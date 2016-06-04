@@ -1,0 +1,48 @@
+{
+  "name": "iobroker.cloud",
+  "version": "0.1.0",
+  "description": "This adapter allows to communicate different web applications with ioBroker.",
+  "author": {
+    "name": "bluefox",
+    "email": "dogafox@gmail.com"
+  },
+  "homepage": "https://github.com/ioBroker/ioBroker.cloud",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/ioBroker/ioBroker.cloud/blob/master/LICENSE"
+    }
+  ],
+  "keywords": [
+    "ioBroker",
+    "cloud",
+    "web"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ioBroker/ioBroker.cloud"
+  },
+  "dependencies": {
+    "socket.io": "^1.4.6",
+    "socket.io-client": "^1.4.6",
+	"cookie-parser": "^1.4.1",
+    "request": "^2.72.0",
+    "iobroker.socketio": ">=1.5.0"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-replace": "^0.9.3",
+    "grunt-contrib-jshint": "^0.11.2",
+    "grunt-jscs": "^2.0.0",
+    "grunt-http": "^1.6.0"
+  },
+  "bugs": {
+    "url": "https://github.com/ioBroker/ioBroker.cloud/issues"
+  },
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "license": "MIT",
+  "readmeFilename": "README.md"
+}

@@ -1,0 +1,73 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="../../lib/css/themes/jquery-ui/redmond/jquery-ui.min.css"/>
+<script type="text/javascript" src="../../lib/js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../../socket.io/socket.io.js"></script>
+<script type="text/javascript" src="../../lib/js/jquery-ui-1.10.3.full.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="../../css/adapter.css"/>
+<script type="text/javascript" src="../../js/translate.js"></script>
+<script type="text/javascript" src="../../js/adapter-settings.js"></script>
+
+<script type="text/javascript">
+    systemDictionary = {
+        "Cloud adapter settings": {
+            "de": "Einstellungen für Cloud-Adapter",
+            "ru": "Настройки драйвре Cloud"
+        },
+        "API-KEY": {"en": "API-KEY", "de": "API-KEY", "ru": "API-KEY"},
+        "help_tip":         {
+            "en": 'No API-KEY? Get it on <a href="https://cloud.iobroker.net" target="_blank">https://cloud.iobroker.net</a>',
+            "de": 'Kein API-KEY? Bekomme der unter <a href="https://cloud.iobroker.net" target="_blank">https://cloud.iobroker.net</a>',
+            "ru": 'Нет API-KEY? Получи его на <a href="https://cloud.iobroker.net" target="_blank">https://cloud.iobroker.net</a>'
+        }
+    };
+
+    // the function loadSettings has to exist ...
+    function load(settings, onChange) {
+        if (!settings) return;
+
+        $('.value').each(function () {
+            var key = $(this).attr('id');
+            // example: select elements with id=key and class=value and insert value
+            if ($('#' + key + '.value').attr('type') == 'checkbox') {
+                $('#' + key + '.value').prop('checked', settings[key]).change(function() {
+                    onChange();
+                });
+            } else {
+                $('#' + key + '.value').val(settings[key]).change(function() {
+                    onChange();
+                }).keyup(function() {
+                    onChange();
+                });
+            }
+        });
+        onChange(false);
+    }
+
+    function save(callback) {
+        var obj = {};
+        $('.value').each(function () {
+            var $this = $(this);
+            if ($this.attr('type') == 'checkbox') {
+                obj[$this.attr('id')] = $this.prop('checked');
+            } else {
+                obj[$this.attr('id')] = $this.val();
+            }
+        });
+        callback(obj);
+    }
+</script>
+</head>
+<body>
+    <div id="adapter-container">
+        <table><tr><td><img src="cloud.png"></td><td><h3 class="translate">Cloud adapter settings</h3></td></tr></table>
+
+        <table style="width: 100%">
+            <tr><td class="translate">API-KEY:</td><td><input  class="value" id="apikey" style="width: 100%" /></td></tr>
+        </table>
+
+        <p class="translate">help_tip</p>
+    </div>
+</body>
+</html>
