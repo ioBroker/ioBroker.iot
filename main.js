@@ -68,5 +68,5 @@ function main() {
         });
     });
 
-    ioSocket = new IOSocket(socket, {client: true}, adapter);
+    ioSocket = new IOSocket(socket, {clientid: adapter.config.apikey}, adapter);
 }
