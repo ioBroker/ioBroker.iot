@@ -3,11 +3,13 @@
         "name":                     "cloud",
         "version":                  "0.1.0",
         "title":                    "Cloud Adapter",
-        "desc":                     "This adapter allows to communicate different web applications with ioBroker",
+        "desc":                     "This adapter connect",
 		"news": {
-            "en":                   "(bluefox) change getHistory function",
-            "de":                   "(bluefox) change getHistory function",
-            "ru":                   "(bluefox) change getHistory function"
+            "0.1.0": {
+                "en":                   "initial commit",
+                "de":                   "initial commit",
+                "ru":                   "initial commit"
+            }
         },
         "authors": [
             "bluefox <dogafox@gmail.com>"
@@ -23,10 +25,13 @@
         "extIcon":                  "https://raw.githubusercontent.com/ioBroker/ioBroker.cloud/master/admin/cloud.png",
         "type":                     "communication",
         "stopBeforeUpdate":         true,
-		"dependencies":             [{"js-controller": ">=0.8.0"}]
+		"dependencies":             [{"js-controller": ">=0.9.0"}]
     },
     "native": {
-        "apikey":                   ""
+        "apikey":                   "",
+        "instance":                 "web.0",
+        "cloudUrl":                 "https://iobroker.net:10555",
+        "allowSelfSignedCertificate": false
     },
     "objects": [
     ],

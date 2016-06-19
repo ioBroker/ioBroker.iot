@@ -17,15 +17,31 @@
         },
         "API-KEY": {"en": "API-KEY", "de": "API-KEY", "ru": "API-KEY"},
         "help_tip":         {
-            "en": 'No API-KEY? Get it on <a href="https://cloud.iobroker.net" target="_blank">https://cloud.iobroker.net</a>',
-            "de": 'Kein API-KEY? Bekomme der unter <a href="https://cloud.iobroker.net" target="_blank">https://cloud.iobroker.net</a>',
-            "ru": 'Нет API-KEY? Получи его на <a href="https://cloud.iobroker.net" target="_blank">https://cloud.iobroker.net</a>'
+            "en": 'No API-KEY? Get it on <a href="https://iobroker.net" target="_blank">https://iobroker.net</a>',
+            "de": 'Kein API-KEY? Bekomme der unter <a href="https://iobroker.net" target="_blank">https://iobroker.net</a>',
+            "ru": 'Нет API-KEY? Получи его на <a href="https://iobroker.net" target="_blank">https://iobroker.net</a>'
         }
     };
+    var supportedInstances = ['web'];
 
     // the function loadSettings has to exist ...
     function load(settings, onChange) {
         if (!settings) return;
+
+        var count = 0;
+        for (var i = 0; i < supportedInstances.length; i++) {
+            count++;
+            getAdapterInstances(supportedInstances[i], function (res) {
+                if (!res) return;
+                for (var t = 0; t < res.length; t++) {
+                    $('#instance').append('<option value="' + res[t]._id + '">' + res[t].common.name + ' [' + res[t]._id.replace('system.adapter.', '') + ']</option>');
+                }
+                count--;
+                if (!count) {
+                    $('#instance').val(settings.instance);
+                }
+            });
+        }
 
         $('.value').each(function () {
             var key = $(this).attr('id');
@@ -65,6 +81,8 @@
 
         <table style="width: 100%">
             <tr><td class="translate">API-KEY:</td><td><input  class="value" id="apikey" style="width: 100%" /></td></tr>
+            <tr><td class="translate">Instance:</td><td><select class="value" id="instance"></select></td></tr>
+            <tr><td class="translate">Cloud URL:</td><td><input class="value" id="cloudUrl"/></td></tr>
         </table>
 
         <p class="translate">help_tip</p>
