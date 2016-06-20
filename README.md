@@ -8,7 +8,11 @@ ioBroker cloud adapter
 
 This adapter allows connection from internet through ioBroker cloud to local installation of ioBroker.
 
-To use cloud adapter you should first get the API-Key on https://cloud.iobroker.net
+To use cloud adapter you should first get the APP-Key on https://iobroker.net.
+
+# APP-Key
+![Intro](img/intro.png)
+
 
 
 ## Changelog

@@ -31,7 +31,7 @@
         "apikey":                   "",
         "instance":                 "web.0",
         "cloudUrl":                 "https://iobroker.net:10555",
-        "allowSelfSignedCertificate": false
+        "allowSelfSignedCertificate": true
     },
     "objects": [
     ],

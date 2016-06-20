@@ -15,11 +15,18 @@
             "de": "Einstellungen für Cloud-Adapter",
             "ru": "Настройки драйвре Cloud"
         },
-        "API-KEY": {"en": "API-KEY", "de": "API-KEY", "ru": "API-KEY"},
-        "help_tip":         {
-            "en": 'No API-KEY? Get it on <a href="https://iobroker.net" target="_blank">https://iobroker.net</a>',
-            "de": 'Kein API-KEY? Bekomme der unter <a href="https://iobroker.net" target="_blank">https://iobroker.net</a>',
-            "ru": 'Нет API-KEY? Получи его на <a href="https://iobroker.net" target="_blank">https://iobroker.net</a>'
+        "APP-KEY:":     {"en": "APP-KEY:",      "de": "APP-KEY:",       "ru": "APP-KEY:"},
+        "Instance:":    {"en": "Instance:",     "de": "Instanz:",       "ru": "Экземпляр:"},
+        "Cloud URL:":   {"en": "Cloud URL:",    "de": "Cloud URL:",     "ru": "Адрес облака:"},
+        "Allow self-signed certificates": {
+            "en": "Allow self-signed certificates",
+            "de": "Erlaube self-sigend Zertifikate",
+            "ru": "Разрешить самоподписанные сертификаты"
+        },
+        "help_tip": {
+            "en": 'No APP-KEY? Get it on <a href="https://iobroker.net" target="_blank">https://iobroker.net</a>',
+            "de": 'Kein APP-KEY? Bekomme der unter <a href="https://iobroker.net" target="_blank">https://iobroker.net</a>',
+            "ru": 'Нет APP-KEY? Получи его на <a href="https://iobroker.net" target="_blank">https://iobroker.net</a>'
         }
     };
     var supportedInstances = ['web'];
@@ -63,6 +70,7 @@
 
     function save(callback) {
         var obj = {};
+        $('#apikey').val($('#apikey').val().trim());
         $('.value').each(function () {
             var $this = $(this);
             if ($this.attr('type') == 'checkbox') {
@@ -79,10 +87,11 @@
     <div id="adapter-container">
         <table><tr><td><img src="cloud.png"></td><td><h3 class="translate">Cloud adapter settings</h3></td></tr></table>
 
-        <table style="width: 100%">
-            <tr><td class="translate">API-KEY:</td><td><input  class="value" id="apikey" style="width: 100%" /></td></tr>
+        <table style="width: 100%; white-space: nowrap;">
+            <tr><td class="translate" style="width: 10%">APP-KEY:</td><td><input  class="value" id="apikey" style="width: 100%" /></td></tr>
             <tr><td class="translate">Instance:</td><td><select class="value" id="instance"></select></td></tr>
             <tr><td class="translate">Cloud URL:</td><td><input class="value" id="cloudUrl"/></td></tr>
+            <tr><td class="translate">Allow self-signed certificates:</td><td><input type="checkbox" class="value" id="allowSelfSignedCertificate"/></td></tr>
         </table>
 
         <p class="translate">help_tip</p>
