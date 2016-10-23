@@ -1,2 +1,6 @@
 Gruntfile.js
 tasks
+./webSite
+.git
+node_modules
+.idea

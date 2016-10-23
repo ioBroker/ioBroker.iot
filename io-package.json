@@ -1,10 +1,15 @@
 {
     "common": {
         "name":                     "cloud",
-        "version":                  "0.1.0",
+        "version":                  "0.1.1",
         "title":                    "Cloud Adapter",
         "desc":                     "This adapter connect",
 		"news": {
+            "0.1.1": {
+                "en":                   "update some packages",
+                "de":                   "Update manche Pakete",
+                "ru":                   "Обновлены некоторые пакеты"
+            },
             "0.1.0": {
                 "en":                   "initial commit",
                 "de":                   "initial commit",

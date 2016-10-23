@@ -17,5 +17,8 @@ To use cloud adapter you should first get the APP-Key on https://iobroker.net.
 
 ## Changelog
 
-### 0.1.0 (2014-12-28)
+### 0.1.1 (2016-10-23)
+* (bluefox) update some packages
+
+### 0.1.0 (2016-08-01)
 * (bluefox) support of read/write files
