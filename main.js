@@ -1,6 +1,6 @@
 /* jshint -W097 */// jshint strict:false
 /*jslint node: true */
-"use strict";
+'use strict';
 
 var utils    = require(__dirname + '/lib/utils'); // Get common adapter utils
 var IOSocket = require(utils.appName + '.socketio/lib/socket.js');
@@ -9,7 +9,7 @@ var request  = require('request');
 var socket    = null;
 var ioSocket  = null;
 
-var adapter = utils.adapter({
+var adapter = new utils.Adapter({
     name: 'cloud',
     objectChange: function (id, obj) {
         if (socket) socket.emit('objectChange', id, obj);
@@ -45,7 +45,9 @@ function main() {
 
     adapter.log.info('Connecting with ' + adapter.config.cloudUrl + ' with "' + adapter.config.apikey + '"');
     socket = require('socket.io-client')(adapter.config.cloudUrl || 'https://iobroker.net:10555', {
-        rejectUnauthorized: !adapter.config.allowSelfSignedCertificate
+        rejectUnauthorized: !adapter.config.allowSelfSignedCertificate,
+        reconnectionDelay:    5000,
+        reconnectionDelayMax: 10000
     });
     
     socket.on('connect', function () {

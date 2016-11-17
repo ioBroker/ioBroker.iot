@@ -17,6 +17,9 @@ To use cloud adapter you should first get the APP-Key on https://iobroker.net.
 
 ## Changelog
 
+### 0.1.2 (2016-11-17)
+* (bluefox) update socket.io
+
 ### 0.1.1 (2016-10-23)
 * (bluefox) update some packages
 
