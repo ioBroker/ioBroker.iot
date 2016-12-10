@@ -669,6 +669,7 @@ if (typeof module !== undefined && module.parent) {
     module.exports.setupController  = setupController;
     module.exports.stopAdapter      = stopAdapter;
     module.exports.startAdapter     = startAdapter;
+    module.exports.installAdapter   = installAdapter;
     module.exports.appName          = appName;
     module.exports.adapterName      = adapterName;
 }
