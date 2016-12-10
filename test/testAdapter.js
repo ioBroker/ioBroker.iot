@@ -87,14 +87,16 @@ describe('Test ' + adapterShortName + ' adapter', function() {
 
             setup.setAdapterConfig(config.common, config.native);
 
-            setup.startController(true, function(id, obj) {}, function (id, state) {
-                    if (onStateChanged) onStateChanged(id, state);
-                },
-                function (_objects, _states) {
-                    objects = _objects;
-                    states  = _states;
-                    _done();
+            setup.installAdapter('web', function () {
+                setup.startController(true, function(id, obj) {}, function (id, state) {
+                        if (onStateChanged) onStateChanged(id, state);
+                    },
+                    function (_objects, _states) {
+                        objects = _objects;
+                        states  = _states;
+                        _done();
                 });
+            });
         });
     });
 
