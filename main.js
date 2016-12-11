@@ -36,10 +36,10 @@ function main() {
 
     if (!adapter.config.apikey) {
         adapter.log.error('No api-key found. Please get one on https://iobroker.net');
-        process.stop();
+        process.exit();
         return;
     }
-    
+
     adapter.setState('info.connection', false, true);
     adapter.config.cloudUrl  = adapter.config.cloudUrl || 'https://iobroker.net:10555';
 
@@ -49,12 +49,12 @@ function main() {
         reconnectionDelay:    5000,
         reconnectionDelayMax: 10000
     });
-    
+
     socket.on('connect', function () {
         adapter.log.info('Connection changed: CONNECTED');
         adapter.setState('info.connection', true, true);
     });
-    
+
     socket.on('disconnect', function () {
         adapter.log.info('Connection changed: DISCONNECTED');
         adapter.setState('info.connection', false, true);
@@ -64,7 +64,7 @@ function main() {
         adapter.log.error('Connection error: ' + error);
         console.log('error: ' + error);
     });
-    
+
     var server = 'http://localhost:8082';
     socket.on('html', function (url, cb) {
         request({url: server + url, encoding: null}, function (error, response, body) {
