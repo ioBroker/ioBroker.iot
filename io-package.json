@@ -1,10 +1,15 @@
 {
     "common": {
         "name":                     "cloud",
-        "version":                  "0.1.2",
+        "version":                  "0.2.0",
         "title":                    "Cloud Adapter",
         "desc":                     "This adapter connect",
 		"news": {
+            "0.2.0": {
+                "en":                   "support of amazon alexa",
+                "de":                   "Unterstützung von Amazon Alexa",
+                "ru":                   "Поддержка Amazon Alexa"
+            },
             "0.1.2": {
                 "en":                   "update socket.io",
                 "de":                   "Update socket.io",

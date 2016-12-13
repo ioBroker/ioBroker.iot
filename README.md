@@ -16,6 +16,8 @@ To use cloud adapter you should first get the APP-Key on https://iobroker.net.
 
 
 ## Changelog
+### 0.2.0 (2016-12-13)
+* (bluefox) support of amazon alexa
 
 ### 0.1.2 (2016-11-17)
 * (bluefox) update socket.io
