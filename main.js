@@ -65,7 +65,7 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
     friendlyDescription = friendlyDescription.substring(0, 128).replace(/[^a-zA-Z0-9äÄüÜöÖß]+/g, ' ');
     friendlyName        = friendlyName.substring(0, 128).replace(/[^a-zA-Z0-9äÄüÜöÖß]+/g, ' ');
     // any letter or number and _ - = # ; : ? @ &
-    var applianceId = id.substring(0, 256).replace(/[^a-zA-Z0-9äÄüÜöÖß_=#;:?@&-]+/g, '_');
+    var applianceId = id.substring(0, 256).replace(/[^a-zA-Z0-9_=#;:?@&-]+/g, '_');
 
     var pos;
     if (alexaIds && (pos = alexaIds.indexOf(id)) !== -1) alexaIds.splice(pos, 1);
@@ -91,7 +91,7 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
             groups[friendlyName].additionalApplianceDetails.ids = JSON.stringify(ids);
         } else {
             groups[friendlyName] = {
-                applianceId:		friendlyName.replace(/[^a-zA-Z0-9äÄüÜöÖß_=#;:?@&-]+/g, '_'),
+                applianceId:		friendlyName.replace(/[^a-zA-Z0-9_=#;:?@&-]+/g, '_'),
                 manufacturerName:	'ioBroker group',
                 modelName:		    (states[id].common.name || 'Kein Namen').substring(0, 128),
                 version:			'1',
@@ -141,10 +141,10 @@ function getDevices(callback) {
                 for (var i = 0, l = doc.rows.length; i < l; i++) {
                     if (doc.rows[i].value) {
                         var _id = doc.rows[i].id;
-                        if (_id.match(/^enum\.rooms\./)) {
+                        if (_id.match(/^enum\.rooms\./) && doc.rows[i].value.common.alexaName !== 'ignore') {
                             rooms.push(doc.rows[i].value);
                         }
-                        if (_id.match(/^enum\.functions\./)) {
+                        if (_id.match(/^enum\.functions\./) && doc.rows[i].value.common.alexaName !== 'ignore') {
                             funcs.push(doc.rows[i].value);
                         }
                     }
@@ -156,7 +156,7 @@ function getDevices(callback) {
 
                 for (var s = 0; s < funcs[f].common.members.length; s++) {
                     var id = funcs[f].common.members[s];
-                    var func = funcs[f].common.name;
+                    var func = funcs[f].common.alexaName || funcs[f].common.name;
 
                     if (!func) {
                         func = funcs[f]._id.substring('enum.functions.'.length);
@@ -168,7 +168,7 @@ function getDevices(callback) {
                         if (!rooms[r].common || !rooms[r].common.members || typeof rooms[r].common.members !== 'object' || !rooms[r].common.members.length) continue;
 
                         if (rooms[r].common.members.indexOf(id) !== -1) {
-                            room = rooms[r].common.name;
+                            room =  rooms[r].common.alexaName || rooms[r].common.name;
                             if (!room) {
                                 room = rooms[r]._id.substring('enum.rooms.'.length);
                                 room = room[0].toUpperCase() + room.substring(1);
@@ -273,7 +273,7 @@ function main() {
                 //      }
                 //}
                 request.header.name = 'DiscoverAppliancesResponse';
-                if (alexaDevices.length > 7) alexaDevices.splice(7, alexaDevices.length - 7);
+                //if (alexaDevices.length > 100) alexaDevices.splice(50, alexaDevices.length - 50);
                 //console.log(JSON.stringify(alexaDevices));
                 var response = {
                     header: request.header,
@@ -347,7 +347,7 @@ function main() {
                     }
                 };
                 callback(response);
-                console.log(JSON.stringify(response, null, 2));
+                //console.log(JSON.stringify(response, null, 2));
                 request = null;
                 break;
 
