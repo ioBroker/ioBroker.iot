@@ -10,6 +10,7 @@ var socket        = null;
 var ioSocket      = null;
 var alexaDevices  = [];
 var recalcTimeout = null;
+var lang          = 'de';
 
 var adapter       = new utils.Adapter({
     name: 'cloud',
@@ -23,6 +24,9 @@ var adapter       = new utils.Adapter({
                     alexaDevices = result;
                 });
             }, 2000);
+        } else if (id === 'system.config' && obj) {
+            lang = obj.common.language;
+            if (lang !== 'en' && lang !== 'de') lang = 'en';
         }
     },
     stateChange: function (id, state) {
@@ -61,7 +65,11 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
 
     if (!friendlyName) {
         if (room) {
-            friendlyName = func + ' im ' + room;
+            if (lang === 'en') {
+                friendlyName = room + ' ' + func;
+            } else {
+                friendlyName = room + ' ' + func;
+            }
         } else {
             friendlyName = states[id].common.name;
         }
@@ -227,8 +235,12 @@ function getDevices(callback) {
 
 function main() {
     //process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-    getDevices(function (err, result) {
-        alexaDevices = result;
+    adapter.getForeignObject('system.config', function (err, obj) {
+        lang = obj.common.language;
+        if (lang !== 'en' && lang !== 'de') lang = 'en';
+        getDevices(function (err, result) {
+            alexaDevices = result;
+        });
     });
     adapter.subscribeForeignObjects('*');
 
