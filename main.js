@@ -2,17 +2,28 @@
 /*jslint node: true */
 'use strict';
 
-var utils    = require(__dirname + '/lib/utils'); // Get common adapter utils
-var IOSocket = require(utils.appName + '.socketio/lib/socket.js');
-var request  = require('request');
+var utils         = require(__dirname + '/lib/utils'); // Get common adapter utils
+var IOSocket      = require(utils.appName + '.socketio/lib/socket.js');
+var request       = require('request');
 
-var socket       = null;
-var ioSocket     = null;
-var alexaDevices = [];
-var adapter      = new utils.Adapter({
+var socket        = null;
+var ioSocket      = null;
+var alexaDevices  = [];
+var recalcTimeout = null;
+
+var adapter       = new utils.Adapter({
     name: 'cloud',
     objectChange: function (id, obj) {
         if (socket) socket.emit('objectChange', id, obj);
+        if (!obj || (obj.type === 'state' || obj.type === 'enum')) {
+            if (recalcTimeout) clearTimeout(recalcTimeout);
+            recalcTimeout = setTimeout(function () {
+                recalcTimeout = null;
+                getDevices(function (err, result) {
+                    alexaDevices = result;
+                });
+            }, 2000);
+        }
     },
     stateChange: function (id, state) {
         if (socket) socket.emit('stateChange', id, state);
@@ -203,7 +214,11 @@ function getDevices(callback) {
                 processState(states, alexaIds[j], null, null, null, groups, names, result);
             }
             for (var k = result.length - 1; k >= 0; k--) {
-                if (result[k].disabled) result.splice(k, 1);
+                if (result[k].disabled) {
+                    result.splice(k, 1);
+                } else {
+                    adapter.log.debug('Created ALEXA device: ' + result[k].friendlyName);
+                }
             }
             callback(err, result);
         });
@@ -215,6 +230,7 @@ function main() {
     getDevices(function (err, result) {
         alexaDevices = result;
     });
+    adapter.subscribeForeignObjects('*');
 
     if (!adapter.config.apikey) {
         adapter.log.error('No api-key found. Please get one on https://iobroker.net');
