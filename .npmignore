@@ -3,4 +3,6 @@ tasks
 ./webSite
 .git
 node_modules
-.idea
+.ideatest
+.travis.yml
+appveyor.yml
