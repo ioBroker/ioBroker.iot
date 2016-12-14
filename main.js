@@ -242,7 +242,7 @@ function getDevices(callback) {
                 if (result[k].disabled) {
                     result.splice(k, 1);
                 } else {
-                    adapter.log.debug('Created ALEXA device: ' + result[k].friendlyName);
+                    adapter.log.debug('Created ALEXA device: ' + result[k].friendlyName + ' ' + JSON.stringify(result[k].actions));
                 }
             }
             callback(err, result);
@@ -294,7 +294,7 @@ function controlPercent(id, value, callback) {
         if (value < 0)   value = 0;
         if (value > 100) value = 100;
 
-        value = value * (max - min) + min;
+        value = (value / 100) * (max - min) + min;
 
         if (obj.common.type === 'boolean') value = !!value;
 
@@ -324,7 +324,7 @@ function controlDelta(id, delta, callback) {
             if (value > 100) value = 100;
             if (value < 0)   value = 0;
             // percent => absolute value
-            value = value * (max - min) + min;
+            value = (value / 100) * (max - min) + min;
 
             if (obj.common.type === 'boolean') value = !!value;
 
@@ -444,7 +444,7 @@ function main() {
         var ids;
         var count;
         var i;
-        if (request.payload.appliance.additionalApplianceDetails) {
+        if (request && request.payload && request.payload.appliance && request.payload.appliance.additionalApplianceDetails) {
             if (request.payload.appliance.additionalApplianceDetails.ids) {
                 ids = JSON.parse(request.payload.appliance.additionalApplianceDetails.ids);
             } else {
@@ -613,7 +613,7 @@ function main() {
             case 'SetPercentageRequest':
                 adapter.log.debug('ALEXA Percent: ' + request.payload.appliance.applianceId + ' ' + request.payload.percentageState.value + '%');
                 for (i = 0; i < ids.length; i++) {
-                    controlPercent(ids[i], request.payload.percentageState.value, null, function (err) {
+                    controlPercent(ids[i], request.payload.percentageState.value, function (err) {
                         if (!--count) {
                             request.header.name = 'SetPercentageConfirmation';
 
@@ -664,7 +664,7 @@ function main() {
             case 'SetTargetTemperatureRequest':
                 adapter.log.debug('ALEXA temperature Percent: ' + request.payload.appliance.applianceId + ' ' + request.payload.targetTemperature.value + ' grad');
                 for (i = 0; i < ids.length; i++) {
-                    controlAnalog(ids[i], request.payload.targetTemperature.value, null, function (err) {
+                    controlAnalog(ids[i], request.payload.targetTemperature.value, function (err) {
                         if (!--count) {
                             request.header.name = 'SetTargetTemperatureConfirmation';
 
