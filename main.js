@@ -56,10 +56,10 @@ function validateName(name) {
 }
 
 function processState(states, id, room, func, alexaIds, groups, names, result) {
-    var _actions = ['turnOn', 'turnOff'];
-    var friendlyName = states[id].common.alexaName;
+    var actions;
+    var friendlyName = states[id].common.smartName;
 
-    if (friendlyName === 'ignore') return null;
+    if (friendlyName === 'ignore' || friendlyName === false) return null;
 
     if (!friendlyName && !room && !func) return null;
 
@@ -80,6 +80,23 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
     }
     var friendlyDescription = (states[id].common.name || id);
 
+    if (states[id].common.write === false) {
+        adapter.log.debug('Name "' + friendlyName + '" cannot be written and will be ignored');
+        return null;
+    }
+
+    if (states[id].common.type === 'number') {
+        if (states[id].common.unit === 'C' || states[id].common.unit === 'C°' || states[id].common.unit === '°C' ||
+            states[id].common.unit === 'F' || states[id].common.unit === 'F°' || states[id].common.unit === '°F' ||
+            states[id].common.unit === 'K' || states[id].common.unit === 'K°' || states[id].common.unit === '°K') {
+            actions = ['setTargetTemperature', 'incrementTargetTemperature', 'decrementTargetTemperature'];
+        } else {
+            actions = ['setPercentage', 'incrementPercentage', 'decrementPercentage'];
+        }
+    } else {
+        actions = ['turnOn', 'turnOff'];
+    }
+
     // friendlyName may not be longer than 128
     friendlyDescription = friendlyDescription.substring(0, 128).replace(/[^a-zA-Z0-9äÄüÜöÖß]+/g, ' ');
     friendlyName        = friendlyName.substring(0, 128).replace(/[^a-zA-Z0-9äÄüÜöÖß]+/g, ' ');
@@ -97,7 +114,7 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
         friendlyName:		friendlyName,
         friendlyDescription: friendlyDescription,
         isReachable:        true,
-        actions:            _actions,
+        actions:            actions,
         additionalApplianceDetails: {
             id: id.substring(0, 1024)
         }
@@ -117,7 +134,7 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
                 friendlyName:		friendlyName,
                 friendlyDescription: 'Gruppe ' + friendlyName,
                 isReachable:        true,
-                actions:            _actions,
+                actions:            actions,
                 additionalApplianceDetails: {
                     ids: JSON.stringify([names[friendlyName].additionalApplianceDetails.id, id])
                 }
@@ -145,7 +162,7 @@ function getDevices(callback) {
                 if (_states.rows[i].value) {
                     states[_states.rows[i].id] = _states.rows[i].value;
                     ids.push(_states.rows[i].id);
-                    if (_states.rows[i].value.common && _states.rows[i].value.common.alexaName && _states.rows[i].value.common.alexaName !== 'ignore') {
+                    if (_states.rows[i].value.common && _states.rows[i].value.common.smartName && _states.rows[i].value.common.smartName !== 'ignore') {
                         alexaIds.push(_states.rows[i].id);
                     }
                 }
@@ -160,10 +177,10 @@ function getDevices(callback) {
                 for (var i = 0, l = doc.rows.length; i < l; i++) {
                     if (doc.rows[i].value) {
                         var _id = doc.rows[i].id;
-                        if (_id.match(/^enum\.rooms\./) && doc.rows[i].value.common.alexaName !== 'ignore') {
+                        if (_id.match(/^enum\.rooms\./) && doc.rows[i].value.common.smartName !== 'ignore' && doc.rows[i].value.common.smartName !== false) {
                             rooms.push(doc.rows[i].value);
                         }
-                        if (_id.match(/^enum\.functions\./) && doc.rows[i].value.common.alexaName !== 'ignore') {
+                        if (_id.match(/^enum\.functions\./) && doc.rows[i].value.common.smartName !== 'ignore' && doc.rows[i].value.common.smartName !== false) {
                             funcs.push(doc.rows[i].value);
                         }
                     }
@@ -175,7 +192,7 @@ function getDevices(callback) {
 
                 for (var s = 0; s < funcs[f].common.members.length; s++) {
                     var id = funcs[f].common.members[s];
-                    var func = funcs[f].common.alexaName || funcs[f].common.name;
+                    var func = funcs[f].common.smartName || funcs[f].common.name;
 
                     if (!func) {
                         func = funcs[f]._id.substring('enum.functions.'.length);
@@ -187,7 +204,7 @@ function getDevices(callback) {
                         if (!rooms[r].common || !rooms[r].common.members || typeof rooms[r].common.members !== 'object' || !rooms[r].common.members.length) continue;
 
                         if (rooms[r].common.members.indexOf(id) !== -1) {
-                            room =  rooms[r].common.alexaName || rooms[r].common.name;
+                            room =  rooms[r].common.smartName || rooms[r].common.name;
                             if (!room) {
                                 room = rooms[r]._id.substring('enum.rooms.'.length);
                                 room = room[0].toUpperCase() + room.substring(1);
@@ -217,7 +234,7 @@ function getDevices(callback) {
                 }
             }
 
-            // process states with defined alexaName
+            // process states with defined smartName
             for (var j = 0; j < alexaIds.length; j++) {
                 processState(states, alexaIds[j], null, null, null, groups, names, result);
             }
@@ -229,6 +246,146 @@ function getDevices(callback) {
                 }
             }
             callback(err, result);
+        });
+    });
+}
+
+function controlOnOff(id, value, callback) {
+    adapter.getForeignObject(id, function (err, obj) {
+        if (!obj || obj.type !== 'state') {
+            if (err) adapter.log.error('Cannot control non state: ' + id + ' ' + (obj ? obj.type : 'no object'));
+            if (callback) callback();
+            return;
+        }
+        if (obj.common.type === 'number') {
+            if (value) {
+                if (typeof obj.common.max !== 'undefined') {
+                    value = obj.common.max;
+                } else {
+                    obj.common.max = 100;
+                }
+            } else {
+                if (typeof obj.common.min !== 'undefined') {
+                    value = obj.common.min;
+                } else {
+                    obj.common.max = 0;
+                }
+            }
+        }
+
+        adapter.setForeignState(id, value, function (err) {
+            if (err) adapter.log.error('Cannot switch device: ' + err);
+            if (callback) callback();
+        });
+    });
+}
+
+function controlPercent(id, value, callback) {
+    adapter.getForeignObject(id, function (err, obj) {
+        if (!obj || obj.type !== 'state') {
+            if (err) adapter.log.error('Cannot control non state: ' + id + ' ' + (obj ? obj.type : 'no object'));
+            if (callback) callback();
+            return;
+        }
+        var max = 100;
+        var min = 0;
+        if (typeof obj.common.max !== 'undefined') max = parseFloat(obj.common.max);
+        if (typeof obj.common.min !== 'undefined') min = parseFloat(obj.common.min);
+        if (value < 0)   value = 0;
+        if (value > 100) value = 100;
+
+        value = value * (max - min) + min;
+
+        if (obj.common.type === 'boolean') value = !!value;
+
+        adapter.setForeignState(id, value, function (err) {
+            if (err) adapter.log.error('Cannot switch device: ' + err);
+            if (callback) callback();
+        });
+    });
+}
+
+function controlDelta(id, delta, callback) {
+    adapter.getForeignObject(id, function (err, obj) {
+        if (!obj || obj.type !== 'state') {
+            if (err) adapter.log.error('Cannot control non state: ' + id + ' ' + (obj ? obj.type : 'no object'));
+            if (callback) callback();
+            return;
+        }
+        adapter.getForeignState(id, function (err, state) {
+            var value = state.val || 0;
+            var max = 100;
+            var min = 0;
+            if (typeof obj.common.max !== 'undefined') max = parseFloat(obj.common.max);
+            if (typeof obj.common.min !== 'undefined') min = parseFloat(obj.common.min);
+
+            // Absolute value => percent => add delta
+            value = (max - min) / (value - min) * 100 + delta;
+            if (value > 100) value = 100;
+            if (value < 0)   value = 0;
+            // percent => absolute value
+            value = value * (max - min) + min;
+
+            if (obj.common.type === 'boolean') value = !!value;
+
+            adapter.setForeignState(id, value, function (err) {
+                if (err) adapter.log.error('Cannot set device: ' + err);
+                if (callback) callback();
+            });
+        });
+    });
+}
+
+function controlAnalog(id, value, callback) {
+    adapter.getForeignObject(id, function (err, obj) {
+        if (!obj || obj.type !== 'state') {
+            if (err) adapter.log.error('Cannot control non state: ' + id + ' ' + (obj ? obj.type : 'no object'));
+            if (callback) callback();
+            return;
+        }
+        value = parseFloat(value);
+        var max;
+        var min;
+        if (typeof obj.common.max !== 'undefined') max = parseFloat(obj.common.max);
+        if (typeof obj.common.min !== 'undefined') min = parseFloat(obj.common.min);
+
+        if (min !== undefined && value < min) value = min;
+        if (max !== undefined && value > max) value = max;
+
+        if (obj.common.type === 'boolean') value = !!value;
+
+        adapter.setForeignState(id, value, function (err) {
+            if (err) adapter.log.error('Cannot switch device: ' + err);
+            if (callback) callback();
+        });
+    });
+}
+
+function controlAnalogDelta(id, delta, callback) {
+    adapter.getForeignObject(id, function (err, obj) {
+        if (!obj || obj.type !== 'state') {
+            if (err) adapter.log.error('Cannot control non state: ' + id + ' ' + (obj ? obj.type : 'no object'));
+            if (callback) callback();
+            return;
+        }
+        adapter.getForeignState(id, function (err, state) {
+            var value = state.val || 0;
+            var max;
+            var min;
+            if (typeof obj.common.max !== 'undefined') max = parseFloat(obj.common.max);
+            if (typeof obj.common.min !== 'undefined') min = parseFloat(obj.common.min);
+
+            // Absolute value => percent => add delta
+            value = value + delta;
+            if (max !== undefined && value > max) value = max;
+            if (min !== undefined && value < min) value = min;
+
+            if (obj.common.type === 'boolean') value = !!value;
+
+            adapter.setForeignState(id, value, function (err) {
+                if (err) adapter.log.error('Cannot set device: ' + err);
+                if (callback) callback();
+            });
         });
     });
 }
@@ -287,6 +444,15 @@ function main() {
         var ids;
         var count;
         var i;
+        if (request.payload.appliance.additionalApplianceDetails) {
+            if (request.payload.appliance.additionalApplianceDetails.ids) {
+                ids = JSON.parse(request.payload.appliance.additionalApplianceDetails.ids);
+            } else {
+                ids = [request.payload.appliance.additionalApplianceDetails.id];
+            }
+            count = ids.length;
+        }
+
         switch (request.header.name) {
             case 'DiscoverAppliancesRequest':
                 //{
@@ -396,15 +562,8 @@ function main() {
             //      }
             // }
                 adapter.log.debug('ALEXA ON: ' + request.payload.appliance.applianceId);
-                if (request.payload.appliance.additionalApplianceDetails.ids) {
-                    ids = JSON.parse(request.payload.appliance.additionalApplianceDetails.ids);
-                } else {
-                    ids = [request.payload.appliance.additionalApplianceDetails.id];
-                }
-                count = ids.length;
                 for (i = 0; i < ids.length; i++) {
-                    adapter.setForeignState(ids[i], true, function (err) {
-                        if (err) adapter.log.error('Cannot tunr on: ' + err);
+                    controlOnOff(ids[i], true, function () {
                         if (!--count) {
                             request.header.name = 'TurnOnConfirmation';
 
@@ -435,16 +594,9 @@ function main() {
                 //      }
                 // }
                 adapter.log.debug('ALEXA OFF: ' + request.payload.appliance.applianceId);
-                if (request.payload.appliance.additionalApplianceDetails.ids) {
-                    ids = JSON.parse(request.payload.appliance.additionalApplianceDetails.ids);
-                } else {
-                    ids = [request.payload.appliance.additionalApplianceDetails.id];
-                }
 
-                count = ids.length;
                 for (i = 0; i < ids.length; i++) {
-                    adapter.setForeignState(ids[i], false, function (err) {
-                        if (err) adapter.log.error('Cannot tunr on: ' + err);
+                    controlOnOff(ids[i], false, function (err) {
                         if (!--count) {
                             request.header.name = 'TurnOffConfirmation';
 
@@ -456,6 +608,128 @@ function main() {
                         }
                     });
                 }
+                break;
+
+            case 'SetPercentageRequest':
+                adapter.log.debug('ALEXA Percent: ' + request.payload.appliance.applianceId + ' ' + request.payload.percentageState.value + '%');
+                for (i = 0; i < ids.length; i++) {
+                    controlPercent(ids[i], request.payload.percentageState.value, null, function (err) {
+                        if (!--count) {
+                            request.header.name = 'SetPercentageConfirmation';
+
+                            callback({
+                                header: request.header,
+                                payload: {}
+                            });
+                            request = null;
+                        }
+                    });
+                }
+                break;
+
+            case 'IncrementPercentageRequest':
+                adapter.log.debug('ALEXA Increment: ' + request.payload.appliance.applianceId + ' ' + request.payload.deltaPercentage.value + '%');
+                for (i = 0; i < ids.length; i++) {
+                    controlDelta(ids[i], request.payload.deltaPercentage.value, function (err) {
+                        if (!--count) {
+                            request.header.name = 'IncrementPercentageConfirmation';
+
+                            callback({
+                                header: request.header,
+                                payload: {}
+                            });
+                            request = null;
+                        }
+                    });
+                }
+                break;
+
+            case 'DecrementPercentageRequest':
+                adapter.log.debug('ALEXA decrement: ' + request.payload.appliance.applianceId + ' ' + request.payload.deltaPercentage.value + '%');
+                for (i = 0; i < ids.length; i++) {
+                    controlDelta(ids[i], request.payload.deltaPercentage.value * (-1), function (err) {
+                        if (!--count) {
+                            request.header.name = 'DecrementPercentageConfirmation';
+
+                            callback({
+                                header: request.header,
+                                payload: {}
+                            });
+                            request = null;
+                        }
+                    });
+                }
+                break;
+
+            case 'SetTargetTemperatureRequest':
+                adapter.log.debug('ALEXA temperature Percent: ' + request.payload.appliance.applianceId + ' ' + request.payload.targetTemperature.value + ' grad');
+                for (i = 0; i < ids.length; i++) {
+                    controlAnalog(ids[i], request.payload.targetTemperature.value, null, function (err) {
+                        if (!--count) {
+                            request.header.name = 'SetTargetTemperatureConfirmation';
+
+                            callback({
+                                header: request.header,
+                                payload: {}
+                            });
+                            request = null;
+                        }
+                    });
+                }
+                break;
+
+            case 'IncrementTargetTemperatureRequest':
+                request.payload.deltaTemperature.value = request.payload.deltaTemperature.value || 1;
+                adapter.log.debug('ALEXA temperature Increment: ' + request.payload.appliance.applianceId + ' ' + request.payload.deltaTemperature.value + ' grad');
+                for (i = 0; i < ids.length; i++) {
+                    controlAnalogDelta(ids[i], request.payload.deltaTemperature.value, function (err) {
+                        if (!--count) {
+                            request.header.name = 'IncrementTargetTemperatureConfirmation';
+
+                            callback({
+                                header: request.header,
+                                payload: {}
+                            });
+                            request = null;
+                        }
+                    });
+                }
+                break;
+
+            case 'DecrementTargetTemperatureRequest':
+                request.payload.deltaTemperature.value = request.payload.deltaTemperature.value || 1;
+                adapter.log.debug('ALEXA temperature decrement: ' + request.payload.appliance.applianceId + ' ' + request.payload.deltaTemperature.value + ' grad');
+                for (i = 0; i < ids.length; i++) {
+                    controlAnalogDelta(ids[i], request.payload.deltaTemperature.value * (-1), function (err) {
+                        if (!--count) {
+                            request.header.name = 'DecrementTargetTemperatureConfirmation';
+
+                            callback({
+                                header: request.header,
+                                payload: {}
+                            });
+                            request = null;
+                        }
+                    });
+                }
+                break;
+
+            case 'HealthCheckRequest':
+                request.header.name = 'HealthCheckResponse';
+                try {
+                    adapter.log.debug('HealthCheckRequest duration: ' + (new Date().getTime() - request.payload.initiationTimestamp) + ' ms');
+                } catch (e) {
+                    adapter.log.error('No payload');
+                }
+
+                callback({
+                    header: request.header,
+                    payload: {
+                        description: "Das System ist OK",
+                        isHealthy: true
+                    }
+                });
+                request = null;
                 break;
 
             default:
