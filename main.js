@@ -238,6 +238,12 @@ function getDevices(callback) {
             for (var j = 0; j < alexaIds.length; j++) {
                 processState(states, alexaIds[j], null, null, null, groups, names, result);
             }
+            result.sort(function (a, b) {
+                if (a.friendlyName > b.friendlyName) return 1;
+                if (a.friendlyName < b.friendlyName) return -1;
+                return 0;
+            });
+
             for (var k = result.length - 1; k >= 0; k--) {
                 if (result[k].disabled) {
                     result.splice(k, 1);
