@@ -91,7 +91,7 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
             states[id].common.unit === 'K' || states[id].common.unit === 'K°' || states[id].common.unit === '°K') {
             actions = ['setTargetTemperature', 'incrementTargetTemperature', 'decrementTargetTemperature'];
         } else {
-            actions = ['setPercentage', 'incrementPercentage', 'decrementPercentage'];
+            actions = ['setPercentage', 'incrementPercentage', 'decrementPercentage', 'turnOn', 'turnOff'];
         }
     } else {
         actions = ['turnOn', 'turnOff'];
