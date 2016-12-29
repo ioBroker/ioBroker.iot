@@ -16,6 +16,9 @@ To use cloud adapter you should first get the APP-Key on https://iobroker.net.
 
 
 ## Changelog
+### 0.3.0 (2016-12-29)
+* (bluefox) Implement Heating profile for Alexa
+
 ### 0.2.0 (2016-12-13)
 * (bluefox) support of amazon alexa
 

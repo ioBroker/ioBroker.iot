@@ -27,9 +27,200 @@
             "en": 'No APP-KEY? Get it on <a href="https://iobroker.net" target="_blank">https://iobroker.net</a>',
             "de": 'Kein APP-KEY? Bekomme der unter <a href="https://iobroker.net" target="_blank">https://iobroker.net</a>',
             "ru": 'Нет APP-KEY? Получи его на <a href="https://iobroker.net" target="_blank">https://iobroker.net</a>'
-        }
+        },
+        "Options":      {"en": "Options",       "de": "Einstellungen",  "ru": "Настройки"},
+        "Smart Devices": {"en": "Smart Devices", "de": "Smart Geräte",  "ru": "Smart устройства"},
+        "Smart Enums":  {"en": "Smart Enums",   "de": "Smart Aufzählungen", "ru": "Smart категории"},
+        "Allow self-signed certificates:": {
+            "en": "Allow self-signed certificates:",
+            "de": "Allow self-signed certificates:",
+            "ru": "Allow self-signed certificates:"
+        },
+        "Smart name:":  {"en": "Smart name:",   "de": "Smart name:",        "ru": "Smart имя:"},
+        "Rooms":        {"en": "Rooms",         "de": "Rooms",              "ru": "Комнаты"},
+        "Functions":    {"en": "Functions",     "de": "Functions",          "ru": "Функции"},
+        "Ok":           {"en": "Ok",            "de": "Ok",                 "ru": "Ok"},
+        "Cancel":       {"en": "Cancel",        "de": "Abbrechen",          "ru": "Отмена"}
     };
     var supportedInstances = ['web'];
+    var actionsMapping = {
+        turnOn: 'On',
+        turnOff: 'Off',
+        setTargetTemperature: '°',
+        incrementTargetTemperature: '↑',
+        decrementTargetTemperature: '↓',
+        setPercentage: '%',
+        incrementPercentage: '↑',
+        decrementPercentage: '↓'
+    };
+    var enumTimer;
+    var devTimer;
+    function updateDevices(delay) {
+        if (delay) {
+            if (devTimer) clearTimeout(devTimer);
+            devTimer = setTimeout(function () {
+                devTimer = null;
+                updateDevices();
+            }, delay);
+            return;
+        }
+        sendTo(null, 'browse', null, function (list) {
+            if (list) {
+                var text = '<tr><th>' + _('Smart name') + '</th><th>' + _('Commands') + '</th><th>' + _('Addresses') + '</th></tr>';
+                for (var j = 0; j < list.length; j++) {
+                    text += '<tr><td class="smart-name">' + list[j].friendlyName + '</td>';
+                    // Type
+                    var actions = [];
+                    for (var a = 0; a < list[j].actions.length; a++) {
+                        if (actionsMapping[list[j].actions[a]]) {
+                            actions.push(actionsMapping[list[j].actions[a]]);
+                        } else {
+                            actions.push(list[j].actions[a]);
+                        }
+                    }
+                    text += '<td>' + actions.join(' ') + '</td>';
+
+                    text += '<td>';
+                    if (list[j].additionalApplianceDetails.ids) {
+                        var parts = JSON.parse(list[j].additionalApplianceDetails.ids);
+                        text += parts.join('<br>');
+                    } else {
+                        text += list[j].additionalApplianceDetails.id || '';
+                    }
+                    text += '</td></tr>';
+                }
+                $('#smart_table').html(text);
+            }
+        });
+    }
+
+    function updateEnums(delay) {
+        if (delay) {
+            if (enumTimer) clearTimeout(enumTimer);
+            enumTimer = setTimeout(function () {
+                enumTimer = null;
+                updateEnums();
+            }, delay);
+            return;
+        }
+        sendTo(null, 'enums', null, function (list) {
+            if (list) {
+                var text = '<tr><th>' + _('Rooms') + '</th><th>' + _('Functions') + '</th></tr>';
+                var rooms = [];
+                var funcs = [];
+                for (var j = 0; j < list.length; j++) {
+                    if (list[j].id.match(/^enum\.rooms\./)) {
+                        rooms.push(list[j]);
+                    } else
+                    if (list[j].id.match(/^enum\.functions\./)) {
+                        funcs.push(list[j]);
+                    }
+                }
+                var i = 0;
+                while (i < rooms.length || i < funcs.length) {
+                    text += '<tr>';
+                    if (rooms[i]) {
+                        text += '<td><input class="smart-enable" type="checkbox" data-id="' + rooms[i].id + '" ' + (rooms[i].smartName !== false && rooms[i].smartName !== 'ignore' ? 'checked' :'') + '/>' +
+                            rooms[i].name + (rooms[i].smartName ? ' (' + rooms[i].smartName + ')' : '') +
+                            '<button ' + (rooms[i].smartName !== false && rooms[i].smartName !== 'ignore' ? '' : 'disabled') + ' class="smart-edit" data-id="' + rooms[i].id + '" data-value="' + (rooms[i].smartName || '') + '" data-name="' + (rooms[i].name || '') + '">...</button></td>';
+                    } else {
+                        text += '<td></td>';
+                    }
+                    if (funcs[i]) {
+                        text += '<td><input class="smart-enable" type="checkbox" data-id="' + funcs[i].id + '" ' + (funcs[i].smartName !== false && funcs[i].smartName !== 'ignore' ? 'checked' :'') + '/>' +
+                            funcs[i].name + (funcs[i].smartName ? ' (' + funcs[i].smartName + ')' : '') +
+                            '<button ' + (funcs[i].smartName !== false && funcs[i].smartName !== 'ignore' ? '' : 'disabled') + ' class="smart-edit" data-id="' + funcs[i].id + '" data-value="' + (funcs[i].smartName || '') + '" data-name="' + (funcs[i].name || '') + '">...</button></td>';
+                    } else {
+                        text += '<td></td>';
+                    }
+                    text += '</tr>';
+                    i++;
+                }
+
+                $('#smart_enums')
+                    .html(text)
+                        .find('.smart-enable')
+                        .change(function () {
+                            var id = $(this).data('id');
+                            var $this = $(this);
+                            $this.parent().addClass('smart-changed');
+                            if ($this.prop('checked')) {
+                                $('#smart_enums').find('.smart-enable[data-id="' + id + '"]').prop('disabled', true);
+                                socket.emit('getObject', id, function (err, obj) {
+                                    obj.common.smartName = null;
+                                    socket.emit('setObject', id, obj, function (err) {
+                                        setTimeout(function () {
+                                            $this.parent().removeClass('smart-changed');
+                                        }, 500);
+                                    });
+                                });
+                            } else {
+                                $('#smart_enums').find('.smart-enable[data-id="' + id + '"]').prop('disabled', false);
+                                socket.emit('getObject', id, function (err, obj) {
+                                    obj.common.smartName = false;
+                                    socket.emit('setObject', id, obj, function (err) {
+                                        setTimeout(function () {
+                                            $this.parent().removeClass('smart-changed');
+                                        }, 500);
+                                    });
+                                });
+                            }
+                        });
+
+                $('#smart_enums').find('.smart-edit').click(function () {
+                    var $this = $(this);
+                    var $editDialog = $('#edit_dialog');
+                    $editDialog.data('id', $this.data('id'));
+                    $('#edit_name').val($this.data('value') || $this.data('name'));
+
+                    if (!$editDialog.data('inited')) {
+                        $editDialog.data('inited', true);
+                        $editDialog.dialog({
+                            autoOpen: false,
+                            title:    _('Edit smart name'),
+                            modal:    true,
+                            width:    600,
+                            height:   200,
+                            buttons: [
+                                {
+                                    id:    'edit-ok',
+                                    text: _('Ok'),
+                                    click: function () {
+                                        $(this).dialog('close');
+                                        var id = $('#edit_dialog').data('id');
+                                        $('#smart_enums').find('.smart-edit[data-id="' + id + '"]').parent().addClass('smart-changed');
+                                        socket.emit('getObject', id, function (err, obj) {
+                                            obj.common.smartName = $('#edit_name').val();
+                                            if (!obj.common.smartName || obj.common.smartName === $this.data('name')) {
+                                                obj.common.smartName = null;
+                                            }
+                                            socket.emit('setObject', id, obj, function (err) {
+                                                updateEnums(1200);
+                                            });
+                                        });
+                                    }
+                                },
+                                {
+                                    text: _('Cancel'),
+                                    click: function () {
+                                        $(this).dialog('close');
+                                    }
+                                }
+                            ]
+                        });
+                        $('#edit_name').keyup(function (e) {
+                            if (e.keyCode === 13) {
+                                setTimeout(function () {
+                                    $('#edit-ok').trigger('click');
+                                }, 100);
+                            }
+                        });
+                    }
+                    $editDialog.dialog('open');
+                });
+            }
+        });
+    }
 
     // the function loadSettings has to exist ...
     function load(settings, onChange) {
@@ -65,6 +256,18 @@
                 });
             }
         });
+
+        $('#tabs').show().tabs({
+            activate:  function (event, ui) {
+                if (ui.newPanel.attr('id') === 'tabs-2') {
+                    updateDevices();
+                }
+                else if (ui.newPanel.attr('id') === 'tabs-3') {
+                    updateEnums();
+                }
+            }
+        });
+
         onChange(false);
     }
 
@@ -82,19 +285,57 @@
         callback(obj);
     }
 </script>
+<style>
+    .smart-table tr:nth-child(even) {
+        background: #CCC
+    }
+    .smart-table tr:nth-child(odd) {
+        background: #FFF
+    }
+    .smart-name {
+        font-weight: bold;
+    }
+    .smart-table button {
+        float: right;
+        margin-right: 20px;
+    }
+    .smart-changed {
+        background: lightcoral;
+    }
+</style>
 </head>
 <body>
     <div id="adapter-container">
-        <table><tr><td><img src="cloud.png"></td><td><h3 class="translate">Cloud adapter settings</h3></td></tr></table>
+        <div id="tabs" style="width: 100%; height: 100%; overflow: hidden; display: none;">
+            <ul>
+                <li><a href="#tabs-1" class="translate">Options</a></li>
+                <li><a href="#tabs-2" class="translate">Smart Devices</a></li>
+                <li><a href="#tabs-3" class="translate">Smart Enums</a></li>
+            </ul>
+            <div id="tabs-1">
+                <table><tr><td><img src="cloud.png"></td><td><h3 class="translate">Cloud adapter settings</h3></td></tr></table>
 
-        <table style="width: 100%; white-space: nowrap;">
-            <tr><td class="translate" style="width: 10%">APP-KEY:</td><td><input  class="value" id="apikey" style="width: 100%" /></td></tr>
-            <tr><td class="translate">Instance:</td><td><select class="value" id="instance"></select></td></tr>
-            <tr><td class="translate">Cloud URL:</td><td><input class="value" id="cloudUrl"/></td></tr>
-            <tr><td class="translate">Allow self-signed certificates:</td><td><input type="checkbox" class="value" id="allowSelfSignedCertificate"/></td></tr>
-        </table>
+                <table style="width: 100%; white-space: nowrap;">
+                    <tr><td class="translate" style="width: 10%">APP-KEY:</td><td><input  class="value" id="apikey" style="width: 100%" /></td></tr>
+                    <tr><td class="translate">Instance:</td><td><select class="value" id="instance"></select></td></tr>
+                    <tr><td class="translate">Cloud URL:</td><td><input class="value" id="cloudUrl"/></td></tr>
+                    <tr><td class="translate">Allow self-signed certificates:</td><td><input type="checkbox" class="value" id="allowSelfSignedCertificate"/></td></tr>
+                </table>
 
-        <p class="translate">help_tip</p>
+                <p class="translate">help_tip</p>
+            </div>
+            <div id="tabs-2" style="width: 100%; height: calc(100% - 40px); overflow-x: hidden; overflow-y: auto; padding: 0">
+                <table id="smart_table" class="smart-table" style="width: 100%;">
+                </table>
+            </div>
+            <div id="tabs-3" style="width: 100%; height: calc(100% - 40px); overflow-x: hidden; overflow-y: auto; padding: 0">
+                <table id="smart_enums"  class="smart-table" style="width: 100%;">
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="edit_dialog" style="display: none">
+        <label for="edit_name" class="translate">Smart name:</label><input id="edit_name" style="width: calc(100% - 100px)"/>
     </div>
 </body>
 </html>
