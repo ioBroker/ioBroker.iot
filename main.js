@@ -8,9 +8,10 @@ var request       = require('request');
 
 var socket        = null;
 var ioSocket      = null;
-var alexaDevices  = [];
+var smartDevices  = [];
 var recalcTimeout = null;
 var lang          = 'de';
+var enums         = [];
 
 var adapter       = new utils.Adapter({
     name: 'cloud',
@@ -21,9 +22,9 @@ var adapter       = new utils.Adapter({
             recalcTimeout = setTimeout(function () {
                 recalcTimeout = null;
                 getDevices(function (err, result) {
-                    alexaDevices = result;
+                    smartDevices = result;
                 });
-            }, 2000);
+            }, 1000);
         } else if (id === 'system.config' && obj) {
             lang = obj.common.language;
             if (lang !== 'en' && lang !== 'de') lang = 'en';
@@ -39,6 +40,23 @@ var adapter       = new utils.Adapter({
             callback();
         } catch (e) {
             callback();
+        }
+    },
+    message: function (obj) {
+        if (obj) {
+            switch (obj.command) {
+                case 'browse':
+                    if (obj.callback) adapter.sendTo(obj.from, obj.command, smartDevices, obj.callback);
+                    break;
+
+                case 'enums':
+                    if (obj.callback) adapter.sendTo(obj.from, obj.command, enums, obj.callback);
+                    break;
+
+                default:
+                    adapter.log.warn('Unknown command: ' + obj.command);
+                    break;
+            }
         }
     },
     ready: function () {
@@ -157,6 +175,7 @@ function getDevices(callback) {
         var alexaIds = [];
         var groups   = {};
         var names    = {};
+        enums        = [];
         if (_states && _states.rows) {
             for (var i = 0; i < _states.rows.length; i++) {
                 if (_states.rows[i].value) {
@@ -177,11 +196,18 @@ function getDevices(callback) {
                 for (var i = 0, l = doc.rows.length; i < l; i++) {
                     if (doc.rows[i].value) {
                         var _id = doc.rows[i].id;
-                        if (_id.match(/^enum\.rooms\./) && doc.rows[i].value.common.smartName !== 'ignore' && doc.rows[i].value.common.smartName !== false) {
+                        if (_id.match(/^enum\.rooms\./)     && doc.rows[i].value.common.smartName !== 'ignore' && doc.rows[i].value.common.smartName !== false) {
                             rooms.push(doc.rows[i].value);
                         }
                         if (_id.match(/^enum\.functions\./) && doc.rows[i].value.common.smartName !== 'ignore' && doc.rows[i].value.common.smartName !== false) {
                             funcs.push(doc.rows[i].value);
+                        }
+                        if (_id.match(/^enum\.rooms\./) || _id.match(/^enum\.functions\./)) {
+                            enums.push({
+                                id: _id,
+                                name: doc.rows[i].value.common.name,
+                                smartName: doc.rows[i].value.common.smartName
+                            });
                         }
                     }
                 }
@@ -396,25 +422,148 @@ function controlAnalogDelta(id, delta, callback) {
     });
 }
 
+function controlTemperature(id, value, callback) {
+    //{
+    //    "header" : {
+    //    "namespace" : "Alexa.ConnectedHome.Control",
+    //        "name" : "SetTargetTemperatureConfirmation",
+    //        "payloadVersion" : "2",
+    //        "messageId" : "cc36e80c-6357-41e0-9dd4-b76cb3a394e3"
+    //    },
+    //    "payload" : {
+    //        "targetTemperature" : {
+    //            "value" : 25.0
+    //        },
+    //        "temperatureMode" : {
+    //            "value" : "AUTO"
+    //        },
+    //        "previousState" : {
+    //            "targetTemperature" : {
+    //                "value" : 21.0
+    //            },
+    //            "mode" : {
+    //                "value" : "AUTO"
+    //            }
+    //        }
+    //    }
+    //}
+
+    adapter.getForeignObject(id, function (err, obj) {
+        if (!obj || obj.type !== 'state') {
+            if (err) adapter.log.error('Cannot control non state: ' + id + ' ' + (obj ? obj.type : 'no object'));
+            if (callback) callback();
+            return;
+        }
+        value = parseFloat(value);
+        var max;
+        var min;
+        if (typeof obj.common.max !== 'undefined') max = parseFloat(obj.common.max);
+        if (typeof obj.common.min !== 'undefined') min = parseFloat(obj.common.min);
+
+        if (min !== undefined && value < min) value = min;
+        if (max !== undefined && value > max) value = max;
+
+        if (obj.common.type === 'boolean') value = !!value;
+
+        adapter.getForeignState(id, function (err, state) {
+            if (err) adapter.log.error('Cannot read device: ' + err);
+            adapter.setForeignState(id, value, function (err) {
+                if (err) adapter.log.error('Cannot switch device: ' + err);
+                var response = {
+                    payload: {
+                        targetTemperature: {
+                            value: value
+                        },
+                        temperatureMode: {
+                            value: 'AUTO'
+                        },
+                        previousState: {
+                            targetTemperature: {
+                                value: parseFloat(state.val)
+                            },
+                            mode: {
+                                value: 'AUTO'
+                            }
+                        }
+                    }
+                };
+
+                if (callback) callback(null, response);
+            });
+        });
+    });
+}
+
+function controlTemperatureDelta(id, delta, callback) {
+    adapter.getForeignObject(id, function (err, obj) {
+        if (!obj || obj.type !== 'state') {
+            if (err) adapter.log.error('Cannot control non state: ' + id + ' ' + (obj ? obj.type : 'no object'));
+            if (callback) callback();
+            return;
+        }
+        adapter.getForeignState(id, function (err, state) {
+            var value = state.val || 0;
+            var max;
+            var min;
+            if (typeof obj.common.max !== 'undefined') max = parseFloat(obj.common.max);
+            if (typeof obj.common.min !== 'undefined') min = parseFloat(obj.common.min);
+
+            // Absolute value => percent => add delta
+            value = value + delta;
+            if (max !== undefined && value > max) value = max;
+            if (min !== undefined && value < min) value = min;
+
+            if (obj.common.type === 'boolean') value = !!value;
+
+            adapter.getForeignState(id, function (err, state) {
+                if (err) adapter.log.error('Cannot read device: ' + err);
+
+                adapter.setForeignState(id, value, function (err) {
+                    if (err) adapter.log.error('Cannot switch device: ' + err);
+                    var response = {
+                        payload: {
+                            targetTemperature: {
+                                value: value
+                            },
+                            temperatureMode: {
+                                value: 'AUTO'
+                            },
+                            previousState: {
+                                targetTemperature: {
+                                    value: parseFloat(state.val)
+                                },
+                                mode: {
+                                    value: 'AUTO'
+                                }
+                            }
+                        }
+                    };
+
+                    if (callback) callback(null, response);
+                });
+            });
+        });
+    });
+}
+
 function main() {
     //process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
     adapter.getForeignObject('system.config', function (err, obj) {
         lang = obj.common.language;
         if (lang !== 'en' && lang !== 'de') lang = 'en';
         getDevices(function (err, result) {
-            alexaDevices = result;
+            smartDevices = result;
         });
     });
     adapter.subscribeForeignObjects('*');
 
-    if (!adapter.config.apikey) {
-        adapter.log.error('No api-key found. Please get one on https://iobroker.net');
-        process.exit();
-        return;
-    }
-
     adapter.setState('info.connection', false, true);
     adapter.config.cloudUrl  = adapter.config.cloudUrl || 'https://iobroker.net:10555';
+
+    if (!adapter.config.apikey) {
+        adapter.log.error('No api-key found. Please get one on https://iobroker.net');
+        return;
+    }
 
     adapter.log.info('Connecting with ' + adapter.config.cloudUrl + ' with "' + adapter.config.apikey + '"');
     socket = require('socket.io-client')(adapter.config.cloudUrl || 'https://iobroker.net:10555', {
@@ -473,12 +622,12 @@ function main() {
                 //      }
                 //}
                 request.header.name = 'DiscoverAppliancesResponse';
-                //if (alexaDevices.length > 100) alexaDevices.splice(50, alexaDevices.length - 50);
-                //console.log(JSON.stringify(alexaDevices));
+                //if (smartDevices.length > 100) smartDevices.splice(50, smartDevices.length - 50);
+                //console.log(JSON.stringify(smartDevices));
                 var response = {
                     header: request.header,
                     payload: {
-                        discoveredAppliances: alexaDevices/*[
+                        discoveredAppliances: smartDevices/*[
                             {
                                 "applianceId":          "hm-rpc",
                                 "manufacturerName":     "ioBroker",
@@ -670,14 +819,11 @@ function main() {
             case 'SetTargetTemperatureRequest':
                 adapter.log.debug('ALEXA temperature Percent: ' + request.payload.appliance.applianceId + ' ' + request.payload.targetTemperature.value + ' grad');
                 for (i = 0; i < ids.length; i++) {
-                    controlAnalog(ids[i], request.payload.targetTemperature.value, function (err) {
+                    controlTemperature(ids[i], request.payload.targetTemperature.value, function (err, response) {
                         if (!--count) {
                             request.header.name = 'SetTargetTemperatureConfirmation';
-
-                            callback({
-                                header: request.header,
-                                payload: {}
-                            });
+                            response.header = request.header;
+                            callback(response);
                             request = null;
                         }
                     });
@@ -688,14 +834,11 @@ function main() {
                 request.payload.deltaTemperature.value = request.payload.deltaTemperature.value || 1;
                 adapter.log.debug('ALEXA temperature Increment: ' + request.payload.appliance.applianceId + ' ' + request.payload.deltaTemperature.value + ' grad');
                 for (i = 0; i < ids.length; i++) {
-                    controlAnalogDelta(ids[i], request.payload.deltaTemperature.value, function (err) {
+                    controlTemperatureDelta(ids[i], request.payload.deltaTemperature.value, function (err, response) {
                         if (!--count) {
                             request.header.name = 'IncrementTargetTemperatureConfirmation';
-
-                            callback({
-                                header: request.header,
-                                payload: {}
-                            });
+                            response.header = request.header;
+                            callback(response);
                             request = null;
                         }
                     });
@@ -706,14 +849,11 @@ function main() {
                 request.payload.deltaTemperature.value = request.payload.deltaTemperature.value || 1;
                 adapter.log.debug('ALEXA temperature decrement: ' + request.payload.appliance.applianceId + ' ' + request.payload.deltaTemperature.value + ' grad');
                 for (i = 0; i < ids.length; i++) {
-                    controlAnalogDelta(ids[i], request.payload.deltaTemperature.value * (-1), function (err) {
+                    controlTemperatureDelta(ids[i], request.payload.deltaTemperature.value * (-1), function (err, response) {
                         if (!--count) {
                             request.header.name = 'DecrementTargetTemperatureConfirmation';
-
-                            callback({
-                                header: request.header,
-                                payload: {}
-                            });
+                            response.header = request.header;
+                            callback(response);
                             request = null;
                         }
                     });
