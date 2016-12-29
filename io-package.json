@@ -47,7 +47,11 @@
         "messagebox":               true,
         "stopBeforeUpdate":         true,
 		"dependencies":             [{"js-controller": ">=0.9.0"}],
-        "preserveSettings":         "smartName"
+        "preserveSettings":         "smartName",
+        "config":{
+            "width ": 1224,
+            "height": 520
+        }
     },
     "native": {
         "apikey":                   "",

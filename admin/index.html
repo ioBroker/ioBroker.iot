@@ -1,6 +1,8 @@
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="../../lib/css/themes/jquery-ui/redmond/jquery-ui.min.css"/>
+<link rel="stylesheet" type="text/css" href="../../lib/css/fancytree/ui.fancytree.min.css"/>
+
 <script type="text/javascript" src="../../lib/js/jquery-1.11.1.min.js"></script>
 <script type="text/javascript" src="../../socket.io/socket.io.js"></script>
 <script type="text/javascript" src="../../lib/js/jquery-ui-1.10.3.full.min.js"></script>
@@ -8,6 +10,8 @@
 <link rel="stylesheet" type="text/css" href="../../css/adapter.css"/>
 <script type="text/javascript" src="../../js/translate.js"></script>
 <script type="text/javascript" src="../../js/adapter-settings.js"></script>
+<script type="text/javascript" src="../../lib/js/jquery.fancytree-all.min.js"></script>
+<script type="text/javascript" src="../../js/selectID.js"></script>
 
 <script type="text/javascript">
     systemDictionary = {
@@ -40,7 +44,17 @@
         "Rooms":        {"en": "Rooms",         "de": "Rooms",              "ru": "Комнаты"},
         "Functions":    {"en": "Functions",     "de": "Functions",          "ru": "Функции"},
         "Ok":           {"en": "Ok",            "de": "Ok",                 "ru": "Ok"},
-        "Cancel":       {"en": "Cancel",        "de": "Abbrechen",          "ru": "Отмена"}
+        "Cancel":       {"en": "Cancel",        "de": "Abbrechen",          "ru": "Отмена"},
+        "Smart name":   {"en": "Smart name",    "de": "Smartname",          "ru": "Smart имя"},
+        "Commands":     {"en": "Commands",      "de": "Befehle",            "ru": "Команды"},
+        "Addresses":    {"en": "Addresses",     "de": "Adressen",           "ru": "Адреса"},
+        "Add device":   {"en": "Add device",    "de": "Gerät hinzufügen",   "ru": "Добавить устройство"},
+        "Device will be disabled.": {
+            "en": "Device will be disabled.",
+            "de": "Gerät wird aus der Liste verschwinden.",
+            "ru": "Устройство исчезнет из списка."
+        },
+        "Are you sure?": {"en": "Are you sure?", "de": "Sind Sie sicher?",  "ru": "Уверены?"}
     };
     var supportedInstances = ['web'];
     var actionsMapping = {
@@ -55,6 +69,85 @@
     };
     var enumTimer;
     var devTimer;
+    var selectId;
+    var filterTimer;
+    var idToEdit;
+    var idToNavigate;
+
+    function initSelectId(callback) {
+        if (selectId) {
+            return callback(selectId);
+        }
+        socket.emit('getObjects', function (err, objs) {
+            selectId = $('#dialog-select-member').selectId('init',  {
+                noMultiselect: true,
+                objects: objs,
+                imgPath:       '../../lib/css/fancytree/',
+                filter:        {type: 'state'},
+                name:          'scenes-select-state',
+                texts: {
+                    select:          _('Select'),
+                    cancel:          _('Cancel'),
+                    all:             _('All'),
+                    id:              _('ID'),
+                    name:            _('Name'),
+                    role:            _('Role'),
+                    room:            _('Room'),
+                    value:           _('Value'),
+                    selectid:        _('Select ID'),
+                    from:            _('From'),
+                    lc:              _('Last changed'),
+                    ts:              _('Time stamp'),
+                    wait:            _('Processing...'),
+                    ack:             _('Acknowledged'),
+                    selectAll:       _('Select all'),
+                    unselectAll:     _('Deselect all'),
+                    invertSelection: _('Invert selection')
+                },
+                columns: ['image', 'name', 'role', 'room']
+            });
+            callback(selectId);
+        });
+    }
+
+    function initDialog() {
+        var $editDialog = $('#edit_dialog');
+        if (!$editDialog.data('inited')) {
+            $editDialog.data('inited', true);
+            $editDialog.dialog({
+                autoOpen: false,
+                title:    _('Edit smart name'),
+                modal:    true,
+                width:    600,
+                height:   200,
+                buttons: [
+                    {
+                        id:    'edit-ok',
+                        text: _('Ok'),
+                        click: function () {
+                            $(this).dialog('close');
+                            var callback = $('#edit_dialog').data('callback');
+                            if (typeof callback === 'function') callback();
+                        }
+                    },
+                    {
+                        text: _('Cancel'),
+                        click: function () {
+                            $(this).dialog('close');
+                        }
+                    }
+                ]
+            });
+            $('#edit_name').keyup(function (e) {
+                if (e.keyCode === 13) {
+                    setTimeout(function () {
+                        $('#edit-ok').trigger('click');
+                    }, 100);
+                }
+            });
+        }
+    }
+
     function updateDevices(delay) {
         if (delay) {
             if (devTimer) clearTimeout(devTimer);
@@ -81,16 +174,75 @@
                     text += '<td>' + actions.join(' ') + '</td>';
 
                     text += '<td>';
+                    text += '<table style="width: 100%" class="smart-table">';
                     if (list[j].additionalApplianceDetails.ids) {
                         var parts = JSON.parse(list[j].additionalApplianceDetails.ids);
-                        text += parts.join('<br>');
+                        for (var k = 0; k < parts.length; k++) {
+                            text += '<tr><td>' + parts[k] + '</td><td style="width: 95px"><button data-id="' + parts[k] + '" class="button-delete"></button></td></tr>';
+                        }
                     } else {
+                        text += '<tr><td>';
                         text += list[j].additionalApplianceDetails.id || '';
+                        text += '</td><td style="width: 95px"><button data-id="' + list[j].additionalApplianceDetails.id + '" class="button-delete"></button><button data-value="' + list[j].friendlyName + '" data-id="' + list[j].additionalApplianceDetails.id + '" class="button-edit"></button></td>';
+                        text += '</td></tr>';
                     }
+                    text += '</table>';
                     text += '</td></tr>';
                 }
-                $('#smart_table').html(text);
+                $('#smart_table').html(text).find('.button-delete').click(function () {
+                    var $this = $(this);
+                    var id = $this.data('id');
+
+                    confirmMessage(_('Device will be disabled.'), _('Are you sure?'), 'alert', function (result) {
+                        if (result) {
+                            $this.parent().addClass('smart-changed');
+                            socket.emit('getObject', id, function (err, obj) {
+                                obj.common.smartName = false;
+                                socket.emit('setObject', id, obj, function (err) {
+                                    updateDevices(2000);
+                                });
+                            });
+                        }
+                    });
+                }).button({icons: {primary: 'ui-icon-trash'}, text: false}).css({width: '26px', height: '26px'});
+
+                $('#smart_table').find('.button-edit').click(function () {
+                    var $this = $(this);
+                    var $editDialog = $('#edit_dialog');
+                    $editDialog.data('id', $this.data('id'));
+                    $('#edit_name').val($this.data('value'));
+
+                    initDialog();
+
+                    $editDialog.data('callback', function () {
+                        var id = $('#edit_dialog').data('id');
+                        $('#smart_table').find('.button-edit[data-id="' + id + '"]').parent().addClass('smart-changed');
+                        idToNavigate = id;
+                        socket.emit('getObject', id, function (err, obj) {
+                            obj.common.smartName = $('#edit_name').val();
+                            if (!obj.common.smartName || obj.common.smartName === $this.data('name')) {
+                                obj.common.smartName = null;
+                            }
+                            socket.emit('setObject', id, obj, function (err) {
+                                updateDevices(2000);
+                            });
+                        });
+                    });
+                    $editDialog.dialog('open');
+                }).button({icons: {primary: 'ui-icon-pencil'}, text: false}).css({width: '26px', height: '26px'});
+
+                if (idToEdit) {
+                    $('#smart_table').find('.button-edit[data-id="' + idToEdit + '"]').trigger('click');
+                    idToEdit = null;
+                }
+                if (idToNavigate) {
+                    var $td = $('#smart_table').find('.button-edit[data-id="' + idToNavigate + '"]');
+                    $td[0].scrollIntoView();
+                    $td.parent().parent().addClass('highlight');
+                    idToNavigate = null;
+                }
             }
+            filter();
         });
     }
 
@@ -122,14 +274,14 @@
                     if (rooms[i]) {
                         text += '<td><input class="smart-enable" type="checkbox" data-id="' + rooms[i].id + '" ' + (rooms[i].smartName !== false && rooms[i].smartName !== 'ignore' ? 'checked' :'') + '/>' +
                             rooms[i].name + (rooms[i].smartName ? ' (' + rooms[i].smartName + ')' : '') +
-                            '<button ' + (rooms[i].smartName !== false && rooms[i].smartName !== 'ignore' ? '' : 'disabled') + ' class="smart-edit" data-id="' + rooms[i].id + '" data-value="' + (rooms[i].smartName || '') + '" data-name="' + (rooms[i].name || '') + '">...</button></td>';
+                            '<button ' + (rooms[i].smartName !== false && rooms[i].smartName !== 'ignore' ? '' : 'disabled') + ' class="smart-edit" data-id="' + rooms[i].id + '" data-value="' + (rooms[i].smartName || '') + '" data-name="' + (rooms[i].name || '') + '"></button></td>';
                     } else {
                         text += '<td></td>';
                     }
                     if (funcs[i]) {
                         text += '<td><input class="smart-enable" type="checkbox" data-id="' + funcs[i].id + '" ' + (funcs[i].smartName !== false && funcs[i].smartName !== 'ignore' ? 'checked' :'') + '/>' +
                             funcs[i].name + (funcs[i].smartName ? ' (' + funcs[i].smartName + ')' : '') +
-                            '<button ' + (funcs[i].smartName !== false && funcs[i].smartName !== 'ignore' ? '' : 'disabled') + ' class="smart-edit" data-id="' + funcs[i].id + '" data-value="' + (funcs[i].smartName || '') + '" data-name="' + (funcs[i].name || '') + '">...</button></td>';
+                            '<button ' + (funcs[i].smartName !== false && funcs[i].smartName !== 'ignore' ? '' : 'disabled') + ' class="smart-edit" data-id="' + funcs[i].id + '" data-value="' + (funcs[i].smartName || '') + '" data-name="' + (funcs[i].name || '') + '"></button></td>';
                     } else {
                         text += '<td></td>';
                     }
@@ -145,7 +297,7 @@
                             var $this = $(this);
                             $this.parent().addClass('smart-changed');
                             if ($this.prop('checked')) {
-                                $('#smart_enums').find('.smart-enable[data-id="' + id + '"]').prop('disabled', true);
+                                $('#smart_enums').find('.smart-edit[data-id="' + id + '"]').prop('disabled', false);
                                 socket.emit('getObject', id, function (err, obj) {
                                     obj.common.smartName = null;
                                     socket.emit('setObject', id, obj, function (err) {
@@ -155,7 +307,7 @@
                                     });
                                 });
                             } else {
-                                $('#smart_enums').find('.smart-enable[data-id="' + id + '"]').prop('disabled', false);
+                                $('#smart_enums').find('.smart-edit[data-id="' + id + '"]').prop('disabled', true);
                                 socket.emit('getObject', id, function (err, obj) {
                                     obj.common.smartName = false;
                                     socket.emit('setObject', id, obj, function (err) {
@@ -173,55 +325,44 @@
                     $editDialog.data('id', $this.data('id'));
                     $('#edit_name').val($this.data('value') || $this.data('name'));
 
-                    if (!$editDialog.data('inited')) {
-                        $editDialog.data('inited', true);
-                        $editDialog.dialog({
-                            autoOpen: false,
-                            title:    _('Edit smart name'),
-                            modal:    true,
-                            width:    600,
-                            height:   200,
-                            buttons: [
-                                {
-                                    id:    'edit-ok',
-                                    text: _('Ok'),
-                                    click: function () {
-                                        $(this).dialog('close');
-                                        var id = $('#edit_dialog').data('id');
-                                        $('#smart_enums').find('.smart-edit[data-id="' + id + '"]').parent().addClass('smart-changed');
-                                        socket.emit('getObject', id, function (err, obj) {
-                                            obj.common.smartName = $('#edit_name').val();
-                                            if (!obj.common.smartName || obj.common.smartName === $this.data('name')) {
-                                                obj.common.smartName = null;
-                                            }
-                                            socket.emit('setObject', id, obj, function (err) {
-                                                updateEnums(1200);
-                                            });
-                                        });
-                                    }
-                                },
-                                {
-                                    text: _('Cancel'),
-                                    click: function () {
-                                        $(this).dialog('close');
-                                    }
-                                }
-                            ]
-                        });
-                        $('#edit_name').keyup(function (e) {
-                            if (e.keyCode === 13) {
-                                setTimeout(function () {
-                                    $('#edit-ok').trigger('click');
-                                }, 100);
+                    initDialog();
+
+                    $editDialog.data('callback', function () {
+                        var id = $('#edit_dialog').data('id');
+                        $('#smart_enums').find('.smart-edit[data-id="' + id + '"]').parent().addClass('smart-changed');
+                        socket.emit('getObject', id, function (err, obj) {
+                            obj.common.smartName = $('#edit_name').val();
+                            if (!obj.common.smartName || obj.common.smartName === $this.data('name')) {
+                                obj.common.smartName = null;
                             }
+                            socket.emit('setObject', id, obj, function (err) {
+                                updateEnums(2000);
+                            });
                         });
-                    }
+                    });
                     $editDialog.dialog('open');
-                });
+                }).button({icons: {primary: 'ui-icon-pencil'}, text: false}).css({width: '26px', height: '26px'});
             }
         });
     }
 
+    function filter() {
+        var val = $('#filter').val().toLowerCase();
+        if (!val) {
+            $('#smart_table tr').show();
+        } else {
+            $('#smart_table tr').each(function () {
+                var $td = $(this).find('.smart-name');
+                if (!$td.length) return;
+                var text = $td.html().toLowerCase();
+                if (text.indexOf(val) !== -1) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        }
+    }
     // the function loadSettings has to exist ...
     function load(settings, onChange) {
         if (!settings) return;
@@ -268,6 +409,38 @@
             }
         });
 
+        $('#add_device').button({icons: {primary: 'ui-icon-plus'}, text: false}).css({width: '26px', height: '26px'}).click(function () {
+            initSelectId(function (sid) {
+                sid.selectId('show', function (newId) {
+                    if (newId) {
+                        //$('#' + id).val(newId || '');
+                        socket.emit('getObject', newId, function (err, obj) {
+                            obj.common.smartName = (obj.common.name || _('Device name')).replace(/[-_.]+/g, ' ');
+                            idToEdit = obj._id;
+                            socket.emit('setObject', obj._id, obj, function (err) {
+                                updateDevices(2000);
+                            });
+                        });
+                    }
+                });
+            });
+        });
+
+        $('#filter').change(function (){
+            if (filterTimer) clearTimeout(filterTimer);
+            filterTimer = setTimeout(function () {
+                filterTimer = null;
+
+                filter();
+            }, 400);
+        }).keyup(function () {
+            $(this).trigger('change');
+        });
+
+        $('#filter-clear').button({icons: {primary: 'ui-icon-close'}, text: false}).css({width: '1em', height: '1em'}).click(function () {
+            $('#filter').val('').trigger('change');
+        });
+
         onChange(false);
     }
 
@@ -302,6 +475,22 @@
     .smart-changed {
         background: lightcoral;
     }
+    @keyframes highlight {
+        0% {
+            color: #00f900
+        }
+        80% {
+            color: green
+        }
+        100% {
+            color: black;
+        }
+    }
+
+    .highlight {
+        animation: highlight 2s;
+    }
+
 </style>
 </head>
 <body>
@@ -325,8 +514,12 @@
                 <p class="translate">help_tip</p>
             </div>
             <div id="tabs-2" style="width: 100%; height: calc(100% - 40px); overflow-x: hidden; overflow-y: auto; padding: 0">
-                <table id="smart_table" class="smart-table" style="width: 100%;">
-                </table>
+                    <button id="add_device" title="Add device" class="translateT" style="margin-left: 1em; display: inline-block"></button>
+                    <div  style="display: inline-block">Filter: <input id="filter" style="display: inline-block"/><button id="filter-clear" style="display: inline-block"></button></div>
+                <div id="pre_table" style="width: 100%; height: calc(100% - 40px); overflow-y: scroll;">
+                    <table id="smart_table" class="smart-table" style="width: 100%;">
+                    </table>
+                </div>
             </div>
             <div id="tabs-3" style="width: 100%; height: calc(100% - 40px); overflow-x: hidden; overflow-y: auto; padding: 0">
                 <table id="smart_enums"  class="smart-table" style="width: 100%;">
@@ -337,5 +530,6 @@
     <div id="edit_dialog" style="display: none">
         <label for="edit_name" class="translate">Smart name:</label><input id="edit_name" style="width: calc(100% - 100px)"/>
     </div>
+    <div id="dialog-select-member" style="display: none"></div>
 </body>
 </html>
