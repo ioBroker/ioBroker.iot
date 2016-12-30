@@ -46,11 +46,17 @@ var adapter       = new utils.Adapter({
         if (obj) {
             switch (obj.command) {
                 case 'browse':
-                    if (obj.callback) adapter.sendTo(obj.from, obj.command, smartDevices, obj.callback);
+                    if (obj.callback) {
+                        adapter.log.info('Request devices');
+                        adapter.sendTo(obj.from, obj.command, smartDevices, obj.callback);
+                    }
                     break;
 
                 case 'enums':
-                    if (obj.callback) adapter.sendTo(obj.from, obj.command, enums, obj.callback);
+                    if (obj.callback) {
+                        adapter.log.info('Request enums');
+                        adapter.sendTo(obj.from, obj.command, enums, obj.callback);
+                    }
                     break;
 
                 default:
