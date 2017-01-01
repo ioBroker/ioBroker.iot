@@ -12,6 +12,7 @@ var smartDevices  = [];
 var recalcTimeout = null;
 var lang          = 'de';
 var enums         = [];
+var valuesON      = {};
 
 var adapter       = new utils.Adapter({
     name: 'cloud',
@@ -128,7 +129,9 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
     var applianceId = id.substring(0, 256).replace(/[^a-zA-Z0-9_=#;:?@&-]+/g, '_');
 
     var pos;
-    if (alexaIds && (pos = alexaIds.indexOf(id)) !== -1) alexaIds.splice(pos, 1);
+    if (alexaIds && (pos = alexaIds.indexOf(id)) !== -1) {
+        alexaIds.splice(pos, 1);
+    }
 
     var obj = {
         applianceId:		applianceId,
@@ -144,10 +147,21 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
         }
     };
     if (names[friendlyName]) {
+        // Ignore it, because yet in the list
+        if (names[friendlyName].additionalApplianceDetails.id === id) return;
+
         // create virtual group
         if (groups[friendlyName]) {
             var ids = JSON.parse(groups[friendlyName].additionalApplianceDetails.ids);
             ids.push(id);
+
+            // merge actions
+            for (var a = 0; a < actions.length; a++) {
+                if (groups[friendlyName].actions.indexOf(actions[a]) === -1) {
+                    groups[friendlyName].actions.push(actions[a]);
+                }
+            }
+
             groups[friendlyName].additionalApplianceDetails.ids = JSON.stringify(ids);
         } else {
             groups[friendlyName] = {
@@ -297,17 +311,32 @@ function controlOnOff(id, value, callback) {
         }
         if (obj.common.type === 'number') {
             if (value) {
-                if (typeof obj.common.max !== 'undefined') {
-                    value = obj.common.max;
+                if (valuesON[id]) {
+                    value = valuesON[id];
                 } else {
-                    obj.common.max = 100;
+                    if (typeof obj.common.max !== 'undefined') {
+                        value = obj.common.max;
+                    } else {
+                        obj.common.max = 100;
+                    }
                 }
             } else {
-                if (typeof obj.common.min !== 'undefined') {
-                    value = obj.common.min;
-                } else {
-                    obj.common.max = 0;
-                }
+                adapter.getForeignState(id, value, function (err, state) {
+                    if (err) adapter.log.error('Cannot get state: ' + err);
+                    valuesON[id] = state.val;
+
+                    if (typeof obj.common.min !== 'undefined') {
+                        value = obj.common.min;
+                    } else {
+                        obj.common.max = 0;
+                    }
+
+                    adapter.setForeignState(id, value, function (err) {
+                        if (err) adapter.log.error('Cannot switch device: ' + err);
+                        if (callback) callback();
+                    });
+                });
+                return;
             }
         }
 
@@ -334,7 +363,11 @@ function controlPercent(id, value, callback) {
 
         value = (value / 100) * (max - min) + min;
 
-        if (obj.common.type === 'boolean') value = !!value;
+        if (obj.common.type === 'boolean') {
+            value = (value >= 30);
+        } else if (value) {
+            valuesON[id] = value;
+        }
 
         adapter.setForeignState(id, value, function (err) {
             if (err) adapter.log.error('Cannot switch device: ' + err);
@@ -364,61 +397,11 @@ function controlDelta(id, delta, callback) {
             // percent => absolute value
             value = (value / 100) * (max - min) + min;
 
-            if (obj.common.type === 'boolean') value = !!value;
-
-            adapter.setForeignState(id, value, function (err) {
-                if (err) adapter.log.error('Cannot set device: ' + err);
-                if (callback) callback();
-            });
-        });
-    });
-}
-
-function controlAnalog(id, value, callback) {
-    adapter.getForeignObject(id, function (err, obj) {
-        if (!obj || obj.type !== 'state') {
-            if (err) adapter.log.error('Cannot control non state: ' + id + ' ' + (obj ? obj.type : 'no object'));
-            if (callback) callback();
-            return;
-        }
-        value = parseFloat(value);
-        var max;
-        var min;
-        if (typeof obj.common.max !== 'undefined') max = parseFloat(obj.common.max);
-        if (typeof obj.common.min !== 'undefined') min = parseFloat(obj.common.min);
-
-        if (min !== undefined && value < min) value = min;
-        if (max !== undefined && value > max) value = max;
-
-        if (obj.common.type === 'boolean') value = !!value;
-
-        adapter.setForeignState(id, value, function (err) {
-            if (err) adapter.log.error('Cannot switch device: ' + err);
-            if (callback) callback();
-        });
-    });
-}
-
-function controlAnalogDelta(id, delta, callback) {
-    adapter.getForeignObject(id, function (err, obj) {
-        if (!obj || obj.type !== 'state') {
-            if (err) adapter.log.error('Cannot control non state: ' + id + ' ' + (obj ? obj.type : 'no object'));
-            if (callback) callback();
-            return;
-        }
-        adapter.getForeignState(id, function (err, state) {
-            var value = state.val || 0;
-            var max;
-            var min;
-            if (typeof obj.common.max !== 'undefined') max = parseFloat(obj.common.max);
-            if (typeof obj.common.min !== 'undefined') min = parseFloat(obj.common.min);
-
-            // Absolute value => percent => add delta
-            value = value + delta;
-            if (max !== undefined && value > max) value = max;
-            if (min !== undefined && value < min) value = min;
-
-            if (obj.common.type === 'boolean') value = !!value;
+            if (obj.common.type === 'boolean') {
+                value = (value >= 30);
+            } else if (value) {
+                valuesON[id] = value;
+            }
 
             adapter.setForeignState(id, value, function (err) {
                 if (err) adapter.log.error('Cannot set device: ' + err);
