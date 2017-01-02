@@ -13,6 +13,11 @@ var recalcTimeout = null;
 var lang          = 'de';
 var enums         = [];
 var valuesON      = {};
+var offPercent    = 30;
+var words         = {
+    'No name':  {'en': 'No name', 'de': 'Kein Name', 'ru': 'Нет имени'},
+    'Group':    {'en': 'Group',   'de': 'Gruppe',    'ru': 'Группа'}
+};
 
 var adapter       = new utils.Adapter({
     name: 'cloud',
@@ -77,6 +82,7 @@ function validateName(name) {
     for (var n = 0; n < name.length; n++) {
         if (name[n] === ';' || name[n] === '.' || name[n] === '-' || name[n] === ':') return false;
     }
+
     return true;
 }
 
@@ -134,18 +140,19 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
     }
 
     var obj = {
-        applianceId:		applianceId,
-        manufacturerName:	'ioBroker',
-        modelName:		    (states[id].common.name || 'Kein Namen').substring(0, 128),
-        version:			'1',
-        friendlyName:		friendlyName,
+        applianceId:		 applianceId,
+        manufacturerName:	 'ioBroker',
+        modelName:		     (states[id].common.name || words['No name'][lang]).substring(0, 128),
+        version:			 '1',
+        friendlyName:		 friendlyName,
         friendlyDescription: friendlyDescription,
-        isReachable:        true,
-        actions:            actions,
+        isReachable:         true,
+        actions:             actions,
         additionalApplianceDetails: {
             id: id.substring(0, 1024)
         }
     };
+
     if (names[friendlyName]) {
         // Ignore it, because yet in the list
         if (names[friendlyName].additionalApplianceDetails.id === id) return;
@@ -165,14 +172,14 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
             groups[friendlyName].additionalApplianceDetails.ids = JSON.stringify(ids);
         } else {
             groups[friendlyName] = {
-                applianceId:		friendlyName.replace(/[^a-zA-Z0-9_=#;:?@&-]+/g, '_'),
-                manufacturerName:	'ioBroker group',
-                modelName:		    (states[id].common.name || 'Kein Namen').substring(0, 128),
-                version:			'1',
-                friendlyName:		friendlyName,
-                friendlyDescription: 'Gruppe ' + friendlyName,
-                isReachable:        true,
-                actions:            actions,
+                applianceId:		 friendlyName.replace(/[^a-zA-Z0-9_=#;:?@&-]+/g, '_'),
+                manufacturerName:	 'ioBroker group',
+                modelName:		     (states[id].common.name || words['No name'][lang]).substring(0, 128),
+                version:			 '1',
+                friendlyName:		 friendlyName,
+                friendlyDescription: words['Group'][lang] + ' ' + friendlyName,
+                isReachable:         true,
+                actions:             actions,
                 additionalApplianceDetails: {
                     ids: JSON.stringify([names[friendlyName].additionalApplianceDetails.id, id])
                 }
@@ -264,7 +271,7 @@ function getDevices(callback) {
                             if (ids[ii] < id) continue;
                             if (m.exec(ids[ii])) {
                                 if (states[ids[ii]].common.role && (
-                                    states[ids[ii]].common.role === 'state' ||
+                                    states[ids[ii]].common.role === 'state'  ||
                                     states[ids[ii]].common.role === 'switch' ||
                                     states[ids[ii]].common.role.match(/^level/)
                                 )) {
@@ -317,26 +324,35 @@ function controlOnOff(id, value, callback) {
                     if (typeof obj.common.max !== 'undefined') {
                         value = obj.common.max;
                     } else {
-                        obj.common.max = 100;
+                        value = 100;
                     }
                 }
             } else {
-                adapter.getForeignState(id, value, function (err, state) {
-                    if (err) adapter.log.error('Cannot get state: ' + err);
-                    valuesON[id] = state.val;
+                if (!obj.common.role || obj.common.role.indexOf('blind') === -1) {
+                    adapter.getForeignState(id, function (err, state) {
+                        if (err) adapter.log.error('Cannot get state: ' + err);
+                        valuesON[id] = state.val;
 
+                        if (typeof obj.common.min !== 'undefined') {
+                            value = obj.common.min;
+                        } else {
+                            value = 0;
+                        }
+
+                        adapter.setForeignState(id, value, function (err) {
+                            if (err) adapter.log.error('Cannot switch device: ' + err);
+                            if (callback) callback();
+                        });
+                    });
+                    return;
+                } else {
+                    // blinds
                     if (typeof obj.common.min !== 'undefined') {
                         value = obj.common.min;
                     } else {
-                        obj.common.max = 0;
+                        value = 0;
                     }
-
-                    adapter.setForeignState(id, value, function (err) {
-                        if (err) adapter.log.error('Cannot switch device: ' + err);
-                        if (callback) callback();
-                    });
-                });
-                return;
+                }
             }
         }
 
@@ -354,8 +370,10 @@ function controlPercent(id, value, callback) {
             if (callback) callback();
             return;
         }
+
         var max = 100;
         var min = 0;
+
         if (typeof obj.common.max !== 'undefined') max = parseFloat(obj.common.max);
         if (typeof obj.common.min !== 'undefined') min = parseFloat(obj.common.min);
         if (value < 0)   value = 0;
@@ -364,8 +382,8 @@ function controlPercent(id, value, callback) {
         value = (value / 100) * (max - min) + min;
 
         if (obj.common.type === 'boolean') {
-            value = (value >= 30);
-        } else if (value) {
+            value = (value >= offPercent);
+        } else if (value >= offPercent && (!obj.common.role || obj.common.role.indexOf('blind') === -1)) {
             valuesON[id] = value;
         }
 
@@ -398,8 +416,8 @@ function controlDelta(id, delta, callback) {
             value = (value / 100) * (max - min) + min;
 
             if (obj.common.type === 'boolean') {
-                value = (value >= 30);
-            } else if (value) {
+                value = (value >= offPercent);
+            } else if (value >= offPercent) {
                 valuesON[id] = value;
             }
 
@@ -463,9 +481,9 @@ function controlTemperature(id, value, callback) {
                         targetTemperature: {
                             value: value
                         },
-                        temperatureMode: {
+                        /*temperatureMode: {
                             value: 'AUTO'
-                        },
+                        },*/
                         previousState: {
                             targetTemperature: {
                                 value: parseFloat(state.val)
@@ -514,9 +532,9 @@ function controlTemperatureDelta(id, delta, callback) {
                             targetTemperature: {
                                 value: value
                             },
-                            temperatureMode: {
+                            /*temperatureMode: {
                                 value: 'AUTO'
-                            },
+                            },*/
                             previousState: {
                                 targetTemperature: {
                                     value: parseFloat(state.val)
