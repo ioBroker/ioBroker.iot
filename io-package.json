@@ -1,7 +1,7 @@
 {
     "common": {
         "name":                     "cloud",
-        "version":                  "0.3.1",
+        "version":                  "0.3.2",
         "title":                    "Cloud Adapter",
         "desc":                     "This adapter connect",
 		"news": {
