@@ -16,7 +16,7 @@ To use cloud adapter you should first get the APP-Key on https://iobroker.net.
 
 
 ## Changelog
-### 0.3.2 (2017-01-02)
+### 0.3.3 (2017-01-02)
 * (bluefox) Fix error with smartNames
 * (bluefox) Take the superset of actions for group and not the last one
 * (bluefox) if group has switches and dimmers, turn devices OFF if the percent level is less than 30%
