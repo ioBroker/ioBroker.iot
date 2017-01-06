@@ -32,6 +32,8 @@
             "de": 'Kein APP-KEY? Bekomme der unter <a href="https://iobroker.net" target="_blank">https://iobroker.net</a>',
             "ru": 'Нет APP-KEY? Получи его на <a href="https://iobroker.net" target="_blank">https://iobroker.net</a>'
         },
+        "Language:":    {"en": "Language:",     "de": "Sprache:",       "ru": "Язык:"},
+        "default":      {"en": "default",       "de": "Systemsprache",  "ru": "системный"},
         "Options":      {"en": "Options",       "de": "Einstellungen",  "ru": "Настройки"},
         "Smart Devices": {"en": "Smart Devices", "de": "Smart Geräte",  "ru": "Smart устройства"},
         "Smart Enums":  {"en": "Smart Enums",   "de": "Smart Aufzählungen", "ru": "Smart категории"},
@@ -367,6 +369,8 @@
     function load(settings, onChange) {
         if (!settings) return;
 
+        if (settings.language === undefined) settings.language = '';
+
         var count = 0;
         for (var i = 0; i < supportedInstances.length; i++) {
             count++;
@@ -505,10 +509,15 @@
                 <table><tr><td><img src="cloud.png"></td><td><h3 class="translate">Cloud adapter settings</h3></td></tr></table>
 
                 <table style="width: 100%; white-space: nowrap;">
-                    <tr><td class="translate" style="width: 10%">APP-KEY:</td><td><input  class="value" id="apikey" style="width: 100%" /></td></tr>
-                    <tr><td class="translate">Instance:</td><td><select class="value" id="instance"></select></td></tr>
-                    <tr><td class="translate">Cloud URL:</td><td><input class="value" id="cloudUrl"/></td></tr>
-                    <tr><td class="translate">Allow self-signed certificates:</td><td><input type="checkbox" class="value" id="allowSelfSignedCertificate"/></td></tr>
+                    <tr><td style="width: 10%"><label for="apikey" class="translate">APP-KEY:</label></td><td><input  class="value" id="apikey" style="width: 100%" /></td></tr>
+                    <tr><td><label for="instance" class="translate">Instance:</label></td><td><select class="value" id="instance"></select></td></tr>
+                    <tr><td><label for="cloudUrl" class="translate">Cloud URL:</label></td><td><input class="value" id="cloudUrl"/></td></tr>
+                    <tr><td><label for="allowSelfSignedCertificate" class="translate">Allow self-signed certificates:</label></td><td><input type="checkbox" class="value" id="allowSelfSignedCertificate"/></td></tr>
+                    <tr><td><label for="language" class="translate">Language:</label></td><td><select class="value" id="language">
+                        <option value=""  class="translate">default</option>
+                        <option value="en">english</option>
+                        <option value="de">deutsch</option>
+                    </select></td></tr>
                 </table>
 
                 <p class="translate">help_tip</p>

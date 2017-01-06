@@ -5,12 +5,15 @@
 var utils         = require(__dirname + '/lib/utils'); // Get common adapter utils
 var IOSocket      = require(utils.appName + '.socketio/lib/socket.js');
 var request       = require('request');
-
+var translateRooms;
+var translateFunctions;
+var translateDevices;
 var socket        = null;
 var ioSocket      = null;
 var smartDevices  = [];
 var recalcTimeout = null;
 var lang          = 'de';
+var translate     = false;
 var enums         = [];
 var valuesON      = {};
 var offPercent    = 30;
@@ -31,7 +34,7 @@ var adapter       = new utils.Adapter({
                     smartDevices = result;
                 });
             }, 1000);
-        } else if (id === 'system.config' && obj) {
+        } else if (id === 'system.config' && obj && !translate) {
             lang = obj.common.language;
             if (lang !== 'en' && lang !== 'de') lang = 'en';
         }
@@ -96,6 +99,14 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
 
     if (!friendlyName) {
         if (room) {
+            // translate room
+            if (translate) {
+                translateRooms     = translateRooms     || require(__dirname + '/lib/rooms.js');
+                translateFunctions = translateFunctions || require(__dirname + '/lib/functions.js');
+                room = translateRooms(lang, room);
+                func = translateFunctions(lang, func);
+            }
+
             if (lang === 'en') {
                 friendlyName = room + ' ' + func;
             } else {
@@ -104,7 +115,11 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
         } else {
             friendlyName = states[id].common.name;
         }
+    } else if (translate) {
+        translateDevices = translateDevices || require(__dirname + '/lib/devices.js');
+        friendlyName = translateDevices(lang, friendlyName);
     }
+
     if (!validateName(friendlyName)) {
         adapter.log.debug('Name "' + friendlyName + '" has invalid symbols');
         return null;
@@ -257,7 +272,18 @@ function getDevices(callback) {
                         if (!rooms[r].common || !rooms[r].common.members || typeof rooms[r].common.members !== 'object' || !rooms[r].common.members.length) continue;
 
                         if (rooms[r].common.members.indexOf(id) !== -1) {
-                            room =  rooms[r].common.smartName || rooms[r].common.name;
+                            room = rooms[r].common.smartName || rooms[r].common.name;
+                            if (!room) {
+                                room = rooms[r]._id.substring('enum.rooms.'.length);
+                                room = room[0].toUpperCase() + room.substring(1);
+                            }
+                        }
+                        // may be the channel is in the room
+                        var _parts = id.split('.');
+                        _parts.pop();
+                        var channel = _parts.join('.');
+                        if (rooms[r].common.members.indexOf(channel) !== -1) {
+                            room = rooms[r].common.smartName || rooms[r].common.name;
                             if (!room) {
                                 room = rooms[r]._id.substring('enum.rooms.'.length);
                                 room = room[0].toUpperCase() + room.substring(1);
@@ -556,7 +582,12 @@ function controlTemperatureDelta(id, delta, callback) {
 function main() {
     //process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
     adapter.getForeignObject('system.config', function (err, obj) {
-        lang = obj.common.language;
+        if (adapter.config.language) {
+            translate = true;
+            lang = adapter.config.language;
+        } else {
+            lang = obj.common.language;
+        }
         if (lang !== 'en' && lang !== 'de') lang = 'en';
         getDevices(function (err, result) {
             smartDevices = result;

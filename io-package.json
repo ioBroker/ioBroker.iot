@@ -1,10 +1,15 @@
 {
     "common": {
         "name":                     "cloud",
-        "version":                  "0.3.3",
+        "version":                  "0.4.0",
         "title":                    "Cloud Adapter",
         "desc":                     "This adapter connect",
 		"news": {
+            "0.4.0": {
+                "en":                   "Support of english language",
+                "de":                   "Unterstützung von englischer Sprache",
+                "ru":                   "Поддержка английского языка"
+            },
             "0.3.3": {
                 "en":                   "Fix error with smartNames\nTake the superset of actions for group and not the last one\nif group has switches and dimmers, turn devices OFF if the percent level is less than 30%\nRemember ON level for dimmers to switch it later ON",
                 "de":                   "Korrigiere Geräte mit SmartNames\nKombiniere Aktionen in einer Gruppe\nFalls die Gruppe hat auch Dimmers, dann schalte die ON/OFF Geräte aus, falls unter 30% gesetzt wird\nMerke AN Level beim Ausschalten um später das bei EInschalten zu setzten",
@@ -59,6 +64,7 @@
         }
     },
     "native": {
+        "language":                 "",
         "apikey":                   "",
         "instance":                 "web.0",
         "cloudUrl":                 "https://iobroker.net:10555",

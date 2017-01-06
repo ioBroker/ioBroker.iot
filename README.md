@@ -13,9 +13,11 @@ To use cloud adapter you should first get the APP-Key on https://iobroker.net.
 # APP-Key
 ![Intro](img/intro.png)
 
-
-
 ## Changelog
+### 0.4.0 (2017-01-06)
+* (bluefox) Support of english language
+* (bluefox) Use rooms of channel and not only states
+
 ### 0.3.3 (2017-01-02)
 * (bluefox) Fix error with smartNames
 * (bluefox) Take the superset of actions for group and not the last one
