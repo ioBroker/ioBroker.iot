@@ -73,8 +73,8 @@ if *common.smartName* is **false**, the state or enumeration will not be include
 The configuration dialog lets comfortable remove and add the single states to virtual groups or as single device.
 ![Configuration](img/configuration.png)
 
-If the group has only one state it can be renamed, as for this the state smartName will be used.
-If the group has more than one state, the group must be renamed via enumeration names.
+If the group has only one state it can be renamed, as for this the state's smartName will be used.
+If the group has more than one state, the group must be renamed via the enumeration's names.
 
 To create own groups the user can install "scenes" adapter or create "script" in Javascript adapter.
 
