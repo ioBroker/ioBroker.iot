@@ -8,12 +8,81 @@ ioBroker cloud adapter
 
 This adapter allows connection from internet through ioBroker cloud to local installation of ioBroker.
 
-To use cloud adapter you should first get the APP-Key on https://iobroker.net.
+## Settings
+### APP-KEY
+To use cloud adapter you should first get the APP-Key on [https://iobroker.net](https://iobroker.net).
 
-# APP-Key
+This is application key that the user can get on [https://iobroker.net](https://iobroker.net) site. Please get the key there and enter it here.
+
 ![Intro](img/intro.png)
 
+### Instance
+All requests from cloud adapter will be routed to some WEB Instance. User must specify here the WEB instance, that will be showed to user, when he logs in https://iobroker.net site.
+
+### Allow self-signed certificates
+If you use standard iobroker.net cloud, you can deactivate it. This option is only important if own cloud used.
+
+### Language
+If you select "default" language the smart names of devices and of enumerations will not be translated. If some language specified all known names will be translated into this language.
+It is done to switch fast between many languages for demonstration purposes.
+
+### OFF level for switches
+Some groups consist of mixed devices: dimmers and switches. It is allowed to control them with "ON" and "OFF" commands and with percents.
+If command is "Set to 30%" and the *OFF level" is "30%" so the switches will be turned on. By command "Set to 25%" all switches will be turned OFF.
+
+Additionally if the command is "OFF", so the adapter will remember the current dimmer level if the actual value is over or equal to the "30%".
+Later when the new "ON" command will come the adapter will switch the dimmer not to 100% but to the level in memory.
+
+Example:
+
+- Assume, that *OFF level* is 30%.
+- Virtual device "Light" has two physical devices: *switch* and *dimmer*.
+- Command: "set the light to 40%". The adapter will remember this value for *dimmer*, will set it for "dimmer" and will turn the *switch* ON.
+- Command: "turn the light off". The adapter will set the *dimmer* to 0% and will turn off the *switch*.
+- Command: "turn on the light". *dimmer* => 40%, *switch* => ON.
+- Command: "set the light to 20%". *dimmer* => 20%, *switch* => OFF. The value for dimmer will not be remembered, because it is bellow *OFF level*.
+- Command: "turn on the light". *dimmer* => 40%, *switch* => ON.
+
+## How names will be generated
+The adapter tries to generate virtual devices for smart home control (e.g. Amazon Alexa or Google Home).
+
+The are two important enumerations for that: rooms and functions.
+
+Rooms are like: living room, bath room, sleeping room.
+Functions are like: light, blind, heating.
+
+Following conditions must be met to get the state in the automatically generated list:
+
+- the state must be in some "function" enumeration.
+- the state must have role ("state", "switch" or "level.*", e.g. level.dimmer) if not directly included into "functions".
+It can be that the channel is in the "functions", but state itself not.
+- the state must be writable: common.write = true
+- the state dimmer must have common.type as 'number'
+- the state heating must have common.unit as 'C', 'F' or 'K' and common.type as 'number'
+
+If the state is only in "functions" and not in any "room", the name of state will be used.
+
+The state names will be generated from function and room. E.g. all *lights* in the *living room* will be collected in the virtual device *living room light*.
+The user cannot change this name, because it is generated automatically.
+But if the enumeration name changes, this name will be changed too. (e.g. function "light" changed to "lights", so the *living room light* will be changed to *living room lights*)
+
+All the rules will be ignored if the state has common.smartName. In this case just the smart name will be used.
+
+if *common.smartName* is **false**, the state or enumeration will not be included into the list generation.
+
+The configuration dialog lets comfortable remove and add the single states to virtual groups or as single device.
+![Configuration](img/configuration.png)
+
+If the group has only one state it can be renamed, as for this the state smartName will be used.
+If the group has more than one state, the group must be renamed via enumeration names.
+
+To create own groups the user can install "scenes" adapter or create "script" in Javascript adapter.
+
 ## Changelog
+### 0.4.1 (2017-01-06)
+* (bluefox) use devices with ":" symbols in the names
+* (bluefox) add debug outputs
+
 ### 0.4.0 (2017-01-06)
 * (bluefox) Support of english language
 * (bluefox) Use rooms of channel and not only states

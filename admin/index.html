@@ -29,7 +29,7 @@
         },
         "help_tip": {
             "en": 'No APP-KEY? Get it on <a href="https://iobroker.net" target="_blank">https://iobroker.net</a>',
-            "de": 'Kein APP-KEY? Bekomme der unter <a href="https://iobroker.net" target="_blank">https://iobroker.net</a>',
+            "de": 'Kein APP-KEY? Bekomme den unter <a href="https://iobroker.net" target="_blank">https://iobroker.net</a>',
             "ru": 'Нет APP-KEY? Получи его на <a href="https://iobroker.net" target="_blank">https://iobroker.net</a>'
         },
         "Language:":    {"en": "Language:",     "de": "Sprache:",       "ru": "Язык:"},
@@ -39,8 +39,8 @@
         "Smart Enums":  {"en": "Smart Enums",   "de": "Smart Aufzählungen", "ru": "Smart категории"},
         "Allow self-signed certificates:": {
             "en": "Allow self-signed certificates:",
-            "de": "Allow self-signed certificates:",
-            "ru": "Allow self-signed certificates:"
+            "de": "Erlaube selbst-signierte Zertifikate:",
+            "ru": "Разрешить само-подписанные сертификаты:"
         },
         "Smart name:":  {"en": "Smart name:",   "de": "Smart name:",        "ru": "Smart имя:"},
         "Rooms":        {"en": "Rooms",         "de": "Rooms",              "ru": "Комнаты"},
@@ -51,6 +51,13 @@
         "Commands":     {"en": "Commands",      "de": "Befehle",            "ru": "Команды"},
         "Addresses":    {"en": "Addresses",     "de": "Adressen",           "ru": "Адреса"},
         "Add device":   {"en": "Add device",    "de": "Gerät hinzufügen",   "ru": "Добавить устройство"},
+        "OFF level for switches:": {"en": "OFF level for switches:", "de": "OFF level for switches:", "ru": "OFF level for switches:"},
+        "Filter: ":     {"en": "Filter: ",      "de": "Filter: ",           "ru": "Фильтр: "},
+        "Instance must run to deliver the data": {
+            "en": "The instance must run to deliver the data",
+            "de": "Die Instanz muss laufen um die Daten zu liefern",
+            "ru": "Драйвер должен быть запущен, что бы отобразить данные"
+        },
         "Device will be disabled.": {
             "en": "Device will be disabled.",
             "de": "Gerät wird aus der Liste verschwinden.",
@@ -370,6 +377,7 @@
         if (!settings) return;
 
         if (settings.language === undefined) settings.language = '';
+        if (settings.deviceOffLevel === undefined) settings.deviceOffLevel = 30;
 
         var count = 0;
         for (var i = 0; i < supportedInstances.length; i++) {
@@ -518,20 +526,23 @@
                         <option value="en">english</option>
                         <option value="de">deutsch</option>
                     </select></td></tr>
+                    <tr><td><label for="deviceOffLevel" class="translate">OFF level for switches:</label></td><td><input class="value" id="deviceOffLevel"/>%</td></tr>
                 </table>
 
                 <p class="translate">help_tip</p>
             </div>
             <div id="tabs-2" style="width: 100%; height: calc(100% - 40px); overflow-x: hidden; overflow-y: auto; padding: 0">
                     <button id="add_device" title="Add device" class="translateT" style="margin-left: 1em; display: inline-block"></button>
-                    <div  style="display: inline-block">Filter: <input id="filter" style="display: inline-block"/><button id="filter-clear" style="display: inline-block"></button></div>
+                    <div  style="display: inline-block"><label class="translate" for="filter">Filter: </label><input id="filter" style="display: inline-block"/><button id="filter-clear" style="display: inline-block"></button></div>
                 <div id="pre_table" style="width: 100%; height: calc(100% - 40px); overflow-y: scroll;">
                     <table id="smart_table" class="smart-table" style="width: 100%;">
+                        <tr style="padding: 20px; background: rgba(0,0,0,0); text-align: center; color: #f26f6f;"><td class="translate" style="padding: 20px;">Instance must run to deliver the data</td></tr>
                     </table>
                 </div>
             </div>
             <div id="tabs-3" style="width: 100%; height: calc(100% - 40px); overflow-x: hidden; overflow-y: auto; padding: 0">
                 <table id="smart_enums"  class="smart-table" style="width: 100%;">
+                    <tr style="padding: 20px; background: rgba(0,0,0,0); text-align: center; color: #f26f6f;"><td class="translate" style="padding: 20px;">Instance must run to deliver the data</td></tr>
                 </table>
             </div>
         </div>

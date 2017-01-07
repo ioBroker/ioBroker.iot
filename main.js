@@ -16,7 +16,6 @@ var lang          = 'de';
 var translate     = false;
 var enums         = [];
 var valuesON      = {};
-var offPercent    = 30;
 var words         = {
     'No name':  {'en': 'No name', 'de': 'Kein Name', 'ru': 'Нет имени'},
     'Group':    {'en': 'Group',   'de': 'Gruppe',    'ru': 'Группа'}
@@ -120,10 +119,9 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
         friendlyName = translateDevices(lang, friendlyName);
     }
 
-    if (!validateName(friendlyName)) {
-        adapter.log.debug('Name "' + friendlyName + '" has invalid symbols');
-        return null;
-    }
+    // friendlyName may not be longer than 128
+    friendlyName = friendlyName.substring(0, 128).replace(/[^a-zA-Z0-9äÄüÜöÖß]+/g, ' ');
+
     var friendlyDescription = (states[id].common.name || id);
 
     if (states[id].common.write === false) {
@@ -143,9 +141,7 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
         actions = ['turnOn', 'turnOff'];
     }
 
-    // friendlyName may not be longer than 128
     friendlyDescription = friendlyDescription.substring(0, 128).replace(/[^a-zA-Z0-9äÄüÜöÖß]+/g, ' ');
-    friendlyName        = friendlyName.substring(0, 128).replace(/[^a-zA-Z0-9äÄüÜöÖß]+/g, ' ');
     // any letter or number and _ - = # ; : ? @ &
     var applianceId = id.substring(0, 256).replace(/[^a-zA-Z0-9_=#;:?@&-]+/g, '_');
 
@@ -267,6 +263,7 @@ function getDevices(callback) {
                         func = func[0].toUpperCase() + func.substring(1);
                     }
 
+                    // Find room
                     var room = '';
                     for (var r = 0; r < rooms.length; r++) {
                         if (!rooms[r].common || !rooms[r].common.members || typeof rooms[r].common.members !== 'object' || !rooms[r].common.members.length) continue;
@@ -278,17 +275,21 @@ function getDevices(callback) {
                                 room = room[0].toUpperCase() + room.substring(1);
                             }
                         }
-                        // may be the channel is in the room
-                        var _parts = id.split('.');
-                        _parts.pop();
-                        var channel = _parts.join('.');
-                        if (rooms[r].common.members.indexOf(channel) !== -1) {
-                            room = rooms[r].common.smartName || rooms[r].common.name;
-                            if (!room) {
-                                room = rooms[r]._id.substring('enum.rooms.'.length);
-                                room = room[0].toUpperCase() + room.substring(1);
+
+                        if (!room) {
+                            // may be the channel is in the room
+                            var _parts = id.split('.');
+                            _parts.pop();
+                            var channel = _parts.join('.');
+                            if (rooms[r].common.members.indexOf(channel) !== -1) {
+                                room = rooms[r].common.smartName || rooms[r].common.name;
+                                if (!room) {
+                                    room = rooms[r]._id.substring('enum.rooms.'.length);
+                                    room = room[0].toUpperCase() + room.substring(1);
+                                }
                             }
                         }
+                        if (room) break;
                     }
 
                     if (!states[id]) {
@@ -345,6 +346,7 @@ function controlOnOff(id, value, callback) {
         if (obj.common.type === 'number') {
             if (value) {
                 if (valuesON[id]) {
+                    adapter.log.debug('Use stored ON value for "' + id + '": ' + valuesON[id]);
                     value = valuesON[id];
                 } else {
                     if (typeof obj.common.max !== 'undefined') {
@@ -381,7 +383,7 @@ function controlOnOff(id, value, callback) {
                 }
             }
         }
-
+        adapter.log.debug('Set "' + id + '" to ' + value);
         adapter.setForeignState(id, value, function (err) {
             if (err) adapter.log.error('Cannot switch device: ' + err);
             if (callback) callback();
@@ -408,9 +410,10 @@ function controlPercent(id, value, callback) {
         value = (value / 100) * (max - min) + min;
 
         if (obj.common.type === 'boolean') {
-            value = (value >= offPercent);
-        } else if (value >= offPercent && (!obj.common.role || obj.common.role.indexOf('blind') === -1)) {
+            value = (value >= adapter.config.deviceOffLevel);
+        } else if (value >= adapter.config.deviceOffLevel && (!obj.common.role || obj.common.role.indexOf('blind') === -1)) {
             valuesON[id] = value;
+            adapter.log.debug('Remember ON value for  "' + id + '": ' + value);
         }
 
         adapter.setForeignState(id, value, function (err) {
@@ -442,8 +445,9 @@ function controlDelta(id, delta, callback) {
             value = (value / 100) * (max - min) + min;
 
             if (obj.common.type === 'boolean') {
-                value = (value >= offPercent);
-            } else if (value >= offPercent) {
+                value = (value >= adapter.config.deviceOffLevel);
+            } else if (value >= adapter.config.deviceOffLevel) {
+                adapter.log.debug('Remember ON value for  "' + id + '": ' + value);
                 valuesON[id] = value;
             }
 
@@ -580,6 +584,9 @@ function controlTemperatureDelta(id, delta, callback) {
 }
 
 function main() {
+    if (adapter.config.deviceOffLevel === undefined) adapter.config.deviceOffLevel = 30;
+    adapter.config.deviceOffLevel = parseFloat(adapter.config.deviceOffLevel);
+
     //process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
     adapter.getForeignObject('system.config', function (err, obj) {
         if (adapter.config.language) {

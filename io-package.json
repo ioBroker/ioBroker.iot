@@ -1,10 +1,15 @@
 {
     "common": {
         "name":                     "cloud",
-        "version":                  "0.4.0",
+        "version":                  "0.4.1",
         "title":                    "Cloud Adapter",
         "desc":                     "This adapter connect",
 		"news": {
+            "0.4.1": {
+                "en":                   "use devices with : symbols in the names\nadd debug outputs",
+                "de":                   "Unterstützung Gerätenamen mit :\nDebugausgaben hinzugefügt",
+                "ru":                   "разрешить устройства с : в имени\nВстроена дебаг информация"
+            },
             "0.4.0": {
                 "en":                   "Support of english language",
                 "de":                   "Unterstützung von englischer Sprache",
