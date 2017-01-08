@@ -63,6 +63,11 @@
             "de": "Gerät wird aus der Liste verschwinden.",
             "ru": "Устройство исчезнет из списка."
         },
+        "(Set to 0 if behavior not desired)": {
+            "en": "(Set to 0 if behavior not desired)",
+            "de": "(Auf 0 setzten, falls das Verhalten nicht erwünscht)",
+            "ru": "(для деактивации установить на 0)"
+        },
         "Are you sure?": {"en": "Are you sure?", "de": "Sind Sie sicher?",  "ru": "Уверены?"}
     };
     var supportedInstances = ['web'];
@@ -517,16 +522,16 @@
                 <table><tr><td><img src="cloud.png"></td><td><h3 class="translate">Cloud adapter settings</h3></td></tr></table>
 
                 <table style="width: 100%; white-space: nowrap;">
-                    <tr><td style="width: 10%"><label for="apikey" class="translate">APP-KEY:</label></td><td><input  class="value" id="apikey" style="width: 100%" /></td></tr>
-                    <tr><td><label for="instance" class="translate">Instance:</label></td><td><select class="value" id="instance"></select></td></tr>
-                    <tr><td><label for="cloudUrl" class="translate">Cloud URL:</label></td><td><input class="value" id="cloudUrl"/></td></tr>
-                    <tr><td><label for="allowSelfSignedCertificate" class="translate">Allow self-signed certificates:</label></td><td><input type="checkbox" class="value" id="allowSelfSignedCertificate"/></td></tr>
+                    <tr><td style="width: 10%"><label for="apikey" class="translate">APP-KEY:</label></td><td><input  class="value" id="apikey" style="width: 100%" /></td><td></td></tr>
+                    <tr><td><label for="instance" class="translate">Instance:</label></td><td><select class="value" id="instance"></select></td><td></td></tr>
+                    <tr><td><label for="cloudUrl" class="translate">Cloud URL:</label></td><td><input class="value" id="cloudUrl"/></td><td></td></tr>
+                    <tr><td><label for="allowSelfSignedCertificate" class="translate">Allow self-signed certificates:</label></td><td><input type="checkbox" class="value" id="allowSelfSignedCertificate"/></td><td></td></tr>
                     <tr><td><label for="language" class="translate">Language:</label></td><td><select class="value" id="language">
                         <option value=""  class="translate">default</option>
                         <option value="en">english</option>
                         <option value="de">deutsch</option>
-                    </select></td></tr>
-                    <tr><td><label for="deviceOffLevel" class="translate">OFF level for switches:</label></td><td><input class="value" id="deviceOffLevel"/>%</td></tr>
+                    </select></td><td></td></tr>
+                    <tr><td><label for="deviceOffLevel" class="translate">OFF level for switches:</label></td><td><input class="value" id="deviceOffLevel"/>%</td><td class="translate">(Set to 0 if behavior not desired)</td></tr>
                 </table>
 
                 <p class="translate">help_tip</p>

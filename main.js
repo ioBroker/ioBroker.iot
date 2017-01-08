@@ -411,7 +411,7 @@ function controlPercent(id, value, callback) {
 
         if (obj.common.type === 'boolean') {
             value = (value >= adapter.config.deviceOffLevel);
-        } else if (value >= adapter.config.deviceOffLevel && (!obj.common.role || obj.common.role.indexOf('blind') === -1)) {
+        } else if (adapter.config.deviceOffLevel && value >= adapter.config.deviceOffLevel && (!obj.common.role || obj.common.role.indexOf('blind') === -1)) {
             valuesON[id] = value;
             adapter.log.debug('Remember ON value for  "' + id + '": ' + value);
         }
@@ -446,7 +446,7 @@ function controlDelta(id, delta, callback) {
 
             if (obj.common.type === 'boolean') {
                 value = (value >= adapter.config.deviceOffLevel);
-            } else if (value >= adapter.config.deviceOffLevel) {
+            } else if (adapter.config.deviceOffLevel && value >= adapter.config.deviceOffLevel) {
                 adapter.log.debug('Remember ON value for  "' + id + '": ' + value);
                 valuesON[id] = value;
             }
@@ -585,7 +585,7 @@ function controlTemperatureDelta(id, delta, callback) {
 
 function main() {
     if (adapter.config.deviceOffLevel === undefined) adapter.config.deviceOffLevel = 30;
-    adapter.config.deviceOffLevel = parseFloat(adapter.config.deviceOffLevel);
+    adapter.config.deviceOffLevel = parseFloat(adapter.config.deviceOffLevel) || 0;
 
     //process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
     adapter.getForeignObject('system.config', function (err, obj) {
@@ -635,7 +635,7 @@ function main() {
     var server = 'http://localhost:8082';
     socket.on('html', function (url, cb) {
         request({url: server + url, encoding: null}, function (error, response, body) {
-            cb(error, response.statusCode, response.headers, body);
+            cb(error, response ? response.statusCode : 501, response ? response.headers : [], body);
         });
     });
 
