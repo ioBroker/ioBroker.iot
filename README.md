@@ -79,6 +79,9 @@ If the group has more than one state, the group must be renamed via the enumerat
 To create own groups the user can install "scenes" adapter or create "script" in Javascript adapter.
 
 ## Changelog
+### 0.4.2 (2017-01-12)
+* (bluefox) add daily restart
+
 ### 0.4.1 (2017-01-06)
 * (bluefox) use devices with ":" symbols in the names
 * (bluefox) add debug outputs

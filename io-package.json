@@ -1,10 +1,15 @@
 {
     "common": {
         "name":                     "cloud",
-        "version":                  "0.4.1",
+        "version":                  "0.4.2",
         "title":                    "Cloud Adapter",
         "desc":                     "This adapter connect",
 		"news": {
+			"0.4.2": {
+                "en":                   "add daily restart",
+                "de":                   "Starte automatisch taglich neu",
+                "ru":                   "Автоматический рестарт каждый день"
+            },
             "0.4.1": {
                 "en":                   "use devices with : symbols in the names\nadd debug outputs",
                 "de":                   "Unterstützung Gerätenamen mit :\nDebugausgaben hinzugefügt",
@@ -63,6 +68,7 @@
         "stopBeforeUpdate":         true,
 		"dependencies":             [{"js-controller": ">=0.9.0"}],
         "preserveSettings":         "smartName",
+		"restartSchedule":          "0 2 * * *",
         "config":{
             "width ": 1224,
             "height": 520
