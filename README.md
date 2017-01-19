@@ -43,6 +43,9 @@ Example:
 - Command: "set the light to 20%". *dimmer* => 20%, *switch* => OFF. The value for dimmer will not be remembered, because it is bellow *OFF level*.
 - Command: "turn on the light". *dimmer* => 40%, *switch* => ON.
 
+### by ON
+You can select the behaviour of ON command will come for the number state. The specific value can be selected or last non zero value will be used.
+
 ## How names will be generated
 The adapter tries to generate virtual devices for smart home control (e.g. Amazon Alexa or Google Home).
 
@@ -79,6 +82,9 @@ If the group has more than one state, the group must be renamed via the enumerat
 To create own groups the user can install "scenes" adapter or create "script" in Javascript adapter.
 
 ## Changelog
+### 0.5.0 (2017-01-20)
+* (bluefox) add value by ON
+
 ### 0.4.2 (2017-01-12)
 * (bluefox) add daily restart
 

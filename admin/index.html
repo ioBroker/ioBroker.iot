@@ -37,6 +37,8 @@
         "Options":      {"en": "Options",       "de": "Einstellungen",  "ru": "Настройки"},
         "Smart Devices": {"en": "Smart Devices", "de": "Smart Geräte",  "ru": "Smart устройства"},
         "Smart Enums":  {"en": "Smart Enums",   "de": "Smart Aufzählungen", "ru": "Smart категории"},
+        "by ON":        {"en": "by ON",         "de": "bei AN",          "ru": "при ВКЛ"},
+        "last value":   {"en": "last value",    "de": "leztes",          "ru": "последн."},
         "Allow self-signed certificates:": {
             "en": "Allow self-signed certificates:",
             "de": "Erlaube selbst-signierte Zertifikate:",
@@ -51,6 +53,8 @@
         "Commands":     {"en": "Commands",      "de": "Befehle",            "ru": "Команды"},
         "Addresses":    {"en": "Addresses",     "de": "Adressen",           "ru": "Адреса"},
         "Add device":   {"en": "Add device",    "de": "Gerät hinzufügen",   "ru": "Добавить устройство"},
+        "On":           {"en": "on",            "de": "an",                 "ru": "вкл"},
+        "Off":          {"en": "off",           "de": "aus",                "ru": "выкл"},
         "OFF level for switches:": {"en": "OFF level for switches:", "de": "OFF level for switches:", "ru": "OFF level for switches:"},
         "Filter: ":     {"en": "Filter: ",      "de": "Filter: ",           "ru": "Фильтр: "},
         "Instance must run to deliver the data": {
@@ -162,6 +166,21 @@
         }
     }
 
+    function getSelect(id, type) {
+        // type = '-', false or number [5-100]
+        if (type !== false) {
+            var text = '<select data-id="' + id + '" class="by-on-edit">';
+            text += '<option value="-" ' + (type === '-' ? 'selected' : '') + '>' + _('last value') + '</option>';
+            for (var i = 5; i <= 100; i += 5) {
+                text += '<option value="' + i + '" ' + (type === i.toString() ? 'selected' : '') + '>' + i + '%</option>';
+            }
+            text += '</select>';
+            return text;
+        } else {
+            return '';
+        }
+    }
+
     function updateDevices(delay) {
         if (delay) {
             if (devTimer) clearTimeout(devTimer);
@@ -173,9 +192,10 @@
         }
         sendTo(null, 'browse', null, function (list) {
             if (list) {
-                var text = '<tr><th>' + _('Smart name') + '</th><th>' + _('Commands') + '</th><th>' + _('Addresses') + '</th></tr>';
+                var text = '<tr><th style="width: 30%">' + _('Smart name') + '</th><th style="width: 100px">' + _('Commands') + '</th><th style="width: 70%">' + _('Addresses') + '<span style="float: right; padding-right: 130px">' + _('by ON') + '</span></th></tr>';
+
                 for (var j = 0; j < list.length; j++) {
-                    text += '<tr><td class="smart-name">' + list[j].friendlyName + '</td>';
+                    text += '<tr><td class="smart-name"  style="white-space: nowrap;">' + list[j].friendlyName + '</td>';
                     // Type
                     var actions = [];
                     for (var a = 0; a < list[j].actions.length; a++) {
@@ -185,25 +205,46 @@
                             actions.push(list[j].actions[a]);
                         }
                     }
-                    text += '<td>' + actions.join(' ') + '</td>';
+                    // place ON /OFF first
+                    var pos = actions.indexOf(actionsMapping.turnOff);
+                    if (pos !== -1) {
+                        actions.splice(pos, 1);
+                        actions.unshift(actionsMapping.turnOff)
+                    }
+                    pos = actions.indexOf(actionsMapping.turnOn);
+                    if (pos !== -1) {
+                        actions.splice(pos, 1);
+                        actions.unshift(actionsMapping.turnOn)
+                    }
+
+                    text += '<td style="white-space: nowrap;">' + actions.join(' ') + '</td>';
 
                     text += '<td>';
                     text += '<table style="width: 100%" class="smart-table">';
                     if (list[j].additionalApplianceDetails.ids) {
                         var parts = JSON.parse(list[j].additionalApplianceDetails.ids);
+                        var names = JSON.parse(list[j].additionalApplianceDetails.names);
+                        var types = JSON.parse(list[j].additionalApplianceDetails.byONs);
                         for (var k = 0; k < parts.length; k++) {
-                            text += '<tr><td>' + parts[k] + '</td><td style="width: 95px"><button data-id="' + parts[k] + '" class="button-delete"></button></td></tr>';
+                            text += '<tr><td title="' + parts[k] + '">' + (names[k] || parts[k]) + '</td>';
+                            text += '<td style="width: 95px">' + getSelect(parts[k], types[k]) + '</td>';
+                            text += '<td style="width: 95px"><button data-id="' + parts[k] + '" class="button-delete"></button></td></tr>';
                         }
                     } else {
-                        text += '<tr><td>';
-                        text += list[j].additionalApplianceDetails.id || '';
-                        text += '</td><td style="width: 95px"><button data-id="' + list[j].additionalApplianceDetails.id + '" class="button-delete"></button><button data-value="' + list[j].friendlyName + '" data-id="' + list[j].additionalApplianceDetails.id + '" class="button-edit"></button></td>';
+                        var name = list[j].additionalApplianceDetails.name;
+                        text += '<tr><td title="' + (list[j].additionalApplianceDetails.id || '') + '">';
+                        text +=  name;
+                        text += '</td>';
+                        text += '<td style="width: 95px">' + getSelect(list[j].additionalApplianceDetails.id, list[j].additionalApplianceDetails.byON) + '</td>';
+                        text += '<td style="width: 95px"><button data-id="' + list[j].additionalApplianceDetails.id + '" class="button-delete"></button><button data-value="' + list[j].friendlyName + '" data-id="' + list[j].additionalApplianceDetails.id + '" class="button-edit"></button></td>';
                         text += '</td></tr>';
                     }
                     text += '</table>';
                     text += '</td></tr>';
                 }
-                $('#smart_table').html(text).find('.button-delete').click(function () {
+
+                var $smartTable = $('#smart_table');
+                $smartTable.html(text).find('.button-delete').click(function () {
                     var $this = $(this);
                     var id = $this.data('id');
 
@@ -220,7 +261,19 @@
                     });
                 }).button({icons: {primary: 'ui-icon-trash'}, text: false}).css({width: '26px', height: '26px'});
 
-                $('#smart_table').find('.button-edit').click(function () {
+                $smartTable.find('.by-on-edit').change(function () {
+                    var $this = $(this);
+                    var id    = $this.data('id');
+                    var val   = $this.val();
+                    $this.addClass('smart-changed');
+                    socket.emit('getObject', id, function (err, obj) {
+                        obj.native.byON = val;
+                        socket.emit('setObject', id, obj, function (err) {
+                            updateDevices(2000);
+                        });
+                    });
+                });
+                $smartTable.find('.button-edit').click(function () {
                     var $this = $(this);
                     var $editDialog = $('#edit_dialog');
                     $editDialog.data('id', $this.data('id'));
@@ -230,6 +283,7 @@
 
                     $editDialog.data('callback', function () {
                         var id = $('#edit_dialog').data('id');
+                        //noinspection JSJQueryEfficiency
                         $('#smart_table').find('.button-edit[data-id="' + id + '"]').parent().addClass('smart-changed');
                         idToNavigate = id;
                         socket.emit('getObject', id, function (err, obj) {
@@ -246,11 +300,11 @@
                 }).button({icons: {primary: 'ui-icon-pencil'}, text: false}).css({width: '26px', height: '26px'});
 
                 if (idToEdit) {
-                    $('#smart_table').find('.button-edit[data-id="' + idToEdit + '"]').trigger('click');
+                    $smartTable.find('.button-edit[data-id="' + idToEdit + '"]').trigger('click');
                     idToEdit = null;
                 }
                 if (idToNavigate) {
-                    var $td = $('#smart_table').find('.button-edit[data-id="' + idToNavigate + '"]');
+                    var $td = $smartTable.find('.button-edit[data-id="' + idToNavigate + '"]');
                     $td[0].scrollIntoView();
                     $td.parent().parent().addClass('highlight');
                     idToNavigate = null;
@@ -381,6 +435,9 @@
     function load(settings, onChange) {
         if (!settings) return;
 
+        actionsMapping.turnOn  = _(actionsMapping.turnOn);
+        actionsMapping.turnOff = _(actionsMapping.turnOff);
+
         if (settings.language === undefined) settings.language = '';
         if (settings.deviceOffLevel === undefined) settings.deviceOffLevel = 30;
 
@@ -401,13 +458,13 @@
 
         $('.value').each(function () {
             var key = $(this).attr('id');
-            // example: select elements with id=key and class=value and insert value
-            if ($('#' + key + '.value').attr('type') == 'checkbox') {
-                $('#' + key + '.value').prop('checked', settings[key]).change(function() {
+            var $value = $('#' + key + '.value');
+            if ($value.attr('type') === 'checkbox') {
+                $value.prop('checked', settings[key]).change(function() {
                     onChange();
                 });
             } else {
-                $('#' + key + '.value').val(settings[key]).change(function() {
+                $value.val(settings[key]).change(function() {
                     onChange();
                 }).keyup(function() {
                     onChange();
@@ -415,16 +472,27 @@
             }
         });
 
-        $('#tabs').show().tabs({
+        var $tabs = $('#tabs');
+        $tabs.show().tabs({
             activate:  function (event, ui) {
+                var activePage = '0';
                 if (ui.newPanel.attr('id') === 'tabs-2') {
                     updateDevices();
-                }
-                else if (ui.newPanel.attr('id') === 'tabs-3') {
+                    activePage = '1';
+                } else if (ui.newPanel.attr('id') === 'tabs-3') {
                     updateEnums();
+                    activePage = '2';
+                }
+                if (typeof localStorage !== 'undefined') {
+                    localStorage['cloud-adapter'] = activePage;
                 }
             }
         });
+        if (typeof localStorage !== 'undefined' && localStorage['cloud-adapter'] !== undefined) {
+            $tabs.tabs({active: localStorage['cloud-adapter']});
+            if (localStorage['cloud-adapter'] === '1') updateDevices();
+            if (localStorage['cloud-adapter'] === '2') updateEnums();
+        }
 
         $('#add_device').button({icons: {primary: 'ui-icon-plus'}, text: false}).css({width: '26px', height: '26px'}).click(function () {
             initSelectId(function (sid) {
@@ -463,7 +531,8 @@
 
     function save(callback) {
         var obj = {};
-        $('#apikey').val($('#apikey').val().trim());
+        var $apiKey = $('#apikey');
+        $apiKey.val($apiKey.val().trim());
         $('.value').each(function () {
             var $this = $(this);
             if ($this.attr('type') == 'checkbox') {
@@ -511,7 +580,7 @@
 </style>
 </head>
 <body>
-    <div id="adapter-container">
+    <div id="adapter-container" style="height: calc(100% - 10px)">
         <div id="tabs" style="width: 100%; height: 100%; overflow: hidden; display: none;">
             <ul>
                 <li><a href="#tabs-1" class="translate">Options</a></li>

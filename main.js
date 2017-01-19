@@ -128,17 +128,20 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
         adapter.log.debug('Name "' + friendlyName + '" cannot be written and will be ignored');
         return null;
     }
+    var type = states[id].common.type;
 
-    if (states[id].common.type === 'number') {
+    if (type === 'number') {
         if (states[id].common.unit === 'C' || states[id].common.unit === 'C°' || states[id].common.unit === '°C' ||
             states[id].common.unit === 'F' || states[id].common.unit === 'F°' || states[id].common.unit === '°F' ||
             states[id].common.unit === 'K' || states[id].common.unit === 'K°' || states[id].common.unit === '°K') {
             actions = ['setTargetTemperature', 'incrementTargetTemperature', 'decrementTargetTemperature'];
+            type = '';
         } else {
             actions = ['setPercentage', 'incrementPercentage', 'decrementPercentage', 'turnOn', 'turnOff'];
         }
     } else {
         actions = ['turnOn', 'turnOff'];
+        type = '';
     }
 
     friendlyDescription = friendlyDescription.substring(0, 128).replace(/[^a-zA-Z0-9äÄüÜöÖß]+/g, ' ');
@@ -150,6 +153,8 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
         alexaIds.splice(pos, 1);
     }
 
+    type = type ? (states[id].native.byON || '100') : false;
+    var name = states[id].common.name ? states[id].common.name.substring(0, 128) : '';
     var obj = {
         applianceId:		 applianceId,
         manufacturerName:	 'ioBroker',
@@ -160,7 +165,9 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
         isReachable:         true,
         actions:             actions,
         additionalApplianceDetails: {
-            id: id.substring(0, 1024)
+            id:   id.substring(0, 1024),
+            name: name,
+            byON: type
         }
     };
 
@@ -170,8 +177,12 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
 
         // create virtual group
         if (groups[friendlyName]) {
-            var ids = JSON.parse(groups[friendlyName].additionalApplianceDetails.ids);
+            var ids    = JSON.parse(groups[friendlyName].additionalApplianceDetails.ids);
+            var _names = JSON.parse(groups[friendlyName].additionalApplianceDetails.names || '[]');
+            var types  = JSON.parse(groups[friendlyName].additionalApplianceDetails.byONs || '[]');
             ids.push(id);
+            _names.push(name);
+            types.push(type);
 
             // merge actions
             for (var a = 0; a < actions.length; a++) {
@@ -180,7 +191,9 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
                 }
             }
 
-            groups[friendlyName].additionalApplianceDetails.ids = JSON.stringify(ids);
+            groups[friendlyName].additionalApplianceDetails.ids   = JSON.stringify(ids);
+            groups[friendlyName].additionalApplianceDetails.names = JSON.stringify(_names);
+            groups[friendlyName].additionalApplianceDetails.byONs = JSON.stringify(types);
         } else {
             groups[friendlyName] = {
                 applianceId:		 friendlyName.replace(/[^a-zA-Z0-9_=#;:?@&-]+/g, '_'),
@@ -192,7 +205,9 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
                 isReachable:         true,
                 actions:             actions,
                 additionalApplianceDetails: {
-                    ids: JSON.stringify([names[friendlyName].additionalApplianceDetails.id, id])
+                    ids:   JSON.stringify([names[friendlyName].additionalApplianceDetails.id,   id]),
+                    names: JSON.stringify([names[friendlyName].additionalApplianceDetails.name, name]),
+                    byONs: JSON.stringify([names[friendlyName].additionalApplianceDetails.byON, type])
                 }
             };
             result.push(groups[friendlyName]);
@@ -344,19 +359,22 @@ function controlOnOff(id, value, callback) {
             return;
         }
         if (obj.common.type === 'number') {
+            // if ON
             if (value) {
-                if (valuesON[id]) {
+                if (obj.native.byON === '-' && valuesON[id]) {
                     adapter.log.debug('Use stored ON value for "' + id + '": ' + valuesON[id]);
                     value = valuesON[id];
                 } else {
                     if (typeof obj.common.max !== 'undefined') {
-                        value = obj.common.max;
+                        value = parseFloat(obj.native.byON) || obj.common.max;
                     } else {
-                        value = 100;
+                        value = parseFloat(obj.native.byON) || 100;
                     }
                 }
             } else {
-                if (!obj.common.role || obj.common.role.indexOf('blind') === -1) {
+                // if OFF
+                if (obj.native.byON === '-') {
+                    // remember last state
                     adapter.getForeignState(id, function (err, state) {
                         if (err) adapter.log.error('Cannot get state: ' + err);
                         valuesON[id] = state.val;
@@ -669,10 +687,18 @@ function main() {
                 request.header.name = 'DiscoverAppliancesResponse';
                 //if (smartDevices.length > 100) smartDevices.splice(50, smartDevices.length - 50);
                 //console.log(JSON.stringify(smartDevices));
+                var smartDevicesCopy = JSON.parse(JSON.stringify(smartDevices));
+                for (var j = 0; j < smartDevicesCopy.length; j++) {
+                    if (smartDevicesCopy[i].additionalApplianceDetails.names !== undefined) delete smartDevicesCopy[j].additionalApplianceDetails.names;
+                    if (smartDevicesCopy[i].additionalApplianceDetails.name  !== undefined) delete smartDevicesCopy[j].additionalApplianceDetails.name;
+                    if (smartDevicesCopy[i].additionalApplianceDetails.byON  !== undefined) delete smartDevicesCopy[j].additionalApplianceDetails.byON;
+                    if (smartDevicesCopy[i].additionalApplianceDetails.byONs !== undefined) delete smartDevicesCopy[j].additionalApplianceDetails.byONs;
+                }
+
                 var response = {
                     header: request.header,
                     payload: {
-                        discoveredAppliances: smartDevices/*[
+                        discoveredAppliances: smartDevicesCopy/*[
                             {
                                 "applianceId":          "hm-rpc",
                                 "manufacturerName":     "ioBroker",
@@ -743,6 +769,7 @@ function main() {
                 callback(response);
                 //console.log(JSON.stringify(response, null, 2));
                 request = null;
+                smartDevicesCopy = null;
                 break;
 
             case 'TurnOnRequest':

@@ -1,11 +1,16 @@
 {
     "common": {
         "name":                     "cloud",
-        "version":                  "0.4.2",
+        "version":                  "0.5.0",
         "title":                    "Cloud Adapter",
         "desc":                     "This adapter connect",
 		"news": {
-			"0.4.2": {
+            "0.5.0": {
+                "en":                   "add value by ON",
+                "de":                   "Wert bei AN hinzugefügt",
+                "ru":                   "Добавлено значение для ВКЛ"
+            },
+            "0.4.2": {
                 "en":                   "add daily restart",
                 "de":                   "Starte automatisch taglich neu",
                 "ru":                   "Автоматический рестарт каждый день"
