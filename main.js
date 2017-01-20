@@ -692,10 +692,11 @@ function main() {
                 //console.log(JSON.stringify(smartDevices));
                 var smartDevicesCopy = JSON.parse(JSON.stringify(smartDevices));
                 for (var j = 0; j < smartDevicesCopy.length; j++) {
-                    if (smartDevicesCopy[i].additionalApplianceDetails.names !== undefined) delete smartDevicesCopy[j].additionalApplianceDetails.names;
-                    if (smartDevicesCopy[i].additionalApplianceDetails.name  !== undefined) delete smartDevicesCopy[j].additionalApplianceDetails.name;
-                    if (smartDevicesCopy[i].additionalApplianceDetails.byON  !== undefined) delete smartDevicesCopy[j].additionalApplianceDetails.byON;
-                    if (smartDevicesCopy[i].additionalApplianceDetails.byONs !== undefined) delete smartDevicesCopy[j].additionalApplianceDetails.byONs;
+                    if (!smartDevicesCopy[j].additionalApplianceDetails) continue;
+                    if (smartDevicesCopy[j].additionalApplianceDetails.names !== undefined) delete smartDevicesCopy[j].additionalApplianceDetails.names;
+                    if (smartDevicesCopy[j].additionalApplianceDetails.name  !== undefined) delete smartDevicesCopy[j].additionalApplianceDetails.name;
+                    if (smartDevicesCopy[j].additionalApplianceDetails.byON  !== undefined) delete smartDevicesCopy[j].additionalApplianceDetails.byON;
+                    if (smartDevicesCopy[j].additionalApplianceDetails.byONs !== undefined) delete smartDevicesCopy[j].additionalApplianceDetails.byONs;
                 }
 
                 var response = {
