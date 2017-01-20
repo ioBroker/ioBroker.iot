@@ -117,8 +117,11 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
     } else if (translate) {
         translateDevices = translateDevices || require(__dirname + '/lib/devices.js');
         friendlyName = translateDevices(lang, friendlyName);
+    }  
+    if (!friendlyName) {
+        adapter.log.warn('State ' + id + ' is invalid.');
+        return
     }
-
     // friendlyName may not be longer than 128
     friendlyName = friendlyName.substring(0, 128).replace(/[^a-zA-Z0-9äÄüÜöÖß]+/g, ' ');
 
@@ -126,7 +129,7 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
 
     if (states[id].common.write === false) {
         adapter.log.debug('Name "' + friendlyName + '" cannot be written and will be ignored');
-        return null;
+        return;
     }
     var type = states[id].common.type;
 
