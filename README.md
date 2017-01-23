@@ -82,6 +82,10 @@ If the group has more than one state, the group must be renamed via the enumerat
 To create own groups the user can install "scenes" adapter or create "script" in Javascript adapter.
 
 ## Changelog
+### 0.6.0 (2017-01-20)
+* (bluefox) fix reconnect
+* (bluefox) change smartName structure
+
 ### 0.5.0 (2017-01-20)
 * (bluefox) add value by ON
 

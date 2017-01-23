@@ -1,10 +1,15 @@
 {
     "common": {
         "name":                     "cloud",
-        "version":                  "0.5.0",
+        "version":                  "0.6.0",
         "title":                    "Cloud Adapter",
         "desc":                     "This adapter connect",
 		"news": {
+            "0.6.0": {
+                "en":                   "fix reconnect",
+                "de":                   "Korrigiere Wiederverbindung",
+                "ru":                   "Исправлено распознавание дисконнекта"
+            },
             "0.5.0": {
                 "en":                   "add value by ON",
                 "de":                   "Wert bei AN hinzugefügt",
@@ -73,7 +78,6 @@
         "stopBeforeUpdate":         true,
 		"dependencies":             [{"js-controller": ">=0.9.0"}],
         "preserveSettings":         "smartName",
-		"restartSchedule":          "0 2 * * *",
         "config":{
             "width ": 1224,
             "height": 520

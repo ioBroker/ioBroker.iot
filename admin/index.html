@@ -91,6 +91,7 @@
     var filterTimer;
     var idToEdit;
     var idToNavigate;
+    var language;
 
     function initSelectId(callback) {
         if (selectId) {
@@ -267,7 +268,25 @@
                     var val   = $this.val();
                     $this.addClass('smart-changed');
                     socket.emit('getObject', id, function (err, obj) {
-                        obj.native.byON = val;
+                        if (obj.native.byON) {
+                            delete obj.native.byON;
+                            var smartName = obj.common.smartName;
+
+                            if (!smartName || typeof smartName !== 'object') {
+                                smartName = {
+                                    en:     smartName
+                                };
+                                smartName[language] = smartName.en;
+                            }
+                            obj.common.smartName = smartName;
+                        } else if (typeof obj.common.smartName === 'string') {
+                            var nnn = obj.common.smartName;
+                            obj.common.smartName = {};
+                            obj.common.smartName[language] = nnn;
+                        }
+                        obj.common.smartName = obj.common.smartName || {};
+                        obj.common.smartName.byON = val;
+
                         socket.emit('setObject', id, obj, function (err) {
                             updateDevices(2000);
                         });
@@ -287,9 +306,18 @@
                         $('#smart_table').find('.button-edit[data-id="' + id + '"]').parent().addClass('smart-changed');
                         idToNavigate = id;
                         socket.emit('getObject', id, function (err, obj) {
-                            obj.common.smartName = $('#edit_name').val();
-                            if (!obj.common.smartName || obj.common.smartName === $this.data('name')) {
-                                obj.common.smartName = null;
+                            obj.common.smartName = obj.common.smartName || {};
+                            obj.common.smartName[language] = $('#edit_name').val();
+                            if (!obj.common.smartName[language] || obj.common.smartName[language] === $this.data('name')) {
+                                delete obj.common.smartName[language];
+                                var empty = true;
+                                for (var key in obj.common.smartName) {
+                                    if (obj.common.smartName.hasOwnProperty(key)) {
+                                        empty = false;
+                                        break;
+                                    }
+                                }
+                                if (empty) obj.common.smartName = null;
                             }
                             socket.emit('setObject', id, obj, function (err) {
                                 updateDevices(2000);
@@ -399,9 +427,19 @@
                         var id = $('#edit_dialog').data('id');
                         $('#smart_enums').find('.smart-edit[data-id="' + id + '"]').parent().addClass('smart-changed');
                         socket.emit('getObject', id, function (err, obj) {
-                            obj.common.smartName = $('#edit_name').val();
-                            if (!obj.common.smartName || obj.common.smartName === $this.data('name')) {
-                                obj.common.smartName = null;
+                            obj.common.smartName = obj.common.smartName || {};
+                            obj.common.smartName[language] = $('#edit_name').val();
+
+                            if (!obj.common.smartName[language] || obj.common.smartName[language] === $this.data('name')) {
+                                delete obj.common.smartName[language];
+                                var empty = true;
+                                for (var key in obj.common.smartName) {
+                                    if (obj.common.smartName.hasOwnProperty(key)) {
+                                        empty = false;
+                                        break;
+                                    }
+                                }
+                                if (empty) obj.common.smartName = null;
                             }
                             socket.emit('setObject', id, obj, function (err) {
                                 updateEnums(2000);
@@ -431,6 +469,7 @@
             });
         }
     }
+
     // the function loadSettings has to exist ...
     function load(settings, onChange) {
         if (!settings) return;
@@ -441,6 +480,7 @@
         if (settings.language === undefined) settings.language = '';
         if (settings.deviceOffLevel === undefined) settings.deviceOffLevel = 30;
 
+        language = settings.language || systemLang;
         var count = 0;
         for (var i = 0; i < supportedInstances.length; i++) {
             count++;
@@ -466,6 +506,8 @@
             } else {
                 $value.val(settings[key]).change(function() {
                     onChange();
+                    var id = $(this).attr('id');
+                    if (id === 'language') language = $(this).val();
                 }).keyup(function() {
                     onChange();
                 });
@@ -500,7 +542,8 @@
                     if (newId) {
                         //$('#' + id).val(newId || '');
                         socket.emit('getObject', newId, function (err, obj) {
-                            obj.common.smartName = (obj.common.name || _('Device name')).replace(/[-_.]+/g, ' ');
+                            obj.common.smartName = obj.common.smartName || {};
+                            obj.common.smartName[language] = (obj.common.name || _('Device name')).replace(/[-_.]+/g, ' ');
                             idToEdit = obj._id;
                             socket.emit('setObject', obj._id, obj, function (err) {
                                 updateDevices(2000);

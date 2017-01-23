@@ -20,6 +20,9 @@ var words         = {
     'No name':  {'en': 'No name', 'de': 'Kein Name', 'ru': 'Нет имени'},
     'Group':    {'en': 'Group',   'de': 'Gruppe',    'ru': 'Группа'}
 };
+var detectDisconnect = null;
+var pingTimer     = null;
+var connected     = false;
 
 var adapter       = new utils.Adapter({
     name: 'cloud',
@@ -42,6 +45,14 @@ var adapter       = new utils.Adapter({
         if (socket) socket.emit('stateChange', id, state);
     },
     unload: function (callback) {
+        if (pingTimer) {
+            clearInterval(pingTimer);
+            pingTimer = null;
+        }
+        if (detectDisconnect) {
+            clearTimeout(detectDisconnect);
+            detectDisconnect = null;
+        }
         try {
             if (socket) socket.close();
             ioSocket = null;
@@ -91,6 +102,38 @@ function validateName(name) {
 function processState(states, id, room, func, alexaIds, groups, names, result) {
     var actions;
     var friendlyName = states[id].common.smartName;
+
+    var byON;
+    if (states[id].native.byON) {
+        byON = states[id].native.byON;
+        delete states[id].native.byON;
+        var smartName = states[id].common.smartName;
+
+        if (!smartName || typeof smartName !== 'object') {
+            smartName = {
+                byON:   byON,
+                en:     smartName
+            };
+            smartName[lang] = smartName.en;
+        } else {
+            smartName.byON = byON;
+        }
+        states[id].common.smartName = smartName;
+        states[id].common.smartName = states[id].common.smartName || {};
+    } else if (typeof states[id].common.smartName === 'string') {
+        var nnn = states[id].common.smartName;
+        states[id].common.smartName = {};
+        states[id].common.smartName[lang] = nnn;
+    }
+
+    byON = states[id].common.smartName && (typeof states[id].common.smartName === 'object') ? states[id].common.smartName.byON : '';
+
+    if (byON) {
+        console.log('a');
+    }
+    if (typeof friendlyName === 'object') {
+        friendlyName = states[id].common.smartName[lang] || states[id].common.smartName.en;
+    }
 
     if (friendlyName === 'ignore' || friendlyName === false) return null;
 
@@ -156,7 +199,7 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
         alexaIds.splice(pos, 1);
     }
 
-    type = type ? (states[id].native.byON || '100') : false;
+    type = type ? (byON || '100') : false;
     var name = states[id].common.name ? states[id].common.name.substring(0, 128) : '';
     var obj = {
         applianceId:		 applianceId,
@@ -260,21 +303,24 @@ function getDevices(callback) {
                         }
                         if (_id.match(/^enum\.rooms\./) || _id.match(/^enum\.functions\./)) {
                             enums.push({
-                                id: _id,
-                                name: doc.rows[i].value.common.name,
-                                smartName: doc.rows[i].value.common.smartName
+                                id:         _id,
+                                name:       doc.rows[i].value.common.name,
+                                smartName:  doc.rows[i].value.common.smartName
                             });
                         }
                     }
                 }
             }
             var result = [];
+            var smartName;
             for (var f = 0; f < funcs.length; f++) {
                 if (!funcs[f].common || !funcs[f].common.members || typeof funcs[f].common.members !== 'object' || !funcs[f].common.members.length) continue;
 
                 for (var s = 0; s < funcs[f].common.members.length; s++) {
                     var id = funcs[f].common.members[s];
-                    var func = funcs[f].common.smartName || funcs[f].common.name;
+                    smartName = funcs[f].common.smartName;
+                    if (typeof smartName === 'object') smartName = smartName[lang] || smartName.en;
+                    var func = smartName || funcs[f].common.name;
 
                     if (!func) {
                         func = funcs[f]._id.substring('enum.functions.'.length);
@@ -287,7 +333,9 @@ function getDevices(callback) {
                         if (!rooms[r].common || !rooms[r].common.members || typeof rooms[r].common.members !== 'object' || !rooms[r].common.members.length) continue;
 
                         if (rooms[r].common.members.indexOf(id) !== -1) {
-                            room = rooms[r].common.smartName || rooms[r].common.name;
+                            smartName = funcs[f].common.smartName;
+                            if (typeof smartName === 'object') smartName = smartName[lang] || smartName.en;
+                            room = smartName || rooms[r].common.name;
                             if (!room) {
                                 room = rooms[r]._id.substring('enum.rooms.'.length);
                                 room = room[0].toUpperCase() + room.substring(1);
@@ -300,7 +348,9 @@ function getDevices(callback) {
                             _parts.pop();
                             var channel = _parts.join('.');
                             if (rooms[r].common.members.indexOf(channel) !== -1) {
-                                room = rooms[r].common.smartName || rooms[r].common.name;
+                                smartName = funcs[f].common.smartName;
+                                if (typeof smartName === 'object') smartName = smartName[lang] || smartName.en;
+                                room = smartName || rooms[r].common.name;
                                 if (!room) {
                                     room = rooms[r]._id.substring('enum.rooms.'.length);
                                     room = room[0].toUpperCase() + room.substring(1);
@@ -362,21 +412,23 @@ function controlOnOff(id, value, callback) {
             return;
         }
         if (obj.common.type === 'number') {
+            var byON = typeof obj.common.smartName === 'object' ? obj.common.smartName.byON : null;
+
             // if ON
             if (value) {
-                if (obj.native.byON === '-' && valuesON[id]) {
+                if (byON === '-' && valuesON[id]) {
                     adapter.log.debug('Use stored ON value for "' + id + '": ' + valuesON[id]);
                     value = valuesON[id];
                 } else {
                     if (typeof obj.common.max !== 'undefined') {
-                        value = parseFloat(obj.native.byON) || obj.common.max;
+                        value = byON ? parseFloat(byON) || obj.common.max : obj.common.max;
                     } else {
-                        value = parseFloat(obj.native.byON) || 100;
+                        value = byON ? parseFloat(byON) || 100 : 100;
                     }
                 }
             } else {
                 // if OFF
-                if (obj.native.byON === '-') {
+                if (byON === '-') {
                     // remember last state
                     adapter.getForeignState(id, function (err, state) {
                         if (err) adapter.log.error('Cannot get state: ' + err);
@@ -604,53 +656,107 @@ function controlTemperatureDelta(id, delta, callback) {
     });
 }
 
-function main() {
-    if (adapter.config.deviceOffLevel === undefined) adapter.config.deviceOffLevel = 30;
-    adapter.config.deviceOffLevel = parseFloat(adapter.config.deviceOffLevel) || 0;
+function pingConnection() {
+    if (!detectDisconnect) {
+        if (connected) {
+            // cannot use "ping" because reserved by socket.io
+           socket.emit('pingg');
 
-    //process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-    adapter.getForeignObject('system.config', function (err, obj) {
-        if (adapter.config.language) {
-            translate = true;
-            lang = adapter.config.language;
-        } else {
-            lang = obj.common.language;
+            detectDisconnect = setTimeout(function () {
+                detectDisconnect = null;
+                adapter.log.error('Ping timeout');
+                if (connected) {
+                    socket.close();
+                    connected = false;
+                    adapter.log.info('Connection changed: DISCONNECTED');
+                    adapter.setState('info.connection', false, true);
+                    setTimeout(connect, 10000);
+                    checkPing();
+                }
+            }, 5000);
         }
-        if (lang !== 'en' && lang !== 'de') lang = 'en';
-        getDevices(function (err, result) {
-            smartDevices = result;
-        });
-    });
-    adapter.subscribeForeignObjects('*');
+    }
+}
 
-    adapter.setState('info.connection', false, true);
-    adapter.config.cloudUrl  = adapter.config.cloudUrl || 'https://iobroker.net:10555';
+function checkPing() {
+    if (connected) {
+        if (!pingTimer) {
+            pingTimer = setInterval(pingConnection, 10000);
+        }
+    } else {
+        if (pingTimer) {
+            clearInterval(pingTimer);
+            pingTimer = null;
+        }
+        if (detectDisconnect) {
+            clearTimeout(detectDisconnect);
+            detectDisconnect = null;
+        }
+    }
+}
 
-    if (!adapter.config.apikey) {
-        adapter.log.error('No api-key found. Please get one on https://iobroker.net');
-        return;
+function connect() {
+    if (socket) {
+        socket.close();
     }
 
-    adapter.log.info('Connecting with ' + adapter.config.cloudUrl + ' with "' + adapter.config.apikey + '"');
     socket = require('socket.io-client')(adapter.config.cloudUrl || 'https://iobroker.net:10555', {
+        reconnection: true,
         rejectUnauthorized: !adapter.config.allowSelfSignedCertificate,
         reconnectionDelay:    5000,
+        timeout:              5000,
         reconnectionDelayMax: 10000
     });
 
     socket.on('connect', function () {
-        adapter.log.info('Connection changed: CONNECTED');
-        adapter.setState('info.connection', true, true);
+        if (!connected) {
+            adapter.log.info('Connection changed: CONNECTED');
+            connected = true;
+            adapter.setState('info.connection', true, true);
+            checkPing();
+        }
     });
-
+    socket.on('reconnect', function () {
+        if (!connected) {
+            adapter.log.info('Connection changed: CONNECTED');
+            connected = true;
+            adapter.setState('info.connection', true, true);
+            checkPing();
+        }
+    });
+    socket.on('reconnecting', function () {
+        if (connected) {
+            connected = false;
+            adapter.log.info('Connection changed: DISCONNECTED');
+            adapter.setState('info.connection', false, true);
+            checkPing();
+        }
+    });
     socket.on('disconnect', function () {
-        adapter.log.info('Connection changed: DISCONNECTED');
-        adapter.setState('info.connection', false, true);
+        if (connected) {
+            connected = false;
+            adapter.log.info('Connection changed: DISCONNECTED');
+            adapter.setState('info.connection', false, true);
+            checkPing();
+        }
     });
 
-    socket.on('error', function (error){
+    socket.on('error', function (error) {
         adapter.log.error('Connection error: ' + error);
-        console.log('error: ' + error);
+        if (connected) {
+            socket.close();
+            connected = false;
+            adapter.log.info('Connection changed: DISCONNECTED');
+            adapter.setState('info.connection', false, true);
+            setTimeout(connect, 10000);
+            checkPing();
+        }
+    });
+
+    // cannot use "pong" because reserved by socket.io
+    socket.on('pongg', function (error) {
+        clearTimeout(detectDisconnect);
+        detectDisconnect = null;
     });
 
     var server = 'http://localhost:8082';
@@ -703,71 +809,71 @@ function main() {
                     header: request.header,
                     payload: {
                         discoveredAppliances: smartDevicesCopy/*[
-                            {
-                                "applianceId":          "hm-rpc",
-                                "manufacturerName":     "ioBroker",
-                                "modelName":            "Bad.Hauptlicht.Aktor.STATE",
-                                "version":              "1",
-                                "friendlyName":         "Licht im Bad",
-                                "friendlyDescription":  "Bad Hauptlicht Aktor STATE",
-                                "isReachable":          true,
-                                "actions": [
-                                    "incrementTargetTemperature",
-                                    "decrementTargetTemperature",
-                                    "setTargetTemperature"
-                                ],
-                                "additionalApplianceDetails": {
-                                    id: 'hm-rpc.1.1'
-                                }
-                            },{
-                                "applianceId":          "hm-rpc-1",
-                                "manufacturerName":     "ioBroker",
-                                "modelName":            "Bad.Hauptlicht.Aktor.STATE",
-                                "version":              "1",
-                                "friendlyName":         "Licht im Bad",
-                                "friendlyDescription":  "Bad Hauptlicht Aktor STATE",
-                                "isReachable":          true,
-                                "actions": [
-                                    "incrementTargetTemperature",
-                                    "decrementTargetTemperature",
-                                    "setTargetTemperature"
-                                ],
-                                "additionalApplianceDetails": {}
-                            },
-                            {
-                                "applianceId":      "uniqueThermostatDeviceId",
-                                "manufacturerName": "yourManufacturerName",
-                                "modelName":        "fancyThermostat",
-                                "version":          "your software version number here.",
-                                "friendlyName":     "Bedroom Thermostat",
-                                "friendlyDescription": "descriptionThatIsShownToCustomer",
-                                "isReachable":      true,
-                                "actions": [
-                                    "incrementTargetTemperature",
-                                    "decrementTargetTemperature",
-                                    "setTargetTemperature"
-                                ],
-                                "additionalApplianceDetails": {
-                                }
-                            },
-                            {
-                                "actions": [
-                                    "incrementPercentage",
-                                    "decrementPercentage",
-                                    "setPercentage",
-                                    "turnOn",
-                                    "turnOff"
-                                ],
-                                "additionalApplianceDetails": {},
-                                "applianceId":          "uniqueLightDeviceId",
-                                "friendlyDescription":  "descriptionThatIsShownToCustomer",
-                                "friendlyName":         "Living Room",
-                                "isReachable":          true,
-                                "manufacturerName":      "yourManufacturerName",
-                                "modelName":            "fancyLight",
-                                "version":              "your software version number here."
-                            }
-                        ]*/
+                         {
+                         "applianceId":          "hm-rpc",
+                         "manufacturerName":     "ioBroker",
+                         "modelName":            "Bad.Hauptlicht.Aktor.STATE",
+                         "version":              "1",
+                         "friendlyName":         "Licht im Bad",
+                         "friendlyDescription":  "Bad Hauptlicht Aktor STATE",
+                         "isReachable":          true,
+                         "actions": [
+                         "incrementTargetTemperature",
+                         "decrementTargetTemperature",
+                         "setTargetTemperature"
+                         ],
+                         "additionalApplianceDetails": {
+                         id: 'hm-rpc.1.1'
+                         }
+                         },{
+                         "applianceId":          "hm-rpc-1",
+                         "manufacturerName":     "ioBroker",
+                         "modelName":            "Bad.Hauptlicht.Aktor.STATE",
+                         "version":              "1",
+                         "friendlyName":         "Licht im Bad",
+                         "friendlyDescription":  "Bad Hauptlicht Aktor STATE",
+                         "isReachable":          true,
+                         "actions": [
+                         "incrementTargetTemperature",
+                         "decrementTargetTemperature",
+                         "setTargetTemperature"
+                         ],
+                         "additionalApplianceDetails": {}
+                         },
+                         {
+                         "applianceId":      "uniqueThermostatDeviceId",
+                         "manufacturerName": "yourManufacturerName",
+                         "modelName":        "fancyThermostat",
+                         "version":          "your software version number here.",
+                         "friendlyName":     "Bedroom Thermostat",
+                         "friendlyDescription": "descriptionThatIsShownToCustomer",
+                         "isReachable":      true,
+                         "actions": [
+                         "incrementTargetTemperature",
+                         "decrementTargetTemperature",
+                         "setTargetTemperature"
+                         ],
+                         "additionalApplianceDetails": {
+                         }
+                         },
+                         {
+                         "actions": [
+                         "incrementPercentage",
+                         "decrementPercentage",
+                         "setPercentage",
+                         "turnOn",
+                         "turnOff"
+                         ],
+                         "additionalApplianceDetails": {},
+                         "applianceId":          "uniqueLightDeviceId",
+                         "friendlyDescription":  "descriptionThatIsShownToCustomer",
+                         "friendlyName":         "Living Room",
+                         "isReachable":          true,
+                         "manufacturerName":      "yourManufacturerName",
+                         "modelName":            "fancyLight",
+                         "version":              "your software version number here."
+                         }
+                         ]*/
                     }
                 };
                 callback(response);
@@ -777,21 +883,21 @@ function main() {
                 break;
 
             case 'TurnOnRequest':
-            //  {
-            //      "header": {
-            //          "messageId": "01ebf625-0b89-4c4d-b3aa-32340e894688",
-            //          "name": "TurnOnRequest",
-            //          "namespace": "Alexa.ConnectedHome.Control",
-            //          "payloadVersion": "2"
-            //      },
-            //      "payload": {
-            //          "accessToken": "[OAuth Token here]",
-            //          "appliance": {
-            //              "additionalApplianceDetails": {},
-            //              "applianceId": "[Device ID for Ceiling Fan]"
-            //          }
-            //      }
-            // }
+                //  {
+                //      "header": {
+                //          "messageId": "01ebf625-0b89-4c4d-b3aa-32340e894688",
+                //          "name": "TurnOnRequest",
+                //          "namespace": "Alexa.ConnectedHome.Control",
+                //          "payloadVersion": "2"
+                //      },
+                //      "payload": {
+                //          "accessToken": "[OAuth Token here]",
+                //          "appliance": {
+                //              "additionalApplianceDetails": {},
+                //              "applianceId": "[Device ID for Ceiling Fan]"
+                //          }
+                //      }
+                // }
                 adapter.log.debug('ALEXA ON: ' + request.payload.appliance.applianceId);
                 for (i = 0; i < ids.length; i++) {
                     controlOnOff(ids[i], true, function () {
@@ -986,4 +1092,36 @@ function main() {
     } else {
         ioSocket = new IOSocket(socket, {clientid: adapter.config.apikey.trim()}, adapter);
     }
+}
+
+function main() {
+    if (adapter.config.deviceOffLevel === undefined) adapter.config.deviceOffLevel = 30;
+    adapter.config.deviceOffLevel = parseFloat(adapter.config.deviceOffLevel) || 0;
+
+    //process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+    adapter.getForeignObject('system.config', function (err, obj) {
+        if (adapter.config.language) {
+            translate = true;
+            lang = adapter.config.language;
+        } else {
+            lang = obj.common.language;
+        }
+        if (lang !== 'en' && lang !== 'de') lang = 'en';
+        getDevices(function (err, result) {
+            smartDevices = result;
+        });
+    });
+    adapter.subscribeForeignObjects('*');
+
+    adapter.setState('info.connection', false, true);
+    adapter.config.cloudUrl  = adapter.config.cloudUrl || 'https://iobroker.net:10555';
+
+    if (!adapter.config.apikey) {
+        adapter.log.error('No api-key found. Please get one on https://iobroker.net');
+        return;
+    }
+
+    adapter.log.info('Connecting with ' + adapter.config.cloudUrl + ' with "' + adapter.config.apikey + '"');
+
+    connect();
 }
