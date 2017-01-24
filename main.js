@@ -319,7 +319,7 @@ function getDevices(callback) {
                 for (var s = 0; s < funcs[f].common.members.length; s++) {
                     var id = funcs[f].common.members[s];
                     smartName = funcs[f].common.smartName;
-                    if (typeof smartName === 'object') smartName = smartName[lang] || smartName.en;
+                    if (smartName && typeof smartName === 'object') smartName = smartName[lang] || smartName.en;
                     var func = smartName || funcs[f].common.name;
 
                     if (!func) {
