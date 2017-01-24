@@ -126,7 +126,7 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
         states[id].common.smartName[lang] = nnn;
     }
 
-    byON = states[id].common.smartName && (typeof states[id].common.smartName === 'object') ? states[id].common.smartName.byON : '';
+    byON = (states[id].common.smartName && typeof states[id].common.smartName === 'object') ? states[id].common.smartName.byON : '';
 
     if (byON) {
         console.log('a');
@@ -334,7 +334,7 @@ function getDevices(callback) {
 
                         if (rooms[r].common.members.indexOf(id) !== -1) {
                             smartName = funcs[f].common.smartName;
-                            if (typeof smartName === 'object') smartName = smartName[lang] || smartName.en;
+                            if (smartName && typeof smartName === 'object') smartName = smartName[lang] || smartName.en;
                             room = smartName || rooms[r].common.name;
                             if (!room) {
                                 room = rooms[r]._id.substring('enum.rooms.'.length);
@@ -349,7 +349,7 @@ function getDevices(callback) {
                             var channel = _parts.join('.');
                             if (rooms[r].common.members.indexOf(channel) !== -1) {
                                 smartName = funcs[f].common.smartName;
-                                if (typeof smartName === 'object') smartName = smartName[lang] || smartName.en;
+                                if (smartName && typeof smartName === 'object') smartName = smartName[lang] || smartName.en;
                                 room = smartName || rooms[r].common.name;
                                 if (!room) {
                                     room = rooms[r]._id.substring('enum.rooms.'.length);
@@ -412,7 +412,7 @@ function controlOnOff(id, value, callback) {
             return;
         }
         if (obj.common.type === 'number') {
-            var byON = typeof obj.common.smartName === 'object' ? obj.common.smartName.byON : null;
+            var byON = (obj.common.smartName && typeof obj.common.smartName === 'object') ? obj.common.smartName.byON : null;
 
             // if ON
             if (value) {

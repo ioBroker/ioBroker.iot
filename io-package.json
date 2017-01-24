@@ -1,11 +1,11 @@
 {
     "common": {
         "name":                     "cloud",
-        "version":                  "0.6.0",
+        "version":                  "0.6.1",
         "title":                    "Cloud Adapter",
         "desc":                     "This adapter connect",
 		"news": {
-            "0.6.0": {
+            "0.6.1": {
                 "en":                   "fix reconnect",
                 "de":                   "Korrigiere Wiederverbindung",
                 "ru":                   "Исправлено распознавание дисконнекта"
