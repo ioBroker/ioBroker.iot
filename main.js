@@ -149,10 +149,18 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
                 func = translateFunctions(lang, func);
             }
 
-            if (lang === 'en') {
-                friendlyName = room + ' ' + func;
+            if (adapter.config.functionFirst) {
+                if (lang === 'en') {
+                    friendlyName = func + (adapter.config.concatWord ? ' ' + adapter.config.concatWord : '') + ' ' + room;
+                } else {
+                    friendlyName = func + (adapter.config.concatWord ? ' ' + adapter.config.concatWord : '') + ' ' + room;
+                }
             } else {
-                friendlyName = room + ' ' + func;
+                if (lang === 'en') {
+                    friendlyName = room + (adapter.config.concatWord ? ' ' + adapter.config.concatWord : '') + ' ' + func;
+                } else {
+                    friendlyName = room + (adapter.config.concatWord ? ' ' + adapter.config.concatWord : '') + ' ' + func;
+                }
             }
         } else {
             friendlyName = states[id].common.name;
@@ -1097,6 +1105,7 @@ function connect() {
 function main() {
     if (adapter.config.deviceOffLevel === undefined) adapter.config.deviceOffLevel = 30;
     adapter.config.deviceOffLevel = parseFloat(adapter.config.deviceOffLevel) || 0;
+    adapter.config.concatWord = (adapter.config.concatWord || '').toString().trim();
 
     //process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
     adapter.getForeignObject('system.config', function (err, obj) {

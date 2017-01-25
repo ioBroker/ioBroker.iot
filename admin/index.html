@@ -62,6 +62,21 @@
             "de": "Die Instanz muss laufen um die Daten zu liefern",
             "ru": "Драйвер должен быть запущен, что бы отобразить данные"
         },
+        "Place function in names first:": {
+            "en": "Place function in names first:",
+            "de": "Platziere Funktionsnamen vorne:",
+            "ru": "Имена функций в начале:"
+        },
+        "Save settings and the names will be changed": {
+            "en": "Save settings and the names will be changed",
+            "de": "Speichere Einstellungen um neuen Namen zu sehen",
+            "ru": "Сохраните настройки, что бы увидеть изменения"
+        },
+        "Concatenate words with:": {
+            "en": "Concatenate words with:",
+            "de": "Verbinde Raum und Funktion mit:",
+            "ru": "Связывать комнаты и функции словом:"
+        },
         "Device will be disabled.": {
             "en": "Device will be disabled.",
             "de": "Gerät wird aus der Liste verschwinden.",
@@ -502,14 +517,17 @@
             if ($value.attr('type') === 'checkbox') {
                 $value.prop('checked', settings[key]).change(function() {
                     onChange();
+                    var id = $(this).attr('id');
+                    if (id === 'functionFirst' || id === 'concatWord') $('#' + id + 'Hint').show();
                 });
             } else {
                 $value.val(settings[key]).change(function() {
                     onChange();
                     var id = $(this).attr('id');
                     if (id === 'language') language = $(this).val();
+                    if (id === 'functionFirst' || id === 'concatWord') $('#' + id + 'Hint').show();
                 }).keyup(function() {
-                    onChange();
+                    $(this).trigger('change');
                 });
             }
         });
@@ -584,6 +602,8 @@
                 obj[$this.attr('id')] = $this.val();
             }
         });
+        $('#functionFirstHint').hide();
+        $('#concatWordHint').hide();
         callback(obj);
     }
 </script>
@@ -643,6 +663,8 @@
                         <option value="en">english</option>
                         <option value="de">deutsch</option>
                     </select></td><td></td></tr>
+                    <tr><td><label for="functionFirst" class="translate">Place function in names first:</label></td><td><input type="checkbox" class="value" id="functionFirst"/></td><td><span id="functionFirstHint" class="translate" style="display: none; color: rgb(255, 153, 153);">Save settings and the names will be changed</span></td></tr>
+                    <tr><td><label for="concatWord" class="translate">Concatenate words with:</label></td><td><input class="value" id="concatWord"/></td><td><span id="concatWordHint" class="translate" style="display: none; color: rgb(255, 153, 153);">Save settings and the names will be changed</span></td></tr>
                     <tr><td><label for="deviceOffLevel" class="translate">OFF level for switches:</label></td><td><input class="value" id="deviceOffLevel"/>%</td><td class="translate">(Set to 0 if behavior not desired)</td></tr>
                 </table>
 

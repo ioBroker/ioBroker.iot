@@ -1,10 +1,15 @@
 {
     "common": {
         "name":                     "cloud",
-        "version":                  "0.6.1",
+        "version":                  "0.6.2",
         "title":                    "Cloud Adapter",
         "desc":                     "This adapter connect",
 		"news": {
+            "0.6.2": {
+                "en":                   "add option Place function in names first",
+                "de":                   "Option hinzugefügt: Platziere Funktionsnamen vorne",
+                "ru":                   "Добавлена опция: Имена функций в начале"
+            },
             "0.6.1": {
                 "en":                   "fix reconnect",
                 "de":                   "Korrigiere Wiederverbindung",
@@ -29,36 +34,6 @@
                 "en":                   "Support of english language",
                 "de":                   "Unterstützung von englischer Sprache",
                 "ru":                   "Поддержка английского языка"
-            },
-            "0.3.3": {
-                "en":                   "Fix error with smartNames\nTake the superset of actions for group and not the last one\nif group has switches and dimmers, turn devices OFF if the percent level is less than 30%\nRemember ON level for dimmers to switch it later ON",
-                "de":                   "Korrigiere Geräte mit SmartNames\nKombiniere Aktionen in einer Gruppe\nFalls die Gruppe hat auch Dimmers, dann schalte die ON/OFF Geräte aus, falls unter 30% gesetzt wird\nMerke AN Level beim Ausschalten um später das bei EInschalten zu setzten",
-                "ru":                   "Fix error with smartNames\nTake the superset of actions for group and not the last one\nif group has switches and dimmers, turn devices OFF if the percent level is less than 30%\nRemember ON level for dimmers to switch it later ON"
-            },
-            "0.3.0": {
-                "en":                   "Implement Heating profile for Alexa",
-                "de":                   "Unterstützung von der Heizung für Alexa",
-                "ru":                   "Поддержка изменения температуры для Amazon Alexa"
-            },
-            "0.2.0": {
-                "en":                   "support of amazon alexa",
-                "de":                   "Unterstützung von Amazon Alexa",
-                "ru":                   "Поддержка Amazon Alexa"
-            },
-            "0.1.2": {
-                "en":                   "update socket.io",
-                "de":                   "Update socket.io",
-                "ru":                   "Обновлён socket.io"
-            },
-            "0.1.1": {
-                "en":                   "update some packages",
-                "de":                   "Update manche Pakete",
-                "ru":                   "Обновлены некоторые пакеты"
-            },
-            "0.1.0": {
-                "en":                   "initial commit",
-                "de":                   "initial commit",
-                "ru":                   "initial commit"
             }
         },
         "authors": [
@@ -88,7 +63,9 @@
         "apikey":                   "",
         "instance":                 "web.0",
         "cloudUrl":                 "https://iobroker.net:10555",
-        "allowSelfSignedCertificate": true
+        "allowSelfSignedCertificate": true,
+        "functionFirst":            false,
+        "concatWord":               ""
     },
     "objects": [
     ],

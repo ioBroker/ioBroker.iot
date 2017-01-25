@@ -26,6 +26,17 @@ If you use standard iobroker.net cloud, you can deactivate it. This option is on
 If you select "default" language the smart names of devices and of enumerations will not be translated. If some language specified all known names will be translated into this language.
 It is done to switch fast between many languages for demonstration purposes.
 
+### Place function in names first
+Change the order of function and roles in self generated names:
+
+- if false: "Room function", e.g. "Living room dimmer"
+- if true: "Function room", e.g. "Dimmer living room"
+
+### Concatenate words with
+You can define the word which will be placed between function and room. E.g. "in" and from "Dimmer living room" will be "Dimmer in living room".
+
+But is not suggested to do so, because recognition engine must analyse one more word and it can lead to misunderstandings.
+
 ### OFF level for switches
 Some groups consist of mixed devices: dimmers and switches. It is allowed to control them with "ON" and "OFF" commands and with percents.
 If command is "Set to 30%" and the *OFF level" is "30%" so the switches will be turned on. By command "Set to 25%" all switches will be turned OFF.
@@ -82,6 +93,9 @@ If the group has more than one state, the group must be renamed via the enumerat
 To create own groups the user can install "scenes" adapter or create "script" in Javascript adapter.
 
 ## Changelog
+### 0.6.2 (2017-01-25)
+* (bluefox) add option "Place function in names first"
+
 ### 0.6.1 (2017-01-24)
 * (bluefox) fix reconnect
 * (bluefox) change smartName structure
