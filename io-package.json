@@ -1,10 +1,15 @@
 {
     "common": {
         "name":                     "cloud",
-        "version":                  "0.6.2",
+        "version":                  "0.6.3",
         "title":                    "Cloud Adapter",
         "desc":                     "This adapter connect",
 		"news": {
+            "0.6.3": {
+                "en":                   "fix enum names",
+                "de":                   "Korrigiere Aufzählungennamen",
+                "ru":                   "Исправлены имена групп"
+            },
             "0.6.2": {
                 "en":                   "add option Place function in names first",
                 "de":                   "Option hinzugefügt: Platziere Funktionsnamen vorne",

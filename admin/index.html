@@ -382,17 +382,27 @@
                 var i = 0;
                 while (i < rooms.length || i < funcs.length) {
                     text += '<tr>';
+                    var smartName;
+
                     if (rooms[i]) {
-                        text += '<td><input class="smart-enable" type="checkbox" data-id="' + rooms[i].id + '" ' + (rooms[i].smartName !== false && rooms[i].smartName !== 'ignore' ? 'checked' :'') + '/>' +
-                            rooms[i].name + (rooms[i].smartName ? ' (' + rooms[i].smartName + ')' : '') +
-                            '<button ' + (rooms[i].smartName !== false && rooms[i].smartName !== 'ignore' ? '' : 'disabled') + ' class="smart-edit" data-id="' + rooms[i].id + '" data-value="' + (rooms[i].smartName || '') + '" data-name="' + (rooms[i].name || '') + '"></button></td>';
+                        smartName = rooms[i].smartName || '';
+                        if (smartName && typeof smartName === 'object') {
+                            smartName = smartName[language] || smartName.en || '';
+                        }
+                        text += '<td><input class="smart-enable" type="checkbox" data-id="' + rooms[i].id + '" ' + (smartName !== false && smartName !== 'ignore' ? 'checked' :'') + '/>' +
+                            rooms[i].name + (smartName ? ' (' + smartName + ')' : '') +
+                            '<button ' + (smartName !== false && smartName !== 'ignore' ? '' : 'disabled') + ' class="smart-edit" data-id="' + rooms[i].id + '" data-value="' + smartName + '" data-name="' + (rooms[i].name || '') + '"></button></td>';
                     } else {
                         text += '<td></td>';
                     }
                     if (funcs[i]) {
-                        text += '<td><input class="smart-enable" type="checkbox" data-id="' + funcs[i].id + '" ' + (funcs[i].smartName !== false && funcs[i].smartName !== 'ignore' ? 'checked' :'') + '/>' +
-                            funcs[i].name + (funcs[i].smartName ? ' (' + funcs[i].smartName + ')' : '') +
-                            '<button ' + (funcs[i].smartName !== false && funcs[i].smartName !== 'ignore' ? '' : 'disabled') + ' class="smart-edit" data-id="' + funcs[i].id + '" data-value="' + (funcs[i].smartName || '') + '" data-name="' + (funcs[i].name || '') + '"></button></td>';
+                        smartName = funcs[i].smartName || '';
+                        if (smartName && typeof smartName === 'object') {
+                            smartName = smartName[language] || smartName.en || '';
+                        }
+                        text += '<td><input class="smart-enable" type="checkbox" data-id="' + funcs[i].id + '" ' + (smartName !== false && smartName !== 'ignore' ? 'checked' :'') + '/>' +
+                            funcs[i].name + (smartName ? ' (' + smartName + ')' : '') +
+                            '<button ' + (smartName !== false && smartName !== 'ignore' ? '' : 'disabled') + ' class="smart-edit" data-id="' + funcs[i].id + '" data-value="' + smartName + '" data-name="' + (funcs[i].name || '') + '"></button></td>';
                     } else {
                         text += '<td></td>';
                     }

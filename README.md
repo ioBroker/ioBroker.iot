@@ -93,6 +93,9 @@ If the group has more than one state, the group must be renamed via the enumerat
 To create own groups the user can install "scenes" adapter or create "script" in Javascript adapter.
 
 ## Changelog
+### 0.6.3 (2017-01-28)
+* (bluefox) fix enum names
+
 ### 0.6.2 (2017-01-25)
 * (bluefox) add option "Place function in names first"
 
