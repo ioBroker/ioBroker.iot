@@ -57,6 +57,9 @@ Example:
 ### by ON
 You can select the behaviour of ON command will come for the number state. The specific value can be selected or last non zero value will be used.
 
+### Write response to
+For every command the text response will be generated. You can define here the Object ID , where this text must be written to. E.g. *sayit.0.tts.text*.
+
 ## How names will be generated
 The adapter tries to generate virtual devices for smart home control (e.g. Amazon Alexa or Google Home).
 
@@ -92,9 +95,17 @@ If the group has more than one state, the group must be renamed via the enumerat
 
 To create own groups the user can install "scenes" adapter or create "script" in Javascript adapter.
 
+## Helper states
+- **smart.lastObjectID**: This state will be set if only one device was controlled by home skill (alexa, google home).
+- **smart.lastFunction**: Function name (if exists) for which last command was executed.
+- **smart.lastRoom**:     Room name (if exists) for which last command was executed.
+- **smart.lastCommand**:  Last executed command. Command can be: true(ON), false(OFF), number(%), -X(decrease at x), +X(increase at X)
+- **smart.lastResponse**: Textual response on command. It can be sent to some text2speech (sayit) engine.
+
 ## Changelog
 ### 0.6.3 (2017-01-28)
 * (bluefox) fix enum names
+* (bluefox) add helper states and response text
 
 ### 0.6.2 (2017-01-25)
 * (bluefox) add option "Place function in names first"

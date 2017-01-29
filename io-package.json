@@ -6,9 +6,9 @@
         "desc":                     "This adapter connect",
 		"news": {
             "0.6.3": {
-                "en":                   "fix enum names",
-                "de":                   "Korrigiere Aufzählungennamen",
-                "ru":                   "Исправлены имена групп"
+                "en":                   "fix enum names\nadd helper states and response text",
+                "de":                   "Korrigiere Aufzählungennamen\nHilfezutände sind eingefügt",
+                "ru":                   "Исправлены имена групп и добавлен ответ в текстовом виде"
             },
             "0.6.2": {
                 "en":                   "add option Place function in names first",
@@ -70,7 +70,8 @@
         "cloudUrl":                 "https://iobroker.net:10555",
         "allowSelfSignedCertificate": true,
         "functionFirst":            false,
-        "concatWord":               ""
+        "concatWord":               "",
+        "responseOID":              ""
     },
     "objects": [
     ],
@@ -93,6 +94,66 @@
                 "read":  true,
                 "write": false,
                 "def":   false
+            },
+            "native": {}
+        },
+        {
+            "_id":  "smart.lastObjectID",
+            "type": "state",
+            "common": {
+                "role":  "state",
+                "name":  "Last controlled Object ID",
+                "type":  "string",
+                "read":  true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id":  "smart.lastFunction",
+            "type": "state",
+            "common": {
+                "role":  "state",
+                "name":  "Last controlled function",
+                "type":  "string",
+                "read":  true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id":  "smart.lastRoom",
+            "type": "state",
+            "common": {
+                "role":  "state",
+                "name":  "Last controlled room",
+                "type":  "string",
+                "read":  true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id":  "smart.lastCommand",
+            "type": "state",
+            "common": {
+                "role":  "state",
+                "name":  "Last command",
+                "type":  "string",
+                "read":  true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id":  "smart.lastResponse",
+            "type": "state",
+            "common": {
+                "role":  "state",
+                "name":  "Last textual response",
+                "type":  "string",
+                "read":  true,
+                "write": false
             },
             "native": {}
         }

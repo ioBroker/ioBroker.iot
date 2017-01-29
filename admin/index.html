@@ -57,6 +57,9 @@
         "Off":          {"en": "off",           "de": "aus",                "ru": "выкл"},
         "OFF level for switches:": {"en": "OFF level for switches:", "de": "OFF level for switches:", "ru": "OFF level for switches:"},
         "Filter: ":     {"en": "Filter: ",      "de": "Filter: ",           "ru": "Фильтр: "},
+        "modified":     {"en": "Name was modified by user", "de": "Der Name war vom Anwender geändert", "ru": "Имя изменено пользователем"},
+        "Edit smart name": {"en": "Edit smart name", "de": "Smartname editieren", "ru": "Редактировать имя"},
+        "Write response to:": {"en": "Write response to:", "de": "Schreibe Antwort ins:", "ru": "Писать ответ в:"},
         "Instance must run to deliver the data": {
             "en": "The instance must run to deliver the data",
             "de": "Die Instanz muss laufen um die Daten zu liefern",
@@ -211,7 +214,11 @@
                 var text = '<tr><th style="width: 30%">' + _('Smart name') + '</th><th style="width: 100px">' + _('Commands') + '</th><th style="width: 70%">' + _('Addresses') + '<span style="float: right; padding-right: 130px">' + _('by ON') + '</span></th></tr>';
 
                 for (var j = 0; j < list.length; j++) {
-                    text += '<tr><td class="smart-name"  style="white-space: nowrap;">' + list[j].friendlyName + '</td>';
+                    if (list[j].additionalApplianceDetails.ids || !list[j].additionalApplianceDetails.nameModified) {
+                        text += '<tr><td class="smart-name"  style="white-space: nowrap;">' + list[j].friendlyName + '</td>';
+                    } else {
+                        text += '<tr><td class="smart-name"  style="white-space: nowrap; font-style: italic" title="' + _('modified') + '">' + list[j].friendlyName + '</td>';
+                    }
                     // Type
                     var actions = [];
                     for (var a = 0; a < list[j].actions.length; a++) {
@@ -283,6 +290,12 @@
                     var val   = $this.val();
                     $this.addClass('smart-changed');
                     socket.emit('getObject', id, function (err, obj) {
+                        if (typeof obj.common.smartName === 'string') {
+                            var nnn = obj.common.smartName;
+                            obj.common.smartName = {};
+                            obj.common.smartName[language] = nnn;
+                        }
+
                         if (obj.native.byON) {
                             delete obj.native.byON;
                             var smartName = obj.common.smartName;
@@ -294,11 +307,8 @@
                                 smartName[language] = smartName.en;
                             }
                             obj.common.smartName = smartName;
-                        } else if (typeof obj.common.smartName === 'string') {
-                            var nnn = obj.common.smartName;
-                            obj.common.smartName = {};
-                            obj.common.smartName[language] = nnn;
                         }
+
                         obj.common.smartName = obj.common.smartName || {};
                         obj.common.smartName.byON = val;
 
@@ -321,7 +331,14 @@
                         $('#smart_table').find('.button-edit[data-id="' + id + '"]').parent().addClass('smart-changed');
                         idToNavigate = id;
                         socket.emit('getObject', id, function (err, obj) {
+                            if (typeof obj.common.smartName === 'string') {
+                                var nnn = obj.common.smartName;
+                                obj.common.smartName = {};
+                                obj.common.smartName[language] = nnn;
+                            }
+
                             obj.common.smartName = obj.common.smartName || {};
+
                             obj.common.smartName[language] = $('#edit_name').val();
                             if (!obj.common.smartName[language] || obj.common.smartName[language] === $this.data('name')) {
                                 delete obj.common.smartName[language];
@@ -452,6 +469,12 @@
                         var id = $('#edit_dialog').data('id');
                         $('#smart_enums').find('.smart-edit[data-id="' + id + '"]').parent().addClass('smart-changed');
                         socket.emit('getObject', id, function (err, obj) {
+                            if (typeof obj.common.smartName === 'string') {
+                                var nnn = obj.common.smartName;
+                                obj.common.smartName = {};
+                                obj.common.smartName[language] = nnn;
+                            }
+
                             obj.common.smartName = obj.common.smartName || {};
                             obj.common.smartName[language] = $('#edit_name').val();
 
@@ -499,6 +522,8 @@
     function load(settings, onChange) {
         if (!settings) return;
 
+        if (settings.responseOID === undefined) settings.responseOID = '';
+
         actionsMapping.turnOn  = _(actionsMapping.turnOn);
         actionsMapping.turnOff = _(actionsMapping.turnOff);
 
@@ -514,10 +539,7 @@
                 for (var t = 0; t < res.length; t++) {
                     $('#instance').append('<option value="' + res[t]._id + '">' + res[t].common.name + ' [' + res[t]._id.replace('system.adapter.', '') + ']</option>');
                 }
-                count--;
-                if (!count) {
-                    $('#instance').val(settings.instance);
-                }
+                if (!--count) $('#instance').val(settings.instance);
             });
         }
 
@@ -570,6 +592,12 @@
                     if (newId) {
                         //$('#' + id).val(newId || '');
                         socket.emit('getObject', newId, function (err, obj) {
+                            if (typeof obj.common.smartName === 'string') {
+                                var nnn = obj.common.smartName;
+                                obj.common.smartName = {};
+                                obj.common.smartName[language] = nnn;
+                            }
+
                             obj.common.smartName = obj.common.smartName || {};
                             obj.common.smartName[language] = (obj.common.name || _('Device name')).replace(/[-_.]+/g, ' ');
                             idToEdit = obj._id;
@@ -597,6 +625,15 @@
             $('#filter').val('').trigger('change');
         });
 
+        $('#responseOIDDialog').button({icons: {primary: 'ui-icon-pencil'}, text: false}).css({width: '2em', height: '2em'}).click(function () {
+            initSelectId(function (sid) {
+                sid.selectId('show', $('#responseOID').val(), function (newId) {
+                    if (newId) {
+                        $('#responseOID').val(newId).trigger('change');
+                    }
+                });
+            });
+        });
         onChange(false);
     }
 
@@ -676,6 +713,7 @@
                     <tr><td><label for="functionFirst" class="translate">Place function in names first:</label></td><td><input type="checkbox" class="value" id="functionFirst"/></td><td><span id="functionFirstHint" class="translate" style="display: none; color: rgb(255, 153, 153);">Save settings and the names will be changed</span></td></tr>
                     <tr><td><label for="concatWord" class="translate">Concatenate words with:</label></td><td><input class="value" id="concatWord"/></td><td><span id="concatWordHint" class="translate" style="display: none; color: rgb(255, 153, 153);">Save settings and the names will be changed</span></td></tr>
                     <tr><td><label for="deviceOffLevel" class="translate">OFF level for switches:</label></td><td><input class="value" id="deviceOffLevel"/>%</td><td class="translate">(Set to 0 if behavior not desired)</td></tr>
+                    <tr><td><label for="responseOID" class="translate">Write response to:</label></td><td><input class="value" id="responseOID"/><button id="responseOIDDialog"></button></td><td></td></tr>
                 </table>
 
                 <p class="translate">help_tip</p>

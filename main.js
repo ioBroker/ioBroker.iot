@@ -102,7 +102,7 @@ function validateName(name) {
 function processState(states, id, room, func, alexaIds, groups, names, result) {
     var actions;
     var friendlyName = states[id].common.smartName;
-
+    var nameModified = false;
     var byON;
     if (states[id].native.byON) {
         byON = states[id].native.byON;
@@ -118,19 +118,17 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
         } else {
             smartName.byON = byON;
         }
-        states[id].common.smartName = smartName;
-        states[id].common.smartName = states[id].common.smartName || {};
+        states[id].common.smartName = smartName || {};
+        friendlyName = states[id].common.smartName;
     } else if (typeof states[id].common.smartName === 'string') {
         var nnn = states[id].common.smartName;
         states[id].common.smartName = {};
         states[id].common.smartName[lang] = nnn;
+        friendlyName = states[id].common.smartName;
     }
 
     byON = (states[id].common.smartName && typeof states[id].common.smartName === 'object') ? states[id].common.smartName.byON : '';
 
-    if (byON) {
-        console.log('a');
-    }
     if (typeof friendlyName === 'object') {
         friendlyName = states[id].common.smartName[lang] || states[id].common.smartName.en;
     }
@@ -165,10 +163,14 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
         } else {
             friendlyName = states[id].common.name;
         }
+        nameModified = false;
     } else if (translate) {
         translateDevices = translateDevices || require(__dirname + '/lib/devices.js');
         friendlyName = translateDevices(lang, friendlyName);
-    }  
+        nameModified = true;
+    } else {
+        nameModified = true;
+    }
     if (!friendlyName) {
         adapter.log.warn('State ' + id + ' is invalid.');
         return
@@ -179,7 +181,7 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
     var friendlyDescription = (states[id].common.name || id);
 
     if (states[id].common.write === false) {
-        adapter.log.debug('Name "' + friendlyName + '" cannot be written and will be ignored');
+        adapter.log.debug('Name "' + (states[id].common.name || id) + '" cannot be written and will be ignored');
         return;
     }
     var type = states[id].common.type;
@@ -219,9 +221,12 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
         isReachable:         true,
         actions:             actions,
         additionalApplianceDetails: {
-            id:   id.substring(0, 1024),
-            name: name,
-            byON: type
+            id:           id.substring(0, 1024),
+            name:         name,
+            byON:         type,
+            nameModified: nameModified,
+            room:         room,
+            func:         func
         }
     };
 
@@ -261,7 +266,9 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
                 additionalApplianceDetails: {
                     ids:   JSON.stringify([names[friendlyName].additionalApplianceDetails.id,   id]),
                     names: JSON.stringify([names[friendlyName].additionalApplianceDetails.name, name]),
-                    byONs: JSON.stringify([names[friendlyName].additionalApplianceDetails.byON, type])
+                    byONs: JSON.stringify([names[friendlyName].additionalApplianceDetails.byON, type]),
+                    room:  room,
+                    func:  func
                 }
             };
             result.push(groups[friendlyName]);
@@ -341,7 +348,7 @@ function getDevices(callback) {
                         if (!rooms[r].common || !rooms[r].common.members || typeof rooms[r].common.members !== 'object' || !rooms[r].common.members.length) continue;
 
                         if (rooms[r].common.members.indexOf(id) !== -1) {
-                            smartName = funcs[f].common.smartName;
+                            smartName = rooms[r].common.smartName;
                             if (smartName && typeof smartName === 'object') smartName = smartName[lang] || smartName.en;
                             room = smartName || rooms[r].common.name;
                             if (!room) {
@@ -412,7 +419,7 @@ function getDevices(callback) {
     });
 }
 
-function controlOnOff(id, value, callback) {
+function controlOnOff(id, value, writeStates, callback) {
     adapter.getForeignObject(id, function (err, obj) {
         if (!obj || obj.type !== 'state') {
             if (err) adapter.log.error('Cannot control non state: ' + id + ' ' + (obj ? obj.type : 'no object'));
@@ -465,6 +472,11 @@ function controlOnOff(id, value, callback) {
             }
         }
         adapter.log.debug('Set "' + id + '" to ' + value);
+
+        if (writeStates) {
+            adapter.setState('smart.lastObjectID', id,    true);
+        }
+
         adapter.setForeignState(id, value, function (err) {
             if (err) adapter.log.error('Cannot switch device: ' + err);
             if (callback) callback();
@@ -472,7 +484,7 @@ function controlOnOff(id, value, callback) {
     });
 }
 
-function controlPercent(id, value, callback) {
+function controlPercent(id, value, writeStates, callback) {
     adapter.getForeignObject(id, function (err, obj) {
         if (!obj || obj.type !== 'state') {
             if (err) adapter.log.error('Cannot control non state: ' + id + ' ' + (obj ? obj.type : 'no object'));
@@ -497,6 +509,10 @@ function controlPercent(id, value, callback) {
             adapter.log.debug('Remember ON value for  "' + id + '": ' + value);
         }
 
+        if (writeStates) {
+            adapter.setState('smart.lastObjectID', id, true);
+        }
+
         adapter.setForeignState(id, value, function (err) {
             if (err) adapter.log.error('Cannot switch device: ' + err);
             if (callback) callback();
@@ -504,7 +520,7 @@ function controlPercent(id, value, callback) {
     });
 }
 
-function controlDelta(id, delta, callback) {
+function controlDelta(id, delta, writeStates, callback) {
     adapter.getForeignObject(id, function (err, obj) {
         if (!obj || obj.type !== 'state') {
             if (err) adapter.log.error('Cannot control non state: ' + id + ' ' + (obj ? obj.type : 'no object'));
@@ -532,6 +548,10 @@ function controlDelta(id, delta, callback) {
                 valuesON[id] = value;
             }
 
+            if (writeStates) {
+                adapter.setState('smart.lastObjectID', id, true);
+            }
+
             adapter.setForeignState(id, value, function (err) {
                 if (err) adapter.log.error('Cannot set device: ' + err);
                 if (callback) callback();
@@ -540,7 +560,7 @@ function controlDelta(id, delta, callback) {
     });
 }
 
-function controlTemperature(id, value, callback) {
+function controlTemperature(id, value, writeStates, callback) {
     //{
     //    "header" : {
     //    "namespace" : "Alexa.ConnectedHome.Control",
@@ -585,6 +605,11 @@ function controlTemperature(id, value, callback) {
 
         adapter.getForeignState(id, function (err, state) {
             if (err) adapter.log.error('Cannot read device: ' + err);
+
+            if (writeStates) {
+                adapter.setState('smart.lastObjectID', id, true);
+            }
+
             adapter.setForeignState(id, value, function (err) {
                 if (err) adapter.log.error('Cannot switch device: ' + err);
                 var response = {
@@ -612,7 +637,7 @@ function controlTemperature(id, value, callback) {
     });
 }
 
-function controlTemperatureDelta(id, delta, callback) {
+function controlTemperatureDelta(id, delta, writeStates, callback) {
     adapter.getForeignObject(id, function (err, obj) {
         if (!obj || obj.type !== 'state') {
             if (err) adapter.log.error('Cannot control non state: ' + id + ' ' + (obj ? obj.type : 'no object'));
@@ -635,6 +660,10 @@ function controlTemperatureDelta(id, delta, callback) {
 
             adapter.getForeignState(id, function (err, state) {
                 if (err) adapter.log.error('Cannot read device: ' + err);
+
+                if (writeStates) {
+                    adapter.setState('smart.lastObjectID', id, true);
+                }
 
                 adapter.setForeignState(id, value, function (err) {
                     if (err) adapter.log.error('Cannot switch device: ' + err);
@@ -684,6 +713,80 @@ function pingConnection() {
             }, 5000);
         }
     }
+}
+
+function writeResponse(applianceId, operation, value) {
+    for (var d = 0; d < smartDevices.length; d++) {
+        if (smartDevices[d].applianceId === applianceId) {
+            var text;
+            var obj = smartDevices[d];
+            switch (operation) {
+                case 'ONOFF':
+                    if (value) {
+                        if (lang === 'de') {
+                            text = obj.friendlyName + ' ist <emphasis>eingeschaltet</emphasis>!';
+                        } else if (lang === 'ru') {
+                            text = obj.friendlyName + ' в состоянии включено';
+                        } else {
+                            text = obj.friendlyName + ' turned on';
+                        }
+                    } else {
+                        if (lang === 'de') {
+                            text = obj.friendlyName + ' ist <emphasis>ausgeschaltet</emphasis>!';
+                        } else if (lang === 'ru') {
+                            text = obj.friendlyName + ' в состоянии <emphasis>выключено</emphasis>';
+                        } else {
+                            text = obj.friendlyName + ' turned off';
+                        }
+                    }
+                    break;
+
+                case '%':
+                    if (lang === 'de') {
+                        text = obj.friendlyName + ' wird auf ' + value + ' Prozent <emphasis>gesetzt</emphasis>';
+                    } else if (lang === 'ru') {
+                        text = 'Состояние ' + obj.friendlyName + ' <emphasis>установлено</emphasis> на ' + value;
+                    } else {
+                        text = obj.friendlyName + ' set to ' + value + ' <emphasis>percent</emphasis>';
+                    }
+                    break;
+
+                case '<>':
+                    if (value >= 0) {
+                        if (lang === 'de') {
+                            text = obj.friendlyName + ' ist <emphasis>erhöht</emphasis> um ' + value + ' Prozent';
+                        } else if (lang === 'ru') {
+                            text = 'Состояние ' + obj.friendlyName + ' <emphasis>увеличено</emphasis> на ' + value;
+                        } else {
+                            text = obj.friendlyName + ' <emphasis>increased</emphasis> on ' + value + ' percent';
+                        }
+                        value = '+' + value;
+                    } else {
+                        if (lang === 'de') {
+                            text = obj.friendlyName + ' ist <emphasis>verkleinert</emphasis> um ' + value + ' Prozent';
+                        } else if (lang === 'ru') {
+                            text = 'Состояние ' + obj.friendlyName + ' <emphasis>уменьшено</emphasis> на ' + value;
+                        } else {
+                            text = obj.friendlyName + ' <emphasis>decreased</emphasis> on ' + value + ' percent';
+                        }
+                        value = '-' + value;
+                    }
+                    break;
+            }
+            if (text) {
+                adapter.setState('smart.lastResponse', text, true);
+                if (adapter.config.responseOID) {
+                    adapter.setForeignState(adapter.config.responseOID, text, false);
+                }
+
+                adapter.setState('smart.lastFunction', obj.additionalApplianceDetails.func, true);
+                adapter.setState('smart.lastRoom',     obj.additionalApplianceDetails.room, true);
+                adapter.setState('smart.lastCommand',  value, true);
+            }
+            return;
+        }
+    }
+    adapter.log.warn('Unknown applianceId: ' + applianceId);
 }
 
 function checkPing() {
@@ -807,10 +910,13 @@ function connect() {
                 var smartDevicesCopy = JSON.parse(JSON.stringify(smartDevices));
                 for (var j = 0; j < smartDevicesCopy.length; j++) {
                     if (!smartDevicesCopy[j].additionalApplianceDetails) continue;
-                    if (smartDevicesCopy[j].additionalApplianceDetails.names !== undefined) delete smartDevicesCopy[j].additionalApplianceDetails.names;
-                    if (smartDevicesCopy[j].additionalApplianceDetails.name  !== undefined) delete smartDevicesCopy[j].additionalApplianceDetails.name;
-                    if (smartDevicesCopy[j].additionalApplianceDetails.byON  !== undefined) delete smartDevicesCopy[j].additionalApplianceDetails.byON;
-                    if (smartDevicesCopy[j].additionalApplianceDetails.byONs !== undefined) delete smartDevicesCopy[j].additionalApplianceDetails.byONs;
+                    if (smartDevicesCopy[j].additionalApplianceDetails.names        !== undefined) delete smartDevicesCopy[j].additionalApplianceDetails.names;
+                    if (smartDevicesCopy[j].additionalApplianceDetails.name         !== undefined) delete smartDevicesCopy[j].additionalApplianceDetails.name;
+                    if (smartDevicesCopy[j].additionalApplianceDetails.byON         !== undefined) delete smartDevicesCopy[j].additionalApplianceDetails.byON;
+                    if (smartDevicesCopy[j].additionalApplianceDetails.byONs        !== undefined) delete smartDevicesCopy[j].additionalApplianceDetails.byONs;
+                    if (smartDevicesCopy[j].additionalApplianceDetails.nameModified !== undefined) delete smartDevicesCopy[j].additionalApplianceDetails.nameModified;
+                    if (smartDevicesCopy[j].additionalApplianceDetails.room         !== undefined) delete smartDevicesCopy[j].additionalApplianceDetails.room;
+                    if (smartDevicesCopy[j].additionalApplianceDetails.func         !== undefined) delete smartDevicesCopy[j].additionalApplianceDetails.func;
                 }
 
                 var response = {
@@ -908,7 +1014,7 @@ function connect() {
                 // }
                 adapter.log.debug('ALEXA ON: ' + request.payload.appliance.applianceId);
                 for (i = 0; i < ids.length; i++) {
-                    controlOnOff(ids[i], true, function () {
+                    controlOnOff(ids[i], true, ids.length === 1, function () {
                         if (!--count) {
                             request.header.name = 'TurnOnConfirmation';
 
@@ -920,6 +1026,7 @@ function connect() {
                         }
                     });
                 }
+                writeResponse(request.payload.appliance.applianceId, 'ONOFF', true);
                 break;
 
             case 'TurnOffRequest':
@@ -941,7 +1048,7 @@ function connect() {
                 adapter.log.debug('ALEXA OFF: ' + request.payload.appliance.applianceId);
 
                 for (i = 0; i < ids.length; i++) {
-                    controlOnOff(ids[i], false, function (err) {
+                    controlOnOff(ids[i], false, ids.length === 1, function (err) {
                         if (!--count) {
                             request.header.name = 'TurnOffConfirmation';
 
@@ -953,12 +1060,13 @@ function connect() {
                         }
                     });
                 }
+                writeResponse(request.payload.appliance.applianceId, 'ONOFF', false);
                 break;
 
             case 'SetPercentageRequest':
                 adapter.log.debug('ALEXA Percent: ' + request.payload.appliance.applianceId + ' ' + request.payload.percentageState.value + '%');
                 for (i = 0; i < ids.length; i++) {
-                    controlPercent(ids[i], request.payload.percentageState.value, function (err) {
+                    controlPercent(ids[i], request.payload.percentageState.value, ids.length === 1, function (err) {
                         if (!--count) {
                             request.header.name = 'SetPercentageConfirmation';
 
@@ -970,12 +1078,13 @@ function connect() {
                         }
                     });
                 }
+                writeResponse(request.payload.appliance.applianceId, '%', request.payload.percentageState.value);
                 break;
 
             case 'IncrementPercentageRequest':
                 adapter.log.debug('ALEXA Increment: ' + request.payload.appliance.applianceId + ' ' + request.payload.deltaPercentage.value + '%');
                 for (i = 0; i < ids.length; i++) {
-                    controlDelta(ids[i], request.payload.deltaPercentage.value, function (err) {
+                    controlDelta(ids[i], request.payload.deltaPercentage.value, ids.length === 1, function (err) {
                         if (!--count) {
                             request.header.name = 'IncrementPercentageConfirmation';
 
@@ -987,12 +1096,13 @@ function connect() {
                         }
                     });
                 }
+                writeResponse(request.payload.appliance.applianceId, '<>', request.payload.deltaPercentage.value);
                 break;
 
             case 'DecrementPercentageRequest':
                 adapter.log.debug('ALEXA decrement: ' + request.payload.appliance.applianceId + ' ' + request.payload.deltaPercentage.value + '%');
                 for (i = 0; i < ids.length; i++) {
-                    controlDelta(ids[i], request.payload.deltaPercentage.value * (-1), function (err) {
+                    controlDelta(ids[i], request.payload.deltaPercentage.value * (-1), ids.length === 1, function (err) {
                         if (!--count) {
                             request.header.name = 'DecrementPercentageConfirmation';
 
@@ -1004,12 +1114,13 @@ function connect() {
                         }
                     });
                 }
+                writeResponse(request.payload.appliance.applianceId, '<>', (-1) * request.payload.deltaPercentage.value);
                 break;
 
             case 'SetTargetTemperatureRequest':
                 adapter.log.debug('ALEXA temperature Percent: ' + request.payload.appliance.applianceId + ' ' + request.payload.targetTemperature.value + ' grad');
                 for (i = 0; i < ids.length; i++) {
-                    controlTemperature(ids[i], request.payload.targetTemperature.value, function (err, response) {
+                    controlTemperature(ids[i], request.payload.targetTemperature.value, ids.length === 1, function (err, response) {
                         if (!--count) {
                             request.header.name = 'SetTargetTemperatureConfirmation';
                             response.header = request.header;
@@ -1024,7 +1135,7 @@ function connect() {
                 request.payload.deltaTemperature.value = request.payload.deltaTemperature.value || 1;
                 adapter.log.debug('ALEXA temperature Increment: ' + request.payload.appliance.applianceId + ' ' + request.payload.deltaTemperature.value + ' grad');
                 for (i = 0; i < ids.length; i++) {
-                    controlTemperatureDelta(ids[i], request.payload.deltaTemperature.value, function (err, response) {
+                    controlTemperatureDelta(ids[i], request.payload.deltaTemperature.value, ids.length === 1, function (err, response) {
                         if (!--count) {
                             request.header.name = 'IncrementTargetTemperatureConfirmation';
                             response.header = request.header;
@@ -1039,7 +1150,7 @@ function connect() {
                 request.payload.deltaTemperature.value = request.payload.deltaTemperature.value || 1;
                 adapter.log.debug('ALEXA temperature decrement: ' + request.payload.appliance.applianceId + ' ' + request.payload.deltaTemperature.value + ' grad');
                 for (i = 0; i < ids.length; i++) {
-                    controlTemperatureDelta(ids[i], request.payload.deltaTemperature.value * (-1), function (err, response) {
+                    controlTemperatureDelta(ids[i], request.payload.deltaTemperature.value * (-1), ids.length === 1, function (err, response) {
                         if (!--count) {
                             request.header.name = 'DecrementTargetTemperatureConfirmation';
                             response.header = request.header;
