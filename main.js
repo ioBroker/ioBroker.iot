@@ -447,7 +447,7 @@ function controlOnOff(id, value, writeStates, callback) {
                     // remember last state
                     adapter.getForeignState(id, function (err, state) {
                         if (err) adapter.log.error('Cannot get state: ' + err);
-                        valuesON[id] = state.val;
+                        if (state) valuesON[id] = state.val;
 
                         if (typeof obj.common.min !== 'undefined') {
                             value = obj.common.min;
@@ -528,7 +528,7 @@ function controlDelta(id, delta, writeStates, callback) {
             return;
         }
         adapter.getForeignState(id, function (err, state) {
-            var value = state.val || 0;
+            var value = state ? (state.val || 0) : 0;
             var max = 100;
             var min = 0;
             if (typeof obj.common.max !== 'undefined') max = parseFloat(obj.common.max);
@@ -622,7 +622,7 @@ function controlTemperature(id, value, writeStates, callback) {
                         },*/
                         previousState: {
                             targetTemperature: {
-                                value: parseFloat(state.val)
+                                value: state ? parseFloat(state.val) || 0 : 0
                             },
                             mode: {
                                 value: 'AUTO'
@@ -645,7 +645,7 @@ function controlTemperatureDelta(id, delta, writeStates, callback) {
             return;
         }
         adapter.getForeignState(id, function (err, state) {
-            var value = state.val || 0;
+            var value = state ? state.val || 0 : 0;
             var max;
             var min;
             if (typeof obj.common.max !== 'undefined') max = parseFloat(obj.common.max);
@@ -677,7 +677,7 @@ function controlTemperatureDelta(id, delta, writeStates, callback) {
                             },*/
                             previousState: {
                                 targetTemperature: {
-                                    value: parseFloat(state.val)
+                                    value: state ? parseFloat(state.val) || 0 : 0
                                 },
                                 mode: {
                                     value: 'AUTO'
