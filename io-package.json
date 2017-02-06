@@ -5,6 +5,11 @@
         "title":                    "Cloud Adapter",
         "desc":                     "This adapter connect",
 		"news": {
+            "0.6.4": {
+                "en":                   "print warnings for invalid states",
+                "de":                   "Gebe Warnung aus für inkorrekte Zustände",
+                "ru":                   "Выводить предупреждение для неправильных объектов"
+            },
             "0.6.3": {
                 "en":                   "fix enum names\nadd helper states and response text",
                 "de":                   "Korrigiere Aufzählungennamen\nHilfezutände sind eingefügt",

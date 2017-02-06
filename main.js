@@ -104,28 +104,34 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
     var friendlyName = states[id].common.smartName;
     var nameModified = false;
     var byON;
-    if (states[id].native.byON) {
-        byON = states[id].native.byON;
-        delete states[id].native.byON;
-        var smartName = states[id].common.smartName;
+    if (states[id] && states[id].native) {
+        if (states[id].native.byON) {
+            byON = states[id].native.byON;
+            delete states[id].native.byON;
+            var smartName = states[id].common.smartName;
 
-        if (!smartName || typeof smartName !== 'object') {
-            smartName = {
-                byON:   byON,
-                en:     smartName
-            };
-            smartName[lang] = smartName.en;
-        } else {
-            smartName.byON = byON;
+            if (!smartName || typeof smartName !== 'object') {
+                smartName = {
+                    byON:   byON,
+                    en:     smartName
+                };
+                smartName[lang] = smartName.en;
+            } else {
+                smartName.byON = byON;
+            }
+            states[id].common.smartName = smartName || {};
+            friendlyName = states[id].common.smartName;
+        } else if (typeof states[id].common.smartName === 'string') {
+            var nnn = states[id].common.smartName;
+            states[id].common.smartName = {};
+            states[id].common.smartName[lang] = nnn;
+            friendlyName = states[id].common.smartName;
         }
-        states[id].common.smartName = smartName || {};
-        friendlyName = states[id].common.smartName;
-    } else if (typeof states[id].common.smartName === 'string') {
-        var nnn = states[id].common.smartName;
-        states[id].common.smartName = {};
-        states[id].common.smartName[lang] = nnn;
-        friendlyName = states[id].common.smartName;
+    } else {
+        adapter.log.warn('Invalid state "' + id + '". Not exist or no native part.');
+        return null;
     }
+
 
     byON = (states[id].common.smartName && typeof states[id].common.smartName === 'object') ? states[id].common.smartName.byON : '';
 

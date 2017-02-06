@@ -103,9 +103,13 @@ To create own groups the user can install "scenes" adapter or create "script" in
 - **smart.lastResponse**: Textual response on command. It can be sent to some text2speech (sayit) engine.
 
 ## Changelog
+### 0.6.4 (2017-02-06)
+* (bluefox) print warnings for invalid states
+
 ### 0.6.3 (2017-01-28)
 * (bluefox) fix enum names
 * (bluefox) add helper states and response text
+
 
 ### 0.6.2 (2017-01-25)
 * (bluefox) add option "Place function in names first"
