@@ -5,6 +5,11 @@
         "title":                    "Cloud Adapter",
         "desc":                     "This adapter connect",
 		"news": {
+            "0.6.6": {
+                "en":                   "allow buttons to be controller with alexa",
+                "de":                   "Erlaube, dass die Buttons auch über Alexa gesteuert erden können",
+                "ru":                   "Разрешить управление кнопками из Алексы"
+            },
             "0.6.5": {
                 "en":                   "print warnings for invalid states",
                 "de":                   "Gebe Warnung aus für inkorrekte Zustände",

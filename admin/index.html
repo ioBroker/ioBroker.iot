@@ -340,7 +340,8 @@
                             obj.common.smartName = obj.common.smartName || {};
 
                             obj.common.smartName[language] = $('#edit_name').val();
-                            if (!obj.common.smartName[language] || obj.common.smartName[language] === $this.data('name')) {
+                            // If no smart name defined or smartname is the same as the name (except buttons)
+                            if (!obj.common.smartName[language] || (obj.common.smartName[language] === $this.data('name') && (!obj.common.role || obj.common.role.indexOf('button') === -1))) {
                                 delete obj.common.smartName[language];
                                 var empty = true;
                                 for (var key in obj.common.smartName) {

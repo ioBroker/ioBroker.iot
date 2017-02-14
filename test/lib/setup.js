@@ -500,13 +500,13 @@ function startController(isStartAdapter, onObjectChange, onStateChange, callback
         var Objects = require(rootDir + 'tmp/node_modules/' + appName + '.js-controller/lib/objects/objectsInMemServer');
         objects = new Objects({
             connection: {
-                "type" : "file",
-                "host" : "127.0.0.1",
-                "port" : 19001,
-                "user" : "",
-                "pass" : "",
-                "noFileCache": false,
-                "connectTimeout": 2000
+                type: 'file',
+                host: '127.0.0.1',
+                port: 19001,
+                user: '',
+                pass: '',
+                noFileCache: false,
+                connectTimeout: 2000
             },
             logger: {
                 debug: function (msg) {
@@ -564,7 +564,11 @@ function startController(isStartAdapter, onObjectChange, onStateChange, callback
                 isStatesConnected = true;
                 if (isObjectConnected) {
                     console.log('startController: started!!');
-                    startAdapter(objects, states, callback);
+                    if (isStartAdapter) {
+                        startAdapter(objects, states, callback);
+                    } else {
+                        if (callback) callback(objects, states);
+                    }
                 }
             },
             change: onStateChange

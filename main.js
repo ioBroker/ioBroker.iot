@@ -201,6 +201,9 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
         } else {
             actions = ['setPercentage', 'incrementPercentage', 'decrementPercentage', 'turnOn', 'turnOff'];
         }
+    } else if (states[id].common.role && states[id].common.role.match(/^button/)){
+        actions = ['turnOn'];
+        type = '';
     } else {
         actions = ['turnOn', 'turnOff'];
         type = '';
@@ -388,7 +391,7 @@ function getDevices(callback) {
                             if (m.exec(ids[ii])) {
                                 if (states[ids[ii]].common.role && (
                                     states[ids[ii]].common.role === 'state'  ||
-                                    states[ids[ii]].common.role === 'switch' ||
+                                    states[ids[ii]].common.role.match(/^switch/) ||
                                     states[ids[ii]].common.role.match(/^level/)
                                 )) {
                                     processState(states, ids[ii], room, func, alexaIds, groups, names, result);
@@ -1232,7 +1235,7 @@ function main() {
         } else {
             lang = obj.common.language;
         }
-        if (lang !== 'en' && lang !== 'de') lang = 'en';
+        if (lang !== 'en' && lang !== 'de' && lang !== 'ru') lang = 'en';
         getDevices(function (err, result) {
             smartDevices = result;
         });
