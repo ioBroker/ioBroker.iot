@@ -1,11 +1,11 @@
 {
     "common": {
         "name":                     "cloud",
-        "version":                  "0.6.5",
+        "version":                  "0.6.7",
         "title":                    "Cloud Adapter",
         "desc":                     "This adapter connect",
 		"news": {
-            "0.6.6": {
+            "0.6.7": {
                 "en":                   "allow buttons to be controller with alexa",
                 "de":                   "Erlaube, dass die Buttons auch über Alexa gesteuert erden können",
                 "ru":                   "Разрешить управление кнопками из Алексы"

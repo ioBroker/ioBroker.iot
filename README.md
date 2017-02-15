@@ -103,7 +103,7 @@ To create own groups the user can install "scenes" adapter or create "script" in
 - **smart.lastResponse**: Textual response on command. It can be sent to some text2speech (sayit) engine.
 
 ## Changelog
-### 0.6.6 (2017-02-14)
+### 0.6.7 (2017-02-14)
 * (bluefox) allow buttons to be controller with alexa
 
 ### 0.6.5 (2017-02-06)
