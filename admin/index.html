@@ -403,7 +403,7 @@
                     var smartName;
 
                     if (rooms[i]) {
-                        smartName = rooms[i].smartName || '';
+                        smartName = rooms[i].smartName;
                         if (smartName && typeof smartName === 'object') {
                             smartName = smartName[language] || smartName.en || '';
                         }
@@ -414,7 +414,7 @@
                         text += '<td></td>';
                     }
                     if (funcs[i]) {
-                        smartName = funcs[i].smartName || '';
+                        smartName = funcs[i].smartName;
                         if (smartName && typeof smartName === 'object') {
                             smartName = smartName[language] || smartName.en || '';
                         }
