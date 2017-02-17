@@ -12,86 +12,10 @@
 <script type="text/javascript" src="../../js/adapter-settings.js"></script>
 <script type="text/javascript" src="../../lib/js/jquery.fancytree-all.min.js"></script>
 <script type="text/javascript" src="../../js/selectID.js"></script>
+<script type="text/javascript" src="words.js"></script>
 
 <script type="text/javascript">
-    systemDictionary = {
-        "Cloud adapter settings": {
-            "de": "Einstellungen für Cloud-Adapter",
-            "ru": "Настройки драйвре Cloud"
-        },
-        "APP-KEY:":     {"en": "APP-KEY:",      "de": "APP-KEY:",       "ru": "APP-KEY:"},
-        "Instance:":    {"en": "Instance:",     "de": "Instanz:",       "ru": "Экземпляр:"},
-        "Cloud URL:":   {"en": "Cloud URL:",    "de": "Cloud URL:",     "ru": "Адрес облака:"},
-        "Allow self-signed certificates": {
-            "en": "Allow self-signed certificates",
-            "de": "Erlaube self-sigend Zertifikate",
-            "ru": "Разрешить самоподписанные сертификаты"
-        },
-        "help_tip": {
-            "en": 'No APP-KEY? Get it on <a href="https://iobroker.net" target="_blank">https://iobroker.net</a>',
-            "de": 'Kein APP-KEY? Bekomme den unter <a href="https://iobroker.net" target="_blank">https://iobroker.net</a>',
-            "ru": 'Нет APP-KEY? Получи его на <a href="https://iobroker.net" target="_blank">https://iobroker.net</a>'
-        },
-        "Language:":    {"en": "Language:",     "de": "Sprache:",       "ru": "Язык:"},
-        "default":      {"en": "default",       "de": "Systemsprache",  "ru": "системный"},
-        "Options":      {"en": "Options",       "de": "Einstellungen",  "ru": "Настройки"},
-        "Smart Devices": {"en": "Smart Devices", "de": "Smart Geräte",  "ru": "Smart устройства"},
-        "Smart Enums":  {"en": "Smart Enums",   "de": "Smart Aufzählungen", "ru": "Smart категории"},
-        "by ON":        {"en": "by ON",         "de": "bei AN",          "ru": "при ВКЛ"},
-        "last value":   {"en": "last value",    "de": "leztes",          "ru": "последн."},
-        "Allow self-signed certificates:": {
-            "en": "Allow self-signed certificates:",
-            "de": "Erlaube selbst-signierte Zertifikate:",
-            "ru": "Разрешить само-подписанные сертификаты:"
-        },
-        "Smart name:":  {"en": "Smart name:",   "de": "Smart name:",        "ru": "Smart имя:"},
-        "Rooms":        {"en": "Rooms",         "de": "Rooms",              "ru": "Комнаты"},
-        "Functions":    {"en": "Functions",     "de": "Functions",          "ru": "Функции"},
-        "Ok":           {"en": "Ok",            "de": "Ok",                 "ru": "Ok"},
-        "Cancel":       {"en": "Cancel",        "de": "Abbrechen",          "ru": "Отмена"},
-        "Smart name":   {"en": "Smart name",    "de": "Smartname",          "ru": "Smart имя"},
-        "Commands":     {"en": "Commands",      "de": "Befehle",            "ru": "Команды"},
-        "Addresses":    {"en": "Addresses",     "de": "Adressen",           "ru": "Адреса"},
-        "Add device":   {"en": "Add device",    "de": "Gerät hinzufügen",   "ru": "Добавить устройство"},
-        "On":           {"en": "on",            "de": "an",                 "ru": "вкл"},
-        "Off":          {"en": "off",           "de": "aus",                "ru": "выкл"},
-        "OFF level for switches:": {"en": "OFF level for switches:", "de": "OFF level for switches:", "ru": "OFF level for switches:"},
-        "Filter: ":     {"en": "Filter: ",      "de": "Filter: ",           "ru": "Фильтр: "},
-        "modified":     {"en": "Name was modified by user", "de": "Der Name war vom Anwender geändert", "ru": "Имя изменено пользователем"},
-        "Edit smart name": {"en": "Edit smart name", "de": "Smartname editieren", "ru": "Редактировать имя"},
-        "Write response to:": {"en": "Write response to:", "de": "Schreibe Antwort ins:", "ru": "Писать ответ в:"},
-        "Instance must run to deliver the data": {
-            "en": "The instance must run to deliver the data",
-            "de": "Die Instanz muss laufen um die Daten zu liefern",
-            "ru": "Драйвер должен быть запущен, что бы отобразить данные"
-        },
-        "Place function in names first:": {
-            "en": "Place function in names first:",
-            "de": "Platziere Funktionsnamen vorne:",
-            "ru": "Имена функций в начале:"
-        },
-        "Save settings and the names will be changed": {
-            "en": "Save settings and the names will be changed",
-            "de": "Speichere Einstellungen um neuen Namen zu sehen",
-            "ru": "Сохраните настройки, что бы увидеть изменения"
-        },
-        "Concatenate words with:": {
-            "en": "Concatenate words with:",
-            "de": "Verbinde Raum und Funktion mit:",
-            "ru": "Связывать комнаты и функции словом:"
-        },
-        "Device will be disabled.": {
-            "en": "Device will be disabled.",
-            "de": "Gerät wird aus der Liste verschwinden.",
-            "ru": "Устройство исчезнет из списка."
-        },
-        "(Set to 0 if behavior not desired)": {
-            "en": "(Set to 0 if behavior not desired)",
-            "de": "(Auf 0 setzten, falls das Verhalten nicht erwünscht)",
-            "ru": "(для деактивации установить на 0)"
-        },
-        "Are you sure?": {"en": "Are you sure?", "de": "Sind Sie sicher?",  "ru": "Уверены?"}
-    };
+
     var supportedInstances = ['web'];
     var actionsMapping = {
         turnOn: 'On',
@@ -259,7 +183,7 @@
                         text +=  name;
                         text += '</td>';
                         text += '<td style="width: 95px">' + getSelect(list[j].additionalApplianceDetails.id, list[j].additionalApplianceDetails.byON) + '</td>';
-                        text += '<td style="width: 95px"><button data-id="' + list[j].additionalApplianceDetails.id + '" class="button-delete"></button><button data-value="' + list[j].friendlyName + '" data-id="' + list[j].additionalApplianceDetails.id + '" class="button-edit"></button></td>';
+                        text += '<td style="width: 95px"><button data-id="' + list[j].additionalApplianceDetails.id + '" class="button-delete"></button><button data-value="' + (list[j].additionalApplianceDetails.friendlyNames ? list[j].additionalApplianceDetails.friendlyNames : list[j].friendlyName) + '" data-id="' + list[j].additionalApplianceDetails.id + '" class="button-edit"></button></td>';
                         text += '</td></tr>';
                     }
                     text += '</table>';
@@ -327,8 +251,26 @@
 
                     $editDialog.data('callback', function () {
                         var id = $('#edit_dialog').data('id');
+
+                        var $devices = $('#smart_table').find('.button-edit');
+
+                        var val   = $('#edit_name').val();
+                        var found = false;
+                        $devices.each(function () {
+                            if ($(this).data('value') === val && $(this).data('id') !== id) {
+                                found = true;
+                                return false;
+                            }
+                        });
+
+                        if (found) {
+                            showMessage(_('Duplicate name'), _('Error'), 'alert');
+                            return;
+                        }
+
                         //noinspection JSJQueryEfficiency
-                        $('#smart_table').find('.button-edit[data-id="' + id + '"]').parent().addClass('smart-changed');
+                        $devices.find('[data-id="' + id + '"]').parent().addClass('smart-changed');
+
                         idToNavigate = id;
                         socket.emit('getObject', id, function (err, obj) {
                             if (typeof obj.common.smartName === 'string') {
@@ -468,7 +410,24 @@
 
                     $editDialog.data('callback', function () {
                         var id = $('#edit_dialog').data('id');
-                        $('#smart_enums').find('.smart-edit[data-id="' + id + '"]').parent().addClass('smart-changed');
+                        // check if this name used or not
+                        var found  = false;
+                        var $enums = $('#smart_enums').find('.smart-edit');
+                        var val    = $('#edit_name').val();
+                        $enums.each(function () {
+                            if ($(this).data('value') === val && $(this).data('id') !== id) {
+                                found = true;
+                                return false;
+                            }
+                        });
+
+                        if (found) {
+                            showMessage(_('Duplicate name'), _('Error'), 'alert');
+                            return;
+                        }
+
+                        $enums.find('[data-id="' + id + '"]').parent().addClass('smart-changed');
+
                         socket.emit('getObject', id, function (err, obj) {
                             if (typeof obj.common.smartName === 'string') {
                                 var nnn = obj.common.smartName;

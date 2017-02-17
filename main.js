@@ -143,6 +143,7 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
 
     if (!friendlyName && !room && !func) return null;
 
+    var friendlyNames = [];
     if (!friendlyName) {
         if (room) {
             // translate room
@@ -169,20 +170,31 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
         } else {
             friendlyName = states[id].common.name;
         }
+        friendlyNames[0] = friendlyName;
         nameModified = false;
     } else if (translate) {
         translateDevices = translateDevices || require(__dirname + '/lib/devices.js');
         friendlyName = translateDevices(lang, friendlyName);
         nameModified = true;
+        friendlyNames = friendlyName.split(',');
     } else {
+        friendlyNames = friendlyName.split(',');
         nameModified = true;
     }
-    if (!friendlyName) {
+    for (var i = friendlyNames.length - 1; i >= 0; i--) {
+        friendlyNames[i] = friendlyNames[i].trim();
+        if (!friendlyNames[i]) {
+            friendlyNames.splice(i, 1);
+        } else {
+            // friendlyName may not be longer than 128
+            friendlyNames[i] = friendlyNames[i].substring(0, 128).replace(/[^a-zA-Z0-9äÄüÜöÖß]+/g, ' ');
+        }
+    }
+
+    if (!friendlyNames[0]) {
         adapter.log.warn('State ' + id + ' is invalid.');
         return
     }
-    // friendlyName may not be longer than 128
-    friendlyName = friendlyName.substring(0, 128).replace(/[^a-zA-Z0-9äÄüÜöÖß]+/g, ' ');
 
     var friendlyDescription = (states[id].common.name || id);
 
@@ -220,75 +232,79 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
 
     type = type ? (byON || '100') : false;
     var name = states[id].common.name ? states[id].common.name.substring(0, 128) : '';
-    var obj = {
-        applianceId:		 applianceId,
-        manufacturerName:	 'ioBroker',
-        modelName:		     (states[id].common.name || words['No name'][lang]).substring(0, 128),
-        version:			 '1',
-        friendlyName:		 friendlyName,
-        friendlyDescription: friendlyDescription,
-        isReachable:         true,
-        actions:             actions,
-        additionalApplianceDetails: {
-            id:           id.substring(0, 1024),
-            name:         name,
-            byON:         type,
-            nameModified: nameModified,
-            room:         room,
-            func:         func
-        }
-    };
 
-    if (names[friendlyName]) {
-        // Ignore it, because yet in the list
-        if (names[friendlyName].additionalApplianceDetails.id === id) return;
-
-        // create virtual group
-        if (groups[friendlyName]) {
-            var ids    = JSON.parse(groups[friendlyName].additionalApplianceDetails.ids);
-            var _names = JSON.parse(groups[friendlyName].additionalApplianceDetails.names || '[]');
-            var types  = JSON.parse(groups[friendlyName].additionalApplianceDetails.byONs || '[]');
-            ids.push(id);
-            _names.push(name);
-            types.push(type);
-
-            // merge actions
-            for (var a = 0; a < actions.length; a++) {
-                if (groups[friendlyName].actions.indexOf(actions[a]) === -1) {
-                    groups[friendlyName].actions.push(actions[a]);
-                }
+    for (var n = 0; n < friendlyNames.length; n++) {
+        var obj = {
+            applianceId:		 applianceId,
+            manufacturerName:	 'ioBroker',
+            modelName:		     (states[id].common.name || words['No name'][lang]).substring(0, 128),
+            version:			 '1',
+            friendlyName:		 friendlyNames[n],
+            friendlyDescription: friendlyDescription,
+            isReachable:         true,
+            actions:             actions,
+            additionalApplianceDetails: {
+                id:            id.substring(0, 1024),
+                name:          name,
+                friendlyNames: friendlyNames.join(', '),
+                byON:          type,
+                nameModified:  nameModified,
+                room:          room,
+                func:          func
             }
+        };
 
-            groups[friendlyName].additionalApplianceDetails.ids   = JSON.stringify(ids);
-            groups[friendlyName].additionalApplianceDetails.names = JSON.stringify(_names);
-            groups[friendlyName].additionalApplianceDetails.byONs = JSON.stringify(types);
-        } else {
-            groups[friendlyName] = {
-                applianceId:		 friendlyName.replace(/[^a-zA-Z0-9_=#;:?@&-]+/g, '_'),
-                manufacturerName:	 'ioBroker group',
-                modelName:		     (states[id].common.name || words['No name'][lang]).substring(0, 128),
-                version:			 '1',
-                friendlyName:		 friendlyName,
-                friendlyDescription: words['Group'][lang] + ' ' + friendlyName,
-                isReachable:         true,
-                actions:             actions,
-                additionalApplianceDetails: {
-                    ids:   JSON.stringify([names[friendlyName].additionalApplianceDetails.id,   id]),
-                    names: JSON.stringify([names[friendlyName].additionalApplianceDetails.name, name]),
-                    byONs: JSON.stringify([names[friendlyName].additionalApplianceDetails.byON, type]),
-                    room:  room,
-                    func:  func
+        if (names[friendlyNames[n]]) {
+            // Ignore it, because yet in the list
+            if (names[friendlyNames[n]].additionalApplianceDetails.id === id) return;
+
+            // create virtual group
+            if (groups[friendlyNames[n]]) {
+                var ids    = JSON.parse(groups[friendlyNames[n]].additionalApplianceDetails.ids);
+                var _names = JSON.parse(groups[friendlyNames[n]].additionalApplianceDetails.names || '[]');
+                var types  = JSON.parse(groups[friendlyNames[n]].additionalApplianceDetails.byONs || '[]');
+                ids.push(id);
+                _names.push(name);
+                types.push(type);
+
+                // merge actions
+                for (var a = 0; a < actions.length; a++) {
+                    if (groups[friendlyNames[n]].actions.indexOf(actions[a]) === -1) {
+                        groups[friendlyNames[n]].actions.push(actions[a]);
+                    }
                 }
-            };
-            result.push(groups[friendlyName]);
-            names[friendlyName].disabled = true;
-        }
-        obj = null;
-    } else {
-        names[friendlyName] = obj;
-    }
 
-    if (obj) result.push(obj);
+                groups[friendlyNames[n]].additionalApplianceDetails.ids   = JSON.stringify(ids);
+                groups[friendlyNames[n]].additionalApplianceDetails.names = JSON.stringify(_names);
+                groups[friendlyNames[n]].additionalApplianceDetails.byONs = JSON.stringify(types);
+            } else {
+                groups[friendlyNames[n]] = {
+                    applianceId:		 friendlyNames[n].replace(/[^a-zA-Z0-9_=#;:?@&-]+/g, '_'),
+                    manufacturerName:	 'ioBroker group',
+                    modelName:		     (states[id].common.name || words['No name'][lang]).substring(0, 128),
+                    version:			 '1',
+                    friendlyName:		 friendlyNames[n],
+                    friendlyDescription: words['Group'][lang] + ' ' + friendlyNames[n],
+                    isReachable:         true,
+                    actions:             actions,
+                    additionalApplianceDetails: {
+                        ids:   JSON.stringify([names[friendlyNames[n]].additionalApplianceDetails.id,   id]),
+                        names: JSON.stringify([names[friendlyNames[n]].additionalApplianceDetails.name, name]),
+                        byONs: JSON.stringify([names[friendlyNames[n]].additionalApplianceDetails.byON, type]),
+                        room:  room,
+                        func:  func
+                    }
+                };
+                result.push(groups[friendlyNames[n]]);
+                names[friendlyNames[n]].disabled = true;
+            }
+            obj = null;
+        } else {
+            names[friendlyNames[n]] = obj;
+        }
+
+        if (obj) result.push(obj);
+    }
 }
 
 function getDevices(callback) {
