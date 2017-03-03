@@ -732,8 +732,14 @@ function pingConnection() {
                     connected = false;
                     adapter.log.info('Connection changed: DISCONNECTED');
                     adapter.setState('info.connection', false, true);
-                    setTimeout(connect, 10000);
-                    checkPing();
+                    if (adapter.config.restartOnDisconnect) {
+                        setTimeout(function () {
+                            process.exit(-100); // simulate scheduled restart
+                        }, 10000);
+                    } else {
+                        setTimeout(connect, 10000);
+                        checkPing();
+                    }
                 }
             }, 5000);
         }
@@ -865,7 +871,13 @@ function connect() {
             connected = false;
             adapter.log.info('Connection changed: DISCONNECTED');
             adapter.setState('info.connection', false, true);
-            checkPing();
+            if (adapter.config.restartOnDisconnect) {
+                setTimeout(function () {
+                    process.exit(-100); // simulate scheduled restart
+                }, 10000);
+            } else {
+                checkPing();
+            }
         }
     });
     socket.on('disconnect', function () {
@@ -873,7 +885,13 @@ function connect() {
             connected = false;
             adapter.log.info('Connection changed: DISCONNECTED');
             adapter.setState('info.connection', false, true);
-            checkPing();
+            if (adapter.config.restartOnDisconnect) {
+                setTimeout(function () {
+                    process.exit(-100); // simulate scheduled restart
+                }, 10000);
+            } else {
+                checkPing();
+            }
         }
     });
 
@@ -884,8 +902,14 @@ function connect() {
             connected = false;
             adapter.log.info('Connection changed: DISCONNECTED');
             adapter.setState('info.connection', false, true);
-            setTimeout(connect, 10000);
-            checkPing();
+            if (adapter.config.restartOnDisconnect) {
+                setTimeout(function () {
+                    process.exit(-100); // simulate scheduled restart
+                }, 10000);
+            } else {
+                setTimeout(connect, 10000);
+                checkPing();
+            }
         }
     });
 

@@ -1,10 +1,15 @@
 {
     "common": {
         "name":                     "cloud",
-        "version":                  "0.6.9",
+        "version":                  "0.6.10",
         "title":                    "Cloud Adapter",
         "desc":                     "This adapter connect",
 		"news": {
+            "0.6.10": {
+                "en":                   "Add tooltips in config\nAdd workaround for alexa reconnection",
+                "de":                   "Füge die Hinweise für die Konfiguratioins-Dialog\nWorkaround für Alexa Wiederverbindung",
+                "ru":                   "Добавлены подсказки в диалоге настроек\nВременное решение для соединения с Alexa"
+            },
             "0.6.9": {
                 "en":                   "Allow to use more than one smart name",
                 "de":                   "Erlaube mehr als ein SmartName",
@@ -39,26 +44,6 @@
                 "en":                   "fix reconnect",
                 "de":                   "Korrigiere Wiederverbindung",
                 "ru":                   "Исправлено распознавание дисконнекта"
-            },
-            "0.5.0": {
-                "en":                   "add value by ON",
-                "de":                   "Wert bei AN hinzugefügt",
-                "ru":                   "Добавлено значение для ВКЛ"
-            },
-            "0.4.2": {
-                "en":                   "add daily restart",
-                "de":                   "Starte automatisch taglich neu",
-                "ru":                   "Автоматический рестарт каждый день"
-            },
-            "0.4.1": {
-                "en":                   "use devices with : symbols in the names\nadd debug outputs",
-                "de":                   "Unterstützung Gerätenamen mit :\nDebugausgaben hinzugefügt",
-                "ru":                   "разрешить устройства с : в имени\nВстроена дебаг информация"
-            },
-            "0.4.0": {
-                "en":                   "Support of english language",
-                "de":                   "Unterstützung von englischer Sprache",
-                "ru":                   "Поддержка английского языка"
             }
         },
         "authors": [
@@ -92,7 +77,8 @@
         "allowSelfSignedCertificate": true,
         "functionFirst":            false,
         "concatWord":               "",
-        "responseOID":              ""
+        "responseOID":              "",
+        "restartOnDisconnect":      false
     },
     "objects": [
     ],

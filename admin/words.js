@@ -76,5 +76,55 @@ systemDictionary = {
         "en": "(Set to 0 if behavior not desired)",
         "de": "(Auf 0 setzten, falls das Verhalten nicht erwünscht)",
         "ru": "(для деактивации установить на 0)"
+    },
+    "tooltip_apikey": {
+        "en": "This key is required to communicate with a cloud. You can get the API-KEY on https://iobroker.net фтв it looks like nickname_f1f439a0-001a-11e7-bc64-92361f002671",
+        "de": "Dieser Schlüssel ist nötig um mit dem Cloud zu kommunizieren. Man kann den Schlüßel unter https://iobroker.net bekommen. Es sieht so aus nickname_f1f439a0-001a-11e7-bc64-92361f002671",
+        "ru": "Ключ необходимый для коммуникации с облаком. Его можно получить на https://iobroker.net и он похож на nickname_f1f439a0-001a-11e7-bc64-92361f002671"
+    },
+    "tooltip_instance": {
+        "en": "Web instance, which will be shown for your connections from cloud.",
+        "de": "Web Instanz, die für ihre Anfrgaen aus dem Cloud angezeigt wird.",
+        "ru": "Экземпляр WEB, который будет показываться при доступе из облака"
+    },
+    "tooltip_cloudUrl": {
+        "en": "Normally you do not need to change it. Only if you use your own cloud.",
+        "de": "Normallerweise muss man diese Option nicht ändern. Nur wenn man eigenen Cloud verwendet.",
+        "ru": "Обычно не нужно менять этот параметр. Только если используется собственное облако."
+    },
+    "tooltip_allowSelfSignedCertificate": {
+        "en": "If you use your own cloud, you can allow to use self-signed certificates for the cloud.",
+        "de": "Wenn man eigenen Cloud verwendet, man kann die Benutzen von self-sigend Zertifikaten erlauben.",
+        "ru": "Если используется собственное облако, то можно разрешить использование самоподписанных сертификатов"
+    },
+    "tooltip_language": {
+        "en": "You can define specific language to switch fast between US Alexa Skill and DE Alexa Skill.",
+        "de": "Man kann hier die Sprache definieren um zwischen US Alexa Skill und DE Alexa Skill umschalten zu können",
+        "ru": "Можно выбрать язык, что бы быстро переключаться между US Alexa Skill и DE Alexa Skill"
+    },
+    "tooltip_functionFirst": {
+        "en": "Normally the names looks like room_function. You can switch it to function_room.",
+        "de": "Normallerweise die Auto-Namen sehen wie Raum-Funktion aus. Damit kann man den auf Funktion-Raum ändern.",
+        "ru": "Обычно имена выглядят как Комната-Функция. Этой настройкой можно переключить на Функция-Комната."
+    },
+    "tooltip_concatWord": {
+        "en": "Define how to concatenate Room and Function. E.g. with 'in': Light in living room.",
+        "de": "Damit wird definiert wie man Funktion und Raum miteinander verbindet. Z.B. mit 'im': Licht im Schlafzimmer",
+        "ru": "Можно указать каким словом соединять Функцию и Комнату. Например с 'в': Свет в зале."
+    },
+    "tooltip_deviceOffLevel": {
+        "en": "Some groups consist of mixed devices: dimmers and switches. It is allowed to control them with ON and OFF commands and with percents",
+        "de": "Some groups consist of mixed devices: dimmers and switches. It is allowed to control them with ON and OFF commands and with percents",
+        "ru": "Some groups consist of mixed devices: dimmers and switches. It is allowed to control them with ON and OFF commands and with percents"
+    },
+    "tooltip_responseOID": {
+        "en": "For every command the text response will be generated. You can define here the Object ID , where this text must be written to. E.g. sayit.0.tts.text.",
+        "de": "For every command the text response will be generated. You can define here the Object ID , where this text must be written to. E.g. sayit.0.tts.text.",
+        "ru": "For every command the text response will be generated. You can define here the Object ID , where this text must be written to. E.g. sayit.0.tts.text."
+    },
+    "tooltip_restartOnDisconnect": {
+        "en": "Workaround for missing connection to Alexa after the connection to cloud was lost. With this option you can restart adapter after each disconnection and it will work.",
+        "de": "Workaround für fehlende Kommunikation mit Alexa nach Verbindungsabbruch. Damit kann man zwingen den Adapter neu zu starten und das Problem umzugehen.",
+        "ru": "Временное решение для проблемы с пропажей соединения с Alexa, после воссоединения с облаком. Этим можно перестартовать драйвер после потери соединения."
     }
 };
