@@ -1,10 +1,15 @@
 {
     "common": {
         "name":                     "cloud",
-        "version":                  "0.6.10",
+        "version":                  "0.6.11",
         "title":                    "Cloud Adapter",
         "desc":                     "This adapter connect",
 		"news": {
+		    "0.6.11": {
+                "en":                   "Fixed scrollbar in configuration",
+                "de":                   "Korrigiere Scrollbar im Konfigurationsdialog",
+                "ru":                   "Поправлен Scrollbar в диалоге настроек"
+            },
             "0.6.10": {
                 "en":                   "Add tooltips in config\nAdd workaround for alexa reconnection",
                 "de":                   "Füge die Hinweise für die Konfiguratioins-Dialog\nWorkaround für Alexa Wiederverbindung",
