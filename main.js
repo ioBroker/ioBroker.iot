@@ -807,7 +807,16 @@ function writeResponse(applianceId, operation, value) {
             if (text) {
                 adapter.setState('smart.lastResponse', text, true);
                 if (adapter.config.responseOID) {
-                    adapter.setForeignState(adapter.config.responseOID, text, false);
+                    var addText = '';
+                    var delay = 0;
+                    if (adapter.config.responseOID.indexOf('sayit.') !== -1) {
+                        addText = adapter.config.language?adapter.config.language:'en';
+                        addText += ';100;';
+                        delay = 1000;
+                    }
+                    setTimeout(function() {
+                        adapter.setForeignState(adapter.config.responseOID, addText + text, false);
+                    }, delay);
                 }
 
                 adapter.setState('smart.lastFunction', obj.additionalApplianceDetails.func, true);
