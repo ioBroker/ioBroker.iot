@@ -1,10 +1,15 @@
 {
     "common": {
         "name":                     "cloud",
-        "version":                  "0.6.11",
+        "version":                  "0.6.12",
         "title":                    "Cloud Adapter",
         "desc":                     "This adapter connect",
 		"news": {
+            "0.6.12": {
+                "en":                   "Try to fix error with names",
+                "de":                   "Versuche zu fixen ein Fehler mit Namen",
+                "ru":                   "Попытка отловить ошибку с именами"
+            },
 		    "0.6.11": {
                 "en":                   "Fixed scrollbar in configuration",
                 "de":                   "Korrigiere Scrollbar im Konfigurationsdialog",

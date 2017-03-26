@@ -100,210 +100,214 @@ function validateName(name) {
 }
 
 function processState(states, id, room, func, alexaIds, groups, names, result) {
-    var actions;
-    var friendlyName = states[id].common.smartName;
-    var nameModified = false;
-    var byON;
-    if (states[id] && states[id].native) {
-        if (states[id].native.byON) {
-            byON = states[id].native.byON;
-            delete states[id].native.byON;
-            var smartName = states[id].common.smartName;
+    try {
+        var actions;
+        var friendlyName = states[id].common.smartName;
+        var nameModified = false;
+        var byON;
+        if (states[id] && states[id].native) {
+            if (states[id].native.byON) {
+                byON = states[id].native.byON;
+                delete states[id].native.byON;
+                var smartName = states[id].common.smartName;
 
-            if (!smartName || typeof smartName !== 'object') {
-                smartName = {
-                    byON:   byON,
-                    en:     smartName
-                };
-                smartName[lang] = smartName.en;
-            } else {
-                smartName.byON = byON;
-            }
-            states[id].common.smartName = smartName || {};
-            friendlyName = states[id].common.smartName;
-        } else if (typeof states[id].common.smartName === 'string') {
-            var nnn = states[id].common.smartName;
-            states[id].common.smartName = {};
-            states[id].common.smartName[lang] = nnn;
-            friendlyName = states[id].common.smartName;
-        }
-    } else {
-        adapter.log.warn('Invalid state "' + id + '". Not exist or no native part.');
-        return null;
-    }
-
-
-    byON = (states[id].common.smartName && typeof states[id].common.smartName === 'object') ? states[id].common.smartName.byON : '';
-
-    if (typeof friendlyName === 'object' && states[id].common.smartName) {
-        friendlyName = states[id].common.smartName[lang] || states[id].common.smartName.en;
-    }
-
-    if (friendlyName === 'ignore' || friendlyName === false) return null;
-
-    if (!friendlyName && !room && !func) return null;
-
-    var friendlyNames = [];
-    if (!friendlyName) {
-        if (room) {
-            // translate room
-            if (translate) {
-                translateRooms     = translateRooms     || require(__dirname + '/lib/rooms.js');
-                translateFunctions = translateFunctions || require(__dirname + '/lib/functions.js');
-                room = translateRooms(lang, room);
-                func = translateFunctions(lang, func);
-            }
-
-            if (adapter.config.functionFirst) {
-                if (lang === 'en') {
-                    friendlyName = func + (adapter.config.concatWord ? ' ' + adapter.config.concatWord : '') + ' ' + room;
+                if (!smartName || typeof smartName !== 'object') {
+                    smartName = {
+                        byON:   byON,
+                        en:     smartName
+                    };
+                    smartName[lang] = smartName.en;
                 } else {
-                    friendlyName = func + (adapter.config.concatWord ? ' ' + adapter.config.concatWord : '') + ' ' + room;
+                    smartName.byON = byON;
                 }
-            } else {
-                if (lang === 'en') {
-                    friendlyName = room + (adapter.config.concatWord ? ' ' + adapter.config.concatWord : '') + ' ' + func;
-                } else {
-                    friendlyName = room + (adapter.config.concatWord ? ' ' + adapter.config.concatWord : '') + ' ' + func;
-                }
+                states[id].common.smartName = smartName || {};
+                friendlyName = states[id].common.smartName;
+            } else if (typeof states[id].common.smartName === 'string') {
+                var nnn = states[id].common.smartName;
+                states[id].common.smartName = {};
+                states[id].common.smartName[lang] = nnn;
+                friendlyName = states[id].common.smartName;
             }
         } else {
-            friendlyName = states[id].common.name;
+            adapter.log.warn('Invalid state "' + id + '". Not exist or no native part.');
+            return null;
         }
-        friendlyNames[0] = friendlyName;
-        nameModified = false;
-    } else if (translate) {
-        translateDevices = translateDevices || require(__dirname + '/lib/devices.js');
-        friendlyName = translateDevices(lang, friendlyName);
-        nameModified = true;
-        friendlyNames = friendlyName.split(',');
-    } else {
-        friendlyNames = friendlyName.split(',');
-        nameModified = true;
-    }
-    for (var i = friendlyNames.length - 1; i >= 0; i--) {
-        friendlyNames[i] = friendlyNames[i].trim();
-        if (!friendlyNames[i]) {
-            friendlyNames.splice(i, 1);
+
+
+        byON = (states[id].common.smartName && typeof states[id].common.smartName === 'object') ? states[id].common.smartName.byON : '';
+
+        if (typeof friendlyName === 'object' && states[id].common.smartName) {
+            friendlyName = states[id].common.smartName[lang] || states[id].common.smartName.en;
+        }
+
+        if (friendlyName === 'ignore' || friendlyName === false) return null;
+
+        if (!friendlyName && !room && !func) return null;
+
+        var friendlyNames = [];
+        if (!friendlyName) {
+            if (room) {
+                // translate room
+                if (translate) {
+                    translateRooms     = translateRooms     || require(__dirname + '/lib/rooms.js');
+                    translateFunctions = translateFunctions || require(__dirname + '/lib/functions.js');
+                    room = translateRooms(lang, room);
+                    func = translateFunctions(lang, func);
+                }
+
+                if (adapter.config.functionFirst) {
+                    if (lang === 'en') {
+                        friendlyName = func + (adapter.config.concatWord ? ' ' + adapter.config.concatWord : '') + ' ' + room;
+                    } else {
+                        friendlyName = func + (adapter.config.concatWord ? ' ' + adapter.config.concatWord : '') + ' ' + room;
+                    }
+                } else {
+                    if (lang === 'en') {
+                        friendlyName = room + (adapter.config.concatWord ? ' ' + adapter.config.concatWord : '') + ' ' + func;
+                    } else {
+                        friendlyName = room + (adapter.config.concatWord ? ' ' + adapter.config.concatWord : '') + ' ' + func;
+                    }
+                }
+            } else {
+                friendlyName = states[id].common.name;
+            }
+            friendlyNames[0] = friendlyName;
+            nameModified = false;
+        } else if (translate) {
+            translateDevices = translateDevices || require(__dirname + '/lib/devices.js');
+            friendlyName = translateDevices(lang, friendlyName);
+            nameModified = true;
+            friendlyNames = friendlyName.split(',');
         } else {
-            // friendlyName may not be longer than 128
-            friendlyNames[i] = friendlyNames[i].substring(0, 128).replace(/[^a-zA-Z0-9äÄüÜöÖß]+/g, ' ');
+            friendlyNames = friendlyName.split(',');
+            nameModified = true;
         }
-    }
+        for (var i = friendlyNames.length - 1; i >= 0; i--) {
+            friendlyNames[i] = friendlyNames[i].trim();
+            if (!friendlyNames[i]) {
+                friendlyNames.splice(i, 1);
+            } else {
+                // friendlyName may not be longer than 128
+                friendlyNames[i] = friendlyNames[i].substring(0, 128).replace(/[^a-zA-Z0-9äÄüÜöÖß]+/g, ' ');
+            }
+        }
 
-    if (!friendlyNames[0]) {
-        adapter.log.warn('State ' + id + ' is invalid.');
-        return
-    }
+        if (!friendlyNames[0]) {
+            adapter.log.warn('State ' + id + ' is invalid.');
+            return
+        }
 
-    var friendlyDescription = (states[id].common.name || id);
+        var friendlyDescription = (states[id].common.name || id);
 
-    if (states[id].common.write === false) {
-        adapter.log.debug('Name "' + (states[id].common.name || id) + '" cannot be written and will be ignored');
-        return;
-    }
-    var type = states[id].common.type;
+        if (states[id].common.write === false) {
+            adapter.log.debug('Name "' + (states[id].common.name || id) + '" cannot be written and will be ignored');
+            return;
+        }
+        var type = states[id].common.type;
 
-    if (type === 'number') {
-        if (states[id].common.unit === 'C' || states[id].common.unit === 'C°' || states[id].common.unit === '°C' ||
-            states[id].common.unit === 'F' || states[id].common.unit === 'F°' || states[id].common.unit === '°F' ||
-            states[id].common.unit === 'K' || states[id].common.unit === 'K°' || states[id].common.unit === '°K') {
-            actions = ['setTargetTemperature', 'incrementTargetTemperature', 'decrementTargetTemperature'];
+        if (type === 'number') {
+            if (states[id].common.unit === 'C' || states[id].common.unit === 'C°' || states[id].common.unit === '°C' ||
+                states[id].common.unit === 'F' || states[id].common.unit === 'F°' || states[id].common.unit === '°F' ||
+                states[id].common.unit === 'K' || states[id].common.unit === 'K°' || states[id].common.unit === '°K') {
+                actions = ['setTargetTemperature', 'incrementTargetTemperature', 'decrementTargetTemperature'];
+                type = '';
+            } else {
+                actions = ['setPercentage', 'incrementPercentage', 'decrementPercentage', 'turnOn', 'turnOff'];
+            }
+        } else if (states[id].common.role && states[id].common.role.match(/^button/)){
+            actions = ['turnOn'];
             type = '';
         } else {
-            actions = ['setPercentage', 'incrementPercentage', 'decrementPercentage', 'turnOn', 'turnOff'];
+            actions = ['turnOn', 'turnOff'];
+            type = '';
         }
-    } else if (states[id].common.role && states[id].common.role.match(/^button/)){
-        actions = ['turnOn'];
-        type = '';
-    } else {
-        actions = ['turnOn', 'turnOff'];
-        type = '';
-    }
 
-    friendlyDescription = friendlyDescription.substring(0, 128).replace(/[^a-zA-Z0-9äÄüÜöÖß]+/g, ' ');
-    // any letter or number and _ - = # ; : ? @ &
-    var applianceId = id.substring(0, 256).replace(/[^a-zA-Z0-9_=#;:?@&-]+/g, '_');
+        friendlyDescription = friendlyDescription.substring(0, 128).replace(/[^a-zA-Z0-9äÄüÜöÖß]+/g, ' ');
+        // any letter or number and _ - = # ; : ? @ &
+        var applianceId = id.substring(0, 256).replace(/[^a-zA-Z0-9_=#;:?@&-]+/g, '_');
 
-    var pos;
-    if (alexaIds && (pos = alexaIds.indexOf(id)) !== -1) {
-        alexaIds.splice(pos, 1);
-    }
+        var pos;
+        if (alexaIds && (pos = alexaIds.indexOf(id)) !== -1) {
+            alexaIds.splice(pos, 1);
+        }
 
-    type = type ? (byON || '100') : false;
-    var name = states[id].common.name ? states[id].common.name.substring(0, 128) : '';
+        type = type ? (byON || '100') : false;
+        var name = states[id].common.name ? states[id].common.name.substring(0, 128) : '';
 
-    for (var n = 0; n < friendlyNames.length; n++) {
-        var obj = {
-            applianceId:		 applianceId,
-            manufacturerName:	 'ioBroker',
-            modelName:		     (states[id].common.name || words['No name'][lang]).substring(0, 128),
-            version:			 '1',
-            friendlyName:		 friendlyNames[n],
-            friendlyDescription: friendlyDescription,
-            isReachable:         true,
-            actions:             actions,
-            additionalApplianceDetails: {
-                id:            id.substring(0, 1024),
-                name:          name,
-                friendlyNames: friendlyNames.join(', '),
-                byON:          type,
-                nameModified:  nameModified,
-                room:          room,
-                func:          func
-            }
-        };
-
-        if (names[friendlyNames[n]]) {
-            // Ignore it, because yet in the list
-            if (names[friendlyNames[n]].additionalApplianceDetails.id === id) return;
-
-            // create virtual group
-            if (groups[friendlyNames[n]]) {
-                var ids    = JSON.parse(groups[friendlyNames[n]].additionalApplianceDetails.ids);
-                var _names = JSON.parse(groups[friendlyNames[n]].additionalApplianceDetails.names || '[]');
-                var types  = JSON.parse(groups[friendlyNames[n]].additionalApplianceDetails.byONs || '[]');
-                ids.push(id);
-                _names.push(name);
-                types.push(type);
-
-                // merge actions
-                for (var a = 0; a < actions.length; a++) {
-                    if (groups[friendlyNames[n]].actions.indexOf(actions[a]) === -1) {
-                        groups[friendlyNames[n]].actions.push(actions[a]);
-                    }
+        for (var n = 0; n < friendlyNames.length; n++) {
+            var obj = {
+                applianceId:		 applianceId,
+                manufacturerName:	 'ioBroker',
+                modelName:		     (states[id].common.name || words['No name'][lang]).substring(0, 128),
+                version:			 '1',
+                friendlyName:		 friendlyNames[n],
+                friendlyDescription: friendlyDescription,
+                isReachable:         true,
+                actions:             actions,
+                additionalApplianceDetails: {
+                    id:            id.substring(0, 1024),
+                    name:          name,
+                    friendlyNames: friendlyNames.join(', '),
+                    byON:          type,
+                    nameModified:  nameModified,
+                    room:          room,
+                    func:          func
                 }
+            };
 
-                groups[friendlyNames[n]].additionalApplianceDetails.ids   = JSON.stringify(ids);
-                groups[friendlyNames[n]].additionalApplianceDetails.names = JSON.stringify(_names);
-                groups[friendlyNames[n]].additionalApplianceDetails.byONs = JSON.stringify(types);
-            } else {
-                groups[friendlyNames[n]] = {
-                    applianceId:		 friendlyNames[n].replace(/[^a-zA-Z0-9_=#;:?@&-]+/g, '_'),
-                    manufacturerName:	 'ioBroker group',
-                    modelName:		     (states[id].common.name || words['No name'][lang]).substring(0, 128),
-                    version:			 '1',
-                    friendlyName:		 friendlyNames[n],
-                    friendlyDescription: words['Group'][lang] + ' ' + friendlyNames[n],
-                    isReachable:         true,
-                    actions:             actions,
-                    additionalApplianceDetails: {
-                        ids:   JSON.stringify([names[friendlyNames[n]].additionalApplianceDetails.id,   id]),
-                        names: JSON.stringify([names[friendlyNames[n]].additionalApplianceDetails.name, name]),
-                        byONs: JSON.stringify([names[friendlyNames[n]].additionalApplianceDetails.byON, type]),
-                        room:  room,
-                        func:  func
+            if (names[friendlyNames[n]]) {
+                // Ignore it, because yet in the list
+                if (names[friendlyNames[n]].additionalApplianceDetails.id === id) return;
+
+                // create virtual group
+                if (groups[friendlyNames[n]]) {
+                    var ids    = JSON.parse(groups[friendlyNames[n]].additionalApplianceDetails.ids);
+                    var _names = JSON.parse(groups[friendlyNames[n]].additionalApplianceDetails.names || '[]');
+                    var types  = JSON.parse(groups[friendlyNames[n]].additionalApplianceDetails.byONs || '[]');
+                    ids.push(id);
+                    _names.push(name);
+                    types.push(type);
+
+                    // merge actions
+                    for (var a = 0; a < actions.length; a++) {
+                        if (groups[friendlyNames[n]].actions.indexOf(actions[a]) === -1) {
+                            groups[friendlyNames[n]].actions.push(actions[a]);
+                        }
                     }
-                };
-                result.push(groups[friendlyNames[n]]);
-                names[friendlyNames[n]].disabled = true;
-            }
-            obj = null;
-        } else {
-            names[friendlyNames[n]] = obj;
-        }
 
-        if (obj) result.push(obj);
+                    groups[friendlyNames[n]].additionalApplianceDetails.ids   = JSON.stringify(ids);
+                    groups[friendlyNames[n]].additionalApplianceDetails.names = JSON.stringify(_names);
+                    groups[friendlyNames[n]].additionalApplianceDetails.byONs = JSON.stringify(types);
+                } else {
+                    groups[friendlyNames[n]] = {
+                        applianceId:		 friendlyNames[n].replace(/[^a-zA-Z0-9_=#;:?@&-]+/g, '_'),
+                        manufacturerName:	 'ioBroker group',
+                        modelName:		     (states[id].common.name || words['No name'][lang]).substring(0, 128),
+                        version:			 '1',
+                        friendlyName:		 friendlyNames[n],
+                        friendlyDescription: words['Group'][lang] + ' ' + friendlyNames[n],
+                        isReachable:         true,
+                        actions:             actions,
+                        additionalApplianceDetails: {
+                            ids:   JSON.stringify([names[friendlyNames[n]].additionalApplianceDetails.id,   id]),
+                            names: JSON.stringify([names[friendlyNames[n]].additionalApplianceDetails.name, name]),
+                            byONs: JSON.stringify([names[friendlyNames[n]].additionalApplianceDetails.byON, type]),
+                            room:  room,
+                            func:  func
+                        }
+                    };
+                    result.push(groups[friendlyNames[n]]);
+                    names[friendlyNames[n]].disabled = true;
+                }
+                obj = null;
+            } else {
+                names[friendlyNames[n]] = obj;
+            }
+
+            if (obj) result.push(obj);
+        }
+    } catch (e) {
+        adapter.log.error('Cannot process "' + id + '": ' + e);
     }
 }
 
