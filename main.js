@@ -135,7 +135,7 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
 
     byON = (states[id].common.smartName && typeof states[id].common.smartName === 'object') ? states[id].common.smartName.byON : '';
 
-    if (typeof friendlyName === 'object') {
+    if (typeof friendlyName === 'object' && states[id].common.smartName) {
         friendlyName = states[id].common.smartName[lang] || states[id].common.smartName.en;
     }
 
