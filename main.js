@@ -23,6 +23,7 @@ var words         = {
 var detectDisconnect = null;
 var pingTimer     = null;
 var connected     = false;
+var connectTimer  = null;
 
 var adapter       = new utils.Adapter({
     name: 'cloud',
@@ -734,14 +735,16 @@ function pingConnection() {
                 if (connected) {
                     socket.close();
                     connected = false;
-                    adapter.log.info('Connection changed: DISCONNECTED');
+                    adapter.log.info('Connection changed: DISCONNECTED1');
                     adapter.setState('info.connection', false, true);
                     if (adapter.config.restartOnDisconnect) {
                         setTimeout(function () {
                             process.exit(-100); // simulate scheduled restart
                         }, 10000);
                     } else {
-                        setTimeout(connect, 10000);
+                        if (!connectTimer) {
+                            connectTimer = setTimeout(connect, 10000);
+                        }
                         checkPing();
                     }
                 }
@@ -842,6 +845,11 @@ function checkPing() {
 }
 
 function connect() {
+    if (connectTimer) {
+        clearTimeout(connectTimer);
+        connectTimer = null;
+    }
+
     if (socket) {
         socket.close();
     }
@@ -856,7 +864,7 @@ function connect() {
 
     socket.on('connect', function () {
         if (!connected) {
-            adapter.log.info('Connection changed: CONNECTED');
+            adapter.log.info('Connection changed: CONNECTED1');
             connected = true;
             adapter.setState('info.connection', true, true);
             checkPing();
@@ -864,7 +872,7 @@ function connect() {
     });
     socket.on('reconnect', function () {
         if (!connected) {
-            adapter.log.info('Connection changed: CONNECTED');
+            adapter.log.info('Connection changed: CONNECTED2');
             connected = true;
             adapter.setState('info.connection', true, true);
             checkPing();
@@ -873,7 +881,7 @@ function connect() {
     socket.on('reconnecting', function () {
         if (connected) {
             connected = false;
-            adapter.log.info('Connection changed: DISCONNECTED');
+            adapter.log.info('Connection changed: DISCONNECTED2');
             adapter.setState('info.connection', false, true);
             if (adapter.config.restartOnDisconnect) {
                 setTimeout(function () {
@@ -887,7 +895,7 @@ function connect() {
     socket.on('disconnect', function () {
         if (connected) {
             connected = false;
-            adapter.log.info('Connection changed: DISCONNECTED');
+            adapter.log.info('Connection changed: DISCONNECTED3');
             adapter.setState('info.connection', false, true);
             if (adapter.config.restartOnDisconnect) {
                 setTimeout(function () {
@@ -904,14 +912,16 @@ function connect() {
         if (connected) {
             socket.close();
             connected = false;
-            adapter.log.info('Connection changed: DISCONNECTED');
+            adapter.log.info('Connection changed: DISCONNECTED4');
             adapter.setState('info.connection', false, true);
             if (adapter.config.restartOnDisconnect) {
                 setTimeout(function () {
                     process.exit(-100); // simulate scheduled restart
                 }, 10000);
             } else {
-                setTimeout(connect, 10000);
+                if (!connectTimer) {
+                    connectTimer = setTimeout(connect, 10000);
+                }
                 checkPing();
             }
         }
