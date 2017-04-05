@@ -727,7 +727,7 @@ function pingConnection() {
     if (!detectDisconnect) {
         if (connected) {
             // cannot use "ping" because reserved by socket.io
-           socket.emit('pingg');
+            socket.emit('pingg');
 
             detectDisconnect = setTimeout(function () {
                 detectDisconnect = null;
@@ -868,7 +868,10 @@ function connect() {
             connected = true;
             adapter.setState('info.connection', true, true);
             checkPing();
+        } else {
+            adapter.log.info('Connection changed: CONNECTED4');
         }
+        socket.emit('apikey', adapter.config.apikey);
     });
     socket.on('reconnect', function () {
         if (!connected) {
@@ -877,11 +880,12 @@ function connect() {
             adapter.setState('info.connection', true, true);
             checkPing();
         }
+        socket.emit('apikey', adapter.config.apikey);
     });
     socket.on('reconnecting', function () {
         if (connected) {
-            connected = false;
             adapter.log.info('Connection changed: DISCONNECTED2');
+            connected = false;
             adapter.setState('info.connection', false, true);
             if (adapter.config.restartOnDisconnect) {
                 setTimeout(function () {
@@ -893,9 +897,9 @@ function connect() {
         }
     });
     socket.on('disconnect', function () {
+        adapter.log.info('Connection changed: DISCONNECTED3');
         if (connected) {
             connected = false;
-            adapter.log.info('Connection changed: DISCONNECTED3');
             adapter.setState('info.connection', false, true);
             if (adapter.config.restartOnDisconnect) {
                 setTimeout(function () {
@@ -1272,7 +1276,7 @@ function connect() {
             }
         });
     } else {
-        ioSocket = new IOSocket(socket, {clientid: adapter.config.apikey.trim()}, adapter);
+        ioSocket = new IOSocket(socket, {clientid: adapter.config.apikey}, adapter);
     }
 }
 
@@ -1280,8 +1284,9 @@ function main() {
     if (adapter.config.deviceOffLevel === undefined) adapter.config.deviceOffLevel = 30;
     adapter.config.deviceOffLevel = parseFloat(adapter.config.deviceOffLevel) || 0;
     adapter.config.concatWord = (adapter.config.concatWord || '').toString().trim();
+    adapter.config.apikey = adapter.config.apikey.trim();
 
-    //process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+    // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
     adapter.getForeignObject('system.config', function (err, obj) {
         if (adapter.config.language) {
             translate = true;

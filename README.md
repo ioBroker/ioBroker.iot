@@ -103,6 +103,9 @@ To create own groups the user can install "scenes" adapter or create "script" in
 - **smart.lastResponse**: Textual response on command. It can be sent to some text2speech (sayit) engine.
 
 ## Changelog
+### 0.7.1 (2017-04-05)
+* (bluefox) Fixed reconnection
+
 ### 0.7.0 (2017-04-01)
 * (bluefox) Try to fix reconnection
 

@@ -1,6 +1,6 @@
 {
   "name": "iobroker.cloud",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "This adapter allows to communicate different web applications with ioBroker.",
   "author": {
     "name": "bluefox",
