@@ -82,7 +82,6 @@
         "messagebox":               true,
         "stopBeforeUpdate":         true,
 		"dependencies":             [{"js-controller": ">=0.9.0"}],
-        "restartSchedule":          "0 2 * * *",
         "preserveSettings":         "smartName",
         "config":{
             "width ": 1224,
