@@ -241,7 +241,11 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
                 } else {
                     actions = ['setPercentage', 'incrementPercentage', 'decrementPercentage', 'turnOn', 'turnOff'];
                 }
-            } else if (states[id].common.role && states[id].common.role.match(/^button/)){
+            } else if (states[id].common.role === 'switch.lock') {
+                actions = ['setLockState', 'getLockState'];
+                type = '';
+            }
+            else if (states[id].common.role && states[id].common.role.match(/^button/)){
                 actions = ['turnOn'];
                 type = '';
             } else {
@@ -823,7 +827,7 @@ function controlLock(id, writeStates, callback) {
             if (callback) callback();
             return;
         }
-        adapter.log.debug('Set "' + id + '" to ' + value);
+        adapter.log.debug('Lock "' + id + '"');
 
         if (writeStates) {
             adapter.setState('smart.lastObjectID', id, true);
@@ -847,7 +851,7 @@ function getLock(id, writeStates, callback) {
             if (callback) callback();
             return;
         }
-        adapter.log.debug('Set "' + id + '" to ' + value);
+        adapter.log.debug('Get lock state "' + id + '"');
 
         if (writeStates) {
             adapter.setState('smart.lastObjectID', id, true);
@@ -1400,7 +1404,7 @@ function connect() {
                         }
 
                         if (!--count) {
-                            request.header.name = 'GetLockStateRequest';
+                            request.header.name = 'GetLockStateResponse';
 
                             if (err) {
                                 callback({
@@ -1423,7 +1427,6 @@ function connect() {
                         }
                     });
                 }
-                writeResponse(request.payload.appliance.applianceId, 'ONOFF', true);
                 break;
 
             case 'SetPercentageRequest':

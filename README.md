@@ -69,6 +69,21 @@ The channel must have 4 states with following roles:
 - level.dimmer,
 - switch (optional)
 
+```
+Alexa, set the "device name" to "color"
+Alexa, turn the light fuschia
+Alexa, set the bedroom light to red
+Alexa, change the kitchen to the color chocolate
+```
+
+### Lock
+To have the possibility to lock the locks, the state must have the role "switch.lock" and have native.LOCK_VALUE to determine the lock state.
+
+```
+Alexa, is "lock name" locked/unlocked
+Alexa, lock the "lock name"
+```
+
 ## How names will be generated
 The adapter tries to generate virtual devices for smart home control (e.g. Amazon Alexa or Google Home).
 
@@ -112,7 +127,7 @@ To create own groups the user can install "scenes" adapter or create "script" in
 - **smart.lastResponse**: Textual response on command. It can be sent to some text2speech (sayit) engine.
 
 ## Changelog
-### 0.8.0 (2017-04-05)
+### 0.8.1 (2017-04-05)
 * (bluefox) controls of colors (english only)
 * (bluefox) request temperature (target temperature and sensor temperature, english only)
 * (bluefox) support of double names
