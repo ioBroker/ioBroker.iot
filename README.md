@@ -60,6 +60,15 @@ You can select the behaviour of ON command will come for the number state. The s
 ### Write response to
 For every command the text response will be generated. You can define here the Object ID , where this text must be written to. E.g. *sayit.0.tts.text*.
 
+### Colors
+Just now only english alexa supports the color control. 
+The channel must have 4 states with following roles:
+
+- level.color.saturation (required for detection of the channel),
+- level.color.hue,
+- level.dimmer,
+- switch (optional)
+
 ## How names will be generated
 The adapter tries to generate virtual devices for smart home control (e.g. Amazon Alexa or Google Home).
 
@@ -103,6 +112,11 @@ To create own groups the user can install "scenes" adapter or create "script" in
 - **smart.lastResponse**: Textual response on command. It can be sent to some text2speech (sayit) engine.
 
 ## Changelog
+### 0.8.0 (2017-04-05)
+* (bluefox) controls of colors (english only)
+* (bluefox) request temperature (target temperature and sensor temperature, english only)
+* (bluefox) support of double names
+
 ### 0.7.1 (2017-04-05)
 * (bluefox) Fixed reconnection
 

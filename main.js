@@ -100,6 +100,22 @@ function validateName(name) {
     return true;
 }
 
+function findRole(states, id, role) {
+    var parts = id.split('.');
+    parts.pop();
+    var channel = parts.join('.') + '.';
+    for (var i in states) {
+        if (states.hasOwnProperty(i) &&
+            i.substring(0, channel.length) === channel &&
+            i !== id &&
+            states[i].common &&
+            states[i].common.role === role) {
+            return i;
+        }
+    }
+    return null;
+}
+
 function processState(states, id, room, func, alexaIds, groups, names, result) {
     try {
         var actions;
@@ -133,7 +149,6 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
             adapter.log.warn('Invalid state "' + id + '". Not exist or no native part.');
             return null;
         }
-
 
         byON = (states[id].common.smartName && typeof states[id].common.smartName === 'object') ? states[id].common.smartName.byON : '';
 
@@ -200,27 +215,39 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
 
         var friendlyDescription = (states[id].common.name || id);
 
-        if (states[id].common.write === false) {
-            adapter.log.debug('Name "' + (states[id].common.name || id) + '" cannot be written and will be ignored');
-            return;
-        }
         var type = states[id].common.type;
 
-        if (type === 'number') {
+        if (states[id].common.write === false) {
             if (states[id].common.unit === 'C' || states[id].common.unit === 'C°' || states[id].common.unit === '°C' ||
                 states[id].common.unit === 'F' || states[id].common.unit === 'F°' || states[id].common.unit === '°F' ||
                 states[id].common.unit === 'K' || states[id].common.unit === 'K°' || states[id].common.unit === '°K') {
-                actions = ['setTargetTemperature', 'incrementTargetTemperature', 'decrementTargetTemperature'];
+                actions = ['getTemperatureReading'];
                 type = '';
             } else {
-                actions = ['setPercentage', 'incrementPercentage', 'decrementPercentage', 'turnOn', 'turnOff'];
+                adapter.log.debug('Name "' + (states[id].common.name || id) + '" cannot be written and will be ignored');
+                return;
             }
-        } else if (states[id].common.role && states[id].common.role.match(/^button/)){
-            actions = ['turnOn'];
-            type = '';
-        } else {
-            actions = ['turnOn', 'turnOff'];
-            type = '';
+        }
+
+        if (states[id].common.write) {
+            if (type === 'number') {
+                if (states[id].common.unit === 'C' || states[id].common.unit === 'C°' || states[id].common.unit === '°C' ||
+                    states[id].common.unit === 'F' || states[id].common.unit === 'F°' || states[id].common.unit === '°F' ||
+                    states[id].common.unit === 'K' || states[id].common.unit === 'K°' || states[id].common.unit === '°K') {
+                    actions = ['setTargetTemperature', 'incrementTargetTemperature', 'decrementTargetTemperature', 'getTargetTemperature'];
+                    type = '';
+                } else if (states[id].common.role === 'level.color.saturation') {
+                    actions = ['setColor', /*'incrementColorTemperature', 'decrementColorTemperature', 'setColorTemperature', */'turnOn', 'turnOff'];
+                } else {
+                    actions = ['setPercentage', 'incrementPercentage', 'decrementPercentage', 'turnOn', 'turnOff'];
+                }
+            } else if (states[id].common.role && states[id].common.role.match(/^button/)){
+                actions = ['turnOn'];
+                type = '';
+            } else {
+                actions = ['turnOn', 'turnOff'];
+                type = '';
+            }
         }
 
         friendlyDescription = friendlyDescription.substring(0, 128).replace(/[^a-zA-Z0-9äÄüÜöÖß]+/g, ' ');
@@ -237,7 +264,7 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
 
         for (var n = 0; n < friendlyNames.length; n++) {
             var obj = {
-                applianceId:		 applianceId,
+                applianceId:		 applianceId + (friendlyNames.length > 1 ? '_' + n : ''),
                 manufacturerName:	 'ioBroker',
                 modelName:		     (states[id].common.name || words['No name'][lang]).substring(0, 128),
                 version:			 '1',
@@ -279,6 +306,20 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
                     groups[friendlyNames[n]].additionalApplianceDetails.ids   = JSON.stringify(ids);
                     groups[friendlyNames[n]].additionalApplianceDetails.names = JSON.stringify(_names);
                     groups[friendlyNames[n]].additionalApplianceDetails.byONs = JSON.stringify(types);
+
+                    if (groups[friendlyNames[n]].additionalApplianceDetails.idhs && states[id].common.role === 'level.color.saturation') {
+                        var idhs = JSON.parse(groups[friendlyNames[n]].additionalApplianceDetails.idhs);
+                        idhs.push(findRole(states, id, 'level.color.hue'));
+                        groups[friendlyNames[n]].additionalApplianceDetails.idhs   = JSON.stringify(idhs);
+
+                        var idbs = JSON.parse(groups[friendlyNames[n]].additionalApplianceDetails.idbs);
+                        idbs.push(findRole(states, id, 'level.dimmer'));
+                        groups[friendlyNames[n]].additionalApplianceDetails.idbs   = JSON.stringify(idbs);
+
+                        var idos = JSON.parse(groups[friendlyNames[n]].additionalApplianceDetails.idos);
+                        idos.push(findRole(states, id, 'switch'));
+                        groups[friendlyNames[n]].additionalApplianceDetails.idos   = JSON.stringify(idos);
+                    }
                 } else {
                     groups[friendlyNames[n]] = {
                         applianceId:		 friendlyNames[n].replace(/[^a-zA-Z0-9_=#;:?@&-]+/g, '_'),
@@ -297,12 +338,24 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
                             func:  func
                         }
                     };
+
+                    if (states[id].common.role === 'level.color.saturation') {
+                        groups[friendlyNames[n]].additionalApplianceDetails.idhs = JSON.stringify([names[friendlyNames[n]].additionalApplianceDetails.idh,   findRole(states, id, 'level.color.hue')]);
+                        groups[friendlyNames[n]].additionalApplianceDetails.idbs = JSON.stringify([names[friendlyNames[n]].additionalApplianceDetails.idb,   findRole(states, id, 'level.dimmer')]);
+                        groups[friendlyNames[n]].additionalApplianceDetails.idos = JSON.stringify([names[friendlyNames[n]].additionalApplianceDetails.ido,   findRole(states, id, 'switch')]);
+                    }
+
                     result.push(groups[friendlyNames[n]]);
                     names[friendlyNames[n]].disabled = true;
                 }
                 obj = null;
             } else {
                 names[friendlyNames[n]] = obj;
+                if (states[id].common.role === 'level.color.saturation') {
+                    obj.additionalApplianceDetails.idh = findRole(states, id, 'level.color.hue');
+                    obj.additionalApplianceDetails.idb = findRole(states, id, 'level.dimmer');
+                    obj.additionalApplianceDetails.ido = findRole(states, id, 'switch');
+                }
             }
 
             if (obj) result.push(obj);
@@ -648,8 +701,8 @@ function controlTemperature(id, value, writeStates, callback) {
                             value: value
                         },
                         /*temperatureMode: {
-                            value: 'AUTO'
-                        },*/
+                         value: 'AUTO'
+                         },*/
                         previousState: {
                             targetTemperature: {
                                 value: state ? parseFloat(state.val) || 0 : 0
@@ -663,6 +716,46 @@ function controlTemperature(id, value, writeStates, callback) {
 
                 if (callback) callback(null, response);
             });
+        });
+    });
+}
+
+function getTemperature(id, writeStates, callback) {
+    adapter.getForeignObject(id, function (err, obj) {
+        if (!obj || obj.type !== 'state') {
+            if (err) adapter.log.error('Cannot control non state: ' + id + ' ' + (obj ? obj.type : 'no object'));
+            if (callback) callback();
+            return;
+        }
+
+        adapter.getForeignState(id, function (err, state) {
+            if (err) adapter.log.error('Cannot read device: ' + err);
+
+            if (writeStates) {
+                adapter.setState('smart.lastObjectID', id, true);
+            }
+
+            if (callback) callback(null, state ? state.val : null, state ? state.ts : null);
+        });
+    });
+}
+
+function getTargetTemperature(id, writeStates, callback) {
+    adapter.getForeignObject(id, function (err, obj) {
+        if (!obj || obj.type !== 'state') {
+            if (err) adapter.log.error('Cannot control non state: ' + id + ' ' + (obj ? obj.type : 'no object'));
+            if (callback) callback();
+            return;
+        }
+
+        adapter.getForeignState(id, function (err, state) {
+            if (err) adapter.log.error('Cannot read device: ' + err);
+
+            if (writeStates) {
+                adapter.setState('smart.lastObjectID', id, true);
+            }
+
+            if (callback) callback(null, state ? state.val : null, state ? state.ts : null);
         });
     });
 }
@@ -717,6 +810,105 @@ function controlTemperatureDelta(id, delta, writeStates, callback) {
                     };
 
                     if (callback) callback(null, response);
+                });
+            });
+        });
+    });
+}
+
+function controlLock(id, writeStates, callback) {
+    adapter.getForeignObject(id, function (err, obj) {
+        if (!obj || obj.type !== 'state') {
+            if (err) adapter.log.error('Cannot control non state: ' + id + ' ' + (obj ? obj.type : 'no object'));
+            if (callback) callback();
+            return;
+        }
+        adapter.log.debug('Set "' + id + '" to ' + value);
+
+        if (writeStates) {
+            adapter.setState('smart.lastObjectID', id, true);
+        }
+        if (obj.native.LOCK_VALUE === undefined) {
+            adapter.log.warn('Cannot choose value for lock: Please define in "' + id + '" the "native.LOCK_VALUE" with locking value');
+            if (callback) callback('Cannot choose value for lock');
+        } else {
+            adapter.setForeignState(id, obj.native.LOCK_VALUE, function (err) {
+                if (err) adapter.log.error('Cannot switch device: ' + err);
+                if (callback) callback();
+            });
+        }
+    });
+}
+
+function getLock(id, writeStates, callback) {
+    adapter.getForeignObject(id, function (err, obj) {
+        if (!obj || obj.type !== 'state') {
+            if (err) adapter.log.error('Cannot control non state: ' + id + ' ' + (obj ? obj.type : 'no object'));
+            if (callback) callback();
+            return;
+        }
+        adapter.log.debug('Set "' + id + '" to ' + value);
+
+        if (writeStates) {
+            adapter.setState('smart.lastObjectID', id, true);
+        }
+        if (obj.native.LOCK_VALUE === undefined) {
+            adapter.log.warn('Cannot choose value for lock: Please define in "' + id + '" the "native.LOCK_VALUE" with locking value');
+            if (callback) callback('Cannot choose value for lock');
+        } else {
+            adapter.getForeignState(id, function (err, state) {
+                if (err || !state) adapter.log.error('Cannot switch device: ' + err);
+                if (callback) {
+                    if (obj.native.LOCK_VALUE === 'true'  || obj.native.LOCK_VALUE === '1' || obj.native.LOCK_VALUE === 1 || obj.native.LOCK_VALUE === 'locked')   obj.native.LOCK_VALUE = true;
+                    if (obj.native.LOCK_VALUE === 'false' || obj.native.LOCK_VALUE === '0' || obj.native.LOCK_VALUE === 0 || obj.native.LOCK_VALUE === 'unlocked') obj.native.LOCK_VALUE = false;
+                    if (state.val === 'true'  || state.val === '1' || state.val === 1 || state.val === 'locked')   state.val = true;
+                    if (state.val === 'false' || state.val === '0' || state.val === 0 || state.val === 'unlocked') state.val = false;
+
+                    callback(err, state.val !== obj.native.LOCK_VALUE, state.lc || state.ts);
+                }
+            });
+        }
+    });
+}
+
+function controlColor(idh, ids, idb, color, writeStates, callback) {
+    // "color": {
+    //     "hue": 0.0,
+    //     "saturation": 1.0000,
+    //     "brightness": 1.0000
+    // }
+    adapter.getForeignObject(idh, function (err, obj) {
+        if (obj.common && obj.common.min !== undefined && obj.common.max !== undefined) {
+            color.hue = Math.round((obj.common.max - obj.common.min) * (color.hue / 360)+ obj.common.min);
+        }
+        adapter.setForeignState(idh, color.hue, function (err) {
+            if (err) adapter.log.error('Cannot read device: ' + err);
+
+            if (writeStates) {
+                adapter.setState('smart.lastObjectID', idh, true);
+            }
+            adapter.getForeignObject(ids, function (err, obj) {
+                if (obj.common && obj.common.min !== undefined && obj.common.max !== undefined) {
+                    color.saturation = (obj.common.max - obj.common.min) * color.saturation + obj.common.min;
+                } else {
+                    color.saturation *= 100;
+                }
+
+                adapter.setForeignState(ids, color.saturation, function (err) {
+                    if (err) adapter.log.error('Cannot read device: ' + err);
+
+                    adapter.getForeignObject(idb, function (err, obj) {
+                        if (obj.common && obj.common.min !== undefined && obj.common.max !== undefined) {
+                            color.brightness = (obj.common.max - obj.common.min) * color.brightness + obj.common.min;
+                        } else {
+                            color.brightness *= 100;
+                        }
+
+                        adapter.setForeignState(idb, color.brightness, function (err) {
+                            if (err) adapter.log.error('Cannot read device: ' + err);
+                            if (callback) callback(err);
+                        });
+                    });
                 });
             });
         });
@@ -947,6 +1139,7 @@ function connect() {
     socket.on('alexa', function (request, callback) {
         adapter.log.debug(new Date().getTime() + ' ALEXA: ' + JSON.stringify(request));
         var ids;
+        var idos;
         var count;
         var i;
         if (request && request.payload && request.payload.appliance && request.payload.appliance.additionalApplianceDetails) {
@@ -954,6 +1147,13 @@ function connect() {
                 ids = JSON.parse(request.payload.appliance.additionalApplianceDetails.ids);
             } else {
                 ids = [request.payload.appliance.additionalApplianceDetails.id];
+            }
+            if (request.payload.appliance.additionalApplianceDetails.ido || request.payload.appliance.additionalApplianceDetails.idos) {
+                if (request.payload.appliance.additionalApplianceDetails.idos) {
+                    idos = JSON.parse(request.payload.appliance.additionalApplianceDetails.idos);
+                } else {
+                    idos = [request.payload.appliance.additionalApplianceDetails.ido];
+                }
             }
             count = ids.length;
         }
@@ -1081,7 +1281,7 @@ function connect() {
                 // }
                 adapter.log.debug('ALEXA ON: ' + request.payload.appliance.applianceId);
                 for (i = 0; i < ids.length; i++) {
-                    controlOnOff(ids[i], true, ids.length === 1, function () {
+                    controlOnOff((idos && idos[i] !== undefined) ? idos[i] : ids[i], true, ids.length === 1, function () {
                         if (!--count) {
                             request.header.name = 'TurnOnConfirmation';
 
@@ -1128,6 +1328,102 @@ function connect() {
                     });
                 }
                 writeResponse(request.payload.appliance.applianceId, 'ONOFF', false);
+                break;
+
+            case 'SetLockStateRequest':
+                //  {
+                //      "header": {
+                //          "messageId": "01ebf625-0b89-4c4d-b3aa-32340e894688",
+                //          "name": "TurnOnRequest",
+                //          "namespace": "Alexa.ConnectedHome.Control",
+                //          "payloadVersion": "2"
+                //      },
+                //      "payload": {
+                //          "accessToken": "[OAuth Token here]",
+                //          "appliance": {
+                //              "additionalApplianceDetails": {},
+                //              "applianceId": "[Device ID for Ceiling Fan]"
+                //          }
+                //      }
+                // }
+                adapter.log.debug('ALEXA ON: ' + request.payload.appliance.applianceId);
+                for (i = 0; i < ids.length; i++) {
+                    controlLock(ids[i], ids.length === 1, function (err) {
+                        if (!--count) {
+                            request.header.name = 'SetLockStateConfirmation';
+
+                            if (err) {
+                                callback({
+                                    header: request.header,
+                                    payload: {
+                                        lockState: 'UNLOCKED'
+                                    }
+                                });
+                            } else {
+                                callback({
+                                    header: request.header,
+                                    payload: {
+                                        lockState: 'LOCKED'
+                                    }
+                                });
+                            }
+
+                            request = null;
+                        }
+                    });
+                }
+                writeResponse(request.payload.appliance.applianceId, 'ONOFF', true);
+                break;
+
+            case 'GetLockStateRequest':
+                //  {
+                //      "header": {
+                //          "messageId": "01ebf625-0b89-4c4d-b3aa-32340e894688",
+                //          "name": "TurnOnRequest",
+                //          "namespace": "Alexa.ConnectedHome.Control",
+                //          "payloadVersion": "2"
+                //      },
+                //      "payload": {
+                //          "accessToken": "[OAuth Token here]",
+                //          "appliance": {
+                //              "additionalApplianceDetails": {},
+                //              "applianceId": "[Device ID for Ceiling Fan]"
+                //          }
+                //      }
+                // }
+                adapter.log.debug('ALEXA ON: ' + request.payload.appliance.applianceId);
+                var result = null;
+                for (i = 0; i < ids.length; i++) {
+                    getLock(ids[i], ids.length === 1, function (err, value, ts) {
+                        if (result === null || value === false) {
+                            result = value;
+                        }
+
+                        if (!--count) {
+                            request.header.name = 'GetLockStateRequest';
+
+                            if (err) {
+                                callback({
+                                    header: request.header,
+                                    payload: {
+                                        lockState: 'UNLOCKED'
+                                    }
+                                });
+                            } else {
+                                callback({
+                                    header: request.header,
+                                    payload: {
+                                        lockState: value ? 'LOCKED' : 'UNLOCKED',
+                                        applianceResponseTimestamp: new Date(ts).toISOString()
+                                    }
+                                });
+                            }
+
+                            request = null;
+                        }
+                    });
+                }
+                writeResponse(request.payload.appliance.applianceId, 'ONOFF', true);
                 break;
 
             case 'SetPercentageRequest':
@@ -1226,6 +1522,113 @@ function connect() {
                         }
                     });
                 }
+                break;
+
+            case 'GetTemperatureReadingRequest':
+                adapter.log.debug('ALEXA temperature get: ' + request.payload.appliance.applianceId);
+                var values = 0;
+                var num = 0;
+                for (i = 0; i < ids.length; i++) {
+                    getTemperature(ids[i], ids.length === 1, function (err, value, ts) {
+                        num++;
+                        values += value;
+                        if (!--count) {
+                            request.header.name = 'GetTemperatureReadingResponse';
+
+                            if (err) {
+                                callback({
+                                    header: request.header,
+                                    payload: {
+                                        temperatureReading: {
+                                            value: 0
+                                        },
+                                        applianceResponseTimestamp: new Date().toISOString()
+                                    }
+                                });
+                            } else {
+                                callback({
+                                    header: request.header,
+                                    payload: {
+                                        temperatureReading: {
+                                            value: Math.round(values * 10 / num) / 10
+                                        },
+                                        applianceResponseTimestamp: new Date(ts).toISOString()
+                                    }
+                                });
+                            }
+
+                            request = null;
+                        }
+                    });
+                }
+                break;
+
+            case 'GetTargetTemperatureRequest':
+                adapter.log.debug('ALEXA temperature target get: ' + request.payload.appliance.applianceId);
+                for (i = 0; i < ids.length; i++) {
+                    getTargetTemperature(ids[i], ids.length === 1, function (err, value, ts) {
+                        if (!--count) {
+                            request.header.name = 'GetTargetTemperatureResponse';
+
+                            callback({
+                                header: request.header,
+                                payload: {
+                                    targetTemperature: {
+                                        value: value,
+                                        temperatureMode: {
+                                            value: 'CUSTOM',
+                                            friendlyName: ''
+                                        }
+                                    },
+                                    applianceResponseTimestamp: new Date(ts).toISOString()
+                                }
+                            });
+
+                            request = null;
+                        }
+                    });
+                }
+                break;
+
+            case 'SetColorRequest':
+                adapter.log.debug('ALEXA Color: ' + request.payload.appliance.applianceId + ' ' + JSON.stringify(request.payload.color));
+
+                var idhs;
+                var idbs;
+                if (request && request.payload && request.payload.appliance && request.payload.appliance.additionalApplianceDetails) {
+                    if (request.payload.appliance.additionalApplianceDetails.idhs) {
+                        idhs = JSON.parse(request.payload.appliance.additionalApplianceDetails.idhs);
+                    } else {
+                        idhs = [request.payload.appliance.additionalApplianceDetails.idh];
+                    }
+                    count = idhs.length;
+                    if (request.payload.appliance.additionalApplianceDetails.idbs) {
+                        idbs = JSON.parse(request.payload.appliance.additionalApplianceDetails.idbs);
+                    } else {
+                        idbs = [request.payload.appliance.additionalApplianceDetails.idb];
+                    }
+                }
+
+                var color = request.payload.color;
+
+                for (i = 0; i < ids.length; i++) {
+                    controlColor(idhs[i], ids[i], idbs[i], color, ids.length === 1, function (err) {
+                        if (!--count) {
+                            request.header.name = 'SetColorConfirmation';
+
+                            callback({
+                                header: request.header,
+                                payload: {
+                                    achievedState: {
+                                        color: color
+                                    }
+                                }
+                            });
+                            request = null;
+                        }
+                    });
+                }
+                //writeResponse(request.payload.appliance.applianceId, '%', request.payload.percentageState.value);
                 break;
 
             case 'HealthCheckRequest':
