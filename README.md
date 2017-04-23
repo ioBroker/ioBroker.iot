@@ -127,7 +127,7 @@ To create own groups the user can install "scenes" adapter or create "script" in
 - **smart.lastResponse**: Textual response on command. It can be sent to some text2speech (sayit) engine.
 
 ## Changelog
-### 0.8.1 (2017-04-05)
+### 0.8.2 (2017-04-24)
 * (bluefox) controls of colors (english only)
 * (bluefox) request temperature (target temperature and sensor temperature, english only)
 * (bluefox) support of double names

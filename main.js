@@ -227,9 +227,7 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
                 adapter.log.debug('Name "' + (states[id].common.name || id) + '" cannot be written and will be ignored');
                 return;
             }
-        }
-
-        if (states[id].common.write) {
+        } else {
             if (type === 'number') {
                 if (states[id].common.unit === 'C' || states[id].common.unit === 'C°' || states[id].common.unit === '°C' ||
                     states[id].common.unit === 'F' || states[id].common.unit === 'F°' || states[id].common.unit === '°F' ||
@@ -244,8 +242,7 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
             } else if (states[id].common.role === 'switch.lock') {
                 actions = ['setLockState', 'getLockState'];
                 type = '';
-            }
-            else if (states[id].common.role && states[id].common.role.match(/^button/)){
+            } else if (states[id].common.role && states[id].common.role.match(/^button/)) {
                 actions = ['turnOn'];
                 type = '';
             } else {

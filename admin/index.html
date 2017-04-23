@@ -153,7 +153,11 @@
                     }
                     // Type
                     var actions = [];
-                    for (var a = 0; a < list[j].actions.length; a++) {
+					if (!list[j].actions) {
+						console.log('Something went wrong');
+						continue;
+					}
+					for (var a = 0; a < list[j].actions.length; a++) {
                         if (actionsMapping[list[j].actions[a]]) {
                             actions.push(actionsMapping[list[j].actions[a]]);
                         } else {
