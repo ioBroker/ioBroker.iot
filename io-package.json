@@ -1,10 +1,15 @@
 {
     "common": {
         "name":                     "cloud",
-        "version":                  "0.8.2",
+        "version":                  "1.0.0",
         "title":                    "Cloud Adapter",
         "desc":                     "This adapter connect",
 		"news": {
+            "1.0.0": {
+                "en":                   "Catch an error if the invalid smart name set",
+                "de":                   "Fange einen Fehler, wenn der ungültige Smart Name gesetzt ist",
+                "ru":                   "Ловит ошибку, если невалидное смарт имя"
+            },
             "0.8.2": {
                 "en":                   "controls of colors\nrequest temperature\nsupport of double names",
                 "de":                   "Farben kontrollieren (nur English)\nTemperaturanfrage (nur english)\nUnterstützung von Doppelnamen",
