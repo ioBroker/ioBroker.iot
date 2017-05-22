@@ -119,6 +119,11 @@ If the group has more than one state, the group must be renamed via the enumerat
 
 To create own groups the user can install "scenes" adapter or create "script" in Javascript adapter.
 
+### Replaces
+You can specify strings, that could be automatically replaced in the devices names. E.g if you set replaces to:
+```.STATE,.LEVEL```, so all ".STATE" and ".LEVEL" will be deleted from names. Be careful with spaces. 
+If you will set ```.STATE, .LEVEL```, so ".STATE" and " .LEVEL" will be replaced and not ".LEVEL".
+
 ## Helper states
 - **smart.lastObjectID**: This state will be set if only one device was controlled by home skill (alexa, google home).
 - **smart.lastFunction**: Function name (if exists) for which last command was executed.
@@ -126,7 +131,13 @@ To create own groups the user can install "scenes" adapter or create "script" in
 - **smart.lastCommand**:  Last executed command. Command can be: true(ON), false(OFF), number(%), -X(decrease at x), +X(increase at X)
 - **smart.lastResponse**: Textual response on command. It can be sent to some text2speech (sayit) engine.
 
+## IFTTT
+[instructions](doc/ifttt.md)
+
 ## Changelog
+### 1.0.1 (2017-05-23)
+* (bluefox) Support of IFTTT
+
 ### 1.0.0 (2017-05-22)
 * (bluefox) Catch an error if the invalid smart name set
 

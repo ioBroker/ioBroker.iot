@@ -48,6 +48,11 @@ systemDictionary = {
     "Write response to:":       {"en": "Write response to:",        "de": "Schreibe Antwort ins:",              "ru": "Писать ответ в:"},
     "Duplicate name":           {"en": "Duplicate name",            "de": "Name ist schon benutzt",             "ru": "Имя уже используется"},
     "Restart on disconnect:":   {"en": "Restart on disconnect:",    "de": "Neustart bei dem Verbindungsabbruch:", "ru": "Перезапуск при потере сединения:"},
+    "info_iftttKey": {
+        "en": "You can find your key <a href='https://ifttt.com/maker_webhooks' target='_blank'>here</a> under 'Documentation'",
+        "de": "Schlüssel kann <a href='https://ifttt.com/maker_webhooks' target='_blank'>hier</a> unter 'Documentation' gefunden werden",
+        "ru": "Свой ключ можно найти <a href='https://ifttt.com/maker_webhooks' target='_blank'>здесь</a> в 'Documentation'"
+    },
     "Instance must run to deliver the data": {
         "en": "The instance must run to deliver the data",
         "de": "Die Instanz muss laufen um die Daten zu liefern",

@@ -1,10 +1,15 @@
 {
     "common": {
         "name":                     "cloud",
-        "version":                  "1.0.0",
+        "version":                  "1.0.1",
         "title":                    "Cloud Adapter",
         "desc":                     "This adapter connect",
 		"news": {
+            "1.0.1": {
+                "en":                   "Support of IFTTT",
+                "de":                   "Unterstützung von IFTTT",
+                "ru":                   "Поддержка IFTTT"
+            },
             "1.0.0": {
                 "en":                   "Catch an error if the invalid smart name set",
                 "de":                   "Fange einen Fehler, wenn der ungültige Smart Name gesetzt ist",
@@ -93,9 +98,10 @@
         "stopBeforeUpdate":         true,
 		"dependencies":             [{"js-controller": ">=0.9.0"}],
         "preserveSettings":         "smartName",
+        "blockly":                  true,
         "config":{
             "width ": 1224,
-            "height": 520
+            "height": 700
         }
     },
     "native": {
@@ -107,7 +113,9 @@
         "functionFirst":            false,
         "concatWord":               "",
         "responseOID":              "",
-        "restartOnDisconnect":      false
+        "restartOnDisconnect":      false,
+        "iftttKey":                 "",
+        "replaces":                 ""
     },
     "objects": [
     ],
@@ -190,6 +198,14 @@
                 "type":  "string",
                 "read":  true,
                 "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id":  "services",
+            "type": "channel",
+            "common": {
+                "name": "Information"
             },
             "native": {}
         }

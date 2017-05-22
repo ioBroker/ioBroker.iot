@@ -43,7 +43,17 @@ var adapter       = new utils.Adapter({
         }
     },
     stateChange: function (id, state) {
-        if (socket) socket.emit('stateChange', id, state);
+        if (socket) {
+            if (id === adapter.namespace + '.services.ifttt' && state && !state.ack) {
+                sendDataToIFTTT({
+                    id: id,
+                    val: state.val,
+                    ack: false
+                });
+            } else {
+                socket.emit('stateChange', id, state);
+            }
+        }
     },
     unload: function (callback) {
         if (pingTimer) {
@@ -79,6 +89,10 @@ var adapter       = new utils.Adapter({
                     }
                     break;
 
+                case 'ifttt':
+                    sendDataToIFTTT(obj.message);
+                    break;
+
                 default:
                     adapter.log.warn('Unknown command: ' + obj.command);
                     break;
@@ -89,6 +103,40 @@ var adapter       = new utils.Adapter({
         main();
     }
 });
+
+function sendDataToIFTTT(obj) {
+    if (!connected || !socket) {
+        adapter.log.warn('Cannot send IFTTT message, while not connected: ' + JSON.stringify(obj));
+        return;
+    }
+    if (!obj) {
+        adapter.log.warn('No data to send to IFTTT');
+        return;
+    }
+    if (!adapter.config.iftttKey && (typeof obj !== 'object' || !obj.key)) {
+        adapter.log.warn('No IFTTT key is defined');
+        return;
+    }
+    if (typeof obj !== 'object') {
+        socket.emit('ifttt', {
+            id: adapter.namespace + '.services.ifttt',
+            key: adapter.config.iftttKey,
+            val: obj
+        });
+    } else {
+        if (obj.val === undefined) {
+            adapter.log.warn('No value is defined');
+            return;
+        }
+        obj.id = obj.id || (adapter.namespace + '.services.ifttt');
+        socket.emit('ifttt', {
+            id: obj.id,
+            key: obj.key || adapter.config.iftttKey,
+            val: obj.val,
+            ack: obj.ack
+        });
+    }
+}
 
 function validateName(name) {
     if (!name) return false;
@@ -189,6 +237,11 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
                 }
             } else {
                 friendlyName = states[id].common.name;
+                if (adapter.config.replaces) {
+                    for (var r = 0; r < adapter.config.replaces.length; r++) {
+                        friendlyName = friendlyName.replaces(adapter.config.replaces[r], '');
+                    }
+                }
             }
             friendlyNames[0] = friendlyName;
             nameModified = false;
@@ -1040,6 +1093,53 @@ function checkPing() {
     }
 }
 
+function processIfttt(data, callback) {
+    adapter.log.debug('Received IFTTT object: ' + data);
+
+    if (typeof data === 'string' && data[0] === '{') {
+        try {
+            data = JSON.parse(data);
+        } catch (e) {
+            adapter.log.debug('Cannot parse: ' + data);
+        }
+    }
+
+    if (typeof data === 'object') {
+        if (data.id) {
+            if (data.id === adapter.namespace + '.services.ifttt') {
+                data.ack = true;
+            }
+            if (data.val === undefined) {
+                callback && callback({error: 'No value set'});
+                return;
+            }
+            adapter.getForeignObject(data.id, function (err, obj) {
+                if (!obj || !obj.common) {
+                    callback && callback({error: 'Unknown ID: ' + data.id});
+                } else {
+                    if (typeof data.val === 'string') data.val = data.val.replace(/^@ifttt\s?/, '');
+                    if (obj.common.type === 'boolean') {
+                        data.val = data.val === true || data.val === 'true' || data.val === 'on' || data.val === 'ON' || data.val === 1 || data.val === '1';
+                    } else if (obj.common.type === 'number') {
+                        data.val = parseFloat(data.val);
+                    }
+
+                    adapter.setForeignState(data.id, data.val, data.ack);
+                }
+            });
+        } else if (data.val !== undefined) {
+            if (typeof data.val === 'string') data.val = data.val.replace(/^@ifttt\s?/, '');
+            adapter.setState('services.ifttt', data.val, true, callback);
+        } else {
+            if (typeof data === 'string') data = data.replace(/^@ifttt\s?/, '');
+            adapter.setState('services.ifttt', JSON.stringify(data), true, callback);
+        }
+    } else {
+        if (typeof data === 'string') data = data.replace(/^@ifttt\s?/, '');
+        adapter.setState('services.ifttt', data, true, callback);
+    }
+}
+
 function connect() {
     if (connectTimer) {
         clearTimeout(connectTimer);
@@ -1663,6 +1763,44 @@ function connect() {
         }
     });
 
+    socket.on('ifttt', processIfttt);
+
+    socket.on('service', function (data, callback) {
+        // supported services:
+        // - text2command
+        // - simpleApi
+        // - custom, e.g. torque
+        if (data.name === 'ifttt') {
+            processIfttt(data.data, callback);
+        } else
+        if (data.name === 'text2command') {
+            adapter.setForeginState(adapter.config.text2command || 'text2command.0.text', decodeURIComponent(data.data), callback);
+        } else if (data.name === 'simpleApi') {
+
+        } else {
+            adapter.getObject('services.' + data.name, function (err, obj) {
+                if (!obj) {
+                    adapter.setObject('services.' + data.name, {
+                        _id: adapter.namespace + '.services.' + data.name,
+                        type: 'state',
+                        common: {
+                            name: 'Service for ' + data.name,
+                            write: false,
+                            read: true,
+                            type: 'mixed'
+                        },
+                        native: {}
+                    }, function (err) {
+                        adapter.setState('services.' + data.name, data.data, false);
+                    });
+                } else {
+                    adapter.setState('services.' + data.name, data.data, false);
+                }
+            });
+        }
+
+    });
+
     if (adapter.config.instance) {
         if (adapter.config.instance.substring(0, 'system.adapter.'.length) !== 'system.adapter.') {
             adapter.config.instance = 'system.adapter.' + adapter.config.instance;
@@ -1691,6 +1829,14 @@ function main() {
     adapter.config.deviceOffLevel = parseFloat(adapter.config.deviceOffLevel) || 0;
     adapter.config.concatWord = (adapter.config.concatWord || '').toString().trim();
     adapter.config.apikey = (adapter.config.apikey || '').trim();
+    adapter.config.replaces = adapter.config.replaces ? adapter.config.replaces.split(',') : null;
+    if (adapter.config.replaces) {
+        var text = [];
+        for (var r = 0; r < adapter.config.replaces.length; r++) {
+            text.push('"' + adapter.config.replaces + '"');
+        }
+        adapter.log.debug('Following strings will be replaced in names: ' + text.join(', '));
+    }
 
     // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
     adapter.getForeignObject('system.config', function (err, obj) {
@@ -1713,6 +1859,27 @@ function main() {
     if (!adapter.config.apikey) {
         adapter.log.error('No api-key found. Please get one on https://iobroker.net');
         return;
+    }
+
+    if (adapter.config.iftttKey) {
+        adapter.subscribeStates('services.ifttt');
+        // create ifttt object
+        adapter.getObject('services.ifttt', function (err, obj) {
+            if (!obj) {
+                adapter.setObject('services.ifttt', {
+                    _id: adapter.namespace + '.services.ifttt',
+                    type: 'state',
+                    common: {
+                        name: 'IFTTT value',
+                        write: true,
+                        read: true,
+                        type: 'mixed',
+                        desc: 'All written data will be sent to IFTTT. If no state specified all requests from IFTTT will be saved here'
+                    },
+                    native: {}
+                });
+            }
+        });
     }
 
     adapter.log.info('Connecting with ' + adapter.config.cloudUrl + ' with "' + adapter.config.apikey + '"');

@@ -490,6 +490,10 @@
         }
     }
 
+    function updateIfttt() {
+        $('#ifttt_link').html('https://iobroker.net/ifttt/' + $('#apikey').val().trim());
+    }
+
     // the function loadSettings has to exist ...
     function load(settings, onChange) {
         if (!settings) return;
@@ -531,6 +535,7 @@
                     var id = $(this).attr('id');
                     if (id === 'language') language = $(this).val();
                     if (id === 'functionFirst' || id === 'concatWord') $('#' + id + 'Hint').show();
+                    if (id === 'appkey') updateIfttt();
                 }).keyup(function() {
                     $(this).trigger('change');
                 });
@@ -607,6 +612,7 @@
                 });
             });
         });
+        updateIfttt();
         onChange(false);
     }
 
@@ -685,9 +691,12 @@
                     </select></td><td></td></tr>
                     <tr><td><label for="functionFirst" class="translate">Place function in names first:</label></td><td class="admin-icon" data-link="place-function-in-names-first"></td><td><input type="checkbox" class="value" id="functionFirst"/></td><td><span id="functionFirstHint" class="translate" style="display: none; color: rgb(255, 153, 153);">Save settings and the names will be changed</span></td></tr>
                     <tr><td><label for="concatWord" class="translate">Concatenate words with:</label></td><td class="admin-icon" data-link="concatenate-words-with"></td><td><input class="value" id="concatWord"/></td><td><span id="concatWordHint" class="translate" style="display: none; color: rgb(255, 153, 153);">Save settings and the names will be changed</span></td></tr>
+                    <tr><td><label for="replaces" class="translate">Replace in names:</label></td><td class="admin-icon"></td><td><input class="value" id="replaces" /></td><td class="admin-text"></td></tr>
                     <tr><td><label for="deviceOffLevel" class="translate">OFF level for switches:</label></td><td class="admin-icon" data-link="off-level-for-switches"></td><td><input class="value" id="deviceOffLevel"/>%</td><td class="translate">(Set to 0 if behavior not desired)</td></tr>
                     <tr><td><label for="responseOID" class="translate">Write response to:</label></td><td class="admin-icon" data-link="write-response-to"></td><td><input class="value" id="responseOID"/><button id="responseOIDDialog"></button></td><td></td></tr>
                     <tr><td><label for="restartOnDisconnect" class="translate">Restart on disconnect:</label></td><td class="admin-icon"></td><td><input class="value" id="restartOnDisconnect" type="checkbox"/></td><td></td></tr>
+                    <tr><td><label for="iftttKey" class="translate">IFTTT key:</label></td><td class="admin-icon"></td><td><input class="value" id="iftttKey" style="width: 100%"/></td><td class="admin-text"></td></tr>
+                    <tr><td>Use following link for IFTTT:</td><td class="admin-icon"></td><td id="ifttt_link">https://iobroker.net/ifttt/</td><td class="admin-text"></td></tr>
                 </table>
 
                 <p class="translate">help_tip</p>
