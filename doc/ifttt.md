@@ -81,8 +81,12 @@ Example how to send some text via telegram to ioBroker.
 
 ![Step8](step8.png)
 
+### Get the generated link
 ![Step9](step9.png)
 
+### And paste it into dialog
 ![Step10](step10.png)
 
 ![Step11](step11.png)
+
+![Step12](step11.png)
