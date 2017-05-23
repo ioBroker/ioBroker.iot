@@ -23,7 +23,7 @@ ioBroker => IFTTT => Maker Webhook => Telegram
 
 ### Define event name
 ![Step5](step24.png)
-**It is important, that event name is "state"**
+Use the same event name as you will use in blockly.
 
 ### Find action Telegram
 ![Step6](step25.png)
@@ -58,7 +58,14 @@ now you can use even blockly to send the text to IFTTT.
 
 you can send via script with
 
-```sendTo('cloud.0', 'ifttt', {id: 'ObjectName', val: 55, ack: true});```
+```
+sendTo("cloud.0", "ifttt", {
+    event: 'state', 
+    value1: 'value1', 
+    value2: 'value2', 
+    value3: 'value3'
+});
+```
 
 If no "id" is defined, it will be used: "cloud.0.service.ifttt". Ack is optional.
 
