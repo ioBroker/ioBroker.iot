@@ -41,6 +41,8 @@ systemDictionary = {
     "Off":          {"en": "off",           "de": "aus",                    "ru": "выкл"},
     "Filter: ":     {"en": "Filter: ",      "de": "Filter: ",               "ru": "Фильтр: "},
     "Error":        {"en": "Error",         "de": "Fehler",                 "ru": "Ошибка"},
+    "Replace in names:": {"en": "Replace in names:", "de": "Ersetzte in Namen:", "ru": "Заменить в именах:"},
+    "IFTTT key:":   {"en": "IFTTT key:",    "de": "IFTTT key:",             "ru": "IFTTT key:"},
     "Are you sure?": {"en": "Are you sure?", "de": "Sind Sie sicher?",      "ru": "Уверены?"},
     "OFF level for switches:":  {"en": "OFF level for switches:",   "de": "OFF level for switches:",            "ru": "OFF level for switches:"},
     "modified":                 {"en": "Name was modified by user", "de": "Der Name war vom Anwender geändert", "ru": "Имя изменено пользователем"},

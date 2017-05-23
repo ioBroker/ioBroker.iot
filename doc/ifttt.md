@@ -1,4 +1,9 @@
 # How to use IFTTT
+
+You can use IFTTT service with ioBroker. Below you can find how to configure data flow from ioBroker to IFTTT and back.
+
+For that the IFTTT "Maker Webhook" service will be used. 
+
 ## Example 1
 
 We will create following rule: 
