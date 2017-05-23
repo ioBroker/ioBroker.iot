@@ -123,6 +123,14 @@ function sendDataToIFTTT(obj) {
             key: adapter.config.iftttKey,
             val: obj
         });
+    } else if (obj.event) {
+        socket.emit('ifttt', {
+            event: obj.event,
+            key: obj.key || adapter.config.iftttKey,
+            value1: obj.value1,
+            value2: obj.value2,
+            value3: obj.value3
+        });
     } else {
         if (obj.val === undefined) {
             adapter.log.warn('No value is defined');
@@ -1764,6 +1772,10 @@ function connect() {
     });
 
     socket.on('ifttt', processIfttt);
+
+    socket.on('iftttError', function (error) {
+        adapter.log.error('Error from IFTTT: ' + JSON.stringify(error));
+    });
 
     socket.on('service', function (data, callback) {
         // supported services:

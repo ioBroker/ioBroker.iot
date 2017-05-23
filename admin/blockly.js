@@ -6,7 +6,10 @@ goog.require('Blockly.JavaScript');
 
 // --- ifttt --------------------------------------------------
 Blockly.Words['ifttt']               = {'en': 'Send text to IFTTT',          'de': 'Sende Text zu IFTTT',                'ru': 'Послать текст в IFTTT'};
-Blockly.Words['ifttt_message']       = {'en': 'message',                     'de': 'Meldung',                            'ru': 'сообщение'};
+Blockly.Words['ifttt_event']         = {'en': 'event',                       'de': 'event',                              'ru': 'event'};
+Blockly.Words['ifttt_value1']        = {'en': 'value1',                      'de': 'value1',                             'ru': 'value1'};
+Blockly.Words['ifttt_value2']        = {'en': 'value2',                      'de': 'value2',                             'ru': 'value2'};
+Blockly.Words['ifttt_value3']        = {'en': 'value3',                      'de': 'value3',                             'ru': 'value3'};
 Blockly.Words['ifttt_tooltip']       = {'en': 'Send to IFTTT',               'de': 'Sende zu IFTTT',                     'ru': 'Послать в IFTTT'};
 Blockly.Words['ifttt_help']          = {'en': 'https://github.com/ioBroker/ioBroker.cloud/blob/master/README.md', 'de': 'http://www.iobroker.net/?page_id=178&lang=de', 'ru': 'http://www.iobroker.net/?page_id=4262&lang=ru'};
 
@@ -25,9 +28,24 @@ Blockly.Sendto.blocks['ifttt'] =
     '<block type="ifttt">'
     + '     <value name="INSTANCE">'
     + '     </value>'
-    + '     <value name="MESSAGE">'
+    + '     <value name="EVENT">'
     + '         <shadow type="text">'
-    + '             <field name="TEXT">text</field>'
+    + '             <field name="TEXT">state</field>'
+    + '         </shadow>'
+    + '     </value>'
+    + '     <value name="VALUE1">'
+    + '         <shadow type="text">'
+    + '             <field name="TEXT">value1</field>'
+    + '         </shadow>'
+    + '     </value>'
+    + '     <value name="VALUE2">'
+    + '         <shadow type="text">'
+    + '             <field name="TEXT">value2</field>'
+    + '         </shadow>'
+    + '     </value>'
+    + '     <value name="VALUE3">'
+    + '         <shadow type="text">'
+    + '             <field name="TEXT">value3</field>'
     + '         </shadow>'
     + '     </value>'
     + '     <value name="LOG">'
@@ -55,8 +73,20 @@ Blockly.Blocks['ifttt'] = {
             .appendField(Blockly.Words['ifttt'][systemLang])
             .appendField(new Blockly.FieldDropdown(options), 'INSTANCE');
 
-        this.appendValueInput('MESSAGE')
-            .appendField(Blockly.Words['ifttt_message'][systemLang]);
+        this.appendValueInput('EVENT')
+            .appendField(Blockly.Words['ifttt_event'][systemLang]);
+
+        var input = this.appendValueInput('VALUE1')
+            .appendField(Blockly.Words['ifttt_value1'][systemLang]);
+        if (input.connection) input.connection._optional = true;
+
+        input = this.appendValueInput('VALUE2')
+            .appendField(Blockly.Words['ifttt_value2'][systemLang]);
+        if (input.connection) input.connection._optional = true;
+
+        input = this.appendValueInput('VALUE3')
+            .appendField(Blockly.Words['ifttt_value3'][systemLang]);
+        if (input.connection) input.connection._optional = true;
 
         this.appendDummyInput('LOG')
             .appendField(Blockly.Words['ifttt_log'][systemLang])
@@ -80,16 +110,19 @@ Blockly.Blocks['ifttt'] = {
 
 Blockly.JavaScript['ifttt'] = function(block) {
     var dropdown_instance = block.getFieldValue('INSTANCE');
-    var value_message = Blockly.JavaScript.valueToCode(block, 'MESSAGE', Blockly.JavaScript.ORDER_ATOMIC);
+    var event = Blockly.JavaScript.valueToCode(block, 'EVENT', Blockly.JavaScript.ORDER_ATOMIC);
     var logLevel = block.getFieldValue('LOG');
+    var value1  = Blockly.JavaScript.valueToCode(block, 'VALUE1', Blockly.JavaScript.ORDER_ATOMIC);
+    var value2  = Blockly.JavaScript.valueToCode(block, 'VALUE2', Blockly.JavaScript.ORDER_ATOMIC);
+    var value3  = Blockly.JavaScript.valueToCode(block, 'VALUE3', Blockly.JavaScript.ORDER_ATOMIC);
 
     var logText;
     if (logLevel) {
-        logText = 'console.' + logLevel + '("ifttt: " + ' + value_message + ');\n'
+        logText = 'console.' + logLevel + '("ifttt: " + ' + event + ');\n'
     } else {
         logText = '';
     }
 
-    return 'sendTo("cloud' + dropdown_instance + '", "ifttt", ' + value_message  + ');\n' +
+    return 'sendTo("cloud' + dropdown_instance + '", "ifttt", {event: ' + event  + ', value1: ' + value1 + ', value2: ' + value2 + ', value3: ' + value3 + '});\n' +
         logText;
 };
