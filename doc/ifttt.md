@@ -23,6 +23,7 @@ ioBroker => IFTTT => Maker Webhook => Telegram
 
 ### Define event name
 ![Step5](step24.png)
+
 Use the same event name as you will use in blockly.
 
 ### Find action Telegram
@@ -54,6 +55,7 @@ and paste it into config
 ![Step13](step32.png)
 
 now you can use even blockly to send the text to IFTTT.
+
 ![Step14](step35.png)
 
 you can send via script with
