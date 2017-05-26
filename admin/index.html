@@ -363,7 +363,7 @@
                         }
                         text += '<td><input class="smart-enable" type="checkbox" data-id="' + rooms[i].id + '" ' + (smartName !== false && smartName !== 'ignore' ? 'checked' :'') + '/>' +
                             rooms[i].name + (smartName ? ' (' + smartName + ')' : '') +
-                            '<button ' + (smartName !== false && smartName !== 'ignore' ? '' : 'disabled') + ' class="smart-edit" data-id="' + rooms[i].id + '" data-value="' + smartName + '" data-name="' + (rooms[i].name || '') + '"></button></td>';
+                            '<button ' + (smartName !== false && smartName !== 'ignore' ? '' : 'disabled') + ' class="smart-edit" data-id="' + rooms[i].id + '" data-value="' + (smartName === undefined ? '' : smartName) + '" data-name="' + (rooms[i].name || '') + '"></button></td>';
                     } else {
                         text += '<td></td>';
                     }
@@ -374,7 +374,7 @@
                         }
                         text += '<td><input class="smart-enable" type="checkbox" data-id="' + funcs[i].id + '" ' + (smartName !== false && smartName !== 'ignore' ? 'checked' :'') + '/>' +
                             funcs[i].name + (smartName ? ' (' + smartName + ')' : '') +
-                            '<button ' + (smartName !== false && smartName !== 'ignore' ? '' : 'disabled') + ' class="smart-edit" data-id="' + funcs[i].id + '" data-value="' + smartName + '" data-name="' + (funcs[i].name || '') + '"></button></td>';
+                            '<button ' + (smartName !== false && smartName !== 'ignore' ? '' : 'disabled') + ' class="smart-edit" data-id="' + funcs[i].id + '" data-value="' + (smartName === undefined ? '' : smartName) + '" data-name="' + (funcs[i].name || '') + '"></button></td>';
                     } else {
                         text += '<td></td>';
                     }

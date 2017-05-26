@@ -247,7 +247,7 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
                 friendlyName = states[id].common.name;
                 if (adapter.config.replaces) {
                     for (var r = 0; r < adapter.config.replaces.length; r++) {
-                        friendlyName = friendlyName.replaces(adapter.config.replaces[r], '');
+                        friendlyName = friendlyName.replace(adapter.config.replaces[r], '');
                     }
                 }
             }

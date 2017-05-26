@@ -135,7 +135,10 @@ If you will set ```.STATE, .LEVEL```, so ".STATE" and " .LEVEL" will be replaced
 [instructions](doc/ifttt.md)
 
 ## Changelog
-### 1.0.1 (2017-05-23)
+### 1.0.3 (2017-05-23)
+* (bluefox) Rename some german words
+
+### 1.0.2 (2017-05-23)
 * (bluefox) Support of IFTTT
 
 ### 1.0.0 (2017-05-22)
