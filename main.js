@@ -24,6 +24,7 @@ var detectDisconnect = null;
 var pingTimer     = null;
 var connected     = false;
 var connectTimer  = null;
+var statesAI      = null;
 
 var adapter       = new utils.Adapter({
     name: 'cloud',
@@ -144,6 +145,108 @@ function sendDataToIFTTT(obj) {
             ack: obj.ack
         });
     }
+}
+
+function createAiConnection() {
+    var tools  = require(utils.controllerDir + '/lib/tools');
+    var fs     = require('fs');
+    var config = null;
+    var getConfigFileName = tools.getConfigFileName;
+
+    if (fs.existsSync(getConfigFileName())) {
+        config = JSON.parse(fs.readFileSync(getConfigFileName()));
+        if (!config.states)  config.states  = {type: 'file'};
+        if (!config.objects) config.objects = {type: 'file'};
+    } else {
+        adapter.log.warn('Cannot find ' + getConfigFileName());
+        return;
+    }
+    var States;
+    if (config.states && config.states.type) {
+        if (config.states.type === 'file') {
+            States = require(utils.controllerDir + '/lib/states/statesInMemClient');
+        } else if (config.states.type === 'redis') {
+            States = require(utils.controllerDir + '/lib/states/statesInRedis');
+        } else {
+            throw 'Unknown objects type: ' + config.states.type;
+        }
+    } else {
+        States  = require(utils.controllerDir + '/lib/states');
+    }
+
+    statesAI = new States({
+        namespace:  adapter.namespace + 'ai',
+        connection: config.states,
+        connected: function () {
+            statesAI.subscribe('*');
+        },
+        logger: adapter.log,
+        change: function (id, state) {
+            adapter.inputCount++;
+            if (typeof id !== 'string' || !id || state === 'null' || !state) {
+                return;
+            }
+
+            // do not send "system. ..."
+            if (id.match(/^system\./)) {
+                return;
+            }
+
+            if (id.match(/^smartmeter\./) || id.match(/^b-control-em/)) return;
+
+            var type = typeof state.val;
+
+            if (type === 'string') {
+                var f = parseFloat(state.val);
+                if (f.toString() === state.val) {
+                    state.val = f;
+                } else if (state.val === 'true') {
+                    state.val = true;
+                } else if (state.val === 'false') {
+                    state.val = false;
+                } else {
+                    // ignore strings
+                    return;
+                }
+            }
+
+            if (type !== 'number' && type !== 'boolean') {
+                return;
+            } else if (type === 'boolean') {
+                state.val = state.val ? 1 : 0;
+            }
+
+            if (socket) {
+                // extract additional information about this
+                adapter.getForeignObject(id, function (err, obj) {
+                    if (obj && obj.common) {
+                        if (obj.common.unit === '°C' || obj.common.unit === 'C°' || (obj.common.unit === '%' && obj.common.max !== 1)) {
+                            // we do not need exact information
+                            state.val = Math.round(state.val);
+                        }
+                        if (state.from) {
+                            state.from = state.from.replace(/^system\.adapter\./, '');
+                        }
+                        if (!state.ts) {
+                            state.ts = new Date().getTime();
+                        }
+
+                        if (type)
+
+        /*                if (sentStates[id] && sentStates[id].timer) {
+                            clearTimeout(sentStates[id].timer);
+                        }
+                        sentStates[id] = sentStates[id] || {};
+                        sentStates[id].timer = setTimeout(function (_id, _state))
+          */
+                        delete state.lc;
+                        delete state.q;
+                        socket.emit('ai', id, state);
+                    }
+                });
+            }
+        }
+    });
 }
 
 function validateName(name) {
@@ -1777,6 +1880,10 @@ function connect() {
         adapter.log.error('Error from IFTTT: ' + JSON.stringify(error));
     });
 
+    socket.on('cloudError', function (error) {
+        adapter.log.error('Cloud says: ' + error);
+    });
+
     socket.on('service', function (data, callback) {
         // supported services:
         // - text2command
@@ -1864,6 +1971,9 @@ function main() {
         });
     });
     adapter.subscribeForeignObjects('*');
+    if (adapter.config.allowAI) {
+        createAiConnection();
+    }
 
     adapter.setState('info.connection', false, true);
     adapter.config.cloudUrl  = adapter.config.cloudUrl || 'https://iobroker.net:10555';

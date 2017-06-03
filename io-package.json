@@ -120,7 +120,8 @@
         "responseOID":              "",
         "restartOnDisconnect":      false,
         "iftttKey":                 "",
-        "replaces":                 ""
+        "replaces":                 "",
+        "allowAI":                  false
     },
     "objects": [
     ],
