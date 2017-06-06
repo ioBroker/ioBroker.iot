@@ -104,3 +104,5 @@ Example how to send some text via telegram to ioBroker.
 ![Step11](step11.png)
 
 ![Step12](step11.png)
+
+The message from IFTTT can be found then in ```cloud.0.services.ifttt``` and can be analysed with JS, Blockly or whatever.
