@@ -1994,6 +1994,7 @@ function main() {
                     common: {
                         name: 'IFTTT value',
                         write: true,
+                        role: 'state',
                         read: true,
                         type: 'mixed',
                         desc: 'All written data will be sent to IFTTT. If no state specified all requests from IFTTT will be saved here'
