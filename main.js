@@ -1203,17 +1203,8 @@ function checkPing() {
         }
     }
 }
-
-function processIfttt(data, callback) {
-    adapter.log.debug('Received IFTTT object: ' + data);
-
-    if (typeof data === 'string' && data[0] === '{') {
-        try {
-            data = JSON.parse(data);
-        } catch (e) {
-            adapter.log.debug('Cannot parse: ' + data);
-        }
-    }
+function controlState(id, data, callback) {
+    id = id || 'services.ifttt';
 
     if (typeof data === 'object') {
         if (data.id) {
@@ -1221,12 +1212,12 @@ function processIfttt(data, callback) {
                 data.ack = true;
             }
             if (data.val === undefined) {
-                callback && callback({error: 'No value set'});
+                callback && callback('No value set');
                 return;
             }
             adapter.getForeignObject(data.id, function (err, obj) {
                 if (!obj || !obj.common) {
-                    callback && callback({error: 'Unknown ID: ' + data.id});
+                    callback && callback('Unknown ID: ' + data.id);
                 } else {
                     if (typeof data.val === 'string') data.val = data.val.replace(/^@ifttt\s?/, '');
                     if (obj.common.type === 'boolean') {
@@ -1235,19 +1226,77 @@ function processIfttt(data, callback) {
                         data.val = parseFloat(data.val);
                     }
 
-                    adapter.setForeignState(data.id, data.val, data.ack);
+                    adapter.setForeignState(data.id, data.val, data.ack, callback);
                 }
             });
         } else if (data.val !== undefined) {
             if (typeof data.val === 'string') data.val = data.val.replace(/^@ifttt\s?/, '');
-            adapter.setState('services.ifttt', data.val, true, callback);
+            adapter.setState(id, data.val, data.ack !== undefined ? data.ack : true, callback);
         } else {
             if (typeof data === 'string') data = data.replace(/^@ifttt\s?/, '');
-            adapter.setState('services.ifttt', JSON.stringify(data), true, callback);
+            adapter.setState(id, JSON.stringify(data), true, callback);
         }
     } else {
         if (typeof data === 'string') data = data.replace(/^@ifttt\s?/, '');
-        adapter.setState('services.ifttt', data, true, callback);
+        adapter.setState(id, data, true, callback);
+    }
+}
+
+
+function processIfttt(data, callback) {
+    adapter.log.debug('Received IFTTT object: ' + data);
+    var id;
+    if (typeof data === 'object' && data.id && data.data !== undefined) {
+        id = data.id;
+        if (typeof data.data === 'string' && data.data[0] === '{') {
+            try {
+                data = JSON.parse(data.data);
+            } catch (e) {
+                adapter.log.debug('Cannot parse: ' + data.data);
+            }
+        } else {
+            data = data.data;
+        }
+    } else {
+        if (typeof data === 'string' && data[0] === '{') {
+            try {
+                data = JSON.parse(data);
+            } catch (e) {
+                adapter.log.debug('Cannot parse: ' + data);
+            }
+        }
+    }
+
+    if (id) {
+        adapter.getForeignObject(id, function (err, obj) {
+            if (obj) {
+                controlState(id, data, callback);
+            } else {
+                adapter.getForeignObject(adapter.namespace + '.services.'  + id, function (err, obj) {
+                    if (!obj) {
+                        // create state
+                        adapter.setObject('services.' + id, {
+                            type: 'state',
+                            common: {
+                                name: 'IFTTT value',
+                                write: false,
+                                role: 'state',
+                                read: true,
+                                type: 'mixed',
+                                desc: 'Custom state'
+                            },
+                            native: {}
+                        }, function () {
+                            controlState(adapter.namespace + '.services.'  + id, data, callback);
+                        });
+                    } else {
+                        controlState(obj._id, data, callback);
+                    }
+                });
+            }
+        });
+    } else {
+        controlState(null, data, callback);
     }
 }
 

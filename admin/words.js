@@ -50,6 +50,11 @@ systemDictionary = {
     "Write response to:":       {"en": "Write response to:",        "de": "Schreibe Antwort ins:",              "ru": "Писать ответ в:"},
     "Duplicate name":           {"en": "Duplicate name",            "de": "Name ist schon benutzt",             "ru": "Имя уже используется"},
     "Restart on disconnect:":   {"en": "Restart on disconnect:",    "de": "Neustart bei dem Verbindungsabbruch:", "ru": "Перезапуск при потере сединения:"},
+    "amazon link": {
+        "en": "If you use Alexa Skill, please make a review for us <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B01MRXCC3J/create-review/?ref-suffix=war_dp' target='_blank' class='here'>here</a>. Examples can be found <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B01MRXCC3J/reviews' target='_blank'>here</a>.",
+        "de": "Falls du Alexa benutzst, bitte eine Review für ioBroker Skill <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B01MRXCC3J/create-review/?ref-suffix=war_dp' target='_blank' class='here'>hier</a> hinterlassen. Beispiele kann man <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B01MRXCC3J/reviews' target='_blank'>hier</a> anschauen.",
+        "ru": "Если вы используете Alexa, пожалуйста оставьте свой отзыв <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B01MRXCC3J/create-review/?ref-suffix=war_dp' target='_blank' class='here'>здесь</a>. Примеры отзывов можно посмотреть <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B01MRXCC3J/reviews' target='_blank'>здесь</a>."
+    },
     "info_iftttKey": {
         "en": "You can find your key <a href='https://ifttt.com/maker_webhooks' target='_blank'>here</a> under 'Documentation'",
         "de": "Schlüssel kann <a href='https://ifttt.com/maker_webhooks' target='_blank'>hier</a> unter 'Documentation' gefunden werden",
