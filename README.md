@@ -134,6 +134,30 @@ If you will set ```.STATE, .LEVEL```, so ".STATE" and " .LEVEL" will be replaced
 ## IFTTT
 [instructions](doc/ifttt.md)
 
+## Services
+There is a possibility to send messages to cloud adapter.
+If you call ```[POST]https://iobroker.net/service/<ServiceName>/<user-app-key>``` und value as payload.
+
+```
+curl --data "myString" https://iobroker.net/service/test/<user-app-key>
+```
+
+If you set in the settings the filed "White list for services" the name *test*, the state **cloud.0.services.custom_test** will be set to *myString*.
+
+You may write "*" in white list and all services will be allowed.
+
+IFTTT service is allowed only if IFTTT key is set.
+
+Reserved names are "ifttt", "text2command", "simpleApi".
+
+### text2command
+You may write "text2command" in white list, you can send POST request to ```https://iobroker.net/service/text2command/<user-app-key>``` to write data into *text2command.X.text* variable.
+
+"X" can be defined in settings by the "Use text2command instance" option.
+
+### simpleApi
+*to do*
+
 ## Changelog
 ### 1.0.3 (2017-05-23)
 * (bluefox) Rename some german words

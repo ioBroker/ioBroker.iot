@@ -121,7 +121,9 @@
         "restartOnDisconnect":      false,
         "iftttKey":                 "",
         "replaces":                 "",
-        "allowAI":                  false
+        "allowAI":                  false,
+        "allowedServices":          "",
+        "text2command":             "0"
     },
     "objects": [
     ],

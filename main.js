@@ -1938,35 +1938,46 @@ function connect() {
         // - text2command
         // - simpleApi
         // - custom, e.g. torque
-        if (data.name === 'ifttt') {
+        if (!data.name) return;
+        if (data.name === 'ifttt' && adapter.config.iftttKey) {
             processIfttt(data.data, callback);
-        } else
-        if (data.name === 'text2command') {
-            adapter.setForeginState(adapter.config.text2command || 'text2command.0.text', decodeURIComponent(data.data), callback);
-        } else if (data.name === 'simpleApi') {
-
         } else {
-            adapter.getObject('services.' + data.name, function (err, obj) {
-                if (!obj) {
-                    adapter.setObject('services.' + data.name, {
-                        _id: adapter.namespace + '.services.' + data.name,
-                        type: 'state',
-                        common: {
-                            name: 'Service for ' + data.name,
-                            write: false,
-                            read: true,
-                            type: 'mixed'
-                        },
-                        native: {}
-                    }, function (err) {
-                        adapter.setState('services.' + data.name, data.data, false);
-                    });
-                } else {
-                    adapter.setState('services.' + data.name, data.data, false);
-                }
-            });
-        }
+            if (data.name.match(/^custom_/)) data.name = data.name.substring(7);
 
+            if (adapter.config.allowedServices[0] === '*' || adapter.config.allowedServices.indexOf(data.name) !== -1) {
+                if (data.name === 'text2command') {
+                    if (adapter.config.text2command !== undefined && adapter.config.text2command !== '') {
+                        adapter.setForeginState('text2command.' + adapter.config.text2command + '.text', decodeURIComponent(data.data), callback);
+                    } else {
+                        adapter.log.warn('Received service text2command, but instance is not defined');
+                    }
+                } else if (data.name === 'simpleApi') {
+
+                } else {
+                    adapter.getObject('services.custom_' + data.name, function (err, obj) {
+                        if (!obj) {
+                            adapter.setObject('services.custom_' + data.name, {
+                                _id: adapter.namespace + '.services.custom_' + data.name,
+                                type: 'state',
+                                common: {
+                                    name: 'Service for ' + data.name,
+                                    write: false,
+                                    read: true,
+                                    type: 'mixed'
+                                },
+                                native: {}
+                            }, function (err) {
+                                adapter.setState('services.custom_' + data.name, data.data, false);
+                            });
+                        } else {
+                            adapter.setState('services.custom_' + data.name, data.data, false);
+                        }
+                    });
+                }
+            } else {
+                adapter.log.warn('Received service "' + data.name + '", but it is not found in white space');
+            }
+        }
     });
 
     if (adapter.config.instance) {
@@ -2022,6 +2033,11 @@ function main() {
     adapter.subscribeForeignObjects('*');
     if (adapter.config.allowAI) {
         createAiConnection();
+    }
+
+    adapter.config.allowedServices = (adapter.config.allowedServices || '').split(',');
+    for (var s = 0; s < adapter.config.allowedServices.length; s++) {
+        adapter.config.allowedServices[s] = adapter.config.allowedServices[s].trim();
     }
 
     adapter.setState('info.connection', false, true);
