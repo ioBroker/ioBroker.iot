@@ -1942,7 +1942,11 @@ function connect() {
         if (data.name === 'ifttt' && adapter.config.iftttKey) {
             processIfttt(data.data, callback);
         } else {
-            if (data.name.match(/^custom_/)) data.name = data.name.substring(7);
+            var isCustom = false;
+            if (data.name.match(/^custom_/)) {
+                data.name = data.name.substring(7);
+                isCustom = true;
+            }
 
             if (adapter.config.allowedServices[0] === '*' || adapter.config.allowedServices.indexOf(data.name) !== -1) {
                 if (data.name === 'text2command') {
@@ -1953,7 +1957,7 @@ function connect() {
                     }
                 } else if (data.name === 'simpleApi') {
 
-                } else {
+                } else if (isCustom) {
                     adapter.getObject('services.custom_' + data.name, function (err, obj) {
                         if (!obj) {
                             adapter.setObject('services.custom_' + data.name, {
