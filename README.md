@@ -61,7 +61,7 @@ You can select the behaviour of ON command will come for the number state. The s
 For every command the text response will be generated. You can define here the Object ID , where this text must be written to. E.g. *sayit.0.tts.text*.
 
 ### Colors
-Just now only english alexa supports the color control. 
+Just now only english alexa supports the color control.
 The channel must have 4 states with following roles:
 
 - level.color.saturation (required for detection of the channel),
@@ -121,7 +121,7 @@ To create own groups the user can install "scenes" adapter or create "script" in
 
 ### Replaces
 You can specify strings, that could be automatically replaced in the devices names. E.g if you set replaces to:
-```.STATE,.LEVEL```, so all ".STATE" and ".LEVEL" will be deleted from names. Be careful with spaces. 
+```.STATE,.LEVEL```, so all ".STATE" and ".LEVEL" will be deleted from names. Be careful with spaces.
 If you will set ```.STATE, .LEVEL```, so ".STATE" and " .LEVEL" will be replaced and not ".LEVEL".
 
 ## Helper states
@@ -142,13 +142,13 @@ If you call ```[POST]https://iobroker.net/service/<ServiceName>/<user-app-key>``
 curl --data "myString" https://iobroker.net/service/test/<user-app-key>
 ```
 
-If you set in the settings the filed "White list for services" the name *test*, the state **cloud.0.services.custom_test** will be set to *myString*.
+If you set in the settings the field "White list for services" the name *test*, and call with "custom_test" as Servicename the state **cloud.0.services.custom_test** will be set to *myString*.
 
 You may write "*" in white list and all services will be allowed.
 
 IFTTT service is allowed only if IFTTT key is set.
 
-Reserved names are "ifttt", "text2command", "simpleApi".
+Reserved names are "ifttt", "text2command", "simpleApi". These are used without the "custom_" prefix
 
 ### text2command
 You may write "text2command" in white list, you can send POST request to ```https://iobroker.net/service/text2command/<user-app-key>``` to write data into *text2command.X.text* variable.
