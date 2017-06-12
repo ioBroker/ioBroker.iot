@@ -1979,7 +1979,7 @@ function connect() {
                     });
                 }
             } else {
-                adapter.log.warn('Received service "' + data.name + '", but it is not found in white space');
+                adapter.log.warn('Received service "' + data.name + '", but it is not found in whitelist');
             }
         }
     });
