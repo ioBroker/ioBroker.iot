@@ -377,7 +377,7 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
 
         if (!friendlyNames[0]) {
             adapter.log.warn('State ' + id + ' is invalid.');
-            return
+            return;
         }
 
         var friendlyDescription = (states[id].common.name || id);
