@@ -1938,7 +1938,9 @@ function connect() {
         // - text2command
         // - simpleApi
         // - custom, e.g. torque
-        if (!data.name) return;
+        if (!data.name) {
+            callback && callback({error: 'no name'});
+        } else
         if (data.name === 'ifttt' && adapter.config.iftttKey) {
             processIfttt(data.data, callback);
         } else {
@@ -1949,14 +1951,17 @@ function connect() {
             }
 
             if (adapter.config.allowedServices[0] === '*' || adapter.config.allowedServices.indexOf(data.name) !== -1) {
-                if (data.name === 'text2command') {
+                if (!isCustom && data.name === 'text2command') {
                     if (adapter.config.text2command !== undefined && adapter.config.text2command !== '') {
-                        adapter.setForeginState('text2command.' + adapter.config.text2command + '.text', decodeURIComponent(data.data), callback);
+                        adapter.setForeginState('text2command.' + adapter.config.text2command + '.text', decodeURIComponent(data.data), function (err) {
+                            callback && callback({result: err || 'Ok'});
+                        });
                     } else {
                         adapter.log.warn('Received service text2command, but instance is not defined');
+                        callback && callback({error: 'but instance is not defined'});
                     }
-                } else if (data.name === 'simpleApi') {
-
+                } else if (!isCustom && data.name === 'simpleApi') {
+                    callback && callback({error: 'not implemented'});
                 } else if (isCustom) {
                     adapter.getObject('services.custom_' + data.name, function (err, obj) {
                         if (!obj) {
@@ -1972,14 +1977,17 @@ function connect() {
                                 native: {}
                             }, function (err) {
                                 adapter.setState('services.custom_' + data.name, data.data, false);
+                                callback && callback({result: err || 'Ok'});
                             });
                         } else {
+                            callback && callback({result: 'Ok'});
                             adapter.setState('services.custom_' + data.name, data.data, false);
                         }
                     });
                 }
             } else {
                 adapter.log.warn('Received service "' + data.name + '", but it is not found in whitelist');
+                callback && callback({error: 'blocked'});
             }
         }
     });
