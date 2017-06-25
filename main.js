@@ -2043,7 +2043,7 @@ function main() {
         });
     });
     adapter.subscribeForeignObjects('*');
-    if (adapter.config.allowAI) {
+    if (adapter.config.allowAI && false) {
         createAiConnection();
     }
 

@@ -159,6 +159,9 @@ You may write "text2command" in white list, you can send POST request to ```http
 *to do*
 
 ## Changelog
+### 1.0.4 (2017-06-25)
+* (bluefox) AI deactivated
+
 ### 1.0.3 (2017-05-23)
 * (bluefox) Rename some german words
 

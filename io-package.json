@@ -1,10 +1,15 @@
 {
     "common": {
         "name":                     "cloud",
-        "version":                  "1.0.3",
+        "version":                  "1.0.4",
         "title":                    "Cloud Adapter",
         "desc":                     "This adapter connect",
 		"news": {
+            "1.0.4": {
+                "en":                   "Disable AI",
+                "de":                   "Ai deaktiviert",
+                "ru":                   "AI выключен"
+            },
             "1.0.3": {
                 "en":                   "Rename some german words",
                 "de":                   "Umbenennen Rolladen => Rollladen",
