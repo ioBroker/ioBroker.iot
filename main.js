@@ -1190,7 +1190,7 @@ function writeResponse(applianceId, operation, value) {
 function checkPing() {
     if (connected) {
         if (!pingTimer) {
-            pingTimer = setInterval(pingConnection, 10000);
+            pingTimer = setInterval(pingConnection, 30000);
         }
     } else {
         if (pingTimer) {
@@ -1327,7 +1327,8 @@ function connect() {
         } else {
             adapter.log.info('Connection changed: CONNECTED4');
         }
-        socket.emit('apikey', adapter.config.apikey);
+        // will be done in socket.io lib
+        // socket.emit('apikey', adapter.config.apikey, 'c');
     });
     socket.on('reconnect', function () {
         if (!connected) {
@@ -1336,7 +1337,7 @@ function connect() {
             adapter.setState('info.connection', true, true);
             checkPing();
         }
-        socket.emit('apikey', adapter.config.apikey);
+        //socket.emit('apikey', adapter.config.apikey);
     });
     socket.on('reconnecting', function () {
         if (connected) {
