@@ -25,6 +25,7 @@ var pingTimer     = null;
 var connected     = false;
 var connectTimer  = null;
 var statesAI      = null;
+var pack          = require(__dirname + '/io-package.json');
 
 var adapter       = new utils.Adapter({
     name: 'cloud',
@@ -1327,8 +1328,7 @@ function connect() {
         } else {
             adapter.log.info('Connection changed: CONNECTED4');
         }
-        // will be done in socket.io lib
-        // socket.emit('apikey', adapter.config.apikey, 'c');
+        socket.emit('apikey', adapter.config.apikey, pack.common.version);
     });
     socket.on('reconnect', function () {
         if (!connected) {
@@ -1337,7 +1337,6 @@ function connect() {
             adapter.setState('info.connection', true, true);
             checkPing();
         }
-        //socket.emit('apikey', adapter.config.apikey);
     });
     socket.on('reconnecting', function () {
         if (connected) {

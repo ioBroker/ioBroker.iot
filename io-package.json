@@ -1,11 +1,11 @@
 {
     "common": {
         "name":                     "cloud",
-        "version":                  "1.0.6",
+        "version":                  "1.0.7",
         "title":                    "Cloud Adapter",
         "desc":                     "This adapter connect",
 		"news": {
-            "1.0.6": {
+            "1.0.7": {
                 "en":                   "Disable AI",
                 "de":                   "Ai deaktiviert",
                 "ru":                   "AI выключен"
