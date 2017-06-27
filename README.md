@@ -136,13 +136,13 @@ If you will set ```.STATE, .LEVEL```, so ".STATE" and " .LEVEL" will be replaced
 
 ## Services
 There is a possibility to send messages to cloud adapter.
-If you call ```[POST]https://iobroker.net/service/<ServiceName>/<user-app-key>``` und value as payload.
+If you call ```[POST]https://iobroker.net/service/custom_<name>/<user-app-key>``` und value as payload.
 
 ```
-curl --data "myString" https://iobroker.net/service/test/<user-app-key>
+curl --data "myString" https://iobroker.net/service/custom_test/<user-app-key>
 ```
 
-If you set in the settings the field "White list for services" the name *test*, and call with "custom_test" as Servicename the state **cloud.0.services.custom_test** will be set to *myString*.
+If you set in the settings the field "White list for services" the name *custom_test*, and call with "custom_test" as Servicename the state **cloud.0.services.custom_test** will be set to *myString*.
 
 You may write "*" in white list and all services will be allowed.
 
