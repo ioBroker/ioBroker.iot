@@ -1,7 +1,7 @@
 systemDictionary = {
     "Cloud adapter settings": {
         "de": "Einstellungen für Cloud-Adapter",
-        "ru": "Настройки драйвре Cloud"
+        "ru": "Настройки драйвера Cloud"
     },
     "APP-KEY:":     {"en": "APP-KEY:",      "de": "APP-KEY:",               "ru": "APP-KEY:"},
     "Instance:":    {"en": "Instance:",     "de": "Instanz:",               "ru": "Экземпляр:"},
@@ -128,12 +128,12 @@ systemDictionary = {
     "tooltip_deviceOffLevel": {
         "en": "Some groups consist of mixed devices: dimmers and switches. It is allowed to control them with ON and OFF commands and with percents",
         "de": "Some groups consist of mixed devices: dimmers and switches. It is allowed to control them with ON and OFF commands and with percents",
-        "ru": "Some groups consist of mixed devices: dimmers and switches. It is allowed to control them with ON and OFF commands and with percents"
+        "ru": "Некоторые группы состоят из смешанных устройств: диммеров и переключателей. Разрешено управлять ими с помощью команд ON и OFF и с процентами"
     },
     "tooltip_responseOID": {
         "en": "For every command the text response will be generated. You can define here the Object ID , where this text must be written to. E.g. sayit.0.tts.text.",
         "de": "For every command the text response will be generated. You can define here the Object ID , where this text must be written to. E.g. sayit.0.tts.text.",
-        "ru": "For every command the text response will be generated. You can define here the Object ID , where this text must be written to. E.g. sayit.0.tts.text."
+        "ru": "Для каждой команды будет генерироваться текстовый ответ. Вы можете определить здесь ID объекта , где этот текст должен быть записан. Например sayit.0.tts.text."
     },
     "tooltip_restartOnDisconnect": {
         "en": "Workaround for missing connection to Alexa after the connection to cloud was lost. With this option you can restart adapter after each disconnection and it will work.",
