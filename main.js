@@ -1972,7 +1972,8 @@ function connect() {
                                     name: 'Service for ' + data.name,
                                     write: false,
                                     read: true,
-                                    type: 'mixed'
+                                    type: 'mixed',
+                                    role: 'value'
                                 },
                                 native: {}
                             }, function (err) {
