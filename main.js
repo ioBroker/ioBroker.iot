@@ -478,7 +478,7 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
 
                     if (groups[friendlyNames[n]].additionalApplianceDetails.idhs && states[id].common.role === 'level.color.saturation') {
                         var idhs = JSON.parse(groups[friendlyNames[n]].additionalApplianceDetails.idhs);
-                        idhs.push(findRole(states, id, 'level.color.hue'));
+                        idhs.push(findRole(states, id, 'level.color.hue') || findRole(states, id, 'level.color.rgb'));
                         groups[friendlyNames[n]].additionalApplianceDetails.idhs   = JSON.stringify(idhs);
 
                         var idbs = JSON.parse(groups[friendlyNames[n]].additionalApplianceDetails.idbs);
@@ -509,7 +509,7 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
                     };
 
                     if (states[id].common.role === 'level.color.saturation') {
-                        groups[friendlyNames[n]].additionalApplianceDetails.idhs = JSON.stringify([names[friendlyNames[n]].additionalApplianceDetails.idh,   findRole(states, id, 'level.color.hue')]);
+                        groups[friendlyNames[n]].additionalApplianceDetails.idhs = JSON.stringify([names[friendlyNames[n]].additionalApplianceDetails.idh,   findRole(states, id, 'level.color.hue') || findRole(states, id, 'level.color.rgb')]);
                         groups[friendlyNames[n]].additionalApplianceDetails.idbs = JSON.stringify([names[friendlyNames[n]].additionalApplianceDetails.idb,   findRole(states, id, 'level.dimmer')]);
                         groups[friendlyNames[n]].additionalApplianceDetails.idos = JSON.stringify([names[friendlyNames[n]].additionalApplianceDetails.ido,   findRole(states, id, 'switch')]);
                     }
@@ -521,7 +521,7 @@ function processState(states, id, room, func, alexaIds, groups, names, result) {
             } else {
                 names[friendlyNames[n]] = obj;
                 if (states[id].common.role === 'level.color.saturation') {
-                    obj.additionalApplianceDetails.idh = findRole(states, id, 'level.color.hue');
+                    obj.additionalApplianceDetails.idh = findRole(states, id, 'level.color.hue') || findRole(states, id, 'level.color.rgb');
                     obj.additionalApplianceDetails.idb = findRole(states, id, 'level.dimmer');
                     obj.additionalApplianceDetails.ido = findRole(states, id, 'switch');
                 }
@@ -1040,6 +1040,63 @@ function getLock(id, writeStates, callback) {
     });
 }
 
+function padding(num) {
+    num = num.toString(16);
+    if (num.length < 2) num = '0' + num;
+    return num;
+}
+// expected hue range: [0, 360)
+// expected saturation range: [0, 1]
+// expected lightness range: [0, 1]
+function hslToRgb(hue, saturation, brightness){
+    // based on algorithm from http://en.wikipedia.org/wiki/HSL_and_HSV#Converting_to_RGB
+    if (hue === undefined){
+        return [0, 0, 0];
+    }
+
+    var chroma = (1 - Math.abs((2 * brightness) - 1)) * saturation;
+    var huePrime = parseFloat(hue) / 60;
+    var secondComponent = chroma * (1 - Math.abs((huePrime % 2) - 1));
+
+    huePrime = Math.floor(huePrime);
+    var red;
+    var green;
+    var blue;
+
+    if (huePrime === 0){
+        red = chroma;
+        green = secondComponent;
+        blue = 0;
+    } else if (huePrime === 1) {
+        red = secondComponent;
+        green = chroma;
+        blue = 0;
+    } else if (huePrime === 2) {
+        red = 0;
+        green = chroma;
+        blue = secondComponent;
+    } else if (huePrime === 3) {
+        red = 0;
+        green = secondComponent;
+        blue = chroma;
+    } else if (huePrime === 4) {
+        red = secondComponent;
+        green = 0;
+        blue = chroma;
+    } else if (huePrime === 5) {
+        red = chroma;
+        green = 0;
+        blue = secondComponent;
+    }
+
+    var lightnessAdjustment = brightness - (chroma / 2);
+    red   += lightnessAdjustment;
+    green += lightnessAdjustment;
+    blue  += lightnessAdjustment;
+
+    return '#' + padding(Math.round(red * 255)) + padding(Math.round(green * 255)) + padding(Math.round(blue * 255));
+}
+
 function controlColor(idh, ids, idb, color, writeStates, callback) {
     // "color": {
     //     "hue": 0.0,
@@ -1047,14 +1104,21 @@ function controlColor(idh, ids, idb, color, writeStates, callback) {
     //     "brightness": 1.0000
     // }
     adapter.getForeignObject(idh, function (err, obj) {
+        if (obj.common && obj.common.role === 'level.color.rgb') {
+            color.hue = hslToRgb(color.hue, color.saturation, color.brightness);
+        } else
         if (obj.common && obj.common.min !== undefined && obj.common.max !== undefined) {
-            color.hue = Math.round((obj.common.max - obj.common.min) * (color.hue / 360)+ obj.common.min);
+            color.hue = Math.round((obj.common.max - obj.common.min) * (color.hue / 360) + obj.common.min);
         }
         adapter.setForeignState(idh, color.hue, function (err) {
             if (err) adapter.log.error('Cannot read device: ' + err);
 
             if (writeStates) {
                 adapter.setState('smart.lastObjectID', idh, true);
+            }
+            if (obj.common.role === 'level.color.rgb') {
+                if (callback) callback(err);
+                return;
             }
             adapter.getForeignObject(ids, function (err, obj) {
                 if (obj.common && obj.common.min !== undefined && obj.common.max !== undefined) {

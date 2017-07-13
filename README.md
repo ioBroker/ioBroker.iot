@@ -159,6 +159,9 @@ You may write "text2command" in white list, you can send POST request to ```http
 *to do*
 
 ## Changelog
+### 1.0.8 (2017-07-13)
+* (bluefox) Allow control light colors
+
 ### 1.0.7 (2017-06-26)
 * (bluefox) AI deactivated
 * (bluefox) change ping interval from 10 to 30 seconds
