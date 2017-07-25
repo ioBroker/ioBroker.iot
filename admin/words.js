@@ -65,6 +65,11 @@ systemDictionary = {
         "de": "Die Instanz muss laufen um die Daten zu liefern",
         "ru": "Драйвер должен быть запущен, что бы отобразить данные"
     },
+    "(you can separate names with comma)": {
+        "en": "You can enter several names divided by comma",
+        "de": "Sie können mehrere Namen eingeben, geteilt durch Komma",
+        "ru": "Вы можете ввести несколько имен, разделенных запятой"
+    },
     "Place function in names first:": {
         "en": "Place function in names first:",
         "de": "Platziere Funktionsnamen vorne:",
@@ -84,6 +89,11 @@ systemDictionary = {
         "en": "Device will be disabled.",
         "de": "Gerät wird aus der Liste verschwinden.",
         "ru": "Устройство исчезнет из списка."
+    },
+    "Device will be deactivated.": {
+        "en": "Device will be deactivated.",
+        "de": "Gerät wird für die Sprachsteuerung deaktiviert.",
+        "ru": "Устройство будет недоступно для голосового управления."
     },
     "(Set to 0 if behavior not desired)": {
         "en": "(Set to 0 if behavior not desired)",

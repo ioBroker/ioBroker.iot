@@ -37,8 +37,10 @@
     };
     var enumTimer;
     var devTimer;
+    var devMTimer;
     var selectId;
     var filterTimer;
+    var filterMTimer;
     var idToEdit;
     var idToNavigate;
     var language;
@@ -88,7 +90,7 @@
                 title:    _('Edit smart name'),
                 modal:    true,
                 width:    600,
-                height:   200,
+                height:   230,
                 buttons: [
                     {
                         id:    'edit-ok',
@@ -326,6 +328,137 @@
                 }
             }
             filter();
+
+        });
+    }
+
+    function updateMDevices(delay) {
+        if (delay) {
+            if (devMTimer) clearTimeout(devMTimer);
+            devMTimer = setTimeout(function () {
+                devMTimer = null;
+                updateMDevices();
+            }, delay);
+            return;
+        }
+        sendTo(null, 'browse3', null, function (list) {
+            if (list) {
+                var text = '<tr><th style="width: 30px">' + _('Active') + '</th><th style="width: 30%">' + _('Smart name') + '</th><th style="width: 100px">' + _('Commands') + '</th><th style="width: 70%">' + _('Addresses') + '</th><th style="width: 70px"></th></tr>';
+
+                for (var j = 0; j < list.length; j++) {
+                    var actions = [];
+                    for (var c = 0; c < list[j].capabilities.length; c++) {
+                        if (list[j].capabilities[c].interface === 'Alexa.Speaker') {
+                            actions.push('vol.');
+                        } else if (list[j].capabilities[c].interface === 'Alexa.PlaybackController') {
+                            actions.push('&#9654;');
+                        }
+                    }
+
+                    text += '<tr class="' + (list[j].enabled ? '' : 'smart-disabled') + '"><td style="text-align: center"><input data-id="' + list[j].cookie.id + '" class="smart-enabled" type="checkbox" ' + (list[j].enabled ? 'checked' : '') + '/></td>';
+                    text += '<td class="smart-name" title="' + (list[j].cookie.id || '') + ' style="white-space: nowrap;">' + list[j].friendlyName + '</td>';
+                    text += '<td>' + actions.join(', ') + '</td>';
+                    text += '<td style="width: 95px" title="' + list[j].cookie.name + '">' + list[j].cookie.id + '</td>';
+                    text += '<td style="width: 95px"><button data-value="' + (list[j].cookie.friendlyNames ? list[j].cookie.friendlyNames.join(',') : list[j].friendlyName) + '" data-id="' + list[j].cookie.id + '" class="button-edit"></button></td>';
+                    text += '</td></tr>';
+                }
+
+                var $smartTable = $('#smart_m_table');
+                $smartTable.html(text).find('.smart-enabled').change(function () {
+                    var $this = $(this);
+                    var id = $this.data('id');
+
+                    if (!$(this).prop('checked')) {
+                        confirmMessage(_('Device will be deactivated.'), _('Are you sure?'), 'alert', function (result) {
+                            if (result) {
+                                $this.parent().addClass('smart-changed');
+                                socket.emit('getObject', id, function (err, obj) {
+                                    obj.common.smartName = false;
+                                    socket.emit('setObject', id, obj, function (err) {
+                                        updateMDevices(2000);
+                                    });
+                                });
+                            }
+                        });
+                    } else {
+                        $this.parent().addClass('smart-changed');
+                        socket.emit('getObject', id, function (err, obj) {
+                            obj.common.smartName = {};
+                            socket.emit('setObject', id, obj, function (err) {
+                                updateMDevices(2000);
+                            });
+                        });
+                    }
+                });
+
+                $smartTable.find('.button-edit').click(function () {
+                    var $this = $(this);
+                    var $editDialog = $('#edit_dialog');
+                    $editDialog.data('id', $this.data('id'));
+                    $('#edit_name').val($this.data('value'));
+
+                    initDialog();
+
+                    $editDialog.data('callback', function () {
+                        var id = $('#edit_dialog').data('id');
+
+                        var $devices = $('#smart_m_table').find('.button-edit');
+
+                        var val   = $('#edit_name').val();
+                        var found = false;
+                        $devices.each(function () {
+                            if ($(this).data('value') === val && $(this).data('id') !== id) {
+                                found = true;
+                                return false;
+                            }
+                        });
+
+                        if (found) {
+                            showMessage(_('Duplicate name'), _('Error'), 'alert');
+                            return;
+                        }
+
+                        //noinspection JSJQueryEfficiency
+                        $devices.find('[data-id="' + id + '"]').parent().addClass('smart-changed');
+
+                        idToNavigate = id;
+                        socket.emit('getObject', id, function (err, obj) {
+                            obj.common.smartName = obj.common.smartName || {};
+
+                            obj.common.smartName[language] = $('#edit_name').val();
+
+                            // If no smart name defined or smartname is the same as the name (except buttons)
+                            if (!obj.common.smartName[language] || (obj.common.smartName[language] === $this.data('name') && (!obj.common.role || obj.common.role.indexOf('button') === -1))) {
+                                delete obj.common.smartName[language];
+                                var empty = true;
+                                for (var key in obj.common.smartName) {
+                                    if (obj.common.smartName.hasOwnProperty(key)) {
+                                        empty = false;
+                                        break;
+                                    }
+                                }
+                                if (empty) obj.common.smartName = null;
+                            }
+                            socket.emit('setObject', id, obj, function (err) {
+                                updateMDevices(2000);
+                            });
+                        });
+                    });
+                    $editDialog.dialog('open');
+                }).button({icons: {primary: 'ui-icon-pencil'}, text: false}).css({width: '26px', height: '26px'});
+
+                if (idToEdit) {
+                    $smartTable.find('.button-edit[data-id="' + idToEdit + '"]').trigger('click');
+                    idToEdit = null;
+                }
+                if (idToNavigate) {
+                    var $td = $smartTable.find('.button-edit[data-id="' + idToNavigate + '"]');
+                    $td[0].scrollIntoView();
+                    $td.parent().parent().addClass('highlight');
+                    idToNavigate = null;
+                }
+            }
+            filter_m();
         });
     }
 
@@ -490,6 +623,24 @@
         }
     }
 
+    function filter_m() {
+        var val = $('#filter_m').val().toLowerCase();
+        if (!val) {
+            $('#smart_m_table tr').show();
+        } else {
+            $('#smart_m_table tr').each(function () {
+                var $td = $(this).find('.smart-name');
+                if (!$td.length) return;
+                var text = $td.html().toLowerCase();
+                if (text.indexOf(val) !== -1) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        }
+    }
+
     function updateIfttt() {
         $('#ifttt_link').html('https://iobroker.net/ifttt/' + $('#apikey').val().trim());
     }
@@ -562,6 +713,9 @@
                 } else if (ui.newPanel.attr('id') === 'tabs-3') {
                     updateEnums();
                     activePage = '2';
+                } else if (ui.newPanel.attr('id') === 'tabs-4') {
+                    updateMDevices();
+                    activePage = '3';
                 }
                 if (typeof localStorage !== 'undefined') {
                     localStorage['cloud-adapter'] = activePage;
@@ -572,6 +726,7 @@
             $tabs.tabs({active: localStorage['cloud-adapter']});
             if (localStorage['cloud-adapter'] === '1') updateDevices();
             if (localStorage['cloud-adapter'] === '2') updateEnums();
+            if (localStorage['cloud-adapter'] === '3') updateMDevices();
         }
 
         $('#add_device').button({icons: {primary: 'ui-icon-plus'}, text: false}).css({width: '26px', height: '26px'}).click(function () {
@@ -598,6 +753,24 @@
             });
         });
 
+        $('#add_m_device').button({icons: {primary: 'ui-icon-plus'}, text: false}).css({width: '26px', height: '26px'}).click(function () {
+            initSelectId(function (sid) {
+                sid.selectId('show', function (newId) {
+                    if (newId) {
+                        //$('#' + id).val(newId || '');
+                        socket.emit('getObject', newId, function (err, obj) {
+                            obj.common.smartName = obj.common.smartName || {};
+                            obj.common.smartName[language] = (obj.common.name || _('Device name')).replace(/[-_.]+/g, ' ');
+                            idToEdit = obj._id;
+                            socket.emit('setObject', obj._id, obj, function (err) {
+                                updateMDevices(2000);
+                            });
+                        });
+                    }
+                });
+            });
+        });
+
         $('#filter').change(function (){
             if (filterTimer) clearTimeout(filterTimer);
             filterTimer = setTimeout(function () {
@@ -609,8 +782,22 @@
             $(this).trigger('change');
         });
 
+        $('#filter_m').change(function (){
+            if (filterMTimer) clearTimeout(filterMTimer);
+            filterMTimer = setTimeout(function () {
+                filterMTimer = null;
+
+                filter_m();
+            }, 400);
+        }).keyup(function () {
+            $(this).trigger('change');
+        });
+
         $('#filter-clear').button({icons: {primary: 'ui-icon-close'}, text: false}).css({width: '1em', height: '1em'}).click(function () {
             $('#filter').val('').trigger('change');
+        });
+        $('#filter-m-clear').button({icons: {primary: 'ui-icon-close'}, text: false}).css({width: '1em', height: '1em'}).click(function () {
+            $('#filter_m').val('').trigger('change');
         });
 
         $('#responseOIDDialog').button({icons: {primary: 'ui-icon-pencil'}, text: false}).css({width: '2em', height: '2em'}).click(function () {
@@ -632,7 +819,7 @@
         $apiKey.val($apiKey.val().trim());
         $('.value').each(function () {
             var $this = $(this);
-            if ($this.attr('type') == 'checkbox') {
+            if ($this.attr('type') === 'checkbox') {
                 obj[$this.attr('id')] = $this.prop('checked');
             } else {
                 obj[$this.attr('id')] = $this.val();
@@ -666,6 +853,9 @@
     .smart-changed {
         background: lightcoral;
     }
+    .smart-disabled {
+        opacity: 0.4;
+    }
     @keyframes highlight {
         0% {
             color: #00f900
@@ -691,8 +881,9 @@
                 <li><a href="#tabs-1" class="translate">Options</a></li>
                 <li><a href="#tabs-2" class="translate">Smart Devices</a></li>
                 <li><a href="#tabs-3" class="translate">Smart Enums</a></li>
-                <li><a href="#tabs-4" class="translate">Extended options</a></li>
-                <li><a href="#tabs-5" class="translate">Services and IFTTT</a></li>
+                <li><a href="#tabs-4" class="translate">Smart Media</a></li>
+                <li><a href="#tabs-5" class="translate">Extended options</a></li>
+                <li><a href="#tabs-6" class="translate">Services and IFTTT</a></li>
             </ul>
             <div id="tabs-1" style="width: calc(100% - 40px); height: calc(100% - 40px);overflow: auto;">
                 <table><tr><td><img src="cloud.png"></td><td><h3 class="translate">Cloud adapter settings</h3></td></tr></table>
@@ -718,7 +909,16 @@
                     <tr style="padding: 20px; background: rgba(0,0,0,0); text-align: center; color: #f26f6f;"><td class="translate" style="padding: 20px;">Instance must run to deliver the data</td></tr>
                 </table>
             </div>
-            <div id="tabs-4" style="width: calc(100% - 40px); height: calc(100% - 40px);overflow: auto;">
+            <div id="tabs-4" style="width: 100%; height: calc(100% - 40px); overflow-x: hidden; overflow-y: auto; padding: 0">
+                <button id="add_m_device" title="Add device" class="translateT" style="margin-left: 1em; display: inline-block"></button>
+                <div  style="display: inline-block"><label class="translate" for="filter">Filter: </label><input id="filter_m" style="display: inline-block"/><button id="filter-m-clear" style="display: inline-block"></button></div>
+                <div id="pre_m_table" style="width: 100%; height: calc(100% - 40px); overflow-y: scroll;">
+                    <table id="smart_m_table" class="smart-table" style="width: 100%;">
+                        <tr style="padding: 20px; background: rgba(0,0,0,0); text-align: center; color: #f26f6f;"><td class="translate" style="padding: 20px;">Instance must run to deliver the data</td></tr>
+                    </table>
+                </div>
+            </div>
+            <div id="tabs-5" style="width: calc(100% - 40px); height: calc(100% - 40px);overflow: auto;">
                 <table style="width: 100%; white-space: nowrap;">
                     <tr><td><label for="cloudUrl" class="translate">Cloud URL:</label></td><td class="admin-icon"></td><td><input class="value" id="cloudUrl"/></td><td></td></tr>
                     <tr><td><label for="allowSelfSignedCertificate" class="translate">Allow self-signed certificates:</label></td><td class="admin-icon" data-link="allow-self-signed-certificates"></td><td><input type="checkbox" class="value" id="allowSelfSignedCertificate"/></td><td></td></tr>
@@ -737,7 +937,7 @@
 
                 <p class="translate">help_tip</p>
             </div>
-            <div id="tabs-5" style="width: calc(100% - 40px); height: calc(100% - 40px);overflow: auto;">
+            <div id="tabs-6" style="width: calc(100% - 40px); height: calc(100% - 40px);overflow: auto;">
                 <table style="width: 100%; white-space: nowrap;">
                     <tr><td><label for="iftttKey" class="translate">IFTTT key:</label></td><td class="admin-icon"></td><td><input class="value" id="iftttKey" style="width: 100%"/></td><td class="admin-text"></td></tr>
                     <tr><td>Use following link for IFTTT:</td><td class="admin-icon"></td><td id="ifttt_link">https://iobroker.net/ifttt/</td><td class="admin-text"></td></tr>
@@ -752,7 +952,9 @@
         </div>
     </div>
     <div id="edit_dialog" style="display: none">
-        <label for="edit_name" class="translate">Smart name:</label><input id="edit_name" style="width: calc(100% - 100px)"/>
+        <label for="edit_name" class="translate">Smart name:</label>
+        <input id="edit_name" style="width: calc(100% - 10px)"/>
+        <span class="translate" style="font-size: smaller">(you can separate names with comma)</span><br>
     </div>
     <div id="dialog-select-member" style="display: none"></div>
 </body>

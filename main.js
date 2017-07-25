@@ -6,12 +6,16 @@ var utils         = require(__dirname + '/lib/utils'); // Get common adapter uti
 var IOSocket      = require(utils.appName + '.socketio/lib/socket.js');
 var request       = require('request');
 var AlexaSH2      = require(__dirname + '/lib/alexaSmartHomeV2');
+var AlexaSH3      = require(__dirname + '/lib/alexaSmartHomeV3');
+var AlexaCustom   = require(__dirname + '/lib/alexaCustom');
 var socket        = null;
 var ioSocket      = null;
 var recalcTimeout = null;
 var lang          = 'de';
 var translate     = false;
 var alexaSH2      = null;
+var alexaSH3      = null;
+var alexaCustom   = null;
 
 var detectDisconnect = null;
 var pingTimer     = null;
@@ -24,16 +28,18 @@ var adapter       = new utils.Adapter({
     name: 'cloud',
     objectChange: function (id, obj) {
         if (socket) socket.emit('objectChange', id, obj);
-        if (!obj || (obj.type === 'state' || obj.type === 'enum')) {
+        if (!obj || (obj.type === 'channel' || obj.type === 'device' || obj.type === 'state' || obj.type === 'enum')) {
             if (recalcTimeout) clearTimeout(recalcTimeout);
             recalcTimeout = setTimeout(function () {
                 recalcTimeout = null;
                 alexaSH2.updateDevices();
+                alexaSH3.updateDevices();
             }, 1000);
         } else if (id === 'system.config' && obj && !translate) {
             lang = obj.common.language;
             if (lang !== 'en' && lang !== 'de') lang = 'en';
             alexaSH2.setLanguage(lang);
+            alexaSH3.setLanguage(lang);
         }
     },
     stateChange: function (id, state) {
@@ -76,10 +82,17 @@ var adapter       = new utils.Adapter({
                     }
                     break;
 
+                case 'browse3':
+                    if (obj.callback) {
+                        adapter.log.info('Request V3 devices');
+                        adapter.sendTo(obj.from, obj.command, alexaSH3.getDevices(), obj.callback);
+                    }
+                    break;
+
                 case 'enums':
                     if (obj.callback) {
                         adapter.log.info('Request enums');
-                        adapter.sendTo(obj.from, obj.command, enums, obj.callback);
+                        adapter.sendTo(obj.from, obj.command, alexaSH2.getEnums(), obj.callback);
                     }
                     break;
 
@@ -486,7 +499,7 @@ function connect() {
 
     socket.on('alexa', function (request, callback) {
         adapter.log.debug(new Date().getTime() + ' ALEXA: ' + JSON.stringify(request));
-        if (request && request.header && request.header.payloadVersion === "3") {
+        if (request && request.directive) {
             alexaSH3.process(request, callback);
         } if (request && !request.header) {
             alexaCustom.process(request, callback);
@@ -601,7 +614,9 @@ function main() {
         }
         adapter.log.debug('Following strings will be replaced in names: ' + text.join(', '));
     }
-    alexaSH2 = new AlexaSH2(adapter);
+    alexaSH2    = new AlexaSH2(adapter);
+    alexaSH3    = new AlexaSH3(adapter);
+    alexaCustom = new AlexaCustom(adapter);
 
     // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
     adapter.getForeignObject('system.config', function (err, obj) {
@@ -614,6 +629,8 @@ function main() {
         if (lang !== 'en' && lang !== 'de' && lang !== 'ru') lang = 'en';
         alexaSH2.setLanguage(lang);
         alexaSH2.updateDevices();
+        alexaSH3.setLanguage(lang);
+        alexaSH3.updateDevices();
     });
     adapter.subscribeForeignObjects('*');
     if (adapter.config.allowAI && false) {
