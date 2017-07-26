@@ -1383,10 +1383,9 @@ function connect() {
         reconnectionDelayMax: 10000
     });
 
-    socket.on('connect_error', (error) => {
+    socket.on('connect_error', function (error) {
       adapter.log.error('Error while connecting to cloud: ' + error);
     });
-
     socket.on('connect', function () {
         if (!connected) {
             adapter.log.info('Connection changed: CONNECTED1');
