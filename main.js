@@ -1379,10 +1379,13 @@ function connect() {
         reconnection: true,
         rejectUnauthorized: !adapter.config.allowSelfSignedCertificate,
         reconnectionDelay:    5000,
-        timeout:              5000,
+        timeout:              parseInt(adapter.config.connectionTimeout, 10) || 5000,
         reconnectionDelayMax: 10000
     });
 
+    socket.on('connect_error', function (error) {
+      adapter.log.error('Error while connecting to cloud: ' + error);
+    });
     socket.on('connect', function () {
         if (!connected) {
             adapter.log.info('Connection changed: CONNECTED1');
