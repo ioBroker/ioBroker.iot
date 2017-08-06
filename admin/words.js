@@ -12,9 +12,9 @@ systemDictionary = {
         "ru": "Разрешить самоподписанные сертификаты"
     },
     "help_tip": {
-        "en": 'No APP-KEY? Get it on <a href="https://iobroker.net" target="_blank">https://iobroker.net</a>',
-        "de": 'Kein APP-KEY? Bekomme den unter <a href="https://iobroker.net" target="_blank">https://iobroker.net</a>',
-        "ru": 'Нет APP-KEY? Получи его на <a href="https://iobroker.net" target="_blank">https://iobroker.net</a>'
+        "en": 'No APP-KEY? Get it on <a href="https://iobroker.pro/accessRemote" target="_blank">https://iobroker.pro</a> for validated access or on <a href="https://iobroker.net" target="_blank">https://iobroker.net</a> for free, but limited access',
+        "de": 'Kein APP-KEY? Bekomme den unter <a href="https://iobroker.pro/accessRemote" target="_blank">https://iobroker.pro</a> für geprüffte Zugirff oder kostenlos unter <a href="https://iobroker.net" target="_blank">https://iobroker.net</a> (begrenzt)',
+        "ru": 'Нет APP-KEY? Получи его на <a href="https://iobroker.pro/accessRemote" target="_blank">https://iobroker.pro</a> для гарантированного доступа или бесплатно на <a href="https://iobroker.net" target="_blank">, но с ограниченным доступом'
     },
     "Language:":    {"en": "Language:",     "de": "Sprache:",               "ru": "Язык:"},
     "default":      {"en": "default",       "de": "Systemsprache",          "ru": "системный"},
@@ -28,7 +28,30 @@ systemDictionary = {
         "de": "Erlaube selbst-signierte Zertifikate:",
         "ru": "Разрешить само-подписанные сертификаты:"
     },
-    "Smart name:":  {"en": "Smart name:",   "de": "Smart name:",            "ru": "Smart имя:"},
+    "Use following link for IFTTT:": {
+        "en": "Use following link for IFTTT:",
+        "de": "Benutze folgendes Link für IFTTT:",
+        "ru": "Используйте этот URL для IFTTT:"
+    },
+    "Use text2command instance:": {
+        "en": "Use text2command instance:",
+        "de": "Benutze text2command Instanz:",
+        "ru": "Использовать text2command:"
+    },
+    "Allow admin access (only pro):": {
+        "en": "Allow admin access (only pro):",
+        "de": "Erlaube Zugriff auf Admin (nur pro):",
+        "ru": "Разрешить доступ к admin (только pro):"
+    },
+    "Active":               {"en": "Active",                "de": "aktiv",                 "ru": "Активно"},
+    "Smart Media":          {"en": "Smart Media",           "de": "Smart Media",            "ru": "Smart Media"},
+    "Extended options":     {"en": "Extended options",      "de": "Extra-Einstellungen",    "ru": "Расширенные настройки"},
+    "Services and IFTTT":   {"en": "Services and IFTTT",    "de": "Services und IFTTT",     "ru": "Сервисы и IFTTT"},
+    "White list for services:": {"en": "White list for services:", "de": "White list für Services:", "ru": "Белый список для сервисов:"},
+    "Divided by comma":     {"en": "Divided by comma",      "de": "mit Komma getrennt",     "ru": "разделённые запятой"},
+
+    "disabled":     {"en": "disabled",      "de": "deaktiviert",            "ru": "неактивно"},
+    "Smart name:":  {"en": "Smart name:",   "de": "Smart-Name:",            "ru": "Smart имя:"},
     "Rooms":        {"en": "Rooms",         "de": "Rooms",                  "ru": "Комнаты"},
     "Functions":    {"en": "Functions",     "de": "Functions",              "ru": "Функции"},
     "Ok":           {"en": "Ok",            "de": "Ok",                     "ru": "Ok"},

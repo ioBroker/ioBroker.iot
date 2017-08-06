@@ -38,8 +38,8 @@ var adapter       = new utils.Adapter({
         } else if (id === 'system.config' && obj && !translate) {
             lang = obj.common.language;
             if (lang !== 'en' && lang !== 'de') lang = 'en';
-            alexaSH2.setLanguage(lang);
-            alexaSH3.setLanguage(lang);
+            alexaSH2.setLanguage(lang, false);
+            alexaSH3.setLanguage(lang, false);
         }
     },
     stateChange: function (id, state) {
@@ -408,6 +408,12 @@ function connect() {
         socket.close();
     }
 
+    if (adapter.config.apikey && adapter.config.apikey.match(/^@pro_/)) {
+        adapter.config.cloudUrl = 'https://iobroker.pro:10555';
+    } else {
+        adapter.config.allowAdmin = false;
+    }
+
     socket = require('socket.io-client')(adapter.config.cloudUrl || 'https://iobroker.net:10555', {
         reconnection: true,
         rejectUnauthorized: !adapter.config.allowSelfSignedCertificate,
@@ -491,10 +497,22 @@ function connect() {
     });
 
     var server = 'http://localhost:8082';
+    var adminServer = 'http://localhost:8081';
     socket.on('html', function (url, cb) {
-        request({url: server + url, encoding: null}, function (error, response, body) {
-            cb(error, response ? response.statusCode : 501, response ? response.headers : [], body);
-        });
+        if (adapter.config.allowAdmin && url.match(/^\/admin\//)) {
+            url = url.substring(6);
+            request({url: adminServer + url, encoding: null}, function (error, response, body) {
+                cb(error, response ? response.statusCode : 501, response ? response.headers : [], body);
+            });
+        } else if (adapter.config.allowAdmin && url.match(/^\/adapter\/|^\/lib\/js\/ace-|^\/lib\/js\/cron\/|^\/lib\/js\/jqGrid\//)) {
+            request({url: adminServer + url, encoding: null}, function (error, response, body) {
+                cb(error, response ? response.statusCode : 501, response ? response.headers : [], body);
+            });
+        } else{
+            request({url: server + url, encoding: null}, function (error, response, body) {
+                cb(error, response ? response.statusCode : 501, response ? response.headers : [], body);
+            });
+        }
     });
 
     socket.on('alexa', function (request, callback) {
@@ -590,12 +608,22 @@ function connect() {
                 server += (!obj.native.bind || obj.native.bind === '0.0.0.0') ? '127.0.0.1' : obj.native.bind;
                 server += ':' + obj.native.port;
 
-                ioSocket = new IOSocket(socket, {clientid: adapter.config.apikey}, adapter);
+                ioSocket = new IOSocket(socket, {clientid: adapter.config.apikey, allowAdmin: adapter.config.allowAdmin}, adapter);
             } else {
                 adapter.log.error('Unknown instance ' + adapter.log.instance);
                 throw new Error('Unknown instance ' + adapter.log.instance);
             }
         });
+        if (adapter.config.allowAdmin) {
+            adapter.getForeignObject(adapter.config.allowAdmin, function (err, obj) {
+                if (obj) {
+                    adminServer = 'http' + (obj.native.secure ? 's' : '') + '://';
+                    // todo if run on other host
+                    adminServer += (!obj.native.bind || obj.native.bind === '0.0.0.0') ? '127.0.0.1' : obj.native.bind;
+                    adminServer += ':' + obj.native.port;
+                }
+            });
+        }
     } else {
         ioSocket = new IOSocket(socket, {clientid: adapter.config.apikey}, adapter);
     }
@@ -627,9 +655,9 @@ function main() {
             lang = obj.common.language;
         }
         if (lang !== 'en' && lang !== 'de' && lang !== 'ru') lang = 'en';
-        alexaSH2.setLanguage(lang);
+        alexaSH2.setLanguage(lang, translate);
         alexaSH2.updateDevices();
-        alexaSH3.setLanguage(lang);
+        alexaSH3.setLanguage(lang, translate);
         alexaSH3.updateDevices();
     });
     adapter.subscribeForeignObjects('*');
