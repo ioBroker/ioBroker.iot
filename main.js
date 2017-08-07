@@ -499,22 +499,25 @@ function connect() {
         detectDisconnect = null;
     });
 
-    var server = 'http://localhost:8082';
+    var server      = 'http://localhost:8082';
     var adminServer = 'http://localhost:8081';
+
     socket.on('html', function (url, cb) {
-        if (adapter.config.allowAdmin && url.match(/^\/admin\//)) {
+        if (adminServer && adapter.config.allowAdmin && url.match(/^\/admin\//)) {
             url = url.substring(6);
             request({url: adminServer + url, encoding: null}, function (error, response, body) {
                 cb(error, response ? response.statusCode : 501, response ? response.headers : [], body);
             });
-        } else if (adapter.config.allowAdmin && url.match(/^\/adapter\/|^\/lib\/js\/ace-|^\/lib\/js\/cron\/|^\/lib\/js\/jqGrid\//)) {
+        } else if (adminServer && adapter.config.allowAdmin && url.match(/^\/adapter\/|^\/lib\/js\/ace-|^\/lib\/js\/cron\/|^\/lib\/js\/jqGrid\//)) {
             request({url: adminServer + url, encoding: null}, function (error, response, body) {
                 cb(error, response ? response.statusCode : 501, response ? response.headers : [], body);
             });
-        } else{
+        } else if (server) {
             request({url: server + url, encoding: null}, function (error, response, body) {
                 cb(error, response ? response.statusCode : 501, response ? response.headers : [], body);
             });
+        } else {
+            cb('Admin or Web are inactive.', 404, [], 'Admin or Web are inactive.');
         }
     });
 
@@ -605,7 +608,13 @@ function connect() {
         }
 
         adapter.getForeignObject(adapter.config.instance, function (err, obj) {
-            if (obj) {
+            if (obj && obj.common && obj.native) {
+                if (obj.common.auth) {
+                    adapter.log.error('Cannot activate web for cloud, because authentication is enabled. Please create extra instance for cloud');
+                    server = '';
+                    return;
+                }
+
                 server = 'http' + (obj.native.secure ? 's' : '')  + '://';
                 // todo if run on other host
                 server += (!obj.native.bind || obj.native.bind === '0.0.0.0') ? '127.0.0.1' : obj.native.bind;
@@ -614,16 +623,24 @@ function connect() {
                 ioSocket = new IOSocket(socket, {clientid: adapter.config.apikey, allowAdmin: adapter.config.allowAdmin}, adapter);
             } else {
                 adapter.log.error('Unknown instance ' + adapter.log.instance);
-                throw new Error('Unknown instance ' + adapter.log.instance);
+                server = null;
             }
         });
         if (adapter.config.allowAdmin) {
             adapter.getForeignObject(adapter.config.allowAdmin, function (err, obj) {
-                if (obj) {
+                if (obj && obj.common && obj.native) {
+                    if (obj.common.auth) {
+                        adapter.log.error('Cannot activate admin for cloud, because authentication is enabled. Please create extra instance for cloud');
+                        server = '';
+                        return;
+                    }
                     adminServer = 'http' + (obj.native.secure ? 's' : '') + '://';
                     // todo if run on other host
                     adminServer += (!obj.native.bind || obj.native.bind === '0.0.0.0') ? '127.0.0.1' : obj.native.bind;
                     adminServer += ':' + obj.native.port;
+                } else {
+                    adminServer = null;
+                    adapter.log.error('Unknown instance ' + adapter.config.allowAdmin);
                 }
             });
         }

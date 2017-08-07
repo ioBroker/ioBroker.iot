@@ -5,7 +5,7 @@
         "title":                    "Cloud Adapter",
         "desc":                     "This adapter connect",
 		"news": {
-            "2.0.0": {
+            "2.0.1": {
                 "en":                   "Allow access to admin via iobroker.pro",
                 "de":                   "Erlaube den Zugriff auf Admin via iobroker.pro",
                 "ru":                   "Доступ к admin через iobroker.pro"
@@ -34,71 +34,6 @@
                 "en":                   "Catch an error if the invalid smart name set",
                 "de":                   "Fange einen Fehler, wenn der ungültige Smart Name gesetzt ist",
                 "ru":                   "Ловит ошибку, если невалидное смарт имя"
-            },
-            "0.8.2": {
-                "en":                   "controls of colors\nrequest temperature\nsupport of double names",
-                "de":                   "Farben kontrollieren (nur English)\nTemperaturanfrage (nur english)\nUnterstützung von Doppelnamen",
-                "ru":                   "Управление цветами\nЗапрос температуры.\nПоддержка двойных имен"
-            },
-            "0.7.1": {
-                "en":                   "Fix reconnection",
-                "de":                   "Fix den Fehler mit Wiederverbindung",
-                "ru":                   "Исправлена ошибка с подключением"
-            },
-            "0.7.0": {
-                "en":                   "Try to fix reconnection",
-                "de":                   "Versuche zu fixen ein Fehler mit Wiederverbindung",
-                "ru":                   "Попытка отловить ошибку с подключением"
-            },
-            "0.6.12": {
-                "en":                   "Try to fix error with names",
-                "de":                   "Versuche zu fixen ein Fehler mit Namen",
-                "ru":                   "Попытка отловить ошибку с именами"
-            },
-		    "0.6.11": {
-                "en":                   "Fixed scrollbar in configuration",
-                "de":                   "Korrigiere Scrollbar im Konfigurationsdialog",
-                "ru":                   "Поправлен Scrollbar в диалоге настроек"
-            },
-            "0.6.10": {
-                "en":                   "Add tooltips in config\nAdd workaround for alexa reconnection",
-                "de":                   "Füge die Hinweise für die Konfiguratioins-Dialog\nWorkaround für Alexa Wiederverbindung",
-                "ru":                   "Добавлены подсказки в диалоге настроек\nВременное решение для соединения с Alexa"
-            },
-            "0.6.9": {
-                "en":                   "Allow to use more than one smart name",
-                "de":                   "Erlaube mehr als ein SmartName",
-                "ru":                   "Можно создать несколько имён для устройства"
-            },
-            "0.6.8": {
-                "en":                   "Fix deactivation of enums",
-                "de":                   "Korrigiere deaktivierung von Aufzählungen",
-                "ru":                   "Поправлена деактивация категорий"
-            },
-            "0.6.7": {
-                "en":                   "allow buttons to be controller with alexa",
-                "de":                   "Erlaube, dass die Buttons auch über Alexa gesteuert erden können",
-                "ru":                   "Разрешить управление кнопками из Алексы"
-            },
-            "0.6.5": {
-                "en":                   "print warnings for invalid states",
-                "de":                   "Gebe Warnung aus für inkorrekte Zustände",
-                "ru":                   "Выводить предупреждение для неправильных объектов"
-            },
-            "0.6.3": {
-                "en":                   "fix enum names\nadd helper states and response text",
-                "de":                   "Korrigiere Aufzählungennamen\nHilfezutände sind eingefügt",
-                "ru":                   "Исправлены имена групп и добавлен ответ в текстовом виде"
-            },
-            "0.6.2": {
-                "en":                   "add option Place function in names first",
-                "de":                   "Option hinzugefügt: Platziere Funktionsnamen vorne",
-                "ru":                   "Добавлена опция: Имена функций в начале"
-            },
-            "0.6.1": {
-                "en":                   "fix reconnect",
-                "de":                   "Korrigiere Wiederverbindung",
-                "ru":                   "Исправлено распознавание дисконнекта"
             }
         },
         "authors": [

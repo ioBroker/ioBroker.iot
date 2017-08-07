@@ -83,6 +83,26 @@ systemDictionary = {
         "de": "Schlüssel kann <a href='https://ifttt.com/maker_webhooks' target='_blank'>hier</a> unter 'Documentation' gefunden werden",
         "ru": "Свой ключ можно найти <a href='https://ifttt.com/maker_webhooks' target='_blank'>здесь</a> в 'Documentation'"
     },
+    "Instance does not exists": {
+        "en": "Instance does not exists",
+        "de": "Instanz existiert nicht",
+        "ru": "Экземпляр не существует"
+    },
+    "Invalid object": {
+        "en": "Invalid object",
+        "de": "Ungültiges Objekt",
+        "ru": "Недействительный объект"
+    },
+    "Authentication must be disabled. You can create second instance extra for cloud.": {
+        "en": "Authentication must be disabled. You can create second instance extra for cloud.",
+        "de": "Die Authentifizierung muss deaktiviert sein. Sie können zweite Instanz extra für Cloud erstellen.",
+        "ru": "Аутентификация должна быть отключена. Вы можете создать дополнительный экземпляр для облака."
+    },
+    "Instance is not active.": {
+        "en": "Instance is not active.",
+        "de": "Instanz ist nicht aktiv.",
+        "ru": "Экземпляр не активен."
+    },
     "Instance must run to deliver the data": {
         "en": "The instance must run to deliver the data",
         "de": "Die Instanz muss laufen um die Daten zu liefern",
