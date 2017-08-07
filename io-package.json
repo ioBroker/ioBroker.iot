@@ -129,6 +129,7 @@
         "apikey":                   "",
         "instance":                 "web.0",
         "cloudUrl":                 "https://iobroker.net:10555",
+        "connectionTimeout":        5000,
         "allowSelfSignedCertificate": true,
         "functionFirst":            false,
         "concatWord":               "",
