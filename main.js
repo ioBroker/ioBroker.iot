@@ -418,7 +418,7 @@ function connect() {
         reconnection: true,
         rejectUnauthorized: !adapter.config.allowSelfSignedCertificate,
         reconnectionDelay:    5000,
-        timeout:              parseInt(adapter.config.connectionTimeout, 10) || 5000,
+        timeout:              parseInt(adapter.config.connectionTimeout, 10) || 10000,
         reconnectionDelayMax: 10000
     });
 
