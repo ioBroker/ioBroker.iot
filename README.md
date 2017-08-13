@@ -161,6 +161,7 @@ You may write "text2command" in white list, you can send POST request to ```http
 ## Changelog
 ### 2.0.1 (2017-08-07)
 * (bluefox) Allow access to admin via iobroker.pro
+* (c-klinger) Add settings for the connection timeout
 
 ### 1.0.8 (2017-07-13)
 * (bluefox) Allow control light colors

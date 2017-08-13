@@ -6,9 +6,9 @@
         "desc":                     "This adapter connect",
 		"news": {
             "2.0.1": {
-                "en":                   "Allow access to admin via iobroker.pro",
-                "de":                   "Erlaube den Zugriff auf Admin via iobroker.pro",
-                "ru":                   "Доступ к admin через iobroker.pro"
+                "en":                   "Allow access to admin via iobroker.pro\nAdd settings for the connection timeout",
+                "de":                   "Erlaube den Zugriff auf Admin via iobroker.pro\nVerbindungs-Timeout Einstellungen",
+                "ru":                   "Доступ к admin через iobroker.pro\nДобавлены настройки таймаута соединения"
             },
             "1.0.8": {
                 "en":                   "Allow control light colors",
