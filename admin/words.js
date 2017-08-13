@@ -14,7 +14,7 @@ systemDictionary = {
     "help_tip": {
         "en": 'No APP-KEY? Get it on <a href="https://iobroker.pro/accessRemote" target="_blank">https://iobroker.pro</a> for validated access or on <a href="https://iobroker.net" target="_blank">https://iobroker.net</a> for free, but limited access',
         "de": 'Kein APP-KEY? Bekomme den unter <a href="https://iobroker.pro/accessRemote" target="_blank">https://iobroker.pro</a> für geprüffte Zugirff oder kostenlos unter <a href="https://iobroker.net" target="_blank">https://iobroker.net</a> (begrenzt)',
-        "ru": 'Нет APP-KEY? Получи его на <a href="https://iobroker.pro/accessRemote" target="_blank">https://iobroker.pro</a> для гарантированного доступа или бесплатно на <a href="https://iobroker.net" target="_blank">, но с ограниченным доступом'
+        "ru": 'Нет APP-KEY? Получи его на <a href="https://iobroker.pro/accessRemote" target="_blank">https://iobroker.pro</a> для гарантированного доступа или бесплатно на <a href="https://iobroker.net" target="_blank">https://iobroker.net</a>, но с ограниченным доступом'
     },
     "Language:":    {"en": "Language:",     "de": "Sprache:",               "ru": "Язык:"},
     "default":      {"en": "default",       "de": "Systemsprache",          "ru": "системный"},
@@ -49,7 +49,7 @@ systemDictionary = {
     "Services and IFTTT":   {"en": "Services and IFTTT",    "de": "Services und IFTTT",     "ru": "Сервисы и IFTTT"},
     "White list for services:": {"en": "White list for services:", "de": "White list für Services:", "ru": "Белый список для сервисов:"},
     "Divided by comma":     {"en": "Divided by comma",      "de": "mit Komma getrennt",     "ru": "разделённые запятой"},
-
+    "Timeout:":             {"en": "Connection timeout(ms):",   "de": "Verbindungs-Timeout(ms):",   "ru": "Таймаут соединения(мс):"},
     "disabled":     {"en": "disabled",      "de": "deaktiviert",            "ru": "неактивно"},
     "Smart name:":  {"en": "Smart name:",   "de": "Smart-Name:",            "ru": "Smart имя:"},
     "Rooms":        {"en": "Rooms",         "de": "Rooms",                  "ru": "Комнаты"},
@@ -144,7 +144,7 @@ systemDictionary = {
         "ru": "(для деактивации установить на 0)"
     },
     "tooltip_apikey": {
-        "en": "This key is required to communicate with a cloud. You can get the API-KEY on https://iobroker.net фтв it looks like nickname_f1f439a0-001a-11e7-bc64-92361f002671",
+        "en": "This key is required to communicate with a cloud. You can get the API-KEY on https://iobroker.net and it looks like nickname_f1f439a0-001a-11e7-bc64-92361f002671",
         "de": "Dieser Schlüssel ist nötig um mit dem Cloud zu kommunizieren. Man kann den Schlüßel unter https://iobroker.net bekommen. Es sieht so aus nickname_f1f439a0-001a-11e7-bc64-92361f002671",
         "ru": "Ключ необходимый для коммуникации с облаком. Его можно получить на https://iobroker.net и он похож на nickname_f1f439a0-001a-11e7-bc64-92361f002671"
     },

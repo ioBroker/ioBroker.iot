@@ -515,7 +515,9 @@
                     i++;
                 }
 
-                $('#smart_enums')
+                var $smart_enums = $('#smart_enums');
+
+                $smart_enums
                     .html(text)
                         .find('.smart-enable')
                         .change(function () {
@@ -523,7 +525,7 @@
                             var $this = $(this);
                             $this.parent().addClass('smart-changed');
                             if ($this.prop('checked')) {
-                                $('#smart_enums').find('.smart-edit[data-id="' + id + '"]').prop('disabled', false);
+                                $smart_enums.find('.smart-edit[data-id="' + id + '"]').prop('disabled', false);
                                 socket.emit('getObject', id, function (err, obj) {
                                     obj.common.smartName = null;
                                     socket.emit('setObject', id, obj, function (err) {
@@ -533,7 +535,7 @@
                                     });
                                 });
                             } else {
-                                $('#smart_enums').find('.smart-edit[data-id="' + id + '"]').prop('disabled', true);
+                                $smart_enums.find('.smart-edit[data-id="' + id + '"]').prop('disabled', true);
                                 socket.emit('getObject', id, function (err, obj) {
                                     obj.common.smartName = false;
                                     socket.emit('setObject', id, obj, function (err) {
@@ -545,7 +547,7 @@
                             }
                         });
 
-                $('#smart_enums').find('.smart-edit').click(function () {
+                $smart_enums.find('.smart-edit').click(function () {
                     var $this = $(this);
                     var $editDialog = $('#edit_dialog');
                     $editDialog.data('id', $this.data('id'));
@@ -557,7 +559,7 @@
                         var id = $('#edit_dialog').data('id');
                         // check if this name used or not
                         var found  = false;
-                        var $enums = $('#smart_enums').find('.smart-edit');
+                        var $enums = $smart_enums.find('.smart-edit');
                         var val    = $('#edit_name').val();
                         $enums.each(function () {
                             if ($(this).data('value') === val && $(this).data('id') !== id) {
@@ -608,9 +610,9 @@
     function filter() {
         var val = $('#filter').val().toLowerCase();
         if (!val) {
-            $('#smart_table tr').show();
+            $('#smart_table').find('tr').show();
         } else {
-            $('#smart_table tr').each(function () {
+            $('#smart_table').find('tr').each(function () {
                 var $td = $(this).find('.smart-name');
                 if (!$td.length) return;
                 var text = $td.html().toLowerCase();
@@ -626,9 +628,9 @@
     function filter_m() {
         var val = $('#filter_m').val().toLowerCase();
         if (!val) {
-            $('#smart_m_table tr').show();
+            $('#smart_m_table').find('tr').show();
         } else {
-            $('#smart_m_table tr').each(function () {
+            $('#smart_m_table').find('tr').each(function () {
                 var $td = $(this).find('.smart-name');
                 if (!$td.length) return;
                 var text = $td.html().toLowerCase();
@@ -935,7 +937,7 @@
                 <li><a href="#tabs-1" class="translate">Options</a></li>
                 <li><a href="#tabs-2" class="translate">Smart Devices</a></li>
                 <li><a href="#tabs-3" class="translate">Smart Enums</a></li>
-                <li><a href="#tabs-4" class="translate">Smart Media</a></li>
+                <!--li><a href="#tabs-4" class="translate">Smart Media</a></li-->
                 <li><a href="#tabs-5" class="translate">Extended options</a></li>
                 <li><a href="#tabs-6" class="translate">Services and IFTTT</a></li>
             </ul>
@@ -963,7 +965,7 @@
                     <tr style="padding: 20px; background: rgba(0,0,0,0); text-align: center; color: #f26f6f;"><td class="translate" style="padding: 20px;">Instance must run to deliver the data</td></tr>
                 </table>
             </div>
-            <div id="tabs-4" style="width: 100%; height: calc(100% - 40px); overflow-x: hidden; overflow-y: auto; padding: 0">
+            <!--div id="tabs-4" style="width: 100%; height: calc(100% - 40px); overflow-x: hidden; overflow-y: auto; padding: 0">
                 <button id="add_m_device" title="Add device" class="translateT" style="margin-left: 1em; display: inline-block"></button>
                 <div  style="display: inline-block"><label class="translate" for="filter">Filter: </label><input id="filter_m" style="display: inline-block"/><button id="filter-m-clear" style="display: inline-block"></button></div>
                 <div id="pre_m_table" style="width: 100%; height: calc(100% - 40px); overflow-y: scroll;">
@@ -971,7 +973,7 @@
                         <tr style="padding: 20px; background: rgba(0,0,0,0); text-align: center; color: #f26f6f;"><td class="translate" style="padding: 20px;">Instance must run to deliver the data</td></tr>
                     </table>
                 </div>
-            </div>
+            </div-->
             <div id="tabs-5" style="width: calc(100% - 40px); height: calc(100% - 40px);overflow: auto;">
                 <table style="width: 100%; white-space: nowrap;">
                     <tr><td><label for="cloudUrl" class="translate">Cloud URL:</label></td><td class="admin-icon"></td><td><input class="value" id="cloudUrl"/></td><td></td></tr>
