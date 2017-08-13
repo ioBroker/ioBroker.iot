@@ -503,11 +503,15 @@ function connect() {
     var adminServer = 'http://localhost:8081';
 
     socket.on('html', function (url, cb) {
-        if (adminServer && adapter.config.allowAdmin && url.match(/^\/admin\//)) {
-            url = url.substring(6);
-            request({url: adminServer + url, encoding: null}, function (error, response, body) {
-                cb(error, response ? response.statusCode : 501, response ? response.headers : [], body);
-            });
+        if (url.match(/^\/admin\//)) {
+            if (adminServer && adapter.config.allowAdmin) {
+                url = url.substring(6);
+                request({url: adminServer + url, encoding: null}, function (error, response, body) {
+                    cb(error, response ? response.statusCode : 501, response ? response.headers : [], body);
+                });
+            } else {
+                cb('Enable admin in cloud settings. And only pro.', 404, [], 'Enable admin in cloud settings. And only pro.');
+            }
         } else if (adminServer && adapter.config.allowAdmin && url.match(/^\/adapter\/|^\/lib\/js\/ace-|^\/lib\/js\/cron\/|^\/lib\/js\/jqGrid\//)) {
             request({url: adminServer + url, encoding: null}, function (error, response, body) {
                 cb(error, response ? response.statusCode : 501, response ? response.headers : [], body);
