@@ -159,7 +159,7 @@ You may write "text2command" in white list, you can send POST request to ```http
 *to do*
 
 ## Changelog
-### 2.0.1 (2017-08-07)
+### 2.0.2 (2017-08-12)
 * (bluefox) Allow access to admin via iobroker.pro
 * (c-klinger) Add settings for the connection timeout
 

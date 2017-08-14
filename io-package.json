@@ -1,11 +1,11 @@
 {
     "common": {
         "name":                     "cloud",
-        "version":                  "2.0.1",
+        "version":                  "2.0.2",
         "title":                    "Cloud Adapter",
         "desc":                     "This adapter connect",
 		"news": {
-            "2.0.1": {
+            "2.0.2": {
                 "en":                   "Allow access to admin via iobroker.pro\nAdd settings for the connection timeout",
                 "de":                   "Erlaube den Zugriff auf Admin via iobroker.pro\nVerbindungs-Timeout Einstellungen",
                 "ru":                   "Доступ к admin через iobroker.pro\nДобавлены настройки таймаута соединения"
@@ -51,7 +51,7 @@
         "type":                     "communication",
         "messagebox":               true,
         "stopBeforeUpdate":         true,
-		"dependencies":             [{"js-controller": ">=0.9.0"}],
+		"dependencies":             [{"js-controller": ">=0.9.0"}, {"admin": ">=2.0.2"],
         "preserveSettings":         "smartName",
         "blockly":                  true,
         "config":{
