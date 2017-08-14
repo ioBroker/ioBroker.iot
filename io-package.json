@@ -1,11 +1,11 @@
 {
     "common": {
         "name":                     "cloud",
-        "version":                  "2.0.2",
+        "version":                  "2.0.3",
         "title":                    "Cloud Adapter",
         "desc":                     "This adapter connect",
         "news": {
-            "2.0.2": {
+            "2.0.3": {
                 "en":                   "Allow access to admin via iobroker.pro\nAdd settings for the connection timeout",
                 "de":                   "Erlaube den Zugriff auf Admin via iobroker.pro\nVerbindungs-Timeout Einstellungen",
                 "ru":                   "Доступ к admin через iobroker.pro\nДобавлены настройки таймаута соединения"
