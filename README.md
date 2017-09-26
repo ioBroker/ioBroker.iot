@@ -136,19 +136,21 @@ If you will set ```.STATE, .LEVEL```, so ".STATE" and " .LEVEL" will be replaced
 
 ## Services
 There is a possibility to send messages to cloud adapter.
-If you call ```[POST]https://iobroker.net/service/custom_<name>/<user-app-key>``` und value as payload.
+If you call ```[POST]https://iobroker.net/service/custom_<NAME>/<user-app-key>``` und value as payload.
 
 ```
 curl --data "myString" https://iobroker.net/service/custom_test/<user-app-key>
 ```
 
-If you set in the settings the field "White list for services" the name *custom_test*, and call with "custom_test" as Servicename the state **cloud.0.services.custom_test** will be set to *myString*.
+If you set in the settings the field "White list for services" the name *custom_test*, and call with "custom_test" as the service name, the state **cloud.0.services.custom_test** will be set to *myString*.
 
 You may write "*" in white list and all services will be allowed.
 
+From version 2.0.5 you can use GET request in form ```[GET]https://iobroker.net/service/custom_<NAME>/<user-app-key>/<data>``` to place the **<data>** into **cloud.0.services.custom_<NAME>**.
+
 IFTTT service is allowed only if IFTTT key is set.
 
-Reserved names are "ifttt", "text2command", "simpleApi". These are used without the "custom_" prefix
+Reserved names are "ifttt", "text2command", "simpleApi", "swagger". These must be used without the ```"custom_"``` prefix.
 
 ### text2command
 You may write "text2command" in white list, you can send POST request to ```https://iobroker.net/service/text2command/<user-app-key>``` to write data into *text2command.X.text* variable.
@@ -159,6 +161,9 @@ You may write "text2command" in white list, you can send POST request to ```http
 *to do*
 
 ## Changelog
+### 2.0.5 (2017-09-26)
+* (bluefox) The small custom service reaction improvement
+
 ### 2.0.4 (2017-09-12)
 * (bluefox) Allow access to admin via iobroker.pro
 * (c-klinger) Add settings for the connection timeout

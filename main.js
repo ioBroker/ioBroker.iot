@@ -590,12 +590,18 @@ function connect() {
                                 },
                                 native: {}
                             }, function (err) {
-                                adapter.setState('services.custom_' + data.name, data.data, false);
-                                callback && callback({result: err || 'Ok'});
+                                if (!err) {
+                                    adapter.setState('services.custom_' + data.name, data.data, false, function (err) {
+                                        callback && callback({result: err || 'Ok'});
+                                    });
+                                } else {
+                                    callback && callback({result: err});
+                                }
                             });
                         } else {
-                            callback && callback({result: 'Ok'});
-                            adapter.setState('services.custom_' + data.name, data.data, false);
+                            adapter.setState('services.custom_' + data.name, data.data, false, function (err) {
+                                callback && callback({result: err || 'Ok'});
+                            });
                         }
                     });
                 }

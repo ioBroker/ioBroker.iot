@@ -33,6 +33,11 @@ systemDictionary = {
         "de": "Benutze folgendes Link für IFTTT:",
         "ru": "Используйте этот URL для IFTTT:"
     },
+    "Use following link for custom service:": {
+        "en": "Use following link for custom service:",
+        "de": "Benutze folgendes Link für eigenen Service:",
+        "ru": "Используйте этот URL для своего сервиса:"
+    },
     "Use text2command instance:": {
         "en": "Use text2command instance:",
         "de": "Benutze text2command Instanz:",
@@ -48,7 +53,6 @@ systemDictionary = {
     "Extended options":     {"en": "Extended options",      "de": "Extra-Einstellungen",    "ru": "Расширенные настройки"},
     "Services and IFTTT":   {"en": "Services and IFTTT",    "de": "Services und IFTTT",     "ru": "Сервисы и IFTTT"},
     "White list for services:": {"en": "White list for services:", "de": "White list für Services:", "ru": "Белый список для сервисов:"},
-    "Divided by comma":     {"en": "Divided by comma",      "de": "mit Komma getrennt",     "ru": "разделённые запятой"},
     "Timeout:":             {"en": "Connection timeout(ms):",   "de": "Verbindungs-Timeout(ms):",   "ru": "Таймаут соединения(мс):"},
     "disabled":     {"en": "disabled",      "de": "deaktiviert",            "ru": "неактивно"},
     "Smart name:":  {"en": "Smart name:",   "de": "Smart-Name:",            "ru": "Smart имя:"},
@@ -82,6 +86,11 @@ systemDictionary = {
         "en": "You can find your key <a href='https://ifttt.com/maker_webhooks' target='_blank'>here</a> under 'Documentation'",
         "de": "Schlüssel kann <a href='https://ifttt.com/maker_webhooks' target='_blank'>hier</a> unter 'Documentation' gefunden werden",
         "ru": "Свой ключ можно найти <a href='https://ifttt.com/maker_webhooks' target='_blank'>здесь</a> в 'Documentation'"
+    },
+    "info_allowedServices": {
+        "en": "divided by comma. Use * to allow all services.",
+        "de": "mit Komma getrennt. Benutze * um alle Services zu erlauben.",
+        "ru": "разделённые запятой. Используйте *, что бы разрешить все сервисы."
     },
     "Instance does not exists": {
         "en": "Instance does not exists",
