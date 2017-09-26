@@ -10,6 +10,8 @@ Install tasker on your android phone from here: https://play.google.com/store/ap
 
 ![Step1](tasker1.png)
 
+Add task and name it "Geo"
+
 ![Step2](tasker2.png)
 
 ![Step3](tasker3.png)
