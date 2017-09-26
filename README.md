@@ -1,6 +1,7 @@
 ![Logo](admin/cloud.png)
 ioBroker cloud adapter
 =================
+
 [![NPM version](http://img.shields.io/npm/v/iobroker.cloud.svg)](https://www.npmjs.com/package/iobroker.cloud)
 [![Downloads](https://img.shields.io/npm/dm/iobroker.cloud.svg)](https://www.npmjs.com/package/iobroker.cloud)
 
@@ -147,6 +148,8 @@ If you set in the settings the field "White list for services" the name *custom_
 You may write "*" in white list and all services will be allowed.
 
 From version 2.0.5 you can use GET request in form ```[GET]https://iobroker.net/service/custom_<NAME>/<user-app-key>/<data>``` to place the **\<data\>** into **cloud.0.services.custom_\<NAME\>**.
+
+Here you can find instructions how to use it with [tasker](doc/tasker.md).
 
 IFTTT service is allowed only if IFTTT key is set.
 
