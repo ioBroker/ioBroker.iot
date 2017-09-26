@@ -408,15 +408,19 @@ function connect() {
         socket.close();
     }
 
+    adapter.config.cloudUrl = (adapter.config.cloudUrl || '').toString();
+
     if (adapter.config.apikey && adapter.config.apikey.match(/^@pro_/)) {
-        adapter.config.cloudUrl = 'https://iobroker.pro:10555';
+        if (adapter.config.cloudUrl.indexOf('https://iobroker.pro:') === -1) {
+            adapter.config.cloudUrl = 'https://iobroker.pro:10555';
+        }
     } else {
         adapter.config.allowAdmin = false;
     }
 
     socket = require('socket.io-client')(adapter.config.cloudUrl || 'https://iobroker.net:10555', {
-        reconnection: true,
-        rejectUnauthorized: !adapter.config.allowSelfSignedCertificate,
+        reconnection:         true,
+        rejectUnauthorized:   !adapter.config.allowSelfSignedCertificate,
         reconnectionDelay:    5000,
         timeout:              parseInt(adapter.config.connectionTimeout, 10) || 10000,
         reconnectionDelayMax: 10000
@@ -547,11 +551,12 @@ function connect() {
     });
 
     socket.on('service', function (data, callback) {
+        adapter.log.debug('service: ' + JSON.stringify(data));
         // supported services:
         // - text2command
         // - simpleApi
         // - custom, e.g. torque
-        if (!data.name) {
+        if (!data || !data.name) {
             callback && callback({error: 'no name'});
         } else
         if (data.name === 'ifttt' && adapter.config.iftttKey) {
