@@ -36,6 +36,8 @@ Write into **path**  ```/service/custom_position/<app-key>/%LOC``` . You can get
 
 ![Step10](tasker10.png)
 
+Do not forget to write name of the custom service into the white list ("position" in our case), or just "\*" to accept all services.  
+
 ![Step11](tasker11.png)
 
 ![Step12](tasker12.png)
