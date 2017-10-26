@@ -22,6 +22,7 @@ var pingTimer     = null;
 var connected     = false;
 var connectTimer  = null;
 var statesAI      = null;
+var uuid          = null;
 var pack          = require(__dirname + '/io-package.json');
 
 var adapter       = new utils.Adapter({
@@ -438,7 +439,7 @@ function connect() {
         } else {
             adapter.log.info('Connection changed: CONNECTED4');
         }
-        socket.emit('apikey', adapter.config.apikey, pack.common.version);
+        socket.emit('apikey', adapter.config.apikey, pack.common.version, uuid);
     });
     socket.on('reconnect', function () {
         if (!connected) {
@@ -739,5 +740,10 @@ function main() {
 
     adapter.log.info('Connecting with ' + adapter.config.cloudUrl + ' with "' + adapter.config.apikey + '"');
 
-    connect();
+    adapter.getForeignObject('system.meta.uuid', function (err, obj) {
+        if (obj && obj.native) {
+            uuid = obj.native.uuid;
+        }
+        connect();
+    });
 }

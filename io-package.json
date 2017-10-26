@@ -1,10 +1,15 @@
 {
     "common": {
         "name":                     "cloud",
-        "version":                  "2.0.5",
+        "version":                  "2.0.6",
         "title":                    "Cloud Adapter",
         "desc":                     "This adapter connect",
         "news": {
+            "2.0.6": {
+                "en":                   "Fix small error in configuration\nSend uuid to cloud for authentication",
+                "de":                   "Klein Fehler in Einstellungen korrigiert\nSende System UUID zur Cloud",
+                "ru":                   "Поправлена маленькая ошибка в диалоге настроек\nОтсылка UUID при соединении"
+            },
             "2.0.5": {
                 "en":                   "The small custom service reaction improvement",
                 "de":                   "Die kleine Verbesserung für die benutzerdefinierte Services",
