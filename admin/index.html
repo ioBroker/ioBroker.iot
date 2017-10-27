@@ -183,9 +183,28 @@
                     text += '<td>';
                     text += '<table style="width: 100%" class="smart-table">';
                     if (list[j].additionalApplianceDetails.ids) {
-                        var parts = JSON.parse(list[j].additionalApplianceDetails.ids);
-                        var names = JSON.parse(list[j].additionalApplianceDetails.names);
-                        var types = JSON.parse(list[j].additionalApplianceDetails.byONs);
+                        var parts;
+                        var names;
+                        var types;
+                        try {
+                            parts = JSON.parse(list[j].additionalApplianceDetails.ids);
+                        } catch (e) {
+                            console.error('Cannot parse ids for "' + list[j].friendlyName + '": "' + list[j].additionalApplianceDetails.ids + '"');
+                            continue;
+                        }
+                        try {
+                            names = JSON.parse(list[j].additionalApplianceDetails.names);
+                        } catch (e) {
+                            console.error('Cannot parse names for "' + list[j].friendlyName + '": "' + list[j].additionalApplianceDetails.names + '"');
+                            continue;
+                        }
+                        try {
+                            types = JSON.parse(list[j].additionalApplianceDetails.byONs);
+                        } catch (e) {
+                            console.error('Cannot parse types for "' + list[j].friendlyName + '": "' + list[j].additionalApplianceDetails.byONs + '"');
+                            continue;
+                        }
+
                         for (var k = 0; k < parts.length; k++) {
                             text += '<tr><td title="' + parts[k] + '">' + (names[k] || parts[k]) + '</td>';
                             text += '<td style="width: 95px">' + getSelect(parts[k], types[k]) + '</td>';
