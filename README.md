@@ -164,6 +164,9 @@ You may write "text2command" in white list, you can send POST request to ```http
 *to do*
 
 ## Changelog
+### 2.0.7 (2017-10-29)
+* (bluefox) Changes for socket-io
+
 ### 2.0.6 (2017-10-26)
 * (bluefox) Fix small error in configuration
 * (bluefox) Send uuid to cloud for authentication

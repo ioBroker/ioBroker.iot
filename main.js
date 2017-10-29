@@ -412,7 +412,8 @@ function connect() {
     adapter.config.cloudUrl = (adapter.config.cloudUrl || '').toString();
 
     if (adapter.config.apikey && adapter.config.apikey.match(/^@pro_/)) {
-        if (adapter.config.cloudUrl.indexOf('https://iobroker.pro:') === -1) {
+        if (adapter.config.cloudUrl.indexOf('https://iobroker.pro:')  === -1 &&
+            adapter.config.cloudUrl.indexOf('https://iobroker.info:') === -1) {
             adapter.config.cloudUrl = 'https://iobroker.pro:10555';
         }
     } else {
@@ -638,7 +639,7 @@ function connect() {
                 server += (!obj.native.bind || obj.native.bind === '0.0.0.0') ? '127.0.0.1' : obj.native.bind;
                 server += ':' + obj.native.port;
 
-                ioSocket = new IOSocket(socket, {clientid: adapter.config.apikey, allowAdmin: adapter.config.allowAdmin}, adapter);
+                ioSocket = new IOSocket(socket, {clientid: adapter.config.apikey, allowAdmin: adapter.config.allowAdmin, uuid: uuid, version: pack.common.version}, adapter);
             } else {
                 adapter.log.error('Unknown instance ' + adapter.log.instance);
                 server = null;
@@ -663,7 +664,7 @@ function connect() {
             });
         }
     } else {
-        ioSocket = new IOSocket(socket, {clientid: adapter.config.apikey}, adapter);
+        ioSocket = new IOSocket(socket, {clientid: adapter.config.apikey, uuid: uuid, version: pack.common.version}, adapter);
     }
 }
 
