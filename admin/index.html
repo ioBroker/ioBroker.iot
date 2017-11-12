@@ -44,6 +44,42 @@
     var idToEdit;
     var idToNavigate;
     var language;
+    var noCommon;
+
+    function getSmartName(states, id) {
+        if (!id) {
+            if (!noCommon) {
+                if (!states.common) {
+                    return states.smartName;
+                } else {
+                    if (states && !states.common) {
+                        return states.smartName;
+                    } else {
+                        return states.common.smartName;
+                    }
+                }
+            } else {
+                if (states && !states.common) {
+                    return states.smartName;
+                } else {
+                    return (states &&
+                        states.common &&
+                        states.common.custom &&
+                        states.common.custom[adapter + '.' + instance]) ?
+                        states.common.custom[adapter + '.' + instance].smartName : undefined;
+                }
+            }
+        } else
+        if (!noCommon) {
+            return states[id].common.smartName;
+        } else {
+            return (states[id] &&
+                states[id].common &&
+                states[id].common.custom &&
+                states[id].common.custom[adapter + '.' + instance]) ?
+                states[id].common.custom[adapter + '.' + instance].smartName || null : null;
+        }
+    }
 
     function initSelectId(callback) {
         if (selectId) {
@@ -232,7 +268,7 @@
                         if (result) {
                             $this.parent().addClass('smart-changed');
                             socket.emit('getObject', id, function (err, obj) {
-                                obj.common.smartName = false;
+                                disableSmartName(obj);
                                 socket.emit('setObject', id, obj, function (err) {
                                     updateDevices(2000);
                                 });
@@ -247,28 +283,7 @@
                     var val   = $this.val();
                     $this.addClass('smart-changed');
                     socket.emit('getObject', id, function (err, obj) {
-                        if (typeof obj.common.smartName === 'string') {
-                            var nnn = obj.common.smartName;
-                            obj.common.smartName = {};
-                            obj.common.smartName[language] = nnn;
-                        }
-
-                        if (obj.native.byON) {
-                            delete obj.native.byON;
-                            var smartName = obj.common.smartName;
-
-                            if (!smartName || typeof smartName !== 'object') {
-                                smartName = {
-                                    en:     smartName
-                                };
-                                smartName[language] = smartName.en;
-                            }
-                            obj.common.smartName = smartName;
-                        }
-
-                        obj.common.smartName = obj.common.smartName || {};
-                        obj.common.smartName.byON = val;
-
+                        updateSmartName(obj, null, undefined, val);
                         socket.emit('setObject', id, obj, function (err) {
                             updateDevices(2000);
                         });
@@ -306,27 +321,7 @@
 
                         idToNavigate = id;
                         socket.emit('getObject', id, function (err, obj) {
-                            if (typeof obj.common.smartName === 'string') {
-                                var nnn = obj.common.smartName;
-                                obj.common.smartName = {};
-                                obj.common.smartName[language] = nnn;
-                            }
-
-                            obj.common.smartName = obj.common.smartName || {};
-
-                            obj.common.smartName[language] = $('#edit_name').val();
-                            // If no smart name defined or smartname is the same as the name (except buttons)
-                            if (!obj.common.smartName[language] || (obj.common.smartName[language] === $this.data('name') && (!obj.common.role || obj.common.role.indexOf('button') === -1))) {
-                                delete obj.common.smartName[language];
-                                var empty = true;
-                                for (var key in obj.common.smartName) {
-                                    if (obj.common.smartName.hasOwnProperty(key)) {
-                                        empty = false;
-                                        break;
-                                    }
-                                }
-                                if (empty) obj.common.smartName = null;
-                            }
+                            updateSmartName(obj, null, $('#edit_name').val());
                             socket.emit('setObject', id, obj, function (err) {
                                 updateDevices(2000);
                             });
@@ -347,8 +342,144 @@
                 }
             }
             filter();
-
         });
+    }
+
+    function disableSmartName(states, id) {
+        var obj;
+        if (!id) {
+            obj = states;
+        } else {
+            obj = states[id];
+        }
+        if (noCommon) {
+            obj.common.custom = obj.common.custom || {};
+            obj.common.custom[adapter + '.' + instance] = obj.common.custom[adapter + '.' + instance] || {};
+            obj.common.custom[adapter + '.' + instance].smartName = false;
+        } else {
+            obj.common.smartName = false;
+        }
+    }
+
+    function enableSmartName(states, id) {
+        var obj;
+        if (!id) {
+            obj = states;
+        } else {
+            obj = states[id];
+        }
+        if (noCommon) {
+            obj.common.custom = obj.common.custom || {};
+            obj.common.custom[adapter + '.' + instance] = obj.common.custom[adapter + '.' + instance] || {};
+            obj.common.custom[adapter + '.' + instance].smartName = {};
+        } else {
+            obj.common.smartName = {};
+        }
+    }
+
+    function removeSmartName(states, id) {
+        var obj;
+        if (!id) {
+            obj = states;
+        } else {
+            obj = states[id];
+        }
+        if (noCommon) {
+            if (obj.common && obj.common.custom && obj.common.custom[adapter + '.' + instance]) {
+                delete obj.common.custom[adapter + '.' + instance];
+            }
+        } else {
+            obj.common.smartName = null;
+        }
+    }
+
+    function updateSmartName(states, id, newSmartName, byON) {
+        var obj;
+        if (!id) {
+            obj = states;
+        } else {
+            obj = states[id];
+        }
+
+        // convert Old format
+        if (typeof obj.common.smartName === 'string') {
+            var nnn = obj.common.smartName;
+            obj.common.smartName = {};
+            obj.common.smartName[language] = nnn;
+        }
+
+        // convert old settings
+        if (obj.native.byON) {
+            delete obj.native.byON;
+            var _smartName = obj.common.smartName;
+
+            if (!_smartName || typeof _smartName !== 'object') {
+                _smartName = {
+                    en:     _smartName
+                };
+                _smartName[language] = _smartName.en;
+            }
+            obj.common.smartName = _smartName;
+        }
+
+        if (byON !== undefined) {
+            if (noCommon) {
+                obj.common.custom = obj.common.custom || {};
+                obj.common.custom[adapter + '.' + instance] = obj.common.custom[adapter + '.' + instance] || {};
+                obj.common.custom[adapter + '.' + instance].smartName = obj.common.custom[adapter + '.' + instance].smartName || {};
+                obj.common.custom[adapter + '.' + instance].smartName.byON = byON;
+            } else {
+                obj.common.smartName = obj.common.smartName || {};
+                obj.common.smartName.byON = byON;
+            }
+        }
+        if (newSmartName !== undefined) {
+            var smartName;
+            if (noCommon) {
+                obj.common.custom = obj.common.custom || {};
+                obj.common.custom[adapter + '.' + instance] = obj.common.custom[adapter + '.' + instance] || {};
+                obj.common.custom[adapter + '.' + instance].smartName = obj.common.custom[adapter + '.' + instance].smartName || {};
+                smartName = obj.common.custom[adapter + '.' + instance].smartName;
+            } else {
+                obj.common.smartName = obj.common.smartName || {};
+                smartName = obj.common.smartName;
+            }
+            smartName[language] = newSmartName;
+
+            if (smartName && (!smartName[language] || (smartName[language] === obj.common.name && (!obj.common.role || obj.common.role.indexOf('button') === -1)))) {
+                delete smartName[language];
+                var empty = true;
+                for (var key in smartName) {
+                    if (smartName.hasOwnProperty(key)) {
+                        empty = false;
+                        break;
+                    }
+                }
+                if (empty) {
+                    if (noCommon) {
+                        if (obj.common.custom[adapter + '.' + instance].smartName.byON === undefined) {
+                            delete obj.common.custom[adapter + '.' + instance];
+                        } else {
+                            delete obj.common.custom[adapter + '.' + instance].en;
+                            delete obj.common.custom[adapter + '.' + instance].de;
+                            delete obj.common.custom[adapter + '.' + instance].ru;
+                            delete obj.common.custom[adapter + '.' + instance].nl;
+                            delete obj.common.custom[adapter + '.' + instance].pl;
+                        }
+                    } else {
+                        if (obj.common.smartName.byON !== undefined) {
+                            delete obj.common.smartName.en;
+                            delete obj.common.smartName.de;
+                            delete obj.common.smartName.ru;
+                            delete obj.common.smartName.nl;
+                            delete obj.common.smartName.pl;
+                        } else {
+                            obj.common.smartName = null;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     function updateMDevices(delay) {
@@ -392,7 +523,7 @@
                             if (result) {
                                 $this.parent().addClass('smart-changed');
                                 socket.emit('getObject', id, function (err, obj) {
-                                    obj.common.smartName = false;
+                                    disableSmartName(obj);
                                     socket.emit('setObject', id, obj, function (err) {
                                         updateMDevices(2000);
                                     });
@@ -402,7 +533,8 @@
                     } else {
                         $this.parent().addClass('smart-changed');
                         socket.emit('getObject', id, function (err, obj) {
-                            obj.common.smartName = {};
+                            enableSmartName(obj);
+
                             socket.emit('setObject', id, obj, function (err) {
                                 updateMDevices(2000);
                             });
@@ -442,22 +574,7 @@
 
                         idToNavigate = id;
                         socket.emit('getObject', id, function (err, obj) {
-                            obj.common.smartName = obj.common.smartName || {};
-
-                            obj.common.smartName[language] = $('#edit_name').val();
-
-                            // If no smart name defined or smartname is the same as the name (except buttons)
-                            if (!obj.common.smartName[language] || (obj.common.smartName[language] === $this.data('name') && (!obj.common.role || obj.common.role.indexOf('button') === -1))) {
-                                delete obj.common.smartName[language];
-                                var empty = true;
-                                for (var key in obj.common.smartName) {
-                                    if (obj.common.smartName.hasOwnProperty(key)) {
-                                        empty = false;
-                                        break;
-                                    }
-                                }
-                                if (empty) obj.common.smartName = null;
-                            }
+                            updateSmartName(obj, null, $('#edit_name').val());
                             socket.emit('setObject', id, obj, function (err) {
                                 updateMDevices(2000);
                             });
@@ -509,7 +626,8 @@
                     var smartName;
 
                     if (rooms[i]) {
-                        smartName = rooms[i].smartName;
+                        smartName = getSmartName(rooms[i]);
+                        // convert old format
                         if (smartName && typeof smartName === 'object') {
                             smartName = smartName[language] || smartName.en || '';
                         }
@@ -520,7 +638,8 @@
                         text += '<td></td>';
                     }
                     if (funcs[i]) {
-                        smartName = funcs[i].smartName;
+                        smartName = getSmartName(funcs[i]);
+                        // convert old format
                         if (smartName && typeof smartName === 'object') {
                             smartName = smartName[language] || smartName.en || '';
                         }
@@ -546,7 +665,7 @@
                             if ($this.prop('checked')) {
                                 $smart_enums.find('.smart-edit[data-id="' + id + '"]').prop('disabled', false);
                                 socket.emit('getObject', id, function (err, obj) {
-                                    obj.common.smartName = null;
+                                    removeSmartName(obj);
                                     socket.emit('setObject', id, obj, function (err) {
                                         setTimeout(function () {
                                             $this.parent().removeClass('smart-changed');
@@ -556,7 +675,7 @@
                             } else {
                                 $smart_enums.find('.smart-edit[data-id="' + id + '"]').prop('disabled', true);
                                 socket.emit('getObject', id, function (err, obj) {
-                                    obj.common.smartName = false;
+                                    disableSmartName(obj);
                                     socket.emit('setObject', id, obj, function (err) {
                                         setTimeout(function () {
                                             $this.parent().removeClass('smart-changed');
@@ -595,26 +714,7 @@
                         $enums.find('[data-id="' + id + '"]').parent().addClass('smart-changed');
 
                         socket.emit('getObject', id, function (err, obj) {
-                            if (typeof obj.common.smartName === 'string') {
-                                var nnn = obj.common.smartName;
-                                obj.common.smartName = {};
-                                obj.common.smartName[language] = nnn;
-                            }
-
-                            obj.common.smartName = obj.common.smartName || {};
-                            obj.common.smartName[language] = $('#edit_name').val();
-
-                            if (!obj.common.smartName[language] || obj.common.smartName[language] === $this.data('name')) {
-                                delete obj.common.smartName[language];
-                                var empty = true;
-                                for (var key in obj.common.smartName) {
-                                    if (obj.common.smartName.hasOwnProperty(key)) {
-                                        empty = false;
-                                        break;
-                                    }
-                                }
-                                if (empty) obj.common.smartName = null;
-                            }
+                            updateSmartName(obj, null, $('#edit_name').val());
                             socket.emit('setObject', id, obj, function (err) {
                                 updateEnums(2000);
                             });
@@ -667,8 +767,23 @@
         $('#ifttt_link').html('https://iobroker.' + (key.match(/^@pro_/) ? 'pro' : 'net') + '/ifttt/' + key);
         $('#service_link').html('https://iobroker.' + (key.match(/^@pro_/) ? 'pro' : 'net') + '/service/custom_&lt;NAME&gt;/' + key + '/&lt;data&gt;');
     }
+
     function updateUrl() {
-        $('#cloudUrl').prop('disabled', $('#apikey').val().match(/^@pro_/));
+        var isPro = $('#apikey').val().match(/^@pro_/);
+        var $noCommon = $('#noCommon');
+        if (isPro) {
+            $('#cloudUrl').prop('disabled', true);
+            $('#allowAdmin').prop('disabled', false);
+            $noCommon.prop('disabled', false);
+        } else {
+            $('#cloudUrl').prop('disabled', false);
+            $('#allowAdmin').prop('disabled', true);
+            $noCommon.prop('disabled', true);
+
+            if ($noCommon.prop('checked')) {
+                $noCommon.prop('checked', false).trigger('change');
+            }
+        }
     }
 
     function checkAuthForInstance(id, value) {
@@ -703,6 +818,9 @@
         if (settings.responseOID === undefined) settings.responseOID = '';
         if (settings.restartOnDisconnect === undefined) settings.restartOnDisconnect = false;
         if (settings.text2command === undefined) settings.text2command = '';
+        if (settings.noCommon === undefined) settings.noCommon = false;
+
+        noCommon = settings.noCommon;
 
         actionsMapping.turnOn  = _(actionsMapping.turnOn);
         actionsMapping.turnOff = _(actionsMapping.turnOff);
@@ -727,6 +845,7 @@
                 }
             });
         }
+
         getAdapterInstances('admin', function (res) {
             if (!res) return;
             var text = '<option value="">' + _('disabled') + '</option>';
@@ -802,14 +921,7 @@
                     if (newId) {
                         //$('#' + id).val(newId || '');
                         socket.emit('getObject', newId, function (err, obj) {
-                            if (typeof obj.common.smartName === 'string') {
-                                var nnn = obj.common.smartName;
-                                obj.common.smartName = {};
-                                obj.common.smartName[language] = nnn;
-                            }
-
-                            obj.common.smartName = obj.common.smartName || {};
-                            obj.common.smartName[language] = (obj.common.name || _('Device name')).replace(/[-_.]+/g, ' ');
+                            updateSmartName(obj, null, (obj.common.name || _('Device name')).replace(/[-_.]+/g, ' '));
                             idToEdit = obj._id;
                             socket.emit('setObject', obj._id, obj, function (err) {
                                 updateDevices(2000);
@@ -826,8 +938,7 @@
                     if (newId) {
                         //$('#' + id).val(newId || '');
                         socket.emit('getObject', newId, function (err, obj) {
-                            obj.common.smartName = obj.common.smartName || {};
-                            obj.common.smartName[language] = (obj.common.name || _('Device name')).replace(/[-_.]+/g, ' ');
+                            updateSmartName(obj, null, (obj.common.name || _('Device name')).replace(/[-_.]+/g, ' '));
                             idToEdit = obj._id;
                             socket.emit('setObject', obj._id, obj, function (err) {
                                 updateMDevices(2000);
@@ -879,6 +990,19 @@
         $('#apikey').change(updateUrl).keyup(function () {
             $(this).trigger('change');
         });
+
+        $('#noCommon').change(function () {
+            var val = $(this).prop('checked');
+            if (window.confirm(_('To apply this setting, the restart of adapter must be done. Agree?'))) {
+                $('button#save').trigger('click');
+                setTimeout(function () {
+                    document.location.reload();
+                }, 500);
+            } else {
+                $(this).prop('checked', !val);
+            }
+        });
+
         updateIfttt();
         updateUrl();
         onChange(false);
@@ -1012,6 +1136,7 @@
                     <tr><td><label for="responseOID" class="translate">Write response to:</label></td><td class="admin-icon" data-link="write-response-to"></td><td><input class="value" id="responseOID"/><button id="responseOIDDialog"></button></td><td></td></tr>
                     <tr><td><label for="restartOnDisconnect" class="translate">Restart on disconnect:</label></td><td class="admin-icon"></td><td><input class="value" id="restartOnDisconnect" type="checkbox"/></td><td></td></tr>
                     <tr><td><label for="allowAdmin" class="translate">Allow admin access (only pro):</label></td><td class="admin-icon" data-link="true"></td><td><select class="value" id="allowAdmin" style="display: inline-block"></select><span id="allowAdmin_tip" class="tip"></span></td><td></td></tr>
+                    <tr><td><label for="noCommon" class="translate">Personal settings (only pro):</label></td><td class="admin-icon" data-link="true"></td><td><input class="value" id="noCommon" type="checkbox"/></td><td></td></tr>
                 </table>
 
                 <p class="translate">help_tip</p>

@@ -90,7 +90,8 @@
         "allowAI":                  false,
         "allowedServices":          "",
         "text2command":             "0",
-        "allowAdmin":               ""
+        "allowAdmin":               "",
+        "noCommon":                 false
     },
     "objects": [
     ],

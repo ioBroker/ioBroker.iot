@@ -48,6 +48,17 @@ systemDictionary = {
         "de": "Erlaube Zugriff auf Admin (nur pro):",
         "ru": "Разрешить доступ к admin (только pro):"
     },
+    "Personal settings (only pro):": {
+        "en": "Personal settings (only pro):",
+        "de": "Eigene Einstellungen (nur pro):",
+        "ru": "Личные настройки (только pro):"
+    },
+
+    "To apply this setting, the restart of adapter must be done. Agree?": {
+        "en": "To apply this setting, the restart of adapter must be done. Agree?",
+        "de": "Um diese Einstelllung zu ändern, es ist erforderlich diese Instanz neu zu starten. Einverstanden?",
+        "ru": "Что бы поменять эту опцию, необходимо перезагрузить инстанцию. Согласны?"
+    },
     "Active":               {"en": "Active",                "de": "aktiv",                 "ru": "Активно"},
     "Smart Media":          {"en": "Smart Media",           "de": "Smart Media",            "ru": "Smart Media"},
     "Extended options":     {"en": "Extended options",      "de": "Extra-Einstellungen",    "ru": "Расширенные настройки"},
@@ -201,5 +212,10 @@ systemDictionary = {
         "en": "Workaround for missing connection to Alexa after the connection to cloud was lost. With this option you can restart adapter after each disconnection and it will work.",
         "de": "Workaround für fehlende Kommunikation mit Alexa nach Verbindungsabbruch. Damit kann man zwingen den Adapter neu zu starten und das Problem umzugehen.",
         "ru": "Временное решение для проблемы с пропажей соединения с Alexa, после воссоединения с облаком. Этим можно перестартовать драйвер после потери соединения."
+    },
+    "tooltip_noCommon": {
+        "en": "If enabled, the settings will be stored only for this instance. So in the another instance the other names could be set.",
+        "de": "Falls aktiviert, dann werden die Einstellungen nur für diese Instanz gespeichert. Damit kann man in einer anderen Instanz andere Namen nehmen.",
+        "ru": "Если выбрана эта опция, то настройки будут сохраняться только для этой инстанции. Что бы в другой инстанции можно было выбрать другие имена."
     }
 };
