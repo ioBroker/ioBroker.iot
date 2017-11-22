@@ -3,7 +3,11 @@
         "name":                     "cloud",
         "version":                  "2.0.7",
         "title":                    "Cloud Adapter",
-        "desc":                     "This adapter connect",
+        "desc":                     {
+            "en": "Connects your ioBroker server to the ioBroker cloud",
+            "de": "Verbindet den ioBroker-Server mit der ioBroker-Cloud",
+            "ru": "Connects your ioBroker server to the ioBroker cloud"
+        },
         "news": {
             "2.0.7": {
                 "en":                   "Changes for socket-io",
@@ -12,12 +16,12 @@
             },
             "2.0.6": {
                 "en":                   "Fix small error in configuration\nSend uuid to cloud for authentication",
-                "de":                   "Klein Fehler in Einstellungen korrigiert\nSende System UUID zur Cloud",
+                "de":                   "Kleine Fehler in Einstellungen korrigiert\nSende System UUID zur Cloud",
                 "ru":                   "Поправлена маленькая ошибка в диалоге настроек\nОтсылка UUID при соединении"
             },
             "2.0.5": {
                 "en":                   "The small custom service reaction improvement",
-                "de":                   "Die kleine Verbesserung für die benutzerdefinierte Services",
+                "de":                   "Kleine Verbesserung für die benutzerdefinierten Services",
                 "ru":                   "Небольшое улучшение клиентских сервисов"
             },
             "2.0.4": {
@@ -32,12 +36,12 @@
             },
             "1.0.7": {
                 "en":                   "Disable AI",
-                "de":                   "Ai deaktiviert",
+                "de":                   "AI deaktiviert",
                 "ru":                   "AI выключен"
             },
             "1.0.3": {
                 "en":                   "Rename some german words",
-                "de":                   "Umbenennen Rolladen => Rollladen",
+                "de":                   "Rolladen in Rollladen umbenannt",
                 "ru":                   "Изменены некоторые немецкие слова"
             },
             "1.0.2": {
@@ -47,7 +51,7 @@
             },
             "1.0.0": {
                 "en":                   "Catch an error if the invalid smart name set",
-                "de":                   "Fange einen Fehler, wenn der ungültige Smart Name gesetzt ist",
+                "de":                   "Fehler abfangen, wenn ungültiger Smart Name gesetzt ist",
                 "ru":                   "Ловит ошибку, если невалидное смарт имя"
             }
         },
