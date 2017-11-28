@@ -13,7 +13,7 @@ systemDictionary = {
     },
     "help_tip": {
         "en": 'No APP-KEY? Get it on <a href="https://iobroker.pro/accessRemote" target="_blank">https://iobroker.pro</a> for validated access or on <a href="https://iobroker.net" target="_blank">https://iobroker.net</a> for free, but limited access',
-        "de": 'Kein APP-KEY? Diesen kann man unter <a href="https://iobroker.pro/accessRemote" target="_blank">https://iobroker.pro</a> für gesicherten Zugriff oder <a href="https://iobroker.net" target="_blank">https://iobroker.net</a> für kostenlosen Zugriff (begrenzt) bekommen.',
+        "de": 'Kein APP-KEY? Diesen kann man unter <a href="https://iobroker.pro/accessRemote" target="_blank">https://iobroker.pro</a> für gesicherten Zugriff oder <a href="https://iobroker.net" target="_blank">https://iobroker.net</a> für kostenlosen Zugriff (gesichert aber begrenzt) bekommen.',
         "ru": 'Нет APP-KEY? Получи его на <a href="https://iobroker.pro/accessRemote" target="_blank">https://iobroker.pro</a> для гарантированного доступа или бесплатно на <a href="https://iobroker.net" target="_blank">https://iobroker.net</a>, но с ограниченным доступом'
     },
     "Language:":    {"en": "Language:",     "de": "Sprache:",               "ru": "Язык:"},
