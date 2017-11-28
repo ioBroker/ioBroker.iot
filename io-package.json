@@ -1,7 +1,7 @@
 {
     "common": {
         "name":                     "cloud",
-        "version":                  "2.0.7",
+        "version":                  "2.0.8",
         "title":                    "Cloud Adapter",
         "desc":                     {
             "en": "Connects your ioBroker server to the ioBroker cloud",
@@ -9,6 +9,11 @@
             "ru": "Connects your ioBroker server to the ioBroker cloud"
         },
         "news": {
+            "2.0.8": {
+                "en":                   "Translations",
+                "de":                   "Übersetzungen",
+                "ru":                   "Перевод"
+            },
             "2.0.7": {
                 "en":                   "Changes for socket-io",
                 "de":                   "Änderungen für socket-io",
