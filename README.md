@@ -164,6 +164,9 @@ You may write "text2command" in white list, you can send POST request to ```http
 *to do*
 
 ## Changelog
+### 2.1.0 (2017-12-06)
+* (bluefox) allow to disable alexa service by state
+
 ### 2.0.8 (2017-11-28)
 * (bluefox / Philipp Beckers) Translations
 

@@ -1,7 +1,7 @@
 {
     "common": {
         "name":                     "cloud",
-        "version":                  "2.0.8",
+        "version":                  "2.1.0",
         "title":                    "Cloud Adapter",
         "desc":                     {
             "en": "Connects your ioBroker server to the ioBroker cloud",
@@ -9,6 +9,11 @@
             "ru": "Connects your ioBroker server to the ioBroker cloud"
         },
         "news": {
+            "2.1.0": {
+                "en":                   "Allow to disable alexa service by state",
+                "de":                   "Erlaube das Alexaservice zu deaktivieren",
+                "ru":                   "Возможность выключить сервис alexa через состояние"
+            },
             "2.0.8": {
                 "en":                   "Translations",
                 "de":                   "Übersetzungen",
@@ -33,31 +38,6 @@
                 "en":                   "Allow access to admin via iobroker.pro\nAdd settings for the connection timeout",
                 "de":                   "Erlaube den Zugriff auf Admin via iobroker.pro\nVerbindungs-Timeout Einstellungen",
                 "ru":                   "Доступ к admin через iobroker.pro\nДобавлены настройки таймаута соединения"
-            },
-            "1.0.8": {
-                "en":                   "Allow control light colors",
-                "de":                   "Erlaube die Steuerung von Farben",
-                "ru":                   "Можно управлять цветами лампы"
-            },
-            "1.0.7": {
-                "en":                   "Disable AI",
-                "de":                   "AI deaktiviert",
-                "ru":                   "AI выключен"
-            },
-            "1.0.3": {
-                "en":                   "Rename some german words",
-                "de":                   "Rolladen in Rollladen umbenannt",
-                "ru":                   "Изменены некоторые немецкие слова"
-            },
-            "1.0.2": {
-                "en":                   "Support of IFTTT",
-                "de":                   "Unterstützung von IFTTT",
-                "ru":                   "Поддержка IFTTT"
-            },
-            "1.0.0": {
-                "en":                   "Catch an error if the invalid smart name set",
-                "de":                   "Fehler abfangen, wenn ungültiger Smart Name gesetzt ist",
-                "ru":                   "Ловит ошибку, если невалидное смарт имя"
             }
         },
         "authors": [
@@ -127,14 +107,41 @@
             "native": {}
         },
         {
-            "_id":  "smart.lastObjectID",
+            "_id":  "info.connection",
+            "type": "state",
+            "common": {
+                "role":  "indicator.connected",
+                "name":  "If connected to cloud",
+                "type":  "boolean",
+                "read":  true,
+                "write": false,
+                "def":   false
+            },
+            "native": {}
+        },
+        {
+            "_id":  "smart.alexaDisabled",
             "type": "state",
             "common": {
                 "role":  "state",
-                "name":  "Last controlled Object ID",
-                "type":  "string",
+                "name":  "If Alexa service is disabled",
+                "type":  "boolean",
+                "def":   false,
                 "read":  true,
-                "write": false
+                "write": true
+            },
+            "native": {}
+        },
+        {
+            "_id":  "smart.googleDisabled",
+            "type": "state",
+            "common": {
+                "role":  "state",
+                "name":  "If Google home service is disabled",
+                "type":  "boolean",
+                "def":   false,
+                "read":  true,
+                "write": true
             },
             "native": {}
         },
