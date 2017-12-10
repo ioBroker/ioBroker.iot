@@ -46,7 +46,7 @@ We will build an applet doing the following chain: ioBroker => Webhook (IFTTT) =
  **8. Now we setup where the message should go and how it looks. Please fill the fields as shown in the picture.
  In this sample Value1 will be the ObjectID, Value2 the value of the object and Value3 the ACK state (false/true).**
  
- ![Image showing the complete action page with the message field filled for our sample using Value1/Value2/Value3 as ingredients](IFTTT_send_08.png)
+ ![Image showing the complete action page with the message field filled for our sample using Value1/Value2/Value3 as ingredients](ifttt_send_08.png)
  
  **9. We're done with the applet creation, so rename it if you like and hit finish to end the applet creation process.**
  
