@@ -55,8 +55,8 @@ systemDictionary = {
     },
 
     "To apply this setting, the restart of adapter must be done. Agree?": {
-        "en": "To apply this setting, the restart of adapter must be done. Agree?",
-        "de": "Um diese Einstelllung zu ändern, es ist erforderlich diese Instanz neu zu starten. Einverstanden?",
+        "en": "To apply this setting, the adapter must be restarted. Agree?",
+        "de": "Um diese Einstellung zu ändern, es ist erforderlich diese Instanz neu zu starten. Einverstanden?",
         "ru": "Что бы поменять эту опцию, необходимо перезагрузить инстанцию. Согласны?"
     },
     "Active":               {"en": "Active",                "de": "aktiv",                 "ru": "Активно"},
@@ -91,12 +91,12 @@ systemDictionary = {
     "Restart on disconnect:":   {"en": "Restart on disconnect:",    "de": "Neustart bei Verbindungsabbruch:", "ru": "Перезапуск при потере сединения:"},
     "amazon link": {
         "en": "If you use the Alexa Skill, please write a review for us <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B01MRXCC3J/create-review/?ref-suffix=war_dp' target='_blank' class='here'>here</a>. Examples can be found <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B01MRXCC3J/reviews' target='_blank'>here</a>.",
-        "de": "Falls du den Alexa Skill benutzt, schreibe doch bitte <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B01MRXCC3J/create-review/?ref-suffix=war_dp' target='_blank' class='here'>hier</a> hier eine Review. Beispiele kann man <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B01MRXCC3J/reviews' target='_blank'>hier</a> anschauen.",
+        "de": "Falls du den Alexa Skill benutzt, schreibe doch bitte <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B01MRXCC3J/create-review/?ref-suffix=war_dp' target='_blank' class='here'>hier</a> eine Review. Beispiele kann man <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B01MRXCC3J/reviews' target='_blank'>hier</a> anschauen.",
         "ru": "Если вы используете Alexa, пожалуйста оставьте свой отзыв <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B01MRXCC3J/create-review/?ref-suffix=war_dp' target='_blank' class='here'>здесь</a>. Примеры отзывов можно посмотреть <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B01MRXCC3J/reviews' target='_blank'>здесь</a>."
     },
     "info_iftttKey": {
         "en": "You can find your key <a href='https://ifttt.com/maker_webhooks' target='_blank'>here</a> under 'Documentation'",
-        "de": "Schlüssel kann <a href='https://ifttt.com/maker_webhooks' target='_blank'>hier</a> unter 'Documentation' gefunden werden",
+        "de": "Der Schlüssel kann <a href='https://ifttt.com/maker_webhooks' target='_blank'>hier</a> unter 'Documentation' gefunden werden",
         "ru": "Свой ключ можно найти <a href='https://ifttt.com/maker_webhooks' target='_blank'>здесь</a> в 'Documentation'"
     },
     "info_allowedServices": {
@@ -141,7 +141,7 @@ systemDictionary = {
     },
     "Save settings and the names will be changed": {
         "en": "Save settings and the names will be changed",
-        "de": "Speichere Einstellungen um neuen Namen zu sehen",
+        "de": "Speichere die Einstellungen um die neuen Namen zu sehen",
         "ru": "Сохраните настройки, что бы увидеть изменения"
     },
     "Concatenate words with:": {
@@ -166,7 +166,7 @@ systemDictionary = {
     },
     "tooltip_apikey": {
         "en": "This key is required to communicate with a cloud. You can get the API-KEY on https://iobroker.net and it looks like nickname_f1f439a0-001a-11e7-bc64-92361f002671",
-        "de": "Dieser Schlüssel wird benötig um mit der Cloud zu kommunizieren. Man kann den Schlüssel unter https://iobroker.net bekommen. Es sieht so aus nickname_f1f439a0-001a-11e7-bc64-92361f002671",
+        "de": "Dieser Schlüssel wird benötigt um mit der Cloud zu kommunizieren. Man kann den Schlüssel unter https://iobroker.net bekommen. Es sieht wie folgt aus nickname_f1f439a0-001a-11e7-bc64-92361f002671",
         "ru": "Ключ необходимый для коммуникации с облаком. Его можно получить на https://iobroker.net и он похож на nickname_f1f439a0-001a-11e7-bc64-92361f002671"
     },
     "tooltip_instance": {
@@ -176,7 +176,7 @@ systemDictionary = {
     },
     "tooltip_cloudUrl": {
         "en": "Normally you do not need to change it. Only required if you plan to use your own cloud.",
-        "de": "Normallerweise muss man diese Option nicht geändert werden. Dies ist nur notwendig, wenn man eigenen Cloud verwendet.",
+        "de": "Normalerweise muss diese Option nicht geändert werden. Dies ist nur notwendig, wenn man eigenen Cloud verwendet.",
         "ru": "Обычно не нужно менять этот параметр. Только если используется собственное облако."
     },
     "tooltip_allowSelfSignedCertificate": {
@@ -206,12 +206,12 @@ systemDictionary = {
     },
     "tooltip_responseOID": {
         "en": "For every command the text response will be generated. You can define here the Object ID , where this text must be written to. E.g. sayit.0.tts.text.",
-        "de": "Für jedes Kommando wird eine Textantwort generiert. Hier kannst du die Objekt ID angeben, an welchde die Textantword gesendet werden soll, z.B. sayit.0.tts.text.",
+        "de": "Für jedes Kommando wird eine Textantwort generiert. Hier kannst du die Objekt ID angeben, an welche die Textantwort gesendet werden soll, z.B. sayit.0.tts.text.",
         "ru": "Для каждой команды будет генерироваться текстовый ответ. Вы можете определить здесь ID объекта , где этот текст должен быть записан. Например sayit.0.tts.text."
     },
     "tooltip_restartOnDisconnect": {
         "en": "Workaround for missing connection to Alexa after the connection to cloud was lost. With this option you can restart adapter after each disconnection and it will work.",
-        "de": "Workaround für fehlende Kommunikation mit Alexa nach Verbindungsabbruch. Damit kann man zwingen den Adapter neu zu starten und das Problem umzugehen.",
+        "de": "Workaround für fehlende Kommunikation mit Alexa nach Verbindungsabbruch. Damit kann man zwingen den Adapter neu zu starten und das Problem umgehen.",
         "ru": "Временное решение для проблемы с пропажей соединения с Alexa, после воссоединения с облаком. Этим можно перестартовать драйвер после потери соединения."
     },
     "tooltip_noCommon": {
