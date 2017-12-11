@@ -166,6 +166,9 @@ You may write "text2command" in white list, you can send POST request to ```http
 ## Changelog
 ### 2.1.1 (2017-12-11)
 * (bluefox) Add settings for the ping timeout
+* (grimneko) corrected some spelling mistakes
+* (grimneko) update readme for IFTTT
+
 
 ### 2.1.0 (2017-12-06)
 * (bluefox) Allow to disable alexa service by state

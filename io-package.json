@@ -10,7 +10,7 @@
         },
         "news": {
             "2.1.1": {
-                "en": "add settings for the ping timeout",
+                "en": "add settings for the ping timeout\nupdate readme for IFTTT\ncorrected some spelling mistakes",
                 "de": "Ping Timeout Einstellungen hinzugefügt",
                 "ru": "Добавлены настройки для таймаута пинга"
             },

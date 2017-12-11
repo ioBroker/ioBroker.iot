@@ -27,6 +27,7 @@ gulp.task('updatePackages', function (done) {
         iopackage.common.news = Object.assign(newNews, news);
     }
     fs.writeFileSync('io-package.json', JSON.stringify(iopackage, null, 4));
+    done();
 });
 
 gulp.task('updateReadme', function (done) {
