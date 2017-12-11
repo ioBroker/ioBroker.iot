@@ -292,7 +292,7 @@ function pingConnection() {
                         checkPing();
                     }
                 }
-            }, 5000);
+            }, adapter.config.pingTimeout);
         }
     }
 }
@@ -680,6 +680,11 @@ function connect() {
 }
 
 function main() {
+    adapter.config.pingTimeout = parseInt(adapter.config.pingTimeout, 10) || 5000;
+    if (adapter.config.pingTimeout < 3000) {
+        adapter.config.pingTimeout = 3000;
+    }
+
     if (adapter.config.deviceOffLevel === undefined) adapter.config.deviceOffLevel = 30;
     adapter.config.deviceOffLevel = parseFloat(adapter.config.deviceOffLevel) || 0;
     adapter.config.concatWord = (adapter.config.concatWord || '').toString().trim();

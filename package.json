@@ -1,6 +1,6 @@
 {
   "name": "iobroker.cloud",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "This adapter allows to communicate different web applications with ioBroker.",
   "author": {
     "name": "bluefox",
@@ -30,12 +30,8 @@
     "iobroker.socketio": ">=1.8.6"
   },
   "devDependencies": {
-    "grunt": "^1.0.1",
-    "grunt-replace": "^1.0.1",
-    "grunt-contrib-jshint": "^1.1.0",
-    "grunt-jscs": "^3.0.1",
-    "grunt-http": "^2.2.0",
-    "mocha": "^3.5.3",
+    "gulp": "^3.9.1",
+    "mocha": "^4.0.1",
     "chai": "^4.1.2"
   },
   "bugs": {
