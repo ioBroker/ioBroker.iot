@@ -35,8 +35,12 @@ var adapter       = new utils.Adapter({
             if (recalcTimeout) clearTimeout(recalcTimeout);
             recalcTimeout = setTimeout(function () {
                 recalcTimeout = null;
-                alexaSH2.updateDevices();
-                alexaSH3.updateDevices();
+                alexaSH2.updateDevices(function () {
+                    adapter.setState('smart.updates', true, true);
+                });
+                alexaSH3.updateDevices(function () {
+                    adapter.setState('smart.updates3', true, true);
+                });
             }, 1000);
         } else if (id === 'system.config' && obj && !translate) {
             lang = obj.common.language;
@@ -91,6 +95,7 @@ var adapter       = new utils.Adapter({
                     if (obj.callback) {
                         adapter.log.info('Request devices');
                         adapter.sendTo(obj.from, obj.command, alexaSH2.getDevices(), obj.callback);
+                        adapter.setState('smart.updates', false, true);
                     }
                     break;
 
@@ -98,6 +103,7 @@ var adapter       = new utils.Adapter({
                     if (obj.callback) {
                         adapter.log.info('Request V3 devices');
                         adapter.sendTo(obj.from, obj.command, alexaSH3.getDevices(), obj.callback);
+                        adapter.setState('smart.updates3', false, true);
                     }
                     break;
 

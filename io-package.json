@@ -1,14 +1,27 @@
 {
     "common": {
         "name": "cloud",
-        "version": "2.1.1",
+        "version": "2.2.0",
         "title": "Cloud Adapter",
         "desc": {
             "en": "Connects your ioBroker server to the ioBroker cloud",
-            "de": "Verbindet den ioBroker-Server mit der ioBroker-Cloud",
-            "ru": "Connects your ioBroker server to the ioBroker cloud"
+            "de": "Verbindet Ihren ioBroker-Server mit der ioBroker-Cloud",
+            "ru": "Подключает сервер ioBroker к облаку ioBroker",
+            "pt": "Conecta seu servidor ioBroker à nuvem ioBroker",
+            "nl": "Verbindt uw ioBroker-server met de ioBroker-cloud",
+            "fr": "Connecte votre serveur ioBroker au cloud ioBroker",
+            "it": "Collega il tuo server ioBroker al cloud ioBroker"
         },
         "news": {
+            "2.2.0": {
+                "en": "Better update of the devices in configuration dialog",
+                "de": "Bessere Aktualisierung der Geräte im Konfigurationsdialog",
+                "ru": "Лучшее обновление устройств в диалоговом окне конфигурации",
+                "pt": "Melhor atualização dos dispositivos no diálogo de configuração",
+                "nl": "Betere update van de apparaten in configuratiedialoog",
+                "fr": "Meilleure mise à jour des périphériques dans la boîte de dialogue de configuration",
+                "it": "Migliore aggiornamento dei dispositivi nella finestra di configurazione"
+            },
             "2.1.1": {
                 "en": "add settings for the ping timeout\nupdate readme for IFTTT\ncorrected some spelling mistakes",
                 "de": "Ping Timeout Einstellungen hinzugefügt",
@@ -201,6 +214,30 @@
                 "role": "state",
                 "name": "Last textual response",
                 "type": "string",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "smart.updates",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": "If updates of configuration is ready",
+                "type": "boolean",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "smart.updates3",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": "If updates of V3 configuration is ready",
+                "type": "boolean",
                 "read": true,
                 "write": false
             },

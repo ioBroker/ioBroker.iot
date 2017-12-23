@@ -17,6 +17,8 @@
 <script type="text/javascript">
 
     var supportedInstances = ['web'];
+    var subscribed = false;
+    var subscribed3 = false;
     var actionsMapping = {
         turnOn: 'On',
         turnOff: 'Off',
@@ -270,7 +272,10 @@
                             socket.emit('getObject', id, function (err, obj) {
                                 disableSmartName(obj);
                                 socket.emit('setObject', id, obj, function (err) {
-                                    updateDevices(2000);
+                                    //updateDevices(2000);
+                                    if (err) {
+                                        window.alert(err);
+                                    }
                                 });
                             });
                         }
@@ -285,7 +290,10 @@
                     socket.emit('getObject', id, function (err, obj) {
                         updateSmartName(obj, null, undefined, val);
                         socket.emit('setObject', id, obj, function (err) {
-                            updateDevices(2000);
+                            //updateDevices(2000);
+                            if (err) {
+                                window.alert(err);
+                            }
                         });
                     });
                 });
@@ -323,7 +331,10 @@
                         socket.emit('getObject', id, function (err, obj) {
                             updateSmartName(obj, null, $('#edit_name').val());
                             socket.emit('setObject', id, obj, function (err) {
-                                updateDevices(2000);
+                                //updateDevices(2000);
+                                if (err) {
+                                    window.alert(err);
+                                }
                             });
                         });
                     });
@@ -465,6 +476,8 @@
                             delete obj.common.custom[adapter + '.' + instance].ru;
                             delete obj.common.custom[adapter + '.' + instance].nl;
                             delete obj.common.custom[adapter + '.' + instance].pl;
+                            delete obj.common.custom[adapter + '.' + instance].it;
+                            delete obj.common.custom[adapter + '.' + instance].fr;
                         }
                     } else {
                         if (obj.common.smartName.byON !== undefined) {
@@ -473,6 +486,8 @@
                             delete obj.common.smartName.ru;
                             delete obj.common.smartName.nl;
                             delete obj.common.smartName.pl;
+                            delete obj.common.smartName.it;
+                            delete obj.common.smartName.fr;
                         } else {
                             obj.common.smartName = null;
                         }
@@ -525,7 +540,10 @@
                                 socket.emit('getObject', id, function (err, obj) {
                                     disableSmartName(obj);
                                     socket.emit('setObject', id, obj, function (err) {
-                                        updateMDevices(2000);
+                                        //updateMDevices(2000);
+                                        if (err) {
+                                            window.alert(err);
+                                        }
                                     });
                                 });
                             }
@@ -536,7 +554,10 @@
                             enableSmartName(obj);
 
                             socket.emit('setObject', id, obj, function (err) {
-                                updateMDevices(2000);
+                                //updateMDevices(2000);
+                                if (err) {
+                                    window.alert(err);
+                                }
                             });
                         });
                     }
@@ -576,7 +597,10 @@
                         socket.emit('getObject', id, function (err, obj) {
                             updateSmartName(obj, null, $('#edit_name').val());
                             socket.emit('setObject', id, obj, function (err) {
-                                updateMDevices(2000);
+                                //updateMDevices(2000);
+                                if (err) {
+                                    window.alert(err);
+                                }
                             });
                         });
                     });
@@ -894,13 +918,36 @@
         $tabs.show().tabs({
             activate:  function (event, ui) {
                 var activePage = '0';
-                if (ui.newPanel.attr('id') === 'tabs-2') {
+                var id = ui.newPanel.attr('id');
+                if (id === 'tabs-4') {
+                    if (!subscribed3) {
+                        subscribed3 = true;
+                        socket.emit('subscribe', 'cloud.' + instance + '.smart.update3');
+                    }
+                } else {
+                    if (subscribed3) {
+                        subscribed3 = false;
+                        socket.emit('unsubscribe', 'cloud.' + instance + '.smart.update3');
+                    }
+                }
+                if (id === 'tabs-2') {
+                    if (!subscribed) {
+                        subscribed = true;
+                        socket.emit('subscribe', 'cloud.' + instance + '.smart.update');
+                    }
+                } else {
+                    if (subscribed) {
+                        subscribed = false;
+                        socket.emit('unsubscribe', 'cloud.' + instance + '.smart.update');
+                    }
+                }
+                if (id === 'tabs-2') {
                     updateDevices();
                     activePage = '1';
-                } else if (ui.newPanel.attr('id') === 'tabs-3') {
+                } else if (id === 'tabs-3') {
                     updateEnums();
                     activePage = '2';
-                } else if (ui.newPanel.attr('id') === 'tabs-4') {
+                } else if (id === 'tabs-4') {
                     updateMDevices();
                     activePage = '3';
                 }
@@ -925,7 +972,10 @@
                             updateSmartName(obj, null, (obj.common.name || _('Device name')).replace(/[-_.]+/g, ' '));
                             idToEdit = obj._id;
                             socket.emit('setObject', obj._id, obj, function (err) {
-                                updateDevices(2000);
+                                //updateDevices(2000);
+                                if (err) {
+                                    window.alert(err);
+                                }
                             });
                         });
                     }
@@ -942,7 +992,10 @@
                             updateSmartName(obj, null, (obj.common.name || _('Device name')).replace(/[-_.]+/g, ' '));
                             idToEdit = obj._id;
                             socket.emit('setObject', obj._id, obj, function (err) {
-                                updateMDevices(2000);
+                                //updateMDevices(2000);
+                                if (err) {
+                                    window.alert(err);
+                                }
                             });
                         });
                     }
@@ -1007,6 +1060,14 @@
         updateIfttt();
         updateUrl();
         onChange(false);
+        socket.on('stateChange', function (id, state) {
+            if (!id || !state || !state.val) return;
+            if (id.match(/smart\.updates$/)) {
+                updateDevices();
+            } else if (id.match(/smart\.updates3$/)) {
+                updateMDevices();
+            }
+        });
     }
 
     function save(callback) {
