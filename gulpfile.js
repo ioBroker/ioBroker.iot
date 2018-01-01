@@ -20,7 +20,8 @@ var languages =  {
     pt: {},
     nl: {},
     fr: {},
-    it: {}
+    it: {},
+    es: {}
 };
 
 function lang2data(lang, isFlat) {
