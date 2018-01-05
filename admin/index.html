@@ -200,7 +200,7 @@
         }
         sendTo(null, 'browse', null, function (list) {
             if (list) {
-                var text = '<tr><th style="width: 30%">' + _('Smart name') + '</th><th style="width: 100px">' + _('Commands') + '</th><th style="width: 70%">' + _('Addresses') + '<span style="float: right; padding-right: 130px">' + _('by ON') + '</span></th></tr>';
+                var text = '<tr><th style="width: 30%">' + _('Smart name') + '</th><th style="width: 100px">' + _('Commands') + '</th><th style="width: 70%">' + _('Addresses') + '<span style="float: right; padding-right: 130px">' + _('Types') + '</span><span style="float: right; padding-right: 130px">' + _('by ON') + '</span></th></tr>';
 
                 for (var j = 0; j < list.length; j++) {
                     if (list[j].additionalApplianceDetails.group || !list[j].additionalApplianceDetails.nameModified) {
