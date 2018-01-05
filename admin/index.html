@@ -443,7 +443,7 @@
         }
 
         // convert old settings
-        if (obj.native.byON) {
+        if (obj.native && obj.native.byON) {
             delete obj.native.byON;
             var _smartName = obj.common.smartName;
 
