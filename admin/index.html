@@ -490,7 +490,9 @@
             }
             smartName[language] = newSmartName;
 
-            if (smartName && (!smartName[language] || (smartName[language] === obj.common.name && (!obj.common.role || obj.common.role.indexOf('button') === -1)))) {
+            if (smartName && (!smartName[language] || 
+			(smartName[language] === obj.common.name && 
+				(!obj.common.role || obj.common.role.indexOf('button') >=0)))) {
                 delete smartName[language];
                 var empty = true;
                 for (var key in smartName) {
