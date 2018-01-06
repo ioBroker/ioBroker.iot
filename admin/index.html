@@ -158,10 +158,11 @@
     }
 
     function getSelect(id, type) {
-        // type = '-', false or number [5-100]
+        // type = '-', 'stored', false or number [5-100]
         if (type !== false) {
             var text = '<select data-id="' + id + '" class="by-on-edit">';
-            text += '<option value="-" ' + (type === '-' ? 'selected' : '') + '>' + _('last value') + '</option>';
+            text += '<option value="-" ' + (type === '-' ? 'selected' : '') + '>' + _('Default') + '</option>';
+            text += '<option value="stored" ' + (type === 'stored' ? 'selected' : '') + '>' + _('last value') + '</option>';
             for (var i = 5; i <= 100; i += 5) {
                 text += '<option value="' + i + '" ' + (type === i.toString() ? 'selected' : '') + '>' + i + '%</option>';
             }
@@ -175,7 +176,6 @@
     const SMARTTYPES = ["LIGHT", "SWITCH", "THERMOSTAT", "ACTIVITY_TRIGGER","SCENE_TRIGGER","SMARTPLUG","SMARTLOCK","CAMERA"]
 
     function getTypeSelect(id, type) {
-        // type = '-', false or number [5-100]
         if (type !== false) {
             var text = '<select data-id="' + id + '" class="type-edit">';
             text += '<option value="" ' + ((!type) ? 'selected' : '') + '>' + _('no type') + '</option>';
@@ -246,7 +246,7 @@
 
                         for (var chan in channels) {
                             for (var i=0; i<channels[chan].length; i++) {
-                                var k = chan+"."+channels[chan][i].split(' ')[0];
+                                var k = channels[chan][i].id;
                                 text += '<tr><td title="' + k + '">' + (names[k] || k) + '</td>';
                                 text += '<td style="width: 95px">' + getSelect(k, types[k]) + '</td>';
                                 text += '<td style="width: 95px">' + getTypeSelect(k, smarttypes[k]) + '</td>';
