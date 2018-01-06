@@ -158,12 +158,29 @@
     }
 
     function getSelect(id, type) {
-        // type = '-', false or number [5-100]
+        // type = '-', 'stored', false or number [5-100]
         if (type !== false) {
             var text = '<select data-id="' + id + '" class="by-on-edit">';
-            text += '<option value="-" ' + (type === '-' ? 'selected' : '') + '>' + _('last value') + '</option>';
+            text += '<option value="-" ' + (type === '-' ? 'selected' : '') + '>' + _('Default') + '</option>';
+            text += '<option value="stored" ' + (type === 'stored' ? 'selected' : '') + '>' + _('last value') + '</option>';
             for (var i = 5; i <= 100; i += 5) {
                 text += '<option value="' + i + '" ' + (type === i.toString() ? 'selected' : '') + '>' + i + '%</option>';
+            }
+            text += '</select>';
+            return text;
+        } else {
+            return '';
+        }
+    }
+
+    const SMARTTYPES = ["LIGHT", "SWITCH", "THERMOSTAT", "ACTIVITY_TRIGGER","SCENE_TRIGGER","SMARTPLUG","SMARTLOCK","CAMERA"]
+
+    function getTypeSelect(id, type) {
+        if (type !== false) {
+            var text = '<select data-id="' + id + '" class="type-edit">';
+            text += '<option value="" ' + ((!type) ? 'selected' : '') + '>' + _('no type') + '</option>';
+            for(var i=0; i<SMARTTYPES.length; i++) {
+                text += '<option value="' + SMARTTYPES[i] + '" ' + (type === SMARTTYPES[i] ? 'selected' : '') + '>' + SMARTTYPES[i] + '</option>';
             }
             text += '</select>';
             return text;
@@ -183,10 +200,10 @@
         }
         sendTo(null, 'browse', null, function (list) {
             if (list) {
-                var text = '<tr><th style="width: 30%">' + _('Smart name') + '</th><th style="width: 100px">' + _('Commands') + '</th><th style="width: 70%">' + _('Addresses') + '<span style="float: right; padding-right: 130px">' + _('by ON') + '</span></th></tr>';
+                var text = '<tr><th style="width: 30%">' + _('Smart name') + '</th><th style="width: 100px">' + _('Commands') + '</th><th style="width: 70%">' + _('Addresses') + '<span style="float: right; padding-right: 130px">' + _('Types') + '</span><span style="float: right; padding-right: 130px">' + _('by ON') + '</span></th></tr>';
 
                 for (var j = 0; j < list.length; j++) {
-                    if (list[j].additionalApplianceDetails.ids || !list[j].additionalApplianceDetails.nameModified) {
+                    if (list[j].additionalApplianceDetails.group || !list[j].additionalApplianceDetails.nameModified) {
                         text += '<tr><td class="smart-name"  style="white-space: nowrap;">' + list[j].friendlyName + '</td>';
                     } else {
                         text += '<tr><td class="smart-name"  style="white-space: nowrap; font-style: italic" title="' + _('modified') + '">' + list[j].friendlyName + '</td>';
@@ -220,33 +237,21 @@
 
                     text += '<td>';
                     text += '<table style="width: 100%" class="smart-table">';
-                    if (list[j].additionalApplianceDetails.ids) {
-                        var parts;
-                        var names;
-                        var types;
-                        try {
-                            parts = JSON.parse(list[j].additionalApplianceDetails.ids);
-                        } catch (e) {
-                            console.error('Cannot parse ids for "' + list[j].friendlyName + '": "' + list[j].additionalApplianceDetails.ids + '"');
-                            continue;
-                        }
-                        try {
-                            names = JSON.parse(list[j].additionalApplianceDetails.names);
-                        } catch (e) {
-                            console.error('Cannot parse names for "' + list[j].friendlyName + '": "' + list[j].additionalApplianceDetails.names + '"');
-                            continue;
-                        }
-                        try {
-                            types = JSON.parse(list[j].additionalApplianceDetails.byONs);
-                        } catch (e) {
-                            console.error('Cannot parse types for "' + list[j].friendlyName + '": "' + list[j].additionalApplianceDetails.byONs + '"');
-                            continue;
-                        }
+                    
+                    if (list[j].additionalApplianceDetails.group) {
+                        var channels = list[j].additionalApplianceDetails.channels;
+                        var names = list[j].additionalApplianceDetails.names;
+                        var types = list[j].additionalApplianceDetails.byONs;
+                        var smarttypes = list[j].additionalApplianceDetails.smartTypes;
 
-                        for (var k = 0; k < parts.length; k++) {
-                            text += '<tr><td title="' + parts[k] + '">' + (names[k] || parts[k]) + '</td>';
-                            text += '<td style="width: 95px">' + getSelect(parts[k], types[k]) + '</td>';
-                            text += '<td style="width: 95px"><button data-id="' + parts[k] + '" class="button-delete"></button></td></tr>';
+                        for (var chan in channels) {
+                            for (var i=0; i<channels[chan].length; i++) {
+                                var k = channels[chan][i].id;
+                                text += '<tr><td title="' + k + '">' + (names[k] || k) + '</td>';
+                                text += '<td style="width: 95px">' + getSelect(k, types[k]) + '</td>';
+                                text += '<td style="width: 95px">' + getTypeSelect(k, smarttypes[k]) + '</td>';
+                                text += '<td style="width: 95px"><button data-id="' + k + '" class="button-delete"></button></td></tr>';
+                            }
                         }
                     } else {
                         var name = list[j].additionalApplianceDetails.name;
@@ -254,6 +259,7 @@
                         text +=  name;
                         text += '</td>';
                         text += '<td style="width: 95px">' + getSelect(list[j].additionalApplianceDetails.id, list[j].additionalApplianceDetails.byON) + '</td>';
+                        text += '<td style="width: 95px">' + getTypeSelect(list[j].additionalApplianceDetails.id, list[j].additionalApplianceDetails.smartType) + '</td>';
                         text += '<td style="width: 95px"><button data-id="' + list[j].additionalApplianceDetails.id + '" class="button-delete"></button><button data-value="' + (list[j].additionalApplianceDetails.friendlyNames ? list[j].additionalApplianceDetails.friendlyNames : list[j].friendlyName) + '" data-id="' + list[j].additionalApplianceDetails.id + '" class="button-edit"></button></td>';
                         text += '</td></tr>';
                     }
@@ -297,6 +303,23 @@
                         });
                     });
                 });
+                
+                $smartTable.find('.type-edit').change(function () {
+                    var $this = $(this);
+                    var id    = $this.data('id');
+                    var val   = $this.val();
+                    $this.addClass('smart-changed');
+                    socket.emit('getObject', id, function (err, obj) {
+                        updateSmartName(obj, null, undefined, undefined, val);
+                        socket.emit('setObject', id, obj, function (err) {
+                            //updateDevices(2000);
+                            if (err) {
+                                window.alert(err);
+                            }
+                        });
+                    });
+                });
+
                 $smartTable.find('.button-edit').click(function () {
                     var $this = $(this);
                     var $editDialog = $('#edit_dialog');
@@ -404,7 +427,7 @@
         }
     }
 
-    function updateSmartName(states, id, newSmartName, byON) {
+    function updateSmartName(states, id, newSmartName, byON, smartType) {
         var obj;
         if (!id) {
             obj = states;
@@ -420,7 +443,7 @@
         }
 
         // convert old settings
-        if (obj.native.byON) {
+        if (obj.native && obj.native.byON) {
             delete obj.native.byON;
             var _smartName = obj.common.smartName;
 
@@ -432,7 +455,17 @@
             }
             obj.common.smartName = _smartName;
         }
-
+        if (smartType !== undefined) {
+            if (noCommon) {
+                obj.common.custom = obj.common.custom || {};
+                obj.common.custom[adapter + '.' + instance] = obj.common.custom[adapter + '.' + instance] || {};
+                obj.common.custom[adapter + '.' + instance].smartName = obj.common.custom[adapter + '.' + instance].smartName || {};
+                obj.common.custom[adapter + '.' + instance].smartName.smartType = smartType;
+            } else {
+                obj.common.smartName = obj.common.smartName || {};
+                obj.common.smartName.smartType = smartType;
+            }
+        }
         if (byON !== undefined) {
             if (noCommon) {
                 obj.common.custom = obj.common.custom || {};
@@ -457,7 +490,9 @@
             }
             smartName[language] = newSmartName;
 
-            if (smartName && (!smartName[language] || (smartName[language] === obj.common.name && (!obj.common.role || obj.common.role.indexOf('button') === -1)))) {
+            if (smartName && (!smartName[language] || 
+			(smartName[language] === obj.common.name && 
+				(!obj.common.role || obj.common.role.indexOf('button') >=0)))) {
                 delete smartName[language];
                 var empty = true;
                 for (var key in smartName) {
@@ -618,7 +653,7 @@
                     idToNavigate = null;
                 }
             }
-            filter_m();
+            //filter_m();
         });
     }
 
@@ -948,7 +983,7 @@
                     updateEnums();
                     activePage = '2';
                 } else if (id === 'tabs-4') {
-                    updateMDevices();
+                    //updateMDevices();
                     activePage = '3';
                 }
                 if (typeof localStorage !== 'undefined') {
