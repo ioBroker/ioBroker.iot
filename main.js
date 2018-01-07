@@ -377,7 +377,7 @@ function processIfttt(data, callback) {
         if (typeof data === 'string' && data[0] === '{') {
             try {
                 data = JSON.parse(data);
-                
+
                 if (typeof data.id === 'string') {
                     id = data.id;
                     if (data.data) {
