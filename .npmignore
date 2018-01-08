@@ -6,3 +6,4 @@ node_modules
 .ideatest
 .travis.yml
 appveyor.yml
+tsconfig.json

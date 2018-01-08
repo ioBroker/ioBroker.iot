@@ -30,6 +30,7 @@
     "iobroker.socketio": ">=1.8.6"
   },
   "devDependencies": {
+    "@types/node": "^4.2.23",
     "gulp": "^3.9.1",
     "mocha": "^4.1.0",
     "chai": "^4.1.2"
