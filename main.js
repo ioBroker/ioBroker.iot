@@ -178,7 +178,7 @@ function createAiConnection() {
     var getConfigFileName = tools.getConfigFileName;
 
     if (fs.existsSync(getConfigFileName())) {
-        config = JSON.parse(fs.readFileSync(getConfigFileName()));
+        config = JSON.parse(fs.readFileSync(getConfigFileName(), 'utf8'));
         if (!config.states)  config.states  = {type: 'file'};
         if (!config.objects) config.objects = {type: 'file'};
     } else {
@@ -587,7 +587,7 @@ function connect() {
             callback && callback({error: 'no name'});
         } else
         if (data.name === 'ifttt' && adapter.config.iftttKey) {
-            processIfttt(data.data, true, callback);
+            processIfttt(data.data, /*true,*/ callback);
         } else {
             var isCustom = false;
             if (data.name.match(/^custom_/)) {
