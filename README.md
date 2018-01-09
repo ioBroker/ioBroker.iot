@@ -1,5 +1,5 @@
 ![Logo](admin/cloud.png)
-ioBroker cloud adapter
+# ioBroker cloud adapter
 =================
 
 [![NPM version](http://img.shields.io/npm/v/iobroker.cloud.svg)](https://www.npmjs.com/package/iobroker.cloud)
