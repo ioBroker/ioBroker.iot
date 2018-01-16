@@ -164,6 +164,9 @@ You may write "text2command" in white list, you can send POST request to ```http
 *to do*
 
 ## Changelog
+### 3.0.0 (2018-01-16)
+* (bluefox) Do not subscribe all objects
+
 ### 2.2.0 (2017-12-22)
 * (bluefox) Better update of the devices in configuration dialog
 

@@ -20,6 +20,7 @@ var alexaCustom   = null;
 var detectDisconnect = null;
 var pingTimer     = null;
 var connected     = false;
+var apiKeyOk      = false;
 var connectTimer  = null;
 var statesAI      = null;
 var uuid          = null;
@@ -30,7 +31,9 @@ var googleDisabled = false;
 var adapter       = new utils.Adapter({
     name: 'cloud',
     objectChange: function (id, obj) {
-        if (socket) socket.emit('objectChange', id, obj);
+        if (socket && connected && apiKeyOk) {
+            socket.emit('objectChange', id, obj);
+        }
         if (!obj || (obj.type === 'channel' || obj.type === 'device' || obj.type === 'state' || obj.type === 'enum')) {
             if (recalcTimeout) clearTimeout(recalcTimeout);
             recalcTimeout = setTimeout(function () {
@@ -50,23 +53,23 @@ var adapter       = new utils.Adapter({
         }
     },
     stateChange: function (id, state) {
-        if (socket) {
-            if (id === adapter.namespace + '.services.ifttt' && state && !state.ack) {
-                sendDataToIFTTT({
-                    id: id,
-                    val: state.val,
-                    ack: false
-                });
-            } else {
-                if (state && !state.ack) {
-                    if (id === adapter.namespace + '.smart.googleDisabled') {
-                        googleDisabled = state.val === 'true' || state.val === true;
-                        adapter.setState('smart.googleDisabled', googleDisabled, true);
-                    } else if (id === adapter.namespace + '.smart.alexaDisabled') {
-                        alexaDisabled = state.val === 'true' || state.val === true;
-                        adapter.setState('smart.alexaDisabled', alexaDisabled, true);
-                    }
+        if (socket && connected && apiKeyOk && id === adapter.namespace + '.services.ifttt' && state && !state.ack) {
+            sendDataToIFTTT({
+                id: id,
+                val: state.val,
+                ack: false
+            });
+        } else {
+            if (state && !state.ack) {
+                if (id === adapter.namespace + '.smart.googleDisabled') {
+                    googleDisabled = state.val === 'true' || state.val === true;
+                    adapter.setState('smart.googleDisabled', googleDisabled, true);
+                } else if (id === adapter.namespace + '.smart.alexaDisabled') {
+                    alexaDisabled = state.val === 'true' || state.val === true;
+                    adapter.setState('smart.alexaDisabled', alexaDisabled, true);
                 }
+            }
+            if (socket && connected && apiKeyOk) {
                 socket.emit('stateChange', id, state);
             }
         }
@@ -130,7 +133,7 @@ var adapter       = new utils.Adapter({
 });
 
 function sendDataToIFTTT(obj) {
-    if (!connected || !socket) {
+    if (!connected || !socket || !apiKeyOk) {
         adapter.log.warn('Cannot send IFTTT message, while not connected: ' + JSON.stringify(obj));
         return;
     }
@@ -178,7 +181,7 @@ function createAiConnection() {
     var getConfigFileName = tools.getConfigFileName;
 
     if (fs.existsSync(getConfigFileName())) {
-        config = JSON.parse(fs.readFileSync(getConfigFileName(), 'utf8'));
+        config = JSON.parse(fs.readFileSync(getConfigFileName()));
         if (!config.states)  config.states  = {type: 'file'};
         if (!config.objects) config.objects = {type: 'file'};
     } else {
@@ -240,7 +243,7 @@ function createAiConnection() {
                 state.val = state.val ? 1 : 0;
             }
 
-            if (socket) {
+            if (socket && connected && apiKeyOk) {
                 // extract additional information about this
                 adapter.getForeignObject(id, function (err, obj) {
                     if (obj && obj.common) {
@@ -446,17 +449,21 @@ function connect() {
     }
 
     socket = require('socket.io-client')(adapter.config.cloudUrl || 'https://iobroker.net:10555', {
-        reconnection:         true,
+        transports:           ['websocket'],
+        upgrade:              false,
+        reconnection:         !adapter.config.restartOnDisconnect,
         rejectUnauthorized:   !adapter.config.allowSelfSignedCertificate,
-        reconnectionDelay:    5000,
+        reconnectionDelay:    8000,
         timeout:              parseInt(adapter.config.connectionTimeout, 10) || 10000,
-        reconnectionDelayMax: 10000
+        reconnectionDelayMax: 30000
     });
 
     socket.on('connect_error', function (error) {
       adapter.log.error('Error while connecting to cloud: ' + error);
     });
     socket.on('connect', function () {
+        apiKeyOk = false;
+
         if (!connected) {
             adapter.log.info('Connection changed: CONNECTED1');
             connected = true;
@@ -465,7 +472,14 @@ function connect() {
         } else {
             adapter.log.info('Connection changed: CONNECTED4');
         }
-        socket.emit('apikey', adapter.config.apikey, pack.common.version, uuid);
+        socket.emit('apikey', adapter.config.apikey, pack.common.version, uuid, function (err) {
+            if (!err) {
+                apiKeyOk = true;
+            } else {
+                adapter.log.error(err);
+                apiKeyOk = false;
+            }
+        });
     });
     socket.on('reconnect', function () {
         if (!connected) {
@@ -491,7 +505,10 @@ function connect() {
     });
     socket.on('disconnect', function () {
         adapter.log.info('Connection changed: DISCONNECTED3');
+
         if (connected) {
+            apiKeyOk = false;
+            // unsubscribe all states and objects !!
             connected = false;
             adapter.setState('info.connection', false, true);
             if (adapter.config.restartOnDisconnect) {
@@ -731,7 +748,7 @@ function main() {
         alexaCustom.setLanguage(lang);
     });
 
-    adapter.subscribeForeignObjects('*');
+    // adapter.subscribeForeignObjects('*');
 
     if (adapter.config.allowAI && false) {
         createAiConnection();

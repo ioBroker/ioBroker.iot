@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "cloud",
-        "version": "2.2.0",
+        "version": "3.0.0",
         "title": "Cloud Adapter",
         "desc": {
             "en": "Connects your ioBroker server to the ioBroker cloud",
@@ -13,6 +13,17 @@
             "it": "Collega il tuo server ioBroker al cloud ioBroker"
         },
         "news": {
+            "3.0.0": {
+                "en": "Do not subscribe all objects",
+                "de": "Abonniert nicht alle Objekte",
+                "ru": "Не подписывается на все объекты",
+                "pt": "Não inscreva todos os objetos",
+                "nl": "Abonneer u niet op alle objecten",
+                "fr": "Ne pas abonner tous les objets",
+                "it": "Non iscrivere tutti gli oggetti",
+                "es": "No suscribas todos los objetos",
+                "pl": "Nie subskrybuj wszystkich obiektów"
+            },
             "2.2.0": {
                 "en": "Better update of the devices in configuration dialog",
                 "de": "Bessere Aktualisierung der Geräte im Konfigurationsdialog",

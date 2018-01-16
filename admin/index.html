@@ -37,6 +37,7 @@
         setLockState: '🔒',
         getLockState: '🔒?'
     };
+    var restartTimer;
     var enumTimer;
     var devTimer;
     var devMTimer;
@@ -81,6 +82,22 @@
                 states[id].common.custom[adapter + '.' + instance]) ?
                 states[id].common.custom[adapter + '.' + instance].smartName || null : null;
         }
+    }
+
+    function restartCloud() {
+        if (restartTimer) {
+            clearTimeout(restartTimer);
+        }
+        restartTimer = setTimeout(function () {
+            restartTimer = null;
+            socket.emit('getObject', 'system.adapter.cloud.' + instance, function (err, obj) {
+                if (obj && obj.common && obj.common.enabled) {
+                    socket.emit('setObject', obj._id, obj, function (err, obj) {
+                        console.log('Restarted');
+                    });
+                }
+            });
+        }, 2000);
     }
 
     function initSelectId(callback) {
@@ -278,6 +295,7 @@
                             socket.emit('getObject', id, function (err, obj) {
                                 disableSmartName(obj);
                                 socket.emit('setObject', id, obj, function (err) {
+                                    restartCloud();
                                     //updateDevices(2000);
                                     if (err) {
                                         window.alert(err);
@@ -296,6 +314,7 @@
                     socket.emit('getObject', id, function (err, obj) {
                         updateSmartName(obj, null, undefined, val);
                         socket.emit('setObject', id, obj, function (err) {
+                            restartCloud();
                             //updateDevices(2000);
                             if (err) {
                                 window.alert(err);
@@ -312,6 +331,7 @@
                     socket.emit('getObject', id, function (err, obj) {
                         updateSmartName(obj, null, undefined, undefined, val);
                         socket.emit('setObject', id, obj, function (err) {
+                            restartCloud();
                             //updateDevices(2000);
                             if (err) {
                                 window.alert(err);
@@ -354,6 +374,7 @@
                         socket.emit('getObject', id, function (err, obj) {
                             updateSmartName(obj, null, $('#edit_name').val());
                             socket.emit('setObject', id, obj, function (err) {
+                                restartCloud();
                                 //updateDevices(2000);
                                 if (err) {
                                     window.alert(err);
@@ -575,6 +596,7 @@
                                 socket.emit('getObject', id, function (err, obj) {
                                     disableSmartName(obj);
                                     socket.emit('setObject', id, obj, function (err) {
+                                        restartCloud();
                                         //updateMDevices(2000);
                                         if (err) {
                                             window.alert(err);
@@ -589,6 +611,7 @@
                             enableSmartName(obj);
 
                             socket.emit('setObject', id, obj, function (err) {
+                                restartCloud();
                                 //updateMDevices(2000);
                                 if (err) {
                                     window.alert(err);
@@ -632,6 +655,7 @@
                         socket.emit('getObject', id, function (err, obj) {
                             updateSmartName(obj, null, $('#edit_name').val());
                             socket.emit('setObject', id, obj, function (err) {
+                                restartCloud();
                                 //updateMDevices(2000);
                                 if (err) {
                                     window.alert(err);
@@ -726,6 +750,7 @@
                                 socket.emit('getObject', id, function (err, obj) {
                                     removeSmartName(obj);
                                     socket.emit('setObject', id, obj, function (err) {
+                                        restartCloud();
                                         setTimeout(function () {
                                             $this.parent().removeClass('smart-changed');
                                         }, 500);
@@ -736,6 +761,7 @@
                                 socket.emit('getObject', id, function (err, obj) {
                                     disableSmartName(obj);
                                     socket.emit('setObject', id, obj, function (err) {
+                                        restartCloud();
                                         setTimeout(function () {
                                             $this.parent().removeClass('smart-changed');
                                         }, 500);
@@ -775,6 +801,7 @@
                         socket.emit('getObject', id, function (err, obj) {
                             updateSmartName(obj, null, $('#edit_name').val());
                             socket.emit('setObject', id, obj, function (err) {
+                                restartCloud();
                                 updateEnums(2000);
                             });
                         });
@@ -1007,6 +1034,7 @@
                             updateSmartName(obj, null, (obj.common.name || _('Device name')).replace(/[-_.]+/g, ' '));
                             idToEdit = obj._id;
                             socket.emit('setObject', obj._id, obj, function (err) {
+                                restartCloud();
                                 //updateDevices(2000);
                                 if (err) {
                                     window.alert(err);
@@ -1027,6 +1055,7 @@
                             updateSmartName(obj, null, (obj.common.name || _('Device name')).replace(/[-_.]+/g, ' '));
                             idToEdit = obj._id;
                             socket.emit('setObject', obj._id, obj, function (err) {
+                                restartCloud();
                                 //updateMDevices(2000);
                                 if (err) {
                                     window.alert(err);
