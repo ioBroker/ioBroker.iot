@@ -144,6 +144,19 @@
             "native": {}
         },
         {
+            "_id": "info.userOnCloud",
+            "type": "state",
+            "common": {
+                "role": "indicator.connected",
+                "name": "If user is connected over cloud",
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        },
+        {
             "_id": "info.connection",
             "type": "state",
             "common": {

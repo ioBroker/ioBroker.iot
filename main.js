@@ -20,19 +20,20 @@ var alexaCustom   = null;
 var detectDisconnect = null;
 var pingTimer     = null;
 var connected     = false;
-var apiKeyOk      = false;
 var connectTimer  = null;
-var statesAI      = null;
+//var statesAI      = null;
 var uuid          = null;
 var pack          = require(__dirname + '/io-package.json');
 var alexaDisabled = false;
 var googleDisabled = false;
 
+var TEXT_PING_TIMEOUT = 'Ping timeout';
+
 var adapter       = new utils.Adapter({
     name: 'cloud',
     objectChange: function (id, obj) {
-        if (socket && connected && apiKeyOk) {
-            socket.emit('objectChange', id, obj);
+        if (ioSocket) {
+            ioSocket.send(socket, 'objectChange', id, obj);
         }
         if (!obj || (obj.type === 'channel' || obj.type === 'device' || obj.type === 'state' || obj.type === 'enum')) {
             if (recalcTimeout) clearTimeout(recalcTimeout);
@@ -53,7 +54,7 @@ var adapter       = new utils.Adapter({
         }
     },
     stateChange: function (id, state) {
-        if (socket && connected && apiKeyOk && id === adapter.namespace + '.services.ifttt' && state && !state.ack) {
+        if (id === adapter.namespace + '.services.ifttt' && state && !state.ack) {
             sendDataToIFTTT({
                 id: id,
                 val: state.val,
@@ -69,8 +70,8 @@ var adapter       = new utils.Adapter({
                     adapter.setState('smart.alexaDisabled', alexaDisabled, true);
                 }
             }
-            if (socket && connected && apiKeyOk) {
-                socket.emit('stateChange', id, state);
+            if (ioSocket) {
+                ioSocket.send(socket, 'stateChange', id, state);
             }
         }
     },
@@ -133,10 +134,6 @@ var adapter       = new utils.Adapter({
 });
 
 function sendDataToIFTTT(obj) {
-    if (!connected || !socket || !apiKeyOk) {
-        adapter.log.warn('Cannot send IFTTT message, while not connected: ' + JSON.stringify(obj));
-        return;
-    }
     if (!obj) {
         adapter.log.warn('No data to send to IFTTT');
         return;
@@ -146,13 +143,13 @@ function sendDataToIFTTT(obj) {
         return;
     }
     if (typeof obj !== 'object') {
-        socket.emit('ifttt', {
+        ioSocket.send(socket, 'ifttt', {
             id: adapter.namespace + '.services.ifttt',
             key: adapter.config.iftttKey,
             val: obj
         });
     } else if (obj.event) {
-        socket.emit('ifttt', {
+        ioSocket.send(socket, 'ifttt', {
             event: obj.event,
             key: obj.key || adapter.config.iftttKey,
             value1: obj.value1,
@@ -165,7 +162,7 @@ function sendDataToIFTTT(obj) {
             return;
         }
         obj.id = obj.id || (adapter.namespace + '.services.ifttt');
-        socket.emit('ifttt', {
+        ioSocket.send(socket, 'ifttt', {
             id: obj.id,
             key: obj.key || adapter.config.iftttKey,
             val: obj.val,
@@ -174,7 +171,7 @@ function sendDataToIFTTT(obj) {
     }
 }
 
-function createAiConnection() {
+/*function createAiConnection() {
     var tools  = require(utils.controllerDir + '/lib/tools');
     var fs     = require('fs');
     var config = null;
@@ -243,7 +240,7 @@ function createAiConnection() {
                 state.val = state.val ? 1 : 0;
             }
 
-            if (socket && connected && apiKeyOk) {
+            if (connected) {
                 // extract additional information about this
                 adapter.getForeignObject(id, function (err, obj) {
                     if (obj && obj.common) {
@@ -260,21 +257,21 @@ function createAiConnection() {
 
                         if (type)
 
-        /*                if (sentStates[id] && sentStates[id].timer) {
-                            clearTimeout(sentStates[id].timer);
-                        }
-                        sentStates[id] = sentStates[id] || {};
-                        sentStates[id].timer = setTimeout(function (_id, _state))
-          */
+        //              if (sentStates[id] && sentStates[id].timer) {
+        //                  clearTimeout(sentStates[id].timer);
+        //              }
+        //              sentStates[id] = sentStates[id] || {};
+        //              sentStates[id].timer = setTimeout(function (_id, _state))
+        //
                         delete state.lc;
                         delete state.q;
-                        socket.emit('ai', id, state);
+                        ioSocket.send(socket, 'ai', id, state);
                     }
                 });
             }
         }
     });
-}
+}*/
 
 function pingConnection() {
     if (!detectDisconnect) {
@@ -284,23 +281,8 @@ function pingConnection() {
 
             detectDisconnect = setTimeout(function () {
                 detectDisconnect = null;
-                adapter.log.error('Ping timeout');
-                if (connected) {
-                    socket.close();
-                    connected = false;
-                    adapter.log.info('Connection changed: DISCONNECTED1');
-                    adapter.setState('info.connection', false, true);
-                    if (adapter.config.restartOnDisconnect) {
-                        setTimeout(function () {
-                            process.exit(-100); // simulate scheduled restart
-                        }, 10000);
-                    } else {
-                        if (!connectTimer) {
-                            connectTimer = setTimeout(connect, 10000);
-                        }
-                        checkPing();
-                    }
-                }
+                adapter.log.error(TEXT_PING_TIMEOUT);
+                onDisconnect(TEXT_PING_TIMEOUT);
             }, adapter.config.pingTimeout);
         }
     }
@@ -427,6 +409,49 @@ function processIfttt(data, callback) {
     }
 }
 
+function onDisconnect(event) {
+    if (typeof event === 'string') {
+        adapter.log.info('Connection changed: ' + event);
+    } else {
+        adapter.log.info('Connection changed: disconnect');
+    }
+    if (connected) {
+        adapter.log.info('Connection lost');
+        connected = false;
+        adapter.setState('info.connection', false, true);
+
+        // clear ping timers
+        checkPing();
+
+        if (adapter.config.restartOnDisconnect || event === TEXT_PING_TIMEOUT) {
+            setTimeout(function () {
+                process.exit(-100); // simulate scheduled restart
+            }, 10000);
+        }
+    }
+}
+
+function onConnect() {
+    if (!connected) {
+        adapter.log.info('Connection changed: connect');
+        connected = true;
+        adapter.setState('info.connection', connected, true);
+        checkPing();
+    } else {
+        adapter.log.info('Connection not changed: was connected');
+    }
+}
+
+function onCloudConnect() {
+    adapter.log.info('User accessed from cloud');
+    adapter.setState('info.userOnCloud', true, true);
+}
+
+function onCloudDisconnect() {
+    adapter.log.info('User disconnected from cloud');
+    adapter.setState('info.userOnCloud', false, true);
+}
+
 function connect() {
     if (connectTimer) {
         clearTimeout(connectTimer);
@@ -461,85 +486,6 @@ function connect() {
     socket.on('connect_error', function (error) {
       adapter.log.error('Error while connecting to cloud: ' + error);
     });
-    socket.on('connect', function () {
-        apiKeyOk = false;
-
-        if (!connected) {
-            adapter.log.info('Connection changed: CONNECTED1');
-            connected = true;
-            adapter.setState('info.connection', true, true);
-            checkPing();
-        } else {
-            adapter.log.info('Connection changed: CONNECTED4');
-        }
-        socket.emit('apikey', adapter.config.apikey, pack.common.version, uuid, function (err) {
-            if (!err) {
-                apiKeyOk = true;
-            } else {
-                adapter.log.error(err);
-                apiKeyOk = false;
-            }
-        });
-    });
-    socket.on('reconnect', function () {
-        if (!connected) {
-            adapter.log.info('Connection changed: CONNECTED2');
-            connected = true;
-            adapter.setState('info.connection', true, true);
-            checkPing();
-        }
-    });
-    socket.on('reconnecting', function () {
-        if (connected) {
-            adapter.log.info('Connection changed: DISCONNECTED2');
-            connected = false;
-            adapter.setState('info.connection', false, true);
-            if (adapter.config.restartOnDisconnect) {
-                setTimeout(function () {
-                    process.exit(-100); // simulate scheduled restart
-                }, 10000);
-            } else {
-                checkPing();
-            }
-        }
-    });
-    socket.on('disconnect', function () {
-        adapter.log.info('Connection changed: DISCONNECTED3');
-
-        if (connected) {
-            apiKeyOk = false;
-            // unsubscribe all states and objects !!
-            connected = false;
-            adapter.setState('info.connection', false, true);
-            if (adapter.config.restartOnDisconnect) {
-                setTimeout(function () {
-                    process.exit(-100); // simulate scheduled restart
-                }, 10000);
-            } else {
-                checkPing();
-            }
-        }
-    });
-
-    socket.on('error', function (error) {
-        adapter.log.error('Connection error: ' + error);
-        if (connected) {
-            socket.close();
-            connected = false;
-            adapter.log.info('Connection changed: DISCONNECTED4');
-            adapter.setState('info.connection', false, true);
-            if (adapter.config.restartOnDisconnect) {
-                setTimeout(function () {
-                    process.exit(-100); // simulate scheduled restart
-                }, 10000);
-            } else {
-                if (!connectTimer) {
-                    connectTimer = setTimeout(connect, 10000);
-                }
-                checkPing();
-            }
-        }
-    });
 
     // cannot use "pong" because reserved by socket.io
     socket.on('pongg', function (error) {
@@ -551,6 +497,7 @@ function connect() {
     var adminServer = 'http://localhost:8081';
 
     socket.on('html', function (url, cb) {
+        adapter.log.debug('Request url: ' + url);
         if (url.match(/^\/admin\//)) {
             if (adminServer && adapter.config.allowAdmin) {
                 url = url.substring(6);
@@ -575,6 +522,7 @@ function connect() {
 
     socket.on('alexa', function (request, callback) {
         adapter.log.debug(new Date().getTime() + ' ALEXA: ' + JSON.stringify(request));
+
         if (request && request.directive) {
             alexaSH3.process(request, !alexaDisabled, callback);
         } if (request && !request.header) {
@@ -604,7 +552,7 @@ function connect() {
             callback && callback({error: 'no name'});
         } else
         if (data.name === 'ifttt' && adapter.config.iftttKey) {
-            processIfttt(data.data, /*true,*/ callback);
+            processIfttt(data.data, callback);
         } else {
             var isCustom = false;
             if (data.name.match(/^custom_/)) {
@@ -681,7 +629,13 @@ function connect() {
                 server += (!obj.native.bind || obj.native.bind === '0.0.0.0') ? '127.0.0.1' : obj.native.bind;
                 server += ':' + obj.native.port;
 
-                ioSocket = new IOSocket(socket, {clientid: adapter.config.apikey, allowAdmin: adapter.config.allowAdmin, uuid: uuid, version: pack.common.version}, adapter);
+                ioSocket = new IOSocket(socket, {apikey: adapter.config.apikey, allowAdmin: adapter.config.allowAdmin, uuid: uuid, version: pack.common.version}, adapter);
+
+                ioSocket.on('connect',         onConnect);
+                ioSocket.on('disconnect',      onDisconnect);
+                ioSocket.on('cloudConnect',    onCloudConnect);
+                ioSocket.on('cloudDisconnect', onCloudDisconnect);
+
             } else {
                 adapter.log.error('Unknown instance ' + adapter.log.instance);
                 server = null;
@@ -707,6 +661,11 @@ function connect() {
         }
     } else {
         ioSocket = new IOSocket(socket, {clientid: adapter.config.apikey, uuid: uuid, version: pack.common.version}, adapter);
+
+        ioSocket.on('connect',          onConnect);
+        ioSocket.on('disconnect',       onDisconnect);
+        ioSocket.on('cloudConnect',     onCloudConnect);
+        ioSocket.on('cloudDisconnect',  onCloudDisconnect);
     }
 }
 
@@ -748,11 +707,9 @@ function main() {
         alexaCustom.setLanguage(lang);
     });
 
-    // adapter.subscribeForeignObjects('*');
-
-    if (adapter.config.allowAI && false) {
-        createAiConnection();
-    }
+    //if (adapter.config.allowAI && false) {
+    //    createAiConnection();
+    //}
 
     adapter.config.allowedServices = (adapter.config.allowedServices || '').split(',');
     for (var s = 0; s < adapter.config.allowedServices.length; s++) {
