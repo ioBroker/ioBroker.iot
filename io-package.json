@@ -88,6 +88,7 @@
         "type": "communication",
         "messagebox": true,
         "stopBeforeUpdate": true,
+        "materialize": true,
         "dependencies": [
             {
                 "js-controller": ">=0.9.0"

@@ -1,7 +1,8 @@
 node_modules
 .idea
 tmp
-/webSite
 .DS_store
-
-/iob_npm.done
+iob_npm.done
+admin/i18n/flat.txt
+admin/i18n/*/flat.txt
+package-lock.json
