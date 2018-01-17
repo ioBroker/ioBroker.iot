@@ -450,7 +450,7 @@ function connect() {
     }
 
     socket = require('socket.io-client')(adapter.config.cloudUrl || 'https://iobroker.net:10555', {
-        reconnection:         true,
+        reconnection:         !adapter.config.restartOnDisconnect,
         rejectUnauthorized:   !adapter.config.allowSelfSignedCertificate,
         reconnectionDelay:    8000,
         timeout:              parseInt(adapter.config.connectionTimeout, 10) || 10000,
