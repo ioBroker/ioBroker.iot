@@ -291,10 +291,13 @@ function pingConnection() {
                     connected = false;
                     adapter.log.info('Connection changed: DISCONNECTED1');
                     adapter.setState('info.connection', false, true);
-                    if (adapter.config.restartOnDisconnect) {
+
+                    // workaround. Normally this should never happen.
+                    // But this code creates somehow many simultaneously web sockets connections and server is overloaded.
+                    if (true || adapter.config.restartOnDisconnect) {
                         setTimeout(function () {
                             process.exit(-100); // simulate scheduled restart
-                        }, 10000);
+                        }, 5000);
                     } else {
                         if (!connectTimer) {
                             connectTimer = setTimeout(connect, 10000);
@@ -450,6 +453,7 @@ function connect() {
     }
 
     socket = require('socket.io-client')(adapter.config.cloudUrl || 'https://iobroker.net:10555', {
+        transports:           ['websocket'],
         reconnection:         !adapter.config.restartOnDisconnect,
         rejectUnauthorized:   !adapter.config.allowSelfSignedCertificate,
         reconnectionDelay:    8000,
@@ -469,7 +473,13 @@ function connect() {
         } else {
             adapter.log.info('Connection changed: CONNECTED4');
         }
-        socket.emit('apikey', adapter.config.apikey, pack.common.version, uuid);
+        socket.emit('apikey', adapter.config.apikey, pack.common.version, uuid, function (err) {
+            if (!err) {
+                adapter.log.debug('API KEY OK');
+            } else {
+                adapter.log.error('API KEY Error: ' + err);
+            }
+        });
     });
     socket.on('reconnect', function () {
         if (!connected) {
