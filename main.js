@@ -98,23 +98,30 @@ var adapter       = new utils.Adapter({
                 case 'browse':
                     if (obj.callback) {
                         adapter.log.info('Request devices');
-                        adapter.sendTo(obj.from, obj.command, alexaSH2.getDevices(), obj.callback);
-                        adapter.setState('smart.updates', false, true);
+                        alexaSH2.updateDevices(function () {
+                            adapter.sendTo(obj.from, obj.command, alexaSH2.getDevices(), obj.callback);
+                            adapter.setState('smart.updates', false, true);
+                        });
                     }
                     break;
 
                 case 'browse3':
                     if (obj.callback) {
                         adapter.log.info('Request V3 devices');
-                        adapter.sendTo(obj.from, obj.command, alexaSH3.getDevices(), obj.callback);
-                        adapter.setState('smart.updates3', false, true);
+                        alexaSH3.updateDevices(function () {
+                            adapter.sendTo(obj.from, obj.command, alexaSH3.getDevices(), obj.callback);
+                            adapter.setState('smart.updates3', false, true);
+                        });
                     }
                     break;
 
                 case 'enums':
                     if (obj.callback) {
                         adapter.log.info('Request enums');
-                        adapter.sendTo(obj.from, obj.command, alexaSH2.getEnums(), obj.callback);
+                        alexaSH2.updateDevices(function () {
+                            adapter.sendTo(obj.from, obj.command, alexaSH2.getEnums(), obj.callback);
+                            adapter.setState('smart.updates', false, true);
+                        });
                     }
                     break;
 
