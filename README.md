@@ -164,7 +164,7 @@ You may write "text2command" in white list, you can send POST request to ```http
 *to do*
 
 ## Changelog
-### 2.4.1 (2018-01-20)
+### 2.4.2 (2018-01-20)
 * (bluefox) Do not subscribe all objects
 
 ### 2.2.0 (2017-12-22)

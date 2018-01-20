@@ -440,10 +440,12 @@ function onDisconnect(event) {
         // clear ping timers
         checkPing();
 
-        if (adapter.config.restartOnDisconnect || event === TEXT_PING_TIMEOUT) {
+        if (adapter.config.restartOnDisconnect) {
             setTimeout(function () {
                 process.exit(-100); // simulate scheduled restart
             }, 10000);
+        } else {
+            startConnect();
         }
     }
 }
@@ -457,6 +459,10 @@ function onConnect() {
     } else {
         adapter.log.info('Connection not changed: was connected');
     }
+    if (connectTimer) {
+        clearInterval(connectTimer);
+        connectTimer = null;
+    }
 }
 
 function onCloudConnect() {
@@ -469,18 +475,29 @@ function onCloudDisconnect() {
     adapter.setState('info.userOnCloud', false, true);
 }
 
-function connect() {
+// this is bug of scoket.io
+// sometimes auto-reconnect does not work.
+function startConnect(immediately) {
     if (connectTimer) {
-        clearTimeout(connectTimer);
+        clearInterval(connectTimer);
         connectTimer = null;
     }
+    connectTimer = setInterval(connect, 30000);
+    if (immediately) {
+        connect();
+    }
+}
 
+function connect() {
+    adapter.log.debug('Connection attempt...');
     if (socket) {
-        socket.close();
+        socket.off();
+        socket.disconnect();
     }
 
     socket = require('socket.io-client')(adapter.config.cloudUrl || 'https://iobroker.net:10555', {
         transports:           ['websocket'],
+        autoConnect:          true,
         reconnection:         !adapter.config.restartOnDisconnect,
         rejectUnauthorized:   !adapter.config.allowSelfSignedCertificate,
         reconnectionDelay:    8000,
@@ -613,6 +630,10 @@ function connect() {
                 callback && callback({error: 'blocked'});
             }
         }
+    });
+
+    socket.on('error', function (error) {
+        startConnect();
     });
 
     if (adapter.config.instance) {
@@ -789,6 +810,6 @@ function main() {
         if (obj && obj.native) {
             uuid = obj.native.uuid;
         }
-        connect();
+        startConnect(true);
     });
 }
