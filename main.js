@@ -294,7 +294,7 @@ function pingConnection() {
     if (!detectDisconnect) {
         if (connected && ioSocket) {
             // cannot use "ping" because reserved by socket.io
-            ioSocket.send('pingg');
+            ioSocket.send(socket, 'pingg');
 
             detectDisconnect = setTimeout(function () {
                 detectDisconnect = null;
@@ -477,17 +477,6 @@ function connect() {
 
     if (socket) {
         socket.close();
-    }
-
-    adapter.config.cloudUrl = (adapter.config.cloudUrl || '').toString();
-
-    if (adapter.config.apikey && adapter.config.apikey.match(/^@pro_/)) {
-        if (adapter.config.cloudUrl.indexOf('https://iobroker.pro:')  === -1 &&
-            adapter.config.cloudUrl.indexOf('https://iobroker.info:') === -1) {
-            adapter.config.cloudUrl = 'https://iobroker.pro:10555';
-        }
-    } else {
-        adapter.config.allowAdmin = false;
     }
 
     socket = require('socket.io-client')(adapter.config.cloudUrl || 'https://iobroker.net:10555', {
@@ -690,11 +679,25 @@ function main() {
         adapter.config.pingTimeout = 3000;
     }
 
-    if (adapter.config.deviceOffLevel === undefined) adapter.config.deviceOffLevel = 30;
+    if (adapter.config.deviceOffLevel === undefined) {
+        adapter.config.deviceOffLevel = 30;
+    }
+
     adapter.config.deviceOffLevel = parseFloat(adapter.config.deviceOffLevel) || 0;
-    adapter.config.concatWord = (adapter.config.concatWord || '').toString().trim();
-    adapter.config.apikey = (adapter.config.apikey || '').trim();
-    adapter.config.replaces = adapter.config.replaces ? adapter.config.replaces.split(',') : null;
+    adapter.config.concatWord     = (adapter.config.concatWord || '').toString().trim();
+    adapter.config.apikey         = (adapter.config.apikey || '').trim();
+    adapter.config.replaces       = adapter.config.replaces ? adapter.config.replaces.split(',') : null;
+    adapter.config.cloudUrl       = (adapter.config.cloudUrl || '').toString();
+
+    if (adapter.config.apikey && adapter.config.apikey.match(/^@pro_/)) {
+        if (adapter.config.cloudUrl.indexOf('https://iobroker.pro:')  === -1 &&
+            adapter.config.cloudUrl.indexOf('https://iobroker.info:') === -1) {
+            adapter.config.cloudUrl = 'https://iobroker.pro:10555';
+        }
+    } else {
+        adapter.config.allowAdmin = false;
+    }
+
     if (adapter.config.replaces) {
         var text = [];
         for (var r = 0; r < adapter.config.replaces.length; r++) {
