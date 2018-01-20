@@ -3,35 +3,35 @@
 /* jslint node: true */
 'use strict';
 
-var utils         = require(__dirname + '/lib/utils'); // Get common adapter utils
-//var IOSocket      = require(utils.appName + '.socketio/lib/socket.js');
-var IOSocket      = require(__dirname + '/lib/socket.js'); // temporary
-var request       = require('request');
-var AlexaSH2      = require(__dirname + '/lib/alexaSmartHomeV2');
-var AlexaSH3      = require(__dirname + '/lib/alexaSmartHomeV3');
-var AlexaCustom   = require(__dirname + '/lib/alexaCustom');
-var socket        = null;
-var ioSocket      = null;
-var recalcTimeout = null;
-var lang          = 'de';
-var translate     = false;
-var alexaSH2      = null;
-var alexaSH3      = null;
-var alexaCustom   = null;
+let utils         = require(__dirname + '/lib/utils'); // Get common adapter utils
+//let IOSocket      = require(utils.appName + '.socketio/lib/socket.js');
+let IOSocket      = require(__dirname + '/lib/socket.js'); // temporary
+let request       = require('request');
+let AlexaSH2      = require(__dirname + '/lib/alexaSmartHomeV2');
+let AlexaSH3      = require(__dirname + '/lib/alexaSmartHomeV3');
+let AlexaCustom   = require(__dirname + '/lib/alexaCustom');
+let socket        = null;
+let ioSocket      = null;
+let recalcTimeout = null;
+let lang          = 'de';
+let translate     = false;
+let alexaSH2      = null;
+let alexaSH3      = null;
+let alexaCustom   = null;
 
-var detectDisconnect = null;
-var pingTimer     = null;
-var connected     = false;
-var connectTimer  = null;
-//var statesAI      = null;
-var uuid          = null;
-var pack          = require(__dirname + '/io-package.json');
-var alexaDisabled = false;
-var googleDisabled = false;
+let detectDisconnect = null;
+let pingTimer     = null;
+let connected     = false;
+let connectTimer  = null;
+//let statesAI      = null;
+let uuid          = null;
+let pack          = require(__dirname + '/io-package.json');
+let alexaDisabled = false;
+let googleDisabled = false;
 
-var TEXT_PING_TIMEOUT = 'Ping timeout';
+let TEXT_PING_TIMEOUT = 'Ping timeout';
 
-var adapter       = new utils.Adapter({
+let adapter       = new utils.Adapter({
     name: 'cloud',
     objectChange: function (id, obj) {
         if (ioSocket) {
@@ -145,9 +145,7 @@ var adapter       = new utils.Adapter({
             }
         }
     },
-    ready: function () {
-        main();
-    }
+    ready: main
 });
 
 function sendDataToIFTTT(obj) {
@@ -189,10 +187,10 @@ function sendDataToIFTTT(obj) {
 }
 
 /*function createAiConnection() {
-    var tools  = require(utils.controllerDir + '/lib/tools');
-    var fs     = require('fs');
-    var config = null;
-    var getConfigFileName = tools.getConfigFileName;
+    let tools  = require(utils.controllerDir + '/lib/tools');
+    let fs     = require('fs');
+    let config = null;
+    let getConfigFileName = tools.getConfigFileName;
 
     if (fs.existsSync(getConfigFileName())) {
         config = JSON.parse(fs.readFileSync(getConfigFileName()));
@@ -202,7 +200,7 @@ function sendDataToIFTTT(obj) {
         adapter.log.warn('Cannot find ' + getConfigFileName());
         return;
     }
-    var States;
+    let States;
     if (config.states && config.states.type) {
         if (config.states.type === 'file') {
             States = require(utils.controllerDir + '/lib/states/statesInMemClient');
@@ -235,10 +233,10 @@ function sendDataToIFTTT(obj) {
 
             if (id.match(/^smartmeter\./) || id.match(/^b-control-em/)) return;
 
-            var type = typeof state.val;
+            let type = typeof state.val;
 
             if (type === 'string') {
-                var f = parseFloat(state.val);
+                let f = parseFloat(state.val);
                 if (f.toString() === state.val) {
                     state.val = f;
                 } else if (state.val === 'true') {
@@ -294,7 +292,7 @@ function pingConnection() {
     if (!detectDisconnect) {
         if (connected && ioSocket) {
             // cannot use "ping" because reserved by socket.io
-            ioSocket.send('pingg');
+            ioSocket.send(socket, 'pingg');
 
             detectDisconnect = setTimeout(function () {
                 detectDisconnect = null;
@@ -363,7 +361,7 @@ function controlState(id, data, callback) {
 
 function processIfttt(data, callback) {
     adapter.log.debug('Received IFTTT object: ' + data);
-    var id;
+    let id;
     if (typeof data === 'object' && data.id && data.data !== undefined) {
         id = data.id;
         if (typeof data.data === 'string' && data.data[0] === '{') {
@@ -440,10 +438,12 @@ function onDisconnect(event) {
         // clear ping timers
         checkPing();
 
-        if (adapter.config.restartOnDisconnect || event === TEXT_PING_TIMEOUT) {
+        if (adapter.config.restartOnDisconnect) {
             setTimeout(function () {
                 process.exit(-100); // simulate scheduled restart
             }, 10000);
+        } else {
+            startConnect();
         }
     }
 }
@@ -457,6 +457,10 @@ function onConnect() {
     } else {
         adapter.log.info('Connection not changed: was connected');
     }
+    if (connectTimer) {
+        clearInterval(connectTimer);
+        connectTimer = null;
+    }
 }
 
 function onCloudConnect() {
@@ -469,29 +473,29 @@ function onCloudDisconnect() {
     adapter.setState('info.userOnCloud', false, true);
 }
 
-function connect() {
+// this is bug of scoket.io
+// sometimes auto-reconnect does not work.
+function startConnect(immediately) {
     if (connectTimer) {
-        clearTimeout(connectTimer);
+        clearInterval(connectTimer);
         connectTimer = null;
     }
-
-    if (socket) {
-        socket.close();
+    connectTimer = setInterval(connect, 30000);
+    if (immediately) {
+        connect();
     }
+}
 
-    adapter.config.cloudUrl = (adapter.config.cloudUrl || '').toString();
-
-    if (adapter.config.apikey && adapter.config.apikey.match(/^@pro_/)) {
-        if (adapter.config.cloudUrl.indexOf('https://iobroker.pro:')  === -1 &&
-            adapter.config.cloudUrl.indexOf('https://iobroker.info:') === -1) {
-            adapter.config.cloudUrl = 'https://iobroker.pro:10555';
-        }
-    } else {
-        adapter.config.allowAdmin = false;
+function connect() {
+    adapter.log.debug('Connection attempt...');
+    if (socket) {
+        socket.off();
+        socket.disconnect();
     }
 
     socket = require('socket.io-client')(adapter.config.cloudUrl || 'https://iobroker.net:10555', {
         transports:           ['websocket'],
+        autoConnect:          true,
         reconnection:         !adapter.config.restartOnDisconnect,
         rejectUnauthorized:   !adapter.config.allowSelfSignedCertificate,
         reconnectionDelay:    8000,
@@ -509,8 +513,8 @@ function connect() {
         detectDisconnect = null;
     });
 
-    var server      = 'http://localhost:8082';
-    var adminServer = 'http://localhost:8081';
+    let server      = 'http://localhost:8082';
+    let adminServer = 'http://localhost:8081';
 
     socket.on('html', function (url, cb) {
         if (url.match(/^\/admin\//)) {
@@ -569,7 +573,7 @@ function connect() {
         if (data.name === 'ifttt' && adapter.config.iftttKey) {
             processIfttt(data.data, callback);
         } else {
-            var isCustom = false;
+            let isCustom = false;
             if (data.name.match(/^custom_/)) {
                 data.name = data.name.substring(7);
                 isCustom = true;
@@ -624,6 +628,10 @@ function connect() {
                 callback && callback({error: 'blocked'});
             }
         }
+    });
+
+    socket.on('error', function (error) {
+        startConnect();
     });
 
     if (adapter.config.instance) {
@@ -690,14 +698,28 @@ function main() {
         adapter.config.pingTimeout = 3000;
     }
 
-    if (adapter.config.deviceOffLevel === undefined) adapter.config.deviceOffLevel = 30;
+    if (adapter.config.deviceOffLevel === undefined) {
+        adapter.config.deviceOffLevel = 30;
+    }
+
     adapter.config.deviceOffLevel = parseFloat(adapter.config.deviceOffLevel) || 0;
-    adapter.config.concatWord = (adapter.config.concatWord || '').toString().trim();
-    adapter.config.apikey = (adapter.config.apikey || '').trim();
-    adapter.config.replaces = adapter.config.replaces ? adapter.config.replaces.split(',') : null;
+    adapter.config.concatWord     = (adapter.config.concatWord || '').toString().trim();
+    adapter.config.apikey         = (adapter.config.apikey || '').trim();
+    adapter.config.replaces       = adapter.config.replaces ? adapter.config.replaces.split(',') : null;
+    adapter.config.cloudUrl       = (adapter.config.cloudUrl || '').toString();
+
+    if (adapter.config.apikey && adapter.config.apikey.match(/^@pro_/)) {
+        if (adapter.config.cloudUrl.indexOf('https://iobroker.pro:')  === -1 &&
+            adapter.config.cloudUrl.indexOf('https://iobroker.info:') === -1) {
+            adapter.config.cloudUrl = 'https://iobroker.pro:10555';
+        }
+    } else {
+        adapter.config.allowAdmin = false;
+    }
+
     if (adapter.config.replaces) {
-        var text = [];
-        for (var r = 0; r < adapter.config.replaces.length; r++) {
+        let text = [];
+        for (let r = 0; r < adapter.config.replaces.length; r++) {
             text.push('"' + adapter.config.replaces + '"');
         }
         adapter.log.debug('Following strings will be replaced in names: ' + text.join(', '));
@@ -727,7 +749,7 @@ function main() {
     //}
 
     adapter.config.allowedServices = (adapter.config.allowedServices || '').split(',');
-    for (var s = 0; s < adapter.config.allowedServices.length; s++) {
+    for (let s = 0; s < adapter.config.allowedServices.length; s++) {
         adapter.config.allowedServices[s] = adapter.config.allowedServices[s].trim();
     }
 
@@ -786,6 +808,6 @@ function main() {
         if (obj && obj.native) {
             uuid = obj.native.uuid;
         }
-        connect();
+        startConnect(true);
     });
 }

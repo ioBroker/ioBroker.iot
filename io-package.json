@@ -1,8 +1,19 @@
 {
     "common": {
         "name": "cloud",
-        "version": "2.4.0",
-        "title": "Cloud Adapter",
+        "version": "2.4.4",
+        "title": "Cloud connection",
+        "titleLang": {
+            "en": "Cloud connection",
+            "de": "Cloud-Verbindung",
+            "ru": "Облачное соединение",
+            "pt": "Conexão em nuvem",
+            "nl": "Cloud verbinding",
+            "fr": "Connexion au cloud",
+            "it": "Connessione cloud",
+            "es": "Conexión a la nube",
+            "pl": "Połączenie w chmurze"
+        },
         "desc": {
             "en": "Connects your ioBroker server to the ioBroker cloud",
             "de": "Verbindet Ihren ioBroker-Server mit der ioBroker-Cloud",
@@ -13,7 +24,18 @@
             "it": "Collega il tuo server ioBroker al cloud ioBroker"
         },
         "news": {
-            "2.4.0": {
+            "2.4.4": {
+                "en": "The errors by controlling of temperature are caught now",
+                "de": "Die Fehler durch Kontrolle der Temperatur werden jetzt gefangen",
+                "ru": "Ошибки, связанные с контролем температуры, теперь пойманы",
+                "pt": "Os erros pelo controle da temperatura são capturados agora",
+                "nl": "De fouten door het beheersen van de temperatuur worden nu opgevangen",
+                "fr": "Les erreurs en contrôlant de la température sont prises maintenant",
+                "it": "Gli errori controllando la temperatura vengono catturati ora",
+                "es": "Los errores por control de temperatura se detectan ahora",
+                "pl": "Błędy poprzez kontrolę temperatury są teraz wychwytywane"
+            },
+            "2.4.2": {
                 "en": "Do not subscribe all objects",
                 "de": "Abonniert nicht alle Objekte",
                 "ru": "Не подписывается на все объекты",
