@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "cloud",
-        "version": "2.4.3",
+        "version": "2.4.4",
         "title": "Cloud connection",
         "titleLang": {
             "en": "Cloud connection",
@@ -24,7 +24,7 @@
             "it": "Collega il tuo server ioBroker al cloud ioBroker"
         },
         "news": {
-            "2.4.3": {
+            "2.4.4": {
                 "en": "The errors by controlling of temperature are caught now",
                 "de": "Die Fehler durch Kontrolle der Temperatur werden jetzt gefangen",
                 "ru": "Ошибки, связанные с контролем температуры, теперь пойманы",
