@@ -40,7 +40,6 @@
         setLockState: '🔒',
         getLockState: '🔒?'
     };
-    var restartTimer;
     var enumTimer;
     var devTimer;
     var devMTimer;
@@ -663,6 +662,129 @@
         });
     }
 
+    // https://stackoverflow.com/questions/35969656/how-can-i-generate-the-opposite-color-according-to-current-color
+    function invertColor(hex) {
+        if (hex.indexOf('#') === 0) {
+            hex = hex.slice(1);
+        }
+        // convert 3-digit hex to 6-digits.
+        if (hex.length === 3) {
+            hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+        }
+        if (hex.length !== 6) {
+            return false;
+        }
+        var r = parseInt(hex.slice(0, 2), 16),
+            g = parseInt(hex.slice(2, 4), 16),
+            b = parseInt(hex.slice(4, 6), 16);
+        // http://stackoverflow.com/a/3943023/112731
+        return (r * 0.299 + g * 0.587 + b * 0.114) <= 186;
+    }
+
+    function getIconFromObj(obj, imgPath, classes) {
+        var icon     = '';
+        var alt      = '';
+        var isCommon = obj;
+        obj._id = obj.id;
+
+        if (isCommon) {
+            if (isCommon.icon) {
+                if (!isCommon.icon.match(/^data:image\//)) {
+                    if (isCommon.icon.indexOf('.') !== -1) {
+                        var instance;
+                        if (obj.type === 'instance') {
+                            icon = '/adapter/' + obj.common.name + '/' + obj.common.icon;
+                        } else if (obj._id.match(/^system\.adapter\./)) {
+                            instance = obj._id.split('.', 3);
+                            if (obj.common.icon[0] === '/') {
+                                instance[2] += obj.common.icon;
+                            } else {
+                                instance[2] += '/' + obj.common.icon;
+                            }
+                            icon = '/adapter/' + instance[2];
+                        } else {
+                            instance = obj._id.split('.', 2);
+                            if (obj.common.icon[0] === '/') {
+                                instance[0] += obj.common.icon;
+                            } else {
+                                instance[0] += '/' + obj.common.icon;
+                            }
+                            icon = '/adapter/' + instance[0];
+                        }
+                    } else {
+                        return '<i class="material-icons ' + (classes || 'treetable-icon') + '">' + isCommon.icon + '</i>';
+                    }
+
+                } else {
+                    icon = isCommon.icon;
+                }
+                alt = obj.type;
+            } else {
+                imgPath = imgPath || 'lib/css/fancytree/';
+                if (obj.type === 'device') {
+                    icon = imgPath + 'device.png';
+                    alt  = 'device';
+                } else if (obj.type === 'channel') {
+                    icon = imgPath + 'channel.png';
+                    alt  = 'channel';
+                } else if (obj.type === 'state') {
+                    icon = imgPath + 'state.png';
+                    alt  = 'state';
+                }
+            }
+        }
+
+        if (icon) return '<img class="' + (classes || 'treetable-icon') + '" src="' + icon + '" alt="' + alt + '" />';
+        return '';
+    }
+
+    function getName(obj) {
+        if (obj && obj.name) {
+            var name = obj.name;
+            if (typeof name === 'object') {
+                name = name[systemLang] || name.en;
+            }
+            return name;
+        } else {
+            var parts = obj.id.split('.');
+            var last = parts.pop();
+            return last[0].toUpperCase() + last.substring(1).toLowerCase();
+        }
+    }
+
+    function drawEnum(obj, $page, scrollTop) {
+        var text = '';
+        var en = obj;
+        //var inverted;
+        var style = '';
+        if (en && en.color) {
+            style = 'background: ' + en.color  + '; ';
+            if (invertColor(en.color)) {
+                //inverted = true;
+                style += 'color: white;';
+            }
+        }
+
+        var smartName = getSmartName(obj);
+
+        // convert old format
+        if (smartName && typeof smartName === 'object') {
+            smartName = smartName[language] || smartName.en || '';
+        }
+
+        text += '<li class="collection-item avatar" data-id="' + obj.id + '" style="' + style + '">' +
+            getIconFromObj(obj, null, 'circle') +
+            '<span class="enum-title">' + (smartName ? smartName + ' <span class="enum-subtitle">(' + getName(obj) + ')</span>' : getName(obj)) + '</span>' +
+            '<p>' + obj.id + '</p>';
+
+        text += '<a class="edit-content" data-id="' + obj.id + '"><i class="material-icons">edit</i></a>';
+        text += '<input class="enable-content filled-in" type="checkbox" data-id="' + obj.id + '" ' + (smartName !== false && smartName !== 'ignore' ? 'checked' : '') + '/><span></span>';
+        text += '</li>';
+
+        $page.append(text);
+        scrollTop && $page.find('.enum-collection').scrollTop(scrollTop);
+    }
+
     function updateEnums(delay) {
         if (delay) {
             if (enumTimer) clearTimeout(enumTimer);
@@ -674,61 +796,41 @@
         }
         sendTo(null, 'enums', null, function (list) {
             if (list) {
-                var text = '<tr><th>' + _('Rooms') + '</th><th>' + _('Functions') + '</th></tr>';
-                var rooms = [];
-                var funcs = [];
+                var $rooms = $('.smart-enums-rooms').html('');
+                var $funcs = $('.smart-enums-funcs').html('');
                 for (var j = 0; j < list.length; j++) {
                     if (list[j].id.match(/^enum\.rooms\./)) {
-                        rooms.push(list[j]);
+                        //rooms.push(list[j]);
+                        drawEnum(list[j], $rooms)
                     } else
                     if (list[j].id.match(/^enum\.functions\./)) {
-                        funcs.push(list[j]);
+                        //funcs.push(list[j]);
+                        drawEnum(list[j], $funcs)
                     }
                 }
-                var i = 0;
-                while (i < rooms.length || i < funcs.length) {
-                    text += '<tr>';
-                    var smartName;
 
-                    if (rooms[i]) {
-                        smartName = getSmartName(rooms[i]);
-                        // convert old format
-                        if (smartName && typeof smartName === 'object') {
-                            smartName = smartName[language] || smartName.en || '';
-                        }
-                        text += '<td><input class="smart-enable" type="checkbox" data-id="' + rooms[i].id + '" ' + (smartName !== false && smartName !== 'ignore' ? 'checked' :'') + '/>' +
-                            rooms[i].name + (smartName ? ' (' + smartName + ')' : '') +
-                            '<a ' + (smartName !== false && smartName !== 'ignore' ? '' : 'disabled') + ' class="smart-edit btn-floating waves-effect waves-light red btn-small" data-id="' + rooms[i].id + '" data-value="' + (smartName === undefined ? '' : smartName) + '" data-name="' + (rooms[i].name || '') + '"><i class="material-icons">delete</i></a></td>';
-                    } else {
-                        text += '<td></td>';
-                    }
-                    if (funcs[i]) {
-                        smartName = getSmartName(funcs[i]);
-                        // convert old format
-                        if (smartName && typeof smartName === 'object') {
-                            smartName = smartName[language] || smartName.en || '';
-                        }
-                        text += '<td><input class="smart-enable" type="checkbox" data-id="' + funcs[i].id + '" ' + (smartName !== false && smartName !== 'ignore' ? 'checked' :'') + '/>' +
-                            funcs[i].name + (smartName ? ' (' + smartName + ')' : '') +
-                            '<a ' + (smartName !== false && smartName !== 'ignore' ? '' : 'disabled') + ' class="smart-edit btn-floating waves-effect waves-light btn-small" data-id="' + funcs[i].id + '" data-value="' + (smartName === undefined ? '' : smartName) + '" data-name="' + (funcs[i].name || '') + '"><i class="material-icons">edit</i></a></td>';
-                    } else {
-                        text += '<td></td>';
-                    }
-                    text += '</tr>';
-                    i++;
+                if (!$funcs.html()) {
+                    $funcs.hide();
+                } else {
+                    $funcs.show();
+                }
+                if (!$rooms.html()) {
+                    $rooms.hide();
+                } else {
+                    $rooms.show();
                 }
 
-                var $smart_enums = $('#smart_enums');
+
+                var $smart_enums = $('#tab-smart-enums');
 
                 $smart_enums
-                    .html(text)
-                        .find('.smart-enable')
+                        .find('.enable-content')
                         .change(function () {
                             var id = $(this).data('id');
                             var $this = $(this);
                             $this.parent().addClass('smart-changed');
                             if ($this.prop('checked')) {
-                                $smart_enums.find('.smart-edit[data-id="' + id + '"]').prop('disabled', false);
+                                $smart_enums.find('.edit-content[data-id="' + id + '"]').prop('disabled', false);
                                 socket.emit('getObject', id, function (err, obj) {
                                     removeSmartName(obj);
                                     socket.emit('setObject', id, obj, function (err) {
@@ -739,7 +841,7 @@
                                     });
                                 });
                             } else {
-                                $smart_enums.find('.smart-edit[data-id="' + id + '"]').prop('disabled', true);
+                                $smart_enums.find('.edit-content[data-id="' + id + '"]').prop('disabled', true);
                                 socket.emit('getObject', id, function (err, obj) {
                                     disableSmartName(obj);
                                     socket.emit('setObject', id, obj, function (err) {
@@ -752,7 +854,7 @@
                             }
                         });
 
-                $smart_enums.find('.smart-edit').click(function () {
+                $smart_enums.find('.edit-content').click(function () {
                     var $this = $(this);
                     var $editDialog = $('#dialog-name-edit');
                     $editDialog.data('id', $this.data('id'));
@@ -764,7 +866,7 @@
                         var id = $('#dialog-name-edit').data('id');
                         // check if this name used or not
                         var found  = false;
-                        var $enums = $smart_enums.find('.smart-edit');
+                        var $enums = $smart_enums.find('.edit-content');
                         var val    = $('#edit_name').val();
                         $enums.each(function () {
                             if ($(this).data('value') === val && $(this).data('id') !== id) {
@@ -789,6 +891,14 @@
                         });
                     });
                     $editDialog.dialog('open');
+                });
+
+                // workaround for materialize checkbox problem
+                $smart_enums.find('input[type="checkbox"]+span').off('click').on('click', function () {
+                    var $input = $(this).prev();
+                    if (!$input.prop('disabled')) {
+                        $input.prop('checked', !$input.prop('checked')).trigger('change');
+                    }
                 });
             }
         });
@@ -1006,9 +1116,6 @@
         setTimeout(function () {
             if (typeof localStorage !== 'undefined' && localStorage['cloud-adapter'] !== undefined) {
                 $tabs.mtabs('select', localStorage['cloud-adapter']);
-                if (localStorage['cloud-adapter'] === 'tab-smart-devices') updateDevices();
-                if (localStorage['cloud-adapter'] === 'tab-smart-enums')   updateEnums();
-                if (localStorage['cloud-adapter'] === 'tab-smart-media')   updateMDevices();
             }
         }, 300);
 
@@ -1227,6 +1334,66 @@
     .adapter-body {
         overflow: hidden;
     }
+
+    .collection {
+        overflow: auto;
+    }
+    .collection .edit-content,
+    .collection .enable-content,
+    .collection .enable-content + span{
+        float: right;
+    }
+    .edit-content {
+        position: absolute;
+        right: 48px;
+        bottom: 16px;
+    }
+    .enable-content,
+    .enable-content + span {
+        position: absolute !important;
+        right: 6px !important;
+        bottom: 14px;
+    }
+    .secondary-content {
+        cursor: pointer;
+        color: #64b5f6;
+    }
+    .edit-content.disabled,
+    .enable-content.disabled,
+    .secondary-content.disabled {
+        color: darkgray;
+        cursor: inherit;
+    }
+    .collection-item {
+        /* margin-bottom: 1 rem;*/
+    }
+    .collection-item>img.circle {
+         border-radius: 0;
+    }
+    .enum-title {
+        font-weight: bold;
+    }
+    .smart-changed::after {
+        content: "";
+        z-index: 1;
+        pointer-events: none;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: red;
+        opacity: 0.3;
+    }
+    .smart-enums-funcs,
+    .smart-enums-rooms {
+        height:     calc(100% - 41px);
+        overflow: auto !important;
+    }
+    #tab-smart-enums {
+        overflow: hidden;
+    }
+
 </style>
 </head>
 <body>
@@ -1301,12 +1468,15 @@
             </div>
             <div id="tab-smart-enums"  class="col s12 page">
                 <div class="row">
-                    <div class="col s12">
-                        <table id="smart_enums"  class="smart-table" style="width: 100%;">
-                            <tr style="padding: 20px; background: rgba(0,0,0,0); text-align: center; color: #f26f6f;">
-                                <td class="translate" style="padding: 20px;">Instance must run to deliver the data</td>
-                            </tr>
-                        </table>
+                    <div class="col s6">
+                        <div class="title translate">Rooms</div>
+                        <ul class="collection smart-enums-rooms">
+                        </ul>
+                    </div>
+                    <div class="col s6">
+                        <div class="title translate">Functions</div>
+                        <ul class="collection smart-enums-funcs">
+                        </ul>
                     </div>
                 </div>
             </div>
