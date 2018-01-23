@@ -748,7 +748,7 @@ function main() {
     //    createAiConnection();
     //}
 
-    adapter.config.allowedServices = (adapter.config.allowedServices || '').split(',');
+    adapter.config.allowedServices = (adapter.config.allowedServices || '').split(/[,\s]+/);
     for (let s = 0; s < adapter.config.allowedServices.length; s++) {
         adapter.config.allowedServices[s] = adapter.config.allowedServices[s].trim();
     }
