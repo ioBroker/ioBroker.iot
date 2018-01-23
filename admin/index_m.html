@@ -126,7 +126,7 @@
         });
     }
 
-    function initDialog() {
+    function initDialog(callback) {
         var $editDialog = $('#dialog-name-edit');
         if (!$editDialog.data('inited')) {
             $editDialog.data('inited', true);
@@ -135,8 +135,10 @@
             });
 
             $editDialog.find('.btn-set').on('click', function () {
-                var callback = $('#dialog-name-edit').data('callback');
+                var $editDialog = $('#dialog-name-edit');
+                var callback = $editDialog.data('callback');
                 if (typeof callback === 'function') callback();
+                $editDialog.data('callback', null);
             });
             $('#edit_name').on('keyup', function (e) {
                 if (e.keyCode === 13) {
@@ -146,6 +148,8 @@
                 }
             });
         }
+        $editDialog.data('callback', callback);
+
         $editDialog.modal('open');
     }
 
@@ -328,9 +332,7 @@
                     $editDialog.data('id', $this.data('id'));
                     $('#edit_name').val($this.data('value'));
 
-                    initDialog();
-
-                    $editDialog.data('callback', function () {
+                    initDialog(function () {
                         var id = $('#dialog-name-edit').data('id');
 
                         var $devices = $('#smart_table').find('.button-edit');
@@ -363,7 +365,6 @@
                             });
                         });
                     });
-                    $editDialog.dialog('open');
                 });
 
                 if (idToEdit) {
@@ -372,7 +373,9 @@
                 }
                 if (idToNavigate) {
                     var $td = $smartTable.find('.button-edit[data-id="' + idToNavigate + '"]');
-                    $td[0].scrollIntoView();
+                    // To do find the solution
+                    // $td[0].scrollIntoView();
+
                     $td.parent().parent().addClass('highlight');
                     idToNavigate = null;
                 }
@@ -653,7 +656,8 @@
                 }
                 if (idToNavigate) {
                     var $td = $smartTable.find('.button-edit[data-id="' + idToNavigate + '"]');
-                    $td[0].scrollIntoView();
+                    // To do find the solution
+                    // $td[0].scrollIntoView();
                     $td.parent().parent().addClass('highlight');
                     idToNavigate = null;
                 }
@@ -811,12 +815,12 @@
 
                 if (!$funcs.html()) {
                     $funcs.hide();
-                } else {
+                    } else {
                     $funcs.show();
-                }
+                    }
                 if (!$rooms.html()) {
                     $rooms.hide();
-                } else {
+                    } else {
                     $rooms.show();
                 }
 
@@ -860,9 +864,7 @@
                     $editDialog.data('id', $this.data('id'));
                     $('#edit_name').val($this.data('value') || $this.data('name'));
 
-                    initDialog();
-
-                    $editDialog.data('callback', function () {
+                    initDialog(function () {
                         var id = $('#dialog-name-edit').data('id');
                         // check if this name used or not
                         var found  = false;
@@ -890,9 +892,7 @@
                             });
                         });
                     });
-                    $editDialog.dialog('open');
                 });
-
                 // workaround for materialize checkbox problem
                 $smart_enums.find('input[type="checkbox"]+span').off('click').on('click', function () {
                     var $input = $(this).prev();
@@ -1280,24 +1280,24 @@
     }
     @keyframes highlight {
         0% {
-            color: #00f900
+            color:      #00f900
         }
         80% {
-            color: green
+            color:      green
         }
         100% {
-            color: black;
+            color:      black;
         }
     }
 
     .highlight {
-        animation: highlight 2s;
+        animation:      highlight 2s;
     }
 
     .tip {
-        color: #f26f6f;
-        font-style: italic;
-        padding-left: 1em;
+        color:          #f26f6f;
+        font-style:     italic;
+        padding-left:   1em;
     }
 
     .filter-input {
@@ -1315,26 +1315,33 @@
         border:         0 !important;
     }
     .filter-clear i {
-        font-size:  0.8rem !important;
-        line-height: 1.2rem !important;
+        font-size:      0.8rem !important;
+        line-height:    1.2rem !important;
     }
     a.btn-small {
-        line-height: 28px !important;
-        height: 28px !important;
-        width: 28px !important;
+        line-height:    28px !important;
+        height:         28px !important;
+        width:          28px !important;
     }
     a.btn-small i {
-        line-height: 1.2rem !important;
-        padding-top: 4px;
-        font-size: 16px !important;
+        line-height:    1.2rem !important;
+        padding-top:    4px;
+        font-size:      16px !important;
     }
     .m td, .m th {
-        padding: 3px 5px;
+        padding:        1px 4px;
+    }
+    .col-select,
+    .col-types,
+    .col-buttons {
+        width:          95px;
+    }
+    .tab-smart-devices-toolbar {
+        margin: 4px 0 0 0 !important;
     }
     .adapter-body {
         overflow: hidden;
     }
-
     .collection {
         overflow: auto;
     }
@@ -1368,7 +1375,7 @@
         /* margin-bottom: 1 rem;*/
     }
     .collection-item>img.circle {
-         border-radius: 0;
+        border-radius: 0;
     }
     .enum-title {
         font-weight: bold;
@@ -1393,7 +1400,6 @@
     #tab-smart-enums {
         overflow: hidden;
     }
-
 </style>
 </head>
 <body>
@@ -1447,7 +1453,7 @@
                 </div>
             </div>
             <div id="tab-smart-devices"  class="col s12 page">
-                <div class="row">
+                <div class="row tab-smart-devices-toolbar">
                     <div class="col s1">
                         <a id="add_device" title="Add device" class="translateT btn-floating waves-effect waves-light btn-small"><i class="material-icons">add</i></a>
                     </div>
@@ -1520,9 +1526,9 @@
                 <div class="row">
                     <div class="col s12">
                         <select class="value" id="language" data-link="true">
-                            <option value=""  class="translate">default</option>
-                            <option value="en">english</option>
-                            <option value="de">deutsch</option>
+                        <option value=""  class="translate">default</option>
+                        <option value="en">english</option>
+                        <option value="de">deutsch</option>
                         </select>
                         <label for="language" class="translate">Language:</label>
                     </div>
@@ -1589,8 +1595,8 @@
                 </div>
                 <div class="row">
                     <div class="col s12">
-                        <p class="translate">help_tip</p>
-                    </div>
+                <p class="translate">help_tip</p>
+            </div>
                 </div>
             </div>
             <div id="tab-services"  class="col s12 page">
@@ -1627,10 +1633,10 @@
                 </div>
                 <div class="row">
                     <div class="col s12">
-                        <p class="translate">help_tip</p>
-                    </div>
-                </div>
+                <p class="translate">help_tip</p>
             </div>
+        </div>
+    </div>
         </div>
     </div>
     <div class="m material-dialogs">
@@ -1653,7 +1659,21 @@
                 <a class="modal-action modal-close waves-effect waves-green btn btn-close"><i class="large material-icons">close</i><span class="translate">Cancel</span></a>
             </div>
         </div>
+        <div id="dialog-select-member" class="modal modal-fixed-footer">
+            <div class="modal-content">
+                <div class="row">
+                    <div class="col s12 title"></div>
+                </div>
+                <div class="row">
+                    <div class="col s12 dialog-content">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a class="modal-action modal-close waves-effect waves-green btn btn-set"  ><i class="large material-icons">check</i><span class="translate">Select</span></a>
+                <a class="modal-action modal-close waves-effect waves-green btn btn-close"><i class="large material-icons">close</i><span class="translate">Cancel</span></a>
+            </div>
+        </div>
     </div>
-    <div id="dialog-select-member" style="display: none"></div>
 </body>
 </html>
