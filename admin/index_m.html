@@ -256,9 +256,9 @@
                             }
                         }
                     } else {
-                        var name = list[j].additionalApplianceDetails.name;
+                        var name = list[j].additionalApplianceDetails.name || list[j].additionalApplianceDetails.id;
                         text += '<tr><td title="' + (list[j].additionalApplianceDetails.id || '') + '">';
-                        text +=  name;
+                        text +=  (name || k);
                         text += '</td>';
                         text += '<td class="col-select">' + getSelect(list[j].additionalApplianceDetails.id, list[j].additionalApplianceDetails.byON) + '</td>';
                         text += '<td class="col-types">'   + getTypeSelect(list[j].additionalApplianceDetails.id, list[j].additionalApplianceDetails.smartType) + '</td>';
@@ -277,9 +277,9 @@
                     var $this = $(this);
                     var id = $this.data('id');
 
-                    confirmMessage(_('Device will be disabled.'), _('Are you sure?'), 'alert', function (result) {
+                    confirmMessage(_('Device will be disabled.'), _('Are you sure?'), 'priority_high', function (result) {
                         if (result) {
-                            $this.parent().addClass('smart-changed');
+                            $this.closest('tr').addClass('smart-changed');
                             socket.emit('getObject', id, function (err, obj) {
                                 disableSmartName(obj);
                                 socket.emit('setObject', id, obj, function (err) {
@@ -577,7 +577,7 @@
                     var id = $this.data('id');
 
                     if (!$(this).prop('checked')) {
-                        confirmMessage(_('Device will be deactivated.'), _('Are you sure?'), 'alert', function (result) {
+                        confirmMessage(_('Device will be deactivated.'), _('Are you sure?'), 'confirmMessage', function (result) {
                             if (result) {
                                 $this.parent().addClass('smart-changed');
                                 socket.emit('getObject', id, function (err, obj) {
@@ -1287,6 +1287,9 @@
         color: white !important;
         border-radius: 5px  ;
     }
+    .smart-table {
+        position: relative;
+    }
     .smart-table tr:nth-child(even) {
         background: #CCC
     }
@@ -1356,19 +1359,23 @@
         padding-top:    4px;
         font-size:      16px !important;
     }
-    .m td, .m th {
+    .m th {
+        padding:        0.5rem 10px;
+    }
+    .m td {
         padding:        1px 4px;
     }
     .m .page {
-        height: calc(100% - 30px);
+        height:         calc(100% - 30px);
     }
     .col-select,
     .col-types,
     .col-buttons {
         width:          95px;
+        position:       relative;
     }
     .tab-smart-devices-toolbar {
-        margin: 4px 0 0 0 !important;
+        margin:         4px 0 0 0 !important;
     }
     .adapter-body {
         overflow: hidden;
@@ -1410,6 +1417,9 @@
     }
     .enum-title {
         font-weight: bold;
+    }
+    .smart-changed {
+        position: relative;
     }
     .smart-changed::after {
         content: "";
