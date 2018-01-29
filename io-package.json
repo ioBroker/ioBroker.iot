@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "cloud",
-        "version": "2.4.4",
+        "version": "2.4.5",
         "title": "Cloud connection",
         "titleLang": {
             "en": "Cloud connection",
@@ -24,6 +24,17 @@
             "it": "Collega il tuo server ioBroker al cloud ioBroker"
         },
         "news": {
+            "2.4.5": {
+                "en": "Changes for Admin 3 ",
+                "de": "Änderungen für Admin 3",
+                "ru": "Изменения для Admin 3",
+                "pt": "Mudanças para Admin 3",
+                "nl": "Wijzigingen voor Admin 3",
+                "fr": "Changements pour l'Admin 3",
+                "it": "Modifiche per l'Admin 3",
+                "es": "Cambios para Admin 3",
+                "pl": "Zmiany dla Admin 3"
+            },
             "2.4.4": {
                 "en": "The errors by controlling of temperature are caught now",
                 "de": "Die Fehler durch Kontrolle der Temperatur werden jetzt gefangen",
