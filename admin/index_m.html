@@ -1261,6 +1261,7 @@
                 updateMDevices();
             }
         });
+        if (M) M.updateTextFields();
     }
 
     function save(callback) {
@@ -1383,9 +1384,6 @@
     .tab-smart-devices-toolbar {
         margin:         4px 0 0 0 !important;
     }
-    .adapter-body {
-        overflow: hidden;
-    }
     .collection {
         overflow: auto;
     }
@@ -1445,7 +1443,14 @@
         overflow: auto !important;
     }
     #tab-smart-enums {
-        overflow: hidden;
+        overflow: auto;
+    }
+    .m .tooltip {
+        right: 0.6rem;
+        z-index: 4;
+    }
+    .m .modal.modal-fixed-footer .modal-footer {
+        right: 10px;
     }
 </style>
 </head>
@@ -1454,26 +1459,26 @@
         <div class="row">
             <div class="col s12">
                 <ul class="tabs">
-                    <li class="tab col s2"><a href="#tab-main"          class="translate active">Options</a></li>
+                    <li class="tab col s2"><a href="#tab-main" class="translate active">Options</a></li>
                     <li class="tab col s2"><a href="#tab-smart-devices" class="translate">Smart Devices</a></li>
-                    <li class="tab col s2"><a href="#tab-smart-enums"   class="translate">Smart Enums</a></li>
+                    <li class="tab col s2"><a href="#tab-smart-enums" class="translate">Smart Enums</a></li>
                     <!--li class="tab col s2"><a href="#tab-smart-media" class="translate">Smart Media</a></li-->
-                    <li class="tab col s2"><a href="#tab-advanced"      class="translate">Extended options</a></li>
-                    <li class="tab col s2"><a href="#tab-services"      class="translate">Services and IFTTT</a></li>
+                    <li class="tab col s2"><a href="#tab-advanced" class="translate">Extended options</a></li>
+                    <li class="tab col s2"><a href="#tab-services" class="translate">Services and IFTTT</a></li>
                 </ul>
             </div>
             <div id="tab-main" class="col s12 page">
                 <div class="row">
-                    <div class="col s12 m4 l2">
+                    <div class="col s6">
                         <img src="cloud.png" class="logo">
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col s12 m8">
-                        <input  class="value" id="apikey" style="width: 100%" />
+                    <div class="input-field col s12 m8">
+                        <input class="value" id="apikey" type="text" style="width: 100%" />
                         <label for="apikey" class="translate">APP-KEY:</label>
                     </div>
-                    <div class="col s12 m4">
+                    <div class="input-field col s12 m4">
                         <select class="value" id="instance"></select>
                         <label for="instance" class="translate">Instance:</label>
                     </div>
@@ -1499,18 +1504,23 @@
                     </div>
                 </div>
             </div>
-            <div id="tab-smart-devices"  class="col s12 page">
+            <div id="tab-smart-devices" class="col s12 page">
+                <div class="row">
+                    <div class="col s6">
+                        <img src="cloud.png" class="logo">
+                    </div>
+                </div>
                 <div class="row tab-smart-devices-toolbar">
                     <div class="col s1">
                         <a id="add_device" title="Add device" class="translateT btn-floating waves-effect waves-light btn-small"><i class="material-icons">add</i></a>
                     </div>
-                    <div class="col s4">
-                        <input id="filter" class="translateP filter-input" placeholder="Filter"/>
+                    <div class="input-field col s4">
+                        <input id="filter" class="translateP filter-input" placeholder="Filter" />
                         <a class="filter-clear btn-floating btn-very-small translateT red lighten-3" title="clear"><i class="material-icons">clear</i></a>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col s12" id="pre_table" >
+                    <div class="col s12" id="pre_table">
                         <table id="smart_table" class="smart-table" style="width: 100%;">
                             <tr style="padding: 20px; background: rgba(0,0,0,0); text-align: center; color: #f26f6f;">
                                 <td class="translate" style="padding: 20px;">Instance must run to deliver the data</td>
@@ -1519,7 +1529,12 @@
                     </div>
                 </div>
             </div>
-            <div id="tab-smart-enums"  class="col s12 page">
+            <div id="tab-smart-enums" class="col s12 page">
+                <div class="row">
+                    <div class="col s6">
+                        <img src="cloud.png" class="logo">
+                    </div>
+                </div>              
                 <div class="row">
                     <div class="col s6">
                         <div class="title translate">Rooms</div>
@@ -1545,88 +1560,75 @@
                     </table>
                 </div>
             </div-->
-            <div id="tab-advanced"  class="col s12 page">
+            <div id="tab-advanced" class="col s12 page">
                 <div class="row">
-                    <div class="col s12">
-                        <input class="value" id="cloudUrl"/>
+                    <div class="col s6">
+                        <img src="cloud.png" class="logo">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12 m6 l3">
+                        <input class="value" type="text" id="cloudUrl" />
                         <label for="cloudUrl" class="translate">Cloud URL:</label>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col s12">
-                        <input class="value" id="connectionTimeout" type="number" min="0" max="100000"/>
+                    <div class="input-field col s12 m6 l3">
+                        <input class="value" id="connectionTimeout" type="number" min="0" max="100000" />
                         <label for="connectionTimeout" class="translate">Connection timeout:</label>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col s12">
-                        <input class="value" id="pingTimeout" type="number" min="0"/>
+                    <div class="input-field col s12 m6 l3">
+                        <input class="value" id="pingTimeout" type="number" min="0" />
                         <label for="pingTimeout" class="translate">Ping timeout:</label>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col s12">
-                        <input type="checkbox" class="value" id="allowSelfSignedCertificate" data-link="allow-self-signed-certificates"/>
-                        <span for="allowSelfSignedCertificate" class="translate">Allow self-signed certificates:</span>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col s12">
+                    <div class="input-field col s12 m6 l3">
                         <select class="value" id="language" data-link="true">
                         <option value=""  class="translate">default</option>
                         <option value="en">english</option>
                         <option value="de">deutsch</option>
                         </select>
                         <label for="language" class="translate">Language:</label>
-                    </div>
+                    </div> 
                 </div>
                 <div class="row">
-                    <div class="col s12">
-                        <input type="checkbox" class="value" id="functionFirst" data-link="place-function-in-names-first"/>
-                        <span for="functionFirst" class="translate">Place function in names first:</span>
+                    <div class="input-field col s12 m6 l4">
+                        <input type="checkbox" class="value" id="allowSelfSignedCertificate" data-link="allow-self-signed-certificates" />
+                        <span for="allowSelfSignedCertificate" class="translate">Allow self-signed certificates:</span>
                     </div>
-                    <div class="col s12">
+                    <div class="input-field col s12 m6 l4">
+                        <input type="checkbox" class="value" id="functionFirst" data-link="place-function-in-names-first" />
+                        <span for="functionFirst" class="translate">Place function in names first:</span>
                         <span id="functionFirstHint" class="translate" style="display: none; color: rgb(255, 153, 153);">Save settings and the names will be changed</span>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col s12">
-                        <input data-link="concatenate-words-with" class="value" id="concatWord"/>
+                    <div class="input-field col s12 m12 l4">
+                        <input data-link="concatenate-words-with" type="text" class="value" id="concatWord" />
                         <label for="concatWord" class="translate">Concatenate words with:</label>
-                    </div>
-                    <div class="col s12">
                         <span id="concatWordHint" class="translate" style="display: none; color: rgb(255, 153, 153);">Save settings and the names will be changed</span>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col s12">
-                        <input class="value" id="replaces" />
+                    <div class="input-field col s12 m6">
+                        <input class="value" type="text" id="replaces" />
                         <label for="replaces" class="translate">Replace in names:</label>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col s12">
-                        <input class="value" data-link="off-level-for-switches" id="deviceOffLevel"/>
+                    <div class="input-field col s12 m6">
+                        <input class="value" type="text" data-link="off-level-for-switches" id="deviceOffLevel" />
                         <label for="deviceOffLevel"><span class="translate">OFF level for switches:</span>%(<span class="translate">(Set to 0 if behavior not desired)</span></label>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col s11">
-                        <input data-link="write-response-to" class="value" id="responseOID"/>
+                    <div class="input-field col s10 m5 l5">
+                        <input data-link="write-response-to" type="text" class="value" id="responseOID" />
                         <label for="responseOID" class="translate">Write response to:</label>
                     </div>
-                    <div class="col s1">
-                        <a id="responseOIDDialog" class="btn"><i class="material-icons"></i><span></span></a>
+                    <div class="col s1 m1 l1">
+                        <a id="responseOIDDialog" class="btn"><i class="material-icons">add_circle_outline</i><span></span></a>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col s12">
-                        <input class="value" id="restartOnDisconnect" type="checkbox"/>
+                    <div class="input-field col s12 m5 offset-m1 l6">
+                        <input class="value" id="restartOnDisconnect" type="checkbox" />
                         <span for="restartOnDisconnect" class="translate">Restart on disconnect:</span>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col s12">
+                    <div class="input-field col s12">
                         <select class="value" id="allowAdmin" data-link="true" style="display: inline-block"></select>
                         <label for="allowAdmin" class="translate">Allow admin access (only pro):</label>
                     </div>
@@ -1635,45 +1637,45 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col s12">
-                        <input class="value" data-link="true" id="noCommon" type="checkbox"/>
+                    <div class="input-field col s6">
+                        <input class="value" data-link="true" id="noCommon" type="checkbox" />
                         <span for="noCommon" class="translate">Personal settings (only pro):</span>
                     </div>
+                    <div class="col s6">
+                        <p class="translate">help_tip</p>
+                    </div>
                 </div>
-                <div class="row">
-                    <div class="col s12">
-                <p class="translate">help_tip</p>
+                <br>
             </div>
-                </div>
-            </div>
-            <div id="tab-services"  class="col s12 page">
+            <div id="tab-services" class="col s12 page">
                 <div class="row">
-                    <div class="col s12">
-                        <input class="value" id="iftttKey"/>
-                        <label for="iftttKey" class="translate">IFTTT key:</label>
+                    <div class="col s6">
+                        <img src="cloud.png" class="logo">
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col s12">
-                        <input id="ifttt_link" style="font-size: 10px;" readonly value="https://iobroker.net/ifttt/" />
-                        <label class="col s12" for="ifttt_link">Use following link for IFTTT:</label>
+                    <div class="input-field col s12 m6 l4">
+                        <input class="value" type="text" id="iftttKey" />
+                        <label for="iftttKey" class="translate">IFTTT key:</label>
+                    </div>
+                    <div class="input-field col s12 m6 l4">
+                        <input id="ifttt_link" type="text" readonly value="https://iobroker.net/ifttt/" />
+                        <label for="ifttt_link" class="translate">Use following link for IFTTT:</label>
                     </div>
                 </div>
                 <!--tr><div class="col s12"><label for="allowAI" class="translate">Allow collect data for AI:</label></td><td class="admin-icon"></td><td><input class="value" id="allowAI" type="checkbox"/></td><td class="admin-text"></td></tr-->
                 <div class="row">
-                    <div class="col s12">
+                    <div class="col s12 m12 l8">
                         <label for="allowedServices" class="translate">White list for services:</label>
                         <div class="chips allowedServices"></div>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col s12">
-                        <input id="service_link" readonly style="font-size: 10px;" value="https://iobroker.net/service/" />
+                    <div class="input-field col s12 m6 l4">
+                        <input id="service_link" type="text" readonly value="https://iobroker.net/service/" />
                         <label for="service_link" class="translate">Use following link for custom service:</label>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col s12">
+                    <div class="input-field col s12 m6 l4">
                         <select class="value" id="text2command">
                             <option value="" class="translate">disabled</option>
                         </select>
@@ -1681,11 +1683,11 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col s12">
-                <p class="translate">help_tip</p>
+                    <div class="col s12 l8">
+                        <p class="translate">help_tip</p>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
         </div>
     </div>
     <div class="m material-dialogs">
@@ -1697,15 +1699,15 @@
                     </div>
                 </div>
                 <div class="row textarea">
-                    <div class="col s12">
-                        <input style="width: calc(100% - 10px)" id="edit_name"/>
-                        <label class="translate" for="edit_name">(you can separate names with comma)</label>
+                    <div class="input-field col s12">
+                        <input style="width: calc(100% - 10px)" type="text" id="edit_name" />
+                        <span class="translate" for="edit_name">(you can separate names with comma)</span>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <a class="modal-action modal-close waves-effect waves-green btn btn-set"  ><i class="large material-icons">check</i><span class="translate">Ok</span></a>
-                <a class="modal-action modal-close waves-effect waves-green btn btn-close"><i class="large material-icons">close</i><span class="translate">Cancel</span></a>
+                <a class="modal-action modal-close waves-effect waves-green btn btn-set"><i class="large material-icons left">check</i><span class="translate">Ok</span></a>
+                <a class="modal-action modal-close waves-effect waves-green btn btn-close"><i class="large material-icons left">close</i><span class="translate">Cancel</span></a>
             </div>
         </div>
         <div id="dialog-select-member" class="modal modal-fixed-footer">
@@ -1719,8 +1721,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <a class="modal-action modal-close waves-effect waves-green btn btn-set"  ><i class="large material-icons">check</i><span class="translate">Select</span></a>
-                <a class="modal-action modal-close waves-effect waves-green btn btn-close"><i class="large material-icons">close</i><span class="translate">Cancel</span></a>
+                <a class="modal-action modal-close waves-effect waves-green btn btn-set"><i class="large material-icons left">check</i><span class="translate">Select</span></a>
+                <a class="modal-action modal-close waves-effect waves-green btn btn-close"><i class="large material-icons left ">close</i><span class="translate">Cancel</span></a>
             </div>
         </div>
     </div>
