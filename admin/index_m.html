@@ -198,7 +198,7 @@
         sendTo(null, 'browse', null, function (list) {
             $('#add_device').removeClass('disabled');
             if (list) {
-                var text = '<tr><th style="width: 30%">' + _('Smart name') + '</th><th style="width: 100px">' + _('Commands') + '</th><th style="width: 70%">' + _('Addresses') + '<span style="float: right; padding-right: 130px">' + _('Types') + '</span><span style="float: right; padding-right: 130px">' + _('by ON') + '</span></th></tr>';
+                var text = '<tr><th style="width: 30%">' + _('Smart name') + '</th><th style="width: 100px">' + _('Commands') + '</th><th style="width: 70%">' + _('Addresses') + '<span style="float: right; padding-right: 130px">' + _('Types') + '</span><span style="float: right; padding-right: 100px">' + _('by ON') + '</span></th></tr>';
 
                 for (var j = 0; j < list.length; j++) {
                     if (list[j].additionalApplianceDetails.group || !list[j].additionalApplianceDetails.nameModified) {
@@ -247,8 +247,8 @@
                                 for (var i = 0; i < channels[chan].length; i++) {
                                     var k = channels[chan][i].id;
                                     text += '<tr><td title="' + k + '">' + (names[k] || k) + '</td>';
-                                    text += '<td class="col-select">' + getSelect(k, types[k]) + '</td>';
-                                    text += '<td class="col-types">'  + getTypeSelect(k, smarttypes[k]) + '</td>';
+                                    text += '<td class="col-select"><div class="input-field">' + getSelect(k, types[k]) + '</div></td>';
+                                    text += '<td class="col-types"><div class="input-field">'  + getTypeSelect(k, smarttypes[k]) + '</div></td>';
                                     text += '<td class="col-buttons">' +
                                         '<a data-id="' + k + '" class="btn-floating waves-effect waves-light red btn-small button-delete"><i class="material-icons">delete</i></a>' +
                                         '</td></tr>';
@@ -260,8 +260,8 @@
                         text += '<tr><td title="' + (list[j].additionalApplianceDetails.id || '') + '">';
                         text +=  (name || k);
                         text += '</td>';
-                        text += '<td class="col-select">' + getSelect(list[j].additionalApplianceDetails.id, list[j].additionalApplianceDetails.byON) + '</td>';
-                        text += '<td class="col-types">'   + getTypeSelect(list[j].additionalApplianceDetails.id, list[j].additionalApplianceDetails.smartType) + '</td>';
+                        text += '<td class="col-select"><div class="input-field">' + getSelect(list[j].additionalApplianceDetails.id, list[j].additionalApplianceDetails.byON) + '</div></td>';
+                        text += '<td class="col-types"><div class="input-field">'   + getTypeSelect(list[j].additionalApplianceDetails.id, list[j].additionalApplianceDetails.smartType) + '</div></td>';
                         text += '<td class="col-buttons">' +
                             '<a data-value="' + (list[j].additionalApplianceDetails.friendlyNames ? list[j].additionalApplianceDetails.friendlyNames : list[j].friendlyName) + '" data-id="' + list[j].additionalApplianceDetails.id + '" class="button-edit btn-floating waves-effect waves-light btn-small"><i class="material-icons">edit</i></a>' +
                             '<a data-id="' + list[j].additionalApplianceDetails.id + '" class="btn-floating waves-effect waves-light red btn-small button-delete"><i class="material-icons">delete</i></a>' +
@@ -379,6 +379,7 @@
                     $td.parent().parent().addClass('highlight');
                     idToNavigate = null;
                 }
+                $('select').select();
             }
             filter();
         });
@@ -1369,11 +1370,16 @@
         height:         calc(100% - 30px);
     }
     .col-select,
-    .col-types,
     .col-buttons {
         width:          95px;
         position:       relative;
     }
+
+    .col-types {
+        width:          160px;
+        position:       relative;
+    }
+
     .tab-smart-devices-toolbar {
         margin:         4px 0 0 0 !important;
     }
