@@ -208,11 +208,11 @@
                     }
                     // Type
                     var actions = [];
-					if (!list[j].actions) {
-						console.log('Something went wrong');
-						continue;
-					}
-					for (var a = 0; a < list[j].actions.length; a++) {
+                    if (!list[j].actions) {
+                        console.log('Something went wrong');
+                        continue;
+                        }
+                    for (var a = 0; a < list[j].actions.length; a++) {
                         if (actionsMapping[list[j].actions[a]]) {
                             actions.push(actionsMapping[list[j].actions[a]]);
                         } else {
@@ -247,12 +247,12 @@
                                 for (var i = 0; i < channels[chan].length; i++) {
                                     var k = channels[chan][i].id;
                                     text += '<tr><td title="' + k + '">' + (names[k] || k) + '</td>';
-                                    text += '<td class="col-select"><div class="input-field">' + getSelect(k, types[k]) + '</div></td>';
-                                    text += '<td class="col-types"><div class="input-field">'  + getTypeSelect(k, smarttypes[k]) + '</div></td>';
+                                    text += '<td class="col-select"><div>' + getSelect(k, types[k]) + '</div></td>';
+                                    text += '<td class="col-types"><div>'  + getTypeSelect(k, smarttypes[k]) + '</div></td>';
                                     text += '<td class="col-buttons">' +
                                         '<a data-id="' + k + '" class="btn-floating waves-effect waves-light red btn-small button-delete"><i class="material-icons">delete</i></a>' +
                                         '</td></tr>';
-                                }
+                                } 
                             }
                         }
                     } else {
@@ -260,8 +260,8 @@
                         text += '<tr><td title="' + (list[j].additionalApplianceDetails.id || '') + '">';
                         text +=  (name || k);
                         text += '</td>';
-                        text += '<td class="col-select"><div class="input-field">' + getSelect(list[j].additionalApplianceDetails.id, list[j].additionalApplianceDetails.byON) + '</div></td>';
-                        text += '<td class="col-types"><div class="input-field">'   + getTypeSelect(list[j].additionalApplianceDetails.id, list[j].additionalApplianceDetails.smartType) + '</div></td>';
+                        text += '<td class="col-select"><div>' + getSelect(list[j].additionalApplianceDetails.id, list[j].additionalApplianceDetails.byON) + '</div></td>';
+                        text += '<td class="col-types"><div>'   + getTypeSelect(list[j].additionalApplianceDetails.id, list[j].additionalApplianceDetails.smartType) + '</div></td>';
                         text += '<td class="col-buttons">' +
                             '<a data-value="' + (list[j].additionalApplianceDetails.friendlyNames ? list[j].additionalApplianceDetails.friendlyNames : list[j].friendlyName) + '" data-id="' + list[j].additionalApplianceDetails.id + '" class="button-edit btn-floating waves-effect waves-light btn-small"><i class="material-icons">edit</i></a>' +
                             '<a data-id="' + list[j].additionalApplianceDetails.id + '" class="btn-floating waves-effect waves-light red btn-small button-delete"><i class="material-icons">delete</i></a>' +
@@ -1334,12 +1334,7 @@
     }
 
     .filter-input {
-        display:        inline-table !important;
-        padding-left:   6px  !important;
-        margin-left:    20px !important;
-        font-size:      14px !important;
         height:         24px !important;
-        width:          10rem !important;
     }
 
     .filter-clear {
@@ -1358,7 +1353,7 @@
     }
     a.btn-small i {
         line-height:    1.2rem !important;
-        padding-top:    4px;
+        padding-top:    5px;
         font-size:      16px !important;
     }
     .m th {
@@ -1382,7 +1377,7 @@
     }
 
     .tab-smart-devices-toolbar {
-        margin:         4px 0 0 0 !important;
+        margin:  0 0 10px 0 !important;
     }
     .collection {
         overflow: auto;
@@ -1452,6 +1447,9 @@
     .m .modal.modal-fixed-footer .modal-footer {
         right: 10px;
     }
+    .marg{
+        margin-top: 3em;
+    }
 </style>
 </head>
 <body>
@@ -1477,6 +1475,7 @@
                     <div class="input-field col s12 m8">
                         <input class="value" id="apikey" type="text" style="width: 100%" />
                         <label for="apikey" class="translate">APP-KEY:</label>
+                        <span class="translate">help_tip</span>
                     </div>
                     <div class="input-field col s12 m4">
                         <select class="value" id="instance"></select>
@@ -1488,35 +1487,36 @@
                         <span id="instance_tip" class="tip"></span>
                     </div>
                 </div-->
-                <div class="row">
-                    <div class="col s12">
-                        <p class="translate">help_tip</p>
+                <div class="col s12 m8 offset-m4 l6 offset-l6">
+                    <div class="card horizontal z-depth-3">
+                        <div class="card-image">
+                            <img src="alexalogo.png">
+                        </div>
+                        <div class="card-stacked">
+                            <div class="card-content center">
+                                <p class="translate">amazon link</p>
+                            </div>
+                            <div class="card-action center">
+                                <a href="http://alexa.amazon.de/spa/index.html#skills/dp/B01MRXCC3J/create-review/?ref-suffix=war_dp" target='_blank'>Review</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col s4">
-                        <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B01MRXCC3J/create-review/?ref-suffix=war_dp' target='_blank'>
-                            <img src="alexalogo.png" />
-                        </a>
-                    </div>
-                    <div class="col s8">
-                        <span class="translate" style="font-weight: bold;">amazon link</span>
-                    </div>
-                </div>
+
+
+
             </div>
             <div id="tab-smart-devices" class="col s12 page">
-                <div class="row">
-                    <div class="col s6">
-                        <img src="cloud.png" class="logo">
-                    </div>
-                </div>
+                <div class="marg"></div>
                 <div class="row tab-smart-devices-toolbar">
-                    <div class="col s1">
+                    <div class="col s2 m1 l1 center">
                         <a id="add_device" title="Add device" class="translateT btn-floating waves-effect waves-light btn-small"><i class="material-icons">add</i></a>
                     </div>
-                    <div class="input-field col s4">
-                        <input id="filter" class="translateP filter-input" placeholder="Filter" />
-                        <a class="filter-clear btn-floating btn-very-small translateT red lighten-3" title="clear"><i class="material-icons">clear</i></a>
+                    <div class="col s5 m4 l3">
+                        <input id="filter" class="translateP filter-input" placeholder="Filter"/>           
+                    </div>
+                    <div class="col s3 m2 l1 left">
+                    <a class="filter-clear btn-floating btn-very-small translateT red lighten-3" title="clear"><i class="material-icons">clear</i></a>
                     </div>
                 </div>
                 <div class="row">
@@ -1530,11 +1530,7 @@
                 </div>
             </div>
             <div id="tab-smart-enums" class="col s12 page">
-                <div class="row">
-                    <div class="col s6">
-                        <img src="cloud.png" class="logo">
-                    </div>
-                </div>              
+                <div class="marg"></div>
                 <div class="row">
                     <div class="col s6">
                         <div class="title translate">Rooms</div>
@@ -1561,11 +1557,7 @@
                 </div>
             </div-->
             <div id="tab-advanced" class="col s12 page">
-                <div class="row">
-                    <div class="col s6">
-                        <img src="cloud.png" class="logo">
-                    </div>
-                </div>
+                <div class="marg"></div>
                 <div class="row">
                     <div class="input-field col s12 m6 l3">
                         <input class="value" type="text" id="cloudUrl" />
@@ -1586,7 +1578,7 @@
                         <option value="de">deutsch</option>
                         </select>
                         <label for="language" class="translate">Language:</label>
-                    </div> 
+                    </div>
                 </div>
                 <div class="row">
                     <div class="input-field col s12 m6 l4">
@@ -1648,11 +1640,7 @@
                 <br>
             </div>
             <div id="tab-services" class="col s12 page">
-                <div class="row">
-                    <div class="col s6">
-                        <img src="cloud.png" class="logo">
-                    </div>
-                </div>
+                <div class="marg"></div>
                 <div class="row">
                     <div class="input-field col s12 m6 l4">
                         <input class="value" type="text" id="iftttKey" />
@@ -1727,4 +1715,5 @@
         </div>
     </div>
 </body>
+
 </html>
