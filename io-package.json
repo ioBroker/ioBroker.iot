@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "cloud",
-        "version": "2.4.5",
+        "version": "2.4.6",
         "title": "Cloud connection",
         "titleLang": {
             "en": "Cloud connection",
@@ -24,6 +24,17 @@
             "it": "Collega il tuo server ioBroker al cloud ioBroker"
         },
         "news": {
+            "2.4.6": {
+                "en": "Adding of new devices is fixed",
+                "de": "Hinzufügen neuer Geräte ist behoben",
+                "ru": "Исправлено добавление новых устройств",
+                "pt": "A adição de novos dispositivos é fixa",
+                "nl": "Het toevoegen van nieuwe apparaten is opgelost",
+                "fr": "L'ajout de nouveaux appareils est fixé",
+                "it": "L'aggiunta di nuovi dispositivi è stata corretta",
+                "es": "Se fija la adición de nuevos dispositivos",
+                "pl": "Dodawanie nowych urządzeń zostało naprawione"
+            },
             "2.4.5": {
                 "en": "Changes for Admin 3 ",
                 "de": "Änderungen für Admin 3",

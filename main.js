@@ -45,7 +45,7 @@ let adapter       = new utils.Adapter({
             alexaSH3.setLanguage(lang, false);
         }
     },
-    stateChange: function (id, state) {
+    stateChange:  function (id, state) {
         if (socket) {
             if (id === adapter.namespace + '.services.ifttt' && state && !state.ack) {
                 sendDataToIFTTT({
@@ -69,7 +69,7 @@ let adapter       = new utils.Adapter({
             }
         }
     },
-    unload: function (callback) {
+    unload:       function (callback) {
         if (pingTimer) {
             clearInterval(pingTimer);
             pingTimer = null;
@@ -88,7 +88,7 @@ let adapter       = new utils.Adapter({
             callback();
         }
     },
-    message: function (obj) {
+    message:      function (obj) {
         if (obj) {
             switch (obj.command) {
                 case 'update':
@@ -145,7 +145,9 @@ let adapter       = new utils.Adapter({
             }
         }
     },
-    ready: main
+    ready:        function () {
+        createInstancesStates(main);
+    }
 });
 
 function sendDataToIFTTT(obj) {
@@ -689,6 +691,28 @@ function connect() {
         ioSocket.on('disconnect',       onDisconnect);
         ioSocket.on('cloudConnect',     onCloudConnect);
         ioSocket.on('cloudDisconnect',  onCloudDisconnect);
+    }
+}
+
+function createInstancesStates(callback, objs) {
+    if (!objs) {
+        var pack = require(__dirname + '/io-package.json');
+        objs = pack.instanceObjects;
+    }
+    if (!objs || !objs.length) {
+        callback();
+    } else {
+        var obj = objs.shift();
+        adapter.getObject(obj._id, function (err, _obj) {
+            if (!_obj) {
+                adapter.setObject(obj._id, obj, function (err) {
+                    if (err) adapter.log.error('Cannot setObject: ' + err);
+                    setImmediate(createInstancesStates, callback, objs);
+                });
+            } else {
+                setImmediate(createInstancesStates, callback, objs);
+            }
+        });
     }
 }
 

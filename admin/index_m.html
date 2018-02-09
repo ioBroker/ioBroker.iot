@@ -379,7 +379,11 @@
                     $td.parent().parent().addClass('highlight');
                     idToNavigate = null;
                 }
-                $('select').select();
+                $('select').select({
+                    dropdownOptions: {
+                        constrainWidth: false
+                    }
+                });
             }
             filter();
         });
@@ -1050,7 +1054,11 @@
                         checkAuthForInstance('instance', $(this).val());
                     });
                     checkAuthForInstance('instance', settings.instance);
-                    $instance.select();
+                    $instance.select({
+                        dropdownOptions: {
+                            constrainWidth: false
+                        }
+                    });
                 }
             });
         }
@@ -1063,7 +1071,11 @@
             }
             $('#allowAdmin').html(text).val(settings.allowAdmin).change(function () {
                 checkAuthForInstance('allowAdmin', $(this).val());
-            }).select();
+            }).select({
+                dropdownOptions: {
+                    constrainWidth: false
+                }
+            });
             checkAuthForInstance('allowAdmin', settings.allowAdmin);
         });
 
@@ -1075,7 +1087,11 @@
                 }
             }
             $text2command.val(settings.text2command);
-            $text2command.select();
+            $text2command.select({
+                dropdownOptions: {
+                    constrainWidth: false
+                }
+            });
         });
 
         $('.value').each(function () {
@@ -1450,6 +1466,9 @@
     .marg{
         margin-top: 3em;
     }
+    /*.m .select-wrapper input.select-dropdown {
+        border: 0 !important;
+    }*/
 </style>
 </head>
 <body>
@@ -1654,7 +1673,7 @@
                 <!--tr><div class="col s12"><label for="allowAI" class="translate">Allow collect data for AI:</label></td><td class="admin-icon"></td><td><input class="value" id="allowAI" type="checkbox"/></td><td class="admin-text"></td></tr-->
                 <div class="row">
                     <div class="col s12 m12 l8">
-                        <label for="allowedServices" class="translate">White list for services:</label>
+                        <label class="translate">White list for services:</label>
                         <div class="chips allowedServices"></div>
                     </div>
                 </div>
