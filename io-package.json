@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "cloud",
-        "version": "2.4.6",
+        "version": "2.4.7",
         "title": "Cloud connection",
         "titleLang": {
             "en": "Cloud connection",
@@ -24,6 +24,17 @@
             "it": "Collega il tuo server ioBroker al cloud ioBroker"
         },
         "news": {
+            "2.4.7": {
+                "en": "Small changes in the configuration dialog\nInformation about the expiring of remote access was added",
+                "de": "Kleine Änderungen im Konfigurationsdialog\nInformationen zum Ablauf des Remote-Zugriffs wurden hinzugefügt",
+                "ru": "Небольшие изменения в диалоговом окне конфигурации\nДобавлена ​​информация об истечении удаленного доступа",
+                "pt": "Pequenas mudanças no diálogo de configuração\nForam adicionadas informações sobre o acesso remoto de acesso remoto",
+                "nl": "Kleine wijzigingen in het configuratievenster\nInformatie over het verlopen van externe toegang is toegevoegd",
+                "fr": "Petits changements dans la boîte de dialogue de configuration\nInformations sur l'expiration de l'accès à distance a été ajouté",
+                "it": "Piccole modifiche nella finestra di configurazione\nSono state aggiunte informazioni sulla scadenza dell'accesso remoto",
+                "es": "Pequeños cambios en el diálogo de configuración\nSe agregó información sobre el vencimiento del acceso remoto",
+                "pl": "Małe zmiany w oknie konfiguracji\nDodano informację o wygaśnięciu dostępu zdalnego"
+            },
             "2.4.6": {
                 "en": "Adding of new devices is fixed",
                 "de": "Hinzufügen neuer Geräte ist behoben",
@@ -202,15 +213,14 @@
             "native": {}
         },
         {
-            "_id": "info.connection",
+            "_id": "info.remoteTill",
             "type": "state",
             "common": {
-                "role": "indicator.connected",
-                "name": "If connected to cloud",
-                "type": "boolean",
+                "role": "state",
+                "name": "Time till pro access is available",
+                "type": "string",
                 "read": true,
-                "write": false,
-                "def": false
+                "write": false
             },
             "native": {}
         },
