@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "cloud",
-        "version": "2.4.7",
+        "version": "2.4.8",
         "title": "Cloud connection",
         "titleLang": {
             "en": "Cloud connection",
@@ -24,6 +24,17 @@
             "it": "Collega il tuo server ioBroker al cloud ioBroker"
         },
         "news": {
+            "2.5.0": {
+                "en": "Added actions on commands from server: wait, stop, redirect",
+                "de": "Aktionen für Befehle vom Server hinzugefügt: wait, stop, redirect",
+                "ru": "Добавлены действия с командами с сервера: wait, stop, redirect",
+                "pt": "Ações adicionadas em comandos do servidor: aguarde, pare, redirecione",
+                "nl": "Acties toegevoegd aan opdrachten van server: wachten, stoppen, omleiden",
+                "fr": "Actions ajoutées sur les commandes du serveur: attente, arrêt, redirection",
+                "it": "Aggiunte azioni sui comandi dal server: attendere, arrestare, reindirizzare",
+                "es": "Acciones agregadas en los comandos del servidor: esperar, detener, redirigir",
+                "pl": "Dodano akcje na komendach z serwera: wait, stop, przekierowanie"
+            },
             "2.4.7": {
                 "en": "Small changes in the configuration dialog\nInformation about the expiring of remote access was added",
                 "de": "Kleine Änderungen im Konfigurationsdialog\nInformationen zum Ablauf des Remote-Zugriffs wurden hinzugefügt",

@@ -28,6 +28,7 @@ let uuid          = null;
 let pack          = require(__dirname + '/io-package.json');
 let alexaDisabled = false;
 let googleDisabled = false;
+let waiting       = false;
 
 let TEXT_PING_TIMEOUT = 'Ping timeout';
 
@@ -475,20 +476,53 @@ function onCloudDisconnect() {
     adapter.setState('info.userOnCloud', false, true);
 }
 
-// this is bug of scoket.io
-// sometimes auto-reconnect does not work.
-function startConnect(immediately) {
+function onCloudWait(seconds) {
+    waiting = true;
+
+    if (socket) {
+        socket.off();
+        socket.disconnect();
+        socket = null;
+    }
     if (connectTimer) {
         clearInterval(connectTimer);
         connectTimer = null;
     }
-    connectTimer = setInterval(connect, 30000);
+
+    setTimeout(function () {
+        waiting = false;
+        startConnect(true);
+    }, (seconds * 1000) || 60000);
+}
+
+// this is bug of scoket.io
+// sometimes auto-reconnect does not work.
+function startConnect(immediately) {
+    if (waiting) return;
+
+    if (connectTimer) {
+        clearInterval(connectTimer);
+        connectTimer = null;
+    }
+    connectTimer = setInterval(connect, 60000);
     if (immediately) {
         connect();
     }
 }
 
+function initConnect(socket, options) {
+    ioSocket = new IOSocket(socket, options, adapter);
+
+    ioSocket.on('connect',         onConnect);
+    ioSocket.on('disconnect',      onDisconnect);
+    ioSocket.on('cloudConnect',    onCloudConnect);
+    ioSocket.on('cloudDisconnect', onCloudDisconnect);
+    ioSocket.on('connectWait',     onCloudWait);
+}
+
 function connect() {
+    if (waiting) return;
+
     adapter.log.debug('Connection attempt...');
     if (socket) {
         socket.off();
@@ -500,9 +534,10 @@ function connect() {
         autoConnect:          true,
         reconnection:         !adapter.config.restartOnDisconnect,
         rejectUnauthorized:   !adapter.config.allowSelfSignedCertificate,
-        reconnectionDelay:    8000,
+        randomizationFactor:  0.9,
+        reconnectionDelay:    60000,
         timeout:              parseInt(adapter.config.connectionTimeout, 10) || 10000,
-        reconnectionDelayMax: 30000
+        reconnectionDelayMax: 120000
     });
 
     socket.on('connect_error', function (error) {
@@ -654,12 +689,7 @@ function connect() {
                 server += (!obj.native.bind || obj.native.bind === '0.0.0.0') ? '127.0.0.1' : obj.native.bind;
                 server += ':' + obj.native.port;
 
-                ioSocket = new IOSocket(socket, {apikey: adapter.config.apikey, allowAdmin: adapter.config.allowAdmin, uuid: uuid, version: pack.common.version}, adapter);
-
-                ioSocket.on('connect',         onConnect);
-                ioSocket.on('disconnect',      onDisconnect);
-                ioSocket.on('cloudConnect',    onCloudConnect);
-                ioSocket.on('cloudDisconnect', onCloudDisconnect);
+                initConnect(socket, {apikey: adapter.config.apikey, allowAdmin: adapter.config.allowAdmin, uuid: uuid, version: pack.common.version});
             } else {
                 adapter.log.error('Unknown instance ' + adapter.log.instance);
                 server = null;
@@ -685,12 +715,7 @@ function connect() {
             });
         }
     } else {
-        ioSocket = new IOSocket(socket, {apikey: adapter.config.apikey, uuid: uuid, version: pack.common.version}, adapter);
-
-        ioSocket.on('connect',          onConnect);
-        ioSocket.on('disconnect',       onDisconnect);
-        ioSocket.on('cloudConnect',     onCloudConnect);
-        ioSocket.on('cloudDisconnect',  onCloudDisconnect);
+        initConnect(socket, {apikey: adapter.config.apikey, uuid: uuid, version: pack.common.version});
     }
 }
 
