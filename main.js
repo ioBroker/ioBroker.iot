@@ -478,10 +478,10 @@ function onCloudDisconnect() {
 
 function onCloudWait(seconds) {
     waiting = true;
-
+    adapter.log.info('Server asked to wait for ' + (seconds || 60) + ' seconds');
     if (socket) {
-        socket.off();
         socket.disconnect();
+        socket.off();
         socket = null;
     }
     if (connectTimer) {
@@ -495,6 +495,64 @@ function onCloudWait(seconds) {
     }, (seconds * 1000) || 60000);
 }
 
+function onCloudRedirect(data) {
+    if (!data) {
+        adapter.log.info('Received invalid redirect command from server');
+        return;
+    }
+    if (!data.url) {
+        adapter.log.error('Received redirect, but no URL.');
+    } else
+    if (data.notSave) {
+        adapter.log.info('Adapter redirected temporally to "' + data.url + '" in one minute. Reason: ' + (data && data.reason ? data.reason : 'command from server'));
+        adapter.config.cloudUrl = data.url;
+        if (socket) {
+            socket.disconnect();
+            socket.off();
+        }
+        startConnect();
+    } else {
+        adapter.log.info('Adapter redirected continuously to "' + data.url + '". Reason: ' + (data && data.reason ? data.reason : 'command from server'));
+        adapter.getForeignObject('system.adapter.' + adapter.namespace, function (err, obj) {
+            if (err) adapter.log.error('redirectAdapter [getForeignObject]: ' + err);
+            if (obj) {
+                obj.native.cloudUrl = data.url;
+                setTimeout(function () {
+                    adapter.setForeignObject(obj._id, obj, function (err) {
+                        if (err) adapter.log.error('redirectAdapter [setForeignObject]: ' + err);
+
+                        adapter.config.cloudUrl = data.url;
+                        if (socket) {
+                            socket.disconnect();
+                            socket.off();
+                        }
+                        startConnect();
+                    });
+                }, 3000);
+            }
+        });
+    }
+}
+
+function onCloudError(error) {
+    adapter.log.error('Cloud says: ' + error);
+}
+function onCloudStop(data) {
+    adapter.getForeignObject('system.adapter.' + adapter.namespace, function (err, obj) {
+        if (err) adapter.log.error('[getForeignObject]: ' + err);
+        if (obj) {
+            obj.common.enabled = false;
+            setTimeout(function () {
+                adapter.setForeignObject(obj._id, obj, function (err) {
+                    if (err) adapter.log.error('[setForeignObject]: ' + err);
+                    process.exit();
+                });
+            }, 5000);
+        } else {
+            process.exit();
+        }
+    });
+}
 // this is bug of scoket.io
 // sometimes auto-reconnect does not work.
 function startConnect(immediately) {
@@ -515,15 +573,18 @@ function initConnect(socket, options) {
 
     ioSocket.on('connect',         onConnect);
     ioSocket.on('disconnect',      onDisconnect);
+    ioSocket.on('cloudError',      onCloudError);
     ioSocket.on('cloudConnect',    onCloudConnect);
     ioSocket.on('cloudDisconnect', onCloudDisconnect);
     ioSocket.on('connectWait',     onCloudWait);
+    ioSocket.on('cloudRedirect',   onCloudRedirect);
+    ioSocket.on('cloudStop',       onCloudStop);
 }
 
 function connect() {
     if (waiting) return;
 
-    adapter.log.debug('Connection attempt...');
+    adapter.log.debug('Connection attempt to ' + (adapter.config.cloudUrl || 'https://iobroker.net:10555') + ' ...');
     if (socket) {
         socket.off();
         socket.disconnect();
@@ -545,7 +606,7 @@ function connect() {
     });
 
     // cannot use "pong" because reserved by socket.io
-    socket.on('pongg', function (error) {
+    socket.on('pongg', function (/*error*/) {
         clearTimeout(detectDisconnect);
         detectDisconnect = null;
     });
