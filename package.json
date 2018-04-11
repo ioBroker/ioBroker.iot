@@ -23,10 +23,10 @@
     "url": "https://github.com/ioBroker/ioBroker.cloud"
   },
   "dependencies": {
-    "socket.io": "^2.0.4",
-    "socket.io-client": "^2.0.4",
+    "socket.io": "~2.1.0",
+    "socket.io-client": "~2.1.0",
     "cookie-parser": "^1.4.3",
-    "request": "^2.83.0"
+    "request": "^2.85.0"
   },
   "devDependencies": {
     "@types/node": "^4.2.23",
