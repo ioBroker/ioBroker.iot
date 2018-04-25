@@ -66,6 +66,7 @@ function copyFolderRecursiveSync(source, target, ignore) {
             }
 
             var curSource = path.join(source, file);
+            var curTarget = path.join(targetFolder, file);
             if (fs.lstatSync(curSource).isDirectory()) {
                 // ignore grunt files
                 if (file.indexOf('grunt') !== -1) return;
@@ -73,7 +74,7 @@ function copyFolderRecursiveSync(source, target, ignore) {
                 if (file === 'mocha') return;
                 copyFolderRecursiveSync(curSource, targetFolder, ignore);
             } else {
-                copyFileSync(curSource, targetFolder);
+                copyFileSync(curSource, curTarget);
             }
         });
     }
@@ -451,7 +452,23 @@ function setupController(cb) {
             restoreOriginalFiles();
             copyAdapterToController();
         }
-        if (cb) cb();
+        // read system.config object
+        var dataDir = rootDir + 'tmp/' + appName + '-data/';
+
+        var objs;
+        try {
+            objs = fs.readFileSync(dataDir + 'objects.json');
+            objs = JSON.parse(objs);
+        }
+        catch (e) {
+            console.log('ERROR reading/parsing system configuration. Ignore');
+            objs = {'system.config': {}};
+        }
+        if (!objs || !objs.system || !objs.system.config) {
+            objs = {'system.config': {}};
+        }
+
+        if (cb) cb(objs['system.config']);
     });
 }
 
@@ -467,13 +484,13 @@ function startAdapter(objects, states, callback) {
         try {
             if (debug) {
                 // start controller
-                pid = child_process.exec('node node_modules/' + pkg.name + '/' + pkg.main + ' --console debug', {
+                pid = child_process.exec('node node_modules/' + pkg.name + '/' + pkg.main + ' --console silly', {
                     cwd: rootDir + 'tmp',
                     stdio: [0, 1, 2]
                 });
             } else {
                 // start controller
-                pid = child_process.fork('node_modules/' + pkg.name + '/' + pkg.main, ['--console', 'debug'], {
+                pid = child_process.fork('node_modules/' + pkg.name + '/' + pkg.main, ['--console', 'silly'], {
                     cwd:   rootDir + 'tmp',
                     stdio: [0, 1, 2, 'ipc']
                 });
@@ -490,7 +507,7 @@ function startAdapter(objects, states, callback) {
 function startController(isStartAdapter, onObjectChange, onStateChange, callback) {
     if (typeof isStartAdapter === 'function') {
         callback = onStateChange;
-        onStateChange = onObjectChange
+        onStateChange = onObjectChange;
         onObjectChange = isStartAdapter;
         isStartAdapter = true;
     }
@@ -520,6 +537,9 @@ function startController(isStartAdapter, onObjectChange, onStateChange, callback
                 "connectTimeout": 2000
             },
             logger: {
+                silly: function (msg) {
+                    console.log(msg);
+                },
                 debug: function (msg) {
                     console.log(msg);
                 },
@@ -563,9 +583,14 @@ function startController(isStartAdapter, onObjectChange, onStateChange, callback
                 }
             },
             logger: {
+                silly: function (msg) {
+                    console.log(msg);
+                },
                 debug: function (msg) {
+                    console.log(msg);
                 },
                 info: function (msg) {
+                    console.log(msg);
                 },
                 warn: function (msg) {
                     console.log(msg);
