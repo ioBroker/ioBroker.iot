@@ -164,6 +164,9 @@ You may write "text2command" in white list, you can send POST request to ```http
 *to do*
 
 ## Changelog
+### 2.6.0 (2018-04-27)
+* (bluefox) Support of custom alexa skill
+
 ### 2.5.0 (2018-03-17)
 * (bluefox) Added actions on commands from server: wait, stop, redirect; to control load of the server by start.
 

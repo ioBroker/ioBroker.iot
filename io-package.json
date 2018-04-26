@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "cloud",
-        "version": "2.5.0",
+        "version": "2.6.0",
         "title": "Cloud connection",
         "titleLang": {
             "en": "Cloud connection",
@@ -24,6 +24,17 @@
             "it": "Collega il tuo server ioBroker al cloud ioBroker"
         },
         "news": {
+            "2.6.0": {
+                "en": "Support of custom alexa skill",
+                "de": "Unterstützung von custom alexa skill",
+                "ru": "Поддержка custom alexa skill",
+                "pt": "Suporte de custom alexa skill",
+                "nl": "Ondersteuning van custom alexa skill",
+                "fr": "Prise en charge de la compétence alexa personnalisée",
+                "it": "Supporto dell'abilità di alexa personalizzata",
+                "es": "Soporte de habilidad personalizada de alexa",
+                "pl": "Obsługa niestandardowych umiejętności alexa"
+            },
             "2.5.0": {
                 "en": "Added actions on commands from server: wait, stop, redirect",
                 "de": "Aktionen für Befehle vom Server hinzugefügt: wait, stop, redirect",
