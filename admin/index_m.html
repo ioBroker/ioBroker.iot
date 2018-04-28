@@ -1254,8 +1254,8 @@
 
         $('#noCommon').on('change', function () {
             var val = $(this).prop('checked');
-            confirmMessage(_('To apply this setting, the restart of adapter must be done. Agree?'), _('Please confirm'), function (result) {
-                if (result) {
+            confirmMessage(_('To apply this setting, the restart of adapter must be done. Agree?'), _('Please confirm'), 'question', [_('Ok'), _('Cancel')], function (result) {
+                if (result === 0) {
                     $('button#save').trigger('click');
                     setTimeout(function () {
                         document.location.reload();
