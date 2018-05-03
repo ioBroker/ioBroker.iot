@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "cloud",
-        "version": "2.6.0",
+        "version": "2.6.1",
         "title": "Cloud connection",
         "titleLang": {
             "en": "Cloud connection",
@@ -24,7 +24,7 @@
             "it": "Collega il tuo server ioBroker al cloud ioBroker"
         },
         "news": {
-            "2.6.0": {
+            "2.6.1": {
                 "en": "Support of custom alexa skill",
                 "de": "Unterstützung von custom alexa skill",
                 "ru": "Поддержка custom alexa skill",
