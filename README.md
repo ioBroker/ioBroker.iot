@@ -164,6 +164,9 @@ You may write "text2command" in white list, you can send POST request to ```http
 *to do*
 
 ## Changelog
+### 2.6.2 (2018-06-18)
+* (Apollon77/AlCalzone/Bluefox) Several fixes
+
 ### 2.6.1 (2018-05-04)
 * (bluefox) Support of custom alexa skill
 
@@ -178,7 +181,7 @@ You may write "text2command" in white list, you can send POST request to ```http
 * (bluefox) Adding of new devices is fixed
 
 ### 2.4.5 (2018-01-29)
-* (bluefox) Changes for Admin 3 
+* (bluefox) Changes for Admin 3
 
 ### 2.4.4 (2018-01-20)
 * (bluefox) The errors by controlling of temperature are caught now
