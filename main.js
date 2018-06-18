@@ -680,7 +680,7 @@ function connect() {
             if (adapter.config.allowedServices[0] === '*' || adapter.config.allowedServices.indexOf(data.name) !== -1) {
                 if (!isCustom && data.name === 'text2command') {
                     if (adapter.config.text2command !== undefined && adapter.config.text2command !== '') {
-                        adapter.setForeginState('text2command.' + adapter.config.text2command + '.text', decodeURIComponent(data.data), function (err) {
+                        adapter.setForeignState('text2command.' + adapter.config.text2command + '.text', decodeURIComponent(data.data), function (err) {
                             callback && callback({result: err || 'Ok'});
                         });
                     } else {
