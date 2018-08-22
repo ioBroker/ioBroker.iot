@@ -500,17 +500,20 @@
             }
             smartName[language] = newSmartName;
 
+            // If smart name deleted
             if (smartName && (!smartName[language] || 
-			(smartName[language] === obj.common.name && 
-				(!obj.common.role || obj.common.role.indexOf('button') >=0)))) {
+			(smartName[language] === obj.common.name &&
+				(!obj.common.role || obj.common.role.indexOf('button') >= 0)))) {
                 delete smartName[language];
                 var empty = true;
+                // Check if structure has any definitions
                 for (var key in smartName) {
                     if (smartName.hasOwnProperty(key)) {
                         empty = false;
                         break;
                     }
                 }
+                // If empty => delete smartName completely
                 if (empty) {
                     if (noCommon) {
                         if (obj.common.custom[adapter + '.' + instance].smartName.byON === undefined) {
@@ -748,7 +751,13 @@
     }
 
     function getName(obj) {
-        if (obj && obj.name) {
+        if (obj && obj.common && obj.common.name) {
+            var name = obj.common.name;
+            if (typeof name === 'object') {
+                name = name[systemLang] || name.en;
+            }
+            return name;
+        } else if (obj && obj.name) {
             var name = obj.name;
             if (typeof name === 'object') {
                 name = name[systemLang] || name.en;
@@ -1169,7 +1178,8 @@
                     if (newId) {
                         //$('#' + id).val(newId || '');
                         socket.emit('getObject', newId, function (err, obj) {
-                            updateSmartName(obj, null, (obj.common.name || _('Device name')).replace(/[-_.]+/g, ' '));
+                            var name = getName(obj);
+                            updateSmartName(obj, null, (name || _('Device name')).replace(/[-_.]+/g, ' '));
                             idToEdit = obj._id;
                             // check if the object is capable to be controlled by cloud
                             var res = getActions(obj);

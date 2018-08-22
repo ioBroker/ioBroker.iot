@@ -260,7 +260,7 @@ function sendDataToIFTTT(obj) {
 
             if (connected) {
                 // extract additional information about this
-                adapter.getForeignObject(id, function (err, obj) {
+                adapter.getForeignObject(id, (err, obj) => {
                     if (obj && obj.common) {
                         if (obj.common.unit === '°C' || obj.common.unit === 'C°' || (obj.common.unit === '%' && obj.common.max !== 1)) {
                             // we do not need exact information
@@ -335,7 +335,7 @@ function controlState(id, data, callback) {
                 callback && callback('No value set');
                 return;
             }
-            adapter.getForeignObject(data.id, function (err, obj) {
+            adapter.getForeignObject(data.id, (err, obj) => {
                 if (!obj || !obj.common) {
                     callback && callback('Unknown ID: ' + data.id);
                 } else {
@@ -395,11 +395,11 @@ function processIfttt(data, callback) {
     }
 
     if (id) {
-        adapter.getForeignObject(id, function (err, obj) {
+        adapter.getForeignObject(id, (err, obj) => {
             if (obj) {
                 controlState(id, data, callback);
             } else {
-                adapter.getForeignObject(adapter.namespace + '.services.'  + id, function (err, obj) {
+                adapter.getForeignObject(adapter.namespace + '.services.'  + id, (err, obj) => {
                     if (!obj) {
                         // create state
                         adapter.setObject('services.' + id, {
@@ -442,9 +442,8 @@ function onDisconnect(event) {
         checkPing();
 
         if (adapter.config.restartOnDisconnect) {
-            setTimeout(function () {
-                process.exit(-100); // simulate scheduled restart
-            }, 10000);
+            // simulate scheduled restart
+            setTimeout(() => process.exit(-100), 10000);
         } else {
             startConnect();
         }
@@ -489,7 +488,7 @@ function onCloudWait(seconds) {
         connectTimer = null;
     }
 
-    setTimeout(function () {
+    setTimeout(() => {
         waiting = false;
         startConnect(true);
     }, (seconds * 1000) || 60000);
@@ -513,12 +512,12 @@ function onCloudRedirect(data) {
         startConnect();
     } else {
         adapter.log.info('Adapter redirected continuously to "' + data.url + '". Reason: ' + (data && data.reason ? data.reason : 'command from server'));
-        adapter.getForeignObject('system.adapter.' + adapter.namespace, function (err, obj) {
+        adapter.getForeignObject('system.adapter.' + adapter.namespace, (err, obj) => {
             if (err) adapter.log.error('redirectAdapter [getForeignObject]: ' + err);
             if (obj) {
                 obj.native.cloudUrl = data.url;
-                setTimeout(function () {
-                    adapter.setForeignObject(obj._id, obj, function (err) {
+                setTimeout(() => {
+                    adapter.setForeignObject(obj._id, obj, err => {
                         if (err) adapter.log.error('redirectAdapter [setForeignObject]: ' + err);
 
                         adapter.config.cloudUrl = data.url;
@@ -538,12 +537,12 @@ function onCloudError(error) {
     adapter.log.error('Cloud says: ' + error);
 }
 function onCloudStop(data) {
-    adapter.getForeignObject('system.adapter.' + adapter.namespace, function (err, obj) {
+    adapter.getForeignObject('system.adapter.' + adapter.namespace, (err, obj) => {
         if (err) adapter.log.error('[getForeignObject]: ' + err);
         if (obj) {
             obj.common.enabled = false;
-            setTimeout(function () {
-                adapter.setForeignObject(obj._id, obj, function (err) {
+            setTimeout(() => {
+                adapter.setForeignObject(obj._id, obj, err => {
                     if (err) adapter.log.error('[setForeignObject]: ' + err);
                     process.exit();
                 });
@@ -601,12 +600,10 @@ function connect() {
         reconnectionDelayMax: 120000
     });
 
-    socket.on('connect_error', function (error) {
-      adapter.log.error('Error while connecting to cloud: ' + error);
-    });
+    socket.on('connect_error', error => adapter.log.error('Error while connecting to cloud: ' + error));
 
     // cannot use "pong" because reserved by socket.io
-    socket.on('pongg', function (/*error*/) {
+    socket.on('pongg', (/*error*/) => {
         clearTimeout(detectDisconnect);
         detectDisconnect = null;
     });
@@ -614,30 +611,27 @@ function connect() {
     let server      = 'http://localhost:8082';
     let adminServer = 'http://localhost:8081';
 
-    socket.on('html', function (url, cb) {
+    socket.on('html', (url, cb) => {
         if (url.match(/^\/admin\//)) {
             if (adminServer && adapter.config.allowAdmin) {
                 url = url.substring(6);
-                request({url: adminServer + url, encoding: null}, function (error, response, body) {
-                    cb(error, response ? response.statusCode : 501, response ? response.headers : [], body);
-                });
+                request({url: adminServer + url, encoding: null}, (error, response, body) =>
+                    cb(error, response ? response.statusCode : 501, response ? response.headers : [], body));
             } else {
                 cb('Enable admin in cloud settings. And only pro.', 404, [], 'Enable admin in cloud settings. And only pro.');
             }
         } else if (adminServer && adapter.config.allowAdmin && url.match(/^\/adapter\/|^\/lib\/js\/ace-|^\/lib\/js\/cron\/|^\/lib\/js\/jqGrid\//)) {
-            request({url: adminServer + url, encoding: null}, function (error, response, body) {
-                cb(error, response ? response.statusCode : 501, response ? response.headers : [], body);
-            });
+            request({url: adminServer + url, encoding: null}, (error, response, body) =>
+                cb(error, response ? response.statusCode : 501, response ? response.headers : [], body));
         } else if (server) {
-            request({url: server + url, encoding: null}, function (error, response, body) {
-                cb(error, response ? response.statusCode : 501, response ? response.headers : [], body);
-            });
+            request({url: server + url, encoding: null}, (error, response, body) =>
+                cb(error, response ? response.statusCode : 501, response ? response.headers : [], body));
         } else {
             cb('Admin or Web are inactive.', 404, [], 'Admin or Web are inactive.');
         }
     });
 
-    socket.on('alexa', function (request, callback) {
+    socket.on('alexa', (request, callback) => {
         adapter.log.debug(new Date().getTime() + ' ALEXA: ' + JSON.stringify(request));
 
         if (request && request.directive) {
@@ -651,15 +645,11 @@ function connect() {
 
     socket.on('ifttt', processIfttt);
 
-    socket.on('iftttError', function (error) {
-        adapter.log.error('Error from IFTTT: ' + JSON.stringify(error));
-    });
+    socket.on('iftttError', error => adapter.log.error('Error from IFTTT: ' + JSON.stringify(error)));
 
-    socket.on('cloudError', function (error) {
-        adapter.log.error('Cloud says: ' + error);
-    });
+    socket.on('cloudError', error => adapter.log.error('Cloud says: ' + error));
 
-    socket.on('service', function (data, callback) {
+    socket.on('service', (data, callback) => {
         adapter.log.debug('service: ' + JSON.stringify(data));
         // supported services:
         // - text2command
@@ -680,9 +670,8 @@ function connect() {
             if (adapter.config.allowedServices[0] === '*' || adapter.config.allowedServices.indexOf(data.name) !== -1) {
                 if (!isCustom && data.name === 'text2command') {
                     if (adapter.config.text2command !== undefined && adapter.config.text2command !== '') {
-                        adapter.setForeignState('text2command.' + adapter.config.text2command + '.text', decodeURIComponent(data.data), function (err) {
-                            callback && callback({result: err || 'Ok'});
-                        });
+                        adapter.setForeignState('text2command.' + adapter.config.text2command + '.text', decodeURIComponent(data.data), err =>
+                            callback && callback({result: err || 'Ok'}));
                     } else {
                         adapter.log.warn('Received service text2command, but instance is not defined');
                         callback && callback({error: 'but instance is not defined'});
@@ -690,7 +679,7 @@ function connect() {
                 } else if (!isCustom && data.name === 'simpleApi') {
                     callback && callback({error: 'not implemented'});
                 } else if (isCustom) {
-                    adapter.getObject('services.custom_' + data.name, function (err, obj) {
+                    adapter.getObject('services.custom_' + data.name, (err, obj) => {
                         if (!obj) {
                             adapter.setObject('services.custom_' + data.name, {
                                 _id: adapter.namespace + '.services.custom_' + data.name,
@@ -703,19 +692,15 @@ function connect() {
                                     role: 'value'
                                 },
                                 native: {}
-                            }, function (err) {
+                            }, err => {
                                 if (!err) {
-                                    adapter.setState('services.custom_' + data.name, data.data, false, function (err) {
-                                        callback && callback({result: err || 'Ok'});
-                                    });
+                                    adapter.setState('services.custom_' + data.name, data.data, false, err => callback && callback({result: err || 'Ok'}));
                                 } else {
                                     callback && callback({result: err});
                                 }
                             });
                         } else {
-                            adapter.setState('services.custom_' + data.name, data.data, false, function (err) {
-                                callback && callback({result: err || 'Ok'});
-                            });
+                            adapter.setState('services.custom_' + data.name, data.data, false, err => callback && callback({result: err || 'Ok'}));
                         }
                     });
                 } else {
@@ -728,16 +713,14 @@ function connect() {
         }
     });
 
-    socket.on('error', function (error) {
-        startConnect();
-    });
+    socket.on('error', error => startConnect());
 
     if (adapter.config.instance) {
         if (adapter.config.instance.substring(0, 'system.adapter.'.length) !== 'system.adapter.') {
             adapter.config.instance = 'system.adapter.' + adapter.config.instance;
         }
 
-        adapter.getForeignObject(adapter.config.instance, function (err, obj) {
+        adapter.getForeignObject(adapter.config.instance, (err, obj) => {
             if (obj && obj.common && obj.native) {
                 if (obj.common.auth) {
                     adapter.log.error('Cannot activate web for cloud, because authentication is enabled. Please create extra instance for cloud');
@@ -758,7 +741,7 @@ function connect() {
         });
 
         if (adapter.config.allowAdmin) {
-            adapter.getForeignObject(adapter.config.allowAdmin, function (err, obj) {
+            adapter.getForeignObject(adapter.config.allowAdmin, (err, obj) => {
                 if (obj && obj.common && obj.native) {
                     if (obj.common.auth) {
                         adapter.log.error('Cannot activate admin for cloud, because authentication is enabled. Please create extra instance for cloud');
@@ -789,9 +772,9 @@ function createInstancesStates(callback, objs) {
         callback();
     } else {
         var obj = objs.shift();
-        adapter.getObject(obj._id, function (err, _obj) {
+        adapter.getObject(obj._id, (err, _obj) => {
             if (!_obj) {
-                adapter.setObject(obj._id, obj, function (err) {
+                adapter.setObject(obj._id, obj, err => {
                     if (err) adapter.log.error('Cannot setObject: ' + err);
                     setImmediate(createInstancesStates, callback, objs);
                 });
@@ -839,7 +822,7 @@ function main() {
     alexaCustom = new AlexaCustom(adapter);
 
     // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-    adapter.getForeignObject('system.config', function (err, obj) {
+    adapter.getForeignObject('system.config', (err, obj) => {
         if (adapter.config.language) {
             translate = true;
             lang = adapter.config.language;
@@ -874,7 +857,7 @@ function main() {
     if (adapter.config.iftttKey) {
         adapter.subscribeStates('services.ifttt');
         // create ifttt object
-        adapter.getObject('services.ifttt', function (err, obj) {
+        adapter.getObject('services.ifttt', (err, obj) => {
             if (!obj) {
                 adapter.setObject('services.ifttt', {
                     _id: adapter.namespace + '.services.ifttt',
@@ -895,7 +878,7 @@ function main() {
 
     adapter.subscribeStates('smart.*');
 
-    adapter.getState('smart.alexaDisabled', function (err, state) {
+    adapter.getState('smart.alexaDisabled', (err, state) => {
         if (!state || state.val === null || state.val === 'null') {
             // init value with false
             adapter.setState('smart.alexaDisabled', alexaDisabled, true);
@@ -903,7 +886,7 @@ function main() {
             alexaDisabled = state.val === true || state.val === 'true';
         }
     });
-    adapter.getState('smart.googleDisabled', function (err, state) {
+    adapter.getState('smart.googleDisabled', (err, state) => {
         if (!state || state.val === null || state.val === 'null') {
             // init value with false
             adapter.setState('smart.googleDisabled', googleDisabled, true);
@@ -914,7 +897,7 @@ function main() {
 
     adapter.log.info('Connecting with ' + adapter.config.cloudUrl + ' with "' + adapter.config.apikey + '"');
 
-    adapter.getForeignObject('system.meta.uuid', function (err, obj) {
+    adapter.getForeignObject('system.meta.uuid', (err, obj) => {
         if (obj && obj.native) {
             uuid = obj.native.uuid;
         }

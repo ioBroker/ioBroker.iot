@@ -164,6 +164,9 @@ You may write "text2command" in white list, you can send POST request to ```http
 *to do*
 
 ## Changelog
+### 2.7.0 (2018-06-18)
+* (bluefox) Multilingual names were corrected
+
 ### 2.6.2 (2018-06-18)
 * (Apollon77/AlCalzone/Bluefox) Several fixes
 
