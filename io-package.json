@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "cloud",
-        "version": "2.7.0",
+        "version": "2.7.1",
         "title": "Cloud connection",
         "titleLang": {
             "en": "Cloud connection",
@@ -24,6 +24,17 @@
             "it": "Collega il tuo server ioBroker al cloud ioBroker"
         },
         "news": {
+            "2.7.1": {
+                "en": "Enhancements for Custom Skill",
+                "de": "Verbesserungen für Custom Skill",
+                "ru": "Улучшения для Custom Skill",
+                "pt": "Melhorias para o Custom Skill",
+                "nl": "Verbeteringen voor Custom Skill",
+                "fr": "Améliorations pour les Custom Skill",
+                "it": "Miglioramenti per Custom Skill",
+                "es": "Mejoras para Custom Skill",
+                "pl": "Rozszerzenia dla Custom Skill"
+            },
             "2.7.0": {
                 "en": "Multilingual names were corrected",
                 "de": "Mehrsprachige Namen wurden korrigiert",
