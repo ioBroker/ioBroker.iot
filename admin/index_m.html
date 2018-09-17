@@ -971,13 +971,14 @@
     }
 
     function updateIfttt() {
-        var key = $('#apikey').val().trim();
+        /*var key = $('#apikey').val().trim();
         $('#ifttt_link').html('https://iobroker.' + (key.match(/^@pro_/) ? 'pro' : 'net') + '/ifttt/' + key);
         $('#service_link').html('https://iobroker.' + (key.match(/^@pro_/) ? 'pro' : 'net') + '/service/custom_&lt;NAME&gt;/' + key + '/&lt;data&gt;');
+        */
     }
 
     function updateUrl() {
-        var isPro = $('#apikey').val().match(/^@pro_/);
+        /*var isPro = $('#apikey').val().match(/^@pro_/);
         var $noCommon = $('#noCommon');
         if (isPro) {
             $('#cloudUrl').prop('disabled', true);
@@ -992,6 +993,7 @@
                 $noCommon.prop('checked', false).trigger('change');
             }
         }
+        */
     }
 
     function checkAuthForInstance(id, value) {
@@ -1054,8 +1056,8 @@
         if (settings.noCommon === undefined) settings.noCommon = false;
         if (settings.pingTimeout === undefined) settings.pingTimeout = 5000;
 
-        if (settings.password) {
-            settings.password = decrypt((typeof systemConfig !== 'undefined' && systemConfig.native && systemConfig.native.secret) || 'Zgfr56gFe87jJOM', settings.password);
+        if (settings.pass) {
+            settings.pass = decrypt((typeof systemConfig !== 'undefined' && systemConfig.native && systemConfig.native.secret) || 'Zgfr56gFe87jJOM', settings.pass);
         }
 
         noCommon = settings.noCommon;
@@ -1312,8 +1314,10 @@
 
     function save(callback) {
         var obj = {};
-        var $apiKey = $('#apikey');
-        $apiKey.val($apiKey.val().trim());
+        //var $apiKey = $('#apikey');
+        //$apiKey.val($apiKey.val().trim());
+        var $login = $('#login');
+        $login.val($login.val().trim());
         $('.value').each(function () {
             var $this = $(this);
             var id = $this.attr('id');
@@ -1321,7 +1325,7 @@
                 obj[id] = $this.prop('checked');
             } else {
                 var value = $this.val();
-                if (id === 'password') {
+                if (id === 'pass') {
                     value = encrypt((typeof systemConfig !== 'undefined' && systemConfig.native && systemConfig.native.secret) || 'Zgfr56gFe87jJOM', value);
                 }
                 obj[id] = value;

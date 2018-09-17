@@ -1,6 +1,6 @@
 {
     "common": {
-        "name": "cloud",
+        "name": "iot",
         "version": "0.1.0",
         "title": "Cloud MQTT connection",
         "titleLang": {
@@ -68,7 +68,7 @@
     },
     "native": {
         "login": "email.com",
-        "password": "",
+        "pass": "",
         "language": "",
         "cloudUrl": "a18wym7vjdl22g.iot.eu-central-1.amazonaws.com",
         "functionFirst": false,
@@ -219,6 +219,67 @@
             "type": "channel",
             "common": {
                 "name": "Information"
+            },
+            "native": {}
+        },
+        {
+            "_id": "certs",
+            "type": "channel",
+            "common": {
+                "expert": true,
+                "name": "Certificates"
+            },
+            "native": {}
+        },
+        {
+            "_id": "certs.id",
+            "type": "state",
+            "common": {
+                "expert": true,
+                "role": "state",
+                "name": "Certificate ID",
+                "type": "string",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "certs.public",
+            "type": "state",
+            "common": {
+                "expert": true,
+                "role": "state",
+                "name": "Public key",
+                "type": "string",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "certs.private",
+            "type": "state",
+            "common": {
+                "expert": true,
+                "role": "state",
+                "name": "Private key",
+                "type": "string",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "certs.certificate",
+            "type": "state",
+            "common": {
+                "expert": true,
+                "role": "state",
+                "name": "Certificate",
+                "type": "string",
+                "read": true,
+                "write": false
             },
             "native": {}
         }

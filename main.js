@@ -24,6 +24,7 @@ let connected     = false;
 let uuid          = null;
 let alexaDisabled = false;
 let googleDisabled = false;
+let secret;
 
 let adapter       = new utils.Adapter({
     name: 'iot',
@@ -106,7 +107,7 @@ let adapter       = new utils.Adapter({
             }
         }
     },
-    ready: () => createInstancesStates(() => main())
+    ready: () => main()
 });
 
 function sendDataToIFTTT(obj) {
@@ -394,36 +395,72 @@ function connect() {
     }
 }
 */
-function createInstancesStates(callback, objs) {
-    if (!objs) {
-        objs = pack.instanceObjects;
-    }
-    if (!objs || !objs.length) {
-        callback();
-    } else {
-        var obj = objs.shift();
-        adapter.getObject(obj._id, (err, _obj) => {
-            if (!_obj) {
-                adapter.setObject(obj._id, obj, err => {
-                    if (err) adapter.log.error('Cannot setObject: ' + err);
-                    setImmediate(createInstancesStates, callback, objs);
-                });
-            } else {
-                setImmediate(createInstancesStates, callback, objs);
-            }
-        });
-    }
-}
 
-function decrypt(key, value) {
+function encrypt(key, value) {
     let result = '';
-    for (let i = 0; i < value.length; i++) {
+    for(let i = 0; i < value.length; i++) {
         result += String.fromCharCode(key[i % key.length].charCodeAt(0) ^ value.charCodeAt(i));
     }
     return result;
 }
 
-function fetchKeys(clientId) {
+function decrypt(key, value) {
+    let result = '';
+    for(let i = 0; i < value.length; i++) {
+        result += String.fromCharCode(key[i % key.length].charCodeAt(0) ^ value.charCodeAt(i));
+    }
+    return result;
+}
+
+function readKeys() {
+    return new Promise((resolve, reject) => {
+        adapter.getState('certs.private', (err, priv) => {
+            if (err || !priv || !priv.val) {
+                reject(err || 'Not exists');
+            } else {
+                adapter.getState('certs.certificate', (err, certificate) => {
+                    if (err || !certificate || !certificate.val) {
+                        reject(err || 'Not exists');
+                    } else {
+                        resolve({private: decrypt(secret, priv.val), certificate: decrypt(secret, certificate.val)});
+                    }
+                });
+            }
+        });
+    });
+}
+
+function writeKeys(data) {
+    return new Promise((resolve, reject) => {
+        adapter.setState('certs.private', encrypt(secret, data.keyPair.PrivateKey), true, err => {
+            if (err) {
+                reject(err);
+            } else {
+                adapter.setState('certs.public', encrypt(secret, data.keyPair.PublicKey), true, err => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        adapter.setState('certs.certificate', encrypt(secret, data.certificatePem), true, err => {
+                            if (err) {
+                                reject(err);
+                            } else {
+                                adapter.setState('certs.id', data.certificateId, true, err => {
+                                    if (err) {
+                                        reject(err);
+                                    } else {
+                                        resolve(data);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        })
+    });
+}
+
+function fetchKeys(login, pass) {
     return new Promise((resolve, reject) => {
         let done = false;
         let timeout = setTimeout(() => {
@@ -432,12 +469,12 @@ function fetchKeys(clientId) {
                 reject('timeout');
             }
             req.abort();
-        }, 1500);
+        }, 3000);
 
         let req = request.get('https://iobroker.pro:3001/getCertificates', {
             auth: {
-                user: adapter.config.login,
-                pass: adapter.config.password,
+                user: login,
+                pass: pass,
                 sendImmediately: true
             }
         }, (error, response, body) => {
@@ -454,64 +491,70 @@ function fetchKeys(clientId) {
                 } catch (e) {
                     return reject('Cannot parse answer: ' + JSON.stringify(e));
                 }
-                const keysPath = __dirname + '/keys/' + clientId;
-                if (!fs.existsSync(keysPath)) {
-                    fs.mkdirSync(keysPath);
-                }
-                fs.writeFileSync(keysPath + '/cert.pem', data.certificatePem);
-                fs.writeFileSync(keysPath + '/public.pem', data.keyPair.PublicKey);
-                fs.writeFileSync(keysPath + '/private.pem', data.keyPair.PrivateKey);
-                resolve();
+                writeKeys(data)
+                    .then(() => resolve({private: data.keyPair.PrivateKey, certificate: data.certificatePem}));
             }
         });
     });
 }
 
-function startDevice(clientId) {
-    if (!fs.existsSync(`${__dirname}/keys/${clientId}/private.pem`)) {
-        return fetchKeys(err => !err && startDevice());
-    } else {
-        device = new DeviceModule({
-            privateKey: fs.readFileSync(`${__dirname}/keys/${clientId}/private.pem`),
-            clientCert: fs.readFileSync(`${__dirname}/keys/${clientId}/cert.pem`),
-            caCert:     fs.readFileSync(__dirname + '/keys/root-CA.crt'),
-            clientId:   adapter.config.login,
-            username:   'ioBroker',
-            host:       'a18wym7vjdl22g.iot.eu-central-1.amazonaws.com',
-            debug:      false
-        });
-
-        device.subscribe('response/' + clientId + '/#');
-        device.on('connect', onConnect);
-        device.on('close', onDisconnect);
-        device.on('reconnect', () => adapter.log.debug('reconnect'));
-        device.on('offline', () => adapter.log.debug('offline'));
-        device.on('error', error => adapter.log.error(error));
-        device.on('message', (topic, request) => {
-            if (topic.startsWith('response/' + clientId + '/')) {
-                const type = topic.substring(clientId.length + 10);
-                if (type === 'alexa') {
-                    adapter.log.debug(new Date().getTime() + ' ALEXA: ' + JSON.stringify(request));
-
-                    if (request && request.directive) {
-                        alexaSH3.process(request, !alexaDisabled, response =>
-                            device.publish('response/' + clientId + '/alexa', JSON.stringify(response)));
-                    }
-                    if (request && !request.header) {
-                        alexaCustom.process(request, !alexaDisabled, response =>
-                            device.publish('response/' + clientId + '/alexa', JSON.stringify(response)));
-                    } else {
-                        alexaSH2.process(request, !alexaDisabled, response =>
-                            device.publish('response/' + clientId + '/alexa', JSON.stringify(response)));
-                    }
-                } else if (type === 'ifttt') {
-
-                } else {
-                    device.publish('response/' + clientId + '/' + type, JSON.stringify({error: 'Unknown service'}));
-                }
+function startDevice(clientId, login, password) {
+    readKeys()
+        .catch(e => {
+            if (e === 'Not exists') {
+                return fetchKeys(login, password);
+            } else {
+                throw new Error(e);
             }
-        });
-    }
+        })
+        .then(certs => {
+            device = new DeviceModule({
+                privateKey: new Buffer(certs.private),
+                clientCert: new Buffer(certs.certificate),
+                caCert:     fs.readFileSync(__dirname + '/keys/root-CA.crt'),
+                clientId:   clientId,
+                username:   'ioBroker',
+                host:       'a18wym7vjdl22g.iot.eu-central-1.amazonaws.com',
+                debug:      false
+            });
+
+            device.subscribe('command/' + clientId + '/#');
+            device.on('connect', onConnect);
+            device.on('close', onDisconnect);
+            device.on('reconnect', () => adapter.log.debug('reconnect'));
+            device.on('offline', () => adapter.log.debug('offline'));
+            device.on('error', error => adapter.log.error(error));
+            device.on('message', (topic, request) => {
+                adapter.log.debug(`Request ${topic}`);
+                if (topic.startsWith('command/' + clientId + '/')) {
+                    const type = topic.substring(clientId.length + 9);
+                    try {
+                        request = JSON.parse(request.toString());
+                    } catch (e) {
+                        return adapter.log.error('Cannot parse request: ' + request);
+                    }
+                    if (type === 'alexa') {
+                        adapter.log.debug(new Date().getTime() + ' ALEXA: ' + JSON.stringify(request));
+
+                        if (request && request.directive) {
+                            alexaSH3.process(request, !alexaDisabled, response =>
+                                device.publish('response/' + clientId + '/alexa', JSON.stringify(response)));
+                        }
+                        if (request && !request.header) {
+                            alexaCustom.process(request, !alexaDisabled, response =>
+                                device.publish('response/' + clientId + '/alexa', JSON.stringify(response)));
+                        } else {
+                            alexaSH2.process(request, !alexaDisabled, response =>
+                                device.publish('response/' + clientId + '/alexa', JSON.stringify(response)));
+                        }
+                    } else if (type === 'ifttt') {
+
+                    } else {
+                        device.publish('response/' + clientId + '/' + type, JSON.stringify({error: 'Unknown service'}));
+                    }
+                }
+            });
+        }).catch(e => adapter.log.error(e));
 }
 
 function main() {
@@ -549,7 +592,7 @@ function main() {
     adapter.setState('info.connection', false, true);
     adapter.config.cloudUrl = adapter.config.cloudUrl || 'a18wym7vjdl22g.iot.eu-central-1.amazonaws.com';
 
-    if (!adapter.config.login || !adapter.config.password) {
+    if (!adapter.config.login || !adapter.config.pass) {
         adapter.log.error('No cloud credentials found. Please get one on https://iobroker.net');
         return;
     }
@@ -610,12 +653,13 @@ function main() {
         alexaSH3.updateDevices();
         alexaCustom.setLanguage(lang);
 
-        adapter.getForeignObject('system.meta.uuid', (err, obj) => {
-            adapter.config.password = decrypt((obj && obj.native && obj.native.secret) || 'Zgfr56gFe87jJOM', adapter.config.password);
-            if (obj && obj.native) {
-                uuid = obj.native.uuid;
+        adapter.getForeignObject('system.meta.uuid', (err, oUuid) => {
+            secret = (obj && obj.native && obj.native.secret) || 'Zgfr56gFe87jJOM';
+            adapter.config.pass = decrypt(secret, adapter.config.pass);
+            if (oUuid && oUuid.native) {
+                uuid = oUuid.native.uuid;
             }
-            startDevice(adapter.config.login.replace(/[^-_:a-zA-Z1-9]/g, '_'));
+            startDevice(adapter.config.login.replace(/[^-_:a-zA-Z1-9]/g, '_'), adapter.config.login, adapter.config.pass);
         });
     });
 }
