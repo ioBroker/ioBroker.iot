@@ -1,31 +1,31 @@
 {
-  "name": "iobroker.cloud",
-  "version": "2.7.1",
-  "description": "This adapter allows to communicate different web applications with ioBroker.",
+  "name": "iobroker.iot",
+  "version": "0.1.0",
+  "description": "This adapter allows to communicate a web applications with ioBroker.",
   "author": {
     "name": "bluefox",
     "email": "dogafox@gmail.com"
   },
-  "homepage": "https://github.com/ioBroker/ioBroker.cloud",
+  "homepage": "https://github.com/ioBroker/ioBroker.iot",
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://github.com/ioBroker/ioBroker.cloud/blob/master/LICENSE"
+      "url": "https://github.com/ioBroker/ioBroker.iot/blob/master/LICENSE"
     }
   ],
   "keywords": [
     "ioBroker",
+    "mqtt",
+    "aws",
     "cloud",
     "web"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/ioBroker/ioBroker.cloud"
+    "url": "https://github.com/ioBroker/ioBroker.iot"
   },
   "dependencies": {
-    "socket.io": "~1.7.0",
-    "socket.io-client": "~1.7.0",
-    "cookie-parser": "^1.4.3",
+    "aws-iot-device-sdk": "^2.2.1",
     "request": "^2.88.0"
   },
   "devDependencies": {
@@ -35,7 +35,7 @@
     "chai": "^4.1.2"
   },
   "bugs": {
-    "url": "https://github.com/ioBroker/ioBroker.cloud/issues"
+    "url": "https://github.com/ioBroker/ioBroker.iot/issues"
   },
   "main": "main.js",
   "scripts": {

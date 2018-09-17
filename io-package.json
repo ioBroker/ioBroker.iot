@@ -1,182 +1,41 @@
 {
     "common": {
         "name": "cloud",
-        "version": "2.7.1",
-        "title": "Cloud connection",
+        "version": "0.1.0",
+        "title": "Cloud MQTT connection",
         "titleLang": {
-            "en": "Cloud connection",
-            "de": "Cloud-Verbindung",
-            "ru": "Облачное соединение",
-            "pt": "Conexão em nuvem",
-            "nl": "Cloud verbinding",
-            "fr": "Connexion au cloud",
-            "it": "Connessione cloud",
-            "es": "Conexión a la nube",
-            "pl": "Połączenie w chmurze"
+            "en": "Cloud MQTT connection",
+            "de": "Cloud MQTT-Verbindung",
+            "ru": "Соединение Cloud MQTT",
+            "pt": "Conexão Cloud MQTT",
+            "nl": "Cloud MQTT-verbinding",
+            "fr": "Connexion Cloud MQTT",
+            "it": "Connessione Cloud MQTT",
+            "es": "Conexión MQTT en la nube",
+            "pl": "Połączenie Cloud MQTT"
         },
         "desc": {
-            "en": "Connects your ioBroker server to the ioBroker cloud",
-            "de": "Verbindet Ihren ioBroker-Server mit der ioBroker-Cloud",
-            "ru": "Подключает сервер ioBroker к облаку ioBroker",
-            "pt": "Conecta seu servidor ioBroker à nuvem ioBroker",
-            "nl": "Verbindt uw ioBroker-server met de ioBroker-cloud",
-            "fr": "Connecte votre serveur ioBroker au cloud ioBroker",
-            "it": "Collega il tuo server ioBroker al cloud ioBroker"
+            "en": "Connects your ioBroker server to the ioBroker IoT cloud",
+            "de": "Verbindet Ihren ioBroker-Server mit der ioBroker IoT-Cloud",
+            "ru": "Соединяет ваш сервер ioBroker с облаком ioBroker IoT",
+            "pt": "Conecta seu servidor ioBroker à nuvem IoT do ioBroker",
+            "nl": "Verbindt uw ioBroker-server met de ioBroker IoT-cloud",
+            "fr": "Connecte votre serveur ioBroker au cloud ioBroker IoT",
+            "it": "Collega il tuo server ioBroker al cloud IoT IoBroker",
+            "es": "Conecta su servidor ioBroker a la nube ioBroker IoT",
+            "pl": "Łączy twój serwer ioBroker z chmurą IoT ioBroker"
         },
         "news": {
-            "2.7.1": {
-                "en": "Enhancements for Custom Skill",
-                "de": "Verbesserungen für Custom Skill",
-                "ru": "Улучшения для Custom Skill",
-                "pt": "Melhorias para o Custom Skill",
-                "nl": "Verbeteringen voor Custom Skill",
-                "fr": "Améliorations pour les Custom Skill",
-                "it": "Miglioramenti per Custom Skill",
-                "es": "Mejoras para Custom Skill",
-                "pl": "Rozszerzenia dla Custom Skill"
-            },
-            "2.7.0": {
-                "en": "Multilingual names were corrected",
-                "de": "Mehrsprachige Namen wurden korrigiert",
-                "ru": "Исправлены многоязычные имена",
-                "pt": "Nomes multilíngües foram corrigidos",
-                "nl": "Meertalige namen werden gecorrigeerd",
-                "fr": "Les noms multilingues ont été corrigés",
-                "it": "I nomi multilingue sono stati corretti",
-                "es": "Los nombres multilingües fueron corregidos",
-                "pl": "Poprawiono wielojęzyczne nazwy"
-            },
-            "2.6.2": {
-                "en": "Several fixes",
-                "de": "Mehrere Korrekturen",
-                "ru": "Несколько исправлений",
-                "pt": "Várias correções",
-                "nl": "Verschillende oplossingen",
-                "fr": "Plusieurs corrections",
-                "it": "Diverse correzioni",
-                "es": "Varias correcciones",
-                "pl": "Kilka poprawek"
-            },
-            "2.6.1": {
-                "en": "Support of custom alexa skill",
-                "de": "Unterstützung von custom alexa skill",
-                "ru": "Поддержка custom alexa skill",
-                "pt": "Suporte de custom alexa skill",
-                "nl": "Ondersteuning van custom alexa skill",
-                "fr": "Prise en charge de la compétence alexa personnalisée",
-                "it": "Supporto dell'abilità di alexa personalizzata",
-                "es": "Soporte de habilidad personalizada de alexa",
-                "pl": "Obsługa niestandardowych umiejętności alexa"
-            },
-            "2.5.0": {
-                "en": "Added actions on commands from server: wait, stop, redirect",
-                "de": "Aktionen für Befehle vom Server hinzugefügt: wait, stop, redirect",
-                "ru": "Добавлены действия с командами с сервера: wait, stop, redirect",
-                "pt": "Ações adicionadas em comandos do servidor: aguarde, pare, redirecione",
-                "nl": "Acties toegevoegd aan opdrachten van server: wachten, stoppen, omleiden",
-                "fr": "Actions ajoutées sur les commandes du serveur: attente, arrêt, redirection",
-                "it": "Aggiunte azioni sui comandi dal server: attendere, arrestare, reindirizzare",
-                "es": "Acciones agregadas en los comandos del servidor: esperar, detener, redirigir",
-                "pl": "Dodano akcje na komendach z serwera: wait, stop, przekierowanie"
-            },
-            "2.4.7": {
-                "en": "Small changes in the configuration dialog\nInformation about the expiring of remote access was added",
-                "de": "Kleine Änderungen im Konfigurationsdialog\nInformationen zum Ablauf des Remote-Zugriffs wurden hinzugefügt",
-                "ru": "Небольшие изменения в диалоговом окне конфигурации\nДобавлена ​​информация об истечении удаленного доступа",
-                "pt": "Pequenas mudanças no diálogo de configuração\nForam adicionadas informações sobre o acesso remoto de acesso remoto",
-                "nl": "Kleine wijzigingen in het configuratievenster\nInformatie over het verlopen van externe toegang is toegevoegd",
-                "fr": "Petits changements dans la boîte de dialogue de configuration\nInformations sur l'expiration de l'accès à distance a été ajouté",
-                "it": "Piccole modifiche nella finestra di configurazione\nSono state aggiunte informazioni sulla scadenza dell'accesso remoto",
-                "es": "Pequeños cambios en el diálogo de configuración\nSe agregó información sobre el vencimiento del acceso remoto",
-                "pl": "Małe zmiany w oknie konfiguracji\nDodano informację o wygaśnięciu dostępu zdalnego"
-            },
-            "2.4.6": {
-                "en": "Adding of new devices is fixed",
-                "de": "Hinzufügen neuer Geräte ist behoben",
-                "ru": "Исправлено добавление новых устройств",
-                "pt": "A adição de novos dispositivos é fixa",
-                "nl": "Het toevoegen van nieuwe apparaten is opgelost",
-                "fr": "L'ajout de nouveaux appareils est fixé",
-                "it": "L'aggiunta di nuovi dispositivi è stata corretta",
-                "es": "Se fija la adición de nuevos dispositivos",
-                "pl": "Dodawanie nowych urządzeń zostało naprawione"
-            },
-            "2.4.5": {
-                "en": "Changes for Admin 3 ",
-                "de": "Änderungen für Admin 3",
-                "ru": "Изменения для Admin 3",
-                "pt": "Mudanças para Admin 3",
-                "nl": "Wijzigingen voor Admin 3",
-                "fr": "Changements pour l'Admin 3",
-                "it": "Modifiche per l'Admin 3",
-                "es": "Cambios para Admin 3",
-                "pl": "Zmiany dla Admin 3"
-            },
-            "2.4.4": {
-                "en": "The errors by controlling of temperature are caught now",
-                "de": "Die Fehler durch Kontrolle der Temperatur werden jetzt gefangen",
-                "ru": "Ошибки, связанные с контролем температуры, теперь пойманы",
-                "pt": "Os erros pelo controle da temperatura são capturados agora",
-                "nl": "De fouten door het beheersen van de temperatuur worden nu opgevangen",
-                "fr": "Les erreurs en contrôlant de la température sont prises maintenant",
-                "it": "Gli errori controllando la temperatura vengono catturati ora",
-                "es": "Los errores por control de temperatura se detectan ahora",
-                "pl": "Błędy poprzez kontrolę temperatury są teraz wychwytywane"
-            },
-            "2.4.2": {
-                "en": "Do not subscribe all objects",
-                "de": "Abonniert nicht alle Objekte",
-                "ru": "Не подписывается на все объекты",
-                "pt": "Não inscreva todos os objetos",
-                "nl": "Abonneer u niet op alle objecten",
-                "fr": "Ne pas abonner tous les objets",
-                "it": "Non iscrivere tutti gli oggetti",
-                "es": "No suscribas todos los objetos",
-                "pl": "Nie subskrybuj wszystkich obiektów"
-            },
-            "2.2.0": {
-                "en": "Better update of the devices in configuration dialog",
-                "de": "Bessere Aktualisierung der Geräte im Konfigurationsdialog",
-                "ru": "Лучшее обновление устройств в диалоговом окне конфигурации",
-                "pt": "Melhor atualização dos dispositivos no diálogo de configuração",
-                "nl": "Betere update van de apparaten in configuratiedialoog",
-                "fr": "Meilleure mise à jour des périphériques dans la boîte de dialogue de configuration",
-                "it": "Migliore aggiornamento dei dispositivi nella finestra di configurazione"
-            },
-            "2.1.1": {
-                "en": "add settings for the ping timeout\nupdate readme for IFTTT\ncorrected some spelling mistakes",
-                "de": "Ping Timeout Einstellungen hinzugefügt",
-                "ru": "Добавлены настройки для таймаута пинга"
-            },
-            "2.1.0": {
-                "en": "Allow to disable alexa service by state",
-                "de": "Erlaube das Alexaservice zu deaktivieren",
-                "ru": "Возможность выключить сервис alexa через состояние"
-            },
-            "2.0.8": {
-                "en": "Translations",
-                "de": "Übersetzungen",
-                "ru": "Перевод"
-            },
-            "2.0.7": {
-                "en": "Changes for socket-io",
-                "de": "Änderungen für socket-io",
-                "ru": "Изменения для socket-io"
-            },
-            "2.0.6": {
-                "en": "Fix small error in configuration\nSend uuid to cloud for authentication",
-                "de": "Kleine Fehler in Einstellungen korrigiert\nSende System UUID zur Cloud",
-                "ru": "Поправлена маленькая ошибка в диалоге настроек\nОтсылка UUID при соединении"
-            },
-            "2.0.5": {
-                "en": "The small custom service reaction improvement",
-                "de": "Kleine Verbesserung für die benutzerdefinierten Services",
-                "ru": "Небольшое улучшение клиентских сервисов"
-            },
-            "2.0.4": {
-                "en": "Allow access to admin via iobroker.pro\nAdd settings for the connection timeout",
-                "de": "Erlaube den Zugriff auf Admin via iobroker.pro\nVerbindungs-Timeout Einstellungen",
-                "ru": "Доступ к admin через iobroker.pro\nДобавлены настройки таймаута соединения"
+            "0.1.0": {
+                "en": "Initial commit",
+                "de": "Erstes Commit",
+                "ru": "Начальное коммит",
+                "pt": "Commit inicial",
+                "nl": "Eerste commit",
+                "fr": "Commit initial",
+                "it": "Commit iniziale",
+                "es": "Compromiso inicial",
+                "pl": "Wstępne zatwierdzenie"
             }
         },
         "authors": [
@@ -186,15 +45,15 @@
         "platform": "Javascript/Node.js",
         "mode": "daemon",
         "loglevel": "info",
-        "readme": "https://github.com/ioBroker/ioBroker.cloud/blob/master/README.md",
-        "icon": "cloud.png",
+        "readme": "https://github.com/ioBroker/ioBroker.iot/blob/master/README.md",
+        "icon": "iot.png",
         "keywords": [
             "web",
             "Cloud",
             "communication"
         ],
         "enabled": false,
-        "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.cloud/master/admin/cloud.png",
+        "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.iot/master/admin/cloud.png",
         "type": "communication",
         "messagebox": true,
         "stopBeforeUpdate": true,
@@ -205,30 +64,21 @@
             }
         ],
         "preserveSettings": "smartName",
-        "blockly": true,
-        "config": {
-            "width": 1224,
-            "height": 700
-        }
+        "blockly": true
     },
     "native": {
+        "login": "email.com",
+        "password": "",
         "language": "",
-        "apikey": "",
-        "instance": "web.0",
-        "cloudUrl": "https://iobroker.net:10555",
-        "connectionTimeout": 10000,
-        "allowSelfSignedCertificate": true,
+        "cloudUrl": "a18wym7vjdl22g.iot.eu-central-1.amazonaws.com",
         "functionFirst": false,
         "concatWord": "",
         "responseOID": "",
         "restartOnDisconnect": false,
-        "pingTimeout": 5000,
         "iftttKey": "",
         "replaces": "",
-        "allowAI": false,
         "allowedServices": "",
         "text2command": "0",
-        "allowAdmin": "",
         "noCommon": false
     },
     "objects": [],
@@ -247,19 +97,6 @@
             "common": {
                 "role": "indicator.connected",
                 "name": "If connected to cloud",
-                "type": "boolean",
-                "read": true,
-                "write": false,
-                "def": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "info.userOnCloud",
-            "type": "state",
-            "common": {
-                "role": "indicator.connected",
-                "name": "If user is connected over cloud",
                 "type": "boolean",
                 "read": true,
                 "write": false,

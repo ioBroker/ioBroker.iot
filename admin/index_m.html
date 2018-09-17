@@ -51,6 +51,22 @@
     var language;
     var noCommon;
 
+    function encrypt(key, value) {
+        var result = '';
+        for(var i = 0; i < value.length; i++) {
+            result += String.fromCharCode(key[i % key.length].charCodeAt(0) ^ value.charCodeAt(i));
+        }
+        return result;
+    }
+    function decrypt(key, value) {
+        var result = '';
+        for(var i = 0; i < value.length; i++) {
+            result += String.fromCharCode(key[i % key.length].charCodeAt(0) ^ value.charCodeAt(i));
+        }
+        return result;
+    }
+
+
     function getSmartName(states, id) {
         if (!id) {
             if (!noCommon) {
@@ -1038,6 +1054,10 @@
         if (settings.noCommon === undefined) settings.noCommon = false;
         if (settings.pingTimeout === undefined) settings.pingTimeout = 5000;
 
+        if (settings.password) {
+            settings.password = decrypt((typeof systemConfig !== 'undefined' && systemConfig.native && systemConfig.native.secret) || 'Zgfr56gFe87jJOM', settings.password);
+        }
+
         noCommon = settings.noCommon;
 
         actionsMapping.turnOn  = _(actionsMapping.turnOn);
@@ -1296,10 +1316,15 @@
         $apiKey.val($apiKey.val().trim());
         $('.value').each(function () {
             var $this = $(this);
+            var id = $this.attr('id');
             if ($this.attr('type') === 'checkbox') {
-                obj[$this.attr('id')] = $this.prop('checked');
+                obj[id] = $this.prop('checked');
             } else {
-                obj[$this.attr('id')] = $this.val();
+                var value = $this.val();
+                if (id === 'password') {
+                    value = encrypt((typeof systemConfig !== 'undefined' && systemConfig.native && systemConfig.native.secret) || 'Zgfr56gFe87jJOM', value);
+                }
+                obj[id] = value;
             }
         });
         obj.allowedServices = chips2list('.allowedServices');
@@ -1504,25 +1529,19 @@
             <div id="tab-main" class="col s12 page">
                 <div class="row">
                     <div class="col s6">
-                        <img src="cloud.png" class="logo">
+                        <img src="iot.png" class="logo">
                     </div>
                 </div>
                 <div class="row">
                     <div class="input-field col s12 m8">
-                        <input class="value" id="apikey" type="text" style="width: 100%" />
-                        <label for="apikey" class="translate">APP-KEY:</label>
-                        <span class="translate">help_tip</span>
+                        <input class="value" id="login" type="text" style="width: 100%" />
+                        <label for="login" class="translate">ioBroker.pro Login:</label>
                     </div>
-                    <div class="input-field col s12 m4">
-                        <select class="value" id="instance"></select>
-                        <label for="instance" class="translate">Instance:</label>
+                    <div class="input-field col s12 m8">
+                        <input class="value" id="pass" type="password" style="width: 100%" />
+                        <label for="pass" class="translate">ioBroker.pro Password:</label>
                     </div>
                 </div>
-                <!--div class="row">
-                    <div class="col s12">
-                        <span id="instance_tip" class="tip"></span>
-                    </div>
-                </div-->
                 <div class="col s12 m8 offset-m4 l6 offset-l6">
                     <div class="card horizontal z-depth-3">
                         <div class="card-image">
@@ -1538,9 +1557,6 @@
                         </div>
                     </div>
                 </div>
-
-
-
             </div>
             <div id="tab-smart-devices" class="col s12 page">
                 <div class="marg"></div>
@@ -1600,14 +1616,6 @@
                         <label for="cloudUrl" class="translate">Cloud URL:</label>
                     </div>
                     <div class="input-field col s12 m6 l3">
-                        <input class="value" id="connectionTimeout" type="number" min="0" max="100000" />
-                        <label for="connectionTimeout" class="translate">Connection timeout:</label>
-                    </div>
-                    <div class="input-field col s12 m6 l3">
-                        <input class="value" id="pingTimeout" type="number" min="0" />
-                        <label for="pingTimeout" class="translate">Ping timeout:</label>
-                    </div>
-                    <div class="input-field col s12 m6 l3">
                         <select class="value" id="language" data-link="true">
                         <option value=""  class="translate">default</option>
                         <option value="en">english</option>
@@ -1617,10 +1625,6 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="input-field col s12 m6 l4">
-                        <input type="checkbox" class="value" id="allowSelfSignedCertificate" data-link="allow-self-signed-certificates" />
-                        <span for="allowSelfSignedCertificate" class="translate">Allow self-signed certificates:</span>
-                    </div>
                     <div class="input-field col s12 m6 l4">
                         <input type="checkbox" class="value" id="functionFirst" data-link="place-function-in-names-first" />
                         <span for="functionFirst" class="translate">Place function in names first:</span>
@@ -1649,19 +1653,6 @@
                     </div>
                     <div class="col s1 m1 l1">
                         <a id="responseOIDDialog" class="btn"><i class="material-icons">add_circle_outline</i><span></span></a>
-                    </div>
-                    <div class="input-field col s12 m5 offset-m1 l6">
-                        <input class="value" id="restartOnDisconnect" type="checkbox" />
-                        <span for="restartOnDisconnect" class="translate">Restart on disconnect:</span>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="input-field col s12">
-                        <select class="value" id="allowAdmin" data-link="true" style="display: inline-block"></select>
-                        <label for="allowAdmin" class="translate">Allow admin access (only pro):</label>
-                    </div>
-                    <div class="col s12">
-                        <span id="allowAdmin_tip" class="tip"></span>
                     </div>
                 </div>
                 <div class="row">
@@ -1696,7 +1687,7 @@
                 </div>
                 <div class="row">
                     <div class="input-field col s12 m6 l4">
-                        <input id="service_link" type="text" readonly value="https://iobroker.net/service/" />
+                        <input id="service_link" type="text" readonly value="https://iobroker.pro/service/" />
                         <label for="service_link" class="translate">Use following link for custom service:</label>
                     </div>
                     <div class="input-field col s12 m6 l4">
