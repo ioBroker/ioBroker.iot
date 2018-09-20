@@ -471,13 +471,7 @@ function fetchKeys(login, pass) {
             req.abort();
         }, 3000);
 
-        let req = request.get('https://iobroker.pro:3001/getCertificates', {
-            auth: {
-                user: login,
-                pass: pass,
-                sendImmediately: true
-            }
-        }, (error, response, body) => {
+        let req = request.get(`https://32xdul2s3h.execute-api.eu-west-1.amazonaws.com/default/createUser?user=${encodeURIComponent(login)}&pass=${encodeURIComponent(pass)}`, (error, response, body) => {
             clearTimeout(timeout);
             if (error) {
                 if (!done)  {
@@ -514,7 +508,7 @@ function startDevice(clientId, login, password) {
                 caCert:     fs.readFileSync(__dirname + '/keys/root-CA.crt'),
                 clientId:   clientId,
                 username:   'ioBroker',
-                host:       'a18wym7vjdl22g.iot.eu-central-1.amazonaws.com',
+                host:       adapter.config.cloudUrl,
                 debug:      false
             });
 
@@ -590,7 +584,7 @@ function main() {
     }
 
     adapter.setState('info.connection', false, true);
-    adapter.config.cloudUrl = adapter.config.cloudUrl || 'a18wym7vjdl22g.iot.eu-central-1.amazonaws.com';
+    adapter.config.cloudUrl = adapter.config.cloudUrl || 'a18wym7vjdl22g.iot.eu-west-1.amazonaws.com';
 
     if (!adapter.config.login || !adapter.config.pass) {
         adapter.log.error('No cloud credentials found. Please get one on https://iobroker.net');

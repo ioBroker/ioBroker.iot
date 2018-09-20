@@ -70,7 +70,7 @@
         "login": "email.com",
         "pass": "",
         "language": "",
-        "cloudUrl": "a18wym7vjdl22g.iot.eu-central-1.amazonaws.com",
+        "cloudUrl": "a18wym7vjdl22g.iot.eu-west-1.amazonaws.com",
         "functionFirst": false,
         "concatWord": "",
         "responseOID": "",
