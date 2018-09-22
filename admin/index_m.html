@@ -1047,8 +1047,8 @@
     }
 
     function resetCerts() {
-        $('#get_new_certs').addClass('disabled');
         $('#get_new_certs').off('click').on('click', function () {
+            $('#get_new_certs').addClass('disabled');
             socket.emit('setState', 'iot.' + instance + '.certs.private', {val: '', ack: true}, function (err) {
                 if (err) {
                     showError(err);

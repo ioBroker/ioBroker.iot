@@ -1,6 +1,6 @@
 {
   "name": "iobroker.iot",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "This adapter allows to communicate a web applications with ioBroker.",
   "author": {
     "name": "bluefox",

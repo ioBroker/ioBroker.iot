@@ -4,29 +4,29 @@
 'use strict';
 
 const DeviceModule = require('aws-iot-device-sdk').device;
-const utils         = require(__dirname + '/lib/utils'); // Get common adapter utils
-const AlexaSH2      = require(__dirname + '/lib/alexaSmartHomeV2');
-const AlexaSH3      = require(__dirname + '/lib/alexaSmartHomeV3');
-const AlexaCustom   = require(__dirname + '/lib/alexaCustom');
-const pack          = require(__dirname + '/io-package.json');
-const fs            = require('fs');
-const request       = require('request');
+const utils        = require(__dirname + '/lib/utils'); // Get common adapter utils
+const AlexaSH2     = require(__dirname + '/lib/alexaSmartHomeV2');
+const AlexaSH3     = require(__dirname + '/lib/alexaSmartHomeV3');
+const AlexaCustom  = require(__dirname + '/lib/alexaCustom');
+const pack         = require(__dirname + '/io-package.json');
+const fs           = require('fs');
+const request      = require('request');
 
-let recalcTimeout = null;
-let lang          = 'de';
-let translate     = false;
-let alexaSH2      = null;
-let alexaSH3      = null;
-let alexaCustom   = null;
-let device        = null;
+let recalcTimeout  = null;
+let lang           = 'de';
+let translate      = false;
+let alexaSH2       = null;
+let alexaSH3       = null;
+let alexaCustom    = null;
+let device         = null;
 
-let connected     = false;
-let uuid          = null;
-let alexaDisabled = false;
+let connected      = false;
+let uuid           = null;
+let alexaDisabled  = false;
 let googleDisabled = false;
 let secret;
 
-let adapter       = new utils.Adapter({
+let adapter         = new utils.Adapter({
     name: 'iot',
     objectChange: function (id, obj) {
         if (id === 'system.config' && obj && !translate) {
