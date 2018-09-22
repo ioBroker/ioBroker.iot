@@ -526,7 +526,7 @@ function startDevice(clientId, login, password) {
             device.on('close', onDisconnect);
             device.on('reconnect', () => adapter.log.debug('reconnect'));
             device.on('offline', () => adapter.log.debug('offline'));
-            device.on('error', error => adapter.log.error(error));
+            device.on('error', error => adapter.log.error(JSON.stringify(error)));
             device.on('message', (topic, request) => {
                 adapter.log.debug(`Request ${topic}`);
                 if (topic.startsWith('command/' + clientId + '/')) {
@@ -557,7 +557,7 @@ function startDevice(clientId, login, password) {
                     }
                 }
             });
-        }).catch(e => adapter.log.error(e));
+        }).catch(e => adapter.log.error(JSON.stringify(e)));
 }
 
 function main() {

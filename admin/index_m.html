@@ -1045,7 +1045,41 @@
         }
         return text.join(' ');
     }
-    // the function loadSettings has to exist ...
+
+    function resetCerts() {
+        $('#get_new_certs').addClass('disabled');
+        $('#get_new_certs').off('click').on('click', function () {
+            socket.emit('setState', 'iot.' + instance + '.certs.private', {val: '', ack: true}, function (err) {
+                if (err) {
+                    showError(err);
+                    $('#get_new_certs').removeClass('disabled');
+                } else {
+                    socket.emit('setState', 'iot.' + instance + '.certs.id', {val: '', ack: true}, function (err) {
+                        socket.emit('setState', 'iot.' + instance + '.certs.public', {val: '', ack: true}, function (err) {
+                            socket.emit('setState', 'iot.' + instance + '.certs.certificate', {val: '', ack: true}, function (err) {
+                                socket.emit('getObject', 'system.adapter.iot.' + instance, function (err, obj) {
+                                    if (!obj || !obj.common || !obj.common.enabled) {
+                                        $('#get_new_certs').removeClass('disabled');
+                                        showToast(null, _('Certificates will be updated after start'));
+                                    } else {
+                                        socket.emit('setObject', 'system.adapter.iot.' + instance, obj, function (err) {
+                                            $('#get_new_certs').removeClass('disabled');
+                                            if (err) {
+                                                showError(err);
+                                            } else {
+                                                showToast(null, _('Certificates will be updated after initiated restart'));
+                                            }
+                                        });
+                                    }
+                                });
+                            });
+                        });
+                    });
+                }
+            });
+        });
+    }
+
     function load(settings, onChange) {
         if (!settings) return;
 
@@ -1309,6 +1343,9 @@
                 updateMDevices();
             }
         });
+
+        resetCerts();
+
         if (M) M.updateTextFields();
     }
 
@@ -1539,11 +1576,16 @@
                 <div class="row">
                     <div class="input-field col s12 m8">
                         <input class="value" id="login" type="text" style="width: 100%" />
-                        <label for="login" class="translate">ioBroker.pro Login:</label>
+                        <label for="login" class="translate">ioBroker.pro Login</label>
                     </div>
                     <div class="input-field col s12 m8">
                         <input class="value" id="pass" type="password" style="width: 100%" />
-                        <label for="pass" class="translate">ioBroker.pro Password:</label>
+                        <label for="pass" class="translate">ioBroker.pro Password</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12 m8">
+                        <a id="get_new_certs" class="waves-effect waves-light btn blue"><i class="material-icons">refresh</i><span class="translate">Get new connection certificates</span></a>
                     </div>
                 </div>
                 <div class="col s12 m8 offset-m4 l6 offset-l6">
