@@ -463,16 +463,18 @@ function writeKeys(data) {
 function fetchKeys(login, pass) {
     return new Promise((resolve, reject) => {
         let done = false;
+        let req;
         let timeout = setTimeout(() => {
             if (!done)  {
                 done = true;
                 reject('timeout');
             }
-            req.abort();
+            req && req.abort();
         }, 15000);
 
         adapter.log.debug('Fetching keys...');
-        let req = request.get(`https://32xdul2s3h.execute-api.eu-west-1.amazonaws.com/default/createUser?user=${encodeURIComponent(login)}&pass=${encodeURIComponent(pass)}`, (error, response, body) => {
+        req = request.get(`https://32xdul2s3h.execute-api.eu-west-1.amazonaws.com/default/createUser?user=${encodeURIComponent(login)}&pass=${encodeURIComponent(pass)}`, (error, response, body) => {
+            req = null;
             clearTimeout(timeout);
             if (error) {
                 if (!done)  {
@@ -501,7 +503,8 @@ function fetchKeys(login, pass) {
     });
 }
 
-function startDevice(clientId, login, password) {
+function startDevice(clientId, login, password, retry) {
+    retry = retry || 0;
     readKeys()
         .catch(e => {
             if (e === 'Not exists') {
@@ -557,7 +560,13 @@ function startDevice(clientId, login, password) {
                     }
                 }
             });
-        }).catch(e => adapter.log.error(JSON.stringify(e)));
+        }).catch(e => {
+            adapter.log.error(JSON.stringify(e));
+
+            if (e === 'timeout' && retry < 10) {
+                setTimeout(() => startDevice(clientId, login, password, retry + 1), 10000);
+            }
+        });
 }
 
 function main() {
