@@ -7,10 +7,11 @@
 
 [![NPM](https://nodei.co/npm/iobroker.iot.png?downloads=true)](https://nodei.co/npm/iobroker.iot/)
 
-This adapter allows connection from internet through ioBroker cloud to local installation of ioBroker.
+This adapter is ONLY for communication with Amazon Alexa.
+It is not for remote access to your ioBroker instance. Use ioBroker.cloud adapter for that.
 
 ## Settings
-To use cloud adapter you should first to register on the iobroker cloud [https://iobroker.pro](https://iobroker.pro).
+To use cloud adapter you should first to register on the ioBroker cloud [https://iobroker.pro](https://iobroker.pro).
 
 ![Intro](img/intro.png)
 
@@ -152,7 +153,7 @@ You may write "text2command" in white list, you can send POST request to ```http
 "X" can be defined in settings by the "Use text2command instance" option.
 
 ## Changelog
-### 0.1.0 (2018-09-17)
+### 0.1.1 (2018-09-22)
 * (bluefox) Initial commit
 
 ## License

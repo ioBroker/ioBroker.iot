@@ -469,8 +469,9 @@ function fetchKeys(login, pass) {
                 reject('timeout');
             }
             req.abort();
-        }, 3000);
+        }, 15000);
 
+        adapter.log.debug('Fetching keys...');
         let req = request.get(`https://32xdul2s3h.execute-api.eu-west-1.amazonaws.com/default/createUser?user=${encodeURIComponent(login)}&pass=${encodeURIComponent(pass)}`, (error, response, body) => {
             clearTimeout(timeout);
             if (error) {
@@ -485,8 +486,16 @@ function fetchKeys(login, pass) {
                 } catch (e) {
                     return reject('Cannot parse answer: ' + JSON.stringify(e));
                 }
-                writeKeys(data)
-                    .then(() => resolve({private: data.keyPair.PrivateKey, certificate: data.certificatePem}));
+                if (data.error) {
+                    adapter.log.error('Cannot fetch keys: ' + JSON.stringify(data.error));
+                    reject(data);
+                } else if (data.certificates) {
+                    writeKeys(data.certificates)
+                        .then(() => resolve({private: data.certificates.keyPair.PrivateKey, certificate: data.certificates.certificatePem}));
+                } else {
+                    adapter.log.error('Cannot fetch keys: ' + JSON.stringify(data));
+                    reject(data);
+                }
             }
         });
     });
