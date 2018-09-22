@@ -53,7 +53,7 @@
             "communication"
         ],
         "enabled": false,
-        "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.iot/master/admin/cloud.png",
+        "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.iot/master/admin/iot.png",
         "type": "communication",
         "messagebox": true,
         "stopBeforeUpdate": true,
