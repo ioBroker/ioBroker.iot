@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "0.1.2",
+        "version": "0.1.3",
         "title": "Cloud MQTT connection",
         "titleLang": {
             "en": "Cloud MQTT connection",
@@ -26,7 +26,7 @@
             "pl": "Łączy twój serwer ioBroker z chmurą IoT ioBroker"
         },
         "news": {
-            "0.1.2": {
+            "0.1.3": {
                 "en": "Initial commit",
                 "de": "Erstes Commit",
                 "ru": "Начальное коммит",

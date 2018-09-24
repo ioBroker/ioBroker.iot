@@ -153,7 +153,7 @@ You may write "text2command" in white list, you can send POST request to ```http
 "X" can be defined in settings by the "Use text2command instance" option.
 
 ## Changelog
-### 0.1.2 (2018-09-22)
+### 0.1.3 (2018-09-24)
 * (bluefox) Initial commit
 
 ## License
