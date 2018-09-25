@@ -8,7 +8,6 @@ const utils        = require(__dirname + '/lib/utils'); // Get common adapter ut
 const AlexaSH2     = require(__dirname + '/lib/alexaSmartHomeV2');
 const AlexaSH3     = require(__dirname + '/lib/alexaSmartHomeV3');
 const AlexaCustom  = require(__dirname + '/lib/alexaCustom');
-const pack         = require(__dirname + '/io-package.json');
 const fs           = require('fs');
 const request      = require('request');
 
@@ -119,32 +118,52 @@ function sendDataToIFTTT(obj) {
         adapter.log.warn('No IFTTT key is defined');
         return;
     }
+    let options;
     if (typeof obj !== 'object') {
-        ioSocket.send(socket, 'ifttt', {
-            id:     adapter.namespace + '.services.ifttt',
-            key:    adapter.config.iftttKey,
-            val:    obj
-        });
+        options = {
+            uri: `https://maker.ifttt.com/trigger/state/with/key/${adapter.config.iftttKey}`,
+            method: 'POST',
+            json: {
+                value1:  adapter.namespace + '.services.ifttt',
+                value2: obj
+            }
+        };
     } else if (obj.event) {
-        ioSocket.send(socket, 'ifttt', {
-            event:  obj.event,
-            key:    obj.key || adapter.config.iftttKey,
-            value1: obj.value1,
-            value2: obj.value2,
-            value3: obj.value3
-        });
+        const event = obj.event;
+        const key = obj.key;
+        delete obj.event;
+        delete obj.key;
+        options = {
+            uri: `https://maker.ifttt.com/trigger/${event}/with/key/${key || adapter.config.iftttKey}`,
+            method: 'POST',
+            json: obj
+        };
     } else {
         if (obj.val === undefined) {
             adapter.log.warn('No value is defined');
             return;
         }
         obj.id = obj.id || (adapter.namespace + '.services.ifttt');
-        ioSocket.send(socket, 'ifttt', {
-            id:  obj.id,
-            key: obj.key || adapter.config.iftttKey,
-            val: obj.val,
-            ack: obj.ack
+        options = {
+            uri: `https://maker.ifttt.com/trigger/state/with/key/${adapter.config.iftttKey}`,
+            method: 'POST',
+            json: {
+                value1: obj.id,
+                value2: obj.val,
+                value3: obj.ack
+            }
+        };
+    }
+    if (options) {
+        request(options, (error, response, body) => {
+            if (!error && response.statusCode === 200) {
+                adapter.log.debug(`Response from IFTTT: ${JSON.stringify(body)}`);
+            } else {
+                adapter.log.warn(`Response from IFTTT: ${error ? JSON.stringify(error) : response && response.statusCode}`);
+            }
         });
+    } else {
+        adapter.log.warn(`Invalid request to IFTTT: ${JSON.stringify(obj)}`);
     }
 }
 
@@ -412,6 +431,73 @@ function decrypt(key, value) {
     return result;
 }
 
+function readUrlKey() {
+    return new Promise((resolve, reject) => {
+        adapter.getState('certs.urlKey', (err, key) => {
+            if (err || !key || !key.val) {
+                reject(err || 'Not exists');
+            } else {
+                resolve({key: key.val});
+            }
+        });
+    });
+}
+
+function createUrlKey(login, pass) {
+    return new Promise((resolve, reject) => {
+        let done = false;
+        let req;
+        let timeout = setTimeout(() => {
+            if (!done)  {
+                done = true;
+                reject('timeout');
+            }
+            req && req.abort();
+        }, 15000);
+
+        adapter.log.debug('Fetching URL key...');
+        req = request.get(`https://kpol5s6co5.execute-api.eu-west-1.amazonaws.com/default/generateUrlKey?user=${encodeURIComponent(login)}&pass=${encodeURIComponent(pass)}`, (error, response, body) => {
+            req = null;
+            clearTimeout(timeout);
+            if (error) {
+                if (!done)  {
+                    done = true;
+                    reject(error);
+                }
+            } else {
+                let data;
+                try {
+                    data = JSON.parse(body)
+                } catch (e) {
+                    return reject('Cannot parse URL key answer: ' + JSON.stringify(e));
+                }
+                if (data.error) {
+                    adapter.log.error('Cannot fetch URL key: ' + JSON.stringify(data.error));
+                    reject(data);
+                } else if (data.key) {
+                    writeUrlKey(data.key)
+                        .then(() => resolve(data.key));
+                } else {
+                    adapter.log.error('Cannot fetch URL key: ' + JSON.stringify(data));
+                    reject(data);
+                }
+            }
+        });
+    });
+}
+
+function writeUrlKey(key) {
+    return new Promise((resolve, reject) => {
+        adapter.setState('certs.urlKey', key, true, err => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(key);
+            }
+        })
+    });
+}
+
 function readKeys() {
     return new Promise((resolve, reject) => {
         adapter.getState('certs.private', (err, priv) => {
@@ -505,7 +591,18 @@ function fetchKeys(login, pass) {
 
 function startDevice(clientId, login, password, retry) {
     retry = retry || 0;
-    readKeys()
+    readUrlKey()
+        .catch(e => {
+            if (e === 'Not exists') {
+                return createUrlKey(login, password);
+            } else {
+                throw new Error(e);
+            }
+        })
+        .then(key => {
+            adapter.log.debug(`URL key is ${key}`);
+            return readKeys();
+        })
         .catch(e => {
             if (e === 'Not exists') {
                 return fetchKeys(login, password);
@@ -533,7 +630,7 @@ function startDevice(clientId, login, password, retry) {
             device.on('message', (topic, request) => {
                 adapter.log.debug(`Request ${topic}`);
                 if (topic.startsWith('command/' + clientId + '/')) {
-                    const type = topic.substring(clientId.length + 9);
+                    let type = topic.substring(clientId.length + 9);
                     try {
                         request = JSON.parse(request.toString());
                     } catch (e) {
@@ -554,9 +651,64 @@ function startDevice(clientId, login, password, retry) {
                                 device.publish('response/' + clientId + '/alexa', JSON.stringify(response)));
                         }
                     } else if (type === 'ifttt') {
-
+                        processIfttt(request, response =>
+                            device.publish('response/' + clientId + '/ifttt', JSON.stringify(response)));
                     } else {
-                        device.publish('response/' + clientId + '/' + type, JSON.stringify({error: 'Unknown service'}));
+                        let isCustom = false;
+                        let _type = type;
+                        if (_type.match(/^custom_/)) {
+                            _type = _type.substring(7);
+                            isCustom = true;
+                        }
+
+                        if (adapter.config.allowedServices[0] === '*' || adapter.config.allowedServices.indexOf(_type) !== -1) {
+                            if (type === 'text2command') {
+                                if (adapter.config.text2command !== undefined && adapter.config.text2command !== '') {
+                                    adapter.setForeignState('text2command.' + adapter.config.text2command + '.text',
+                                        decodeURIComponent(request.data),
+                                            err => device.publish('response/' + clientId + '/' + type, JSON.stringify({result: err || 'Ok'})));
+                                } else {
+                                    adapter.log.warn('Received service text2command, but instance is not defined');
+                                    device.publish('response/' + clientId + '/' + type, JSON.stringify({result: 'but instance is not defined'}));
+                                }
+                            } else if (type === 'simpleApi') {
+                                device.publish('response/' + clientId + '/' + type, JSON.stringify({result: 'not implemented'}));
+                            } else if (isCustom) {
+                                adapter.getObject('services.custom_' + _type, (err, obj) => {
+                                    if (!obj) {
+                                        adapter.setObject('services.custom_' + _type, {
+                                            _id: adapter.namespace + '.services.custom_' + _type,
+                                            type: 'state',
+                                            common: {
+                                                name: 'Service for ' + _type,
+                                                write: false,
+                                                read: true,
+                                                type: 'mixed',
+                                                role: 'value'
+                                            },
+                                            native: {}
+                                        }, err => {
+                                            if (!err) {
+                                                adapter.setState('services.custom_' + _type, request.data, false, err =>
+                                                    device.publish('response/' + clientId + '/' + type, JSON.stringify({result: err || 'Ok'})));
+                                            } else {
+                                                adapter.log.error(`Cannot control ${'.services.custom_' + _type}: ${JSON.stringify(err)}`);
+                                                device.publish('response/' + clientId + '/' + type, JSON.stringify({error: err}));
+                                            }
+                                        });
+                                    } else {
+                                        adapter.setState('services.custom_' + _type, request.data, false, err =>
+                                            device.publish('response/' + clientId + '/' + type, JSON.stringify({result: err || 'Ok'})));
+                                    }
+                                });
+                            } else {
+                                adapter.log.warn(`Received service "${type}", but it is not allowed`);
+                                device.publish('response/' + clientId + '/' + type, JSON.stringify({error: 'not allowed'}));
+                            }
+                        } else {
+                            adapter.log.warn(`Received service "${type}", but it is not found in whitelist`);
+                            device.publish('response/' + clientId + '/' + type, JSON.stringify({error: 'Unknown service'}));
+                        }
                     }
                 }
             });
@@ -605,7 +757,7 @@ function main() {
     adapter.config.cloudUrl = adapter.config.cloudUrl || 'a18wym7vjdl22g.iot.eu-west-1.amazonaws.com';
 
     if (!adapter.config.login || !adapter.config.pass) {
-        adapter.log.error('No cloud credentials found. Please get one on https://iobroker.net');
+        adapter.log.error('No cloud credentials found. Please get one on https://iobroker.pro');
         return;
     }
 

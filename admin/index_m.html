@@ -50,6 +50,8 @@
     var idToNavigate;
     var language;
     var noCommon;
+    var gURLKey;
+    var gLogin;
 
     function encrypt(key, value) {
         var result = '';
@@ -970,30 +972,22 @@
         }
     }
 
-    function updateIfttt() {
-        /*var key = $('#apikey').val().trim();
-        $('#ifttt_link').html('https://iobroker.' + (key.match(/^@pro_/) ? 'pro' : 'net') + '/ifttt/' + key);
-        $('#service_link').html('https://iobroker.' + (key.match(/^@pro_/) ? 'pro' : 'net') + '/service/custom_&lt;NAME&gt;/' + key + '/&lt;data&gt;');
-        */
-    }
-
-    function updateUrl() {
-        /*var isPro = $('#apikey').val().match(/^@pro_/);
-        var $noCommon = $('#noCommon');
-        if (isPro) {
-            $('#cloudUrl').prop('disabled', true);
-            $('#allowAdmin').prop('disabled', false);
-            $noCommon.prop('disabled', false);
-        } else {
-            $('#cloudUrl').prop('disabled', false);
-            $('#allowAdmin').prop('disabled', true);
-            $noCommon.prop('disabled', true);
-
-            if ($noCommon.prop('checked')) {
-                $noCommon.prop('checked', false).trigger('change');
-            }
+    function updateUrlKey(key, user) {
+        if (key) {
+            gURLKey = key;
         }
-        */
+        if (user) {
+            gLogin = user;
+        }
+        if (!gURLKey) {
+            return socket.emit('getForeignState', 'iot.' + instance + '.certs.urlKey', function (err, state) {
+                gURLKey = state && state.val;
+                gURLKey && updateUrlKey();
+            });
+        }
+
+        $('#ifttt_link').val('https://URL/iotService?service=ifttt&key=' + gURLKey + '&user=' + encodeURIComponent(gLogin));
+        $('#service_link').val('https://URL/iotService?service=<SERVICE_NAME>&key=' + gURLKey + '&user=' + encodeURIComponent(gLogin));
     }
 
     function checkAuthForInstance(id, value) {
@@ -1169,12 +1163,12 @@
                     if (id === 'functionFirst' || id === 'concatWord') $('#' + id + 'Hint').show();
                 });
             } else {
-                $value.val(settings[key]).change(function() {
+                $value.val(settings[key]).change(function () {
                     onChange();
                     var id = $(this).attr('id');
                     if (id === 'language') language = $(this).val();
                     if (id === 'functionFirst' || id === 'concatWord') $('#' + id + 'Hint').show();
-                    if (id === 'apikey') updateIfttt();
+                    if (id === 'login') updateUrlKey(null, $(this).val());
                 }).keyup(function() {
                     $(this).trigger('change');
                 });
@@ -1314,10 +1308,6 @@
             });
         });
 
-        $('#apikey').on('change', updateUrl).keyup(function () {
-            $(this).trigger('change');
-        });
-
         $('#noCommon').on('change', function () {
             var val = $(this).prop('checked');
             confirmMessage(_('To apply this setting, the restart of adapter must be done. Agree?'), _('Please confirm'), 'question', [_('Ok'), _('Cancel')], function (result) {
@@ -1332,21 +1322,25 @@
             });
         });
 
-        updateIfttt();
-        updateUrl();
+        gLogin = settings.login;
+        updateUrlKey();
         onChange(false);
         socket.on('stateChange', function (id, state) {
             if (!id || !state || !state.val) return;
+            if (id.match(/certs\.urlKey$/)) {
+                updateUrlKey(state.val);
+            } else
             if (id.match(/smart\.updates$/)) {
                 updateDevices();
             } else if (id.match(/smart\.updates3$/)) {
                 updateMDevices();
             }
         });
+        socket.emit('subscribe', 'cloud.' + instance + '.certs.urlKey');
 
         resetCerts();
 
-        if (M) M.updateTextFields();
+        M.updateTextFields();
     }
 
     function save(callback) {
@@ -1588,17 +1582,22 @@
                         <a id="get_new_certs" class="waves-effect waves-light btn blue"><i class="material-icons">refresh</i><span class="translate">Get new connection certificates</span></a>
                     </div>
                 </div>
-                <div class="col s12 m8 offset-m4 l6 offset-l6">
-                    <div class="card horizontal z-depth-3">
-                        <div class="card-image">
-                            <img src="alexalogo.png">
-                        </div>
-                        <div class="card-stacked">
-                            <div class="card-content center">
-                                <p class="translate">amazon link</p>
+                <div class="row">
+                    <div class="col s12 m6 l6">
+                        <p class="translate">help_tip</p>
+                    </div>
+                    <div class="col s12 m6 l6">
+                        <div class="card horizontal z-depth-3">
+                            <div class="card-image">
+                                <img src="alexalogo.png">
                             </div>
-                            <div class="card-action center">
-                                <a href="http://alexa.amazon.de/spa/index.html#skills/dp/B074LXQQQT/create-review/?ref-suffix=war_dp" target='_blank'>Review</a>
+                            <div class="card-stacked">
+                                <div class="card-content center">
+                                    <p class="translate">amazon link</p>
+                                </div>
+                                <div class="card-action center">
+                                    <a href="http://alexa.amazon.de/spa/index.html#skills/dp/B074LXQQQT/create-review/?ref-suffix=war_dp" target='_blank'>Review</a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1719,7 +1718,9 @@
                         <input class="value" type="text" id="iftttKey" />
                         <label for="iftttKey" class="translate">IFTTT key:</label>
                     </div>
-                    <div class="input-field col s12 m6 l4">
+                </div>
+                <div class="row">
+                    <div class="input-field col s12 m12 l8">
                         <input id="ifttt_link" type="text" readonly value="https://iobroker.net/ifttt/" />
                         <label for="ifttt_link" class="translate">Use following link for IFTTT:</label>
                     </div>
@@ -1732,20 +1733,17 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="input-field col s12 m6 l4">
+                    <div class="input-field col s12 m12 l8">
                         <input id="service_link" type="text" readonly value="https://iobroker.pro/service/" />
                         <label for="service_link" class="translate">Use following link for custom service:</label>
                     </div>
+                </div>
+                <div class="row">
                     <div class="input-field col s12 m6 l4">
                         <select class="value" id="text2command">
                             <option value="" class="translate">disabled</option>
                         </select>
                         <label for="text2command" class="translate">Use text2command instance:</label>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col s12 l8">
-                        <p class="translate">help_tip</p>
                     </div>
                 </div>
             </div>

@@ -282,6 +282,19 @@
                 "write": false
             },
             "native": {}
+        },
+        {
+            "_id": "certs.urlKey",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": "URL Key",
+                "desc": "Used for access this instance via URL",
+                "type": "string",
+                "read": true,
+                "write": false
+            },
+            "native": {}
         }
     ]
 }
