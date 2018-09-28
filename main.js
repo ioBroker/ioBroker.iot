@@ -591,7 +591,19 @@ function fetchKeys(login, pass) {
 
 function startDevice(clientId, login, password, retry) {
     retry = retry || 0;
-    readUrlKey()
+    let certs;
+    readKeys()
+        .catch(e => {
+            if (e === 'Not exists') {
+                return fetchKeys(login, password);
+            } else {
+                throw new Error(e);
+            }
+        })
+        .then(_certs => {
+            certs = _certs;
+            return readUrlKey()
+        })
         .catch(e => {
             if (e === 'Not exists') {
                 return createUrlKey(login, password);
@@ -601,16 +613,7 @@ function startDevice(clientId, login, password, retry) {
         })
         .then(key => {
             adapter.log.debug(`URL key is ${key}`);
-            return readKeys();
-        })
-        .catch(e => {
-            if (e === 'Not exists') {
-                return fetchKeys(login, password);
-            } else {
-                throw new Error(e);
-            }
-        })
-        .then(certs => {
+
             device = new DeviceModule({
                 privateKey: new Buffer(certs.private),
                 clientCert: new Buffer(certs.certificate),
@@ -802,7 +805,7 @@ function main() {
         }
     });
 
-    adapter.log.info('Connecting with ' + adapter.config.cloudUrl + ' with "' + adapter.config.apikey + '"');
+    adapter.log.info('Connecting with ' + adapter.config.cloudUrl);
     adapter.getForeignObject('system.config', (err, obj) => {
         if (adapter.config.language) {
             translate = true;
