@@ -153,6 +153,9 @@ You may write "text2command" in white list, you can send POST request to ```http
 "X" can be defined in settings by the "Use text2command instance" option.
 
 ## Changelog
+### 0.1.5 (2018-10-08)
+* (bluefox) The configuration dialog was corrected
+
 ### 0.1.4 (2018-09-26)
 * (bluefox) Initial commit
 

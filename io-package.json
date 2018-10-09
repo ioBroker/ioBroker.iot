@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "0.1.4",
+        "version": "0.1.5",
         "title": "Cloud MQTT connection",
         "titleLang": {
             "en": "Cloud MQTT connection",
@@ -26,6 +26,17 @@
             "pl": "Łączy twój serwer ioBroker z chmurą IoT ioBroker"
         },
         "news": {
+            "0.1.5": {
+                "en": "The configuration dialog was corrected",
+                "de": "Der Konfigurationsdialog wurde korrigiert",
+                "ru": "Диалог конфигурации был исправлен",
+                "pt": "A caixa de diálogo de configuração foi corrigida",
+                "nl": "Het configuratiedialoogvenster is gecorrigeerd",
+                "fr": "Le dialogue de configuration a été corrigé",
+                "it": "La finestra di configurazione è stata corretta",
+                "es": "Se corrigió el diálogo de configuración.",
+                "pl": "Okno dialogowe konfiguracji zostało poprawione"
+            },
             "0.1.4": {
                 "en": "Initial commit",
                 "de": "Erstes Commit",

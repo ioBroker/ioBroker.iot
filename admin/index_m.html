@@ -1183,26 +1183,26 @@
             if (id === 'tab-smart-media') {
                 if (!subscribed3) {
                     subscribed3 = true;
-                    socket.emit('subscribe', 'cloud.' + instance + '.smart.update3');
+                    socket.emit('subscribe', adapter + '.' + instance + '.smart.update3');
                 }
             } else {
                 if (subscribed3) {
                     subscribed3 = false;
-                    socket.emit('unsubscribe', 'cloud.' + instance + '.smart.update3');
+                    socket.emit('unsubscribe', adapter + '.' + instance + '.smart.update3');
                 }
             }
             if (id === 'tab-smart-devices') {
                 if (!subscribed) {
                     subscribed = true;
-                    socket.emit('subscribe', 'cloud.' + instance + '.smart.update');
+                    socket.emit('subscribe', adapter + '.' + instance + '.smart.update');
                 }
             } else {
                 if (subscribed) {
                     subscribed = false;
-                    socket.emit('unsubscribe', 'cloud.' + instance + '.smart.update');
+                    socket.emit('unsubscribe', adapter + '.' + instance + '.smart.update');
                 }
             }
-            // laod data
+            // load data
             if (id === 'tab-smart-devices') {
                 updateDevices();
             } else if (id === 'tab-smart-enums') {
@@ -1211,14 +1211,14 @@
                 //updateMDevices();
             }
             if (typeof localStorage !== 'undefined') {
-                localStorage['cloud-adapter'] = id;
+                localStorage['iot-adapter'] = id;
             }
         });
 
         // wait till tabs will be rendered after load
         setTimeout(function () {
-            if (typeof localStorage !== 'undefined' && localStorage['cloud-adapter'] !== undefined) {
-                $tabs.mtabs('select', localStorage['cloud-adapter']);
+            if (typeof localStorage !== 'undefined' && localStorage['iot-adapter'] !== undefined) {
+                $tabs.mtabs('select', localStorage['iot-adapter']);
             }
         }, 300);
 
@@ -1336,7 +1336,7 @@
                 updateMDevices();
             }
         });
-        socket.emit('subscribe', 'cloud.' + instance + '.certs.urlKey');
+        socket.emit('subscribe', adapter + '.' + instance + '.certs.urlKey');
 
         resetCerts();
 
