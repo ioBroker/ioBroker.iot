@@ -152,9 +152,34 @@ You may write "text2command" in white list, you can send POST request to ```http
 
 "X" can be defined in settings by the "Use text2command instance" option.
 
+## Custom skill
+The answers for custom skill can be processed in two ways:
+- text2command
+- javascript
+
+### text2command
+if *text2command* instance is defined in the configuration dialog, so the question will be sent to the instance.
+
+*text2command* must be configured that the expected phrase will be parsed and the answer will be given back.
+
+### Javascript
+There is a possibility to process the question directly with script. It is activated by default if no *text2command* instance is selected.
+
+If *text2command* instance is defined, so this instance must provide the answer and the answer from *script* will be ignored.
+
+Example of the script:
+```
+// important, that ack=true
+on({id: 'iot.0.smart.lastCommand', ack: true, change: 'any'}, obj => {
+    // you have 200ms to prepare the answer and to write it into iot.X.smart.lastResponse
+    setState('iot.0.smart.lastResponse', 'Received phrase is: ' + obj.state.val); // important, that ack=false (default)
+});
+```
+
 ## Changelog
-### 0.1.5 (2018-10-08)
+### 0.1.6 (2018-10-11)
 * (bluefox) The configuration dialog was corrected
+* (bluefox) The possibility to create the answer with script for the custom skill was implemented.
 
 ### 0.1.4 (2018-09-26)
 * (bluefox) Initial commit

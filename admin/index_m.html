@@ -53,21 +53,25 @@
     var gURLKey;
     var gLogin;
 
-    function encrypt(key, value) {
-        var result = '';
-        for(var i = 0; i < value.length; i++) {
-            result += String.fromCharCode(key[i % key.length].charCodeAt(0) ^ value.charCodeAt(i));
+    if (typeof encrypt === 'undefined') {
+        encrypt = function (key, value) {
+            var result = '';
+            for(var i = 0; i < value.length; i++) {
+                result += String.fromCharCode(key[i % key.length].charCodeAt(0) ^ value.charCodeAt(i));
+            }
+            return result;
         }
-        return result;
-    }
-    function decrypt(key, value) {
-        var result = '';
-        for(var i = 0; i < value.length; i++) {
-            result += String.fromCharCode(key[i % key.length].charCodeAt(0) ^ value.charCodeAt(i));
-        }
-        return result;
     }
 
+    if (typeof decrypt === 'undefined') {
+        decrypt = function (key, value) {
+            var result = '';
+            for(var i = 0; i < value.length; i++) {
+                result += String.fromCharCode(key[i % key.length].charCodeAt(0) ^ value.charCodeAt(i));
+            }
+            return result;
+        }
+    }
 
     function getSmartName(states, id) {
         if (!id) {
@@ -279,7 +283,7 @@
                         text +=  (name || k);
                         text += '</td>';
                         text += '<td class="col-select"><div>' + getSelect(list[j].additionalApplianceDetails.id, list[j].additionalApplianceDetails.byON) + '</div></td>';
-                        text += '<td class="col-types"><div>'   + getTypeSelect(list[j].additionalApplianceDetails.id, list[j].additionalApplianceDetails.smartType) + '</div></td>';
+                        text += '<td class="col-types"><div>'  + getTypeSelect(list[j].additionalApplianceDetails.id, list[j].additionalApplianceDetails.smartType) + '</div></td>';
                         text += '<td class="col-buttons">' +
                             '<a data-value="' + (list[j].additionalApplianceDetails.friendlyNames ? list[j].additionalApplianceDetails.friendlyNames : list[j].friendlyName) + '" data-id="' + list[j].additionalApplianceDetails.id + '" class="button-edit btn-floating waves-effect waves-light btn-small"><i class="material-icons">edit</i></a>' +
                             '<a data-id="' + list[j].additionalApplianceDetails.id + '" class="btn-floating waves-effect waves-light red btn-small button-delete"><i class="material-icons">delete</i></a>' +
@@ -1312,7 +1316,7 @@
             var val = $(this).prop('checked');
             confirmMessage(_('To apply this setting, the restart of adapter must be done. Agree?'), _('Please confirm'), 'question', [_('Ok'), _('Cancel')], function (result) {
                 if (result === 0) {
-                    $('button#save').trigger('click');
+                    $('.btn-save').trigger('click');
                     setTimeout(function () {
                         document.location.reload();
                     }, 500);

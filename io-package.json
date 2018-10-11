@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "0.1.5",
+        "version": "0.1.6",
         "title": "Cloud MQTT connection",
         "titleLang": {
             "en": "Cloud MQTT connection",
@@ -26,16 +26,16 @@
             "pl": "Łączy twój serwer ioBroker z chmurą IoT ioBroker"
         },
         "news": {
-            "0.1.5": {
-                "en": "The configuration dialog was corrected",
-                "de": "Der Konfigurationsdialog wurde korrigiert",
-                "ru": "Диалог конфигурации был исправлен",
-                "pt": "A caixa de diálogo de configuração foi corrigida",
-                "nl": "Het configuratiedialoogvenster is gecorrigeerd",
-                "fr": "Le dialogue de configuration a été corrigé",
-                "it": "La finestra di configurazione è stata corretta",
-                "es": "Se corrigió el diálogo de configuración.",
-                "pl": "Okno dialogowe konfiguracji zostało poprawione"
+            "0.1.6": {
+                "en": "The configuration dialog was corrected\nThe possibility to create the answer for the custom skill with the script was implemented. ",
+                "de": "Der Konfigurationsdialog wurde korrigiert\nDie Möglichkeit, die Antwort für die benutzerdefinierte Fertigkeit mit dem Skript zu erstellen, wurde implementiert.",
+                "ru": "Диалог конфигурации был исправлен\nБыла реализована возможность создания ответа для пользовательского навыка со скриптом.",
+                "pt": "A caixa de diálogo de configuração foi corrigida\nA possibilidade de criar a resposta para a habilidade personalizada com o script foi implementada.",
+                "nl": "Het configuratiedialoogvenster is gecorrigeerd\nDe mogelijkheid om het antwoord voor de aangepaste vaardigheid met het script te creëren, is geïmplementeerd.",
+                "fr": "Le dialogue de configuration a été corrigé\nLa possibilité de créer la réponse pour la compétence personnalisée avec le script a été mise en œuvre.",
+                "it": "La finestra di configurazione è stata corretta\nÈ stata implementata la possibilità di creare la risposta per l'abilità personalizzata con lo script.",
+                "es": "Se corrigió el diálogo de configuración.\nSe implementó la posibilidad de crear la respuesta para la habilidad personalizada con el script.",
+                "pl": "Okno dialogowe konfiguracji zostało poprawione\nStworzono możliwość stworzenia odpowiedzi na niestandardowe umiejętności ze skryptem."
             },
             "0.1.4": {
                 "en": "Initial commit",

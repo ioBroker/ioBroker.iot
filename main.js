@@ -25,9 +25,9 @@ let alexaDisabled  = false;
 let googleDisabled = false;
 let secret;
 
-let adapter         = new utils.Adapter({
+let adapter        = new utils.Adapter({
     name: 'iot',
-    objectChange: function (id, obj) {
+    objectChange: (id, obj) => {
         if (id === 'system.config' && obj && !translate) {
             lang = obj.common.language;
             if (lang !== 'en' && lang !== 'de') lang = 'en';
@@ -35,10 +35,12 @@ let adapter         = new utils.Adapter({
             alexaSH3.setLanguage(lang, false);
         }
     },
-    stateChange:  function (id, state) {
-
+    stateChange:  (id, state) => {
+        if (id === adapter.namespace + '.smart.lastResponse' && state && !state.ack) {
+            alexaCustom && alexaCustom.setResponse(state.val);
+        }
     },
-    unload:       function (callback) {
+    unload: callback => {
         try {
             if (device) {
                 device.end();
@@ -49,7 +51,7 @@ let adapter         = new utils.Adapter({
             callback();
         }
     },
-    message:      function (obj) {
+    message: obj => {
         if (obj) {
             switch (obj.command) {
                 case 'update':
@@ -293,127 +295,6 @@ function onConnect() {
         adapter.log.info('Connection not changed: was connected');
     }
 }
-/*
-function connect() {
-    socket.on('ifttt', processIfttt);
-
-    socket.on('iftttError', error => adapter.log.error('Error from IFTTT: ' + JSON.stringify(error)));
-
-    socket.on('cloudError', error => adapter.log.error('Cloud says: ' + error));
-
-    socket.on('service', (data, callback) => {
-        adapter.log.debug('service: ' + JSON.stringify(data));
-        // supported services:
-        // - text2command
-        // - simpleApi
-        // - custom, e.g. torque
-        if (!data || !data.name) {
-            callback && callback({error: 'no name'});
-        } else
-        if (data.name === 'ifttt' && adapter.config.iftttKey) {
-            processIfttt(data.data, callback);
-        } else {
-            let isCustom = false;
-            if (data.name.match(/^custom_/)) {
-                data.name = data.name.substring(7);
-                isCustom = true;
-            }
-
-            if (adapter.config.allowedServices[0] === '*' || adapter.config.allowedServices.indexOf(data.name) !== -1) {
-                if (!isCustom && data.name === 'text2command') {
-                    if (adapter.config.text2command !== undefined && adapter.config.text2command !== '') {
-                        adapter.setForeignState('text2command.' + adapter.config.text2command + '.text', decodeURIComponent(data.data), err =>
-                            callback && callback({result: err || 'Ok'}));
-                    } else {
-                        adapter.log.warn('Received service text2command, but instance is not defined');
-                        callback && callback({error: 'but instance is not defined'});
-                    }
-                } else if (!isCustom && data.name === 'simpleApi') {
-                    callback && callback({error: 'not implemented'});
-                } else if (isCustom) {
-                    adapter.getObject('services.custom_' + data.name, (err, obj) => {
-                        if (!obj) {
-                            adapter.setObject('services.custom_' + data.name, {
-                                _id: adapter.namespace + '.services.custom_' + data.name,
-                                type: 'state',
-                                common: {
-                                    name: 'Service for ' + data.name,
-                                    write: false,
-                                    read: true,
-                                    type: 'mixed',
-                                    role: 'value'
-                                },
-                                native: {}
-                            }, err => {
-                                if (!err) {
-                                    adapter.setState('services.custom_' + data.name, data.data, false, err => callback && callback({result: err || 'Ok'}));
-                                } else {
-                                    callback && callback({result: err});
-                                }
-                            });
-                        } else {
-                            adapter.setState('services.custom_' + data.name, data.data, false, err => callback && callback({result: err || 'Ok'}));
-                        }
-                    });
-                } else {
-                    callback && callback({error: 'not allowed'});
-                }
-            } else {
-                adapter.log.warn('Received service "' + data.name + '", but it is not found in whitelist');
-                callback && callback({error: 'blocked'});
-            }
-        }
-    });
-
-    socket.on('error', error => startConnect());
-
-    if (adapter.config.instance) {
-        if (adapter.config.instance.substring(0, 'system.adapter.'.length) !== 'system.adapter.') {
-            adapter.config.instance = 'system.adapter.' + adapter.config.instance;
-        }
-
-        adapter.getForeignObject(adapter.config.instance, (err, obj) => {
-            if (obj && obj.common && obj.native) {
-                if (obj.common.auth) {
-                    adapter.log.error('Cannot activate web for cloud, because authentication is enabled. Please create extra instance for cloud');
-                    server = '';
-                    return;
-                }
-
-                server = 'http' + (obj.native.secure ? 's' : '')  + '://';
-                // todo if run on other host
-                server += (!obj.native.bind || obj.native.bind === '0.0.0.0') ? '127.0.0.1' : obj.native.bind;
-                server += ':' + obj.native.port;
-
-                initConnect(socket, {apikey: adapter.config.apikey, allowAdmin: adapter.config.allowAdmin, uuid: uuid, version: pack.common.version});
-            } else {
-                adapter.log.error('Unknown instance ' + adapter.log.instance);
-                server = null;
-            }
-        });
-
-        if (adapter.config.allowAdmin) {
-            adapter.getForeignObject(adapter.config.allowAdmin, (err, obj) => {
-                if (obj && obj.common && obj.native) {
-                    if (obj.common.auth) {
-                        adapter.log.error('Cannot activate admin for cloud, because authentication is enabled. Please create extra instance for cloud');
-                        server = '';
-                        return;
-                    }
-                    adminServer = 'http' + (obj.native.secure ? 's' : '') + '://';
-                    // todo if run on other host
-                    adminServer += (!obj.native.bind || obj.native.bind === '0.0.0.0') ? '127.0.0.1' : obj.native.bind;
-                    adminServer += ':' + obj.native.port;
-                } else {
-                    adminServer = null;
-                    adapter.log.error('Unknown instance ' + adapter.config.allowAdmin);
-                }
-            });
-        }
-    } else {
-    }
-}
-*/
 
 function encrypt(key, value) {
     let result = '';

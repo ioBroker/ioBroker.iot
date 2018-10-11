@@ -1,6 +1,6 @@
 {
   "name": "iobroker.iot",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "This adapter allows to communicate a web applications with ioBroker.",
   "author": {
     "name": "bluefox",
@@ -32,7 +32,7 @@
     "@types/node": "^4.2.23",
     "gulp": "^3.9.1",
     "mocha": "^5.2.0",
-    "chai": "^4.1.2"
+    "chai": "^4.2.0"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.iot/issues"
