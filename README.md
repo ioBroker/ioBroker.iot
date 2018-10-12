@@ -150,7 +150,9 @@ IFTTT service is allowed only if IFTTT key is set.
 Reserved names are "ifttt", "text2command", "simpleApi", "swagger". These must be used without the ```"custom_"``` prefix.
 
 ### text2command
-You may write "text2command" in white list, you can send POST request to ```https://iobroker.net/service/text2command/<user-app-key>``` to write data into *text2command.X.text* variable.
+You may write "text2command" in white list, you can send POST request to ```https://service.iobroker.in/v1/iotService?service=text2command&key=<user-app-key>&user=<USER_EMAIL>``` to write data into *text2command.X.text* variable.
+
+You can use GET method too ```https://service.iobroker.in/v1/iotService?service=text2command&key=<user-app-key>&user=<USER_EMAIL>&data=<MY COMMAND>```
 
 "X" can be defined in settings by the "Use text2command instance" option.
 
