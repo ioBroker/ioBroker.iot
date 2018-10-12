@@ -984,14 +984,13 @@
             gLogin = user;
         }
         if (!gURLKey) {
-            return socket.emit('getForeignState', 'iot.' + instance + '.certs.urlKey', function (err, state) {
+            return socket.emit('getState', 'iot.' + instance + '.certs.urlKey', function (err, state) {
                 gURLKey = state && state.val;
                 gURLKey && updateUrlKey();
             });
         }
-
-        $('#ifttt_link').val('https://URL/iotService?service=ifttt&key=' + gURLKey + '&user=' + encodeURIComponent(gLogin));
-        $('#service_link').val('https://URL/iotService?service=<SERVICE_NAME>&key=' + gURLKey + '&user=' + encodeURIComponent(gLogin));
+        $('#ifttt_link').val('https://service.iobroker.in/v1/iotService?service=ifttt&key=' + gURLKey + '&user=' + encodeURIComponent(gLogin));
+        $('#service_link').val('https://service.iobroker.in/v1/iotService?service=custom_<SERVICE_NAME>&key=' + gURLKey + '&user=' + encodeURIComponent(gLogin) + '&data=<SOME_TEXT>');
     }
 
     function checkAuthForInstance(id, value) {
@@ -1718,14 +1717,14 @@
             <div id="tab-services" class="col s12 page">
                 <div class="marg"></div>
                 <div class="row">
-                    <div class="input-field col s12 m6 l4">
+                    <div class="input-field col s12">
                         <input class="value" type="text" id="iftttKey" />
                         <label for="iftttKey" class="translate">IFTTT key:</label>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="input-field col s12 m12 l8">
-                        <input id="ifttt_link" type="text" readonly value="https://iobroker.net/ifttt/" />
+                    <div class="input-field col s12">
+                        <input id="ifttt_link" type="text" readonly value="https://service.iobroker.in/v1/iotService?key=<API_KEY>&user=<EMAIL>&service=ifttt" />
                         <label for="ifttt_link" class="translate">Use following link for IFTTT:</label>
                     </div>
                 </div>
@@ -1737,8 +1736,8 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="input-field col s12 m12 l8">
-                        <input id="service_link" type="text" readonly value="https://iobroker.pro/service/" />
+                    <div class="input-field col s12">
+                        <input id="service_link" type="text" readonly value="https://service.iobroker.in/v1/iotService?key=<API_KEY>&user=<EMAIL>&service=custom_<SERVICE_NAME>" />
                         <label for="service_link" class="translate">Use following link for custom service:</label>
                     </div>
                 </div>

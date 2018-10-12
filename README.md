@@ -129,17 +129,19 @@ If you will set ```.STATE, .LEVEL```, so ".STATE" and " .LEVEL" will be replaced
 
 ## Services
 There is a possibility to send messages to cloud adapter.
-If you call ```[POST]https://iobroker.net/service/custom_<NAME>/<user-app-key>``` und value as payload.
+If you call ```[POST]https://service.iobroker.in/v1/iotService?service=custom_<NAME>&key=<XXX>&user=<USER_EMAIL>``` und value as payload.
 
 ```
-curl --data "myString" https://iobroker.net/service/custom_test/<user-app-key>
+curl --data "myString" https://service.iobroker.in/v1/iotService?service=custom_<NAME>&key=<XXX>&user=<USER_EMAIL>
 ```
+
+or
+
+```[GET]https://service.iobroker.in/v1/iotService?service=custom_<NAME>&key=<XXX>&user=<USER_EMAIL>&data=myString```
 
 If you set in the settings the field "White list for services" the name *custom_test*, and call with "custom_test" as the service name, the state **cloud.0.services.custom_test** will be set to *myString*.
 
 You may write "*" in white list and all services will be allowed.
-
-From version 2.0.5 you can use GET request in form ```[GET]https://iobroker.net/service/custom_<NAME>/<user-app-key>/<data>``` to place the **\<data\>** into **cloud.0.services.custom_\<NAME\>**.
 
 Here you can find instructions how to use it with [tasker](doc/tasker.md).
 

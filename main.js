@@ -337,7 +337,7 @@ function createUrlKey(login, pass) {
         }, 15000);
 
         adapter.log.debug('Fetching URL key...');
-        req = request.get(`https://kpol5s6co5.execute-api.eu-west-1.amazonaws.com/default/generateUrlKey?user=${encodeURIComponent(login)}&pass=${encodeURIComponent(pass)}`, (error, response, body) => {
+        req = request.get(`https://generate-key.iobroker.in/v1/generateUrlKey?user=${encodeURIComponent(login)}&pass=${encodeURIComponent(pass)}`, (error, response, body) => {
             req = null;
             clearTimeout(timeout);
             if (error) {
@@ -440,7 +440,7 @@ function fetchKeys(login, pass) {
         }, 15000);
 
         adapter.log.debug('Fetching keys...');
-        req = request.get(`https://32xdul2s3h.execute-api.eu-west-1.amazonaws.com/default/createUser?user=${encodeURIComponent(login)}&pass=${encodeURIComponent(pass)}`, (error, response, body) => {
+        req = request.get(`https://create-user.iobroker.in/v1/createUser?user=${encodeURIComponent(login)}&pass=${encodeURIComponent(pass)}`, (error, response, body) => {
             req = null;
             clearTimeout(timeout);
             if (error) {
@@ -493,7 +493,7 @@ function startDevice(clientId, login, password, retry) {
             }
         })
         .then(key => {
-            adapter.log.debug(`URL key is ${key}`);
+            adapter.log.debug(`URL key is ${JSON.stringify(key)}`);
 
             device = new DeviceModule({
                 privateKey: new Buffer(certs.private),
@@ -515,12 +515,20 @@ function startDevice(clientId, login, password, retry) {
                 adapter.log.debug(`Request ${topic}`);
                 if (topic.startsWith('command/' + clientId + '/')) {
                     let type = topic.substring(clientId.length + 9);
+
                     try {
-                        request = JSON.parse(request.toString());
+                        request = request.toString();
                     } catch (e) {
-                        return adapter.log.error('Cannot parse request: ' + request);
+                        return adapter.log.error('Cannot convert request: ' + request);
                     }
+                    adapter.log.debug('Data: ' + request);
                     if (type === 'alexa') {
+                        try {
+                            request = JSON.parse(request);
+                        } catch (e) {
+                            return adapter.log.error('Cannot parse request: ' + request);
+                        }
+
                         adapter.log.debug(new Date().getTime() + ' ALEXA: ' + JSON.stringify(request));
 
                         if (request && request.directive) {
@@ -548,8 +556,7 @@ function startDevice(clientId, login, password, retry) {
                         if (adapter.config.allowedServices[0] === '*' || adapter.config.allowedServices.indexOf(_type) !== -1) {
                             if (type === 'text2command') {
                                 if (adapter.config.text2command !== undefined && adapter.config.text2command !== '') {
-                                    adapter.setForeignState('text2command.' + adapter.config.text2command + '.text',
-                                        decodeURIComponent(request.data),
+                                    adapter.setForeignState('text2command.' + adapter.config.text2command + '.text', request,
                                             err => device.publish('response/' + clientId + '/' + type, JSON.stringify({result: err || 'Ok'})));
                                 } else {
                                     adapter.log.warn('Received service text2command, but instance is not defined');
@@ -573,7 +580,7 @@ function startDevice(clientId, login, password, retry) {
                                             native: {}
                                         }, err => {
                                             if (!err) {
-                                                adapter.setState('services.custom_' + _type, request.data, false, err =>
+                                                adapter.setState('services.custom_' + _type, request, false, err =>
                                                     device.publish('response/' + clientId + '/' + type, JSON.stringify({result: err || 'Ok'})));
                                             } else {
                                                 adapter.log.error(`Cannot control ${'.services.custom_' + _type}: ${JSON.stringify(err)}`);
@@ -581,7 +588,7 @@ function startDevice(clientId, login, password, retry) {
                                             }
                                         });
                                     } else {
-                                        adapter.setState('services.custom_' + _type, request.data, false, err =>
+                                        adapter.setState('services.custom_' + _type, request, false, err =>
                                             device.publish('response/' + clientId + '/' + type, JSON.stringify({result: err || 'Ok'})));
                                     }
                                 });
