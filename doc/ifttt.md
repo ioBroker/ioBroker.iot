@@ -25,8 +25,7 @@ We will build an applet doing the following chain: ioBroker => Webhook (IFTTT) =
 
 ![Image showing the IFTTT trigger selection page](ifttt_send_03.png)
 
-**4. Now we name our event, choose here the same name as you will later in Blocky. For this example lets call it
-"state".**
+**4. Now we name our event, choose here the same name as you will later in Blocky. ioBroker.iot sends only events with name "state" and this you should enter as "Event name".**
 
 ![Image showing the trigger field page of the webhook service with a red arrow showing where to put in the name of the event](ifttt_send_04.png)
 
@@ -58,10 +57,10 @@ We will build an applet doing the following chain: ioBroker => Webhook (IFTTT) =
  
  ![Image showing the IFTTT Webhooks documentation where you get the Maker Webhooks key](ifttt_send_10.png)
  
- **11. Now go to ioBroker and there to your cloud adapter instance settings page, select the "IFTTT and services"
+ **11. Now go to ioBroker and there to your iot adapter instance settings page, select the "IFTTT and services"
   tab and paste the key in the field labeled "IFTTT key". (dont even try, the key here is random and just for show)**
   
-  ![Image showing the cloud adapter configuration page with the "Services and IFTTT" tab selected](ifttt_send_11.png)
+  ![Image showing the iot adapter configuration page with the "Services and IFTTT" tab selected](ifttt_send_11.png)
   
   **12. Now we are good to send data to IFTTT using blocky. Here is how the fields of the "send text to IFTTT"
   element (under "Sendto" in Blocky) correspond to the ones we configured as the action in IFTTT.**
@@ -71,14 +70,14 @@ We will build an applet doing the following chain: ioBroker => Webhook (IFTTT) =
   **If you prefer to write javascript directly instead using blocky, the function to use looks like this:**
   
   ```javascript
-  sendTo("cloud.0", "ifttt", {
+  sendTo("iot.0", "ifttt", {
       event: 'state',
       value1: 'value1',
       value2: 'value2',
       value3: 'value3'
   });
   ```
-  **Also its possible to set the variable ```cloud.0.service.ifttt``` with some value and it will be send, too.**
+  **Also its possible to set the variable ```iot.0.service.ifttt``` with some value and it will be send, too.**
   
   **13. As a simple example here a Blocky script which grabs the state of a HomeMatic door contact and sends it to
   IFTTT on a change and the resulting Telegram message.**
@@ -122,14 +121,14 @@ We will build an applet doing the following chain: ioBroker => Webhook (IFTTT) =
   ![Image showing the choose action page of the Webhooks service](ifttt_get_07.png)
   
   **8. Now we need the API url (requires you having a ioBroker cloud account, either free or pro) from the 
-  cloud adapter page, its under the "IFTTT and Services" tab. (oh and don't try, the key in the picture is fake)**
+  iot adapter page, its under the "IFTTT and Services" tab. (oh and don't try, the key in the picture is fake)**
   
   In the case you use custom services, you need set "White list for services" either to "*" to allow
   all services or add "ifttt" to the list of allowed services. If you don't use custom services, ignore this.
   
-  ![Image showing the cloud adapter page with the tab "IFTTT and Services" open and a red arrow pointing the the IFTTT url](ifttt_get_08.png)
+  ![Image showing the iot adapter page with the tab "IFTTT and Services" open and a red arrow pointing the the IFTTT url](ifttt_get_08.png)
   
-  **9. Insert the API url you copied from the cloud adapter configuration into the URL field here. then
+  **9. Insert the API url you copied from the iot adapter configuration into the URL field here. then
   select action "post" and content type "text/plain" and for the body "Text" as the ingredient.**
   
   ![Image showing the complete action fields with all options filled/selected as explained.](ifttt_get_09.png)
@@ -139,7 +138,7 @@ We will build an applet doing the following chain: ioBroker => Webhook (IFTTT) =
   ![Image showing the final page of the applet creation on IFTTT](ifttt_get_10.png)
    
    **11. Now if we send a private message to @IFTTT at Telegram like for example "state roflcopter" the variable
-    ```cloud.0.service.ifttt``` will contain "roflcopter". This can be captured by any Blocky- or Javascript
+    ```iot.0.service.ifttt``` will contain "roflcopter". This can be captured by any Blocky- or Javascript
     which then can act accordingly.**
     
   ![Image showing a Telegram window with the message send to the @IFTTT bot and the state in ioBroker](ifttt_get_11.png)
