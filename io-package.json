@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "0.1.6",
+        "version": "0.1.7",
         "title": "Cloud MQTT connection",
         "titleLang": {
             "en": "Cloud MQTT connection",
@@ -26,7 +26,7 @@
             "pl": "Łączy twój serwer ioBroker z chmurą IoT ioBroker"
         },
         "news": {
-            "0.1.6": {
+            "0.1.7": {
                 "en": "The configuration dialog was corrected\nThe possibility to create the answer for the custom skill with the script was implemented. ",
                 "de": "Der Konfigurationsdialog wurde korrigiert\nDie Möglichkeit, die Antwort für die benutzerdefinierte Fertigkeit mit dem Skript zu erstellen, wurde implementiert.",
                 "ru": "Диалог конфигурации был исправлен\nБыла реализована возможность создания ответа для пользовательского навыка со скриптом.",
