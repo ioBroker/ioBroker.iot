@@ -301,10 +301,18 @@ function encrypt(key, value) {
     for(let i = 0; i < value.length; i++) {
         result += String.fromCharCode(key[i % key.length].charCodeAt(0) ^ value.charCodeAt(i));
     }
-    return result;
+    return 'base64:' + new Buffer(result).toString('base64');
 }
 
 function decrypt(key, value) {
+    if (value.startsWith('base64:')) {
+        try {
+            value = new Buffer(value.substring(7), 'base64').toString('ascii')
+        } catch (e) {
+            adapter.log.error('Cannot decrypt key: ' + e);
+        }
+    }
+
     let result = '';
     for(let i = 0; i < value.length; i++) {
         result += String.fromCharCode(key[i % key.length].charCodeAt(0) ^ value.charCodeAt(i));
@@ -502,7 +510,8 @@ function startDevice(clientId, login, password, retry) {
                 clientId:   clientId,
                 username:   'ioBroker',
                 host:       adapter.config.cloudUrl,
-                debug:      false
+                debug:      !!adapter.config.debug,
+                baseReconnectTimeMs: 5000
             });
 
             device.subscribe('command/' + clientId + '/#');
@@ -510,7 +519,9 @@ function startDevice(clientId, login, password, retry) {
             device.on('close', onDisconnect);
             device.on('reconnect', () => adapter.log.debug('reconnect'));
             device.on('offline', () => adapter.log.debug('offline'));
-            device.on('error', error => adapter.log.error(JSON.stringify(error)));
+            device.on('error', error => {
+                adapter.log.error((error && error.message) || JSON.stringify(error))
+            });
             device.on('message', (topic, request) => {
                 adapter.log.debug(`Request ${topic}`);
                 if (topic.startsWith('command/' + clientId + '/')) {

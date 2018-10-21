@@ -181,6 +181,9 @@ on({id: 'iot.0.smart.lastCommand', ack: true, change: 'any'}, obj => {
 ```
 
 ## Changelog
+### 0.1.8 (2018-10-21)
+* (bluefox) Added extended diagnostics
+
 ### 0.1.7 (2018-10-14)
 * (bluefox) The configuration dialog was corrected
 * (bluefox) The possibility to create the answer with script for the custom skill was implemented.

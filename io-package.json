@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "0.1.7",
+        "version": "0.1.8",
         "title": "Cloud MQTT connection",
         "titleLang": {
             "en": "Cloud MQTT connection",
@@ -26,6 +26,17 @@
             "pl": "Łączy twój serwer ioBroker z chmurą IoT ioBroker"
         },
         "news": {
+            "0.1.8": {
+                "en": " Added extended diagnostics ",
+                "de": "Erweiterte Diagnose hinzugefügt",
+                "ru": "Добавлена ​​расширенная диагностика",
+                "pt": "Adicionado diagnóstico estendido",
+                "nl": "Uitgebreide diagnostiek toegevoegd",
+                "fr": "Ajout de diagnostics étendus",
+                "it": "Aggiunta diagnostica estesa",
+                "es": "Diagnóstico extendido agregado",
+                "pl": "Dodano rozszerzoną diagnostykę"
+            },
             "0.1.7": {
                 "en": "The configuration dialog was corrected\nThe possibility to create the answer for the custom skill with the script was implemented. ",
                 "de": "Der Konfigurationsdialog wurde korrigiert\nDie Möglichkeit, die Antwort für die benutzerdefinierte Fertigkeit mit dem Skript zu erstellen, wurde implementiert.",
@@ -90,7 +101,8 @@
         "replaces": "",
         "allowedServices": "",
         "text2command": "0",
-        "noCommon": false
+        "noCommon": false,
+        "debug": false
     },
     "objects": [],
     "instanceObjects": [
