@@ -38,6 +38,9 @@ let adapter        = new utils.Adapter({
         }
     },
     stateChange:  (id, state) => {
+        !googleDisabled && googleHome && googleHome.updateState(id, state);
+        !alexaDisabled && alexaSH3 && alexaSH3.updateState && alexaSH3.updateState(id, state);
+
         if (id === adapter.namespace + '.smart.lastResponse' && state && !state.ack) {
             alexaCustom && alexaCustom.setResponse(state.val);
         } else if (id === adapter.namespace + '.smart.googleDisabled' && state && !state.ack) {
@@ -664,7 +667,10 @@ function main() {
     alexaSH2    = new AlexaSH2(adapter);
     alexaSH3    = new AlexaSH3(adapter);
     alexaCustom = new AlexaCustom(adapter);
-    googleHome  = new GoogleHome(adapter);
+
+    readUrlKey()
+        .then(key => googleHome  = new GoogleHome(adapter, key))
+
 
     adapter.config.allowedServices = (adapter.config.allowedServices || '').split(/[,\s]+/);
     for (let s = 0; s < adapter.config.allowedServices.length; s++) {
