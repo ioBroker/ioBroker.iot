@@ -4,10 +4,11 @@
 'use strict';
 
 const DeviceModule = require('aws-iot-device-sdk').device;
-const utils        = require(__dirname + '/lib/utils'); // Get common adapter utils
-const AlexaSH2     = require(__dirname + '/lib/alexaSmartHomeV2');
-const AlexaSH3     = require(__dirname + '/lib/alexaSmartHomeV3');
-const AlexaCustom  = require(__dirname + '/lib/alexaCustom');
+const utils        = require('./lib/utils'); // Get common adapter utils
+const AlexaSH2     = require('./lib/alexaSmartHomeV2');
+const AlexaSH3     = require('./lib/alexaSmartHomeV3');
+const AlexaCustom  = require('./lib/alexaCustom');
+const GoogleHome   = require('./lib/GoogleHome');
 const fs           = require('fs');
 const request      = require('request');
 
@@ -16,6 +17,7 @@ let lang           = 'de';
 let translate      = false;
 let alexaSH2       = null;
 let alexaSH3       = null;
+let googleHome     = null;
 let alexaCustom    = null;
 let device         = null;
 
@@ -38,6 +40,10 @@ let adapter        = new utils.Adapter({
     stateChange:  (id, state) => {
         if (id === adapter.namespace + '.smart.lastResponse' && state && !state.ack) {
             alexaCustom && alexaCustom.setResponse(state.val);
+        } else if (id === adapter.namespace + '.smart.googleDisabled' && state && !state.ack) {
+            googleDisabled = state.val;
+        } else if (id === adapter.namespace + '.smart.alexaDisabled' && state && !state.ack) {
+            alexaDisabled = state.val;
         }
     },
     unload: callback => {
@@ -556,6 +562,15 @@ function startDevice(clientId, login, password, retry) {
                     } else if (type === 'ifttt') {
                         processIfttt(request, response =>
                             device.publish('response/' + clientId + '/ifttt', JSON.stringify(response)));
+                    } else if (type === 'ghome') {
+                        try {
+                            request = JSON.parse(request);
+                        } catch (e) {
+                            return adapter.log.error('Cannot parse request: ' + request);
+                        }
+
+                        googleHome.process(request, !googleDisabled, response =>
+                            device.publish('response/' + clientId + '/ghome', JSON.stringify(response)));
                     } else {
                         let isCustom = false;
                         let _type = type;
@@ -649,6 +664,7 @@ function main() {
     alexaSH2    = new AlexaSH2(adapter);
     alexaSH3    = new AlexaSH3(adapter);
     alexaCustom = new AlexaCustom(adapter);
+    googleHome  = new GoogleHome(adapter);
 
     adapter.config.allowedServices = (adapter.config.allowedServices || '').split(/[,\s]+/);
     for (let s = 0; s < adapter.config.allowedServices.length; s++) {
@@ -695,6 +711,7 @@ function main() {
             alexaDisabled = state.val === true || state.val === 'true';
         }
     });
+
     adapter.getState('smart.googleDisabled', (err, state) => {
         if (!state || state.val === null || state.val === 'null') {
             // init value with false
