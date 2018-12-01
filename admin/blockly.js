@@ -5,7 +5,7 @@ goog.provide('Blockly.JavaScript.Sendto');
 goog.require('Blockly.JavaScript');
 
 // --- ifttt --------------------------------------------------
-Blockly.Words['ifttt']               = {'en': 'Send text to IFTTT',          'de': 'Sende Text zu IFTTT',                'ru': 'Послать текст в IFTTT'};
+Blockly.Words['ifttt_iot']           = {'en': 'Send text to IFTTT via iot',  'de': 'Sende Text zu IFTTT über iot',       'ru': 'Послать текст в IFTTT через iot'};
 Blockly.Words['ifttt_event']         = {'en': 'event',                       'de': 'event',                              'ru': 'event'};
 Blockly.Words['ifttt_value1']        = {'en': 'value1',                      'de': 'value1',                             'ru': 'value1'};
 Blockly.Words['ifttt_value2']        = {'en': 'value2',                      'de': 'value2',                             'ru': 'value2'};
@@ -24,8 +24,8 @@ Blockly.Words['ifttt_log_error']     = {'en': 'error',                       'de
 // this is copy of engines.js
 // Blockly.Sendto is global variable and defined in javascript/admin/google-blockly/own/blocks_sendto.js
 
-Blockly.Sendto.blocks['ifttt'] =
-    '<block type="ifttt">'
+Blockly.Sendto.blocks['ifttt_iot'] =
+    '<block type="ifttt_iot">'
     + '     <value name="INSTANCE">'
     + '     </value>'
     + '     <value name="EVENT">'
@@ -52,25 +52,30 @@ Blockly.Sendto.blocks['ifttt'] =
     + '     </value>'
     + '</block>';
 
-Blockly.Blocks['ifttt'] = {
+Blockly.Blocks['ifttt_iot'] = {
     init: function() {
         var options = [];
         if (typeof main !== 'undefined' && main.instances) {
             for (var i = 0; i < main.instances.length; i++) {
-                var m = main.instances[i].match(/^system.adapter.cloud.(\d+)$/);
+                var m = main.instances[i].match(/^system.adapter.iot.(\d+)$/);
                 if (m) {
                     var n = parseInt(m[1], 10);
-                    options.push(['cloud.' + n, '.' + n]);
+                    options.push(['iot.' + n, '.' + n]);
+                }
+            }
+            if (options.length === 0) {
+                for (var k = 0; k <= 4; k++) {
+                    options.push(['iot.' + k, '.' + k]);
                 }
             }
         } else {
             for (var u = 0; u <= 4; u++) {
-                options.push(['cloud.' + u, '.' + u]);
+                options.push(['iot.' + u, '.' + u]);
             }
         }
 
         this.appendDummyInput('INSTANCE')
-            .appendField(Blockly.Words['ifttt'][systemLang])
+            .appendField(Blockly.Words['ifttt_iot'][systemLang])
             .appendField(new Blockly.FieldDropdown(options), 'INSTANCE');
 
         this.appendValueInput('EVENT')
@@ -108,7 +113,7 @@ Blockly.Blocks['ifttt'] = {
     }
 };
 
-Blockly.JavaScript['ifttt'] = function(block) {
+Blockly.JavaScript['ifttt_iot'] = function(block) {
     var dropdown_instance = block.getFieldValue('INSTANCE');
     var event = Blockly.JavaScript.valueToCode(block, 'EVENT', Blockly.JavaScript.ORDER_ATOMIC);
     var logLevel = block.getFieldValue('LOG');
@@ -118,7 +123,7 @@ Blockly.JavaScript['ifttt'] = function(block) {
 
     var logText;
     if (logLevel) {
-        logText = 'console.' + logLevel + '("ifttt: " + ' + event + ');\n'
+        logText = 'console.' + logLevel + '("ifttt_iot: " + ' + event + ');\n'
     } else {
         logText = '';
     }
