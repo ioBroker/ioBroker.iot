@@ -1,8 +1,8 @@
 {
     "common": {
         "name": "iot",
-        "version": "0.1.8",
-        "title": "Cloud MQTT connection",
+        "version": "0.1.9",
+        "title": "IoT Assistants",
         "titleLang": {
             "en": "Cloud MQTT connection",
             "de": "Cloud MQTT-Verbindung",
@@ -26,8 +26,19 @@
             "pl": "Łączy twój serwer ioBroker z chmurą IoT ioBroker"
         },
         "news": {
+            "0.1.9": {
+                "en": "The name of the adapter was changed",
+                "de": "Der Name des Adapters wurde geändert",
+                "ru": "Название адаптера было изменено",
+                "pt": "O nome do adaptador foi alterado",
+                "nl": "De naam van de adapter is gewijzigd",
+                "fr": "Le nom de l'adaptateur a été changé",
+                "it": "Il nome dell'adattatore è stato cambiato",
+                "es": "Se cambió el nombre del adaptador",
+                "pl": "Nazwa adaptera została zmieniona"
+            },
             "0.1.8": {
-                "en": " Added extended diagnostics ",
+                "en": "Added extended diagnostics",
                 "de": "Erweiterte Diagnose hinzugefügt",
                 "ru": "Добавлена ​​расширенная диагностика",
                 "pt": "Adicionado diagnóstico estendido",

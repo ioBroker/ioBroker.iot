@@ -1,5 +1,5 @@
 ![Logo](admin/iot.png)
-# ioBroker MQTT cloud adapter
+# ioBroker IoT Adapter
 =================
 
 [![NPM version](http://img.shields.io/npm/v/iobroker.iot.svg)](https://www.npmjs.com/package/iobroker.iot)
@@ -181,6 +181,9 @@ on({id: 'iot.0.smart.lastCommand', ack: true, change: 'any'}, obj => {
 ```
 
 ## Changelog
+### 0.1.9 (2018-12-09)
+* (bluefox) Change the name of adapter
+
 ### 0.1.8 (2018-10-21)
 * (bluefox) Added extended diagnostics
 
