@@ -542,7 +542,7 @@ function startDevice(clientId, login, password, retry) {
                         return adapter.log.error('Cannot convert request: ' + request);
                     }
                     adapter.log.debug('Data: ' + request);
-                    if (type === 'alexa') {
+                    if (type.startsWith('alexa')) {
                         try {
                             request = JSON.parse(request);
                         } catch (e) {
@@ -553,19 +553,19 @@ function startDevice(clientId, login, password, retry) {
 
                         if (request && request.directive) {
                             alexaSH3.process(request, !alexaDisabled, response =>
-                                device.publish('response/' + clientId + '/alexa', JSON.stringify(response)));
-                        }
+                                device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
+                        } else
                         if (request && !request.header) {
                             alexaCustom.process(request, !alexaDisabled, response =>
-                                device.publish('response/' + clientId + '/alexa', JSON.stringify(response)));
+                                device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
                         } else {
                             alexaSH2.process(request, !alexaDisabled, response =>
-                                device.publish('response/' + clientId + '/alexa', JSON.stringify(response)));
+                                device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
                         }
-                    } else if (type === 'ifttt') {
+                    } else if (type.startsWith('ifttt')) {
                         processIfttt(request, response =>
-                            device.publish('response/' + clientId + '/ifttt', JSON.stringify(response)));
-                    } else if (type === 'ghome') {
+                            device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
+                    } else if (type.startsWith('ghome')) {
                         try {
                             request = JSON.parse(request);
                         } catch (e) {
@@ -573,7 +573,7 @@ function startDevice(clientId, login, password, retry) {
                         }
 
                         googleHome.process(request, !googleDisabled, response =>
-                            device.publish('response/' + clientId + '/ghome', JSON.stringify(response)));
+                            device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
                     } else {
                         let isCustom = false;
                         let _type = type;
@@ -583,7 +583,7 @@ function startDevice(clientId, login, password, retry) {
                         }
 
                         if (adapter.config.allowedServices[0] === '*' || adapter.config.allowedServices.indexOf(_type) !== -1) {
-                            if (type === 'text2command') {
+                            if (type.startsWith('text2command')) {
                                 if (adapter.config.text2command !== undefined && adapter.config.text2command !== '') {
                                     adapter.setForeignState('text2command.' + adapter.config.text2command + '.text', request,
                                             err => device.publish('response/' + clientId + '/' + type, JSON.stringify({result: err || 'Ok'})));
@@ -591,7 +591,7 @@ function startDevice(clientId, login, password, retry) {
                                     adapter.log.warn('Received service text2command, but instance is not defined');
                                     device.publish('response/' + clientId + '/' + type, JSON.stringify({result: 'but instance is not defined'}));
                                 }
-                            } else if (type === 'simpleApi') {
+                            } else if (type.startsWith('simpleApi')) {
                                 device.publish('response/' + clientId + '/' + type, JSON.stringify({result: 'not implemented'}));
                             } else if (isCustom) {
                                 adapter.getObject('services.custom_' + _type, (err, obj) => {

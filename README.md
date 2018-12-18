@@ -181,7 +181,7 @@ on({id: 'iot.0.smart.lastCommand', ack: true, change: 'any'}, obj => {
 ```
 
 ## Changelog
-### 0.1.9 (2018-12-09)
+### 0.2.0 (2018-12-18)
 * (bluefox) Change the name of adapter
 
 ### 0.1.8 (2018-10-21)

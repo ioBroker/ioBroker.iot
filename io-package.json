@@ -1,18 +1,18 @@
 {
     "common": {
         "name": "iot",
-        "version": "0.1.9",
+        "version": "0.2.0",
         "title": "IoT Assistants",
         "titleLang": {
-            "en": "Cloud MQTT connection",
-            "de": "Cloud MQTT-Verbindung",
-            "ru": "Соединение Cloud MQTT",
-            "pt": "Conexão Cloud MQTT",
-            "nl": "Cloud MQTT-verbinding",
-            "fr": "Connexion Cloud MQTT",
-            "it": "Connessione Cloud MQTT",
-            "es": "Conexión MQTT en la nube",
-            "pl": "Połączenie Cloud MQTT"
+            "en": "IoT cloud connection",
+            "de": "Cloud IoT-Verbindung",
+            "ru": "Соединение Cloud IoT",
+            "pt": "Conexão Cloud IoT",
+            "nl": "Cloud IoT-verbinding",
+            "fr": "Connexion Cloud IoT",
+            "it": "Connessione Cloud IoT",
+            "es": "Conexión IoT en la nube",
+            "pl": "Połączenie Cloud IoT"
         },
         "desc": {
             "en": "Connects your ioBroker server to the ioBroker IoT cloud",
@@ -26,7 +26,7 @@
             "pl": "Łączy twój serwer ioBroker z chmurą IoT ioBroker"
         },
         "news": {
-            "0.1.9": {
+            "0.2.0": {
                 "en": "The name of the adapter was changed",
                 "de": "Der Name des Adapters wurde geändert",
                 "ru": "Название адаптера было изменено",
