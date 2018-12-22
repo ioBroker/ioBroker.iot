@@ -976,6 +976,29 @@
         }
     }
 
+    function reissueUrlKey() {
+        $('#get_new_key').off('click').on('click', function () {
+            $('#get_new_key').addClass('disabled');
+            return socket.emit('setState', 'iot.' + instance + '.certs.urlKey', {val: '', ack: true}, function (err, state) {
+                socket.emit('getObject', 'system.adapter.iot.' + instance, function (err, obj) {
+                    if (!obj || !obj.common || !obj.common.enabled) {
+                        $('#get_new_key').removeClass('disabled');
+                        showToast(null, _('Key will be updated after start'));
+                    } else {
+                        socket.emit('setObject', 'system.adapter.iot.' + instance, obj, function (err) {
+                            $('#get_new_key').removeClass('disabled');
+                            if (err) {
+                                showError(err);
+                            } else {
+                                showToast(null, _('Certificates will be updated after initiated restart'));
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    }
+
     function updateUrlKey(key, user) {
         if (key) {
             gURLKey = key;
@@ -1057,16 +1080,38 @@
                                 socket.emit('getObject', 'system.adapter.iot.' + instance, function (err, obj) {
                                     if (!obj || !obj.common || !obj.common.enabled) {
                                         $('#get_new_certs').removeClass('disabled');
+                                        if ($('#get_new_certs_force').prop('checked')) {
+                                            socket.emit('setState', 'iot.' + instance + '.certs.forceUserCreate', {
+                                                val: true,
+                                                ack: true
+                                            });
+                                        }
                                         showToast(null, _('Certificates will be updated after start'));
                                     } else {
-                                        socket.emit('setObject', 'system.adapter.iot.' + instance, obj, function (err) {
-                                            $('#get_new_certs').removeClass('disabled');
-                                            if (err) {
-                                                showError(err);
-                                            } else {
-                                                showToast(null, _('Certificates will be updated after initiated restart'));
-                                            }
-                                        });
+                                        if ($('#get_new_certs_force').prop('checked')) {
+                                            socket.emit('setState', 'iot.' + instance + '.certs.forceUserCreate', {
+                                                val: true,
+                                                ack: true
+                                            }, function (err) {
+                                                socket.emit('setObject', 'system.adapter.iot.' + instance, obj, function (err) {
+                                                    $('#get_new_certs').removeClass('disabled');
+                                                    if (err) {
+                                                        showError(err);
+                                                    } else {
+                                                        showToast(null, _('Certificates will be updated after initiated restart'));
+                                                    }
+                                                });
+                                            });
+                                        } else {
+                                            socket.emit('setObject', 'system.adapter.iot.' + instance, obj, function (err) {
+                                                $('#get_new_certs').removeClass('disabled');
+                                                if (err) {
+                                                    showError(err);
+                                                } else {
+                                                    showToast(null, _('Certificates will be updated after initiated restart'));
+                                                }
+                                            });
+                                        }
                                     }
                                 });
                             });
@@ -1339,9 +1384,17 @@
                 updateMDevices();
             }
         });
+
+        $('#get_new_certs_force').on('change', function () {
+            if ($(this).prop('checked')) {
+                showMessage(_('Click now Get new connection certificates to request new temporary password'));
+            }
+        });
+
         socket.emit('subscribe', adapter + '.' + instance + '.certs.urlKey');
 
         resetCerts();
+        reissueUrlKey();
 
         M.updateTextFields();
     }
@@ -1581,8 +1634,12 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="input-field col s12 m8">
+                    <div class="input-field col s6 m4">
                         <a id="get_new_certs" class="waves-effect waves-light btn blue"><i class="material-icons">refresh</i><span class="translate">Get new connection certificates</span></a>
+                    </div>
+                    <div class="input-field col s6 m4">
+                        <input type="checkbox" id="get_new_certs_force" />
+                        <span for="get_new_certs_force" class="translate">Request email with password one more time</span>
                     </div>
                 </div>
                 <div class="row">
@@ -1722,6 +1779,11 @@
             </div>
             <div id="tab-services" class="col s12 page">
                 <div class="marg"></div>
+                <div class="row">
+                    <div class="input-field col s6 m4">
+                        <a id="get_new_key" class="waves-effect waves-light btn blue"><i class="material-icons">refresh</i><span class="translate">Get new service URL key</span></a>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="input-field col s12">
                         <input class="value" type="text" id="iftttKey" />

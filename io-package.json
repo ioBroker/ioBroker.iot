@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "0.2.0",
+        "version": "0.2.1",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -26,6 +26,17 @@
             "pl": "Łączy twój serwer ioBroker z chmurą IoT ioBroker"
         },
         "news": {
+            "0.2.1": {
+                "en": "Generation of new URL key was added",
+                "de": "Die Generierung eines neuen URL-Schlüssels wurde hinzugefügt",
+                "ru": "Была добавлена генерация нового URL-ключа",
+                "pt": "Geração de nova chave de URL foi adicionada",
+                "nl": "Het genereren van een nieuwe URL-sleutel is toegevoegd",
+                "fr": "La génération d'une nouvelle clé d'URL a été ajoutée.",
+                "it": "È stata aggiunta la nuova chiave URL",
+                "es": "Generación de nueva clave de URL fue agregada",
+                "pl": "Generowanie nowego klucza URL zostało dodane"
+            },
             "0.2.0": {
                 "en": "The name of the adapter was changed",
                 "de": "Der Name des Adapters wurde geändert",
@@ -327,6 +338,20 @@
                 "type": "string",
                 "read": true,
                 "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "certs.forceUserCreate",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": "Force user creation",
+                "desc": "Used to get the email with temp password anew",
+                "def": false,
+                "type": "boolean",
+                "read": true,
+                "write": true
             },
             "native": {}
         }

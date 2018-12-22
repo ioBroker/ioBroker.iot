@@ -444,45 +444,56 @@ function writeKeys(data) {
     });
 }
 
-function fetchKeys(login, pass) {
+function fetchKeys(login, pass, forceUserCreation) {
     return new Promise((resolve, reject) => {
-        let done = false;
-        let req;
-        let timeout = setTimeout(() => {
-            if (!done)  {
-                done = true;
-                reject('timeout');
-            }
-            req && req.abort();
-        }, 15000);
-
-        adapter.log.debug('Fetching keys...');
-        req = request.get(`https://create-user.iobroker.in/v1/createUser?user=${encodeURIComponent(login)}&pass=${encodeURIComponent(pass)}`, (error, response, body) => {
-            req = null;
-            clearTimeout(timeout);
-            if (error) {
-                if (!done)  {
+        adapter.getState('certs.forceUserCreate', (err, state) => {
+            let forceUserCreation = state && state.val;
+            let done = false;
+            let req;
+            let timeout = setTimeout(() => {
+                if (!done) {
                     done = true;
-                    reject(error);
+                    reject('timeout');
                 }
-            } else {
-                let data;
-                try {
-                    data = JSON.parse(body)
-                } catch (e) {
-                    return reject('Cannot parse answer: ' + JSON.stringify(e));
-                }
-                if (data.error) {
-                    adapter.log.error('Cannot fetch keys: ' + JSON.stringify(data.error));
-                    reject(data);
-                } else if (data.certificates) {
-                    writeKeys(data.certificates)
-                        .then(() => resolve({private: data.certificates.keyPair.PrivateKey, certificate: data.certificates.certificatePem}));
-                } else {
-                    adapter.log.error('Cannot fetch keys: ' + JSON.stringify(data));
-                    reject(data);
-                }
+                req && req.abort();
+            }, 15000);
+
+            // erase flag, if user must be created anew, but remember the state
+            if (forceUserCreation) {
+                adapter.setState('certs.forceUserCreate', false, true);
             }
+
+            adapter.log.debug('Fetching keys...');
+            req = request.get(`https://create-user.iobroker.in/v1/createUser?user=${encodeURIComponent(login)}&pass=${encodeURIComponent(pass)}&forceRecreate=${forceUserCreation}`, (error, response, body) => {
+                req = null;
+                clearTimeout(timeout);
+                if (error) {
+                    if (!done) {
+                        done = true;
+                        reject(error);
+                    }
+                } else {
+                    let data;
+                    try {
+                        data = JSON.parse(body)
+                    } catch (e) {
+                        return reject('Cannot parse answer: ' + JSON.stringify(e));
+                    }
+                    if (data.error) {
+                        adapter.log.error('Cannot fetch keys: ' + JSON.stringify(data.error));
+                        reject(data);
+                    } else if (data.certificates) {
+                        writeKeys(data.certificates)
+                            .then(() => resolve({
+                                private: data.certificates.keyPair.PrivateKey,
+                                certificate: data.certificates.certificatePem
+                            }));
+                    } else {
+                        adapter.log.error('Cannot fetch keys: ' + JSON.stringify(data));
+                        reject(data);
+                    }
+                }
+            });
         });
     });
 }
@@ -500,7 +511,7 @@ function startDevice(clientId, login, password, retry) {
         })
         .then(_certs => {
             certs = _certs;
-            return readUrlKey()
+            return readUrlKey();
         })
         .catch(e => {
             if (e === 'Not exists') {
@@ -670,6 +681,9 @@ function main() {
 
     readUrlKey()
         .then(key => googleHome  = new GoogleHome(adapter, key))
+        .catch(err => {
+            adapter.log.error('Cannot read URL key: ' + err);
+        });
 
 
     adapter.config.allowedServices = (adapter.config.allowedServices || '').split(/[,\s]+/);

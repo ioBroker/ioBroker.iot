@@ -181,6 +181,9 @@ on({id: 'iot.0.smart.lastCommand', ack: true, change: 'any'}, obj => {
 ```
 
 ## Changelog
+### 0.2.1 (2018-12-21)
+* (bluefox) Generation of new URL key was added
+
 ### 0.2.0 (2018-12-18)
 * (bluefox) Change the name of adapter
 
