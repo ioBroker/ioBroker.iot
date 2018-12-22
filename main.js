@@ -662,6 +662,10 @@ function main() {
         adapter.config.deviceOffLevel = 30;
     }
 
+    if (adapter.config.login !== (adapter.config.login || '').trim().toLowerCase()) {
+        adapter.log.error('Please write your login only in lowercase!');
+    }
+
     adapter.config.deviceOffLevel = parseFloat(adapter.config.deviceOffLevel) || 0;
     adapter.config.concatWord     = (adapter.config.concatWord || '').toString().trim();
     adapter.config.apikey         = (adapter.config.apikey || '').trim();
