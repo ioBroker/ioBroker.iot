@@ -1418,10 +1418,16 @@
                 obj[id] = value;
             }
         });
+        obj.login = (obj.login || '').trim();
         obj.allowedServices = chips2list('.allowedServices');
         $('#functionFirstHint').hide();
         $('#concatWordHint').hide();
-        callback(obj);
+
+        if (obj.login !== obj.login.toLowerCase()) {
+            showError(_('Please write your email only in lower case letters'));
+        } else {
+            callback(obj);
+        }
     }
 </script>
 <style>

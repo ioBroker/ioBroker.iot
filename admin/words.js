@@ -79,6 +79,17 @@ systemDictionary = {
         "es": "Solicitar correo electrónico con contraseña una vez más",
         "pl": "Poproś jeszcze raz o e-mail z hasłem"
     },
+    "Please write your email only in lower case letters": {
+        "en": "Please write your email only in lower case letters",
+        "de": "Bitte schreiben Sie Ihre E-Mail nur in Kleinbuchstaben",
+        "ru": "Пожалуйста, пишите свою электронную почту только строчными буквами",
+        "pt": "Por favor, escreva seu e-mail apenas em letras minúsculas",
+        "nl": "Schrijf uw e-mail alleen in kleine letters",
+        "fr": "S'il vous plaît écrivez votre email uniquement en minuscules",
+        "it": "Si prega di scrivere la tua email solo in lettere minuscole",
+        "es": "Por favor escriba su correo electrónico sólo en minúsculas",
+        "pl": "Napisz swój e-mail tylko małymi literami"
+    },
     "IFTTT key:": {                                  "en": "IFTTT key",                                       "de": "IFTTT key",                                       "ru": "IFTTT key",                                       "pt": "Chave IFTTT",                                     "nl": "IFTTT-sleutel",                                   "fr": "Touche IFTTT",                                    "it": "Tasto IFTTT",                                     "es": "Tecla IFTTT",                                     "pl": "Klawisz IFTTT"},
     "Instance does not exists": {                    "en": "Instance does not exists",                        "de": "Instanz existiert nicht",                         "ru": "Экземпляр не существует",                         "pt": "Instância não existe",                            "nl": "Instantie bestaat niet",                          "fr": "L'instance n'existe pas",                         "it": "L'istanza non esiste",                            "es": "La instancia no existe",                          "pl": "Instancja nie istnieje"},
     "Instance is not active.": {                     "en": "Instance is not active.",                         "de": "Instanz ist nicht aktiv.",                        "ru": "Экземпляр не активен.",                           "pt": "A instância não está ativa.",                     "nl": "Instantie is niet actief.",                       "fr": "L'instance n'est pas active.",                    "it": "L'istanza non è attiva.",                         "es": "La instancia no está activa.",                    "pl": "Instancja nie jest aktywna."},

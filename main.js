@@ -680,7 +680,7 @@ function main() {
     alexaCustom = new AlexaCustom(adapter);
 
     readUrlKey()
-        .then(key => googleHome  = new GoogleHome(adapter, key))
+        .then(key => googleHome  = new GoogleHome(adapter, key));
         .catch(err => {
             adapter.log.error('Cannot read URL key: ' + err);
         });
