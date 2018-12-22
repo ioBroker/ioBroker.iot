@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "0.2.1",
+        "version": "0.2.2",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -26,7 +26,7 @@
             "pl": "Łączy twój serwer ioBroker z chmurą IoT ioBroker"
         },
         "news": {
-            "0.2.1": {
+            "0.2.2": {
                 "en": "Generation of new URL key was added",
                 "de": "Die Generierung eines neuen URL-Schlüssels wurde hinzugefügt",
                 "ru": "Была добавлена генерация нового URL-ключа",
