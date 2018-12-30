@@ -181,6 +181,9 @@ on({id: 'iot.0.smart.lastCommand', ack: true, change: 'any'}, obj => {
 ```
 
 ## Changelog
+### 0.3.0 (2018-12-30)
+* (bluefox) Detection of google devices was fixed
+
 ### 0.2.2 (2018-12-21)
 * (bluefox) Generation of new URL key was added
 

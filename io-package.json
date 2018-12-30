@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "0.2.2",
+        "version": "0.3.0",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -26,6 +26,17 @@
             "pl": "Łączy twój serwer ioBroker z chmurą IoT ioBroker"
         },
         "news": {
+            "0.3.0": {
+                "en": "Detection of google devices was fixed",
+                "de": "Die Erkennung von Google-Geräten wurde behoben",
+                "ru": "Исправлено обнаружение устройств Google",
+                "pt": "Detecção de dispositivos do Google foi corrigido",
+                "nl": "Detectie van google-apparaten was opgelost",
+                "fr": "La détection des appareils Google a été corrigée",
+                "it": "Il rilevamento dei dispositivi Google è stato corretto",
+                "es": "Se solucionó la detección de dispositivos google",
+                "pl": "Wykryto urządzenia Google"
+            },
             "0.2.2": {
                 "en": "Generation of new URL key was added",
                 "de": "Die Generierung eines neuen URL-Schlüssels wurde hinzugefügt",
