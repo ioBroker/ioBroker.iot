@@ -1,0 +1,96 @@
+(Defina para 0 se o comportamento não for desejado)
+Você pode inserir vários nomes divididos por vírgula
+APP-KEY
+Ativo
+Adicionar dispositivo
+Adicionar serviço
+Endereços
+Permitir acesso de administrador (apenas pro)
+Permitir certificados auto-assinados
+Permitir certificados auto-assinados
+Você tem certeza?
+A autenticação deve ser desabilitada. Você pode criar uma segunda instância extra para a nuvem.
+Cancelar
+Não é possível adicionar este objeto, porque não é suportado.
+Os certificados serão atualizados após a reinicialização iniciada
+Certificados serão atualizados após o início
+Clique agora "Obter novos certificados de conexão" para solicitar uma nova senha temporária
+URL em nuvem
+Configurações do adaptador de nuvem
+Comandos
+Concatenar palavras com
+Tempo limite de conexão (ms)
+Saídas de depuração
+Padrão
+O dispositivo será desativado.
+O dispositivo será desabilitado.
+Nome duplicado
+Edite o nome inteligente
+Erro
+Opções estendidas
+Filtro
+Filtro
+Funções
+Obter novos certificados de conexão
+Obter nova chave de URL de serviço
+Chave IFTTT
+Instância não existe
+A instância não está ativa.
+A instância deve ser executada para entregar os dados
+Instância
+Objeto inválido
+Língua
+Nível OFF para switches
+fora
+Está bem
+em
+Opções
+Configurações pessoais (somente pro)
+Tempo limite de ping (ms)
+Coloque a função em nomes primeiro
+Por favor, escreva seu e-mail apenas em letras minúsculas
+Substitua nos nomes
+Solicite email com senha mais uma vez
+Reiniciar na desconexão
+quartos
+Salve as configurações e os nomes serão alterados
+Selecione
+Nome do serviço
+Serviços e IFTTT
+Dispositivos inteligentes
+Smart Enums
+Smart Media
+Nome inteligente
+Nome inteligente
+Para aplicar esta configuração, o adaptador deve ser reiniciado. Aceita?
+Tipo
+Tipos
+Use o seguinte link para IFTTT
+Use o seguinte link para o serviço personalizado
+Use a instância text2command
+Lista branca de serviços
+Escreva a resposta para
+Se você usa a habilidade de Alexa, escreva um comentário para nós <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/create-review/?ref-suffix=war_dp' target='_blank' class='here'>aqui</a>.<br>Exemplos podem ser encontrados <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/reviews' target='_blank'>aqui</a>.
+por ON
+para limpar
+padrão
+Desativado
+Nenhuma conta iobroker.pro? Compre no <a href="https://iobroker.pro/accessRemote" target="_blank"> https://iobroker.pro </a> para obter acesso validado ou obter acesso gratuito, mas limitado.
+dividido por vírgula. Use * para permitir todos os serviços.
+Você pode encontrar sua chave <a href='https://ifttt.com/maker_webhooks' target='_blank'>aqui</a> em 'Documentação'
+ioBroker.pro Login
+Senha do ioBroker.pro
+último valor
+O nome foi modificado pelo usuário
+nenhum tipo
+Se você usa sua própria nuvem, você pode permitir o uso de certificados auto-assinados para a nuvem.
+Essa chave é necessária para se comunicar com uma nuvem. Você pode obter a API-KEY em https://iobroker.net e parece com o apelido_f1f439a0-001a-11e7-bc64-92361f002671
+Normalmente, você não precisa mudá-lo. Só é necessário se você planeja usar sua própria nuvem.
+Defina como concatenar o Quarto e a Função. Por exemplo. com 'in': luz na sala de estar.
+Alguns grupos consistem em dispositivos mistos: dimmers e switches. É permitido controlá-los com comandos ON e OFF e com porcentagens
+Normalmente, os nomes parecem room_function. Aqui pode mudar para function_room.
+Instância da Web, que será mostrada para suas conexões a partir da nuvem.
+Você pode definir os idiomas para mudar rapidamente entre a Alexa Skill dos EUA e a habilidade de DE Alexa.
+Se ativado, as configurações serão armazenadas somente para esta instância. Então, na outra instância, os outros nomes poderiam ser definidos.
+Para cada comando, a resposta do texto será gerada. Você pode definir aqui o ID do objeto, onde este texto deve ser escrito. Por exemplo. sayit.0.tts.text.
+Solução de problemas por conexão perdida com Alexa após a conexão à nuvem ter sido perdida. Com esta opção, você pode reiniciar o adaptador após cada desconexão e funcionará.

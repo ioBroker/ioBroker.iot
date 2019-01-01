@@ -6,6 +6,7 @@ node_modules
 .ideatest
 .travis.yml
 appveyor.yml
+src
 admin/i18n
 package-lock.json
 tsconfig.json

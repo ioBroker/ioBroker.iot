@@ -1,0 +1,96 @@
+(Set to 0 if behavior not desired)
+You can enter several names divided by comma
+APP-KEY
+Active
+Add device
+Add service
+Addresses
+Allow admin access (only pro)
+Allow self-signed certificates
+Allow self-signed certificates
+Are you sure?
+Authentication must be disabled. You can create a second instance extra for the cloud.
+Cancel
+Cannot add this object, because not supported.
+Certificates will be updated after initiated restart
+Certificates will be updated after start
+Click now "Get new connection certificates" to request new temporary password
+Cloud URL
+Cloud adapter settings
+Commands
+Concatenate words with
+Connection timeout(ms)
+Debug outputs
+Default
+Device will be deactivated.
+Device will be disabled.
+Duplicate name
+Edit smart name
+Error
+Extended options
+Filter
+Filter: 
+Functions
+Get new connection certificates
+Get new service URL key
+IFTTT key
+Instance does not exists
+Instance is not active.
+The instance must run to deliver the data
+Instance
+Invalid object
+Language
+OFF level for switches
+off
+Ok
+on
+Options
+Personal settings (only pro)
+Ping timeout(ms)
+Place function in names first
+Please write your email only in lower case letters
+Replace in names
+Request email with password one more time
+Restart on disconnect
+Rooms
+Save settings and the names will be changed
+Select
+Service names
+Services and IFTTT
+Smart Devices
+Smart Enums
+Smart Media
+Smart name
+Smart name
+To apply this setting, the adapter must be restarted. Agree?
+Type
+Types
+Use following link for IFTTT
+Use following link for custom service
+Use text2command instance
+White list for services
+Write response to
+If you use the Alexa Skill, please write a review for us <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/create-review/?ref-suffix=war_dp' target='_blank' class='here'>here</a>.<br>Examples can be found <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/reviews' target='_blank'>here</a>.
+by ON
+clear
+default
+disabled
+No iobroker.pro account? Buy it on <a href="https://iobroker.pro/accessRemote" target="_blank">https://iobroker.pro</a> for validated access or get for free, but limited access.
+divided by comma. Use * to allow all services.
+You can find your key <a href='https://ifttt.com/maker_webhooks' target='_blank'>here</a> under 'Documentation'
+ioBroker.pro Login
+ioBroker.pro Password
+last value
+Name was modified by user
+no type
+If you use your own cloud, you can allow the use of self-signed certificates for the cloud.
+This key is required to communicate with a cloud. You can get the API-KEY on https://iobroker.net and it looks like nickname_f1f439a0-001a-11e7-bc64-92361f002671
+Normally you do not need to change it. Only required if you plan to use your own cloud.
+Define how to concatenate Room and Function. E.g. with 'in': Light in living room.
+Some groups consist of mixed devices: dimmers and switches. It is allowed to control them with ON and OFF commands and with percents
+Normally the names looks like room_function. Here you can switch it to function_room.
+Web instance, which will be shown for your connections from cloud.
+You can define the languages to switch fast between US Alexa Skill and DE Alexa Skill.
+If enabled, the settings will be stored only for this instance. So in the another instance the other names could be set.
+For every command the text response will be generated. You can define here the Object ID , where this text must be written to. E.g. sayit.0.tts.text.
+Workaround for missing connection to Alexa after the connection to cloud was lost. With this option you can restart adapter after each disconnection and it will work.

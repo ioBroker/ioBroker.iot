@@ -1,0 +1,96 @@
+(Set to 0 if behavior not desired)
+(you can separate names with comma)
+APP-KEY:
+Active
+Add device
+Add service
+Addresses
+Allow admin access (only pro):
+Allow self-signed certificates
+Allow self-signed certificates:
+Are you sure?
+Authentication must be disabled. You can create second instance extra for cloud.
+Cancel
+Cannot add this object
+Certificates will be updated after initiated restart
+Certificates will be updated after start
+Click now Get new connection certificates to request new temporary password
+Cloud URL:
+Cloud adapter settings
+Commands
+Concatenate words with:
+Connection timeout:
+Debug outputs
+Default
+Device will be deactivated.
+Device will be disabled.
+Duplicate name
+Edit smart name
+Error
+Extended options
+Filter
+Filter: 
+Functions
+Get new connection certificates
+Get new service URL key
+IFTTT key:
+Instance does not exists
+Instance is not active.
+Instance must run to deliver the data
+Instance:
+Invalid object
+Language:
+OFF level for switches:
+Off
+Ok
+On
+Options
+Personal settings (only pro):
+Ping timeout:
+Place function in names first:
+Please write your email only in lower case letters
+Replace in names:
+Request email with password one more time
+Restart on disconnect:
+Rooms
+Save settings and the names will be changed
+Select
+Service names
+Services and IFTTT
+Smart Devices
+Smart Enums
+Smart Media
+Smart name
+Smart name:
+To apply this setting, the restart of adapter must be done. Agree?
+Type
+Types
+Use following link for IFTTT:
+Use following link for custom service:
+Use text2command instance:
+White list for services:
+Write response to:
+amazon link
+by ON
+clear
+default
+disabled
+help_tip
+info_allowedServices
+info_iftttKey
+ioBroker.pro Login
+ioBroker.pro Password
+last value
+modified
+no type
+tooltip_allowSelfSignedCertificate
+tooltip_apikey
+tooltip_cloudUrl
+tooltip_concatWord
+tooltip_deviceOffLevel
+tooltip_functionFirst
+tooltip_instance
+tooltip_language
+tooltip_noCommon
+tooltip_responseOID
+tooltip_restartOnDisconnect

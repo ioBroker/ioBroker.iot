@@ -850,13 +850,13 @@
                 }
 
                 if (!$funcs.html()) {
-                    $funcs.hide();
-                    } else {
+                        $funcs.hide();
+                } else {
                     $funcs.show();
-                    }
+                }
                 if (!$rooms.html()) {
                     $rooms.hide();
-                    } else {
+                } else {
                     $rooms.show();
                 }
 
@@ -864,35 +864,35 @@
                 var $smart_enums = $('#tab-smart-enums');
 
                 $smart_enums
-                        .find('.enable-content')
-                        .change(function () {
-                            var id = $(this).data('id');
-                            var $this = $(this);
-                            $this.parent().addClass('smart-changed');
-                            if ($this.prop('checked')) {
-                                $smart_enums.find('.edit-content[data-id="' + id + '"]').prop('disabled', false);
-                                socket.emit('getObject', id, function (err, obj) {
-                                    removeSmartName(obj);
-                                    socket.emit('setObject', id, obj, function (err) {
-                                        informInstance(id);
-                                        setTimeout(function () {
-                                            $this.parent().removeClass('smart-changed');
-                                        }, 500);
-                                    });
+                    .find('.enable-content')
+                    .change(function () {
+                        var id = $(this).data('id');
+                        var $this = $(this);
+                        $this.parent().addClass('smart-changed');
+                        if ($this.prop('checked')) {
+                            $smart_enums.find('.edit-content[data-id="' + id + '"]').prop('disabled', false);
+                            socket.emit('getObject', id, function (err, obj) {
+                                removeSmartName(obj);
+                                socket.emit('setObject', id, obj, function (err) {
+                                    informInstance(id);
+                                    setTimeout(function () {
+                                        $this.parent().removeClass('smart-changed');
+                                    }, 500);
                                 });
-                            } else {
-                                $smart_enums.find('.edit-content[data-id="' + id + '"]').prop('disabled', true);
-                                socket.emit('getObject', id, function (err, obj) {
-                                    disableSmartName(obj);
-                                    socket.emit('setObject', id, obj, function (err) {
-                                        informInstance(id);
-                                        setTimeout(function () {
-                                            $this.parent().removeClass('smart-changed');
-                                        }, 500);
-                                    });
+                            });
+                        } else {
+                            $smart_enums.find('.edit-content[data-id="' + id + '"]').prop('disabled', true);
+                            socket.emit('getObject', id, function (err, obj) {
+                                disableSmartName(obj);
+                                socket.emit('setObject', id, obj, function (err) {
+                                    informInstance(id);
+                                    setTimeout(function () {
+                                        $this.parent().removeClass('smart-changed');
+                                    }, 500);
                                 });
-                            }
-                        });
+                            });
+                        }
+                    });
 
                 $smart_enums.find('.edit-content').click(function () {
                     var $this = $(this);

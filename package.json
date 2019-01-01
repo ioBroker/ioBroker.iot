@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "aws-iot-device-sdk": "^2.2.1",
+    "create-react-app": "^2.1.2",
     "iobroker.type-detector": "^0.1.0",
     "request": "^2.88.0"
   },

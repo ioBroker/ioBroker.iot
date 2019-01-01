@@ -38,8 +38,8 @@ let adapter        = new utils.Adapter({
         }
     },
     stateChange:  (id, state) => {
-        !googleDisabled && googleHome && googleHome.updateState(id, state);
-        !alexaDisabled && alexaSH3 && alexaSH3.updateState && alexaSH3.updateState(id, state);
+        state && !googleDisabled && googleHome && googleHome.updateState(id, state);
+        state && !alexaDisabled && alexaSH3 && alexaSH3.updateState && alexaSH3.updateState(id, state);
 
         if (id === adapter.namespace + '.smart.lastResponse' && state && !state.ack) {
             alexaCustom && alexaCustom.setResponse(state.val);

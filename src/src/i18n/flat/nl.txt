@@ -1,0 +1,96 @@
+(Stel in op 0 als gedrag niet gewenst is)
+U kunt verschillende namen invoeren, gescheiden door een komma
+APP-KEY
+Actief
+Voeg toestel toe
+Service toevoegen
+adressen
+Beheerrechten toestaan ​​(alleen pro)
+Sta zelf-ondertekende certificaten toe
+Sta zelf-ondertekende certificaten toe
+Weet je het zeker?
+Verificatie moet zijn uitgeschakeld. U kunt een tweede exemplaar extra voor de cloud maken.
+Annuleer
+Kan dit object niet toevoegen, omdat het niet wordt ondersteund.
+Certificaten worden bijgewerkt na de herstart opnieuw gestart
+Certificaten worden na het opstarten bijgewerkt
+Klik nu op "Nieuwe verbindingscertificaten verkrijgen" om een ​​nieuw tijdelijk wachtwoord aan te vragen
+Cloud URL
+Cloud adapter-instellingen
+commando's
+Woorden samenvoegen met
+Verbinding time-out (ms)
+Debug-uitgangen
+Standaard
+Apparaat wordt gedeactiveerd.
+Apparaat zal worden uitgeschakeld.
+Dubbele naam
+Bewerk slimme naam
+Fout
+Uitgebreide opties
+Filter
+Filter
+functies
+Ontvang nieuwe verbindingscertificaten
+Ontvang nieuwe service URL-sleutel
+IFTTT-sleutel
+Instantie bestaat niet
+Instantie is niet actief.
+Het exemplaar moet worden uitgevoerd om de gegevens te bezorgen
+Aanleg
+Ongeldig object
+Taal
+UIT-niveau voor schakelaars
+uit
+OK
+op
+opties
+Persoonlijke instellingen (alleen pro)
+Ping-timeout (ms)
+Plaats eerst de functie in namen
+Schrijf uw e-mail alleen in kleine letters
+Vervangen in namen
+E-mail met wachtwoord nog een keer aanvragen
+Opnieuw opstarten bij verbreken
+kamers
+Sla instellingen op en de namen worden gewijzigd
+kiezen
+Servicenamen
+Diensten en IFTTT
+Slimme apparaten
+Smart Enums
+Smart Media
+Slimme naam
+Slimme naam
+Om deze instelling toe te passen, moet de adapter opnieuw worden opgestart. Mee eens?
+Type
+Soorten
+Gebruik de volgende link voor IFTTT
+Gebruik de volgende link voor aangepaste service
+Gebruik de text2command-instantie
+Witte lijst voor services
+Schrijf reactie op
+Als je de Alexa Skill gebruikt, schrijf dan een recensie voor ons <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/create-review/?ref-suffix=war_dp' target='_blank' class='here'>hier</a>.<br>Voorbeelden zijn <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/reviews' target='_blank'> hier </a> te vinden.
+door ON
+wissen
+standaard
+invalide
+Geen iobroker.pro-account? Koop het op <a href="https://iobroker.pro/accessRemote" target="_blank"> https://iobroker.pro </a> voor gevalideerde toegang of krijg gratis toegang, maar beperkte toegang.
+gedeeld door een komma. Gebruik * om alle services toe te staan.
+Je kunt je belangrijkste <a href='https://ifttt.com/maker_webhooks' target='_blank'>hier</a> vinden onder 'Documentatie'
+ioBroker.pro Login
+ioBroker.pro Wachtwoord
+laatste waarde
+Naam is gewijzigd door gebruiker
+geen type
+Als u uw eigen cloud gebruikt, kunt u het gebruik van zelfondertekende certificaten voor de cloud toestaan.
+Deze sleutel is vereist om te communiceren met een cloud. Je kunt de API-KEY op https://iobroker.net krijgen en het lijkt op nickname_f1f439a0-001a-11e7-bc64-92361f002671
+Normaal gesproken hoeft u dit niet te veranderen. Alleen vereist als u van plan bent uw eigen cloud te gebruiken.
+Bepaal hoe kamer en functie moeten worden samengevoegd. Bijv. met 'in': licht in de woonkamer.
+Sommige groepen bestaan ​​uit gemengde apparaten: dimmers en schakelaars. Het is toegestaan ​​om ze te besturen met AAN- en UIT-commando's en met percentages
+Normaal gezien zien de namen eruit als room_function. Hier kun je het omschakelen naar function_room.
+Web-instantie, die wordt weergegeven voor uw verbindingen vanuit de cloud.
+Je kunt de talen definiëren om snel te schakelen tussen US Alexa Skill en DE Alexa Skill.
+Indien ingeschakeld, worden de instellingen alleen voor deze instantie opgeslagen. Dus in het andere geval kunnen de andere namen worden ingesteld.
+Voor elke opdracht wordt het tekstantwoord gegenereerd. U kunt hier de Object-ID definiëren, waar deze tekst naartoe moet worden geschreven. Bijv. sayit.0.tts.text.
+Oplossing voor ontbrekende verbinding met Alexa nadat de verbinding met de cloud verloren was gegaan. Met deze optie kunt u de adapter opnieuw opstarten na elke verbreking en het zal werken.
