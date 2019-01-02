@@ -644,7 +644,10 @@ function startDevice(clientId, login, password, retry) {
                 }
             });
         }).catch(e => {
-            adapter.log.error(JSON.stringify(e));
+            if (e && e.message)
+                adapter.log.error(e.message);
+            else
+                adapter.log.error(JSON.stringify(e));
 
             if (e === 'timeout' && retry < 10) {
                 setTimeout(() => startDevice(clientId, login, password, retry + 1), 10000);
