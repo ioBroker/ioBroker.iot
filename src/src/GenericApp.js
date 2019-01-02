@@ -100,7 +100,7 @@ class GenericApp extends Component {
 
     renderError() {
         if (!this.state.errorText) return null;
-        return (<DialogError text={this.state.text} />);
+        return (<DialogError text={this.state.text} onClose={() => this.setState({errorText: ''})}/>);
 
     }
 

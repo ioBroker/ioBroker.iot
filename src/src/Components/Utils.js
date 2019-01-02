@@ -493,9 +493,9 @@ class Utils {
         }
     }
 
-    static getSmartName(states, id, adapterInstance) {
+    static getSmartName(states, id, instanceId, noCommon) {
         if (!id) {
-            if (!adapterInstance) {
+            if (!noCommon) {
                 if (!states.common) {
                     return states.smartName;
                 } else {
@@ -512,24 +512,24 @@ class Utils {
                     return (states &&
                         states.common &&
                         states.common.custom &&
-                        states.common.custom[adapterInstance]) ?
-                        states.common.custom[adapterInstance].smartName : undefined;
+                        states.common.custom[instanceId]) ?
+                        states.common.custom[instanceId].smartName : undefined;
                 }
             }
         } else
-        if (!adapterInstance) {
+        if (!noCommon) {
             return states[id].common.smartName;
         } else {
             return (states[id] &&
                 states[id].common &&
                 states[id].common.custom &&
-                states[id].common.custom[adapterInstance]) ?
-                states[id].common.custom[adapterInstance].smartName || null : null;
+                states[id].common.custom[instanceId]) ?
+                states[id].common.custom[instanceId].smartName || null : null;
         }
     }
 
-    static getSmartNameFromObj(obj, adapterInstance) {
-        if (!adapterInstance) {
+    static getSmartNameFromObj(obj, instanceId, noCommon) {
+        if (!noCommon) {
             if (!obj.common) {
                 return obj.smartName;
             } else {
@@ -546,15 +546,13 @@ class Utils {
                 return (obj &&
                     obj.common &&
                     obj.common.custom &&
-                    obj.common.custom[adapterInstance]) ?
-                    obj.common.custom[adapterInstance].smartName : undefined;
+                    obj.common.custom[instanceId]) ?
+                    obj.common.custom[instanceId].smartName : undefined;
             }
         }
     }
 
-    static enableSmartName(obj) {
-        const instanceId = 'iot.' + this.props.instance;
-        const noCommon = this.props.native.noCommon;
+    static enableSmartName(obj, instanceId, noCommon) {
         if (noCommon) {
             obj.common.custom = obj.common.custom || {};
             obj.common.custom[instanceId] = obj.common.custom[instanceId] || {};
@@ -564,10 +562,7 @@ class Utils {
         }
     }
 
-    static removeSmartName(obj) {
-        const instanceId = 'iot.' + this.props.instance;
-        const noCommon = this.props.native.noCommon;
-
+    static removeSmartName(obj, instanceId, noCommon) {
         if (noCommon) {
             if (obj.common && obj.common.custom && obj.common.custom[instanceId]) {
                 delete obj.common.custom[instanceId];
@@ -577,10 +572,8 @@ class Utils {
         }
     }
 
-    static updateSmartName(obj, newSmartName, byON, smartType) {
+    static updateSmartName(obj, newSmartName, byON, smartType, instanceId, noCommon) {
         const language = I18n.getLanguage();
-        const noCommon = this.props.native.noCommon;
-        const instanceId = 'iot.' + this.props.instance;
 
         // convert Old format
         if (typeof obj.common.smartName === 'string') {
@@ -684,9 +677,7 @@ class Utils {
         }
     }
 
-    static disableSmartName(obj) {
-        const instanceId = 'iot.' + this.props.instance;
-        const noCommon = this.props.native.noCommon;
+    static disableSmartName(obj, instanceId, noCommon) {
         if (noCommon) {
             obj.common.custom = obj.common.custom || {};
             obj.common.custom[instanceId] = obj.common.custom[instanceId] || {};

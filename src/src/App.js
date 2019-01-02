@@ -6,9 +6,10 @@ import Tab from '@material-ui/core/Tab';
 import Loader from './Components/Loader'
 import I18n from './i18n';
 
+import GenericApp from './GenericApp';
 import TabOptions from './Tabs/Options';
 import TabEnums from './Tabs/Enums';
-import GenericApp from './GenericApp';
+import TabAlexaSmartNames from './Tabs/AlexaSmartNames';
 
 const styles = theme => ({
     root: {},
@@ -53,7 +54,13 @@ class App extends GenericApp {
                             }
                         }}
                     />)}
-                    {this.state.selectedTab === 1 && <div className={this.props.classes.tabContent}>Item Three</div>}
+                    {this.state.selectedTab === 1 && (<TabAlexaSmartNames
+                        common={this.common}
+                        socket={this.socket}
+                        native={this.state.native}
+                        onError={text => this.setState({errorText: text})}
+                        instance={this.instance}
+                    />)}
                     {this.state.selectedTab === 2 && (<TabEnums
                         common={this.common}
                         socket={this.socket}
