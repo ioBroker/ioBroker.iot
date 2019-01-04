@@ -108,6 +108,7 @@
             "communication"
         ],
         "enabled": false,
+        "compact": true,
         "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.iot/master/admin/iot.png",
         "type": "communication",
         "messagebox": true,

@@ -11,6 +11,7 @@ const AlexaCustom  = require('./lib/alexaCustom');
 const GoogleHome   = require('./lib/GoogleHome');
 const fs           = require('fs');
 const request      = require('request');
+const adapterName  = require('./package.json').name.split('.').pop();
 
 let recalcTimeout  = null;
 let lang           = 'de';
@@ -26,100 +27,108 @@ let uuid           = null;
 let alexaDisabled  = false;
 let googleDisabled = false;
 let secret;
+let adapter;
 
-let adapter        = new utils.Adapter({
-    name: 'iot',
-    objectChange: (id, obj) => {
-        if (id === 'system.config' && obj && !translate) {
-            lang = obj.common.language;
-            if (lang !== 'en' && lang !== 'de') lang = 'en';
-            alexaSH2.setLanguage(lang, false);
-            alexaSH3.setLanguage(lang, false);
-        }
-    },
-    stateChange:  (id, state) => {
-        state && !googleDisabled && googleHome && googleHome.updateState(id, state);
-        state && !alexaDisabled && alexaSH3 && alexaSH3.updateState && alexaSH3.updateState(id, state);
+function startAdapter(options) {
+    options = options || {};
 
-        if (id === adapter.namespace + '.smart.lastResponse' && state && !state.ack) {
-            alexaCustom && alexaCustom.setResponse(state.val);
-        } else if (id === adapter.namespace + '.smart.googleDisabled' && state && !state.ack) {
-            googleDisabled = state.val;
-        } else if (id === adapter.namespace + '.smart.alexaDisabled' && state && !state.ack) {
-            alexaDisabled = state.val;
-        }
-    },
-    unload: callback => {
-        try {
-            if (device) {
-                device.end();
-                device = null;
+    Object.assign(options, {
+        name: adapterName,
+        objectChange: (id, obj) => {
+            if (id === 'system.config' && obj && !translate) {
+                lang = obj.common.language;
+                if (lang !== 'en' && lang !== 'de') lang = 'en';
+                alexaSH2.setLanguage(lang, false);
+                alexaSH3.setLanguage(lang, false);
             }
-            callback();
-        } catch (e) {
-            callback();
-        }
-    },
-    message: obj => {
-        if (obj) {
-            switch (obj.command) {
-                case 'update':
-                    if (recalcTimeout) clearTimeout(recalcTimeout);
+        },
+        stateChange: (id, state) => {
+            state && !googleDisabled && googleHome && googleHome.updateState(id, state);
+            state && !alexaDisabled && alexaSH3 && alexaSH3.updateState && alexaSH3.updateState(id, state);
 
-                    recalcTimeout = setTimeout(() => {
-                        recalcTimeout = null;
-                        alexaSH2.updateDevices(() => {
-                            adapter.setState('smart.updates', true, true);
-                        });
-                        alexaSH3.updateDevices(() => {
-                            adapter.setState('smart.updates3', true, true);
-                        });
-                    }, 1000);
-                    break;
-
-                case 'browse':
-                    if (obj.callback) {
-                        adapter.log.info('Request devices');
-                        alexaSH2.updateDevices(() => {
-                            adapter.sendTo(obj.from, obj.command, alexaSH2.getDevices(), obj.callback);
-                            adapter.setState('smart.updates', false, true);
-                        });
-                    }
-                    break;
-
-                case 'browse3':
-                    if (obj.callback) {
-                        adapter.log.info('Request V3 devices');
-                        alexaSH3.updateDevices(() => {
-                            adapter.sendTo(obj.from, obj.command, alexaSH3.getDevices(), obj.callback);
-                            adapter.setState('smart.updates3', false, true);
-                        });
-                    }
-                    break;
-
-                case 'enums':
-                    if (obj.callback) {
-                        adapter.log.info('Request enums');
-                        alexaSH2.updateDevices(() => {
-                            adapter.sendTo(obj.from, obj.command, alexaSH2.getEnums(), obj.callback);
-                            adapter.setState('smart.updates', false, true);
-                        });
-                    }
-                    break;
-
-                case 'ifttt':
-                    sendDataToIFTTT(obj.message);
-                    break;
-
-                default:
-                    adapter.log.warn('Unknown command: ' + obj.command);
-                    break;
+            if (id === adapter.namespace + '.smart.lastResponse' && state && !state.ack) {
+                alexaCustom && alexaCustom.setResponse(state.val);
+            } else if (id === adapter.namespace + '.smart.googleDisabled' && state && !state.ack) {
+                googleDisabled = state.val;
+            } else if (id === adapter.namespace + '.smart.alexaDisabled' && state && !state.ack) {
+                alexaDisabled = state.val;
             }
-        }
-    },
-    ready: () => main()
-});
+        },
+        unload: callback => {
+            try {
+                if (device) {
+                    device.end();
+                    device = null;
+                }
+                callback();
+            } catch (e) {
+                callback();
+            }
+        },
+        message: obj => {
+            if (obj) {
+                switch (obj.command) {
+                    case 'update':
+                        if (recalcTimeout) clearTimeout(recalcTimeout);
 
+                        recalcTimeout = setTimeout(() => {
+                            recalcTimeout = null;
+                            alexaSH2.updateDevices(() => {
+                                adapter.setState('smart.updates', true, true);
+                            });
+                            alexaSH3.updateDevices(() => {
+                                adapter.setState('smart.updates3', true, true);
+                            });
+                        }, 1000);
+                        break;
+
+                    case 'browse':
+                        if (obj.callback) {
+                            adapter.log.info('Request devices');
+                            alexaSH2.updateDevices(() => {
+                                adapter.sendTo(obj.from, obj.command, alexaSH2.getDevices(), obj.callback);
+                                adapter.setState('smart.updates', false, true);
+                            });
+                        }
+                        break;
+
+                    case 'browse3':
+                        if (obj.callback) {
+                            adapter.log.info('Request V3 devices');
+                            alexaSH3.updateDevices(() => {
+                                adapter.sendTo(obj.from, obj.command, alexaSH3.getDevices(), obj.callback);
+                                adapter.setState('smart.updates3', false, true);
+                            });
+                        }
+                        break;
+
+                    case 'enums':
+                        if (obj.callback) {
+                            adapter.log.info('Request enums');
+                            alexaSH2.updateDevices(() => {
+                                adapter.sendTo(obj.from, obj.command, alexaSH2.getEnums(), obj.callback);
+                                adapter.setState('smart.updates', false, true);
+                            });
+                        }
+                        break;
+
+                    case 'ifttt':
+                        sendDataToIFTTT(obj.message);
+                        break;
+
+                    default:
+                        adapter.log.warn('Unknown command: ' + obj.command);
+                        break;
+                }
+            }
+        },
+        ready: () => main()
+    });
+
+    adapter = new utils.Adapter(options);
+
+    return adapter;
+}
 function sendDataToIFTTT(obj) {
     if (!obj) {
         adapter.log.warn('No data to send to IFTTT');
@@ -772,4 +781,12 @@ function main() {
             startDevice(adapter.config.login.replace(/[^-_:a-zA-Z1-9]/g, '_'), adapter.config.login, adapter.config.pass);
         });
     });
+}
+
+// If started as allInOne mode => return function to create instance
+if (typeof module !== undefined && module.parent) {
+    module.exports = startAdapter;
+} else {
+    // or start the instance directly
+    startAdapter();
 }
