@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "0.3.0",
+        "version": "0.3.1",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -26,6 +26,18 @@
             "pl": "Łączy twój serwer ioBroker z chmurą IoT ioBroker"
         },
         "news": {
+            "0.3.1": {
+                "en": "Blockly was fixed",
+                "de": "Blockly wurde behoben",
+                "ru": "Blockly был исправлен",
+                "pt": "Blockly foi corrigido",
+                "nl": "Blockly was opgelost",
+                "fr": "Blockly a été corrigé",
+                "it": "Blockly è stato risolto",
+                "es": "Blockly fue arreglado",
+                "pl": "Blockly zostało naprawione",
+                "zh-cn": "Blockly被修复了"
+            },
             "0.3.0": {
                 "en": "Detection of google devices was fixed",
                 "de": "Die Erkennung von Google-Geräten wurde behoben",

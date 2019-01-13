@@ -22,7 +22,8 @@ const languages =  {
     fr: {},
     it: {},
     es: {},
-    pl: {}
+    pl: {},
+    'zh-cn': {}
 };
 
 
