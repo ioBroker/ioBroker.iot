@@ -11,6 +11,7 @@ const AlexaCustom  = require('./lib/alexaCustom');
 const GoogleHome   = require('./lib/GoogleHome');
 const fs           = require('fs');
 const request      = require('request');
+// @ts-ignore
 const adapterName  = require('./package.json').name.split('.').pop();
 
 let recalcTimeout  = null;
@@ -114,6 +115,10 @@ function startAdapter(options) {
 
                     case 'ifttt':
                         sendDataToIFTTT(obj.message);
+                        break;
+
+                    case 'alexaCustomResponse':
+                        alexaCustom && alexaCustom.setResponse(obj.message);
                         break;
 
                     default:
@@ -784,6 +789,7 @@ function main() {
 }
 
 // If started as allInOne mode => return function to create instance
+// @ts-ignore
 if (module.parent) {
     module.exports = startAdapter;
 } else {

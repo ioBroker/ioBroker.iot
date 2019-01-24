@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "0.3.1",
+        "version": "0.4.0",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -26,6 +26,18 @@
             "pl": "Łączy twój serwer ioBroker z chmurą IoT ioBroker"
         },
         "news": {
+            "0.4.0": {
+                "en": "Added more data for own scripts for use with \"Alexa Custom Skill\". Please check the README",
+                "de": "Weitere Daten für eigene Skripte zur Verwendung mit dem \"Alexa Custom Skill\" hinzugefügt. Mehr Details in der README",
+                "ru": "Добавлено больше данных для собственных скриптов для использования с «Alexa Custom Skill». Пожалуйста, проверьте README",
+                "pt": "Adicionado mais dados para scripts próprios para uso com \"Alexa Custom Skill\". Por favor, verifique o README",
+                "nl": "Meer gegevens toegevoegd voor eigen scripts voor gebruik met \"Alexa Custom Skill\". Controleer de README",
+                "fr": "Ajout de plus de données pour ses propres scripts à utiliser avec \"Alexa Custom Skill\". S'il vous plaît vérifier le fichier README",
+                "it": "Aggiunti altri dati per i propri script da utilizzare con \"Alexa Custom Skill\". Si prega di controllare il README",
+                "es": "Se agregaron más datos para los scripts propios para usarlos con \"Habilidad personalizada de Alexa\". Por favor revisa el archivo README",
+                "pl": "Dodano więcej danych do własnych skryptów do użytku z \"Alexa Custom Skill\". Sprawdź README",
+                "zh-cn": "为自己的脚本添加了更多数据，以便与“Alexa Custom Skill”一起使用。请查看README"
+            },
             "0.3.1": {
                 "en": "Blockly was fixed",
                 "de": "Blockly wurde behoben",
@@ -248,6 +260,18 @@
             "native": {}
         },
         {
+            "_id": "smart.lastCommandObj",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": "Last command as object",
+                "type": "string",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
             "_id": "smart.lastResponse",
             "type": "state",
             "common": {
@@ -255,7 +279,7 @@
                 "name": "Last textual response",
                 "type": "string",
                 "read": true,
-                "write": false
+                "write": true
             },
             "native": {}
         },
