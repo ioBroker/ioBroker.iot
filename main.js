@@ -271,7 +271,7 @@ function processIfttt(data, callback) {
                 adapter.getForeignObject(adapter.namespace + '.services.'  + id, (err, obj) => {
                     if (!obj) {
                         // create state
-                        adapter.setObject('services.' + id, {
+                        adapter.setObjectNotExists('services.' + id, {
                             type: 'state',
                             common: {
                                 name: 'IFTTT value',
@@ -621,7 +621,7 @@ function startDevice(clientId, login, password, retry) {
                             } else if (isCustom) {
                                 adapter.getObject('services.custom_' + _type, (err, obj) => {
                                     if (!obj) {
-                                        adapter.setObject('services.custom_' + _type, {
+                                        adapter.setObjectNotExists('services.custom_' + _type, {
                                             _id: adapter.namespace + '.services.custom_' + _type,
                                             type: 'state',
                                             common: {
@@ -725,7 +725,7 @@ function main() {
         // create ifttt object
         adapter.getObject('services.ifttt', (err, obj) => {
             if (!obj) {
-                adapter.setObject('services.ifttt', {
+                adapter.setObjectNotExists('services.ifttt', {
                     _id: adapter.namespace + '.services.ifttt',
                     type: 'state',
                     common: {
