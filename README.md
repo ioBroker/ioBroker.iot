@@ -204,7 +204,7 @@ on({id: 'iot.0.smart.lastCommand', ack: true, change: 'any'}, obj => {
 });
 ```
 
-**Example of a script that uses JSON.-objects**
+**Example of a script that uses JSON objects**
 ```
 // important, that ack=true
 on({id: 'iot.0.smart.lastCommandObj', ack: true, change: 'any'}, obj => {
