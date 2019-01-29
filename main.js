@@ -38,8 +38,8 @@ function startAdapter(options) {
             if (id === 'system.config' && obj && !translate) {
                 lang = obj.common.language;
                 if (lang !== 'en' && lang !== 'de') lang = 'en';
-                alexaSH2.setLanguage(lang, false);
-                alexaSH3.setLanguage(lang, false);
+                alexaSH2 && alexaSH2.setLanguage(lang, false);
+                alexaSH3 && alexaSH3.setLanguage(lang, false);
             }
         },
         stateChange: (id, state) => {
@@ -73,19 +73,17 @@ function startAdapter(options) {
 
                         recalcTimeout = setTimeout(() => {
                             recalcTimeout = null;
-                            alexaSH2.updateDevices(() => {
-                                adapter.setState('smart.updates', true, true);
-                            });
-                            alexaSH3.updateDevices(() => {
-                                adapter.setState('smart.updates3', true, true);
-                            });
+                            alexaSH2 && alexaSH2.updateDevices(() =>
+                                adapter.setState('smart.updates', true, true));
+                            alexaSH3 && alexaSH3.updateDevices(() =>
+                                adapter.setState('smart.updates3', true, true));
                         }, 1000);
                         break;
 
                     case 'browse':
                         if (obj.callback) {
                             adapter.log.info('Request devices');
-                            alexaSH2.updateDevices(() => {
+                            alexaSH2 && alexaSH2.updateDevices(() => {
                                 adapter.sendTo(obj.from, obj.command, alexaSH2.getDevices(), obj.callback);
                                 adapter.setState('smart.updates', false, true);
                             });
@@ -95,17 +93,26 @@ function startAdapter(options) {
                     case 'browse3':
                         if (obj.callback) {
                             adapter.log.info('Request V3 devices');
-                            alexaSH3.updateDevices(() => {
+                            alexaSH3 && alexaSH3.updateDevices(() => {
                                 adapter.sendTo(obj.from, obj.command, alexaSH3.getDevices(), obj.callback);
                                 adapter.setState('smart.updates3', false, true);
                             });
                         }
                         break;
 
+                    case 'browseGH':
+                        if (obj.callback) {
+                            adapter.log.info('Request google home devices');
+                            googleHome && googleHome.updateDevices(() => {
+                                adapter.sendTo(obj.from, obj.command, googleHome.getDevices(), obj.callback);
+                                adapter.setState('smart.updatesGH', false, true);
+                            });
+                        }
+                        break;
                     case 'enums':
                         if (obj.callback) {
                             adapter.log.info('Request enums');
-                            alexaSH2.updateDevices(() => {
+                            alexaSH2 && alexaSH2.updateDevices(() => {
                                 adapter.sendTo(obj.from, obj.command, alexaSH2.getEnums(), obj.callback);
                                 adapter.setState('smart.updates', false, true);
                             });
@@ -572,14 +579,14 @@ function startDevice(clientId, login, password, retry) {
                         adapter.log.debug(new Date().getTime() + ' ALEXA: ' + JSON.stringify(request));
 
                         if (request && request.directive) {
-                            alexaSH3.process(request, !alexaDisabled, response =>
+                            alexaSH3 && alexaSH3.process(request, !alexaDisabled, response =>
                                 device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
                         } else
                         if (request && !request.header) {
-                            alexaCustom.process(request, !alexaDisabled, response =>
+                            alexaCustom && alexaCustom.process(request, !alexaDisabled, response =>
                                 device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
                         } else {
-                            alexaSH2.process(request, !alexaDisabled, response =>
+                            alexaSH2 && alexaSH2.process(request, !alexaDisabled, response =>
                                 device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
                         }
                     } else if (type.startsWith('ifttt')) {
@@ -592,7 +599,7 @@ function startDevice(clientId, login, password, retry) {
                             return adapter.log.error('Cannot parse request: ' + request);
                         }
 
-                        googleHome.process(request, !googleDisabled, response =>
+                        googleHome && googleHome.process(request, !googleDisabled, response =>
                             device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
                     } else {
                         let isCustom = false;
@@ -696,7 +703,7 @@ function main() {
     alexaCustom = new AlexaCustom(adapter);
 
     readUrlKey()
-        .then(key => googleHome  = new GoogleHome(adapter, key))
+        .then(key => googleHome = new GoogleHome(adapter, key))
         .catch(err => {
             adapter.log.error('Cannot read URL key: ' + err);
         });
@@ -766,11 +773,11 @@ function main() {
             lang = obj.common.language;
         }
         if (lang !== 'en' && lang !== 'de' && lang !== 'ru') lang = 'en';
-        alexaSH2.setLanguage(lang, translate);
-        alexaSH2.updateDevices();
-        alexaSH3.setLanguage(lang, translate);
-        alexaSH3.updateDevices();
-        alexaCustom.setLanguage(lang);
+        alexaSH2 && alexaSH2.setLanguage(lang, translate);
+        alexaSH2 && alexaSH2.updateDevices();
+        alexaSH3 && alexaSH3.setLanguage(lang, translate);
+        alexaSH3 && alexaSH3.updateDevices();
+        alexaCustom && alexaCustom.setLanguage(lang);
 
         adapter.getForeignObject('system.meta.uuid', (err, oUuid) => {
             secret = (obj && obj.native && obj.native.secret) || 'Zgfr56gFe87jJOM';

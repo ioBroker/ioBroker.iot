@@ -284,6 +284,18 @@
             "native": {}
         },
         {
+            "_id": "smart.updatesGH",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": "If updates of google home configuration is ready",
+                "type": "boolean",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
             "_id": "services",
             "type": "channel",
             "common": {
