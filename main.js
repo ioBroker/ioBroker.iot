@@ -11,6 +11,7 @@ const AlexaCustom  = require('./lib/alexaCustom');
 const GoogleHome   = require('./lib/GoogleHome');
 const fs           = require('fs');
 const request      = require('request');
+// @ts-ignore
 const adapterName  = require('./package.json').name.split('.').pop();
 
 let recalcTimeout  = null;
@@ -121,6 +122,10 @@ function startAdapter(options) {
 
                     case 'ifttt':
                         sendDataToIFTTT(obj.message);
+                        break;
+
+                    case 'alexaCustomResponse':
+                        alexaCustom && alexaCustom.setResponse(obj.message);
                         break;
 
                     default:
@@ -273,7 +278,7 @@ function processIfttt(data, callback) {
                 adapter.getForeignObject(adapter.namespace + '.services.'  + id, (err, obj) => {
                     if (!obj) {
                         // create state
-                        adapter.setObject('services.' + id, {
+                        adapter.setObjectNotExists('services.' + id, {
                             type: 'state',
                             common: {
                                 name: 'IFTTT value',
@@ -623,7 +628,7 @@ function startDevice(clientId, login, password, retry) {
                             } else if (isCustom) {
                                 adapter.getObject('services.custom_' + _type, (err, obj) => {
                                     if (!obj) {
-                                        adapter.setObject('services.custom_' + _type, {
+                                        adapter.setObjectNotExists('services.custom_' + _type, {
                                             _id: adapter.namespace + '.services.custom_' + _type,
                                             type: 'state',
                                             common: {
@@ -727,7 +732,7 @@ function main() {
         // create ifttt object
         adapter.getObject('services.ifttt', (err, obj) => {
             if (!obj) {
-                adapter.setObject('services.ifttt', {
+                adapter.setObjectNotExists('services.ifttt', {
                     _id: adapter.namespace + '.services.ifttt',
                     type: 'state',
                     common: {
@@ -791,6 +796,7 @@ function main() {
 }
 
 // If started as allInOne mode => return function to create instance
+// @ts-ignore
 if (module.parent) {
     module.exports = startAdapter;
 } else {
