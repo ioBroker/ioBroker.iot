@@ -197,8 +197,8 @@ class AlexaSmartNames extends Component {
 
         this.state = {
             inAction: false,
-            editId: '',
             editedSmartName: '',
+            editId: '',
             changed: [],
             devices: [],
             message: '',
@@ -206,6 +206,9 @@ class AlexaSmartNames extends Component {
             loading: true,
             expanded: []
         };
+
+        this.editDevice = false;
+
         this.props.socket.getObject(`system.adapter.${adapterName}${this.props.instance}`).then(obj => {
             this.props.socket.getState(`system.adapter.${adapterName}${this.props.instance}.alive`).then(state => {
                 if (!obj || !obj.common || (!obj.common.enabled && (!state || !state.val))) {
@@ -241,65 +244,29 @@ class AlexaSmartNames extends Component {
         }
     }
 
-    updateObjInState(obj) {
+    updateObjInState(dev) {
         // update obj
-        if (obj._id.match(/^enum\.functions\./)) {
-            for (let i = 0; i < this.state.funcs.length; i++) {
-                if (this.state.funcs[i]._id === obj._id) {
-                    const funcs = JSON.parse(JSON.stringify(this.state.funcs));
-                    funcs[i] = obj;
-                    this.setState({funcs});
-                    break;
-                }
-            }
-        } else
-        if (obj._id.match(/^enum\.rooms\./)) {
-            for (let i = 0; i < this.state.rooms.length; i++) {
-                if (this.state.rooms[i]._id === obj._id) {
-                    const rooms = JSON.parse(JSON.stringify(this.state.rooms));
-                    rooms[i] = obj;
-                    this.setState({rooms});
-                    break;
-                }
+        for (let i = 0; i < this.state.devices.length; i++) {
+            if (this.state.devices[i].additionalApplianceDetails.id === dev._id) {
+                const devices = JSON.parse(JSON.stringify(this.state.devices));
+                devices[i] = dev;
+                this.setState({devices});
+                break;
             }
         }
-    }
-
-    onToggle(id) {
-        let obj = this.state.funcs.find(e => e._id === id) || this.state.rooms.find(e => e._id === id);
-
-        let smartName = Utils.getSmartNameFromObj(obj);
-        obj = JSON.parse(JSON.stringify(obj));
-        if (smartName !== false) {
-            Utils.disableSmartName(obj, adapterName + this.props.instance, this.props.native.noCommon);
-        } else {
-            Utils.removeSmartName(obj, adapterName + this.props.instance, this.props.native.noCommon);
-        }
-
-        this.addChanged(id);
-
-        this.props.socket.setObject(id, obj)
-            .then(() => {
-                // update obj
-                this.updateObjInState(obj);
-                this.informInstance(id);
-
-                setTimeout(() => this.removeChanged(id), 500);
-            });
     }
 
     onEdit(id) {
-        const obj = this.state.funcs.find(e => e._id === id) || this.state.rooms.find(e => e._id === id);
-        let smartName = Utils.getSmartNameFromObj(obj, adapterName + this.props.instance, this.props.native.noCommon);
+        const device = this.state.devices.find(dev => dev.additionalApplianceDetails.id === id);
+        let smartName = device.additionalApplianceDetails.friendlyNames ? device.additionalApplianceDetails.friendlyNames : device.friendlyName;
         if (typeof smartName === 'object' && smartName) {
             smartName = smartName[I18n.getLanguage()] || smartName.en;
         }
-        smartName = smartName || Utils.getObjectNameFromObj(obj, null, {language: I18n.getLanguage()});
         this.setState({editId: id, editedSmartName: smartName});
     }
 
-    onDelete(friendlyName) {
-
+    onDelete(id) {
+        const device = this.state.devices.find(dev => dev.additionalApplianceDetails.id === id);
     }
 
     renderActions(dev) {
@@ -367,6 +334,7 @@ class AlexaSmartNames extends Component {
             return null;
         }
     }
+
     onTypeChange() {
 
     }
@@ -415,12 +383,13 @@ class AlexaSmartNames extends Component {
                 }
             }
         } else {
-            const name = dev.additionalApplianceDetails.name || dev.additionalApplianceDetails.id;
+            const id = dev.additionalApplianceDetails.id;
+            const name = dev.additionalApplianceDetails.name || id;
             result.push((<div className={classes.devSubLine} style={{background: '#e9e9e9'}}>
-                <div className={classes.devSubLineName} title={(dev.additionalApplianceDetails.id || '')}>{name}</div>
-                {this.renderSelectType(dev, lineNum, dev.additionalApplianceDetails.id, dev.additionalApplianceDetails.smartType)}
-                {this.renderSelectByOn(dev, lineNum, dev.additionalApplianceDetails.id, dev.additionalApplianceDetails.byON)}
-                <IconButton aria-label="Delete" className={this.props.classes.devSubLineDelete} onClick={() => this.onDelete(lineNum, dev.additionalApplianceDetails.id)}><IconDelete fontSize="middle" /></IconButton>
+                <div className={classes.devSubLineName} title={(id || '')}>{name}</div>
+                {this.renderSelectType(dev, lineNum, id, dev.additionalApplianceDetails.smartType)}
+                {this.renderSelectByOn(dev, lineNum, id, dev.additionalApplianceDetails.byON)}
+                <IconButton aria-label="Delete" className={this.props.classes.devSubLineDelete} onClick={() => this.onDelete(lineNum, id)}><IconDelete fontSize="middle" /></IconButton>
             </div>));
         }
         return result;
@@ -443,6 +412,7 @@ class AlexaSmartNames extends Component {
         }
         devCount = devCount || 1;
         const expanded = this.state.expanded.indexOf(friendlyName) !== -1;
+        const id = dev.additionalApplianceDetails.id;
 
         return [
             (<div key={'line' + lineNum} className={this.props.classes.devLine} style={{background: (lineNum % 2) ? '#f1f1f1' : 'inherit'}}>
@@ -459,8 +429,10 @@ class AlexaSmartNames extends Component {
                     <span className={this.props.classes.devLineDescription}>{dev.friendlyDescription}</span>
                 </div>
                 <span className={this.props.classes.devLineActions}>{this.renderActions(dev)}</span>
-                <IconButton aria-label="Edit" className={this.props.classes.devLineEdit} onClick={() => this.onEdit(friendlyName)}><IconEdit fontSize="middle" /></IconButton>
-                <IconButton aria-label="Delete" className={this.props.classes.devLineDelete} onClick={() => this.onDelete(friendlyName)}><IconDelete fontSize="middle" /></IconButton>
+                {!dev.additionalApplianceDetails.group ?
+                    (<IconButton aria-label="Edit" className={this.props.classes.devLineEdit} onClick={() => this.onEdit(id)}><IconEdit fontSize="middle" /></IconButton>) : null}
+                {!dev.additionalApplianceDetails.group ?
+                    (<IconButton aria-label="Delete" className={this.props.classes.devLineDelete} onClick={() => this.onDelete(id)}><IconDelete fontSize="middle" /></IconButton>) : null}
             </div>),
             expanded ? this.renderChannels(dev, lineNum) : null
         ];
@@ -476,37 +448,27 @@ class AlexaSmartNames extends Component {
 
     changeSmartName() {
         // Check if the name is duplicate
-        let enums = this.state.editId.startsWith('enum.functions.') ? this.state.funcs : this.state.rooms;
-        if (enums.find(obj =>
-            this.state.editId !== obj._id && (
-            this.state.editedSmartName === Utils.getObjectNameFromObj(obj, null, {language: I18n.getLanguage()}) ||
-            this.state.editedSmartName === Utils.getSmartNameFromObj(obj, adapterName + this.props.instance, this.props.native.noCommon)))) {
-            this.setState({message: I18n.t('Duplicate name')});
-        } else {
-            this.addChanged(this.state.editId);
-            setTimeout(() => this.removeChanged(this.state.editId), 500);
-            const id = this.state.editId;
-            this.setState({editId: ''});
-            let newObj;
-            this.props.socket.getObject(id)
-                .then(obj => {
-                    Utils.updateSmartName(obj, this.state.editedSmartName, undefined, undefined, adapterName + this.props.instance, this.props.native.noCommon);
-                    newObj = obj;
-                    return this.props.socket.setObject(id, obj);
-                })
-                .then(() => {
-                    // update obj
-                    this.updateObjInState(newObj);
-                    this.informInstance(id);
-                })
-                .catch(err => this.props.onError(err));
-        }
+        this.addChanged(this.state.editId);
+        setTimeout(() => this.removeChanged(this.state.editId), 500);
+        const id = this.state.editId;
+        this.setState({editId: ''});
+        let newObj;
+        this.props.socket.getObject(id)
+            .then(obj => {
+                Utils.updateSmartName(obj, this.state.editedSmartName, undefined, undefined, adapterName + this.props.instance, this.props.native.noCommon);
+                newObj = obj;
+                return this.props.socket.setObject(id, obj);
+            })
+            .then(() => {
+                // update obj
+                this.updateObjInState(newObj);
+                this.informInstance(id);
+            })
+            .catch(err => this.props.onError(err));
     }
 
     renderEditDialog() {
-        if (this.state.editId) {
-            const obj = this.state.funcs.find(e => e._id === this.state.editId) || this.state.rooms.find(e => e._id === this.state.editId);
-
+        if (this.state.editDevice) {
             return (<Dialog
                 open={true}
                 maxWidth="sm"
@@ -515,7 +477,7 @@ class AlexaSmartNames extends Component {
                 aria-labelledby="message-dialog-title"
                 aria-describedby="message-dialog-description"
             >
-                <DialogTitle id="message-dialog-title">{this.props.title || I18n.t('Smart name for %s', Utils.getObjectNameFromObj(obj, null, {language: I18n.getLanguage()}))}</DialogTitle>
+                <DialogTitle id="message-dialog-title">{this.props.title || I18n.t('Smart name for %s', this.state.editDevice.modelName)}</DialogTitle>
                 <DialogContent>
                     <TextField
                         style={{width: '100%'}}
