@@ -225,6 +225,9 @@ on({id: 'iot.0.smart.lastCommandObj', ack: true, change: 'any'}, obj => {
 
 
 ## Changelog
+### 0.4.1 (2019-02-19)
+* (bluefox) Add version check to google home
+
 ### 0.3.1 (2019-01-13)
 * (bluefox) Blockly was fixed
 

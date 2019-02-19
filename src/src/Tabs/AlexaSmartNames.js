@@ -139,7 +139,7 @@ const styles = theme => ({
     },
     devLineNameBlock: {
         display: 'inline-block',
-        width: 'calc(100% - 270px)'
+        width: 'calc(100% - 350px)'
     },
     columnHeader: {
         background: theme.palette.primary.light,
@@ -206,8 +206,16 @@ class AlexaSmartNames extends Component {
             loading: true,
             expanded: []
         };
-        this.props.socket.sendTo(adapterName + this.props.instance, 'browse', null, list => {
-            this.setState({devices: list, loading: false});
+        this.props.socket.getObject(`system.adapter.${adapterName}${this.props.instance}`).then(obj => {
+            this.props.socket.getState(`system.adapter.${adapterName}${this.props.instance}.alive`).then(state => {
+                if (!obj || !obj.common || (!obj.common.enabled && (!state || !state.val))) {
+                    this.setState({message: I18n.t('Instance must be enabled'), loading: false, devices: []});
+                } else {
+                    this.props.socket.sendTo(adapterName + this.props.instance, 'browse', null, list => {
+                        this.setState({devices: list, loading: false});
+                    });
+                }
+            });
         });
     }
 
@@ -311,15 +319,18 @@ class AlexaSmartNames extends Component {
             return 0;
         });
 
+        Object.keys(actionsMapping).forEach(action => {
+            if (dev.actions.indexOf(action) !== -1) {
+                const Icon = actionsMapping[action].icon;
+                actions.push((<span key={action} title={actionsMapping[action].desc}><Icon className={this.props.classes.actionIcon} style={{color: actionsMapping[action].color}}/></span>));
+            }
+        });
+        // add unknown actions
         for (let a = 0; a < dev.actions.length; a++) {
-            if (actionsMapping[dev.actions[a]]) {
-                const Icon = actionsMapping[dev.actions[a]].icon;
-                actions.push((<span key={dev.actions[a]} title={actionsMapping[dev.actions[a]].desc}><Icon className={this.props.classes.actionIcon} style={{color: actionsMapping[dev.actions[a]].color}}/></span>));
-            } else {
+            if (!actionsMapping[dev.actions[a]]) {
                 actions.push((<span key={dev.actions[a]}>{dev.actions[a]}</span>));
             }
         }
-
         return actions;
     }
 

@@ -44,6 +44,13 @@ const styles = theme => ({
         display: 'inline-block',
         verticalAlign: 'top',
         marginRight: 20
+    },
+    columnLogo: {
+        width: 350,
+        marginRight: 0
+    },
+    columnSettings: {
+        width: 'calc(100% - 370px)',
     }
 });
 
@@ -169,7 +176,7 @@ class Options extends Component {
                     onError={text => this.setState({errorText: text})}
                     onLoad={this.props.onLoad}
                 />
-                <div className={this.props.classes.column}>
+                <div className={this.props.classes.column + ' ' + this.props.classes.columnSettings}>
                     {this.renderInput('ioBroker.pro Login', 'login')}<br/>
                     {this.renderInput('ioBroker.pro Password', 'pass', 'password')}<br/>
                     <br/>
@@ -188,7 +195,7 @@ class Options extends Component {
                     />
                     <p style={{fontWeight: 'bold'}}>{Utils.renderTextWithA(I18n.t('help_tip'))}</p>
                 </div>
-                <div className={this.props.classes.column}>{this.renderCard()}</div>
+                <div className={this.props.classes.column + ' ' + this.props.classes.columnLogo}>{this.renderCard()}</div>
                 {this.renderHint()}
                 {this.renderToast()}
             </form>

@@ -26,7 +26,10 @@ const styles = theme => ({
         verticalAlign: 'top',
         marginRight: 20,
         height: '100%',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        width: 'calc(50% - 20px)',
+        minWidth: 300,
+        maxWidth: 450
     },
     columnDiv: {
         height: 'calc(100% - 60px)',
