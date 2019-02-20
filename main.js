@@ -70,14 +70,17 @@ function startAdapter(options) {
             if (obj) {
                 switch (obj.command) {
                     case 'update':
-                        if (recalcTimeout) clearTimeout(recalcTimeout);
+                        recalcTimeout && clearTimeout(recalcTimeout);
 
                         recalcTimeout = setTimeout(() => {
                             recalcTimeout = null;
-                            alexaSH2 && alexaSH2.updateDevices(() =>
-                                adapter.setState('smart.updates', true, true));
-                            alexaSH3 && alexaSH3.updateDevices(() =>
-                                adapter.setState('smart.updates3', true, true));
+                            alexaSH2 && alexaSH2.updateDevices(obj.message, analyseAddedId =>
+                                adapter.setState('smart.updatesResult', analyseAddedId || '', true, () =>
+                                    adapter.setState('smart.updates', true, true)));
+
+                            alexaSH3 && alexaSH3.updateDevices(obj.message, analyseAddedId =>
+                                adapter.setState('smart.updatesResult', analyseAddedId || '', true, () =>
+                                    adapter.setState('smart.updates3', true, true)));
                         }, 1000);
                         break;
 

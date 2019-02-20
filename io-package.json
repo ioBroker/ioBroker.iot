@@ -320,6 +320,18 @@
             "native": {}
         },
         {
+            "_id": "smart.updatesResult",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": "Result for last devices update",
+                "type": "string",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
             "_id": "services",
             "type": "channel",
             "common": {

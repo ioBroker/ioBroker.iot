@@ -108,6 +108,22 @@ class Connection {
         this.getState(id, cb);
     }
 
+    unsubscribeState(id, cb) {
+        if (this.statesSubscribes[id]) {
+            if (cb) {
+                const pos = this.statesSubscribes[id].cbs.indexOf(cb);
+                pos !== -1 && this.statesSubscribes[id].cbs.splice(pos, 1);
+            } else {
+                this.statesSubscribes[id].cbs = null;
+            }
+
+            if (this.connected && (!this.statesSubscribes[id].cbs || !this.statesSubscribes[id].cbs.length)) {
+                delete this.statesSubscribes[id];
+                this.socket.emit('unsubscribe', id);
+            }
+        }
+    }
+
     objectChange(id, obj) {
         // update main.objects cache
         if (!this.objects) return;

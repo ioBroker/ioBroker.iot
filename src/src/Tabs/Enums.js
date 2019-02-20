@@ -14,7 +14,9 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
 import Dialog from "@material-ui/core/Dialog";
 import MessageDialog from '../Dialogs/Message';
-import CircularProgress from "@material-ui/core/CircularProgress";
+import CircularProgress from '@material-ui/core/CircularProgress';
+
+const CHANGED_COLOR = '#e7000040';
 
 const styles = theme => ({
     tab: {
@@ -190,7 +192,7 @@ class Enums extends Component {
         }
         let name = Utils.getObjectNameFromObj(obj);
 
-        return (<div className={this.props.classes.enumLine} style={{background: this.state.changed.indexOf(obj._id) !== -1 ? '#e7000040' : 'inherit'}}>
+        return (<div className={this.props.classes.enumLine} style={{background: this.state.changed.indexOf(obj._id) !== -1 ? CHANGED_COLOR : 'inherit'}}>
             <span className={this.props.classes.enumLineName} style={{opacity: smartName === false ? 0.5: 1}}>{smartName || null}{smartName ? (<span className={this.props.classes.enumLineSubName}> ({name})</span>) : name}</span>
             <span className={this.props.classes.enumLineId} style={{opacity: smartName === false ? 0.5: 1}}>{obj._id}</span>
             <Switch

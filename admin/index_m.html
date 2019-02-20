@@ -1377,11 +1377,14 @@
             if (!id || !state || !state.val) return;
             if (id.match(/certs\.urlKey$/)) {
                 updateUrlKey(state.val);
-            } else
-            if (id.match(/smart\.updates$/)) {
+            } else if (id.match(/smart\.updates$/)) {
                 updateDevices();
             } else if (id.match(/smart\.updates3$/)) {
                 updateMDevices();
+            } else if (id.match(/smart\.updatesResult$/)) {
+                if (state && state.ack) {
+                    showError(_(state.val));
+                }
             }
         });
 
@@ -1392,6 +1395,7 @@
         });
 
         socket.emit('subscribe', adapter + '.' + instance + '.certs.urlKey');
+        socket.emit('subscribe', adapter + '.' + instance + '.smart.updatesResult');
 
         resetCerts();
         reissueUrlKey();
