@@ -33,6 +33,7 @@
   "devDependencies": {
     "@types/node": "^4.2.23",
     "gulp": "^4.0.0",
+    "axios": "^0.18.0",
     "mocha": "^5.2.0",
     "chai": "^4.2.0"
   },
