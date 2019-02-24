@@ -12,7 +12,8 @@
             "fr": "Connexion Cloud IoT",
             "it": "Connessione Cloud IoT",
             "es": "Conexión IoT en la nube",
-            "pl": "Połączenie Cloud IoT"
+            "pl": "Połączenie Cloud IoT",
+            "zh-cn": "IoT云连接"
         },
         "desc": {
             "en": "Connects your ioBroker server to the ioBroker IoT cloud",
@@ -23,7 +24,8 @@
             "fr": "Connecte votre serveur ioBroker au cloud ioBroker IoT",
             "it": "Collega il tuo server ioBroker al cloud IoT IoBroker",
             "es": "Conecta su servidor ioBroker a la nube ioBroker IoT",
-            "pl": "Łączy twój serwer ioBroker z chmurą IoT ioBroker"
+            "pl": "Łączy twój serwer ioBroker z chmurą IoT ioBroker",
+            "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
             "0.4.0": {
@@ -59,7 +61,8 @@
                 "fr": "La détection des appareils Google a été corrigée",
                 "it": "Il rilevamento dei dispositivi Google è stato corretto",
                 "es": "Se solucionó la detección de dispositivos google",
-                "pl": "Wykryto urządzenia Google"
+                "pl": "Wykryto urządzenia Google",
+                "zh-cn": "检测的谷歌装置是固定的"
             },
             "0.2.2": {
                 "en": "Generation of new URL key was added",
@@ -70,7 +73,8 @@
                 "fr": "La génération d'une nouvelle clé d'URL a été ajoutée.",
                 "it": "È stata aggiunta la nuova chiave URL",
                 "es": "Generación de nueva clave de URL fue agregada",
-                "pl": "Generowanie nowego klucza URL zostało dodane"
+                "pl": "Generowanie nowego klucza URL zostało dodane",
+                "zh-cn": "产生的新网址的关键是加入"
             },
             "0.2.0": {
                 "en": "The name of the adapter was changed",
@@ -81,7 +85,8 @@
                 "fr": "Le nom de l'adaptateur a été changé",
                 "it": "Il nome dell'adattatore è stato cambiato",
                 "es": "Se cambió el nombre del adaptador",
-                "pl": "Nazwa adaptera została zmieniona"
+                "pl": "Nazwa adaptera została zmieniona",
+                "zh-cn": "名称的改适配器"
             },
             "0.1.8": {
                 "en": "Added extended diagnostics",
@@ -92,7 +97,8 @@
                 "fr": "Ajout de diagnostics étendus",
                 "it": "Aggiunta diagnostica estesa",
                 "es": "Diagnóstico extendido agregado",
-                "pl": "Dodano rozszerzoną diagnostykę"
+                "pl": "Dodano rozszerzoną diagnostykę",
+                "zh-cn": "加入扩展诊断"
             },
             "0.1.7": {
                 "en": "The configuration dialog was corrected\nThe possibility to create the answer for the custom skill with the script was implemented. ",
@@ -103,7 +109,8 @@
                 "fr": "Le dialogue de configuration a été corrigé\nLa possibilité de créer la réponse pour la compétence personnalisée avec le script a été mise en œuvre.",
                 "it": "La finestra di configurazione è stata corretta\nÈ stata implementata la possibilità di creare la risposta per l'abilità personalizzata con lo script.",
                 "es": "Se corrigió el diálogo de configuración.\nSe implementó la posibilidad de crear la respuesta para la habilidad personalizada con el script.",
-                "pl": "Okno dialogowe konfiguracji zostało poprawione\nStworzono możliwość stworzenia odpowiedzi na niestandardowe umiejętności ze skryptem."
+                "pl": "Okno dialogowe konfiguracji zostało poprawione\nStworzono możliwość stworzenia odpowiedzi na niestandardowe umiejętności ze skryptem.",
+                "zh-cn": "配对话是纠正\n可能创建的答复为的定义的技巧，用脚本到实施。 "
             },
             "0.1.4": {
                 "en": "Initial commit",
@@ -114,7 +121,8 @@
                 "fr": "Commit initial",
                 "it": "Commit iniziale",
                 "es": "Compromiso inicial",
-                "pl": "Wstępne zatwierdzenie"
+                "pl": "Wstępne zatwierdzenie",
+                "zh-cn": "最初的承诺"
             }
         },
         "authors": [
