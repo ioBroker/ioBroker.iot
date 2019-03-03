@@ -4,7 +4,7 @@
 'use strict';
 
 const DeviceModule = require('aws-iot-device-sdk').device;
-const utils        = require('./lib/utils'); // Get common adapter utils
+const utils = require('@iobroker/adapter-core'); // Get common adapter utils
 const AlexaSH2     = require('./lib/alexaSmartHomeV2');
 const AlexaSH3     = require('./lib/alexaSmartHomeV3');
 const AlexaCustom  = require('./lib/alexaCustom');
