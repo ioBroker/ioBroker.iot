@@ -28,15 +28,15 @@
     "aws-iot-device-sdk": "^2.2.1",
     "create-react-app": "^2.1.2",
     "iobroker.type-detector": "^0.1.0",
-    "request": "^2.88.0"
+    "request": "^2.88.0",
+    "@iobroker/adapter-core": "^1.0.3"
   },
   "devDependencies": {
     "@types/node": "^4.2.23",
     "gulp": "^4.0.0",
     "axios": "^0.18.0",
     "mocha": "^6.0.2",
-    "chai": "^4.2.0",
-    "@iobroker/adapter-core": "^1.0.3"
+    "chai": "^4.2.0"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.iot/issues"
