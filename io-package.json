@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "0.4.2": {
+                "en": "Allowed the enable and disable of Amazon Alexa and of Google Home from configuration. ",
+                "de": "Zulassen, dass Amazon Alexa und Google Home aktiviert und deaktiviert werden können.",
+                "ru": "Разрешено включение и отключение Amazon Alexa и Google Home из конфигурации.",
+                "pt": "Permitida a ativação e desativação do Amazon Alexa e do Google Home a partir da configuração.",
+                "nl": "Toegestaan ​​de enable en disable van Amazon Alexa en van Google Home van configuratie.",
+                "fr": "Autorisé l'activation et la désactivation d'Amazon Alexa et de Google Home à partir de la configuration.",
+                "it": "Consentita l'abilitazione e disabilitazione di Amazon Alexa e di Google Home dalla configurazione.",
+                "es": "Permitió la activación y desactivación de Amazon Alexa y de Google Home desde la configuración.",
+                "pl": "Pozwoliła włączyć i wyłączyć Amazon Alexa i Google Home z konfiguracji.",
+                "zh-cn": "允许从配置中启用和禁用Amazon Alexa和Google Home。"
+            },
             "0.4.0": {
                 "en": "Added more data for own scripts for use with \"Alexa Custom Skill\". Please check the README",
                 "de": "Weitere Daten für eigene Skripte zur Verwendung mit dem \"Alexa Custom Skill\" hinzugefügt. Mehr Details in der README",
@@ -165,6 +177,8 @@
         "restartOnDisconnect": false,
         "iftttKey": "",
         "replaces": "",
+        "amazonAlexa": true,
+        "googleHome": false,
         "allowedServices": "",
         "text2command": "0",
         "noCommon": false,
@@ -202,32 +216,6 @@
                 "type": "string",
                 "read": true,
                 "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "smart.alexaDisabled",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "If Alexa service is disabled",
-                "type": "boolean",
-                "def": false,
-                "read": true,
-                "write": true
-            },
-            "native": {}
-        },
-        {
-            "_id": "smart.googleDisabled",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "If Google home service is disabled",
-                "type": "boolean",
-                "def": false,
-                "read": true,
-                "write": true
             },
             "native": {}
         },

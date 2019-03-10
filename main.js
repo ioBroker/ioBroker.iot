@@ -25,8 +25,6 @@ let device         = null;
 
 let connected      = false;
 let uuid           = null;
-let alexaDisabled  = false;
-let googleDisabled = false;
 let secret;
 let adapter;
 
@@ -44,15 +42,11 @@ function startAdapter(options) {
             }
         },
         stateChange: (id, state) => {
-            state && !googleDisabled && googleHome && googleHome.updateState(id, state);
-            state && !alexaDisabled && alexaSH3 && alexaSH3.updateState && alexaSH3.updateState(id, state);
+            state && !adapter.config.googleHome && googleHome && googleHome.updateState(id, state);
+            state && !adapter.config.amazonAlexa && alexaSH3 && alexaSH3.updateState && alexaSH3.updateState(id, state);
 
             if (id === adapter.namespace + '.smart.lastResponse' && state && !state.ack) {
                 alexaCustom && alexaCustom.setResponse(state.val);
-            } else if (id === adapter.namespace + '.smart.googleDisabled' && state && !state.ack) {
-                googleDisabled = state.val;
-            } else if (id === adapter.namespace + '.smart.alexaDisabled' && state && !state.ack) {
-                alexaDisabled = state.val;
             }
         },
         unload: callback => {
@@ -587,14 +581,14 @@ function startDevice(clientId, login, password, retry) {
                         adapter.log.debug(new Date().getTime() + ' ALEXA: ' + JSON.stringify(request));
 
                         if (request && request.directive) {
-                            alexaSH3 && alexaSH3.process(request, !alexaDisabled, response =>
+                            alexaSH3 && alexaSH3.process(request, !adapter.config.amazonAlexa, response =>
                                 device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
                         } else
                         if (request && !request.header) {
-                            alexaCustom && alexaCustom.process(request, !alexaDisabled, response =>
+                            alexaCustom && alexaCustom.process(request, !adapter.config.amazonAlexa, response =>
                                 device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
                         } else {
-                            alexaSH2 && alexaSH2.process(request, !alexaDisabled, response =>
+                            alexaSH2 && alexaSH2.process(request, !adapter.config.amazonAlexa, response =>
                                 device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
                         }
                     } else if (type.startsWith('ifttt')) {
@@ -607,7 +601,7 @@ function startDevice(clientId, login, password, retry) {
                             return adapter.log.error('Cannot parse request: ' + request);
                         }
 
-                        googleHome && googleHome.process(request, !googleDisabled, response =>
+                        googleHome && googleHome.process(request, !adapter.config.googleHome, response =>
                             device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
                     } else {
                         let isCustom = false;
@@ -680,6 +674,14 @@ function startDevice(clientId, login, password, retry) {
 }
 
 function main() {
+    if (adapter.config.googleHome === undefined) {
+        adapter.config.googleHome = false;
+    }
+
+    if (adapter.config.amazonAlexa === undefined) {
+        adapter.config.amazonAlexa = true;
+    }
+
     adapter.config.pingTimeout = parseInt(adapter.config.pingTimeout, 10) || 5000;
     if (adapter.config.pingTimeout < 3000) {
         adapter.config.pingTimeout = 3000;
@@ -753,24 +755,6 @@ function main() {
     }
 
     adapter.subscribeStates('smart.*');
-
-    adapter.getState('smart.alexaDisabled', (err, state) => {
-        if (!state || state.val === null || state.val === 'null') {
-            // init value with false
-            adapter.setState('smart.alexaDisabled', alexaDisabled, true);
-        } else {
-            alexaDisabled = state.val === true || state.val === 'true';
-        }
-    });
-
-    adapter.getState('smart.googleDisabled', (err, state) => {
-        if (!state || state.val === null || state.val === 'null') {
-            // init value with false
-            adapter.setState('smart.googleDisabled', googleDisabled, true);
-        } else {
-            googleDisabled = state.val === true || state.val === 'true';
-        }
-    });
 
     adapter.log.info('Connecting with ' + adapter.config.cloudUrl);
     adapter.getForeignObject('system.config', (err, obj) => {

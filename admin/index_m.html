@@ -1125,6 +1125,8 @@
     function load(settings, onChange) {
         if (!settings) return;
 
+        if (settings.googleHome === undefined) settings.googleHome = false;
+        if (settings.amazonAlexa === undefined) settings.amazonAlexa = true;
         if (settings.allowAdmin === undefined) settings.allowAdmin = '';
         if (settings.responseOID === undefined) settings.responseOID = '';
         if (settings.restartOnDisconnect === undefined) settings.restartOnDisconnect = false;
@@ -1641,6 +1643,16 @@
                     <div class="input-field col s12 m8">
                         <input class="value" id="pass" type="password" style="width: 100%" />
                         <label for="pass" class="translate">ioBroker.pro Password</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12 m8">
+                        <input class="value" id="amazonAlexa" type="checkbox" style="width: 100%" />
+                        <span for="amazonAlexa" class="translate">Amazon Alexa</span>
+                    </div>
+                    <div class="input-field col s12 m8">
+                        <input class="value" id="googleHome" type="checkbox" style="width: 100%" />
+                        <span for="googleHome" class="translate">Google Home</span>
                     </div>
                 </div>
                 <div class="row">
