@@ -2,7 +2,7 @@
 # ioBroker IoT Adapter
 =================
 
-[![NPM version](http://img.shields.io/npm/v/iobroker.iot.svg)](https://www.npmjs.com/package/iobroker.iot)
+![Number of Installations](http://iobroker.live/badges/iot-installed.svg) ![Number of Installations](http://iobroker.live/badges/iot-stable.svg) [![NPM version](http://img.shields.io/npm/v/iobroker.iot.svg)](https://www.npmjs.com/package/iobroker.iot)
 [![Downloads](https://img.shields.io/npm/dm/iobroker.iot.svg)](https://www.npmjs.com/package/iobroker.iot)
 
 [![NPM](https://nodei.co/npm/iobroker.iot.png?downloads=true)](https://nodei.co/npm/iobroker.iot/)
