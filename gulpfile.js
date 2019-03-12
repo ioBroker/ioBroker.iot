@@ -422,7 +422,7 @@ gulp.task('updateReadme', function (done) {
     done();
 });
 
-gulp.task('translate', async function (done) {
+gulp.task('translate', async function () {
 
     let yandex;
     const i = process.argv.indexOf("--yandex");
