@@ -42,8 +42,8 @@ function startAdapter(options) {
             }
         },
         stateChange: (id, state) => {
-            state && !adapter.config.googleHome && googleHome && googleHome.updateState(id, state);
-            state && !adapter.config.amazonAlexa && alexaSH3 && alexaSH3.updateState && alexaSH3.updateState(id, state);
+            state && adapter.config.googleHome && googleHome && googleHome.updateState(id, state);
+            state && adapter.config.amazonAlexa && alexaSH3 && alexaSH3.updateState && alexaSH3.updateState(id, state);
 
             if (id === adapter.namespace + '.smart.lastResponse' && state && !state.ack) {
                 alexaCustom && alexaCustom.setResponse(state.val);
@@ -462,7 +462,7 @@ function writeKeys(data) {
     });
 }
 
-function fetchKeys(login, pass, forceUserCreation) {
+function fetchKeys(login, pass, _forceUserCreation) {
     return new Promise((resolve, reject) => {
         adapter.getState('certs.forceUserCreate', (err, state) => {
             let forceUserCreation = state && state.val;
@@ -581,14 +581,14 @@ function startDevice(clientId, login, password, retry) {
                         adapter.log.debug(new Date().getTime() + ' ALEXA: ' + JSON.stringify(request));
 
                         if (request && request.directive) {
-                            alexaSH3 && alexaSH3.process(request, !adapter.config.amazonAlexa, response =>
+                            alexaSH3 && alexaSH3.process(request, adapter.config.amazonAlexa, response =>
                                 device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
                         } else
                         if (request && !request.header) {
-                            alexaCustom && alexaCustom.process(request, !adapter.config.amazonAlexa, response =>
+                            alexaCustom && alexaCustom.process(request, adapter.config.amazonAlexa, response =>
                                 device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
                         } else {
-                            alexaSH2 && alexaSH2.process(request, !adapter.config.amazonAlexa, response =>
+                            alexaSH2 && alexaSH2.process(request, adapter.config.amazonAlexa, response =>
                                 device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
                         }
                     } else if (type.startsWith('ifttt')) {
@@ -601,7 +601,7 @@ function startDevice(clientId, login, password, retry) {
                             return adapter.log.error('Cannot parse request: ' + request);
                         }
 
-                        googleHome && googleHome.process(request, !adapter.config.googleHome, response =>
+                        googleHome && googleHome.process(request, adapter.config.googleHome, response =>
                             device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
                     } else {
                         let isCustom = false;
