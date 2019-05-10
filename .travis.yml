@@ -16,10 +16,10 @@ before_script:
   - 'npm install https://github.com/ioBroker/ioBroker.js-controller/tarball/master --production'
   - npm install iobroker.web  --prefix ./node_modules/iobroker.js-controller/
 env:
-  - CXX=g++-4.9
+  - CXX=g++-6
 addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
     packages:
-      - g++-4.9
+      - g++-6
