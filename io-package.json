@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "0.4.1",
+        "version": "0.4.3",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,29 +28,17 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
-            "0.4.2": {
-                "en": "Allowed the enable and disable of Amazon Alexa and of Google Home from configuration. ",
-                "de": "Zulassen, dass Amazon Alexa und Google Home aktiviert und deaktiviert werden können.",
-                "ru": "Разрешено включение и отключение Amazon Alexa и Google Home из конфигурации.",
-                "pt": "Permitida a ativação e desativação do Amazon Alexa e do Google Home a partir da configuração.",
-                "nl": "Toegestaan ​​de enable en disable van Amazon Alexa en van Google Home van configuratie.",
-                "fr": "Autorisé l'activation et la désactivation d'Amazon Alexa et de Google Home à partir de la configuration.",
-                "it": "Consentita l'abilitazione e disabilitazione di Amazon Alexa e di Google Home dalla configurazione.",
-                "es": "Permitió la activación y desactivación de Amazon Alexa y de Google Home desde la configuración.",
-                "pl": "Pozwoliła włączyć i wyłączyć Amazon Alexa i Google Home z konfiguracji.",
-                "zh-cn": "允许从配置中启用和禁用Amazon Alexa和Google Home。"
-            },
-            "0.4.0": {
-                "en": "Added more data for own scripts for use with \"Alexa Custom Skill\". Please check the README",
-                "de": "Weitere Daten für eigene Skripte zur Verwendung mit dem \"Alexa Custom Skill\" hinzugefügt. Mehr Details in der README",
-                "ru": "Добавлено больше данных для собственных скриптов для использования с «Alexa Custom Skill». Пожалуйста, проверьте README",
-                "pt": "Adicionado mais dados para scripts próprios para uso com \"Alexa Custom Skill\". Por favor, verifique o README",
-                "nl": "Meer gegevens toegevoegd voor eigen scripts voor gebruik met \"Alexa Custom Skill\". Controleer de README",
-                "fr": "Ajout de plus de données pour ses propres scripts à utiliser avec \"Alexa Custom Skill\". S'il vous plaît vérifier le fichier README",
-                "it": "Aggiunti altri dati per i propri script da utilizzare con \"Alexa Custom Skill\". Si prega di controllare il README",
-                "es": "Se agregaron más datos para los scripts propios para usarlos con \"Habilidad personalizada de Alexa\". Por favor revisa el archivo README",
-                "pl": "Dodano więcej danych do własnych skryptów do użytku z \"Alexa Custom Skill\". Sprawdź README",
-                "zh-cn": "为自己的脚本添加了更多数据，以便与“Alexa Custom Skill”一起使用。请查看README"
+            "0.4.3": {
+                "en": "Added more data for own scripts for use with \"Alexa Custom Skill\". Please check the README. Allowed the enable and disable of Amazon Alexa and of Google Home from configuration. ",
+                "de": "Weitere Daten für eigene Skripte zur Verwendung mit dem \"Alexa Custom Skill\" hinzugefügt. Mehr Details in der README. Zulassen, dass Amazon Alexa und Google Home aktiviert und deaktiviert werden können.",
+                "ru": "Добавлено больше данных для собственных скриптов для использования с «Alexa Custom Skill». Пожалуйста, проверьте README. Разрешено включение и отключение Amazon Alexa и Google Home из конфигурации.",
+                "pt": "Adicionado mais dados para scripts próprios para uso com \"Alexa Custom Skill\". Por favor, verifique o README. Permitida a ativação e desativação do Amazon Alexa e do Google Home a partir da configuração.",
+                "nl": "Meer gegevens toegevoegd voor eigen scripts voor gebruik met \"Alexa Custom Skill\". Controleer de README. Toegestaan ​​de enable en disable van Amazon Alexa en van Google Home van configuratie.",
+                "fr": "Ajout de plus de données pour ses propres scripts à utiliser avec \"Alexa Custom Skill\". S'il vous plaît vérifier le fichier README. Autorisé l'activation et la désactivation d'Amazon Alexa et de Google Home à partir de la configuration.",
+                "it": "Aggiunti altri dati per i propri script da utilizzare con \"Alexa Custom Skill\". Si prega di controllare il README. Consentita l'abilitazione e disabilitazione di Amazon Alexa e di Google Home dalla configurazione.",
+                "es": "Se agregaron más datos para los scripts propios para usarlos con \"Habilidad personalizada de Alexa\". Por favor revisa el archivo README. Permitió la activación y desactivación de Amazon Alexa y de Google Home desde la configuración.",
+                "pl": "Dodano więcej danych do własnych skryptów do użytku z \"Alexa Custom Skill\". Sprawdź README. Pozwoliła włączyć i wyłączyć Amazon Alexa i Google Home z konfiguracji.",
+                "zh-cn": "为自己的脚本添加了更多数据，以便与“Alexa Custom Skill”一起使用。请查看README. 允许从配置中启用和禁用Amazon Alexa和Google Home。"
             },
             "0.3.1": {
                 "en": "Blockly was fixed",
