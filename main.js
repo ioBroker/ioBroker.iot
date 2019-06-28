@@ -9,6 +9,7 @@ const AlexaSH2     = require('./lib/alexaSmartHomeV2');
 const AlexaSH3     = require('./lib/alexaSmartHomeV3');
 const AlexaCustom  = require('./lib/alexaCustom');
 const GoogleHome   = require('./lib/GoogleHome');
+const YandexAlisa  = require('./lib/alisa');
 const fs           = require('fs');
 const request      = require('request');
 // @ts-ignore
@@ -21,6 +22,7 @@ let alexaSH2       = null;
 let alexaSH3       = null;
 let googleHome     = null;
 let alexaCustom    = null;
+let yandexAlisa    = null;
 let device         = null;
 
 let connected      = false;
@@ -44,6 +46,7 @@ function startAdapter(options) {
         stateChange: (id, state) => {
             state && adapter.config.googleHome && googleHome && googleHome.updateState(id, state);
             state && adapter.config.amazonAlexa && alexaSH3 && alexaSH3.updateState && alexaSH3.updateState(id, state);
+            state && adapter.config.yandexAlisa && yandexAlisa && yandexAlisa.updateState && yandexAlisa.updateState(id, state);
 
             if (id === adapter.namespace + '.smart.lastResponse' && state && !state.ack) {
                 alexaCustom && alexaCustom.setResponse(state.val);
@@ -580,7 +583,10 @@ function startDevice(clientId, login, password, retry) {
 
                         adapter.log.debug(new Date().getTime() + ' ALEXA: ' + JSON.stringify(request));
 
-                        if (request && request.directive) {
+                        if (request && request.alisa) {
+                            yandexAlisa && yandexAlisa.process(request, adapter.config.yandexAlisa, response =>
+                                device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
+                        } else if (request && request.directive) {
                             alexaSH3 && alexaSH3.process(request, adapter.config.amazonAlexa, response =>
                                 device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
                         } else
@@ -682,6 +688,10 @@ function main() {
         adapter.config.amazonAlexa = true;
     }
 
+    if (adapter.config.yandexAlisa === undefined) {
+        adapter.config.yandexAlisa = false;
+    }
+
     adapter.config.pingTimeout = parseInt(adapter.config.pingTimeout, 10) || 5000;
     if (adapter.config.pingTimeout < 3000) {
         adapter.config.pingTimeout = 3000;
@@ -711,6 +721,7 @@ function main() {
     alexaSH2    = new AlexaSH2(adapter);
     alexaSH3    = new AlexaSH3(adapter);
     alexaCustom = new AlexaCustom(adapter);
+    yandexAlisa = new YandexAlisa(adapter);
 
     readUrlKey()
         .then(key => googleHome = new GoogleHome(adapter, key))

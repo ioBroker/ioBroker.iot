@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "0.4.3",
+        "version": "0.5.0",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "0.5.0": {
+                "en": "tried to add yandex Alisa ",
+                "de": "versuchte yandex Alisa hinzuzufügen",
+                "ru": "пытался добавить яндекс алиса",
+                "pt": "tentou adicionar yandex Alisa",
+                "nl": "probeerde yandex Alisa toe te voegen",
+                "fr": "essayé d'ajouter yandex Alisa",
+                "it": "ho provato ad aggiungere yandex Alisa",
+                "es": "Intenté agregar yandex a alisa.",
+                "pl": "próbowałem dodać yandex Alisa",
+                "zh-cn": "试图添加yandex Alisa"
+            },
             "0.4.3": {
                 "en": "Added more data for own scripts for use with \"Alexa Custom Skill\". Please check the README. Allowed the enable and disable of Amazon Alexa and of Google Home from configuration. ",
                 "de": "Weitere Daten für eigene Skripte zur Verwendung mit dem \"Alexa Custom Skill\" hinzugefügt. Mehr Details in der README. Zulassen, dass Amazon Alexa und Google Home aktiviert und deaktiviert werden können.",
@@ -167,6 +179,7 @@
         "replaces": "",
         "amazonAlexa": true,
         "googleHome": false,
+        "yandexAlisa": false,
         "allowedServices": "",
         "text2command": "0",
         "noCommon": false,
