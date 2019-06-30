@@ -574,6 +574,11 @@ function startDevice(clientId, login, password, retry) {
                         return adapter.log.error('Cannot convert request: ' + request);
                     }
                     adapter.log.debug('Data: ' + request);
+                    
+                    if (request && request.alisa) {
+                        yandexAlisa && yandexAlisa.process(request, adapter.config.yandexAlisa, response =>
+                            device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
+                    } else
                     if (type.startsWith('alexa')) {
                         try {
                             request = JSON.parse(request);
@@ -583,10 +588,7 @@ function startDevice(clientId, login, password, retry) {
 
                         adapter.log.debug(new Date().getTime() + ' ALEXA: ' + JSON.stringify(request));
 
-                        if (request && request.alisa) {
-                            yandexAlisa && yandexAlisa.process(request, adapter.config.yandexAlisa, response =>
-                                device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
-                        } else if (request && request.directive) {
+                        else if (request && request.directive) {
                             alexaSH3 && alexaSH3.process(request, adapter.config.amazonAlexa, response =>
                                 device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
                         } else
