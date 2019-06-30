@@ -110,6 +110,15 @@ function startAdapter(options) {
                             });
                         }
                         break;
+                    case 'browseAlice':
+                        if (obj.callback) {
+                            adapter.log.info('Request Yandex Alice devices');
+                            yandexAlisa && yandexAlisa.updateDevices(() => {
+                                adapter.sendTo(obj.from, obj.command, yandexAlisa.getDevices(), obj.callback);
+                                adapter.setState('smart.updatesYA', false, true);
+                            });
+                        }
+                        break;
                     case 'enums':
                         if (obj.callback) {
                             adapter.log.info('Request enums');
@@ -575,10 +584,6 @@ function startDevice(clientId, login, password, retry) {
                     }
                     adapter.log.debug('Data: ' + request);
 
-                    if (request && request.alisa) {
-                        yandexAlisa && yandexAlisa.process(request, adapter.config.yandexAlisa, response =>
-                            device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
-                    } else
                     if (type.startsWith('alexa')) {
                         try {
                             request = JSON.parse(request);
@@ -610,6 +615,16 @@ function startDevice(clientId, login, password, retry) {
                         }
 
                         googleHome && googleHome.process(request, adapter.config.googleHome, response =>
+                            device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
+                    } else if (type.startsWith('alisa')) {
+                        try {
+                            request = JSON.parse(request);
+                        } catch (e) {
+                            return adapter.log.error('Cannot parse request: ' + request);
+                        }
+
+                        adapter.log.debug(new Date().getTime() + ' ALISA: ' + JSON.stringify(request));
+                        yandexAlisa && yandexAlisa.process(request, adapter.config.yandexAlisa, response =>
                             device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
                     } else {
                         let isCustom = false;
