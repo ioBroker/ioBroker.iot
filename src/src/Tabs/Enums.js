@@ -89,6 +89,8 @@ class Enums extends Component {
             loading: true,
         };
 
+        this.onEnumUpdateBound = this.onEnumUpdate.bind(this);
+
         this.props.socket.getEnums()
             .then(res => {
                 const funcs = [];
@@ -101,8 +103,19 @@ class Enums extends Component {
                         funcs.push(res[id]);
                     }
                 });
+
                 this.setState({funcs, rooms, loading: false});
+                return this.props.socket.subscribeObject('enum.*', this.onEnumUpdateBound);
             });
+    }
+
+    componentWillUnmount() {
+        this.props.socket.unsubscribeObject('enum.*', this.onEnumUpdateBound).then(() => {});
+    }
+
+    onEnumUpdate(id, obj) {
+        this.removeChanged(id);
+        this.updateObjInState(id, obj);
     }
 
     informInstance(id) {
@@ -127,23 +140,31 @@ class Enums extends Component {
         }
     }
 
-    updateObjInState(obj) {
+    updateObjInState(id, obj) {
         // update obj
-        if (obj._id.match(/^enum\.functions\./)) {
-            for (let i = 0; i < this.state.funcs.length; i++) {
-                if (this.state.funcs[i]._id === obj._id) {
+        if (id.match(/^enum\.functions\./)) {
+            for (let i = this.state.funcs.length - 1; i >= 0 ; i--) {
+                if (this.state.funcs[i]._id === id) {
                     const funcs = JSON.parse(JSON.stringify(this.state.funcs));
-                    funcs[i] = obj;
+                    if (obj) {
+                        funcs[i] = obj;
+                    } else {
+                        funcs.splice(i, 1);
+                    }
                     this.setState({funcs});
                     break;
                 }
             }
         } else
-        if (obj._id.match(/^enum\.rooms\./)) {
-            for (let i = 0; i < this.state.rooms.length; i++) {
-                if (this.state.rooms[i]._id === obj._id) {
+        if (id.match(/^enum\.rooms\./)) {
+            for (let i = this.state.rooms.length - 1; i >= 0; i--) {
+                if (this.state.rooms[i]._id === id) {
                     const rooms = JSON.parse(JSON.stringify(this.state.rooms));
-                    rooms[i] = obj;
+                    if (obj) {
+                        rooms[i] = obj;
+                    } else {
+                        rooms.splice(i, 1);
+                    }
                     this.setState({rooms});
                     break;
                 }
@@ -167,7 +188,7 @@ class Enums extends Component {
         this.props.socket.setObject(id, obj)
             .then(() => {
                 // update obj
-                this.updateObjInState(obj);
+                this.updateObjInState(id, obj);
                 this.informInstance(id);
 
                 setTimeout(() => this.removeChanged(id), 500);
@@ -241,7 +262,7 @@ class Enums extends Component {
                 })
                 .then(() => {
                     // update obj
-                    this.updateObjInState(newObj);
+                    this.updateObjInState(id, newObj);
                     this.informInstance(id);
                 })
                 .catch(err => this.props.onError(err));

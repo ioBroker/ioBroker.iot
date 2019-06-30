@@ -72,8 +72,10 @@ function startAdapter(options) {
                         recalcTimeout = setTimeout(() => {
                             recalcTimeout = null;
                             alexaSH2 && alexaSH2.updateDevices(obj.message, analyseAddedId =>
-                                adapter.setState('smart.updatesResult', analyseAddedId || '', true, () =>
-                                    adapter.setState('smart.updates', true, true)));
+                                adapter.setState('smart.updatesResult', analyseAddedId || '', true, () => {
+                                    adapter.log.debug('Devices updated!');
+                                    adapter.setState('smart.updates', true, true);
+                                }));
 
                             alexaSH3 && alexaSH3.updateDevices(obj.message, analyseAddedId =>
                                 adapter.setState('smart.updatesResult', analyseAddedId || '', true, () =>

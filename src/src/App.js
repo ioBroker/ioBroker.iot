@@ -40,6 +40,7 @@ class App extends GenericApp {
                 </AppBar>
                 <div className={this.props.classes.tabContent}>
                     {this.state.selectedTab === 0 && (<TabOptions
+                        key="options"
                         common={this.common}
                         socket={this.socket}
                         native={this.state.native}
@@ -55,6 +56,7 @@ class App extends GenericApp {
                         }}
                     />)}
                     {this.state.selectedTab === 1 && (<TabAlexaSmartNames
+                        key="alexa"
                         common={this.common}
                         socket={this.socket}
                         native={this.state.native}
@@ -62,6 +64,7 @@ class App extends GenericApp {
                         instance={this.instance}
                     />)}
                     {this.state.selectedTab === 2 && (<TabEnums
+                        key="enums"
                         common={this.common}
                         socket={this.socket}
                         native={this.state.native}
