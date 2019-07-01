@@ -181,6 +181,7 @@ function binarySearch(d, t, s, e) {
     }
 }
 */
+
 function applyFilter(item, filters, lang, objects, context) {
     let filteredOut = false;
     if (!context) {
@@ -706,7 +707,7 @@ class SelectID extends React.Component {
             },
             depth: 0
         };
-        this.selectedFound = false;
+        this.selectedFound = !this.state.selected;
         this.copyContentImg = CopyContentImg;
         this.treeTableRef = React.createRef();
         this.mainRef = React.createRef();

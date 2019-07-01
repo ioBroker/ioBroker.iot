@@ -24,12 +24,12 @@ class Connection {
             groups: [],
             instances: []
         };
-        this.acl = null;
         this.firstConnect = true;
         this.waitForRestart = false;
         this.systemLang = 'en';
         this.connected = false;
         this.statesSubscribes = {}; // subscribe for states
+        this.objectsSubscribes = {}; // subscribe for objects
         this.onProgress = this.props.onProgress || function () {};
         this.onError = this.props.onError || function (err) {console.error(err);};
 
@@ -97,7 +97,11 @@ class Connection {
 
     subscribeState(id, cb) {
         if (!this.statesSubscribes[id]) {
-            this.statesSubscribes[id] = {reg: new RegExp(id.replace(/\./g, '\\.').replace(/\*/g, '.*')), cbs: []};
+            let reg = id.replace(/\./g, '\\.').replace(/\*/g, '.*');
+            if (reg.indexOf('*') === -1) {
+                reg += '$';
+            }
+            this.statesSubscribes[id] = {reg: new RegExp(reg), cbs: []};
             this.statesSubscribes[id].cbs.push(cb);
             if (this.connected) {
                 this.socket.emit('subscribe', id);
@@ -124,6 +128,40 @@ class Connection {
         }
     }
 
+    subscribeObject(id, cb) {
+        if (!this.objectsSubscribes[id]) {
+            let reg = id.replace(/\./g, '\\.').replace(/\*/g, '.*');
+            if (reg.indexOf('*') === -1) {
+                reg += '$';
+            }
+            this.objectsSubscribes[id] = {reg: new RegExp(reg), cbs: []};
+            this.objectsSubscribes[id].cbs.push(cb);
+            if (this.connected) {
+                this.socket.emit('subscribeObjects', id);
+            }
+        } else {
+            this.objectsSubscribes[id].cbs.indexOf(cb) === -1 && this.objectsSubscribes[id].cbs.push(cb);
+        }
+        return Promise.resolve();
+    }
+
+    unsubscribeObject(id, cb) {
+        if (this.objectsSubscribes[id]) {
+            if (cb) {
+                const pos = this.objectsSubscribes[id].cbs.indexOf(cb);
+                pos !== -1 && this.objectsSubscribes[id].cbs.splice(pos, 1);
+            } else {
+                this.objectsSubscribes[id].cbs = null;
+            }
+
+            if (this.connected && (!this.objectsSubscribes[id].cbs || !this.objectsSubscribes[id].cbs.length)) {
+                delete this.objectsSubscribes[id];
+                this.socket.emit('unsubscribeObjects', id);
+            }
+        }
+        return Promise.resolve();
+    }
+
     objectChange(id, obj) {
         // update main.objects cache
         if (!this.objects) return;
@@ -140,15 +178,15 @@ class Connection {
                 let pos;
                 if (obj.type === 'instance') {
                     pos = this.scripts.instances.indexOf(id);
-                    if (pos === -1) this.scripts.instances.push(id);
+                    pos === -1 && this.scripts.instances.push(id);
                 } else
                 if (obj.type === 'script') {
                     pos = this.scripts.list.indexOf(id);
-                    if (pos === -1) this.scripts.list.push(id);
+                    pos === -1 && this.scripts.list.push(id);
                 } else
                 if (id.match(/^script\.js\./) && obj.type === 'channel') {
                     pos = this.scripts.groups.indexOf(id);
-                    if (pos === -1) this.scripts.groups.push(id);
+                    pos === -1 && this.scripts.groups.push(id);
                 }
             }
         } else if (this.objects[id]) {
@@ -169,6 +207,12 @@ class Connection {
             }
             changed = true;
         }
+
+        Object.keys(this.objectsSubscribes).forEach(_id => {
+            if (_id === id || this.objectsSubscribes[_id].reg.test(id)) {
+                this.objectsSubscribes[_id].cbs.forEach(cb => cb(id, obj));
+            }
+        });
 
         if (this.props.onBlocklyChanges && id.match(/^system\.adapter\.[-\w\d]+\$/)) {
             if (obj[id].common && obj[id].common.blockly) {
@@ -243,12 +287,14 @@ class Connection {
         if (isEnable && !this.subscribed) {
             this.subscribed = true;
             this.autoSubscribes.forEach(id => this.socket.emit('subscribeObjects', id));
+            Object.keys(this.objectsSubscribes).forEach(id => this.socket.emit('subscribeObjects', id));
             this.autoSubscribeLog && this.socket.emit('requireLog', true);
 
             Object.keys(this.statesSubscribes).forEach(id => this.socket.emit('subscribe', id));
         } else if (!isEnable && this.subscribed) {
             this.subscribed = false;
             this.autoSubscribes.forEach(id => this.socket.emit('unsubscribeObjects', id));
+            Object.keys(this.objectsSubscribes).forEach(id => this.socket.emit('unsubscribeObjects', id));
             this.autoSubscribeLog && this.socket.emit('requireLog', false);
 
             Object.keys(this.statesSubscribes).forEach(id => this.socket.emit('unsubscribe', id));
@@ -278,6 +324,7 @@ class Connection {
             });
         });
     }
+
     updateScript(oldId, newId, newCommon) {
         return new Promise((resolve, reject) => {
             this.socket.emit('getObject', oldId, (err, _obj) => {

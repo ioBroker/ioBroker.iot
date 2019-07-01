@@ -45,6 +45,8 @@ const colorOff = '#444';
 const colorSet = '#00c6ff';
 const colorRead = '#00bc00';
 const CHANGED_COLOR = '#e7000040';
+const DEFAULT_CHANNEL_COLOR = '#e9e9e9';
+const LAST_CHANGED_COLOR = '#b4ffbe';
 
 const actionsMapping = {
     turnOn: {color: colorOn, icon: IconOn, desc: 'Turn on'},
@@ -86,7 +88,7 @@ const styles = theme => ({
         overflow: 'hidden'
     },
     columnDiv: {
-        height: 'calc(100% - 60px)',
+        height: 'calc(100% - 40px)',
         overflow: 'auto',
         minWidth: 300
     },
@@ -111,7 +113,7 @@ const styles = theme => ({
     },
     devLineDelete: {
         position: 'absolute',
-        top: 0,
+        top: 5,
         right: 0
     },
     devLineName: {
@@ -144,6 +146,11 @@ const styles = theme => ({
         paddingLeft: 50,
         display: 'inline-block',
     },
+    devLineProgress: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+    },
     channelLineActions: {
         width: 80
     },
@@ -173,6 +180,11 @@ const styles = theme => ({
         display: 'inline-block',
         fontSize: 13,
         width: 'calc(100% - 400px)'
+    },
+    devSubSubLineName:  {
+        fontSize: 8,
+        fontStyle: 'italic',
+        display: 'block'
     },
     devSubLineByOn: {
         marginLeft: 5
@@ -218,8 +230,15 @@ class AlexaSmartNames extends Component {
             message: '',
             filter: '',
             loading: true,
-            expanded: []
+            browse: false,
+            expanded: [],
+            lastChanged: ''
         };
+
+        this.timerChanged = null;
+        this.browseTimer = null;
+        this.browseTimerCount = 0;
+        this.editedSmartName = '';
 
         this.waitForUpdateID = null;
         this.onReadyUpdateBound = this.onReadyUpdate.bind(this);
@@ -237,23 +256,43 @@ class AlexaSmartNames extends Component {
     }
 
     browse(isIndicate) {
+        if (Date.now() - this.lastBrowse < 500) return;
+        this.lastBrowse = Date.now();
         if (isIndicate) {
-            this.setState({loading: true});
+            this.setState({loading: true, browse: true});
+        } else {
+            this.setState({browse: true});
         }
+        console.log('Send BROWSE!');
+        this.browseTimer = setTimeout(() => {
+            console.log('Browse timeout!');
+            this.browseTimer = null;
+            this.browseTimerCount++;
+            if (this.browseTimerCount < 5) {
+                this.browse(isIndicate);
+            } else {
+                this.setState({message: I18n.t('Cannot read devices!')});
+            }
+        }, 10000);
+
         this.props.socket.sendTo(adapterName + this.props.instance, 'browse', null, list => {
+            this.browseTimer && clearTimeout(this.browseTimer);
+            this.browseTimerCount = 0;
+            this.browseTimer = null;
             if (this.waitForUpdateID) {
-                if (!this.onEdit(this.waitForUpdateID)) {
+                if (!this.onEdit(this.waitForUpdateID, list)) {
                     this.setState({message: I18n.t('Device %s was not added', this.waitForUpdateID)});
                 }
                 this.waitForUpdateID = null;
-                this.setState({devices: list, loading: false, changed: []});
-            } else {
-                this.setState({devices: list, loading: false, changed: []});
             }
+            console.log('BROWSE received.');
+
+            this.setState({devices: list, loading: false, changed: [], browse: false});
         });
     }
 
     onReadyUpdate(id, state) {
+        console.log('Update ' + id + ' ' + state.val + '/' + state.ack);
         if (state && state.ack === true && state.val === true) {
             if (this.devTimer) clearTimeout(this.devTimer);
             this.devTimer = setTimeout(() => {
@@ -275,6 +314,10 @@ class AlexaSmartNames extends Component {
     componentWillUnmount() {
         this.props.socket.unsubscribeState(`${adapterName}${this.props.instance}.smart.updates`, this.onReadyUpdateBound);
         this.props.socket.unsubscribeState(`${adapterName}${this.props.instance}.smart.updatesResult`, this.onResultUpdateBound);
+        if (this.timerChanged) {
+            clearTimeout(this.timerChanged);
+            this.timerChanged = null;
+        }
     }
 
     informInstance(id) {
@@ -301,8 +344,9 @@ class AlexaSmartNames extends Component {
         }
     }
 
-    onEdit(id) {
-        const device = this.state.devices.find(dev => dev.additionalApplianceDetails.id === id);
+    onEdit(id, devices) {
+        devices = devices || this.state.devices;
+        const device = devices.find(dev => dev.additionalApplianceDetails.id === id);
         if (device) {
             this.props.socket.getObject(id)
                 .then(obj => {
@@ -310,6 +354,7 @@ class AlexaSmartNames extends Component {
                     if (typeof smartName === 'object' && smartName) {
                         smartName = smartName[I18n.getLanguage()] || smartName.en;
                     }
+                    this.editedSmartName = smartName;
                     this.setState({editId: id, editedSmartName: smartName, editObjectName: Utils.getObjectNameFromObj(obj, null, {language: I18n.getLanguage()})});
                 });
             return true;
@@ -323,10 +368,30 @@ class AlexaSmartNames extends Component {
     }
 
     onDelete() {
+        let id = this.state.deleteId;
         // const device = this.state.devices.find(dev => dev.additionalApplianceDetails.id === id);
-        console.log(this.state.deleteId);
-        this.setState({deleteId: '', showConfirmation: false});
+        this.addChanged(id, () => {
+            this.props.socket.getObject(id)
+                .then(obj => {
+                    Utils.disableSmartName(obj);
+                    return this.props.socket.setObject(id, obj);
+                })
+                .then(() => {
+                    this.setState({deleteId: '', showConfirmation: false, lastChanged: id});
+
+                    this.timerChanged && clearTimeout(this.timerChanged);
+                    this.timerChanged = setTimeout(() => {
+                        this.setState({lastChanged: ''});
+                        this.timerChanged = null;
+                    }, 30000);
+
+                    // update obj
+                    this.informInstance(id);
+                })
+                .catch(err => this.props.onError(err));
+        });
     }
+
     renderActions(dev) {
         // Type
         const actions = [];
@@ -374,11 +439,11 @@ class AlexaSmartNames extends Component {
         // type = '-', 'stored', false or number [5-100]
         if (type !== false) {
             const items = [
-                (<MenuItem value=""><em>{I18n.t('Default')}</em></MenuItem>),
-                (<MenuItem value="stored">{I18n.t('last value')}</MenuItem>)
+                (<MenuItem key="_" value=""><em>{I18n.t('Default')}</em></MenuItem>),
+                (<MenuItem key="last" value="stored">{I18n.t('last value')}</MenuItem>)
             ];
             for (let i = 5; i <= 100; i += 5) {
-                items.push((<MenuItem value={i.toString()}>{i}%</MenuItem>));
+                items.push((<MenuItem  key={i.toString()} value={i.toString()}>{i}%</MenuItem>));
             }
             return (<FormControl className={this.props.classes.devSubLineByOn}>
                 <Select className={this.props.classes.devSubLineByOnSelect} value={(type || '').toString()} onChange={e => this.onParamsChange(id, e.target.value)}>{items}</Select>
@@ -394,6 +459,16 @@ class AlexaSmartNames extends Component {
             this.props.socket.getObject(id)
                 .then(obj => {
                     Utils.updateSmartName(obj, undefined, byON, type, adapterName + this.props.instance, this.props.native.noCommon);
+
+                    if (this.state.lastChanged !== id) {
+                        this.setState({lastChanged: id});
+                        this.timerChanged && clearTimeout(this.timerChanged);
+                        this.timerChanged = setTimeout(() => {
+                            this.setState({lastChanged: ''});
+                            this.timerChanged = null;
+                        }, 30000);
+                    }
+
                     return this.props.socket.setObject(id, obj);
                 })
                 .then(() => {
@@ -407,10 +482,10 @@ class AlexaSmartNames extends Component {
     renderSelectType(dev, lineNum, id, type) {
         if (type !== false) {
             const items = [
-                (<MenuItem value="_"><em>{I18n.t('no type')}</em></MenuItem>)
+                (<MenuItem key="_" value="_"><em>{I18n.t('no type')}</em></MenuItem>)
             ];
             for (let i = 0; i < SMARTTYPES.length; i++) {
-                items.push((<MenuItem value={SMARTTYPES[i]}><em>{I18n.t(SMARTTYPES[i])}</em></MenuItem>));
+                items.push((<MenuItem  key={SMARTTYPES[i]} value={SMARTTYPES[i]}><em>{I18n.t(SMARTTYPES[i])}</em></MenuItem>));
             }
             return (
                 <FormControl>
@@ -437,12 +512,18 @@ class AlexaSmartNames extends Component {
                 if (channels.hasOwnProperty(chan)) {
                     for (let i = 0; i < channels[chan].length; i++) {
                         const id = channels[chan][i].id;
-                        result.push((<div className={classes.devSubLine} style={(c % 2) ? {} : {background: this.state.changed.indexOf(id) !== -1 ? CHANGED_COLOR : '#e9e9e9'}}>
+                        let background = this.state.changed.indexOf(id) !== -1 ? CHANGED_COLOR : DEFAULT_CHANNEL_COLOR;
+                        if (this.state.lastChanged === id && background === DEFAULT_CHANNEL_COLOR) {
+                            background = LAST_CHANGED_COLOR;
+                        }
+                        result.push((<div key={'sub' + id} className={classes.devSubLine} style={(c % 2) ? {} : {background}}>
                             <div className={this.props.classes.devLineActions + ' ' + this.props.classes.channelLineActions}>{this.renderActions(channels[chan][i])}</div>
-                            <div className={classes.devSubLineName} title={id}>{(names[id] || id)}</div>
+                            <div className={classes.devSubLineName} title={id}>{(names[id] || id)}
+                                {id !== names[id] ? (<span className={classes.devSubSubLineName}>{id}</span>) : null}
+                            </div>
                             {this.renderSelectType(dev, lineNum, id, smarttypes[id])}
                             {this.renderSelectByOn(dev, lineNum, id, types[id])}
-                            <IconButton aria-label="Delete" className={this.props.classes.devSubLineDelete} onClick={() => this.onAskDelete(lineNum, id)}><IconDelete fontSize="middle" /></IconButton>
+                            <IconButton aria-label="Delete" className={this.props.classes.devSubLineDelete} onClick={() => this.onAskDelete(id, lineNum)}><IconDelete fontSize="middle" /></IconButton>
                         </div>));
                         c++;
                     }
@@ -451,7 +532,11 @@ class AlexaSmartNames extends Component {
         } else {
             const id = dev.additionalApplianceDetails.id;
             const name = dev.additionalApplianceDetails.name || id;
-            result.push((<div className={classes.devSubLine} style={{background: this.state.changed.indexOf(id) !== -1 ? CHANGED_COLOR : '#e9e9e9'}}>
+            let background = this.state.changed.indexOf(id) !== -1 ? CHANGED_COLOR : DEFAULT_CHANNEL_COLOR;
+            if (this.state.lastChanged === id && background === DEFAULT_CHANNEL_COLOR) {
+                background = LAST_CHANGED_COLOR;
+            }
+            result.push((<div key={'sub' + id} className={classes.devSubLine} style={{background}}>
                 <div className={this.props.classes.devLineActions + ' ' + this.props.classes.channelLineActions} style={{width: 80}}>{this.renderActions(dev)}</div>
                 <div className={classes.devSubLineName} title={(id || '')}>{name}</div>
                 {this.renderSelectType(dev, lineNum, id, dev.additionalApplianceDetails.smartType)}
@@ -481,10 +566,29 @@ class AlexaSmartNames extends Component {
         const id = dev.additionalApplianceDetails.id;
 
         let background = (lineNum % 2) ? '#f1f1f1' : 'inherit';
-        if (this.state.changed.indexOf(id) !== -1) {
-            background = '#e7000040';
+        const changed = this.state.changed.indexOf(id) !== -1;
+        if (changed) {
+            background = CHANGED_COLOR;
+        } else if (id === this.state.lastChanged) {
+            background = LAST_CHANGED_COLOR;
         }
 
+        // If some of sub channels in change list or in last changed
+        if (dev.additionalApplianceDetails.group && !changed && id !== this.state.lastChanged) {
+            const channels = dev.additionalApplianceDetails.channels;
+            for (const chan in channels) {
+                if (channels.hasOwnProperty(chan)) {
+                    for (let i = 0; i < channels[chan].length; i++) {
+                        const id = channels[chan][i].id;
+                        if (this.state.changed.indexOf(id) !== -1) {
+                            background = CHANGED_COLOR;
+                        } else if (this.state.lastChanged === id) {
+                            background = LAST_CHANGED_COLOR;
+                        }
+                    }
+                }
+            }
+        }
 
         return [
             (<div key={'line' + lineNum} className={this.props.classes.devLine} style={{background}}>
@@ -496,9 +600,10 @@ class AlexaSmartNames extends Component {
                         </Badge>) :
                         (expanded ? (<IconCollapse/>) : (<IconExpand />))}
                 </IconButton>
-                <div className={this.props.classes.devLineNameBlock} style={{display: 'inline-block'}}>
+                <div className={this.props.classes.devLineNameBlock} style={{display: 'inline-block', position: 'relative'}}>
                     <span className={this.props.classes.devLineName}>{title}</span>
                     <span className={this.props.classes.devLineDescription}>{dev.friendlyDescription}</span>
+                    {changed ? (<CircularProgress className={this.props.classes.devLineProgress} size={20}/>) : null}
                 </div>
                 <span className={this.props.classes.devLineActions}>{this.renderActions(dev)}</span>
                 {!dev.additionalApplianceDetails.group ?
@@ -518,14 +623,22 @@ class AlexaSmartNames extends Component {
         }
     }
 
-    changeSmartName() {
+    changeSmartName(e) {
+        e && e.preventDefault();
         // Check if the name is duplicate
         this.addChanged(this.state.editId, () => {
             const id = this.state.editId;
-            this.setState({editId: '', editObjectName: ''});
+            this.setState({editId: '', editObjectName: '', lastChanged: id});
+
+            this.timerChanged && clearTimeout(this.timerChanged);
+            this.timerChanged = setTimeout(() => {
+                this.setState({lastChanged: ''});
+                this.timerChanged = null;
+            }, 30000);
+
             this.props.socket.getObject(id)
                 .then(obj => {
-                    Utils.updateSmartName(obj, this.state.editedSmartName, undefined, undefined, adapterName + this.props.instance, this.props.native.noCommon);
+                    Utils.updateSmartName(obj, this.editedSmartName, undefined, undefined, adapterName + this.props.instance, this.props.native.noCommon);
                     return this.props.socket.setObject(id, obj);
                 })
                 .then(() => {
@@ -552,15 +665,20 @@ class AlexaSmartNames extends Component {
                     <TextField
                         style={{width: '100%'}}
                         label={I18n.t('Smart name')}
-                        onChange={e => this.setState({editedSmartName: e.target.value})}
-                        value={this.state.editedSmartName}
+                        onKeyDown={e =>
+                            e.keyCode === 13 && this.changeSmartName(e)}
+                        onChange={e => this.editedSmartName = e.target.value}
+                        defaultValue={this.state.editedSmartName}
                         helperText={I18n.t('You can enter several names divided by comma')}
                         margin="normal"
                     />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => this.changeSmartName()} color="primary" autoFocus>{I18n.t('Ok')}</Button>
-                    <Button onClick={() => this.setState({editId: '', editedSmartName: ''})}>{I18n.t('Cancel')}</Button>
+                    <Button onClick={() => {
+                        this.editedSmartName = null;
+                        this.setState({editId: '', editedSmartName: ''});
+                    }}>{I18n.t('Cancel')}</Button>
                 </DialogActions>
             </Dialog>)
         } else {
@@ -603,6 +721,7 @@ class AlexaSmartNames extends Component {
                 onClose={() => this.setState({showSelectId: false})}
                 onOk={(selected, name) => {
                     this.setState({showSelectId: false});
+
                     this.props.socket.getObject(selected)
                         .then(obj => {
                             if (obj) {
@@ -611,11 +730,18 @@ class AlexaSmartNames extends Component {
                                 this.addChanged(obj._id);
                                 this.waitForUpdateID = obj._id;
 
-                                this.props.socket.setObject(obj._id)
-                                    .then(obj, err => {
-                                        this.informInstance(obj._id);
-                                        err && this.setState({message: err});
-                                    });
+                                if (this.state.lastChanged !== obj._id) {
+                                    this.setState({lastChanged: obj._id});
+                                    this.timerChanged && clearTimeout(this.timerChanged);
+                                    this.timerChanged = setTimeout(() => {
+                                        this.setState({lastChanged: ''});
+                                        this.timerChanged = null;
+                                    }, 30000);
+                                }
+
+                                this.props.socket.setObject(obj._id, obj)
+                                    .then(() => this.informInstance(obj._id))
+                                    .catch(err => this.setState({message: err}));
                             } else {
                                 this.setState({message: I18n.t('Invalid ID')});
                             }
@@ -634,18 +760,19 @@ class AlexaSmartNames extends Component {
             if (this.state.filter && this.state.devices[i].friendlyName.toLowerCase().indexOf(filter) === -1 ) continue;
             result.push(this.renderDevice(this.state.devices[i], i));
         }
-        return result;
+        return (<div key="listDevices" className={this.props.classes.columnDiv}>{result}</div>);
     }
 
     render() {
         if (this.state.loading) {
-            return (<CircularProgress />);
+            return (<CircularProgress  key="alexaProgress" />);
         }
 
         return (
-            <form className={this.props.classes.tab}>
+            <form key="alexa" className={this.props.classes.tab}>
                 <Fab size="small" color="secondary" aria-label="Add" className={this.props.classes.button} onClick={() => this.setState({showSelectId: true})}><IconAdd /></Fab>
-                <Fab size="small" color="primary" aria-label="Refresh" className={this.props.classes.button} onClick={() => this.browse(true)}><IconRefresh /></Fab>
+                <Fab size="small" color="primary" aria-label="Refresh" className={this.props.classes.button}
+                      onClick={() => this.browse(true)} disabled={this.state.browse}>{this.state.browse ? (<CircularProgress size={20} />) : (<IconRefresh/>)}</Fab>
 
                 <Input
                     placeholder={I18n.t('Filter')}
