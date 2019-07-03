@@ -21,7 +21,6 @@ import I18n from '../i18n';
 import Logo from './Logo';
 import Message from '../Dialogs/Message';
 
-
 const styles = theme => ({
     tab: {
         width: '100%',
@@ -72,7 +71,7 @@ class Options extends Component {
             className={this.props.classes.input}
             value={this.props.native[attr]}
             type={type || 'text'}
-            onChange={e => this.onChange(attr, e.target.value)}
+            onChange={e => this.props.onChange(attr, e.target.value)}
             margin="normal"
         />);
     }

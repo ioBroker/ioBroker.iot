@@ -686,8 +686,6 @@ class Utils {
             obj.common.smartName = false;
         }
     }
-
-
 }
 
 export default Utils;

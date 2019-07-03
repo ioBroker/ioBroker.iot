@@ -317,6 +317,18 @@
             "native": {}
         },
         {
+            "_id": "smart.updatesYA",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": "If updates of yandex alice configuration is ready",
+                "type": "boolean",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
             "_id": "smart.updatesResult",
             "type": "state",
             "common": {

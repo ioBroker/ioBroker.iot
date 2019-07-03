@@ -8,6 +8,7 @@ import I18n from './i18n';
 
 import GenericApp from './GenericApp';
 import TabOptions from './Tabs/Options';
+import TabExtended from './Tabs/Extended';
 import TabEnums from './Tabs/Enums';
 import TabAlexaSmartNames from './Tabs/AlexaSmartNames';
 
@@ -70,6 +71,21 @@ class App extends GenericApp {
                         native={this.state.native}
                         onError={text => this.setState({errorText: text})}
                         instance={this.instance}
+                    />)}
+                    {this.state.selectedTab === 3 && (<TabExtended
+                        key="enums"
+                        common={this.common}
+                        socket={this.socket}
+                        native={this.state.native}
+                        onError={text => this.setState({errorText: text})}
+                        instance={this.instance}
+                        onChange={(attr, value) => {
+                            const native = JSON.parse(JSON.stringify(this.state.native));
+                            if (native[attr] !== value) {
+                                native[attr] = value;
+                                this.setState({native, changed: this.getIsChanged(native)});
+                            }
+                        }}
                     />)}
                 </div>
                 {this.renderError()}
