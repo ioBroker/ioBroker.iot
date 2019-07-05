@@ -61,8 +61,14 @@ class Options extends Component {
             inAction: false,
             forceUserCreate: false,
             showHint: false,
-            toast: ''
+            toast: '',
+            isInstanceAlive: false,
         };
+
+        this.props.socket.getObject(`system.adapter.${this.props.adapterName}.${this.props.instance}`).then(obj =>
+            this.props.socket.getState(`system.adapter.${this.props.adapterName}.${this.props.instance}.alive`).then(state =>
+                this.setState({isInstanceAlive: obj && obj.common && obj.common.enabled && state && state.val})));
+
     }
 
     renderInput(title, attr, type) {
@@ -165,6 +171,19 @@ class Options extends Component {
         }
     }
 
+    renderCheckbox(title, attr, style) {
+        return (<FormControlLabel key={attr} style={Object.assign({paddingTop: 5}, style)} className={this.props.classes.controlElement}
+                                  control={
+                                      <Checkbox
+                                          checked={this.props.native[attr]}
+                                          onChange={() => this.props.onChange(attr, !this.props.native[attr])}
+                                          color="primary"
+                                      />
+                                  }
+                                  label={I18n.t(title)}
+        />);
+    }
+
     render() {
         return (
             <form className={this.props.classes.tab}>
@@ -178,8 +197,15 @@ class Options extends Component {
                 <div className={this.props.classes.column + ' ' + this.props.classes.columnSettings}>
                     {this.renderInput('ioBroker.pro Login', 'login')}<br/>
                     {this.renderInput('ioBroker.pro Password', 'pass', 'password')}<br/>
+                    {this.renderCheckbox('Amazon Alexa', 'amazonAlexa', {marginTop: 10})}<br/>
+                    {this.renderCheckbox('Google Home', 'googleHome', {marginTop: 10})}<br/>
+                    {this.renderCheckbox('Yandex Алиса', 'yandexAlisa', {marginTop: 10})}<br/>
                     <br/>
-                    <Button variant="outlined" className={this.props.classes.button} disabled={this.state.inAction} onClick={() => this.resetCerts()}>
+                    <Button variant="outlined"
+                            className={this.props.classes.button}
+                            disabled={this.state.inAction || !this.state.isInstanceAlive}
+                            title={!this.state.isInstanceAlive ? I18n.t('Instance must be enabled') : ''}
+                            onClick={() => this.resetCerts()}>
                         <IconReload/>{I18n.t('Get new connection certificates')}
                     </Button>
                     <FormControlLabel
@@ -206,6 +232,7 @@ Options.propTypes = {
     common: PropTypes.object.isRequired,
     native: PropTypes.object.isRequired,
     instance: PropTypes.number.isRequired,
+    adapterName: PropTypes.string.isRequired,
     onError: PropTypes.func,
     onLoad: PropTypes.func,
     onChange: PropTypes.func,

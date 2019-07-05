@@ -15,6 +15,7 @@ import {MdAdd as IconAdd} from 'react-icons/md';
 
 import I18n from '../i18n';
 import DialogSelectID from '../Dialogs/SelectID';
+import Utils from '../Components/Utils'
 
 const styles = theme => ({
     tab: {
@@ -46,6 +47,10 @@ const styles = theme => ({
     },
     columnSettings: {
         width: 'calc(100% - 370px)',
+    },
+    controlElement: {
+        //background: '#d2d2d2',
+        marginBottom: 5
     }
 });
 
@@ -54,14 +59,15 @@ class ExtendedOptions extends Component {
         super(props);
 
         this.state = {
-            showSelectId: false
+            showSelectId: false,
         };
-    }
 
+    }
+    
     renderInput(title, attr, type) {
         return (<TextField
             label={I18n.t(title)}
-            className={this.props.classes.input}
+            className={this.props.classes.input + ' ' + this.props.classes.controlElement}
             value={this.props.native[attr]}
             type={type || 'text'}
             onChange={e => this.props.onChange(attr, e.target.value)}
@@ -69,8 +75,8 @@ class ExtendedOptions extends Component {
         />);
     }
 
-    renderSelect(title, attr, options) {
-        return (<FormControl className={this.props.classes.input} style={{paddingTop: 5}}>
+    renderSelect(title, attr, options, style) {
+        return (<FormControl className={this.props.classes.input + ' ' + this.props.classes.controlElement} style={Object.assign({paddingTop: 5}, style)}>
             <Select
                 value={this.props.native[attr] || '_'}
                 onChange={e => this.props.onChange(attr, e.target.value === '_' ? '' : e.target.value)}
@@ -82,8 +88,8 @@ class ExtendedOptions extends Component {
         </FormControl>);
     }
 
-    renderCheckbox(title, attr, hint) {
-        const checkBox = (<FormControlLabel key={attr} style={{paddingTop: 5}}
+    renderCheckbox(title, attr, style) {
+        return (<FormControlLabel key={attr} style={Object.assign({paddingTop: 5}, style)} className={this.props.classes.controlElement}
             control={
                 <Checkbox
                     checked={this.props.native[attr]}
@@ -93,12 +99,6 @@ class ExtendedOptions extends Component {
             }
             label={I18n.t(title)}
         />);
-        if (hint) {
-            return [checkBox, (<FormHelperText key={'hint-' + attr}>{I18n.t(hint)}</FormHelperText>)];
-        } else {
-            return checkBox;
-        }
-
     }
 
     getSelectIdDialog(attr) {
@@ -120,19 +120,6 @@ class ExtendedOptions extends Component {
         }
     }
 
-    replaceA(text) {
-        const m = text.match(/<a (.+)<\/a>/);
-        if (m) {
-            const mTarget = m[1].match(/target="([^"]+)"/);
-            const mHref = m[1].match(/href="([^"]+)"/);
-            const mText = m[1].match(/>([^<]+)$/);
-            const parts = text.split(m[0]);
-            return [(<span key="1">{parts[0]}</span>), (<a key="a" href={mHref[1]} target={mTarget[1]}>{mText[1]}</a>), (<span key="1">{parts[1]}</span>)];
-        } else {
-            return m;
-        }
-    }
-
     render() {
         return (
             <form className={this.props.classes.tab}>
@@ -142,16 +129,22 @@ class ExtendedOptions extends Component {
                     {title: 'english', value: 'en'},
                     {title: 'Deutsch', value: 'de'},
                     {title: 'русский', value: 'ru'}
-                ])}<br/>
-                {this.renderCheckbox('Place function in names first', 'functionFirst')}<br/>
+                ], {marginTop: 10})}<br/>
+                {this.renderCheckbox('Place function in names first', 'functionFirst', {marginTop: 10})}<br/>
                 {this.renderInput('Concatenate words with', 'concatWord')}<br/>
                 {this.renderInput('Replace in names', 'replaces')}<br/>
-                {this.renderInput('OFF level for switches in %', 'deviceOffLevel')}
-                <FormHelperText>{I18n.t('(Set to 0 if behavior not desired)')}</FormHelperText><br/>
-                {this.renderInput('Write response to', 'responseOID')}
-                <Fab size="small" color="secondary" onClick={() => this.setState({showSelectId: true})} aria-label="Add" style={{marginLeft: 5, marginTop: 10}}><IconAdd /></Fab><br/>
-                {this.renderCheckbox('Personal settings (only pro)', 'noCommon')}
-                <FormHelperText>{this.replaceA(I18n.t('help_tip'))}</FormHelperText><br/>
+                <div className={this.props.classes.controlElement} style={{marginTop: 15}}>
+                    {this.renderInput('OFF level for switches in %', 'deviceOffLevel')}
+                    <FormHelperText>{I18n.t('(Set to 0 if behavior not desired)')}</FormHelperText>
+                </div>
+                <div className={this.props.classes.controlElement}>
+                    {this.renderInput('Write response to', 'responseOID')}
+                    <Fab size="small" color="secondary" onClick={() => this.setState({showSelectId: true})} aria-label="Add" style={{marginLeft: 5, marginTop: 10}}><IconAdd /></Fab><br/>
+                </div>
+                <div className={this.props.classes.controlElement}>
+                    {this.renderCheckbox('Personal settings (only pro)', 'noCommon')}
+                    <FormHelperText>{Utils.renderTextWithA(I18n.t('help_tip'))}</FormHelperText><br/>
+                </div>
                 {this.renderCheckbox('Debug outputs', 'debug')}
                 {this.getSelectIdDialog('responseOID')}
             </form>

@@ -72,8 +72,6 @@ const styles = theme => ({
     }
 });
 
-const adapterName = 'iot.';
-
 class Enums extends Component {
     constructor(props) {
         super(props);
@@ -119,7 +117,7 @@ class Enums extends Component {
     }
 
     informInstance(id) {
-        this.props.socket.sendTo(adapterName + this.props.instance, 'update', id);
+        this.props.socket.sendTo(this.props.adapterName + '.' + this.props.instance, 'update', id);
     }
 
     addChanged(id) {
@@ -178,9 +176,9 @@ class Enums extends Component {
         let smartName = Utils.getSmartNameFromObj(obj);
         obj = JSON.parse(JSON.stringify(obj));
         if (smartName !== false) {
-            Utils.disableSmartName(obj, adapterName + this.props.instance, this.props.native.noCommon);
+            Utils.disableSmartName(obj, this.props.adapterName + '.' + this.props.instance, this.props.native.noCommon);
         } else {
-            Utils.removeSmartName(obj, adapterName + this.props.instance, this.props.native.noCommon);
+            Utils.removeSmartName(obj, this.props.adapterName + '.' + this.props.instance, this.props.native.noCommon);
         }
 
         this.addChanged(id);
@@ -197,7 +195,7 @@ class Enums extends Component {
 
     onEdit(id) {
         const obj = this.state.funcs.find(e => e._id === id) || this.state.rooms.find(e => e._id === id);
-        let smartName = Utils.getSmartNameFromObj(obj, adapterName + this.props.instance, this.props.native.noCommon);
+        let smartName = Utils.getSmartNameFromObj(obj, this.props.adapterName + '.' + this.props.instance, this.props.native.noCommon);
         if (typeof smartName === 'object' && smartName) {
             smartName = smartName[I18n.getLanguage()] || smartName.en;
         }
@@ -206,7 +204,7 @@ class Enums extends Component {
     }
 
     renderEnum(obj) {
-        let smartName = Utils.getSmartNameFromObj(obj, adapterName + this.props.instance, this.props.native.noCommon);
+        let smartName = Utils.getSmartNameFromObj(obj, this.props.adapterName + '.' + this.props.instance, this.props.native.noCommon);
         // convert old format
         if (smartName && typeof smartName === 'object') {
             smartName = smartName[I18n.getLanguage()] || smartName.en || '';
@@ -246,7 +244,7 @@ class Enums extends Component {
         if (enums.find(obj =>
             this.state.editId !== obj._id && (
             this.state.editedSmartName === Utils.getObjectNameFromObj(obj, null, {language: I18n.getLanguage()}) ||
-            this.state.editedSmartName === Utils.getSmartNameFromObj(obj, adapterName + this.props.instance, this.props.native.noCommon)))) {
+            this.state.editedSmartName === Utils.getSmartNameFromObj(obj, this.props.adapterName + '.' + this.props.instance, this.props.native.noCommon)))) {
             this.setState({message: I18n.t('Duplicate name')});
         } else {
             this.addChanged(this.state.editId);
@@ -256,7 +254,7 @@ class Enums extends Component {
             let newObj;
             this.props.socket.getObject(id)
                 .then(obj => {
-                    Utils.updateSmartName(obj, this.state.editedSmartName, undefined, undefined, adapterName + this.props.instance, this.props.native.noCommon);
+                    Utils.updateSmartName(obj, this.state.editedSmartName, undefined, undefined, this.props.adapterName + '.' + this.props.instance, this.props.native.noCommon);
                     newObj = obj;
                     return this.props.socket.setObject(id, obj);
                 })
@@ -327,6 +325,7 @@ Enums.propTypes = {
     common: PropTypes.object.isRequired,
     native: PropTypes.object.isRequired,
     instance: PropTypes.number.isRequired,
+    adapterName: PropTypes.string.isRequired,
     onError: PropTypes.func,
     onLoad: PropTypes.func,
     onChange: PropTypes.func,

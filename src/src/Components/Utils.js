@@ -686,6 +686,18 @@ class Utils {
             obj.common.smartName = false;
         }
     }
+
+    static copyToClipboard(text, e) {
+        const el = window.document.createElement('textarea');
+        el.value = text;
+        window.document.body.appendChild(el);
+        el.select();
+        window.document.execCommand('copy');
+        window.document.body.removeChild(el);
+        console.log(text);
+        e && e.stopPropagation();
+        e && e.preventDefault();
+    }
 }
 
 export default Utils;

@@ -112,7 +112,7 @@ function startAdapter(options) {
                             });
                         }
                         break;
-                    case 'browseAlice':
+                    case 'browseAlisa':
                         if (obj.callback) {
                             adapter.log.info('Request Yandex Alice devices');
                             yandexAlisa && yandexAlisa.updateDevices(() => {

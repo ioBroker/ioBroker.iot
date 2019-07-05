@@ -43,26 +43,26 @@ import DialogSelectID from '../Dialogs/SelectID';
 const colorOn = '#aba613';
 const colorOff = '#444';
 const colorSet = '#00c6ff';
+const colorRGB = '#ff7ee3';
 const colorRead = '#00bc00';
 const CHANGED_COLOR = '#e7000040';
 const DEFAULT_CHANNEL_COLOR = '#e9e9e9';
 const LAST_CHANGED_COLOR = '#b4ffbe';
 
 const actionsMapping = {
-    turnOn: {color: colorOn, icon: IconOn, desc: 'Turn on'},
-    turnOff: {color: colorOff, icon: IconOn, desc: 'Turn off'},
+    OnOff: {color: colorOn, icon: IconOn, desc: 'On/Off'},
+    Brightness: {color: colorSet, icon: IconBulb, desc: 'Dimmer'},
+    RGB: {color: colorRGB, icon: IconBulb, desc: 'Set color'},
 
     setTargetTemperature: {color: colorSet, icon: IconTemperature, desc: 'Set target temperature'},
     incrementTargetTemperature: {color: colorOn, icon: IconUp, desc: 'Increment target temperature'},
     decrementTargetTemperature: {color: colorOff, icon: IconDown, desc: 'Decrement target temperature'},
 
-    setPercentage: {color: colorSet, icon: IconPercentage, desc: 'Set percentage'},
     incrementPercentage: {color: colorOn, icon: IconUp, desc: 'Increment percentage'},
     decrementPercentage: {color: colorOff, icon: IconDown, desc: 'Decrement percentage'},
 
     setColor: {color: colorSet, icon: IconColor, desc: 'Set color'},
 
-    setColorTemperature: {color: colorSet, icon: IconBulb, desc: 'Set color temperature'},
     incrementColorTemperature: {color: colorOn, icon: IconUp, desc: 'Increment color temperature'},
     decrementColorTemperature: {color: colorOff, icon: IconDown, desc: 'Decrement color temperature'},
 
@@ -177,14 +177,22 @@ const styles = theme => ({
     devSubLineName: {
         marginLeft: 5,
         marginTop: 14,
+        minWidth: 100,
         display: 'inline-block',
         fontSize: 13,
-        width: 'calc(100% - 400px)'
+        paddingLeft: 70,
+        //width: 'calc(100% - 400px)'
     },
-    devSubSubLineName:  {
-        fontSize: 8,
+    devSubSubLine:  {
+        fontSize: 10,
         fontStyle: 'italic',
-        display: 'block'
+        display: 'inline-block',
+        marginLeft: 15
+    },
+    devSubLineSetId:  {
+        fontStyle: 'italic',
+        display: 'block',
+        color: '#999'
     },
     devSubLineByOn: {
         marginLeft: 5
@@ -206,7 +214,7 @@ const styles = theme => ({
     }
 });
 
-class AlexaSmartNames extends Component {
+class AlisaDevices extends Component {
     constructor(props) {
         super(props);
 
@@ -255,13 +263,16 @@ class AlexaSmartNames extends Component {
 
     browse(isIndicate) {
         if (Date.now() - this.lastBrowse < 500) return;
+
         this.lastBrowse = Date.now();
         if (isIndicate) {
             this.setState({loading: true, browse: true});
         } else {
             this.setState({browse: true});
         }
+
         console.log('Send BROWSE!');
+
         this.browseTimer = setTimeout(() => {
             console.log('Browse timeout!');
             this.browseTimer = null;
@@ -273,16 +284,18 @@ class AlexaSmartNames extends Component {
             }
         }, 10000);
 
-        this.props.socket.sendTo(this.props.adapterName + '.' + this.props.instance, 'browse', null, list => {
+        this.props.socket.sendTo(this.props.adapterName + '.' + this.props.instance, 'browseAlisa', null, list => {
             this.browseTimer && clearTimeout(this.browseTimer);
             this.browseTimerCount = 0;
             this.browseTimer = null;
+
             if (this.waitForUpdateID) {
                 if (!this.onEdit(this.waitForUpdateID, list)) {
                     this.setState({message: I18n.t('Device %s was not added', this.waitForUpdateID)});
                 }
                 this.waitForUpdateID = null;
             }
+
             console.log('BROWSE received.');
 
             this.setState({devices: list, loading: false, changed: [], browse: false});
@@ -397,13 +410,11 @@ class AlexaSmartNames extends Component {
             console.log('Something went wrong');
             return null;
         }
+
         dev.actions.sort((a, b) => {
             if (a === b) return 0;
-            if (a === 'turnOn') return -1;
-            if (b === 'turnOn') return 1;
-
-            if (a === 'turnOff') return -1;
-            if (b === 'turnOff') return 1;
+            if (a === 'OnOff') return -1;
+            if (b === 'OnOff') return 1;
             return 0;
         });
 
@@ -424,9 +435,9 @@ class AlexaSmartNames extends Component {
 
     onExpand(lineNum) {
         const expanded = JSON.parse(JSON.stringify(this.state.expanded));
-        const pos = expanded.indexOf(this.state.devices[lineNum].friendlyName);
+        const pos = expanded.indexOf(this.state.devices[lineNum].name);
         if (pos === -1) {
-            expanded.push(this.state.devices[lineNum].friendlyName);
+            expanded.push(this.state.devices[lineNum].name);
         } else {
             expanded.splice(pos, 1);
         }
@@ -499,7 +510,32 @@ class AlexaSmartNames extends Component {
         const result = [];
         const classes = this.props.classes;
 
-        if (dev.additionalApplianceDetails.group) {
+        const id = dev.main.getId;
+        const name = dev.func;
+        let background = DEFAULT_CHANNEL_COLOR;/*this.state.changed.indexOf(id) !== -1 ? CHANGED_COLOR : DEFAULT_CHANNEL_COLOR;
+        if (this.state.lastChanged === id && background === DEFAULT_CHANNEL_COLOR) {
+            background = LAST_CHANGED_COLOR;
+        }*/
+        result.push((<div key={'sub' + id} className={classes.devSubLine} style={{background}}>
+            <div className={classes.devSubLineName}>{name.toUpperCase()}</div>
+            <div className={classes.devSubSubLine}>
+                <div>{dev.main.getId}</div>
+                {dev.main.setId && dev.main.setId !== dev.main.getId ? (<div className={classes.devSubLineSetId}>{dev.main.setId}</div>) : null}
+            </div>
+
+        </div>));
+
+        dev.attributes.forEach(attr => {
+            result.push((<div key={'sub' + attr.getId} className={classes.devSubLine} style={{background}}>
+                <div className={classes.devSubLineName}>{attr.name.toUpperCase()}</div>
+                <div className={classes.devSubSubLine}>
+                    <div>{attr.getId}</div>
+                    {attr.setId && attr.setId !== attr.getId ? (<div className={classes.devSubLineSetId}>{attr.setId}</div>) : null}
+                </div>
+            </div>));
+        });
+
+        /*if (dev.additionalApplianceDetails.group) {
             const channels   = dev.additionalApplianceDetails.channels;
             const names      = dev.additionalApplianceDetails.names;
             const types      = dev.additionalApplianceDetails.byONs;
@@ -528,89 +564,37 @@ class AlexaSmartNames extends Component {
                 }
             }
         } else {
-            const id = dev.additionalApplianceDetails.id;
-            const name = dev.additionalApplianceDetails.name || id;
-            let background = this.state.changed.indexOf(id) !== -1 ? CHANGED_COLOR : DEFAULT_CHANNEL_COLOR;
-            if (this.state.lastChanged === id && background === DEFAULT_CHANNEL_COLOR) {
-                background = LAST_CHANGED_COLOR;
-            }
-            result.push((<div key={'sub' + id} className={classes.devSubLine} style={{background}}>
-                <div className={this.props.classes.devLineActions + ' ' + this.props.classes.channelLineActions} style={{width: 80}}>{this.renderActions(dev)}</div>
-                <div className={classes.devSubLineName} title={(id || '')}>{name}</div>
-                {this.renderSelectType(dev, lineNum, id, dev.additionalApplianceDetails.smartType)}
-                {this.renderSelectByOn(dev, lineNum, id, dev.additionalApplianceDetails.byON)}
-            </div>));
-        }
+        }*/
         return result;
     }
 
     renderDevice(dev, lineNum) {
-        let friendlyName = dev.friendlyName;
-        let title;
-        if (!dev.additionalApplianceDetails.group && dev.additionalApplianceDetails.nameModified) {
-            title = friendlyName;
-        } else {
-            title = (<span className={this.props.classes.devModified} title={I18n.t('modified')}>{friendlyName}</span>);
-        }
-
-        let devCount = 0;
-        for (const ch in dev.additionalApplianceDetails.channels) {
-            if (dev.additionalApplianceDetails.channels.hasOwnProperty(ch)) {
-                devCount += dev.additionalApplianceDetails.channels[ch].length;
-            }
-        }
-        devCount = devCount || 1;
-        const expanded = this.state.expanded.indexOf(friendlyName) !== -1;
-        const id = dev.additionalApplianceDetails.id;
-
+        //return (<div key={lineNum}>{JSON.stringify(dev)}</div>);
+        const expanded = this.state.expanded.indexOf(dev.name) !== -1;
+        const changed = false;
         let background = (lineNum % 2) ? '#f1f1f1' : 'inherit';
-        const changed = this.state.changed.indexOf(id) !== -1;
-        if (changed) {
-            background = CHANGED_COLOR;
-        } else if (id === this.state.lastChanged) {
-            background = LAST_CHANGED_COLOR;
-        }
-
-        // If some of sub channels in change list or in last changed
-        if (dev.additionalApplianceDetails.group && !changed && id !== this.state.lastChanged) {
-            const channels = dev.additionalApplianceDetails.channels;
-            for (const chan in channels) {
-                if (channels.hasOwnProperty(chan)) {
-                    for (let i = 0; i < channels[chan].length; i++) {
-                        const id = channels[chan][i].id;
-                        if (this.state.changed.indexOf(id) !== -1) {
-                            background = CHANGED_COLOR;
-                        } else if (this.state.lastChanged === id) {
-                            background = LAST_CHANGED_COLOR;
-                        }
-                    }
-                }
-            }
-        }
 
         return [
             (<div key={'line' + lineNum} className={this.props.classes.devLine} style={{background}}>
                 <div className={this.props.classes.devLineNumber}>{lineNum + 1}.</div>
                 <IconButton className={this.props.classes.devLineExpand} onClick={() => this.onExpand(lineNum)}>
-                    {devCount > 1 ?
-                        (<Badge badgeContent={devCount} color="primary">
-                            {expanded ? (<IconCollapse/>) : (<IconExpand />)}
-                        </Badge>) :
+                    {dev.attributes.length ?
+                        (<Badge badgeContent={dev.attributes.length} color="primary">{expanded ? (<IconCollapse/>) : (<IconExpand />)}</Badge>) :
                         (expanded ? (<IconCollapse/>) : (<IconExpand />))}
                 </IconButton>
                 <div className={this.props.classes.devLineNameBlock} style={{display: 'inline-block', position: 'relative'}}>
-                    <span className={this.props.classes.devLineName}>{title}</span>
-                    <span className={this.props.classes.devLineDescription}>{dev.friendlyDescription}</span>
+                    <span className={this.props.classes.devLineName}>{dev.name}</span>
+                    <span className={this.props.classes.devLineDescription}>{dev.description}</span>
                     {changed ? (<CircularProgress className={this.props.classes.devLineProgress} size={20}/>) : null}
                 </div>
                 <span className={this.props.classes.devLineActions}>{this.renderActions(dev)}</span>
-                {!dev.additionalApplianceDetails.group ?
-                    (<IconButton aria-label="Edit" className={this.props.classes.devLineEdit} onClick={() => this.onEdit(id)}><IconEdit fontSize="middle" /></IconButton>) : null}
-                {!dev.additionalApplianceDetails.group ?
-                    (<IconButton aria-label="Delete" className={this.props.classes.devLineDelete} onClick={() => this.onAskDelete(id)}><IconDelete fontSize="middle" /></IconButton>) : null}
             </div>),
             expanded ? this.renderChannels(dev, lineNum) : null
         ];
+        /*{!dev.additionalApplianceDetails.group ?
+            (<IconButton aria-label="Edit" className={this.props.classes.devLineEdit} onClick={() => this.onEdit(id)}><IconEdit fontSize="middle" /></IconButton>) : null}
+        {!dev.additionalApplianceDetails.group ?
+            (<IconButton aria-label="Delete" className={this.props.classes.devLineDelete} onClick={() => this.onAskDelete(id)}><IconDelete fontSize="middle" /></IconButton>) : null}*/
     }
 
     renderMessage() {
@@ -755,7 +739,7 @@ class AlexaSmartNames extends Component {
         const filter = this.state.filter.toLowerCase();
         const result = [];
         for (let i = 0; i < this.state.devices.length; i++) {
-            if (this.state.filter && this.state.devices[i].friendlyName.toLowerCase().indexOf(filter) === -1 ) continue;
+            if (this.state.filter && this.state.devices[i].name.toLowerCase().indexOf(filter) === -1 ) continue;
             result.push(this.renderDevice(this.state.devices[i], i));
         }
         return (<div key="listDevices" className={this.props.classes.columnDiv}>{result}</div>);
@@ -789,7 +773,7 @@ class AlexaSmartNames extends Component {
     }
 }
 
-AlexaSmartNames.propTypes = {
+AlisaDevices.propTypes = {
     common: PropTypes.object.isRequired,
     native: PropTypes.object.isRequired,
     instance: PropTypes.number.isRequired,
@@ -800,4 +784,4 @@ AlexaSmartNames.propTypes = {
     socket: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(AlexaSmartNames);
+export default withStyles(styles)(AlisaDevices);

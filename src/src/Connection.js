@@ -250,6 +250,15 @@ class Connection {
         }
     }
 
+    setState(id, val, cb) {
+        if (!cb) {
+            return new Promise((resolve, reject) =>
+                this.setState(id, val, err => err ? reject(err) : resolve()));
+        } else {
+            this.socket.emit('setState', id, val, cb);
+        }
+    }
+
     getObjects(refresh, cb, disableProgressUdpate) {
         if (typeof refresh === 'function') {
             disableProgressUdpate = cb;
@@ -388,6 +397,18 @@ class Connection {
                         this.socket.emit('setObject', newId, _obj, err => err ? reject(err) : resolve());
                     }
                 }, 0);
+            });
+        });
+    }
+
+    getAdapterInstances(adapter) {
+        return new Promise((resolve, reject) => {
+            this.socket.emit('getObjectView', 'system', 'instance', {startkey: 'system.adapter.' + adapter, endkey: 'system.adapter.' + (adapter ? adapter + '.' : '') + '\u9999'}, (err, doc) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(doc.rows.map(item => item.value));
+                }
             });
         });
     }
