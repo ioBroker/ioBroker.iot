@@ -357,16 +357,16 @@ class AlisaDevices extends Component {
 
     onEdit(id, devices) {
         devices = devices || this.state.devices;
-        const device = devices.find(dev => dev.additionalApplianceDetails.id === id);
+        const device = devices.find(dev => dev.iobID === id);
         if (device) {
             this.props.socket.getObject(id)
                 .then(obj => {
-                    let smartName = device.additionalApplianceDetails.friendlyNames ? device.additionalApplianceDetails.friendlyNames : device.friendlyName;
+                    let smartName = device.name;
                     if (typeof smartName === 'object' && smartName) {
                         smartName = smartName[I18n.getLanguage()] || smartName.en;
                     }
                     this.editedSmartName = smartName;
-                    this.setState({editId: id, editedSmartName: smartName, editObjectName: Utils.getObjectNameFromObj(obj, null, {language: I18n.getLanguage()})});
+                    this.setState({editId: id, editedSmartName: smartName, editObjectName:smartName/* Utils.getObjectNameFromObj(obj, null, {language: I18n.getLanguage()})*/});
                 });
             return true;
         } else {
@@ -384,7 +384,7 @@ class AlisaDevices extends Component {
         this.addChanged(id, () => {
             this.props.socket.getObject(id)
                 .then(obj => {
-                    Utils.disableSmartName(obj);
+                    Utils.disableSmartName(obj, this.props.adapterName + '.' + this.props.instance, this.props.native.noCommon);
                     return this.props.socket.setObject(id, obj);
                 })
                 .then(() => {
@@ -442,25 +442,6 @@ class AlisaDevices extends Component {
             expanded.splice(pos, 1);
         }
         this.setState({expanded});
-    }
-
-    renderSelectByOn(dev, lineNum, id, type) {
-        // type = '-', 'stored', false or number [5-100]
-        if (type !== false) {
-            const items = [
-                (<MenuItem key="_" value=""><em>{I18n.t('Default')}</em></MenuItem>),
-                (<MenuItem key="last" value="stored">{I18n.t('last value')}</MenuItem>)
-            ];
-            for (let i = 5; i <= 100; i += 5) {
-                items.push((<MenuItem  key={i.toString()} value={i.toString()}>{i}%</MenuItem>));
-            }
-            return (<FormControl className={this.props.classes.devSubLineByOn}>
-                <Select className={this.props.classes.devSubLineByOnSelect} value={(type || '').toString()} onChange={e => this.onParamsChange(id, e.target.value)}>{items}</Select>
-                <FormHelperText className={this.props.classes.devSubLineTypeTitle}>{I18n.t('by ON')}</FormHelperText>
-            </FormControl>);
-        } else {
-            return null;
-        }
     }
 
     onParamsChange(id, byON, type) {
@@ -571,8 +552,15 @@ class AlisaDevices extends Component {
     renderDevice(dev, lineNum) {
         //return (<div key={lineNum}>{JSON.stringify(dev)}</div>);
         const expanded = this.state.expanded.indexOf(dev.name) !== -1;
-        const changed = false;
         let background = (lineNum % 2) ? '#f1f1f1' : 'inherit';
+        const changed = this.state.changed.indexOf(dev.iobID) !== -1;
+        if (changed) {
+            background = CHANGED_COLOR;
+        } else if (dev.iobID === this.state.lastChanged) {
+            background = LAST_CHANGED_COLOR;
+        }
+
+        //const isComplex = dev.
 
         return [
             (<div key={'line' + lineNum} className={this.props.classes.devLine} style={{background}}>
@@ -588,13 +576,12 @@ class AlisaDevices extends Component {
                     {changed ? (<CircularProgress className={this.props.classes.devLineProgress} size={20}/>) : null}
                 </div>
                 <span className={this.props.classes.devLineActions}>{this.renderActions(dev)}</span>
+                <IconButton aria-label="Edit" className={this.props.classes.devLineEdit} onClick={() => this.onEdit(dev.iobID)}><IconEdit fontSize="middle" /></IconButton>
+                <IconButton aria-label="Delete" className={this.props.classes.devLineDelete} onClick={() => this.onAskDelete(dev.iobID)}><IconDelete fontSize="middle" /></IconButton>
+
             </div>),
             expanded ? this.renderChannels(dev, lineNum) : null
         ];
-        /*{!dev.additionalApplianceDetails.group ?
-            (<IconButton aria-label="Edit" className={this.props.classes.devLineEdit} onClick={() => this.onEdit(id)}><IconEdit fontSize="middle" /></IconButton>) : null}
-        {!dev.additionalApplianceDetails.group ?
-            (<IconButton aria-label="Delete" className={this.props.classes.devLineDelete} onClick={() => this.onAskDelete(id)}><IconDelete fontSize="middle" /></IconButton>) : null}*/
     }
 
     renderMessage() {

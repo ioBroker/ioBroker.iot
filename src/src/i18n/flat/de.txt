@@ -1,80 +1,120 @@
 (Auf 0 setzten, falls das Verhalten unerwünscht ist)
 Sie können mehrere kommaseparierte Namen eingeben
-APP-KEY
 aktiv
 Gerät hinzufügen
 Dienst hinzufügen
 Adressen
+Alexa-Geräte
+Alisa Geräte
 Erlaube Zugriff auf Admin (nur pro)
 Erlaube selbst-signierte Zertifikate
-Erlaube selbst-signierte Zertifikate
+Amazon Alexa
 Sind Sie sicher?
 Die Authentifizierung muss deaktiviert sein. Sie können zweite Instanz extra für Cloud erstellen.
 Abbrechen
 Dieses Objekt kann nicht hinzugefügt werden, da es nicht unterstützt wird.
+Geräte können nicht gelesen werden!
 Zertifikate werden nach dem Neustart aktualisiert
 Zertifikate werden nach dem Start aktualisiert
 Klicken Sie jetzt auf "Neue Verbindungszertifikate anfordern", um ein neues temporäres Kennwort anzufordern
+Schließen
 Cloud URL
 Einstellungen für Cloud-Adapter
 Befehle
 Verbinde Raum und Funktion mit
 Verbindungs-Timeout(ms)
 Ausgaben debuggen
+Farbtemperatur verringern
+Prozentsatz verringern
+Solltemperatur verringern
 Standard
+Gerät %s wurde nicht hinzugefügt
 Gerät wird für die Sprachsteuerung deaktiviert.
 Gerät wird aus der Liste entfernt.
+Dimmer
 Name wurde schon benutzt
 Smartname editieren
 Fehler
 Erweiterte Einstellungen
 Filter
-Filter: 
 Funktionen
+Aktuelle Temperatur abrufen
 Erhalten Sie neue Verbindungszertifikate
 Neuen Service-URL-Schlüssel abrufen
+Solltemperatur abrufen
+Google Home
 IFTTT key
+Erhöhen Sie die Farbtemperatur
+Prozentsatz erhöhen
+Erhöhen Sie die Zieltemperatur
+Instanz
 Instanz existiert nicht
 Instanz ist nicht aktiv.
+Instanz muss aktiviert sein
 Die Instanz muss laufen um die Daten zu liefern
-Instanz
 Ungültiges Objekt
 Sprache
+Konfiguration aus Datei laden
+Botschaft
 OFF level for switches
+AUS-Pegel für Schalter in%
 aus
 Ok
 an
+An aus
 Einstellungen
 Eigene Einstellungen (nur pro)
 Ping-Timeout(ms)
 Platziere Funktionsnamen vorne
+Bitte Objekt ID auswählen ...
 Bitte schreiben Sie Ihre E-Mail nur in Kleinbuchstaben
+Sperrstatus lesen
 Ersetze in Namen
 Fordern Sie noch einmal eine E-Mail mit Passwort an
 Neustart bei Verbindungsabbruch
+Rezension
 Räume
+sparen
+Speichern und schließen
+Konfiguration in Datei speichern
 Speichere die Einstellungen um die neuen Namen zu sehen
 Wählen
 Servicenamen
 Services und IFTTT
+Farbe einstellen
+Farbtemperatur einstellen
+Legen Sie den Sperrstatus fest
+Prozent einstellen
+Solltemperatur einstellen
 Smart Geräte
 Smart Aufzählungen
 Smart Media
-Smartname
+Intelligente Aufzählungen
 Smart-Name
+Intelligenter Name für %s
 Um diese Einstellung zu ändern, es ist erforderlich diese Instanz neu zu starten. Einverstanden?
+Abschalten
+Anschalten
 Typ
 Typen
 Benutze folgenden Link für IFTTT
 Benutze folgende Link für einen eigenen Service
 Benutze text2command Instanz
+Wert
 White list für Services
 Schreibe Antwort ins
+Yandex Алиса
+Sie können mehrere durch Komma getrennte Namen eingeben
 Falls du den Alexa Skill benutzt, schreibe doch bitte <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/create-review/?ref-suffix=war_dp' target='_blank' class='here'>hier</a> eine Review.<br>Beispiele kann man <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/reviews' target='_blank'>hier</a> anschauen.
 bei AN
 löschen
 Systemsprache
 deaktiviert
+Funktion
+ICH WÜRDE
+Name
+Rolle
+Zimmer
 Kein iobroker.pro-Konto? Kaufen Sie es auf <a href="https://iobroker.pro/accessRemote" target="_blank"> https://iobroker.pro </a> für den validierten Zugriff oder erhalten Sie kostenlosen, aber eingeschränkten Zugriff.
 durch Komma getrennt. Benutze * um alle Services zu erlauben.
 Der Schlüssel kann <a href='https://ifttt.com/maker_webhooks' target='_blank'>hier</a> unter 'Documentation' gefunden werden
@@ -83,14 +123,21 @@ ioBroker.pro Passwort
 letzter Wert
 Der Name wurde vom Anwender geändert
 kein Typ
+Bestätigte Flagge
 Wenn man eine eigene Cloud verwendet, man kann die Benutzung von selbst-signierten Zertifikaten erlauben.
 Dieser Schlüssel wird benötigt um mit der Cloud zu kommunizieren. Man kann den Schlüssel unter https://iobroker.net bekommen. Es sieht wie folgt aus nickname_f1f439a0-001a-11e7-bc64-92361f002671
 Normalerweise muss diese Option nicht geändert werden. Dies ist nur notwendig, wenn man eigenen Cloud verwendet.
 Damit wird definiert wie Funktion und Raum miteinander verbunden werden; z.B. mit 'im': Licht im Schlafzimmer
 Gruppen können aus gemischten Geräten (Schaltern und Dimmern) bestehen. Sie können mit ON/OFF sowie Prozentwerten angesteuert werden, hier kann definiert werden welcher Prozentsatz OFF entspricht.
+Von
 Die automatischen Namen werden im Schema Raum-Funktion generiert. Hiermit kann man es auf Funktion-Raum geändert werden.
 Web Instanz, die für ihre Anfragen aus dem Cloud angezeigt wird.
 Man kann hier die Sprache definieren um zwischen US Alexa Skill und DE Alexa Skill umschalten zu können
+Zuletzt geändert
 Wenn diese Option aktiviert wird, so werden die Einstellungen nur für diese Instanz gespeichert. So ist es möglich in einer anderen Instanz andere Namen zu setzen.
+Qualität
 Für jedes Kommando wird eine Textantwort generiert. Hier kannst du die Objekt ID angeben, an welche die Textantwort gesendet werden soll, z.B. sayit.0.tts.text.
 Workaround für fehlende Kommunikation mit Alexa nach Verbindungsabbruch. Damit kann man zwingen den Adapter neu zu starten und das Problem umgehen.
+Zeitstempel
+Nutzer
+Wert

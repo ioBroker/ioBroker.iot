@@ -1,80 +1,120 @@
 (Set to 0 if behavior not desired)
 (you can separate names with comma)
-APP-KEY:
 Active
 Add device
 Add service
 Addresses
-Allow admin access (only pro):
+Alexa devices
+Alisa devices
+Allow admin access (only pro)
 Allow self-signed certificates
-Allow self-signed certificates:
+Amazon Alexa
 Are you sure?
 Authentication must be disabled. You can create second instance extra for cloud.
 Cancel
 Cannot add this object
+Cannot read devices!
 Certificates will be updated after initiated restart
 Certificates will be updated after start
 Click now Get new connection certificates to request new temporary password
-Cloud URL:
+Close
+Cloud URL
 Cloud adapter settings
 Commands
-Concatenate words with:
-Connection timeout:
+Concatenate words with
+Connection timeout
 Debug outputs
+Decrement color temperature
+Decrement percentage
+Decrement target temperature
 Default
+Device %s was not added
 Device will be deactivated.
 Device will be disabled.
+Dimmer
 Duplicate name
 Edit smart name
 Error
 Extended options
 Filter
-Filter: 
 Functions
+Get actual temperature
 Get new connection certificates
 Get new service URL key
-IFTTT key:
+Get target temperature
+Google Home
+IFTTT key
+Increment color temperature
+Increment percentage
+Increment target temperature
+Instance
 Instance does not exists
 Instance is not active.
+Instance must be enabled
 Instance must run to deliver the data
-Instance:
 Invalid object
-Language:
-OFF level for switches:
+Language
+Load configuration from file
+Message
+OFF level for switches
+OFF level for switches in %
 Off
 Ok
 On
+On/Off
 Options
-Personal settings (only pro):
+Personal settings (only pro)
 Ping timeout:
-Place function in names first:
+Place function in names first
+Please select object ID...
 Please write your email only in lower case letters
-Replace in names:
+Read lock state
+Replace in names
 Request email with password one more time
-Restart on disconnect:
+Restart on disconnect
+Review
 Rooms
+Save
+Save and close
+Save configuration to file
 Save settings and the names will be changed
 Select
 Service names
 Services and IFTTT
+Set color
+Set color temperature
+Set lock state
+Set percentage
+Set target temperature
 Smart Devices
 Smart Enums
 Smart Media
+Smart enums
 Smart name
-Smart name:
+Smart name for %s
 To apply this setting, the restart of adapter must be done. Agree?
+Turn off
+Turn on
 Type
 Types
-Use following link for IFTTT:
-Use following link for custom service:
-Use text2command instance:
-White list for services:
-Write response to:
+Use following link for IFTTT
+Use following link for custom service
+Use text2command instance
+Value
+White list for services
+Write response to
+Yandex Алиса
+You can enter several names divided by comma
 amazon link
 by ON
 clear
 default
 disabled
+filter_func
+filter_id
+filter_name
+filter_role
+filter_room
 help_tip
 info_allowedServices
 info_iftttKey
@@ -83,14 +123,21 @@ ioBroker.pro Password
 last value
 modified
 no type
+tooltip_ack
 tooltip_allowSelfSignedCertificate
 tooltip_apikey
 tooltip_cloudUrl
 tooltip_concatWord
 tooltip_deviceOffLevel
+tooltip_from
 tooltip_functionFirst
 tooltip_instance
 tooltip_language
+tooltip_lc
 tooltip_noCommon
+tooltip_quality
 tooltip_responseOID
 tooltip_restartOnDisconnect
+tooltip_ts
+tooltip_user
+tooltip_value

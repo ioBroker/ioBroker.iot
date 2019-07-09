@@ -14,7 +14,7 @@ class Connection {
         this.autoSubscribes = this.props.autoSubscribes || [];
         this.autoSubscribeLog = this.props.autoSubscribeLog;
         this.socket = window.io.connect(
-            window.location.protocol + '//' + window.location.host.replace('3000', 8081),
+            window.location.protocol + '//' + window.location.host.replace('3000', 8081), // todo: do replace only if not in iFrame
             {query: 'ws=true'});
         this.states = {};
         this.objects = null;
