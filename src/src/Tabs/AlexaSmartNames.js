@@ -371,7 +371,7 @@ class AlexaSmartNames extends Component {
         this.addChanged(id, () => {
             this.props.socket.getObject(id)
                 .then(obj => {
-                    Utils.disableSmartName(obj);
+                    Utils.disableSmartName(obj, this.props.adapterName + '.' + this.props.instance, this.props.native.noCommon);
                     return this.props.socket.setObject(id, obj);
                 })
                 .then(() => {

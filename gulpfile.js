@@ -2,16 +2,18 @@
  * ioBroker gulpfile
  * Date: 2019-01-28
  */
-"use strict";
+'use strict';
 
-const gulp = require("gulp");
-const fs = require("fs");
-const pkg = require("./package.json");
-const iopackage = require("./io-package.json");
+const gulp = require('gulp');
+const fs = require('fs');
+const pkg = require('./package.json');
+const iopackage = require('./io-package.json');
 const version = (pkg && pkg.version) ? pkg.version : iopackage.common.version;
-const fileName = "words.js";
-const EMPTY = "";
-const translate = require("./lib/tools.js").translateText;
+const fileName = 'words.js';
+const EMPTY = '';
+const translate = require('./lib/tools.js').translateText;
+const del = require('del');
+
 const languages = {
     en: {},
     de: {},
@@ -22,7 +24,7 @@ const languages = {
     it: {},
     es: {},
     pl: {},
-    "zh-cn": {}
+    'zh-cn': {}
 };
 
 function lang2data(lang, isFlat) {
@@ -51,15 +53,15 @@ function lang2data(lang, isFlat) {
 function readWordJs(src) {
     try {
         let words;
-        if (fs.existsSync(src + "js/" + fileName)) {
-            words = fs.readFileSync(src + "js/" + fileName).toString();
+        if (fs.existsSync(src + 'js/' + fileName)) {
+            words = fs.readFileSync(src + 'js/' + fileName).toString();
         } else {
             words = fs.readFileSync(src + fileName).toString();
         }
         words = words.substring(words.indexOf('{'), words.length);
         words = words.substring(0, words.lastIndexOf(';'));
 
-        const resultFunc = new Function("return " + words + ";");
+        const resultFunc = new Function('return ' + words + ';');
 
         return resultFunc();
     } catch (e) {
@@ -345,7 +347,7 @@ async function translateNotExisting(obj, baseText, yandex) {
             if (!obj[l]) {                
                 const time = new Date().getTime();
                 obj[l] = await translate(t, l, yandex);
-                console.log("en -> " + l + " " + (new Date().getTime() - time) + " ms");
+                console.log('en -> ' + l + ' ' + (new Date().getTime() - time) + ' ms');
             }
         }
     }
@@ -353,27 +355,27 @@ async function translateNotExisting(obj, baseText, yandex) {
 
 //TASKS
 
-gulp.task('adminWords2languages', function (done) {
+gulp.task('adminWords2languages', done => {
     words2languages('./admin/');
     done();
 });
 
-gulp.task('adminWords2languagesFlat', function (done) {
+gulp.task('adminWords2languagesFlat', done => {
     words2languagesFlat('./admin/');
     done();
 });
 
-gulp.task('adminLanguagesFlat2words', function (done) {
+gulp.task('adminLanguagesFlat2words', done => {
     languagesFlat2words('./admin/');
     done();
 });
 
-gulp.task('adminLanguages2words', function (done) {
+gulp.task('adminLanguages2words', done => {
     languages2words('./admin/');
     done();
 });
 
-gulp.task("updatePackages", function (done) {
+gulp.task('updatePackages', done => {
     iopackage.common.version = pkg.version;
     iopackage.common.news = iopackage.common.news || {};
     if (!iopackage.common.news[pkg.version]) {
@@ -381,24 +383,24 @@ gulp.task("updatePackages", function (done) {
         const newNews = {};
 
         newNews[pkg.version] = {
-            en: "news",
-            de: "neues",
-            ru: "новое",
-            pt: "novidades",
-            nl: "nieuws",
-            fr: "nouvelles",
-            it: "notizie",
-            es: "noticias",
-            pl: "nowości",
-            "zh-cn": "新"
+            en: 'news',
+            de: 'neues',
+            ru: 'новое',
+            pt: 'novidades',
+            nl: 'nieuws',
+            fr: 'nouvelles',
+            it: 'notizie',
+            es: 'noticias',
+            pl: 'nowości',
+            'zh-cn': '新'
         };
         iopackage.common.news = Object.assign(newNews, news);
     }
-    fs.writeFileSync("io-package.json", JSON.stringify(iopackage, null, 4));
+    fs.writeFileSync('io-package.json', JSON.stringify(iopackage, null, 4));
     done();
 });
 
-gulp.task('updateReadme', function (done) {
+gulp.task('updateReadme', done => {
     const readme = fs.readFileSync('README.md').toString();
     const pos = readme.indexOf('## Changelog\n');
     if (pos !== -1) {
@@ -423,35 +425,34 @@ gulp.task('updateReadme', function (done) {
 });
 
 gulp.task('translate', async function () {
-
     let yandex;
-    const i = process.argv.indexOf("--yandex");
+    const i = process.argv.indexOf('--yandex');
     if (i > -1) {
         yandex = process.argv[i + 1];
     }
     
     if (iopackage && iopackage.common) {
         if (iopackage.common.news) {
-            console.log("Translate News");
+            console.log('Translate News');
             for (let k in iopackage.common.news) {
-                console.log("News: " + k);
+                console.log('News: ' + k);
                 let nw = iopackage.common.news[k];
                 await translateNotExisting(nw, null, yandex);
             }
         }
         if (iopackage.common.titleLang) {
-            console.log("Translate Title");
+            console.log('Translate Title');
             await translateNotExisting(iopackage.common.titleLang, iopackage.common.title, yandex);
         }
         if (iopackage.common.desc) {
-            console.log("Translate Description");
+            console.log('Translate Description');
             await translateNotExisting(iopackage.common.desc, null, yandex);
         }
 
         if (fs.existsSync('./admin/i18n/en/translations.json')) {
             let enTranslations = require('./admin/i18n/en/translations.json');
             for (let l in languages) {
-                console.log("Translate Text: " + l);
+                console.log('Translate Text: ' + l);
                 let existing = {};
                 if (fs.existsSync('./admin/i18n/' + l + '/translations.json')) {
                     existing = require('./admin/i18n/' + l + '/translations.json');
@@ -472,6 +473,36 @@ gulp.task('translate', async function () {
     fs.writeFileSync('io-package.json', JSON.stringify(iopackage, null, 4));
 });
 
-gulp.task("translateAndUpdateWordsJS", gulp.series("translate", "adminLanguages2words", "adminWords2languages"));
+gulp.task('translateAndUpdateWordsJS', gulp.series('translate', 'adminLanguages2words', 'adminWords2languages'));
 
-gulp.task('default', gulp.series('updatePackages', 'updateReadme'));
+gulp.task('build', done => {
+    const { exec } = require('child_process');
+
+    if (!fs.existsSync(__dirname + '/src/node_modules')) {
+        const child = exec('npm install', {stdio: [process.stdin, process.stdout, process.stderr], cwd: __dirname + '/src'});
+        child.on('exit', (code, signal) => {
+            const child_ = exec('npm run build', {stdio: [process.stdin, process.stdout, process.stderr], cwd: __dirname + '/src'});
+            child_.on('exit', (code, signal) => done());
+        });
+    } else {
+        const child = exec('npm run build', {stdio: [process.stdin, process.stdout, process.stderr], cwd: __dirname + '/src'});
+        child.on('exit', (code, signal) => done());
+    }
+});
+
+gulp.task('clean', () =>
+    del(['admin/*/**', 'admin/*', '!admin/actions.js', '!admin/alexalogo.png', '!admin/blockly.js', '!admin/iot.png']));
+
+gulp.task('copy', () => {
+    return gulp.src(['src/build/*/**', 'src/build/*'])
+        .pipe(gulp.dest('admin/'));
+});
+
+gulp.task('renameIndex', done => {
+    if (fs.existsSync(__dirname + '/admin/index.html')) {
+        fs.renameSync(__dirname + '/admin/index.html', __dirname + '/admin/index_m.html')
+    }
+    done();
+});
+
+gulp.task('default', gulp.series('clean', 'build', 'copy', 'renameIndex'));

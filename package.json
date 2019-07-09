@@ -25,19 +25,22 @@
     "@iobroker/adapter-core": "^1.0.3"
   },
   "devDependencies": {
-    "@types/node": "^11.11.0",
     "@types/iobroker": "^1.4.10",
+    "@types/node": "^11.11.0",
+    "axios": "^0.18.1",
+    "chai": "^4.2.0",
+    "del": "^5.0.0",
     "gulp": "^4.0.0",
-    "axios": "^0.18.0",
-    "mocha": "^6.0.2",
-    "chai": "^4.2.0"
+    "mocha": "^6.0.2"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.iot/issues"
   },
   "main": "main.js",
   "scripts": {
-    "test": "node node_modules/mocha/bin/mocha --exit"
+    "test": "node node_modules/mocha/bin/mocha --exit",
+    "prepublishOnly": "node node_modules/gulp/bin/gulp.js",
+    "build": "node node_modules/gulp/bin/gulp.js"
   },
   "license": "MIT",
   "readmeFilename": "README.md"

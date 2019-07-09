@@ -14,11 +14,19 @@ import TabEnums from './Tabs/Enums';
 import TabAlexaSmartNames from './Tabs/AlexaSmartNames';
 import TabAlisaSmartNames from './Tabs/AlisaSmartNames';
 
+const isIFrame = (function () {
+    try {
+        return window.self !== window.top;
+    } catch (e) {
+        return true;
+    }
+})();
+
 const styles = theme => ({
     root: {},
     tabContent: {
         padding: 10,
-        height: 'calc(100% - 64px - 48px - 20px)',
+        height: isIFrame ? 'calc(100% - 64px - 48px - 20px - 38px)' : 'calc(100% - 64px - 48px - 20px)',
         overflow: 'auto'
     }
 });
