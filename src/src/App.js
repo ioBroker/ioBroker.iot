@@ -14,19 +14,16 @@ import TabEnums from './Tabs/Enums';
 import TabAlexaSmartNames from './Tabs/AlexaSmartNames';
 import TabAlisaSmartNames from './Tabs/AlisaSmartNames';
 
-const isIFrame = (function () {
-    try {
-        return window.self !== window.top;
-    } catch (e) {
-        return true;
-    }
-})();
-
 const styles = theme => ({
     root: {},
     tabContent: {
         padding: 10,
-        height: isIFrame ? 'calc(100% - 64px - 48px - 20px - 38px)' : 'calc(100% - 64px - 48px - 20px)',
+        height: 'calc(100% - 64px - 48px - 20px)',
+        overflow: 'auto'
+    },
+    tabContentIFrame: {
+        padding: 10,
+        height: 'calc(100% - 64px - 48px - 20px - 38px)',
         overflow: 'auto'
     }
 });
@@ -73,7 +70,7 @@ class App extends GenericApp {
                         <Tab label={I18n.t('Services and IFTTT')} data-name="services" />
                     </Tabs>
                 </AppBar>
-                <div className={this.props.classes.tabContent}>
+                <div className={this.isIFrame ? this.props.classes.tabContentIFrame : this.props.classes.tabContent}>
                     {(this.state.selectedTab === 'options' || !this.state.selectedTab) && (<TabOptions
                         key="options"
                         common={this.common}

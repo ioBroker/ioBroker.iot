@@ -36,6 +36,12 @@ class GenericApp extends Component {
             toast: ''
         };
 
+        try {
+            this.isIFrame = window.self !== window.top;
+        } catch (e) {
+            this.isIFrame = true;
+        }
+
         this.savedNative = {}; // to detect if the config changed
 
         this.socket = new Connection({
@@ -162,7 +168,7 @@ class GenericApp extends Component {
         };
 
         return (
-            <Toolbar position="absolute" style={{bottom: 0, left: 0, right: 0, position: 'absolute', background: Theme.saveToolbar.background}}>
+            <Toolbar position="absolute" style={{bottom: this.isIFrame ? 38 : 0, left: 0, right: 0, position: 'absolute', background: Theme.saveToolbar.background}}>
                 <Fab variant="extended" aria-label="Save" disabled={!this.state.changed} onClick={() => this.onSave(false)} style={buttonStyle}>
                     <IconSave />{I18n.t('Save')}
                 </Fab>
