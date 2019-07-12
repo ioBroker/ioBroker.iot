@@ -80,6 +80,12 @@ function startAdapter(options) {
                             alexaSH3 && alexaSH3.updateDevices(obj.message, analyseAddedId =>
                                 adapter.setState('smart.updatesResult', analyseAddedId || '', true, () =>
                                     adapter.setState('smart.updates3', true, true)));
+                    
+                            googleHome && googleHome.updateDevices(analyseAddedId =>
+                                adapter.setState('smart.updatesResult', analyseAddedId || '', true, () => {
+                                    adapter.log.debug('GH Devices updated!');
+                                    adapter.setState('smart.updates', true, true);
+                                }));
                         }, 1000);
                         break;
 

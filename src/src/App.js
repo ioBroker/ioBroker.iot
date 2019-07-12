@@ -13,6 +13,7 @@ import TabServices from './Tabs/Services';
 import TabEnums from './Tabs/Enums';
 import TabAlexaSmartNames from './Tabs/AlexaSmartNames';
 import TabAlisaSmartNames from './Tabs/AlisaSmartNames';
+import TabGoogleSmartNames from './Tabs/GoogleSmartNames';
 
 const styles = theme => ({
     root: {},
@@ -40,16 +41,20 @@ class App extends GenericApp {
         if (tab === 'alexa') {
             return 2;
         } else
-        if (tab === 'alisa') {
+        if (tab === 'google') {
             const offset = (this.state.native.amazonAlexa ? 1 : 0);
+            return 2 + offset;
+        }
+        if (tab === 'alisa') {
+            const offset = (this.state.native.amazonAlexa ? 1 : 0) + (this.state.native.googleHome ? 1 : 0);
             return 2 + offset;
         } else
         if (tab === 'extended') {
-            const offset = (this.state.native.amazonAlexa ? 1 : 0) + (this.state.native.yandexAlisa ? 1 : 0);
+            const offset = (this.state.native.amazonAlexa ? 1 : 0) + (this.state.native.googleHome ? 1 : 0) + (this.state.native.yandexAlisa ? 1 : 0);
             return 2 + offset;
         } else
         if (tab === 'services') {
-            const offset = (this.state.native.amazonAlexa ? 1 : 0) + (this.state.native.yandexAlisa ? 1 : 0);
+            const offset = (this.state.native.amazonAlexa ? 1 : 0) + (this.state.native.googleHome ? 1 : 0) + (this.state.native.yandexAlisa ? 1 : 0);
             return 3 + offset;
         }
     }
@@ -65,6 +70,7 @@ class App extends GenericApp {
                         <Tab label={I18n.t('Options')} data-name="options" />
                         <Tab label={I18n.t('Smart enums')} data-name="enums" />
                         {this.state.native.amazonAlexa && <Tab selected={this.state.selectedTab === 'alexa'} label={I18n.t('Alexa devices')} data-name="alexa" />}
+                        {this.state.native.googleHome && <Tab selected={this.state.selectedTab === 'google'} label={I18n.t('Google devices')} data-name="google" />}
                         {this.state.native.yandexAlisa && <Tab selected={this.state.selectedTab === 'alisa'} label={I18n.t('Alisa devices')} data-name="alisa" />}
                         <Tab label={I18n.t('Extended options')} data-name="extended" />
                         <Tab label={I18n.t('Services and IFTTT')} data-name="services" />
@@ -93,6 +99,15 @@ class App extends GenericApp {
                     />)}
                     {this.state.selectedTab === 'alexa' && (<TabAlexaSmartNames
                         key="alexa"
+                        common={this.common}
+                        socket={this.socket}
+                        native={this.state.native}
+                        onError={text => this.setState({errorText: text})}
+                        adapterName={this.adapterName}
+                        instance={this.instance}
+                    />)}
+                        {this.state.selectedTab === 'google' && (<TabGoogleSmartNames
+                        key="google"
                         common={this.common}
                         socket={this.socket}
                         native={this.state.native}
