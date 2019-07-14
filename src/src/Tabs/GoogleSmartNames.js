@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
-import Utils from '../Components/Utils'
+import Utils from '@iobroker/adapter-react/Components/Utils'
 import Fab from '@material-ui/core/Fab';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Input from '@material-ui/core/Input';
@@ -37,8 +37,8 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
 import Dialog from "@material-ui/core/Dialog";
-import MessageDialog from '../Dialogs/Message';
-import DialogSelectID from '../Dialogs/SelectID';
+import MessageDialog from '@iobroker/adapter-react/Dialogs/Message';
+import DialogSelectID from '@iobroker/adapter-react/Dialogs/SelectID';
 
 const colorOn = '#aba613';
 const colorOff = '#444';

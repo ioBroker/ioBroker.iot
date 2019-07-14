@@ -16,9 +16,9 @@ import {MdRefresh as IconRefresh} from 'react-icons/md';
 import {MdClose as IconClose} from 'react-icons/md';
 import {MdAdd as IconAdd} from 'react-icons/md';
 
-import CopyContentImg from '../assets/copy-content.svg';
+import CopyContentImg from '@iobroker/adapter-react/assets/copy-content.svg';
 import I18n from '../i18n';
-import Utils from '../Components/Utils'
+import Utils from '@iobroker/adapter-react/Components/Utils';
 
 const styles = theme => ({
     tab: {

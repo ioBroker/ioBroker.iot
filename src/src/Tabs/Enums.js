@@ -4,16 +4,16 @@ import PropTypes from 'prop-types';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
-import Utils from '../Components/Utils'
 import Switch from '@material-ui/core/Switch';
 import {MdEdit as IconEdit} from 'react-icons/md';
 
+import Utils from '@iobroker/adapter-react/Components/Utils'
 import I18n from '../i18n';
-import DialogTitle from "@material-ui/core/DialogTitle";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogActions from "@material-ui/core/DialogActions";
-import Dialog from "@material-ui/core/Dialog";
-import MessageDialog from '../Dialogs/Message';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogActions from '@material-ui/core/DialogActions';
+import Dialog from '@material-ui/core/Dialog';
+import MessageDialog from '@iobroker/adapter-react/Dialogs/Message';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 const CHANGED_COLOR = '#e7000040';

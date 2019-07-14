@@ -12,14 +12,14 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
-import Utils from '../Components/Utils'
+import Utils from '@iobroker/adapter-react/Components/Utils'
 
 import {MdRefresh as IconReload} from 'react-icons/md';
 import {MdClose as IconClose} from 'react-icons/md';
 
 import I18n from '../i18n';
 import Logo from './Logo';
-import Message from '../Dialogs/Message';
+import Message from '@iobroker/adapter-react/Dialogs/Message';
 
 const styles = theme => ({
     tab: {

@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "0.5.0",
+        "version": "1.0.0",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.0.0": {
+                "en": "Google Home list was added",
+                "de": "Google-Startliste wurde hinzugefügt",
+                "ru": "Список Google Home был добавлен",
+                "pt": "A lista inicial do Google foi adicionada",
+                "nl": "Google Home-lijst is toegevoegd",
+                "fr": "La liste de Google Home a été ajoutée",
+                "it": "L'elenco Home page di Google è stato aggiunto",
+                "es": "Se agregó la lista de Google Home",
+                "pl": "Dodano listę główną Google",
+                "zh-cn": "Google Home列表已添加"
+            },
             "0.5.0": {
                 "en": "tried to add yandex Alisa ",
                 "de": "versuchte yandex Alisa hinzuzufügen",
@@ -75,66 +87,6 @@
                 "es": "Se solucionó la detección de dispositivos google",
                 "pl": "Wykryto urządzenia Google",
                 "zh-cn": "检测的谷歌装置是固定的"
-            },
-            "0.2.2": {
-                "en": "Generation of new URL key was added",
-                "de": "Die Generierung eines neuen URL-Schlüssels wurde hinzugefügt",
-                "ru": "Была добавлена генерация нового URL-ключа",
-                "pt": "Geração de nova chave de URL foi adicionada",
-                "nl": "Het genereren van een nieuwe URL-sleutel is toegevoegd",
-                "fr": "La génération d'une nouvelle clé d'URL a été ajoutée.",
-                "it": "È stata aggiunta la nuova chiave URL",
-                "es": "Generación de nueva clave de URL fue agregada",
-                "pl": "Generowanie nowego klucza URL zostało dodane",
-                "zh-cn": "产生的新网址的关键是加入"
-            },
-            "0.2.0": {
-                "en": "The name of the adapter was changed",
-                "de": "Der Name des Adapters wurde geändert",
-                "ru": "Название адаптера было изменено",
-                "pt": "O nome do adaptador foi alterado",
-                "nl": "De naam van de adapter is gewijzigd",
-                "fr": "Le nom de l'adaptateur a été changé",
-                "it": "Il nome dell'adattatore è stato cambiato",
-                "es": "Se cambió el nombre del adaptador",
-                "pl": "Nazwa adaptera została zmieniona",
-                "zh-cn": "名称的改适配器"
-            },
-            "0.1.8": {
-                "en": "Added extended diagnostics",
-                "de": "Erweiterte Diagnose hinzugefügt",
-                "ru": "Добавлена ​​расширенная диагностика",
-                "pt": "Adicionado diagnóstico estendido",
-                "nl": "Uitgebreide diagnostiek toegevoegd",
-                "fr": "Ajout de diagnostics étendus",
-                "it": "Aggiunta diagnostica estesa",
-                "es": "Diagnóstico extendido agregado",
-                "pl": "Dodano rozszerzoną diagnostykę",
-                "zh-cn": "加入扩展诊断"
-            },
-            "0.1.7": {
-                "en": "The configuration dialog was corrected\nThe possibility to create the answer for the custom skill with the script was implemented. ",
-                "de": "Der Konfigurationsdialog wurde korrigiert\nDie Möglichkeit, die Antwort für die benutzerdefinierte Fertigkeit mit dem Skript zu erstellen, wurde implementiert.",
-                "ru": "Диалог конфигурации был исправлен\nБыла реализована возможность создания ответа для пользовательского навыка со скриптом.",
-                "pt": "A caixa de diálogo de configuração foi corrigida\nA possibilidade de criar a resposta para a habilidade personalizada com o script foi implementada.",
-                "nl": "Het configuratiedialoogvenster is gecorrigeerd\nDe mogelijkheid om het antwoord voor de aangepaste vaardigheid met het script te creëren, is geïmplementeerd.",
-                "fr": "Le dialogue de configuration a été corrigé\nLa possibilité de créer la réponse pour la compétence personnalisée avec le script a été mise en œuvre.",
-                "it": "La finestra di configurazione è stata corretta\nÈ stata implementata la possibilità di creare la risposta per l'abilità personalizzata con lo script.",
-                "es": "Se corrigió el diálogo de configuración.\nSe implementó la posibilidad de crear la respuesta para la habilidad personalizada con el script.",
-                "pl": "Okno dialogowe konfiguracji zostało poprawione\nStworzono możliwość stworzenia odpowiedzi na niestandardowe umiejętności ze skryptem.",
-                "zh-cn": "配对话是纠正\n可能创建的答复为的定义的技巧，用脚本到实施。 "
-            },
-            "0.1.4": {
-                "en": "Initial commit",
-                "de": "Erstes Commit",
-                "ru": "Начальное коммит",
-                "pt": "Commit inicial",
-                "nl": "Eerste commit",
-                "fr": "Commit initial",
-                "it": "Commit iniziale",
-                "es": "Compromiso inicial",
-                "pl": "Wstępne zatwierdzenie",
-                "zh-cn": "最初的承诺"
             }
         },
         "authors": [

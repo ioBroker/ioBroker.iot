@@ -5,7 +5,7 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
-import createTheme from './createTheme';
+import createTheme from '@iobroker/adapter-react/createTheme';
 
 let theme = 'light';
 

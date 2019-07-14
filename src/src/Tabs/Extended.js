@@ -14,8 +14,8 @@ import Checkbox from '@material-ui/core/Checkbox';
 import {MdAdd as IconAdd} from 'react-icons/md';
 
 import I18n from '../i18n';
-import DialogSelectID from '../Dialogs/SelectID';
-import Utils from '../Components/Utils'
+import DialogSelectID from '@iobroker/adapter-react/Dialogs/SelectID';
+import Utils from '@iobroker/adapter-react/Components/Utils'
 
 const styles = theme => ({
     tab: {

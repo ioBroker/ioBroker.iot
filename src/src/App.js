@@ -3,10 +3,10 @@ import {withStyles} from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import Loader from './Components/Loader'
-import I18n from './i18n';
+import GenericApp from '@iobroker/adapter-react/GenericApp';
+import Loader from '@iobroker/adapter-react/Components/Loader'
 
-import GenericApp from './GenericApp';
+import I18n from './i18n';
 import TabOptions from './Tabs/Options';
 import TabExtended from './Tabs/Extended';
 import TabServices from './Tabs/Services';
