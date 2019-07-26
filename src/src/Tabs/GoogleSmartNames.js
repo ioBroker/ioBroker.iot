@@ -1,7 +1,7 @@
 import React, {Component, forwardRef} from 'react';
 import {withStyles} from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
-import Utils from '../Components/Utils'
+import Utils from '@iobroker/adapter-react/Components/Utils'
 import Fab from '@material-ui/core/Fab';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Select from '@material-ui/core/Select';
@@ -14,8 +14,8 @@ import {MdRefresh as IconRefresh} from 'react-icons/md';
 
 
 import I18n from '../i18n';
-import MessageDialog from '../Dialogs/Message';
-import DialogSelectID from '../Dialogs/SelectID';
+import MessageDialog from '@iobroker/adapter-react/Dialogs/Message';
+import DialogSelectID from '@iobroker/adapter-react/Dialogs/SelectID';
 
 import MaterialTable from 'material-table';
 import AddBox from '@material-ui/icons/AddBox';
@@ -78,7 +78,7 @@ class GoogleSmartNames extends Component {
             lastChanged: '',
             columns: [
                 { title: 'id', field: 'id' , editable: 'never'},
-                { title: 'smartnames', field: 'name.name' },
+                { title: 'smartnames', field: 'name.nicknames' },
                 { title: 'type', field: 'type' ,  lookup: { 
                     "action.devices.types.AC_UNIT": 'Air conditioning unit	', 
                     "action.devices.types.AIRFRESHENER": 'Air Freshener' ,
@@ -141,44 +141,6 @@ class GoogleSmartNames extends Component {
                     "action.devices.traits.TemperatureControl":'TemperatureControl',
                     "action.devices.traits.TemperatureSetting":'TemperatureSetting',
                     "action.devices.traits.Toggles":'Toggles',
-
-             /*   editComponent: props => (
-                    <div style={{textAlign:"center"}}>
-                    <div>Press Strg or CMD for multiple values <a  rel="noopener noreferrer" target="_blank" href="https://developers.google.com/actions/smarthome/traits/">Help</a></div>
-                    <select style={{height:"18rem"} }name="cars" value={props.value} multiple onChange={e => {
-                        let result = "";
-                        for (var i = 0; i < e.target.selectedOptions.length; i++) {
-                            if (i === 0) {
-                                result +=e.target.selectedOptions[i].value
-                            } else {
-                                result +=", " + e.target.selectedOptions[i].value
-                            }
-                        }
-                        props.onChange(result.split(", "))
-                        
-                        }}>
-                        <option value="action.devices.traits.ArmDisarm">ArmDisarm</option>
-                        <option value="action.devices.traits.Brightness">Brightness</option>
-                        <option value="action.devices.traits.CameraStream">CameraStream</option>
-                        <option value="action.devices.traits.ColorSetting">ColorSetting</option>
-                        <option value="action.devices.traits.ColorSpectrum">ColorSpectrum</option>
-                        <option value="action.devices.traits.ColorTemperature">ColorTemperature</option>
-                        <option value="action.devices.traits.Dock">Dock</option>
-                        <option value="action.devices.traits.FanSpeed">FanSpeed</option>
-                        <option value="action.devices.traits.LightEffects">LightEffects</option>
-                        <option value="action.devices.traits.Locator">Locator</option>
-                        <option value="action.devices.traits.LockUnlock">LockUnlock</option>
-                        <option value="action.devices.traits.Modes">Modes</option>
-                        <option value="action.devices.traits.OnOff">OnOff</option>
-                        <option value="action.devices.traits.OpenClose">OpenClose</option>
-                        <option value="action.devices.traits.RunCycle">RunCycle</option>
-                        <option value="action.devices.traits.Scene">Scene</option>
-                        <option value="action.devices.traits.StartStop">StartStop</option>
-                        <option value="action.devices.traits.TemperatureControl">TemperatureControl</option>
-                        <option value="action.devices.traits.TemperatureSetting">TemperatureSetting</option>
-                        <option value="action.devices.traits.Toggles">Toggles</option>
-                        </select></div>
-                  )},*/
                     }},
                 { title: 'room', field: 'roomHint', editable: 'never' },
                 
@@ -394,8 +356,11 @@ class GoogleSmartNames extends Component {
         this.addChanged(id, () => {
             this.props.socket.getObject(id)
                 .then(obj => {
-
+                    
                     Utils.updateSmartName(obj, this.editedSmartName, undefined, undefined, this.props.adapterName + '.' + this.props.instance, this.props.native.noCommon);
+                    if (!Array.isArray(traits)) {
+                        traits=[traits]
+                    }
                     obj.common.smartName.ghTraits = traits;
                     obj.common.smartName.ghType = type;
                     return this.props.socket.setObject(id, obj);
@@ -528,13 +493,16 @@ class GoogleSmartNames extends Component {
                 editable={{
                   
                     onRowUpdate: (newData, oldData) => {
-                        this.editedSmartName = newData.name.name
+                        if (Array.isArray(newData.name.nicknames)) {
+                            newData.name.nicknames = newData.name.nicknames.join(",");
+                        }
+                        this.editedSmartName = newData.name.nicknames
                         this.setState({editId: newData.id});
                        
                     return new Promise(resolve => {
                         
                         setTimeout(() => {
-                        this.onGHParamsChange(newData.id, newData.type, [newData.traits]);
+                        this.onGHParamsChange(newData.id, newData.type, newData.traits);
                         resolve();
                         const devices = [...this.state.devices];
                         devices[devices.indexOf(oldData)] = newData;
