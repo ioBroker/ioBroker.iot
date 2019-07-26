@@ -120,13 +120,11 @@ class GoogleSmartNames extends Component {
                     "action.devices.types.WATERHEATER": 'Water heater' ,
                     "action.devices.types.WINDOW": 'Window' 
                 }},
-                { title: 'trait', field: 'traits' ,  lookup: { 
+                { title: 'trait', field: 'traits[0]' ,  lookup: { 
                     "action.devices.traits.ArmDisarm":'ArmDisarm',
                     "action.devices.traits.Brightness":'Brightness',
                     "action.devices.traits.CameraStream":'CameraStream',
                     "action.devices.traits.ColorSetting":'ColorSetting',
-                    "action.devices.traits.ColorSpectrum":'ColorSpectrum',
-                    "action.devices.traits.ColorTemperature":'ColorTemperature',
                     "action.devices.traits.Dock":'Dock',
                     "action.devices.traits.FanSpeed":'FanSpeed',
                     "action.devices.traits.LightEffects":'LightEffects',
@@ -140,6 +138,7 @@ class GoogleSmartNames extends Component {
                     "action.devices.traits.StartStop":'StartStop',
                     "action.devices.traits.TemperatureControl":'TemperatureControl',
                     "action.devices.traits.TemperatureSetting":'TemperatureSetting',
+                    "action.devices.traits.Timer":'Timer',
                     "action.devices.traits.Toggles":'Toggles',
                     }},
                 { title: 'room', field: 'roomHint', editable: 'never' },
