@@ -120,7 +120,7 @@ class GoogleSmartNames extends Component {
                     "action.devices.types.WATERHEATER": 'Water heater' ,
                     "action.devices.types.WINDOW": 'Window' 
                 }},
-                { title: 'trait', field: 'traits[0]' ,  lookup: { 
+                { title: 'trait', field: 'displayTraits' ,  lookup: { 
                     "action.devices.traits.ArmDisarm":'ArmDisarm',
                     "action.devices.traits.Brightness":'Brightness',
                     "action.devices.traits.CameraStream":'CameraStream',
@@ -501,7 +501,7 @@ class GoogleSmartNames extends Component {
                     return new Promise(resolve => {
                         
                         setTimeout(() => {
-                        this.onGHParamsChange(newData.id, newData.type, newData.traits);
+                        this.onGHParamsChange(newData.id, newData.type, newData.displayTraits);
                         resolve();
                         const devices = [...this.state.devices];
                         devices[devices.indexOf(oldData)] = newData;
