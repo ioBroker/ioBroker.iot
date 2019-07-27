@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.0.0",
+        "version": "1.0.1",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.0.1": {
+                "en": "Support of private skills/actions was added",
+                "de": "Unterstützung von privaten Fähigkeiten / Aktionen wurde hinzugefügt",
+                "ru": "Добавлена поддержка личных навыков / действий",
+                "pt": "Suporte de habilidades / ações privadas foi adicionado",
+                "nl": "Ondersteuning van privévaardigheden / acties is toegevoegd",
+                "fr": "Le support des compétences / actions privées a été ajouté",
+                "it": "È stato aggiunto il supporto di abilità / azioni private",
+                "es": "Se agregó soporte de habilidades / acciones privadas",
+                "pl": "Dodano wsparcie prywatnych umiejętności / działań",
+                "zh-cn": "增加了对私人技能/行动的支持"
+            },
             "1.0.0": {
                 "en": "Google Home list was added",
                 "de": "Google-Startliste wurde hinzugefügt",

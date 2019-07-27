@@ -137,6 +137,21 @@ function startAdapter(options) {
                         }
                         break;
 
+                    case 'private':
+                        if (typeof obj.message !== 'object') {
+                            try {
+                                obj.message = JSON.parse(obj.message);
+                            } catch (e) {
+                                adapter.log.error('Cannot parse object: ' + e);
+                                obj.callback && adapter.sendTo(obj.from, obj.command, {error: 'Invalid message format: cannot parse object'}, obj.callback);
+                                return;
+                            }
+                        }
+                        processMessage(obj.message.type, obj.message.request, response =>
+                            obj.callback && adapter.sendTo(obj.from, obj.command, response, obj.callback));
+
+                        break;
+
                     case 'ifttt':
                         sendDataToIFTTT(obj.message);
                         break;
@@ -536,6 +551,108 @@ function fetchKeys(login, pass, _forceUserCreation) {
     });
 }
 
+function processMessage(type, request, callback) {
+    try {
+        request = request.toString();
+    } catch (e) {
+        return adapter.log.error('Cannot convert request: ' + request);
+    }
+    adapter.log.debug('Data: ' + request);
+
+    if (type.startsWith('alexa')) {
+        try {
+            request = JSON.parse(request);
+        } catch (e) {
+            return adapter.log.error('Cannot parse request: ' + request);
+        }
+
+        adapter.log.debug(new Date().getTime() + ' ALEXA: ' + JSON.stringify(request));
+
+        if (request && request.directive) {
+            alexaSH3 && alexaSH3.process(request, adapter.config.amazonAlexa, response => callback(response));
+        } else
+        if (request && !request.header) {
+            alexaCustom && alexaCustom.process(request, adapter.config.amazonAlexa, response =>callback(response));
+        } else {
+            alexaSH2 && alexaSH2.process(request, adapter.config.amazonAlexa, response => callback(response));
+        }
+    } else if (type.startsWith('ifttt')) {
+        processIfttt(request, response => callback(response));
+    } else if (type.startsWith('ghome')) {
+        try {
+            request = JSON.parse(request);
+        } catch (e) {
+            return adapter.log.error('Cannot parse request: ' + request);
+        }
+
+        googleHome && googleHome.process(request, adapter.config.googleHome, response => callback(response));
+    } else if (type.startsWith('alisa')) {
+        try {
+            request = JSON.parse(request);
+        } catch (e) {
+            return adapter.log.error('Cannot parse request: ' + request);
+        }
+
+        adapter.log.debug(new Date().getTime() + ' ALISA: ' + JSON.stringify(request));
+        yandexAlisa && yandexAlisa.process(request, adapter.config.yandexAlisa, response => callback(response));
+    } else {
+        let isCustom = false;
+        let _type = type;
+        if (_type.match(/^custom_/)) {
+            _type = _type.substring(7);
+            isCustom = true;
+        }
+
+        if (adapter.config.allowedServices[0] === '*' || adapter.config.allowedServices.indexOf(_type) !== -1) {
+            if (type.startsWith('text2command')) {
+                if (adapter.config.text2command !== undefined && adapter.config.text2command !== '') {
+                    adapter.setForeignState('text2command.' + adapter.config.text2command + '.text', request,
+                        err => callback({result: err || 'Ok'}));
+                } else {
+                    adapter.log.warn('Received service text2command, but instance is not defined');
+                    callback({result: 'but instance is not defined'});
+                }
+            } else if (type.startsWith('simpleApi')) {
+                callback({result: 'not implemented'});
+            } else if (isCustom) {
+                adapter.getObject('services.custom_' + _type, (err, obj) => {
+                    if (!obj) {
+                        adapter.setObjectNotExists('services.custom_' + _type, {
+                            _id: adapter.namespace + '.services.custom_' + _type,
+                            type: 'state',
+                            common: {
+                                name: 'Service for ' + _type,
+                                write: false,
+                                read: true,
+                                type: 'mixed',
+                                role: 'value'
+                            },
+                            native: {}
+                        }, err => {
+                            if (!err) {
+                                adapter.setState('services.custom_' + _type, request, false, err =>
+                                    callback({result: err || 'Ok'}));
+                            } else {
+                                adapter.log.error(`Cannot control ${'.services.custom_' + _type}: ${JSON.stringify(err)}`);
+                                callback({error: err});
+                            }
+                        });
+                    } else {
+                        adapter.setState('services.custom_' + _type, request, false, err =>
+                            callback({result: err || 'Ok'}));
+                    }
+                });
+            } else {
+                adapter.log.warn(`Received service "${type}", but it is not allowed`);
+                callback({error: 'not allowed'});
+            }
+        } else {
+            adapter.log.warn(`Received service "${type}", but it is not found in whitelist`);
+            callback({error: 'Unknown service'});
+        }
+    }
+}
+
 function startDevice(clientId, login, password, retry) {
     retry = retry || 0;
     let certs;
@@ -583,118 +700,15 @@ function startDevice(clientId, login, password, retry) {
                 if (topic.startsWith('command/' + clientId + '/')) {
                     let type = topic.substring(clientId.length + 9);
 
-                    try {
-                        request = request.toString();
-                    } catch (e) {
-                        return adapter.log.error('Cannot convert request: ' + request);
-                    }
-                    adapter.log.debug('Data: ' + request);
-
-                    if (type.startsWith('alexa')) {
-                        try {
-                            request = JSON.parse(request);
-                        } catch (e) {
-                            return adapter.log.error('Cannot parse request: ' + request);
-                        }
-
-                        adapter.log.debug(new Date().getTime() + ' ALEXA: ' + JSON.stringify(request));
-
-                        if (request && request.directive) {
-                            alexaSH3 && alexaSH3.process(request, adapter.config.amazonAlexa, response =>
-                                device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
-                        } else
-                        if (request && !request.header) {
-                            alexaCustom && alexaCustom.process(request, adapter.config.amazonAlexa, response =>
-                                device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
-                        } else {
-                            alexaSH2 && alexaSH2.process(request, adapter.config.amazonAlexa, response =>
-                                device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
-                        }
-                    } else if (type.startsWith('ifttt')) {
-                        processIfttt(request, response =>
-                            device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
-                    } else if (type.startsWith('ghome')) {
-                        try {
-                            request = JSON.parse(request);
-                        } catch (e) {
-                            return adapter.log.error('Cannot parse request: ' + request);
-                        }
-
-                        googleHome && googleHome.process(request, adapter.config.googleHome, response =>
-                            device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
-                    } else if (type.startsWith('alisa')) {
-                        try {
-                            request = JSON.parse(request);
-                        } catch (e) {
-                            return adapter.log.error('Cannot parse request: ' + request);
-                        }
-
-                        adapter.log.debug(new Date().getTime() + ' ALISA: ' + JSON.stringify(request));
-                        yandexAlisa && yandexAlisa.process(request, adapter.config.yandexAlisa, response =>
-                            device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
-                    } else {
-                        let isCustom = false;
-                        let _type = type;
-                        if (_type.match(/^custom_/)) {
-                            _type = _type.substring(7);
-                            isCustom = true;
-                        }
-
-                        if (adapter.config.allowedServices[0] === '*' || adapter.config.allowedServices.indexOf(_type) !== -1) {
-                            if (type.startsWith('text2command')) {
-                                if (adapter.config.text2command !== undefined && adapter.config.text2command !== '') {
-                                    adapter.setForeignState('text2command.' + adapter.config.text2command + '.text', request,
-                                            err => device.publish('response/' + clientId + '/' + type, JSON.stringify({result: err || 'Ok'})));
-                                } else {
-                                    adapter.log.warn('Received service text2command, but instance is not defined');
-                                    device.publish('response/' + clientId + '/' + type, JSON.stringify({result: 'but instance is not defined'}));
-                                }
-                            } else if (type.startsWith('simpleApi')) {
-                                device.publish('response/' + clientId + '/' + type, JSON.stringify({result: 'not implemented'}));
-                            } else if (isCustom) {
-                                adapter.getObject('services.custom_' + _type, (err, obj) => {
-                                    if (!obj) {
-                                        adapter.setObjectNotExists('services.custom_' + _type, {
-                                            _id: adapter.namespace + '.services.custom_' + _type,
-                                            type: 'state',
-                                            common: {
-                                                name: 'Service for ' + _type,
-                                                write: false,
-                                                read: true,
-                                                type: 'mixed',
-                                                role: 'value'
-                                            },
-                                            native: {}
-                                        }, err => {
-                                            if (!err) {
-                                                adapter.setState('services.custom_' + _type, request, false, err =>
-                                                    device.publish('response/' + clientId + '/' + type, JSON.stringify({result: err || 'Ok'})));
-                                            } else {
-                                                adapter.log.error(`Cannot control ${'.services.custom_' + _type}: ${JSON.stringify(err)}`);
-                                                device.publish('response/' + clientId + '/' + type, JSON.stringify({error: err}));
-                                            }
-                                        });
-                                    } else {
-                                        adapter.setState('services.custom_' + _type, request, false, err =>
-                                            device.publish('response/' + clientId + '/' + type, JSON.stringify({result: err || 'Ok'})));
-                                    }
-                                });
-                            } else {
-                                adapter.log.warn(`Received service "${type}", but it is not allowed`);
-                                device.publish('response/' + clientId + '/' + type, JSON.stringify({error: 'not allowed'}));
-                            }
-                        } else {
-                            adapter.log.warn(`Received service "${type}", but it is not found in whitelist`);
-                            device.publish('response/' + clientId + '/' + type, JSON.stringify({error: 'Unknown service'}));
-                        }
-                    }
+                    processMessage(type, request, response =>
+                        device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
                 }
             });
         }).catch(e => {
             if (e && e.message)
-                adapter.log.error(JSON.stringify(e.message));
+                adapter.log.error('Cannot read keys: ' + JSON.stringify(e.message) + ' / ' + e.toString());
             else
-                adapter.log.error(JSON.stringify(e));
+                adapter.log.error('Cannot read keys: ' + JSON.stringify(e) + ' / ' + e.toString());
 
             if (e === 'timeout' && retry < 10) {
                 setTimeout(() => startDevice(clientId, login, password, retry + 1), 10000);
