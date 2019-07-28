@@ -33,6 +33,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+
  
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -124,7 +125,8 @@ class GoogleSmartNames extends Component {
                     "action.devices.traits.ArmDisarm":'ArmDisarm',
                     "action.devices.traits.Brightness":'Brightness',
                     "action.devices.traits.CameraStream":'CameraStream',
-                    "action.devices.traits.ColorSetting":'ColorSetting',
+                    "action.devices.traits.ColorSetting_temperature":'ColorSetting_Temperature',
+                    "action.devices.traits.ColorSetting_spectrumRGB":'ColorSetting_RGB',
                     "action.devices.traits.Dock":'Dock',
                     "action.devices.traits.FanSpeed":'FanSpeed',
                     "action.devices.traits.LightEffects":'LightEffects',
@@ -141,6 +143,18 @@ class GoogleSmartNames extends Component {
                     "action.devices.traits.Timer":'Timer',
                     "action.devices.traits.Toggles":'Toggles',
                     }},
+
+                { title: 'attributes', field: 'displayAttributes' ,   cellStyle: {
+                    maxWidth: "12rem",
+                    overflow: "hidden",
+                    wordBreak: "break-all"
+                  },  
+                editComponent: props => (
+                    <textarea cols="40" rows="20"
+                      value={props.value}
+                      onChange={e => props.onChange(e.target.value)}
+                    />
+                  )},
                 { title: 'room', field: 'roomHint', editable: 'never' },
                 
               ]
@@ -351,7 +365,7 @@ class GoogleSmartNames extends Component {
     }
 
     
-    onGHParamsChange(id, type, traits) {
+    onGHParamsChange(id, type, traits, attributes) {
         this.addChanged(id, () => {
             this.props.socket.getObject(id)
                 .then(obj => {
@@ -362,6 +376,7 @@ class GoogleSmartNames extends Component {
                     }
                     obj.common.smartName.ghTraits = traits;
                     obj.common.smartName.ghType = type;
+                    obj.common.smartName.ghAttributes = attributes;
                     return this.props.socket.setObject(id, obj);
                 })
                 .then(() => {
@@ -437,7 +452,9 @@ class GoogleSmartNames extends Component {
                                 }
 
                                 this.props.socket.setObject(obj._id, obj)
-                                    .then(() => this.informInstance(obj._id))
+                                    .then(() => {
+                                        this.informInstance(obj._id);
+                                        this.setState({message: I18n.t('Please add action and trait to complete the Google Home state.')});})
                                     .catch(err => this.setState({message: err}));
                             } else {
                                 this.setState({message: I18n.t('Invalid ID')});
@@ -467,9 +484,14 @@ class GoogleSmartNames extends Component {
             
                 {this.renderMessage()}
                 {this.getSelectIdDialog()}
-                <div style={{marginTop:"4rem"}}>Please select type and traits after adding state. 
+                <div style={{marginTop:"4rem"}}>Please select a
+                <a target="_blank" rel="noopener noreferrer" href="https://developers.google.com/actions/smarthome/guides/" > type</a> and a
+                <a target="_blank" rel="noopener noreferrer" href="https://developers.google.com/actions/smarthome/traits/" > trait</a> after adding a state. 
                 To add multiple traits add a different id and trait but same smartname, type and room.</div>
                 <div style={{marginTop:"0.5rem"}}>Comma separated for mutiple smartnames.</div>
+                <div style={{marginTop:"0.5rem"}}>With attributes you can for example set a range for the color temperature 
+                <a target="_blank" rel="noopener noreferrer" href="https://developers.google.com/actions/smarthome/traits/colorsetting#response" > Infos about Attributes you can find here.</a>
+                </div>
                 <MaterialTable
                 style ={{marginTop:"1rem"}}
                 title=""
@@ -501,7 +523,10 @@ class GoogleSmartNames extends Component {
                     return new Promise(resolve => {
                         
                         setTimeout(() => {
-                        this.onGHParamsChange(newData.id, newData.type, newData.displayTraits);
+                            if(!newData.type || !newData.displayTraits) {
+                                this.setState({message: I18n.t('Please add action and trait to complete the Google Home state.')});
+                            }
+                        this.onGHParamsChange(newData.id, newData.type, newData.displayTraits, newData.displayAttributes);
                         resolve();
                         const devices = [...this.state.devices];
                         devices[devices.indexOf(oldData)] = newData;

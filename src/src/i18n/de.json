@@ -141,5 +141,6 @@
   "tooltip_restartOnDisconnect": "Workaround für fehlende Kommunikation mit Alexa nach Verbindungsabbruch. Damit kann man zwingen den Adapter neu zu starten und das Problem umgehen.",
   "tooltip_ts": "Zeitstempel",
   "tooltip_user": "Nutzer",
-  "tooltip_value": "Wert"
+  "tooltip_value": "Wert",
+  "Please add action and trait to complete the Google Home state.":"Bitte füge eine Action und Trait hinzu um den Google Home State zu vervollständigen."
 }
