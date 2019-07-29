@@ -376,7 +376,14 @@ class GoogleSmartNames extends Component {
                     }
                     obj.common.smartName.ghTraits = traits;
                     obj.common.smartName.ghType = type;
-                    obj.common.smartName.ghAttributes = attributes.replace(/\n/g, ' ');
+                    obj.common.smartName.ghAttributes = attributes
+                    try {
+                        if(obj.common.smartName.ghAttributes) {
+                           JSON.parse(obj.common.smartName.ghAttributes)
+                    }
+                    } catch (error) {
+                        this.setState({message: I18n.t('Attributes has not correct JSON format.')})
+                    }
                     return this.props.socket.setObject(id, obj);
                 })
                 .then(() => {
@@ -485,8 +492,8 @@ class GoogleSmartNames extends Component {
                 {this.renderMessage()}
                 {this.getSelectIdDialog()}
                 <div style={{marginTop:"4rem"}}>Please select a
-                <a target="_blank" rel="noopener noreferrer" href="https://developers.google.com/actions/smarthome/guides/" > type</a> and a
-                <a target="_blank" rel="noopener noreferrer" href="https://developers.google.com/actions/smarthome/traits/" > trait</a> after adding a state. 
+                <a target="_blank" rel="noopener noreferrer" href="https://developers.google.com/actions/smarthome/guides/" > TYPE</a> and a
+                <a target="_blank" rel="noopener noreferrer" href="https://developers.google.com/actions/smarthome/traits/" > TRAIT</a> after adding a state. 
                 To add multiple traits add a different id and trait but same smartname, type and room.</div>
                 <div style={{marginTop:"0.5rem"}}>Comma separated for mutiple smartnames.</div>
                 <div style={{marginTop:"0.5rem"}}>To assign a room please use the ioBroker Enums/Aufzählungen.</div>
@@ -527,6 +534,7 @@ class GoogleSmartNames extends Component {
                             if(!newData.type || !newData.displayTraits) {
                                 this.setState({message: I18n.t('Please add action and trait to complete the Google Home state.')});
                             }
+                        
                         this.onGHParamsChange(newData.id, newData.type, newData.displayTraits, newData.displayAttributes);
                         resolve();
                         const devices = [...this.state.devices];

@@ -142,5 +142,6 @@
   "tooltip_ts": "Zeitstempel",
   "tooltip_user": "Nutzer",
   "tooltip_value": "Wert",
-  "Please add action and trait to complete the Google Home state.":"Bitte füge eine Action und Trait hinzu um den Google Home State zu vervollständigen."
+  "Please add action and trait to complete the Google Home state.":"Bitte füge eine Action und Trait hinzu um den Google Home State zu vervollständigen.",
+  "Attributes has not correct JSON format.":"Attributes ist nicht im korrekten JSON Format"
 }
