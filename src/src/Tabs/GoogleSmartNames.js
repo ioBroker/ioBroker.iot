@@ -78,7 +78,11 @@ class GoogleSmartNames extends Component {
             expanded: [],
             lastChanged: '',
             columns: [
-                { title: 'id', field: 'id' , editable: 'never'},
+                { title: 'id', field: 'id' , editable: 'never' ,   cellStyle: {
+                    maxWidth: "12rem",
+                    overflow: "hidden",
+                    wordBreak: "break-all"
+                  }},
                 { title: 'smartnames', field: 'name.nicknames' },
                 { title: 'type', field: 'type' ,  lookup: { 
                     "action.devices.types.AC_UNIT": 'Air conditioning unit	', 
@@ -160,7 +164,11 @@ class GoogleSmartNames extends Component {
                     />
                   )},
                 { title: 'room', field: 'roomHint', editable: 'never' },
-                
+                { title: 'smartEnum', field: 'smartEnum', editable: 'never',cellStyle: {
+                    maxWidth: "3rem",
+                    overflow: "hidden",
+                    wordBreak: "break-all"
+                  } },
               ]
         };
 
@@ -227,7 +235,7 @@ class GoogleSmartNames extends Component {
             this.devTimer = setTimeout(() => {
                 this.devTimer = null;
                 this.browse();
-            }, 300);
+            }, 10);
         }
     }
 
@@ -504,12 +512,14 @@ class GoogleSmartNames extends Component {
                 <div style={{marginTop:"0.5rem"}}>With attributes you can for example set a range for the color temperature 
                 <a target="_blank" rel="noopener noreferrer" href="https://developers.google.com/actions/smarthome/traits/colorsetting" > Infos about Attributes you can find here.</a> Empty attribute is {"{}"}
                 </div>
+                <div>
                 <MaterialTable
-                style ={{marginTop:"1rem"}}
+                style ={{marginTop:"1rem",display: "inline-block"}}
                 title=""
                 columns={this.state.columns}
                 data={this.state.devices}
                 icons={tableIcons}
+                isLoading={this.state.browse }
                 options={{
                     actionsColumnIndex: -1,
                     paging: false
@@ -533,7 +543,7 @@ class GoogleSmartNames extends Component {
                         this.setState({editId: newData.id});
                        
                     return new Promise(resolve => {
-                        
+                        this.setState({browse:true})
                         setTimeout(() => {
                             if(!newData.type || !newData.displayTraits) {
                                 this.setState({message: I18n.t('Please add action and trait to complete the Google Home state.')});
@@ -544,7 +554,7 @@ class GoogleSmartNames extends Component {
                         const devices = [...this.state.devices];
                         devices[devices.indexOf(oldData)] = newData;
                         this.setState({ ...this.state, devices });
-                        }, 600);
+                        }, 500);
                     })},
                     onRowDelete: (oldData) => {
 
@@ -561,7 +571,7 @@ class GoogleSmartNames extends Component {
                     })
                     }
                 }}
-                />
+                /></div>
 
             </form>
         );
