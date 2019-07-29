@@ -71,17 +71,17 @@ function startAdapter(options) {
 
                         recalcTimeout = setTimeout(() => {
                             recalcTimeout = null;
-                            alexaSH2 && alexaSH2.updateDevices(obj.message, analyseAddedId =>
+                            adapter.config.amazonAlexa && alexaSH2 && alexaSH2.updateDevices(obj.message, analyseAddedId =>
                                 adapter.setState('smart.updatesResult', analyseAddedId || '', true, () => {
                                     adapter.log.debug('Devices updated!');
                                     adapter.setState('smart.updates', true, true);
                                 }));
 
-                            alexaSH3 && alexaSH3.updateDevices(obj.message, analyseAddedId =>
+                            adapter.config.amazonAlexa  && alexaSH3 && alexaSH3.updateDevices(obj.message, analyseAddedId =>
                                 adapter.setState('smart.updatesResult', analyseAddedId || '', true, () =>
                                     adapter.setState('smart.updates3', true, true)));
                     
-                            googleHome && googleHome.updateDevices(analyseAddedId =>
+                            adapter.config.googleHome && googleHome && googleHome.updateDevices(analyseAddedId =>
                                 adapter.setState('smart.updatesResult', analyseAddedId || '', true, () => {
                                     adapter.log.debug('GH Devices updated!');
                                     adapter.setState('smart.updates', true, true);
@@ -813,11 +813,11 @@ function main() {
             lang = obj.common.language;
         }
         if (lang !== 'en' && lang !== 'de' && lang !== 'ru') lang = 'en';
-        alexaSH2 && alexaSH2.setLanguage(lang, translate);
-        alexaSH2 && alexaSH2.updateDevices();
-        alexaSH3 && alexaSH3.setLanguage(lang, translate);
-        alexaSH3 && alexaSH3.updateDevices();
-        alexaCustom && alexaCustom.setLanguage(lang);
+        adapter.config.amazonAlexa && alexaSH2 && alexaSH2.setLanguage(lang, translate);
+        adapter.config.amazonAlexa && alexaSH2 && alexaSH2.updateDevices();
+        adapter.config.amazonAlexa && alexaSH3 && alexaSH3.setLanguage(lang, translate);
+        adapter.config.amazonAlexa && alexaSH3 && alexaSH3.updateDevices();
+        adapter.config.amazonAlexa && alexaCustom && alexaCustom.setLanguage(lang);
 
         adapter.getForeignObject('system.meta.uuid', (err, oUuid) => {
             secret = (obj && obj.native && obj.native.secret) || 'Zgfr56gFe87jJOM';
