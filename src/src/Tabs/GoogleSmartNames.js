@@ -376,7 +376,7 @@ class GoogleSmartNames extends Component {
                     }
                     obj.common.smartName.ghTraits = traits;
                     obj.common.smartName.ghType = type;
-                    obj.common.smartName.ghAttributes = attributes;
+                    obj.common.smartName.ghAttributes = attributes.replace(/\n/g, ' ');
                     return this.props.socket.setObject(id, obj);
                 })
                 .then(() => {
@@ -489,8 +489,9 @@ class GoogleSmartNames extends Component {
                 <a target="_blank" rel="noopener noreferrer" href="https://developers.google.com/actions/smarthome/traits/" > trait</a> after adding a state. 
                 To add multiple traits add a different id and trait but same smartname, type and room.</div>
                 <div style={{marginTop:"0.5rem"}}>Comma separated for mutiple smartnames.</div>
+                <div style={{marginTop:"0.5rem"}}>To assign a room please use the ioBroker Enums/Aufzählungen.</div>
                 <div style={{marginTop:"0.5rem"}}>With attributes you can for example set a range for the color temperature 
-                <a target="_blank" rel="noopener noreferrer" href="https://developers.google.com/actions/smarthome/traits/colorsetting#response" > Infos about Attributes you can find here.</a>
+                <a target="_blank" rel="noopener noreferrer" href="https://developers.google.com/actions/smarthome/traits/colorsetting" > Infos about Attributes you can find here.</a> Empty attribute is {"{}"}
                 </div>
                 <MaterialTable
                 style ={{marginTop:"1rem"}}
