@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.0.1",
+        "version": "1.0.2",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.0.2": {
+                "en": "Fixed language issues for google home and yandex alice",
+                "de": "Sprachprobleme bei Google Home und Yandex Alice behoben",
+                "ru": "Исправлены языковые проблемы для Google Home и Яндекс Алисы",
+                "pt": "Corrigidos problemas de idioma para o google home e yandex alice",
+                "nl": "Taalproblemen opgelost voor Google Home en Yandex Alice",
+                "fr": "Correction des problèmes de langue pour google home et alice yandex",
+                "it": "Risolti i problemi di lingua per google home e yandex alice",
+                "es": "Se corrigieron problemas de idioma para google home y yandex alice",
+                "pl": "Naprawiono problemy z językiem dla domu google i yandex alice",
+                "zh-cn": "修复了google home和yandex alice的语言问题"
+            },
             "1.0.1": {
                 "en": "Support of private skills/actions was added",
                 "de": "Unterstützung von privaten Fähigkeiten / Aktionen wurde hinzugefügt",

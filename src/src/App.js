@@ -6,7 +6,7 @@ import Tab from '@material-ui/core/Tab';
 import GenericApp from '@iobroker/adapter-react/GenericApp';
 import Loader from '@iobroker/adapter-react/Components/Loader'
 
-import I18n from './i18n';
+import I18n from '@iobroker/adapter-react/i18n';
 import TabOptions from './Tabs/Options';
 import TabExtended from './Tabs/Extended';
 import TabServices from './Tabs/Services';
@@ -30,6 +30,22 @@ const styles = theme => ({
 });
 
 class App extends GenericApp {
+    constructor(props) {
+        const extendedProps = {...props};
+        extendedProps.translations = {
+            'en': require('./i18n/en'),
+            'de': require('./i18n/de'),
+            'ru': require('./i18n/ru'),
+            'pt': require('./i18n/pt'),
+            'nl': require('./i18n/nl'),
+            'fr': require('./i18n/fr'),
+            'it': require('./i18n/it'),
+            'es': require('./i18n/es'),
+            'pl': require('./i18n/pl'),
+            'zh-cn': require('./i18n/zh-cn'),
+        };
+        super(extendedProps);
+    }
     getSelectedTab() {
         const tab = this.state.selectedTab;
         if (!tab || tab === 'options') {
@@ -58,6 +74,7 @@ class App extends GenericApp {
             return 3 + offset;
         }
     }
+
     render() {
         if (!this.state.loaded) {
             return (<Loader theme={this.state.themeType}/>);

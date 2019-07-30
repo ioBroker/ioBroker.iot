@@ -38,9 +38,16 @@ function startAdapter(options) {
         objectChange: (id, obj) => {
             if (id === 'system.config' && obj && !translate) {
                 lang = obj.common.language;
-                if (lang !== 'en' && lang !== 'de') lang = 'en';
-                alexaSH2 && alexaSH2.setLanguage(lang, false);
-                alexaSH3 && alexaSH3.setLanguage(lang, false);
+
+                if (lang !== 'en' && lang !== 'de' && lang !== 'ru') {
+                    lang = 'en';
+                }
+
+                alexaSH2 && alexaSH2.setLanguage(lang);
+                alexaSH3 && alexaSH3.setLanguage(lang);
+                yandexAlisa && yandexAlisa.setLanguage(lang);
+                alexaCustom && alexaCustom.setLanguage(lang);
+                googleHome && googleHome.setLanguage(lang);
             }
         },
         stateChange: (id, state) => {
@@ -71,17 +78,17 @@ function startAdapter(options) {
 
                         recalcTimeout = setTimeout(() => {
                             recalcTimeout = null;
-                            adapter.config.amazonAlexa && alexaSH2 && alexaSH2.updateDevices(obj.message, analyseAddedId =>
+                            alexaSH2 && alexaSH2.updateDevices(obj.message, analyseAddedId =>
                                 adapter.setState('smart.updatesResult', analyseAddedId || '', true, () => {
                                     adapter.log.debug('Devices updated!');
                                     adapter.setState('smart.updates', true, true);
                                 }));
 
-                            adapter.config.amazonAlexa  && alexaSH3 && alexaSH3.updateDevices(obj.message, analyseAddedId =>
+                            alexaSH3 && alexaSH3.updateDevices(obj.message, analyseAddedId =>
                                 adapter.setState('smart.updatesResult', analyseAddedId || '', true, () =>
                                     adapter.setState('smart.updates3', true, true)));
                     
-                            adapter.config.googleHome && googleHome && googleHome.updateDevices(analyseAddedId =>
+                            googleHome && googleHome.updateDevices(analyseAddedId =>
                                 adapter.setState('smart.updatesResult', analyseAddedId || '', true, () => {
                                     adapter.log.debug('GH Devices updated!');
                                     adapter.setState('smart.updates', true, true);
@@ -552,21 +559,37 @@ function fetchKeys(login, pass, _forceUserCreation) {
 }
 
 function processMessage(type, request, callback) {
-    try {
-        request = request.toString();
-    } catch (e) {
-        return adapter.log.error('Cannot convert request: ' + request);
-    }
-    adapter.log.debug('Data: ' + request);
+    if (request instanceof Buffer) {
 
-    if (type.startsWith('alexa')) {
-        try {
-            request = JSON.parse(request);
-        } catch (e) {
-            return adapter.log.error('Cannot parse request: ' + request);
+        request = request.toString();
+    }
+
+    adapter.log.debug('Data: ' + JSON.stringify(request));
+
+    if (!request || !type) {
+        return callback && callback({error: 'invalid request'});
+    }
+
+    if (type.startsWith('nightscout')) {
+        adapter.getForeignState('system.adapter.nightscout.0.alive', (err, state) => {
+            if (state && state.val) {
+                adapter.sendTo('nightscout.0', 'send', request, response =>
+                    callback && callback(response));
+            } else {
+                callback && callback({errro: 'nightscout.0 is offline'});
+            }
+        });
+    } else if (type.startsWith('alexa')) {
+        if (typeof request === 'string') {
+            try {
+                request = JSON.parse(request);
+            } catch (e) {
+                adapter.log.error('Cannot parse request: ' + request);
+                return callback && callback({error: 'Cannot parse request'});
+            }
         }
 
-        adapter.log.debug(new Date().getTime() + ' ALEXA: ' + JSON.stringify(request));
+        adapter.log.debug(Date.now() + ' ALEXA: ' + JSON.stringify(request));
 
         if (request && request.directive) {
             alexaSH3 && alexaSH3.process(request, adapter.config.amazonAlexa, response => callback(response));
@@ -577,23 +600,40 @@ function processMessage(type, request, callback) {
             alexaSH2 && alexaSH2.process(request, adapter.config.amazonAlexa, response => callback(response));
         }
     } else if (type.startsWith('ifttt')) {
+        try {
+            if (typeof request === 'object') {
+                request = JSON.stringify(request);
+            } else {
+                request = request.toString();
+            }
+        } catch (e) {
+            adapter.log.error('Cannot parse request: ' + request);
+            return callback && callback({error: 'Cannot parse request'});
+        }
+
         processIfttt(request, response => callback(response));
     } else if (type.startsWith('ghome')) {
-        try {
-            request = JSON.parse(request);
-        } catch (e) {
-            return adapter.log.error('Cannot parse request: ' + request);
+        if (typeof request === 'string') {
+            try {
+                request = JSON.parse(request);
+            } catch (e) {
+                adapter.log.error('Cannot parse request: ' + request);
+                return callback && callback({error: 'Cannot parse request'});
+            }
         }
 
         googleHome && googleHome.process(request, adapter.config.googleHome, response => callback(response));
     } else if (type.startsWith('alisa')) {
-        try {
-            request = JSON.parse(request);
-        } catch (e) {
-            return adapter.log.error('Cannot parse request: ' + request);
+        if (typeof request === 'string') {
+            try {
+                request = JSON.parse(request);
+            } catch (e) {
+                adapter.log.error('Cannot parse request: ' + request);
+                return callback && callback({error: 'Cannot parse request'});
+            }
         }
 
-        adapter.log.debug(new Date().getTime() + ' ALISA: ' + JSON.stringify(request));
+        adapter.log.debug(Date.now() + ' ALISA: ' + JSON.stringify(request));
         yandexAlisa && yandexAlisa.process(request, adapter.config.yandexAlisa, response => callback(response));
     } else {
         let isCustom = false;
@@ -604,6 +644,12 @@ function processMessage(type, request, callback) {
         }
 
         if (adapter.config.allowedServices[0] === '*' || adapter.config.allowedServices.indexOf(_type) !== -1) {
+            if (typeof request === 'object') {
+                request = JSON.stringify(request);
+            } else {
+                request = request.toString();
+            }
+
             if (type.startsWith('text2command')) {
                 if (adapter.config.text2command !== undefined && adapter.config.text2command !== '') {
                     adapter.setForeignState('text2command.' + adapter.config.text2command + '.text', request,
@@ -676,13 +722,13 @@ function startDevice(clientId, login, password, retry) {
             }
         })
         .then(key => {
-            adapter.log.debug(`URL key is ${JSON.stringify(key)}`);
+            adapter.log.debug(`URL key is ${JSON.stringify(key)}, clientId: ${clientId}`);
 
             device = new DeviceModule({
                 privateKey: new Buffer(certs.private),
                 clientCert: new Buffer(certs.certificate),
                 caCert:     fs.readFileSync(__dirname + '/keys/root-CA.crt'),
-                clientId:   clientId,
+                clientId,
                 username:   'ioBroker',
                 host:       adapter.config.cloudUrl,
                 debug:      !!adapter.config.debug,
@@ -755,15 +801,25 @@ function main() {
         }
         adapter.log.debug('Following strings will be replaced in names: ' + text.join(', '));
     }
-    alexaSH2    = new AlexaSH2(adapter);
-    alexaSH3    = new AlexaSH3(adapter);
-    alexaCustom = new AlexaCustom(adapter);
-    yandexAlisa = new YandexAlisa(adapter);
+    if (adapter.config.amazonAlexa) {
+        alexaSH2    = new AlexaSH2(adapter);
+        alexaSH3    = new AlexaSH3(adapter);
+        alexaCustom = new AlexaCustom(adapter);
+    }
+    if (adapter.config.yandexAlisa) {
+        yandexAlisa = new YandexAlisa(adapter);
+    }
 
     readUrlKey()
-        .then(key => googleHome = new GoogleHome(adapter, key))
+        .then(key => {
+            if (adapter.config.googleHome) {
+                googleHome = new GoogleHome(adapter, key)
+            }
+        })
         .catch(err => {
-            adapter.log.error('Cannot read URL key: ' + err);
+            if (adapter.config.googleHome) {
+                adapter.log.error('Cannot read URL key: ' + err);
+            }
         });
 
 
@@ -812,16 +868,28 @@ function main() {
         } else {
             lang = obj.common.language;
         }
-        if (lang !== 'en' && lang !== 'de' && lang !== 'ru') lang = 'en';
-        adapter.config.amazonAlexa && alexaSH2 && alexaSH2.setLanguage(lang, translate);
-        adapter.config.amazonAlexa && alexaSH2 && alexaSH2.updateDevices();
-        adapter.config.amazonAlexa && alexaSH3 && alexaSH3.setLanguage(lang, translate);
-        adapter.config.amazonAlexa && alexaSH3 && alexaSH3.updateDevices();
-        adapter.config.amazonAlexa && alexaCustom && alexaCustom.setLanguage(lang);
+
+        if (lang !== 'en' && lang !== 'de' && lang !== 'ru') {
+            lang = 'en';
+        }
+
+        alexaSH2 && alexaSH2.setLanguage(lang, translate);
+        alexaSH2 && alexaSH2.updateDevices();
+
+        alexaSH3 && alexaSH3.setLanguage(lang, translate);
+        alexaSH3 && alexaSH3.updateDevices();
+
+        googleHome && googleHome.setLanguage(lang, translate);
+        googleHome && googleHome.updateDevices();
+
+        yandexAlisa && yandexAlisa.setLanguage(lang, translate);
+        yandexAlisa && yandexAlisa.updateDevices();
+
+        alexaCustom && alexaCustom.setLanguage(lang, translate);
 
         adapter.getForeignObject('system.meta.uuid', (err, oUuid) => {
             secret = (obj && obj.native && obj.native.secret) || 'Zgfr56gFe87jJOM';
-            //adapter.config.pass = decrypt(secret, adapter.config.pass);
+            adapter.config.pass = decrypt(secret, adapter.config.pass);
             if (oUuid && oUuid.native) {
                 uuid = oUuid.native.uuid;
             }
