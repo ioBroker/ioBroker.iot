@@ -13,7 +13,7 @@ import {MdAdd as IconAdd} from 'react-icons/md';
 import {MdRefresh as IconRefresh} from 'react-icons/md';
 
 
-import I18n from '../i18n';
+import I18n from '@iobroker/adapter-react/i18n';
 import MessageDialog from '@iobroker/adapter-react/Dialogs/Message';
 import DialogSelectID from '@iobroker/adapter-react/Dialogs/SelectID';
 

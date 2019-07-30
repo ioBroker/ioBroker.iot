@@ -873,14 +873,14 @@ function main() {
             lang = 'en';
         }
 
-        alexaSH2 && alexaSH2.setLanguage(lang, translate);
-        alexaSH2 && alexaSH2.updateDevices();
+        adapter.config.amazonAlexa && alexaSH2 && alexaSH2.setLanguage(lang, translate);
+        adapter.config.amazonAlexa && alexaSH2 && alexaSH2.updateDevices();
 
-        alexaSH3 && alexaSH3.setLanguage(lang, translate);
-        alexaSH3 && alexaSH3.updateDevices();
+        adapter.config.amazonAlexa && alexaSH3 && alexaSH3.setLanguage(lang, translate);
+        adapter.config.amazonAlexa && alexaSH3 && alexaSH3.updateDevices();
 
-        googleHome && googleHome.setLanguage(lang, translate);
-        googleHome && googleHome.updateDevices();
+        adapter.config.googleHome && googleHome && googleHome.setLanguage(lang, translate);
+        adapter.config.googleHome && googleHome && googleHome.updateDevices();
 
         yandexAlisa && yandexAlisa.setLanguage(lang, translate);
         yandexAlisa && yandexAlisa.updateDevices();
@@ -889,7 +889,7 @@ function main() {
 
         adapter.getForeignObject('system.meta.uuid', (err, oUuid) => {
             secret = (obj && obj.native && obj.native.secret) || 'Zgfr56gFe87jJOM';
-            adapter.config.pass = decrypt(secret, adapter.config.pass);
+          //  adapter.config.pass = decrypt(secret, adapter.config.pass);
             if (oUuid && oUuid.native) {
                 uuid = oUuid.native.uuid;
             }
