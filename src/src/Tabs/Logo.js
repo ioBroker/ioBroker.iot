@@ -3,7 +3,7 @@ import {withStyles} from '@material-ui/core/styles';
 import Fab from '@material-ui/core/Fab';
 import PropTypes from 'prop-types';
 
-import I18n from '../i18n';
+import I18n from '@iobroker/adapter-react/i18n';
 
 import {MdHelpOutline as IconHelp} from 'react-icons/md';
 import {FaFileDownload as IconDownload} from 'react-icons/fa';
