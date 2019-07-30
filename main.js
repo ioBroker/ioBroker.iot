@@ -559,7 +559,7 @@ function fetchKeys(login, pass, _forceUserCreation) {
 }
 
 function processMessage(type, request, callback) {
-    adapter.log.debug('Data: ' + JSON.stringify(request));
+    adapter.log.debug(type+' Data: ' + JSON.stringify(request));
 
     if (!request || !type) {
         return callback && callback({error: 'invalid request'});
@@ -609,6 +609,9 @@ function processMessage(type, request, callback) {
 
         googleHome && googleHome.process(request, adapter.config.googleHome, response => callback(response));
     } else if (type.startsWith('alisa')) {
+        if (Buffer.isBuffer(request)) {
+            request = request.toString();
+        }
         if (typeof request === 'string') {
             try {
                 request = JSON.parse(request);
