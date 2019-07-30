@@ -78,13 +78,13 @@ class GoogleSmartNames extends Component {
             expanded: [],
             lastChanged: '',
             columns: [
-                { title: 'id', field: 'id' , editable: 'never' ,   cellStyle: {
+                { title: 'Id', field: 'id' , editable: 'never' ,   cellStyle: {
                     maxWidth: "12rem",
                     overflow: "hidden",
                     wordBreak: "break-all"
                   }},
-                { title: 'smartnames', field: 'name.nicknames' },
-                { title: 'type', field: 'type' ,  lookup: { 
+                { title: 'Smartnames', field: 'name.nicknames' },
+                { title: 'Type', field: 'type' ,  lookup: { 
                     "action.devices.types.AC_UNIT": 'Air conditioning unit	', 
                     "action.devices.types.AIRFRESHENER": 'Air Freshener' ,
                     "action.devices.types.AIRPURIFIER": 'Air purifier' ,
@@ -125,7 +125,7 @@ class GoogleSmartNames extends Component {
                     "action.devices.types.WATERHEATER": 'Water heater' ,
                     "action.devices.types.WINDOW": 'Window' 
                 }},
-                { title: 'trait', field: 'displayTraits' ,  lookup: { 
+                { title: 'Funktion/Trait', field: 'displayTraits' ,  lookup: { 
                     // "action.devices.traits.ArmDisarm":'ArmDisarm',
                     "action.devices.traits.Brightness":'Brightness',
                     // "action.devices.traits.CameraStream":'CameraStream',
@@ -142,17 +142,17 @@ class GoogleSmartNames extends Component {
                     // "action.devices.traits.RunCycle":'RunCycle',
                     "action.devices.traits.Scene":'Scene',
                     "action.devices.traits.StartStop":'StartStop',
-                    "action.devices.traits.TemperatureControl_temperatureSetpointCelsius":'TemperatureControl_SetTemp',
-                    "action.devices.traits.TemperatureControl_temperatureAmbientCelsius":'TemperatureControl_StatusTemp',
-                    "action.devices.traits.TemperatureSetting_thermostatMode":'TemperatureSetting_Mode',
-                    "action.devices.traits.TemperatureSetting_thermostatTemperatureSetpoint":'TemperatureSetting_SetTemp',
-                    "action.devices.traits.TemperatureSetting_thermostatTemperatureAmbient":'TemperatureSetting_StatusTemp',
-                    "action.devices.traits.TemperatureSetting_thermostatHumidityAmbient":'TemperatureSetting_StatusHumidity',
+                    "action.devices.traits.TemperatureControl_temperatureSetpointCelsius":'Oven_SetTemp',
+                    "action.devices.traits.TemperatureControl_temperatureAmbientCelsius":'Oven_StatusTemp',
+                    "action.devices.traits.TemperatureSetting_thermostatMode":'Thermostat_Mode',
+                    "action.devices.traits.TemperatureSetting_thermostatTemperatureSetpoint":'Thermostat_SetTemp',
+                    "action.devices.traits.TemperatureSetting_thermostatTemperatureAmbient":'Thermostat_StatusTemp',
+                    "action.devices.traits.TemperatureSetting_thermostatHumidityAmbient":'Thermostat_StatusHumidity',
                     // "action.devices.traits.Timer":'Timer',
                     "action.devices.traits.Toggles":'Toggles',
                     }},
 
-                { title: 'attributes', field: 'displayAttributes' ,   cellStyle: {
+                { title: 'Attributes', field: 'displayAttributes' ,   cellStyle: {
                     maxWidth: "12rem",
                     overflow: "hidden",
                     wordBreak: "break-all"
@@ -163,8 +163,8 @@ class GoogleSmartNames extends Component {
                       onChange={e => props.onChange(e.target.value)}
                     />
                   )},
-                { title: 'room', field: 'roomHint', editable: 'never' },
-                { title: 'smartEnum', field: 'smartEnum', editable: 'never',cellStyle: {
+                { title: 'Room', field: 'roomHint', editable: 'never' },
+                { title: 'SmartEnum', field: 'smartEnum', editable: 'never',cellStyle: {
                     maxWidth: "3rem",
                     overflow: "hidden",
                     wordBreak: "break-all"
