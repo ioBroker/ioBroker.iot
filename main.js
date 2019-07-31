@@ -559,12 +559,27 @@ function fetchKeys(login, pass, _forceUserCreation) {
 }
 
 function processMessage(type, request, callback) {
-    adapter.log.debug(type+' Data: ' + JSON.stringify(request));
+    if (request instanceof Buffer) {
+
+        request = request.toString();
+    }
+
+    adapter.log.debug('Data: ' + JSON.stringify(request));
 
     if (!request || !type) {
         return callback && callback({error: 'invalid request'});
     }
-    if (type.startsWith('alexa')) {
+
+    if (type.startsWith('nightscout')) {
+        adapter.getForeignState('system.adapter.nightscout.0.alive', (err, state) => {
+            if (state && state.val) {
+                adapter.sendTo('nightscout.0', 'send', request, response =>
+                    callback && callback(response));
+            } else {
+                callback && callback({errro: 'nightscout.0 is offline'});
+            }
+        });
+    } else if (type.startsWith('alexa')) {
         if (typeof request === 'string') {
             try {
                 request = JSON.parse(request);
@@ -609,9 +624,6 @@ function processMessage(type, request, callback) {
 
         googleHome && googleHome.process(request, adapter.config.googleHome, response => callback(response));
     } else if (type.startsWith('alisa')) {
-        if (Buffer.isBuffer(request)) {
-            request = request.toString();
-        }
         if (typeof request === 'string') {
             try {
                 request = JSON.parse(request);
@@ -710,13 +722,13 @@ function startDevice(clientId, login, password, retry) {
             }
         })
         .then(key => {
-            adapter.log.debug(`URL key is ${JSON.stringify(key)}`);
+            adapter.log.debug(`URL key is ${JSON.stringify(key)}, clientId: ${clientId}`);
 
             device = new DeviceModule({
                 privateKey: new Buffer(certs.private),
                 clientCert: new Buffer(certs.certificate),
                 caCert:     fs.readFileSync(__dirname + '/keys/root-CA.crt'),
-                clientId:   clientId,
+                clientId,
                 username:   'ioBroker',
                 host:       adapter.config.cloudUrl,
                 debug:      !!adapter.config.debug,
@@ -789,15 +801,25 @@ function main() {
         }
         adapter.log.debug('Following strings will be replaced in names: ' + text.join(', '));
     }
-    alexaSH2    = new AlexaSH2(adapter);
-    alexaSH3    = new AlexaSH3(adapter);
-    alexaCustom = new AlexaCustom(adapter);
-    yandexAlisa = new YandexAlisa(adapter);
+    if (adapter.config.amazonAlexa) {
+        alexaSH2    = new AlexaSH2(adapter);
+        alexaSH3    = new AlexaSH3(adapter);
+        alexaCustom = new AlexaCustom(adapter);
+    }
+    if (adapter.config.yandexAlisa) {
+        yandexAlisa = new YandexAlisa(adapter);
+    }
 
     readUrlKey()
-        .then(key => googleHome = new GoogleHome(adapter, key))
+        .then(key => {
+            if (adapter.config.googleHome) {
+                googleHome = new GoogleHome(adapter, key)
+            }
+        })
         .catch(err => {
-            adapter.log.error('Cannot read URL key: ' + err);
+            if (adapter.config.googleHome) {
+                adapter.log.error('Cannot read URL key: ' + err);
+            }
         });
 
 
