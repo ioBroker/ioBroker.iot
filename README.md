@@ -244,7 +244,7 @@ Following types are supported:
 - `ifttt` - acting like IFTTT (actually not required, but for tests purposes)
 
 ## Changelog
-### 1.0.2 (2019-07-30)
+### 1.0.3 (2019-07-30)
 * (bluefox) Fixed language issues for google home and yandex alice
 
 ### 1.0.1 (2019-07-26)
