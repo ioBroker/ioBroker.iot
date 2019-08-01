@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.0.3",
+        "version": "1.0.4",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.0.4": {
+                "en": "Fixed password encoding. Please enter password anew!",
+                "de": "Feste Passwortverschlüsselung. Bitte Passwort erneut eingeben!",
+                "ru": "Исправлена кодировка пароля. Пожалуйста, введите пароль заново!",
+                "pt": "Codificação de senha fixa. Por favor, insira a senha novamente!",
+                "nl": "Vaste wachtwoordcodering. Voer het wachtwoord opnieuw in!",
+                "fr": "Correction du codage du mot de passe. Veuillez entrer votre mot de passe à nouveau!",
+                "it": "Codifica password fissa. Inserisci di nuovo la password!",
+                "es": "Se arregló la codificación de contraseña. Por favor ingrese la contraseña nuevamente!",
+                "pl": "Naprawiono kodowanie hasła. Wprowadź hasło ponownie!",
+                "zh-cn": "固定密码编码。请重新输入密码！"
+            },
             "1.0.3": {
                 "en": "Fixed language issues for google home and yandex alice",
                 "de": "Sprachprobleme bei Google Home und Yandex Alice behoben",
