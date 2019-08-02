@@ -889,7 +889,7 @@ function main() {
 
         adapter.getForeignObject('system.meta.uuid', (err, oUuid) => {
             secret = (obj && obj.native && obj.native.secret) || 'Zgfr56gFe87jJOM';
-          //  adapter.config.pass = decrypt(secret, adapter.config.pass);
+            adapter.config.pass = decrypt(secret, adapter.config.pass);
             if (oUuid && oUuid.native) {
                 uuid = oUuid.native.uuid;
             }

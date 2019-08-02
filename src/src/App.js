@@ -32,6 +32,7 @@ const styles = theme => ({
 class App extends GenericApp {
     constructor(props) {
         const extendedProps = {...props};
+        extendedProps.encryptedFields = ['pass'];
         extendedProps.translations = {
             'en': require('./i18n/en'),
             'de': require('./i18n/de'),
@@ -46,6 +47,7 @@ class App extends GenericApp {
         };
         super(extendedProps);
     }
+
     getSelectedTab() {
         const tab = this.state.selectedTab;
         if (!tab || tab === 'options') {
@@ -93,6 +95,7 @@ class App extends GenericApp {
                         <Tab label={I18n.t('Services and IFTTT')} data-name="services" />
                     </Tabs>
                 </AppBar>
+
                 <div className={this.isIFrame ? this.props.classes.tabContentIFrame : this.props.classes.tabContent}>
                     {(this.state.selectedTab === 'options' || !this.state.selectedTab) && (<TabOptions
                         key="options"
@@ -103,7 +106,7 @@ class App extends GenericApp {
                         onLoad={native => this.onLoadConfig(native)}
                         instance={this.instance}
                         adapterName={this.adapterName}
-                        onChange={(attr, value) => this.updateNativeValue(attr, value)}
+                        onChange={(attr, value, cb) => this.updateNativeValue(attr, value, cb)}
                     />)}
                     {this.state.selectedTab === 'enums' && (<TabEnums
                         key="enums"

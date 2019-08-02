@@ -173,14 +173,14 @@ class Options extends Component {
 
     renderCheckbox(title, attr, style) {
         return (<FormControlLabel key={attr} style={Object.assign({paddingTop: 5}, style)} className={this.props.classes.controlElement}
-                                  control={
-                                      <Checkbox
-                                          checked={this.props.native[attr]}
-                                          onChange={() => this.props.onChange(attr, !this.props.native[attr])}
-                                          color="primary"
-                                      />
-                                  }
-                                  label={I18n.t(title)}
+              control={
+                  <Checkbox
+                      checked={this.props.native[attr]}
+                      onChange={() => this.props.onChange(attr, !this.props.native[attr])}
+                      color="primary"
+                  />
+              }
+              label={I18n.t(title)}
         />);
     }
 
@@ -198,7 +198,22 @@ class Options extends Component {
                     {this.renderInput('ioBroker.pro Login', 'login')}<br/>
                     {this.renderInput('ioBroker.pro Password', 'pass', 'password')}<br/>
                     {this.renderCheckbox('Amazon Alexa', 'amazonAlexa', {marginTop: 10})}<br/>
-                    {this.renderCheckbox('Google Home', 'googleHome', {marginTop: 10})}<br/>
+                    <FormControlLabel key="googleHome" style={{paddingTop: 5}} className={this.props.classes.controlElement}
+                        control={
+                          <Checkbox
+                              checked={this.props.native.googleHome}
+                              onChange={() => {
+                                  // activate alexa if google home is on (temporary)
+                                  const newVal = !this.props.native.googleHome;
+                                  this.props.onChange('googleHome', newVal, () =>
+                                      newVal && this.props.onChange('amazonAlexa', true));
+                              }}
+                              color="primary"
+                          />
+                        }
+                        label={I18n.t('Google Home')}
+                    />
+                    {/*this.renderCheckbox('Google Home', 'googleHome', {marginTop: 10})*/}<br/>
                     {this.renderCheckbox('Yandex Алиса', 'yandexAlisa', {marginTop: 10})}<br/>
                     <br/>
                     <Button variant="outlined"
