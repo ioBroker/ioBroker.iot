@@ -164,7 +164,7 @@ class GoogleSmartNames extends Component {
                     />
                   )},
                 { title: 'Room', field: 'roomHint', editable: 'never' },
-                { title: 'SmartEnum', field: 'smartEnum', editable: 'never',cellStyle: {
+                { title: 'Automatisch', field: 'smartEnum', editable: 'never',cellStyle: {
                     maxWidth: "3rem",
                     overflow: "hidden",
                     wordBreak: "break-all"
@@ -298,10 +298,6 @@ class GoogleSmartNames extends Component {
         } else {
             return false;
         }
-    }
-
-    onAskDelete(deleteId) {
-        this.setState({deleteId, showConfirmation: true});
     }
 
     onDelete() {
@@ -524,15 +520,7 @@ class GoogleSmartNames extends Component {
                     actionsColumnIndex: -1,
                     paging: false
                   }}
-                  actions={[
-                    {
-                      icon: '+',
-                      tooltip: 'Add SmartDevice',
-                      isFreeAction: true,
-                      onClick: () =>  this.setState({showSelectId: true})
-                    },
-                    
-                  ]}
+               
                 editable={{
                   
                     onRowUpdate: (newData, oldData) => {
@@ -557,12 +545,24 @@ class GoogleSmartNames extends Component {
                         }, 500);
                     })},
                     onRowDelete: (oldData) => {
-
-                    
-                    this.setState({deleteId: oldData.id});
+                    // if smartenum set smartname on false if not delete/reset smartname content
+                    if (oldData.smartEnum=== "X") {
+                        this.setState({deleteId: oldData.id});
+                    } else {
+                        this.props.socket.getObject(oldData.id)
+                        .then(obj => {
+                            obj.common["smartName"] = "";
+                            return this.props.socket.setObject(oldData.id, obj);
+                        })
+                    }
                     return new Promise(resolve => {
                         setTimeout(() => {
-                            this.onDelete();
+                            if (this.state.deleteId) {
+                                this.onDelete();
+                            } else {
+
+                            this.informInstance(oldData.id);
+                            }
                             resolve();
                             const devices = [...this.state.devices];
                             devices.splice(devices.indexOf(oldData), 1);
