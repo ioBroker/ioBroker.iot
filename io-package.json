@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.0.4",
+        "version": "1.0.5",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.0.5": {
+                "en": "Added support for Nightscout",
+                "de": "Unterstützung für Nightscout hinzugefügt",
+                "ru": "Добавлена поддержка Nightscout",
+                "pt": "Adicionado suporte para o Nightscout",
+                "nl": "Ondersteuning toegevoegd voor Nightscout",
+                "fr": "Ajout du support pour Nightscout",
+                "it": "Aggiunto supporto per Nightscout",
+                "es": "Soporte agregado para Nightscout",
+                "pl": "Dodano obsługę Nightscout",
+                "zh-cn": "添加了对Nightscout的支持"
+            },
             "1.0.4": {
                 "en": "Fixed password encoding. Please enter password anew!",
                 "de": "Feste Passwortverschlüsselung. Bitte Passwort erneut eingeben!",
@@ -170,6 +182,7 @@
         "yandexAlisa": false,
         "allowedServices": "",
         "text2command": "0",
+        "nightscout": "0",
         "noCommon": false,
         "debug": false
     },

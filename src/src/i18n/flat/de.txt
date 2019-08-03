@@ -74,7 +74,7 @@ Fordern Sie noch einmal eine E-Mail mit Passwort an
 Neustart bei Verbindungsabbruch
 Rezension
 Räume
-sparen
+Speichern
 Speichern und schließen
 Konfiguration in Datei speichern
 Speichere die Einstellungen um die neuen Namen zu sehen
@@ -97,6 +97,7 @@ Abschalten
 Anschalten
 Typ
 Typen
+Benutze Nightscout Instanz
 Benutze folgenden Link für IFTTT
 Benutze folgende Link für einen eigenen Service
 Benutze text2command Instanz

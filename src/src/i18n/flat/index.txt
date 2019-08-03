@@ -97,6 +97,7 @@ Turn off
 Turn on
 Type
 Types
+Use Nightscout instance
 Use following link for IFTTT
 Use following link for custom service
 Use text2command instance
