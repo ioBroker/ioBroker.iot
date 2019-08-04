@@ -81,13 +81,19 @@ class Services extends Component {
             running: false,
             toast: '',
             text2commandList: [],
+            nightscoutList: [],
             addValue: '',
             isInstanceAlive: false
         };
         this.onKeyChangedBound = this.onKeyChanged.bind(this);
 
         this.props.socket.getAdapterInstances('text2command')
-            .then(list => this.setState({text2commandList: list.map(obj => obj._id.replace('system.adapter.text2command.', ''))}));
+            .then(list =>
+                this.props.socket.getAdapterInstances('nightscout')
+                    .then(nsList => this.setState({
+                        nightscoutList: nsList.map(obj => obj._id.replace('system.adapter.nightscout.', '')),
+                        text2commandList: list.map(obj => obj._id.replace('system.adapter.text2command.', ''))
+                    })));
     }
 
     componentWillMount() {
@@ -260,6 +266,18 @@ class Services extends Component {
                         {this.state.text2commandList.map(item => (<MenuItem key={'key-' + item} value={item}>text2command.{item}</MenuItem>))}
                     </Select>
                     <FormHelperText>{I18n.t('Use text2command instance')}</FormHelperText>
+                </FormControl>
+                <br/>
+                <FormControl className={this.props.classes.input + ' ' + this.props.classes.controlElement} style={{paddingTop: 20}}>
+                    <Select
+                        value={this.props.native.nightscout || '_'}
+                        onChange={e => this.props.onChange('nightscout', e.target.value === '_' ? '' : e.target.value)}
+                        input={<Input name="nightscout" id="nightscout-helper" />}
+                    >
+                        <MenuItem key="key-default" value={'_'}>{I18n.t('disabled')}</MenuItem>
+                        {this.state.nightscoutList.map(item => (<MenuItem key={'key-' + item} value={item}>nightscout.{item}</MenuItem>))}
+                    </Select>
+                    <FormHelperText>{I18n.t('Use Nightscout instance')}</FormHelperText>
                 </FormControl>
                 {this.renderToast()}
             </form>

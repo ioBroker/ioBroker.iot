@@ -97,6 +97,7 @@ Desligar
 Ligar
 Tipo
 Tipos
+Use a instância Nightscout
 Use o seguinte link para IFTTT
 Use o seguinte link para o serviço personalizado
 Use a instância text2command

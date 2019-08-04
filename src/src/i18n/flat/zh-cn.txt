@@ -97,6 +97,7 @@ Ping超时（ms）
 打开
 类型
 类型
+使用Nightscout实例
 使用以下链接进行IFTTT
 使用以下链接进行自定义服务
 使用text2command实例

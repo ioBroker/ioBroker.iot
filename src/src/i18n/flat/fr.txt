@@ -97,6 +97,7 @@ Pour appliquer ce paramètre, l'adaptateur doit être redémarré. Se mettre d'a
 Allumer
 Type
 Les types
+Utilisez l'instance Nightscout
 Utilisez le lien suivant pour IFTTT
 Utilisez le lien suivant pour un service personnalisé
 Utilisez l'instance text2command

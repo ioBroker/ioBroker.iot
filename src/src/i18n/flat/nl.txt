@@ -97,6 +97,7 @@ Uitschakelen
 Aanzetten
 Type
 Soorten
+Gebruik de Nightscout-instantie
 Gebruik de volgende link voor IFTTT
 Gebruik de volgende link voor aangepaste service
 Gebruik de text2command-instantie

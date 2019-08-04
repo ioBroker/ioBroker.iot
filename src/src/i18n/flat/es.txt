@@ -97,6 +97,7 @@ Apagar
 Encender
 Tipo
 Tipos
+Use la instancia del Nightscout
 Utilice el siguiente enlace para IFTTT
 Use el siguiente enlace para servicio personalizado
 Use la instancia del comando text2

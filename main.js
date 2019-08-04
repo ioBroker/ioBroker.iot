@@ -29,6 +29,7 @@ let connected      = false;
 let uuid           = null;
 let secret;
 let adapter;
+let connectStarted;
 
 function startAdapter(options) {
     options = options || {};
@@ -343,6 +344,10 @@ function processIfttt(data, callback) {
 }
 
 function onDisconnect(event) {
+    const now = Date.now();
+    if (now - connectStarted < 500) {
+        adapter.log.warn('Looks like your connection certificates are invalid. Please renew them via configuration dialog.');
+    }
     if (typeof event === 'string') {
         adapter.log.info('Connection changed: ' + event);
     } else {
@@ -571,14 +576,20 @@ function processMessage(type, request, callback) {
     }
 
     if (type.startsWith('nightscout')) {
-        adapter.getForeignState('system.adapter.nightscout.0.alive', (err, state) => {
-            if (state && state.val) {
-                adapter.sendTo('nightscout.0', 'send', request, response =>
-                    callback && callback(response));
-            } else {
-                callback && callback({errro: 'nightscout.0 is offline'});
-            }
-        });
+        if (adapter.config.nightscout) {
+            adapter.getForeignState(`system.adapter.nightscout.${adapter.config.nightscout}.alive`, (err, state) => {
+                if (state && state.val) {
+                    adapter.sendTo('nightscout.' + adapter.config.nightscout, 'send', request, response => {
+                        adapter.log.debug(`Response from nightscout.${adapter.config.nightscout}: ${JSON.stringify(response)}`);
+                        callback && callback(response);
+                    });
+                } else {
+                    callback && callback({error: `nightscout.${adapter.config.nightscout} is offline`});
+                }
+            });
+        } else {
+            callback({error: 'Service is disabled'});
+        }
     } else if (type.startsWith('alexa')) {
         if (typeof request === 'string') {
             try {
@@ -592,12 +603,24 @@ function processMessage(type, request, callback) {
         adapter.log.debug(Date.now() + ' ALEXA: ' + JSON.stringify(request));
 
         if (request && request.directive) {
-            alexaSH3 && alexaSH3.process(request, adapter.config.amazonAlexa, response => callback(response));
+            if (alexaSH3) {
+                alexaSH3.process(request, adapter.config.amazonAlexa, response => callback(response));
+            } else {
+                callback({error: 'Service is disabled'});
+            }
         } else
         if (request && !request.header) {
-            alexaCustom && alexaCustom.process(request, adapter.config.amazonAlexa, response =>callback(response));
+            if (alexaCustom) {
+                alexaCustom.process(request, adapter.config.amazonAlexa, response => callback(response));
+            } else {
+                callback({error: 'Service is disabled'});
+            }
         } else {
-            alexaSH2 && alexaSH2.process(request, adapter.config.amazonAlexa, response => callback(response));
+            if (alexaSH2) {
+                alexaSH2.process(request, adapter.config.amazonAlexa, response => callback(response));
+            } else {
+                callback({error: 'Service is disabled'});
+            }
         }
     } else if (type.startsWith('ifttt')) {
         try {
@@ -622,7 +645,11 @@ function processMessage(type, request, callback) {
             }
         }
 
-        googleHome && googleHome.process(request, adapter.config.googleHome, response => callback(response));
+        if (googleHome) {
+            googleHome.process(request, adapter.config.googleHome, response => callback(response));
+        } else {
+            callback({error: 'Service is disabled'});
+        }
     } else if (type.startsWith('alisa')) {
         if (typeof request === 'string') {
             try {
@@ -634,7 +661,11 @@ function processMessage(type, request, callback) {
         }
 
         adapter.log.debug(Date.now() + ' ALISA: ' + JSON.stringify(request));
-        yandexAlisa && yandexAlisa.process(request, adapter.config.yandexAlisa, response => callback(response));
+        if (yandexAlisa) {
+            yandexAlisa.process(request, adapter.config.yandexAlisa, response => callback(response));
+        } else {
+            callback({error: 'Service is disabled'});
+        }
     } else {
         let isCustom = false;
         let _type = type;
@@ -724,6 +755,7 @@ function startDevice(clientId, login, password, retry) {
         .then(key => {
             adapter.log.debug(`URL key is ${JSON.stringify(key)}, clientId: ${clientId}`);
 
+            connectStarted = Date.now();
             device = new DeviceModule({
                 privateKey: new Buffer(certs.private),
                 clientCert: new Buffer(certs.certificate),
@@ -751,10 +783,11 @@ function startDevice(clientId, login, password, retry) {
                 }
             });
         }).catch(e => {
-            if (e && e.message)
+            if (e && e.message) {
                 adapter.log.error('Cannot read keys: ' + JSON.stringify(e.message) + ' / ' + e.toString());
-            else
+            } else {
                 adapter.log.error('Cannot read keys: ' + JSON.stringify(e) + ' / ' + e.toString());
+            }
 
             if (e === 'timeout' && retry < 10) {
                 setTimeout(() => startDevice(clientId, login, password, retry + 1), 10000);
@@ -793,6 +826,7 @@ function main() {
     adapter.config.apikey         = (adapter.config.apikey || '').trim();
     adapter.config.replaces       = adapter.config.replaces ? adapter.config.replaces.split(',') : null;
     adapter.config.cloudUrl       = (adapter.config.cloudUrl || '').toString();
+    adapter.config.nightscout     = adapter.config.nightscout || '';
 
     if (adapter.config.replaces) {
         let text = [];

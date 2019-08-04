@@ -97,6 +97,7 @@ Wyłączyć
 Włączyć
 Rodzaj
 Rodzaje
+Użyj instancji Nightscout
 Użyj następującego linku dla IFTTT
 Użyj poniższego linku do niestandardowej usługi
 Użyj instancji text2command

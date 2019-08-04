@@ -97,6 +97,7 @@ Spegni
 Accendere
 Genere
 tipi
+Utilizza l'istanza Nightscout
 Usa il seguente link per IFTTT
 Usa il seguente link per il servizio personalizzato
 Utilizza l'istanza text2command
