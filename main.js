@@ -29,6 +29,7 @@ let connected      = false;
 let uuid           = null;
 let secret;
 let adapter;
+let connectStarted;
 
 function startAdapter(options) {
     options = options || {};
@@ -343,6 +344,10 @@ function processIfttt(data, callback) {
 }
 
 function onDisconnect(event) {
+    const now = Date.now();
+    if (now - connectStarted < 500) {
+        adapter.log.warn('Looks like your connection certificates are invalid. Please renew them via configuration dialog.');
+    }
     if (typeof event === 'string') {
         adapter.log.info('Connection changed: ' + event);
     } else {
@@ -750,6 +755,7 @@ function startDevice(clientId, login, password, retry) {
         .then(key => {
             adapter.log.debug(`URL key is ${JSON.stringify(key)}, clientId: ${clientId}`);
 
+            connectStarted = Date.now();
             device = new DeviceModule({
                 privateKey: new Buffer(certs.private),
                 clientCert: new Buffer(certs.certificate),
