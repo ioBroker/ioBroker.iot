@@ -509,7 +509,7 @@ class GoogleSmartNames extends Component {
                 <a target="_blank" rel="noopener noreferrer" href="https://developers.google.com/actions/smarthome/traits/colorsetting" > Infos about Attributes you can find here.</a> Empty attribute is {"{}"}
                 </div>
 
-                <div style={{marginTop:"0.8rem",fontWeight:"bold"}}>To auto detect devices please assign a room and function to the channel or device not only to the state. And enable them under SmartEnum/Intelligente Aufzählung</div>
+                <div style={{marginTop:"0.8rem",fontWeight:"bold"}}>To auto detect devices please assign a room and function to the channel not only to the state or device. And enable them under SmartEnum/Intelligente Aufzählung</div>
                 <div>
                 <MaterialTable
                 style ={{marginTop:"1rem",display: "inline-block"}}
