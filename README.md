@@ -244,7 +244,7 @@ Following types are supported:
 - `ifttt` - acting like IFTTT (actually not required, but for tests purposes)
 
 ## Changelog
-### 1.0.5 (2019-08-04)
+### 1.0.6 (2019-08-04)
 * (bluefox) Added support for Nightscout
 
 ### 1.0.4 (2019-08-01)

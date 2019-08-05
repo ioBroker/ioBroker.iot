@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.0.5",
+        "version": "1.0.6",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,7 +28,7 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
-            "1.0.5": {
+            "1.0.6": {
                 "en": "Added support for Nightscout",
                 "de": "Unterstützung für Nightscout hinzugefügt",
                 "ru": "Добавлена поддержка Nightscout",
