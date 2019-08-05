@@ -465,7 +465,7 @@ class GoogleSmartNames extends Component {
                                         this.timerChanged = null;
                                     }, 30000);
                                 }
-
+                                obj.common.smartName.ghType="action.devices.types.LIGHT"
                                 this.props.socket.setObject(obj._id, obj)
                                     .then(() => {
                                         this.informInstance(obj._id);
@@ -553,7 +553,12 @@ class GoogleSmartNames extends Component {
                     } else {
                         this.props.socket.getObject(oldData.id)
                         .then(obj => {
-                            obj.common["smartName"] = "";
+                            if (obj.common["smartName"]) {
+                                delete obj.common["smartName"]["ghTraits"]
+                                delete obj.common["smartName"]["ghType"]
+                                delete obj.common["smartName"]["ghAttributes"]
+                            }
+                            
                             return this.props.socket.setObject(oldData.id, obj);
                         })
                     }
