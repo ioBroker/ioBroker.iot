@@ -581,6 +581,15 @@ function processMessage(type, request, callback) {
                 if (state && state.val) {
                     adapter.sendTo('nightscout.' + adapter.config.nightscout, 'send', request, response => {
                         adapter.log.debug(`Response from nightscout.${adapter.config.nightscout}: ${JSON.stringify(response)}`);
+                        // try to parse JSON
+                        if (typeof response === 'string' && (response[0] === '{' || response[0] === '[')) {
+                            try {
+                                response = JSON.parse(response);
+                            } catch (e) {
+
+                            }
+                        }
+
                         callback && callback(response);
                     });
                 } else {
