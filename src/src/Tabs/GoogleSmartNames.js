@@ -114,8 +114,10 @@ class GoogleSmartNames extends Component {
                     "action.devices.types.REFRIGERATOR": 'Refrigerator' ,
                     "action.devices.types.SCENE": 'Scene' ,
                     "action.devices.types.SECURITYSYSTEM": 'Security System' ,
+                    "action.devices.types.SENSOR": 'Sensor' ,
                     "action.devices.types.SHUTTER": 'Shutter' ,
                     "action.devices.types.SHOWER": 'Shower' ,
+                    "action.devices.types.SPEAKER": 'Speaker' ,
                     "action.devices.types.SPRINKLER": 'Sprinkler' ,
                     "action.devices.types.SWITCH": 'Switch' ,
                     "action.devices.types.THERMOSTAT": 'Thermostat' ,
@@ -141,6 +143,7 @@ class GoogleSmartNames extends Component {
                     "action.devices.traits.OpenClose":'OpenClose',
                     // "action.devices.traits.RunCycle":'RunCycle',
                     "action.devices.traits.Scene":'Scene',
+                    // "action.devices.traits.Sensor":'Sensor',
                     "action.devices.traits.StartStop":'StartStop',
                     "action.devices.traits.TemperatureControl_temperatureSetpointCelsius":'Oven_SetTemp',
                     "action.devices.traits.TemperatureControl_temperatureAmbientCelsius":'Oven_StatusTemp',
@@ -150,6 +153,7 @@ class GoogleSmartNames extends Component {
                     "action.devices.traits.TemperatureSetting_thermostatHumidityAmbient":'Thermostat_StatusHumidity',
                     // "action.devices.traits.Timer":'Timer',
                     "action.devices.traits.Toggles":'Toggles',
+                    "action.devices.traits.Volume":'Volume',
                     }},
 
                 { title: 'Attributes', field: 'displayAttributes' ,   cellStyle: {
