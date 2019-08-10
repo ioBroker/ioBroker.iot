@@ -804,6 +804,26 @@ function startDevice(clientId, login, password, retry) {
         });
 }
 
+function updateNightscoutSecret() {
+    return new Promise(resolve => {
+        if (!adapter.config.nightscout) {
+            return resolve();
+        }
+        const email = adapter.config.login.replace(/[^\w\d-_]/g, '_');
+        const secret = adapter.config.nightscoutPass;
+        const apiSecret = email + (secret ? '-' + secret : '');
+        const URL = `https://generate-key.iobroker.in/v1/updateApiSecret?user=${encodeURIComponent(adapter.config.login)}&pass=${encodeURIComponent(adapter.config.pass)}$apisecret=${encodeURIComponent(apiSecret)}`;
+        request(URL, (error, response, body) => {
+            if (error) {
+                adapter.log.warn('Cannot update api-secret: ' + error);
+            } else {
+                adapter.log.debug('Api-Secret updated: ' + body);
+            }
+            resolve();
+        });
+    });
+}
+
 function main() {
     if (adapter.config.googleHome === undefined) {
         adapter.config.googleHome = false;
@@ -936,7 +956,9 @@ function main() {
             if (oUuid && oUuid.native) {
                 uuid = oUuid.native.uuid;
             }
-            startDevice(adapter.config.login.replace(/[^-_:a-zA-Z1-9]/g, '_'), adapter.config.login, adapter.config.pass);
+            updateNightscoutSecret()
+                .then(() =>
+                    startDevice(adapter.config.login.replace(/[^-_:a-zA-Z1-9]/g, '_'), adapter.config.login, adapter.config.pass));
         });
     });
 }

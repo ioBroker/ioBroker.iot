@@ -182,7 +182,8 @@
         "yandexAlisa": false,
         "allowedServices": "",
         "text2command": "0",
-        "nightscout": "0",
+        "nightscout": "",
+        "nightscoutPass": "myBlood",
         "noCommon": false,
         "debug": false
     },

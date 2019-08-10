@@ -32,6 +32,10 @@ const styles = theme => ({
     fullSize: {
         width: 'calc(100% - 64px)'
     },
+    normalSize: {
+        width: 'calc(30% - 64px)',
+        marginLeft: 10
+    },
     button: {
         marginRight: 20,
     },
@@ -188,6 +192,12 @@ class Services extends Component {
         }
     }
 
+    calcNightscoutSecret() {
+        const email = this.props.native.login.replace(/[^\w\d-_]/g, '_');
+        const secret = this.props.native.nightscoutPass;
+        return email + (secret ? '-' + secret : '');
+    }
+
     renderChips(label, attr) {
         return (<div className={this.props.classes.chipsDiv}>
             <FormHelperText>{Utils.renderTextWithA(I18n.t(label))}</FormHelperText>
@@ -279,6 +289,24 @@ class Services extends Component {
                     </Select>
                     <FormHelperText>{I18n.t('Use Nightscout instance')}</FormHelperText>
                 </FormControl>
+                {this.props.native.nightscout ? (<TextField
+                    style={{marginTop: 3.5}}
+                    label={I18n.t('Nightscout password')}
+                    onChange={e => this.props.onChange('nightscoutPass', e.target.value.replace(/[^\w\d-_]/g, '_'))}
+                    className={this.props.classes.input + ' ' + this.props.classes.controlElement + ' ' + this.props.classes.normalSize}
+                    value={this.props.native.nightscoutPass}
+                    type="text"
+                    margin="normal"
+                />) : null}
+                {this.props.native.nightscout ? (<TextField
+                    style={{marginTop: 3.5}}
+                    label={I18n.t('Nightscout api-secret')}
+                    className={this.props.classes.input + ' ' + this.props.classes.controlElement + ' ' + this.props.classes.normalSize}
+                    value={this.calcNightscoutSecret()}
+                    type="text"
+                    readOnly={true}
+                    margin="normal"
+                />) : null}
                 {this.renderToast()}
             </form>
         );
