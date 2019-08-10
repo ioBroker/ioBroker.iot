@@ -812,12 +812,20 @@ function updateNightscoutSecret() {
         const email = adapter.config.login.replace(/[^\w\d-_]/g, '_');
         const secret = adapter.config.nightscoutPass;
         const apiSecret = email + (secret ? '-' + secret : '');
-        const URL = `https://generate-key.iobroker.in/v1/updateApiSecret?user=${encodeURIComponent(adapter.config.login)}&pass=${encodeURIComponent(adapter.config.pass)}$apisecret=${encodeURIComponent(apiSecret)}`;
+        const URL = `https://generate-key.iobroker.in/v1/generateUrlKey?user=${encodeURIComponent(adapter.config.login)}&pass=${encodeURIComponent(adapter.config.pass)}&apisecret=${encodeURIComponent(apiSecret)}`;
         request(URL, (error, response, body) => {
             if (error) {
                 adapter.log.warn('Cannot update api-secret: ' + error);
             } else {
-                adapter.log.debug('Api-Secret updated: ' + body);
+                try {
+                    body = JSON.parse(body)
+                } catch (e) {
+                }
+                if (body.error) {
+                    adapter.log.error('Api-Secret cannot be updated: ' + body.error);
+                } else {
+                    adapter.log.debug('Api-Secret updated: ' + body);
+                }
             }
             resolve();
         });
