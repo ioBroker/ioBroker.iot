@@ -377,30 +377,37 @@ class GoogleSmartNames extends Component {
     }
 
     
-    onGHParamsChange(id, type, traits, attributes) {
-        this.addChanged(id, () => {
-            this.props.socket.getObject(id)
+    onGHParamsChange(newData, oldData) {
+        this.addChanged(newData.id, () => {
+            this.props.socket.getObject(newData.id)
                 .then(obj => {
-                    
+                  //  id, newData.type, newData.displayTraits, newData.displayAttributes
                     Utils.updateSmartName(obj, this.editedSmartName, undefined, undefined, this.props.adapterName + '.' + this.props.instance, this.props.native.noCommon);
-                    if (!Array.isArray(traits)) {
-                        traits=[traits]
+                    if (JSON.stringify(newData.traits) !== JSON.stringify(oldData.traits)) {
+                        if (!Array.isArray(newData.displayTraits)) {
+                            newData.displayTraits=[newData.displayTraits]
+                        }
+
+                        obj.common.smartName.ghTraits = newData.displayTraits;
                     }
-                    obj.common.smartName.ghTraits = traits;
-                    obj.common.smartName.ghType = type;
-                    obj.common.smartName.ghAttributes = attributes
-                    try {
-                        if(obj.common.smartName.ghAttributes) {
-                           JSON.parse(obj.common.smartName.ghAttributes)
+                    if (newData.type !== oldData.type) {
+                        obj.common.smartName.ghType = newData.type;
                     }
-                    } catch (error) {
-                        this.setState({message: I18n.t('Attributes has not correct JSON format.')})
+                    if (newData.displayAttributes !== oldData.displayAttributes ) {
+                        obj.common.smartName.ghAttributes = newData.displayAttributes
+                        try {
+                            if(obj.common.smartName.ghAttributes) {
+                            JSON.parse(obj.common.smartName.ghAttributes)
+                        }
+                        } catch (error) {
+                            this.setState({message: I18n.t('Attributes has not correct JSON format.')})
+                        }
                     }
-                    return this.props.socket.setObject(id, obj);
+                    return this.props.socket.setObject(newData.id, obj);
                 })
                 .then(() => {
                     // update obj
-                    this.informInstance(id);
+                    this.informInstance(newData.id);
                 })
                 .catch(err => this.props.onError(err));
         });
@@ -543,7 +550,7 @@ class GoogleSmartNames extends Component {
                                 this.setState({message: I18n.t('Please add action and trait to complete the Google Home state.')});
                             }
                         
-                        this.onGHParamsChange(newData.id, newData.type, newData.displayTraits, newData.displayAttributes);
+                        this.onGHParamsChange(newData, oldData);
                         resolve();
                         const devices = [...this.state.devices];
                         devices[devices.indexOf(oldData)] = newData;
