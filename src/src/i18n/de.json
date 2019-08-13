@@ -144,5 +144,13 @@
   "tooltip_user": "Nutzer",
   "tooltip_value": "Wert",
   "Please add action and trait to complete the Google Home state.":"Bitte füge eine Action und Trait hinzu um den Google Home State zu vervollständigen.",
-  "Attributes has not correct JSON format.":"Attributes ist nicht im korrekten JSON Format"
+  "Attributes has not correct JSON format.":"Attributes ist nicht im korrekten JSON Format",
+  "To auto detect devices please assign a room and function to the channel if no channel available than assign to a device. Not only to the state or device. And enable them under SmartEnum/Intelligente Aufzählung":
+  "Für automatische Erkennung, weiße unter Objekte einem Channel (Device wenn kein Channel vorhanden ist) ein Raum und Funktion zu. Es reicht nicht einem State oder Device zuzuordnen. Räume/Funktionen können unter Aufzählung hinzugefügt werden und müssen im IoT Adapter unter Intelligente Aufzählung aktiviert werden. Um manuelle States wieder automatisch erkennen zu lassen muss der State gelöscht werden.",
+  "Please select a  <a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/guides/'>TYPE</a> and a":
+  "Bitte wähle  <a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/guides/' > TYPE</a> und ein ",
+  "<a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/' > TRAIT</a> after adding a state.   To add multiple traits add a different id and trait but same smartname, type and room. Comma separated for mutiple smartnames.  To assign a room please use the ioBroker Enums/Aufzählungen.  With attributes you can for example set a range for the color temperature ":
+  "<a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/' > TRAIT</a> nachdem du ein ioBroker State hinzugefügt hast.  Für mehrere Traits füge unterschiedliche State IDs hinzu und verwende den gleichen SmartName, Type und Raum. Kommaseperiert kannst du mehrere Smartnamen hinzufügen.  Um ein Raum zuzuordnen verwende die Aufzählungen in ioBroker und weiße ihn über Objekte hinzu. Mit den Attributes kannst du z.B. den Farbtemperaturberich festlegen ",
+  "<a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/colorsetting'> Infos about Attributes you can find here.</a> Empty attribute is {}":
+  "<a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/colorsetting' > Infos über Attribute kannst du hier finden.</a> Ein leeres Attribut ist {}"
 }

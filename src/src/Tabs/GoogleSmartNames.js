@@ -383,7 +383,7 @@ class GoogleSmartNames extends Component {
                 .then(obj => {
                   //  id, newData.type, newData.displayTraits, newData.displayAttributes
                     Utils.updateSmartName(obj, this.editedSmartName, undefined, undefined, this.props.adapterName + '.' + this.props.instance, this.props.native.noCommon);
-                    if (JSON.stringify(newData.traits) !== JSON.stringify(oldData.traits)) {
+                    if (JSON.stringify(newData.displayTraits) !== JSON.stringify(oldData.displayTraits)) {
                         if (!Array.isArray(newData.displayTraits)) {
                             newData.displayTraits=[newData.displayTraits]
                         }
@@ -510,17 +510,18 @@ class GoogleSmartNames extends Component {
             
                 {this.renderMessage()}
                 {this.getSelectIdDialog()}
-                <div style={{marginTop:"4rem"}}>Please select a
-                <a target="_blank" rel="noopener noreferrer" href="https://developers.google.com/actions/smarthome/guides/" > TYPE</a> and a
-                <a target="_blank" rel="noopener noreferrer" href="https://developers.google.com/actions/smarthome/traits/" > TRAIT</a> after adding a state. 
-                To add multiple traits add a different id and trait but same smartname, type and room.</div>
-                <div style={{marginTop:"0.5rem"}}>Comma separated for mutiple smartnames.</div>
-                <div style={{marginTop:"0.5rem"}}>To assign a room please use the ioBroker Enums/Aufzählungen.</div>
-                <div style={{marginTop:"0.5rem"}}>With attributes you can for example set a range for the color temperature 
-                <a target="_blank" rel="noopener noreferrer" href="https://developers.google.com/actions/smarthome/traits/colorsetting" > Infos about Attributes you can find here.</a> Empty attribute is {"{}"}
+                <div style={{marginTop:"4rem",display: "flex"}}>
+                <div style={{ flex: "50%"}}><div style={{fontWeight:"bold"}}> Auto Mode</div>
+                <div style={{marginTop:"0.8rem",marginRight:"0.8rem",}}>{I18n.t('To auto detect devices please assign a room and function to the channel if no channel available than assign to a device. Not only to the state or device. And enable them under SmartEnum/Intelligente Aufzählung')}</div>
+              
                 </div>
-
-                <div style={{marginTop:"0.8rem",fontWeight:"bold"}}>To auto detect devices please assign a room and function to the channel not only to the state or device. And enable them under SmartEnum/Intelligente Aufzählung</div>
+                <div style={{ flex: "50%"}}><div style={{fontWeight:"bold"}}>Manuell Mode</div>
+                <span>{Utils.renderTextWithA(I18n.t("Please select a  <a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/guides/'>TYPE</a> and a"))}</span>
+                <span>{Utils.renderTextWithA(I18n.t("<a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/' > TRAIT</a> after adding a state.   To add multiple traits add a different id and trait but same smartname, type and room. Comma separated for mutiple smartnames.  To assign a room please use the ioBroker Enums/Aufzählungen.  With attributes you can for example set a range for the color temperature "))}</span>
+                <span>  {Utils.renderTextWithA(I18n.t("<a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/colorsetting'> Infos about Attributes you can find here.</a> Empty attribute is {}"))}</span>
+                </div>
+                </div>
+                
                 <div>
                 <MaterialTable
                 style ={{marginTop:"1rem",display: "inline-block"}}
