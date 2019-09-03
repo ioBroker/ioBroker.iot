@@ -92,7 +92,7 @@ function startAdapter(options) {
                             googleHome && googleHome.updateDevices(analyseAddedId =>
                                 adapter.setState('smart.updatesResult', analyseAddedId || '', true, () => {
                                     adapter.log.debug('GH Devices updated!');
-                                    adapter.setState('smart.updates', true, true);
+                                    adapter.setState('smart.updatesGH', true, true);
                                 }));
                         }, 1000);
                         break;
@@ -944,14 +944,14 @@ function main() {
             lang = 'en';
         }
 
-        alexaSH2 && alexaSH2.setLanguage(lang, translate);
-        alexaSH2 && alexaSH2.updateDevices();
+        adapter.config.amazonAlexa && alexaSH2 && alexaSH2.setLanguage(lang, translate);
+        adapter.config.amazonAlexa && alexaSH2 && alexaSH2.updateDevices();
 
-        alexaSH3 && alexaSH3.setLanguage(lang, translate);
-        alexaSH3 && alexaSH3.updateDevices();
+        adapter.config.amazonAlexa && alexaSH3 && alexaSH3.setLanguage(lang, translate);
+        adapter.config.amazonAlexa && alexaSH3 && alexaSH3.updateDevices();
 
-        googleHome && googleHome.setLanguage(lang, translate);
-        googleHome && googleHome.updateDevices();
+        adapter.config.googleHome && googleHome && googleHome.setLanguage(lang, translate);
+        adapter.config.googleHome && googleHome && googleHome.updateDevices();
 
         yandexAlisa && yandexAlisa.setLanguage(lang, translate);
         yandexAlisa && yandexAlisa.updateDevices();

@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.0.7",
+        "version": "1.0.8",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.0.8": {
+                "en": "Improved Google Home support",
+                "de": "Verbesserte Google Home Unterstützung",
+                "ru": "Улучшенная поддержка Google Home",
+                "pt": "Suporte melhorado ao Google Home",
+                "nl": "Verbeterde Google Home ondersteuning",
+                "fr": "Amélioration du support de Google Home",
+                "it": "Supporto di Google Home migliorato",
+                "es": "Soporte mejorado de Google Home",
+                "pl": "Ulepszona obsługa Google Home",
+                "zh-cn": "改进了Google Home支持"
+            },
             "1.0.7": {
                 "en": "Added support for Nightscout",
                 "de": "Unterstützung für Nightscout hinzugefügt",
