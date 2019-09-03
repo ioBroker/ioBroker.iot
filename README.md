@@ -246,7 +246,7 @@ Following types are supported:
 ## Changelog
 ### 1.0.8 (2019-08-22)
 * (TA2k) Improved support for Google Home
-            Added auto detection for RGB, CT, MediaDevice, Switch, Info, Socket, Light, Dimmer, Thermostat, WindowTilt, Blinds
+            Added auto detection for RGB, RGBSingle, Hue CT, MediaDevice, Switch, Info, Socket, Light, Dimmer, Thermostat, WindowTilt, Blinds, Slider
             Added support for manualy adding states as devices
             Fix update state after Sync
             Added typical Google Home devices and traits/actions
