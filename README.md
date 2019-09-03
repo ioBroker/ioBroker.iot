@@ -6,11 +6,13 @@
 
 [![NPM](https://nodei.co/npm/iobroker.iot.png?downloads=true)](https://nodei.co/npm/iobroker.iot/)
 
-This adapter is ONLY for communication with Amazon Alexa.
+This adapter is ONLY for communication with Amazon Alexa and GoogleGome.
 It is not for remote access to your ioBroker instance. Use ioBroker.cloud adapter for that.
 
 ## Settings
 To use cloud adapter you should first to register on the ioBroker cloud [https://iobroker.pro](https://iobroker.pro).
+
+[Refference to google API type settings](https://developers.google.com/actions/smarthome/guides/)
 
 ![Intro](img/intro.png)
 
