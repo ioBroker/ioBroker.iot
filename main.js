@@ -92,7 +92,7 @@ function startAdapter(options) {
                             googleHome && googleHome.updateDevices(analyseAddedId =>
                                 adapter.setState('smart.updatesResult', analyseAddedId || '', true, () => {
                                     adapter.log.debug('GH Devices updated!');
-                                    adapter.setState('smart.updates', true, true);
+                                    adapter.setState('smart.updatesGH', true, true);
                                 }));
                         }, 1000);
                         break;
