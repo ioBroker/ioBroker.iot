@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.1.0",
+        "version": "1.1.1",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.1.1": {
+                "en": "Google Home problem fixed with LinkedDevices",
+                "de": "Google Home-Problem mit LinkedDevices behoben",
+                "ru": "Проблема Google Home устранена с помощью LinkedDevices",
+                "pt": "Problema na Página inicial do Google corrigido com o LinkedDevices",
+                "nl": "Google Home-probleem opgelost met LinkedDevices",
+                "fr": "Problème de Google Home résolu avec LinkedDevices",
+                "it": "Problema di Google Home risolto con LinkedDevices",
+                "es": "Problema de Google Home solucionado con LinkedDevices",
+                "pl": "Problem Google Home naprawiony w LinkedDevices",
+                "zh-cn": "使用LinkedDevices修复Google Home问题"
+            },
             "1.1.0": {
                 "en": "Added support of aliases",
                 "de": "Unterstützung für Aliase hinzugefügt",
