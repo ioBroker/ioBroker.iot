@@ -244,7 +244,7 @@ Following types are supported:
 - `ifttt` - acting like IFTTT (actually not required, but for tests purposes)
 
 ## Changelog
-### 1.1.2 (2019-09-09)
+### 1.1.3 (2019-09-09)
 * (TA2k) Google Home problem fixed with LinkedDevices
 
 ### 1.1.0 (2019-09-06)
