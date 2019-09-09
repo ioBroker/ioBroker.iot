@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.0.8",
+        "version": "1.1.0",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.1.0": {
+                "en": "Added support of aliases",
+                "de": "Unterstützung für Aliase hinzugefügt",
+                "ru": "Добавлена поддержка aliases",
+                "pt": "Adicionado suporte a aliases",
+                "nl": "Ondersteuning van aliassen toegevoegd",
+                "fr": "Ajout du support des alias",
+                "it": "Aggiunto supporto di alias",
+                "es": "Soporte agregado de alias",
+                "pl": "Dodano obsługę aliasów",
+                "zh-cn": "添加了别名支持"
+            },
             "1.0.8": {
                 "en": "Improved Google Home support",
                 "de": "Verbesserte Google Home Unterstützung",

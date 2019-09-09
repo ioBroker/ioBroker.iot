@@ -88,7 +88,7 @@ function startAdapter(options) {
                             alexaSH3 && alexaSH3.updateDevices(obj.message, analyseAddedId =>
                                 adapter.setState('smart.updatesResult', analyseAddedId || '', true, () =>
                                     adapter.setState('smart.updates3', true, true)));
-                    
+
                             googleHome && googleHome.updateDevices(analyseAddedId =>
                                 adapter.setState('smart.updatesResult', analyseAddedId || '', true, () => {
                                     adapter.log.debug('GH Devices updated!');
@@ -565,7 +565,6 @@ function fetchKeys(login, pass, _forceUserCreation) {
 
 function processMessage(type, request, callback) {
     if (request instanceof Buffer) {
-
         request = request.toString();
     }
 
