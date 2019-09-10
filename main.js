@@ -772,7 +772,8 @@ function startDevice(clientId, login, password, retry) {
                 username:   'ioBroker',
                 host:       adapter.config.cloudUrl,
                 debug:      !!adapter.config.debug,
-                baseReconnectTimeMs: 5000
+                baseReconnectTimeMs: 5000,
+                keepalive:  60
             });
 
             device.subscribe('command/' + clientId + '/#');

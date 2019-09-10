@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.1.3",
+        "version": "1.1.4",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.1.4": {
+                "en": "decreased keepalive value to fix issue with disconnect ",
+                "de": "Der Keepalive-Wert wurde verringert, um das Problem mit der Verbindungsunterbrechung zu beheben",
+                "ru": "уменьшено значение keepalive для устранения проблемы с отключением",
+                "pt": "valor keepalive diminuído para corrigir o problema com a desconexão",
+                "nl": "verminderde bewaarwaarde om probleem met loskoppelen op te lossen",
+                "fr": "valeur keepalive réduite pour résoudre le problème de déconnexion",
+                "it": "diminuzione del valore keepalive per risolvere il problema con disconnessione",
+                "es": "Disminución del valor de keepalive para solucionar el problema con la desconexión",
+                "pl": "zmniejszono wartość podtrzymania, aby rozwiązać problem z rozłączeniem",
+                "zh-cn": "降低keepalive值以解决断开连接问题"
+            },
             "1.1.3": {
                 "en": "Google Home problem fixed with LinkedDevices",
                 "de": "Google Home-Problem mit LinkedDevices behoben",
@@ -87,90 +99,6 @@
                 "es": "Se arregló la codificación de contraseña. Por favor ingrese la contraseña nuevamente!",
                 "pl": "Naprawiono kodowanie hasła. Wprowadź hasło ponownie!",
                 "zh-cn": "固定密码编码。请重新输入密码！"
-            },
-            "1.0.3": {
-                "en": "Fixed language issues for google home and yandex alice",
-                "de": "Sprachprobleme bei Google Home und Yandex Alice behoben",
-                "ru": "Исправлены языковые проблемы для Google Home и Яндекс Алисы",
-                "pt": "Corrigidos problemas de idioma para o google home e yandex alice",
-                "nl": "Taalproblemen opgelost voor Google Home en Yandex Alice",
-                "fr": "Correction des problèmes de langue pour google home et alice yandex",
-                "it": "Risolti i problemi di lingua per google home e yandex alice",
-                "es": "Se corrigieron problemas de idioma para google home y yandex alice",
-                "pl": "Naprawiono problemy z językiem dla domu google i yandex alice",
-                "zh-cn": "修复了google home和yandex alice的语言问题"
-            },
-            "1.0.1": {
-                "en": "Support of private skills/actions was added",
-                "de": "Unterstützung von privaten Fähigkeiten / Aktionen wurde hinzugefügt",
-                "ru": "Добавлена поддержка личных навыков / действий",
-                "pt": "Suporte de habilidades / ações privadas foi adicionado",
-                "nl": "Ondersteuning van privévaardigheden / acties is toegevoegd",
-                "fr": "Le support des compétences / actions privées a été ajouté",
-                "it": "È stato aggiunto il supporto di abilità / azioni private",
-                "es": "Se agregó soporte de habilidades / acciones privadas",
-                "pl": "Dodano wsparcie prywatnych umiejętności / działań",
-                "zh-cn": "增加了对私人技能/行动的支持"
-            },
-            "1.0.0": {
-                "en": "Google Home list was added",
-                "de": "Google-Startliste wurde hinzugefügt",
-                "ru": "Список Google Home был добавлен",
-                "pt": "A lista inicial do Google foi adicionada",
-                "nl": "Google Home-lijst is toegevoegd",
-                "fr": "La liste de Google Home a été ajoutée",
-                "it": "L'elenco Home page di Google è stato aggiunto",
-                "es": "Se agregó la lista de Google Home",
-                "pl": "Dodano listę główną Google",
-                "zh-cn": "Google Home列表已添加"
-            },
-            "0.5.0": {
-                "en": "tried to add yandex Alisa ",
-                "de": "versuchte yandex Alisa hinzuzufügen",
-                "ru": "пытался добавить яндекс алиса",
-                "pt": "tentou adicionar yandex Alisa",
-                "nl": "probeerde yandex Alisa toe te voegen",
-                "fr": "essayé d'ajouter yandex Alisa",
-                "it": "ho provato ad aggiungere yandex Alisa",
-                "es": "Intenté agregar yandex a alisa.",
-                "pl": "próbowałem dodać yandex Alisa",
-                "zh-cn": "试图添加yandex Alisa"
-            },
-            "0.4.3": {
-                "en": "Added more data for own scripts for use with \"Alexa Custom Skill\". Please check the README. Allowed the enable and disable of Amazon Alexa and of Google Home from configuration. ",
-                "de": "Weitere Daten für eigene Skripte zur Verwendung mit dem \"Alexa Custom Skill\" hinzugefügt. Mehr Details in der README. Zulassen, dass Amazon Alexa und Google Home aktiviert und deaktiviert werden können.",
-                "ru": "Добавлено больше данных для собственных скриптов для использования с «Alexa Custom Skill». Пожалуйста, проверьте README. Разрешено включение и отключение Amazon Alexa и Google Home из конфигурации.",
-                "pt": "Adicionado mais dados para scripts próprios para uso com \"Alexa Custom Skill\". Por favor, verifique o README. Permitida a ativação e desativação do Amazon Alexa e do Google Home a partir da configuração.",
-                "nl": "Meer gegevens toegevoegd voor eigen scripts voor gebruik met \"Alexa Custom Skill\". Controleer de README. Toegestaan ​​de enable en disable van Amazon Alexa en van Google Home van configuratie.",
-                "fr": "Ajout de plus de données pour ses propres scripts à utiliser avec \"Alexa Custom Skill\". S'il vous plaît vérifier le fichier README. Autorisé l'activation et la désactivation d'Amazon Alexa et de Google Home à partir de la configuration.",
-                "it": "Aggiunti altri dati per i propri script da utilizzare con \"Alexa Custom Skill\". Si prega di controllare il README. Consentita l'abilitazione e disabilitazione di Amazon Alexa e di Google Home dalla configurazione.",
-                "es": "Se agregaron más datos para los scripts propios para usarlos con \"Habilidad personalizada de Alexa\". Por favor revisa el archivo README. Permitió la activación y desactivación de Amazon Alexa y de Google Home desde la configuración.",
-                "pl": "Dodano więcej danych do własnych skryptów do użytku z \"Alexa Custom Skill\". Sprawdź README. Pozwoliła włączyć i wyłączyć Amazon Alexa i Google Home z konfiguracji.",
-                "zh-cn": "为自己的脚本添加了更多数据，以便与“Alexa Custom Skill”一起使用。请查看README. 允许从配置中启用和禁用Amazon Alexa和Google Home。"
-            },
-            "0.3.1": {
-                "en": "Blockly was fixed",
-                "de": "Blockly wurde behoben",
-                "ru": "Blockly был исправлен",
-                "pt": "Blockly foi corrigido",
-                "nl": "Blockly was opgelost",
-                "fr": "Blockly a été corrigé",
-                "it": "Blockly è stato risolto",
-                "es": "Blockly fue arreglado",
-                "pl": "Blockly zostało naprawione",
-                "zh-cn": "Blockly被修复了"
-            },
-            "0.3.0": {
-                "en": "Detection of google devices was fixed",
-                "de": "Die Erkennung von Google-Geräten wurde behoben",
-                "ru": "Исправлено обнаружение устройств Google",
-                "pt": "Detecção de dispositivos do Google foi corrigido",
-                "nl": "Detectie van google-apparaten was opgelost",
-                "fr": "La détection des appareils Google a été corrigée",
-                "it": "Il rilevamento dei dispositivi Google è stato corretto",
-                "es": "Se solucionó la detección de dispositivos google",
-                "pl": "Wykryto urządzenia Google",
-                "zh-cn": "检测的谷歌装置是固定的"
             }
         },
         "authors": [
