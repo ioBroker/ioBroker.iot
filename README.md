@@ -246,11 +246,11 @@ Following types are supported:
 - `ifttt` - acting like IFTTT (actually not required, but for tests purposes)
 
 ## Changelog
-### 1.1.5 (2019-09-11)
-* (TA2k) Room fix for Google Home and LinkedDevices 
+### 1.1.6 (2019-09-11)
+* (TA2k) Room fix for Google Home and LinkedDevices
 
 ### 1.1.4 (2019-09-10)
-* (bluefox) decreased keepalive value to fix issue with disconnect 
+* (bluefox) decreased keepalive value to fix issue with disconnect
 
 ### 1.1.3 (2019-09-09)
 * (TA2k) Google Home problem fixed with LinkedDevices
