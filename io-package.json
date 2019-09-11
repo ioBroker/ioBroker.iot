@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.1.5",
+        "version": "1.1.4",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,18 +28,6 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
-            "1.1.5": {
-                "en": "Room fix for Google Home and LinkedDevices",
-                "de": "Raumkorrektur für Google Home und LinkedDevices",
-                "ru": "Исправление комнаты для Google Home и LinkedDevices",
-                "pt": "Correção de quarto para o Google Home e o LinkedDevices",
-                "nl": "Ruimtefix voor Google Home en LinkedDevices",
-                "fr": "Correction de pièce pour Google Home et LinkedDevices",
-                "it": "Correzione della camera per Google Home e LinkedDevices",
-                "es": "Arreglo de sala para Google Home y LinkedDevices",
-                "pl": "Poprawka pokoju dla Google Home i LinkedDevices",
-                "zh-cn": "Google Home和LinkedDevices的房间修复"
-            },
             "1.1.4": {
                 "en": "decreased keepalive value to fix issue with disconnect ",
                 "de": "Der Keepalive-Wert wurde verringert, um das Problem mit der Verbindungsunterbrechung zu beheben",
