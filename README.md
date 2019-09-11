@@ -6,7 +6,7 @@
 
 [![NPM](https://nodei.co/npm/iobroker.iot.png?downloads=true)](https://nodei.co/npm/iobroker.iot/)
 
-This adapter is ONLY for communication with Amazon Alexa and GoogleGome.
+This adapter is ONLY for communication with Amazon Alexa, GoogleGome and Nightscout.
 It is not for remote access to your ioBroker instance. Use ioBroker.cloud adapter for that.
 
 ## Settings
@@ -246,6 +246,9 @@ Following types are supported:
 - `ifttt` - acting like IFTTT (actually not required, but for tests purposes)
 
 ## Changelog
+### 1.1.5 (2019-09-11)
+* (bluefox) Room fix for Google Home and LinkedDevices 
+
 ### 1.1.4 (2019-09-10)
 * (bluefox) decreased keepalive value to fix issue with disconnect 
 
