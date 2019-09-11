@@ -6,7 +6,7 @@
 
 [![NPM](https://nodei.co/npm/iobroker.iot.png?downloads=true)](https://nodei.co/npm/iobroker.iot/)
 
-This adapter is ONLY for communication with Amazon Alexa, GoogleHome and Nightscout.
+This adapter is ONLY for communication with Amazon Alexa, Google Home and Nightscout.
 It is not for remote access to your ioBroker instance. Use ioBroker.cloud adapter for that.
 
 ## Settings
