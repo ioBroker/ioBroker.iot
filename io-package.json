@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.1.6",
+        "version": "1.1.7",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.1.7": {
+                "en": "The sending rate to google home is limited now",
+                "de": "Die Versandrate für Google Home ist jetzt begrenzt",
+                "ru": "Скорость отправки в Google Home теперь ограничена",
+                "pt": "A taxa de envio para o google home é limitada agora",
+                "nl": "De verzendingssnelheid naar Google Home is nu beperkt",
+                "fr": "Le tarif d'envoi à google home est limité maintenant",
+                "it": "La velocità di invio a google home è ora limitata",
+                "es": "La tasa de envío a Google Home es limitada ahora",
+                "pl": "Szybkość wysyłania do Google Home jest teraz ograniczona",
+                "zh-cn": "谷歌回家的发送速度现在有限"
+            },
             "1.1.6": {
                 "en": "Room fix for Google Home and LinkedDevices",
                 "de": "Raumkorrektur für Google Home und LinkedDevices",
