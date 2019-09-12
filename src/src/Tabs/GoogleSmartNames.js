@@ -520,7 +520,11 @@ class GoogleSmartNames extends Component {
                 <span>{Utils.renderTextWithA(I18n.t("<a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/' > TRAIT</a> after adding a state.   To add multiple traits add a different id and trait but same smartname, type and room. Comma separated for mutiple smartnames.  To assign a room please use the ioBroker Enums/Aufzählungen.  With attributes you can for example set a range for the color temperature "))}</span>
                 <span>  {Utils.renderTextWithA(I18n.t("<a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/colorsetting'> Infos about Attributes you can find here.</a> Empty attribute is {}"))}</span>
                 </div>
+
                 </div>
+                <br></br>
+                <div style={{ flex: "100%"}}><div style={{fontWeight:"bold"}}>{Utils.renderTextWithA(I18n.t("For help use this forum <a target='_blank' rel='noopener noreferrer' href='https://forum.iobroker.net/topic/24061/google-home-assistant-iobroker-einrichten-nutzen/'>thread</a>"))}</div></div>
+             
                 
                 <div>
                 <MaterialTable
