@@ -246,6 +246,9 @@ Following types are supported:
 - `ifttt` - acting like IFTTT (actually not required, but for tests purposes)
 
 ## Changelog
+### 1.1.8 (2019-09-12)
+* (bluefox) Optimization of googe home communication was done
+
 ### 1.1.7 (2019-09-11)
 * (bluefox) The sending rate to google home is limited now
 

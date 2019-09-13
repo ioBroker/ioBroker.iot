@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.1.7",
+        "version": "1.1.8",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.1.8": {
+              "en": "Optimization of google home communication was done ",
+              "de": "Die Google Home-Kommunikation wurde optimiert",
+              "ru": "Оптимизация Google Home Communication была проведена",
+              "pt": "A otimização da comunicação doméstica do Google foi realizada",
+              "nl": "Optimalisatie van Google Home-communicatie is voltooid",
+              "fr": "L'optimisation de la communication google home a été effectuée",
+              "it": "L'ottimizzazione della comunicazione domestica di Google è stata eseguita",
+              "es": "Se realizó la optimización de la comunicación doméstica de google",
+              "pl": "Optymalizacja domowej komunikacji Google została wykonana",
+              "zh-cn": "谷歌家庭通信的优化已经完成"
+            },
             "1.1.7": {
                 "en": "The sending rate to google home is limited now",
                 "de": "Die Versandrate für Google Home ist jetzt begrenzt",
@@ -75,42 +87,6 @@
                 "es": "Problema de Google Home solucionado con LinkedDevices",
                 "pl": "Problem Google Home naprawiony w LinkedDevices",
                 "zh-cn": "使用LinkedDevices修复Google Home问题"
-            },
-            "1.1.0": {
-                "en": "Added support of aliases",
-                "de": "Unterstützung für Aliase hinzugefügt",
-                "ru": "Добавлена поддержка aliases",
-                "pt": "Adicionado suporte a aliases",
-                "nl": "Ondersteuning van aliassen toegevoegd",
-                "fr": "Ajout du support des alias",
-                "it": "Aggiunto supporto di alias",
-                "es": "Soporte agregado de alias",
-                "pl": "Dodano obsługę aliasów",
-                "zh-cn": "添加了别名支持"
-            },
-            "1.0.8": {
-                "en": "Improved Google Home support",
-                "de": "Verbesserte Google Home Unterstützung",
-                "ru": "Улучшенная поддержка Google Home",
-                "pt": "Suporte melhorado ao Google Home",
-                "nl": "Verbeterde Google Home ondersteuning",
-                "fr": "Amélioration du support de Google Home",
-                "it": "Supporto di Google Home migliorato",
-                "es": "Soporte mejorado de Google Home",
-                "pl": "Ulepszona obsługa Google Home",
-                "zh-cn": "改进了Google Home支持"
-            },
-            "1.0.7": {
-                "en": "Added support for Nightscout",
-                "de": "Unterstützung für Nightscout hinzugefügt",
-                "ru": "Добавлена поддержка Nightscout",
-                "pt": "Adicionado suporte para o Nightscout",
-                "nl": "Ondersteuning toegevoegd voor Nightscout",
-                "fr": "Ajout du support pour Nightscout",
-                "it": "Aggiunto supporto per Nightscout",
-                "es": "Soporte agregado para Nightscout",
-                "pl": "Dodano obsługę Nightscout",
-                "zh-cn": "添加了对Nightscout的支持"
             },
             "1.0.4": {
                 "en": "Fixed password encoding. Please enter password anew!",
