@@ -248,12 +248,12 @@ class GoogleSmartNames extends Component {
     }
 
     componentWillMount() {
-        this.props.socket.subscribeState(`${this.props.adapterName}.${this.props.instance}.smart.updates`, this.onReadyUpdateBound);
+        this.props.socket.subscribeState(`${this.props.adapterName}.${this.props.instance}.smart.updatesGH`, this.onReadyUpdateBound);
         this.props.socket.subscribeState(`${this.props.adapterName}.${this.props.instance}.smart.updatesResult`, this.onResultUpdateBound);
     }
 
     componentWillUnmount() {
-        this.props.socket.unsubscribeState(`${this.props.adapterName}.${this.props.instance}.smart.updates`, this.onReadyUpdateBound);
+        this.props.socket.unsubscribeState(`${this.props.adapterName}.${this.props.instance}.smart.updatesGH`, this.onReadyUpdateBound);
         this.props.socket.unsubscribeState(`${this.props.adapterName}.${this.props.instance}.smart.updatesResult`, this.onResultUpdateBound);
         if (this.timerChanged) {
             clearTimeout(this.timerChanged);
