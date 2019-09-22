@@ -1,30 +1,42 @@
 {
-  "name": "iobroker.iot",
-  "version": "1.1.8",
-  "description": "This adapter allows to communicate Amazon Alexa and Google Home with ioBroker.",
+  "_from": "https://github.com/TA2k/ioBroker.iot/tarball/master",
+  "_id": "iobroker.iot@1.1.8",
+  "_inBundle": false,
+  "_integrity": "sha512-1hdbA4W2WeowD+D23srPf6qLac6IhhxwJ1TjEm1RQI4Aq5A4AF3tP79p+wymcqDXRFIIB7ZIFHcXSPuHsS5ZPg==",
+  "_location": "/iobroker.iot",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "remote",
+    "raw": "https://github.com/TA2k/ioBroker.iot/tarball/master",
+    "rawSpec": "https://github.com/TA2k/ioBroker.iot/tarball/master",
+    "saveSpec": "https://github.com/TA2k/ioBroker.iot/tarball/master",
+    "fetchSpec": "https://github.com/TA2k/ioBroker.iot/tarball/master"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://github.com/TA2k/ioBroker.iot/tarball/master",
+  "_shasum": "a1ce6e3c5700d1ae2bd39dacf35cb48b1a160fcf",
+  "_spec": "https://github.com/TA2k/ioBroker.iot/tarball/master",
+  "_where": "/usr/local",
   "author": {
     "name": "bluefox",
     "email": "dogafox@gmail.com"
   },
-  "homepage": "https://github.com/ioBroker/ioBroker.iot",
-  "keywords": [
-    "ioBroker",
-    "mqtt",
-    "aws",
-    "cloud",
-    "web"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ioBroker/ioBroker.iot"
+  "bugs": {
+    "url": "https://github.com/ioBroker/ioBroker.iot/issues"
   },
+  "bundleDependencies": false,
   "dependencies": {
+    "@iobroker/adapter-core": "^1.0.3",
     "aws-iot-device-sdk": "^2.2.1",
     "iobroker.type-detector": "^0.1.5",
     "request": "^2.88.0",
-    "@iobroker/adapter-core": "^1.0.3",
     "uuid": "^3.3.3"
   },
+  "deprecated": false,
+  "description": "This adapter allows to communicate Amazon Alexa and Google Home with ioBroker.",
   "devDependencies": {
     "@types/iobroker": "^1.4.11",
     "@types/node": "^11.11.0",
@@ -34,15 +46,25 @@
     "gulp": "^4.0.2",
     "mocha": "^6.2.0"
   },
-  "bugs": {
-    "url": "https://github.com/ioBroker/ioBroker.iot/issues"
-  },
-  "main": "main.js",
-  "scripts": {
-    "test": "node node_modules/mocha/bin/mocha --exit",
-    "prepublishOnly": "node node_modules/gulp/bin/gulp.js",
-    "build": "node node_modules/gulp/bin/gulp.js"
-  },
+  "homepage": "https://github.com/ioBroker/ioBroker.iot",
+  "keywords": [
+    "ioBroker",
+    "mqtt",
+    "aws",
+    "cloud",
+    "web"
+  ],
   "license": "MIT",
-  "readmeFilename": "README.md"
+  "main": "main.js",
+  "name": "iobroker.iot",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ioBroker/ioBroker.iot.git"
+  },
+  "scripts": {
+    "build": "node node_modules/gulp/bin/gulp.js",
+    "prepublishOnly": "node node_modules/gulp/bin/gulp.js",
+    "test": "node node_modules/mocha/bin/mocha --exit"
+  },
+  "version": "1.1.9"
 }

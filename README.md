@@ -246,6 +246,11 @@ Following types are supported:
 - `ifttt` - acting like IFTTT (actually not required, but for tests purposes)
 
 ## Changelog
+### 1.1.9 (2019-09-22)
+* (TA2k) Added Conversion feature to Google Home
+* (TA2k) Added Channel Tree in Google Home Table
+* (TA2k) Added Autoimport of Alexa devices to Google Home
+
 ### 1.1.8 (2019-09-12)
 * (bluefox) Optimization of googe home communication was done
 

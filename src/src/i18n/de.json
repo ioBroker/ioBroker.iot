@@ -143,7 +143,7 @@
   "tooltip_ts": "Zeitstempel",
   "tooltip_user": "Nutzer",
   "tooltip_value": "Wert",
-  "Please add action and trait to complete the Google Home state.":"Bitte füge eine Action und Trait hinzu um den Google Home State zu vervollständigen.",
+  "Please add type and trait to complete the Google Home state.":"Bitte füge eine Type und Trait hinzu um den Google Home State zu vervollständigen.",
   "Attributes has not correct JSON format.":"Attributes ist nicht im korrekten JSON Format",
   "To auto detect devices please assign a room and function to the channel if no channel available than assign to a device. Not only to the state or device. And enable them under SmartEnum/Intelligente Aufzählung":
   "Für automatische Erkennung, unter Objekte ordne einem Channel (Device wenn kein Channel vorhanden ist) ein Raum und Funktion zu. Es reicht nicht einem State oder Device den Raum zuzuordnen. Räume/Funktionen können unter Aufzählung (Anzeigen über den weißen Pfeil oben rechts) hinzugefügt werden und müssen im IoT Adapter unter Intelligente Aufzählung aktiviert werden. Um manuelle States wieder automatisch erkennen zu lassen muss der State gelöscht werden.",

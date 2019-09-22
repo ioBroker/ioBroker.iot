@@ -60,7 +60,7 @@ const styles = () => ({})
 class GoogleSmartNames extends Component {
     constructor(props) {
         super(props);
-
+        this.myTableRef =  React.createRef();
         this.state = {
             editedSmartName: '',
             editId: '',
@@ -84,6 +84,11 @@ class GoogleSmartNames extends Component {
                     wordBreak: "break-all"
                   }},
                 { title: 'Smartnames', field: 'name.nicknames' },
+                { title: 'ioBType', field: 'ioType',editable: 'never', cellStyle: {
+                    maxWidth: "4rem",
+                    overflow: "hidden",
+                    wordBreak: "break-all"
+                  }},
                 { title: 'Type', field: 'type' ,  lookup: { 
                     "action.devices.types.AC_UNIT": 'Air conditioning unit	', 
                     "action.devices.types.AIRFRESHENER": 'Air Freshener' ,
@@ -173,6 +178,30 @@ class GoogleSmartNames extends Component {
                     overflow: "hidden",
                     wordBreak: "break-all"
                   } },
+                  { title: 'Conversation to GH', field: 'conv2GH' ,  cellStyle: {
+                    maxWidth: "4rem",
+                    overflow: "hidden",
+                    wordBreak: "break-all"
+                  },  
+                  editComponent: props => (
+                    <div>Conversation to Google Home = function(value)&#123; <br></br>
+                     <textarea cols="40" rows="20"
+                        value={props.value}
+                        onChange={e => props.onChange(e.target.value)}
+                      />     &#125;</div>
+                )}, { title: 'Conversation to ioB', field: 'conv2iob' , cellStyle: {
+                    maxWidth: "4rem",
+                    overflow: "hidden",
+                    wordBreak: "break-all"
+                    },  
+                    editComponent: props => (
+                        <div>Conversation to ioBroker = function(value)&#123; <br></br>
+                        <textarea cols="40" rows="20"
+                        value={props.value}
+                        onChange={e => props.onChange(e.target.value)}
+                        />     &#125;</div>
+                    )},  
+                  
               ]
         };
 
@@ -195,7 +224,6 @@ class GoogleSmartNames extends Component {
             });
         });
     }
-
     browse(isIndicate) {
         if (Date.now() - this.lastBrowse < 500) return;
         this.lastBrowse = Date.now();
@@ -403,6 +431,12 @@ class GoogleSmartNames extends Component {
                             this.setState({message: I18n.t('Attributes has not correct JSON format.')})
                         }
                     }
+                    if (newData.conv2GH) {
+                        obj.common.smartName.ghConv2GH = newData.conv2GH;
+                    }
+                    if (newData.conv2iob) {
+                        obj.common.smartName.ghConv2iob = newData.conv2iob;
+                    }
                     return this.props.socket.setObject(newData.id, obj);
                 })
                 .then(() => {
@@ -476,11 +510,21 @@ class GoogleSmartNames extends Component {
                                         this.timerChanged = null;
                                     }, 30000);
                                 }
-                                obj.common.smartName.ghType="action.devices.types.LIGHT"
+                                
+                                if (!obj.common.smartName) {
+
+                                    obj.common.smartName = {ghType:"action.devices.types.LIGHT"}
+                                    obj.common.smartName = {ghTraits:["action.devices.traits.OnOff"]}
+                                } else {
+
+                                    obj.common.smartName.ghType="action.devices.types.LIGHT"
+                                    obj.common.smartName.ghTraits=["action.devices.traits.OnOff"];
+                                }
+                                
                                 this.props.socket.setObject(obj._id, obj)
                                     .then(() => {
                                         this.informInstance(obj._id);
-                                        this.setState({message: I18n.t('Please add action and trait to complete the Google Home state.')});})
+                                        this.setState({message: I18n.t('Please add type and trait to complete the Google Home state.')});})
                                     .catch(err => this.setState({message: err}));
                             } else {
                                 this.setState({message: I18n.t('Invalid ID')});
@@ -530,19 +574,35 @@ class GoogleSmartNames extends Component {
                 <MaterialTable
                 style ={{marginTop:"1rem",display: "inline-block"}}
                 title=""
+                tableRef={this.myTableRef}
+                onRowClick={(e, rowData) => {
+                    this.myTableRef.current.onTreeExpandChanged(rowData.tableData.path, rowData)
+                }
+            }
+           
                 columns={this.state.columns}
+                parentChildData={(row, rows) => {
+                    const result = rows.find(function(element) {
+                        if (element.id && row.parentId && element.id === row.parentId) {
+                            console.log(row.parentId)
+                            return true;
+                        };
+                      })
+                      console.log(result)
+                      return result
+                }} 
                 data={this.state.devices}
                 icons={tableIcons}
                 isLoading={this.state.browse }
                 options={{
                     actionsColumnIndex: -1,
-                    paging: false
+                    paging: false,
                   }}
                
                 editable={{
-                  
+                    
                     onRowUpdate: (newData, oldData) => {
-                        if (Array.isArray(newData.name.nicknames)) {
+                        if (newData.name.nicknames && Array.isArray(newData.name.nicknames)) {
                             newData.name.nicknames = newData.name.nicknames.join(",");
                         }
                         this.editedSmartName = newData.name.nicknames
