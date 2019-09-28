@@ -178,7 +178,7 @@ class GoogleSmartNames extends Component {
                     overflow: "hidden",
                     wordBreak: "break-all"
                   } },
-                  { title: 'Conversation to GH', field: 'conv2GH' ,  cellStyle: {
+                  { title: 'Conversation to GH', field: 'displayConv2GH' ,  cellStyle: {
                     maxWidth: "4rem",
                     overflow: "hidden",
                     wordBreak: "break-all"
@@ -189,7 +189,7 @@ class GoogleSmartNames extends Component {
                         value={props.value}
                         onChange={e => props.onChange(e.target.value)}
                       />     &#125;</div>
-                )}, { title: 'Conversation to ioB', field: 'conv2iob' , cellStyle: {
+                )}, { title: 'Conversation to ioB', field: 'displayConv2iob' , cellStyle: {
                     maxWidth: "4rem",
                     overflow: "hidden",
                     wordBreak: "break-all"
@@ -432,10 +432,10 @@ class GoogleSmartNames extends Component {
                         }
                     }
                     if (newData.conv2GH) {
-                        obj.common.smartName.ghConv2GH = newData.conv2GH;
+                        obj.common.smartName.ghConv2GH = newData.displayConv2GH;
                     }
                     if (newData.conv2iob) {
-                        obj.common.smartName.ghConv2iob = newData.conv2iob;
+                        obj.common.smartName.ghConv2iob = newData.displayConv2iob;
                     }
                     return this.props.socket.setObject(newData.id, obj);
                 })
