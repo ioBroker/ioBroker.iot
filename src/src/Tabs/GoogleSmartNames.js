@@ -596,7 +596,18 @@ class GoogleSmartNames extends Component {
                 isLoading={this.state.browse }
                 options={{
                     actionsColumnIndex: -1,
-                    paging: false,
+                    paging: false, 
+                    rowStyle: (rowData) => {
+                        let background = '#FFF'
+                        if (rowData.ioType === "channel" || rowData.ioType === "device") {
+                            background = '#eafff2'
+                        }
+                        if  (this.state.selectedRow && this.state.selectedRow.tableData.id === rowData.tableData.id) {
+                            background =  '#EEE'
+                        }
+
+                        return {backgroundColor:  background}
+                      }
                   }}
                
                 editable={{
