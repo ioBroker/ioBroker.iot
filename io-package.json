@@ -29,16 +29,16 @@
         },
         "news": {
             "1.1.9": {
-                "en": "Added Conversion feature to Google Home\nAdded Channel Tree in Google Home Table\nAdded Autoimport of Alexa devices to Google Home",
-                "de": "Conversion-Funktion zu Google Home hinzugefügt\nChannel Tree in Google Home Table hinzugefügt\nAutoimport von Alexa-Geräten zu Google Home hinzugefügt",
-                "ru": "Добавлена функция конвертации в Google Home\nДобавлено дерево каналов в главную таблицу Google\nДобавлен автоимпорт устройств Alexa в Google Home",
-                "pt": "Adicionado recurso de conversão à Página inicial do Google\nÁrvore de canais adicionada na tabela inicial do Google\nImportação automática de dispositivos Alexa adicionada à Página inicial do Google",
-                "nl": "Conversiefunctie toegevoegd aan Google Home\nKanaalboom toegevoegd aan Google Home-tabel\nAutoimport van Alexa-apparaten toegevoegd aan Google Home",
-                "fr": "Fonctionnalité de conversion ajoutée à Google Home\nAjout de l'arbre des chaînes dans la table de Google\nAjout automatique des appareils Alexa à Google Home",
-                "it": "Aggiunta funzione di conversione a Google Home\nAggiunta della struttura dei canali nella tabella Home di Google\nAggiunta dell'importazione automatica dei dispositivi Alexa a Google Home",
-                "es": "Se agregó la función de conversión a Google Home\nÁrbol de canales agregado en la tabla de inicio de Google\nSe agregó la importación automática de dispositivos Alexa a Google Home",
-                "pl": "Dodano funkcję konwersji do Google Home\nDodano Drzewo kanałów w Google Home Table\nDodano automatyczne importowanie urządzeń Alexa do Google Home",
-                "zh-cn": "向Google Home添加了转换功能\n在Google Home Table中添加了频道树\n将自动导入Alexa设备到Google Home"
+                "en": "Fixed: sometimes the configuration could not be loaded",
+                "de": "Behoben: Manchmal konnte die Konfiguration nicht geladen werden",
+                "ru": "Исправлено: иногда конфигурация не могла быть загружена",
+                "pt": "Corrigido: às vezes a configuração não pôde ser carregada",
+                "nl": "Opgelost: soms kon de configuratie niet worden geladen",
+                "fr": "Corrigé: parfois la configuration ne pouvait pas être chargée",
+                "it": "Risolto: a volte la configurazione non poteva essere caricata",
+                "es": "Solucionado: a veces la configuración no se podía cargar",
+                "pl": "Naprawiono: czasami konfiguracja nie mogła zostać załadowana",
+                "zh-cn": "修复：有时无法加载配置"
             },
             "1.1.8": {
               "en": "Optimization of google home communication was done ",
