@@ -246,6 +246,9 @@ Following types are supported:
 - `ifttt` - acting like IFTTT (actually not required, but for tests purposes)
 
 ## Changelog
+### 1.1.10 (2020-01-01)
+* (TA2k) Google Home handling and visualization improved.
+
 ### 1.1.9 (2019-11-27)
 * (bluefox) Fixed: sometimes the configuration could not be loaded
 

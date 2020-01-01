@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.1.9",
+        "version": "1.1.10",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.1.10": {
+                "en": "Google Home handling and visualization improved.",
+                "de": "Die Handhabung und Visualisierung von Google Home wurde verbessert.",
+                "ru": "Улучшена обработка и визуализация в Google Home.",
+                "pt": "Manipulação e visualização da Página inicial do Google melhoradas.",
+                "nl": "Google Home handling en visualisatie verbeterd.",
+                "fr": "Amélioration de la gestion et de la visualisation de Google Home.",
+                "it": "Gestione e visualizzazione di Google Home migliorate.",
+                "es": "Se mejoró el manejo y la visualización de Google Home.",
+                "pl": "Ulepszona obsługa i wizualizacja Google Home.",
+                "zh-cn": "Google Home的处理和可视化得到了改善。"
+            },
             "1.1.9": {
                 "en": "Fixed: sometimes the configuration could not be loaded",
                 "de": "Behoben: Manchmal konnte die Konfiguration nicht geladen werden",

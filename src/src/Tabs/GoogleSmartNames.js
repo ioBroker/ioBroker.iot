@@ -599,12 +599,21 @@ class GoogleSmartNames extends Component {
                     paging: false, 
                     rowStyle: (rowData) => {
                         let background = '#FFF'
+                        if (rowData.smartEnum) {
+                            background = '#F7FFEA'
+                        }
                         if (rowData.ioType === "channel" || rowData.ioType === "device") {
-                            background = '#eafff2'
+                            if (rowData.smartEnum) {
+                                background = '#eafff2'
+                            } else {
+                                background = '#E2FFFF'
+                            }
+                            
                         }
                         if  (this.state.selectedRow && this.state.selectedRow.tableData.id === rowData.tableData.id) {
                             background =  '#EEE'
                         }
+
 
                         return {backgroundColor:  background}
                       }
