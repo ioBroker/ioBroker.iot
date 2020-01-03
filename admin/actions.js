@@ -5,7 +5,8 @@ function getActions(obj) {
     if (obj.common.write === false) {
         if (obj.common.unit === 'C' || obj.common.unit === 'C°' || obj.common.unit === '°C' ||
             obj.common.unit === 'F' || obj.common.unit === 'F°' || obj.common.unit === '°F' ||
-            obj.common.unit === 'K' || obj.common.unit === 'K°' || obj.common.unit === '°K') {
+            obj.common.unit === 'K' || obj.common.unit === 'K°' || obj.common.unit === '°K' ||
+            obj.common.role === 'value.temperature') {
             actions = ['getTemperatureReading'];
             type = '';
         } else {
@@ -14,9 +15,10 @@ function getActions(obj) {
     } else {
         if (type === 'number') {
             if ((obj.common.unit === 'C' || obj.common.unit === 'C°' || obj.common.unit === '°C' ||
-                obj.common.unit === 'F' || obj.common.unit === 'F°' || obj.common.unit === '°F' ||
-                obj.common.unit === 'K' || obj.common.unit === 'K°' || obj.common.unit === '°K')
-                && obj.common.role !== "level.color.temperature") {
+                 obj.common.unit === 'F' || obj.common.unit === 'F°' || obj.common.unit === '°F' ||
+                 obj.common.unit === 'K' || obj.common.unit === 'K°' || obj.common.unit === '°K')
+                &&
+                 obj.common.role !== 'level.color.temperature') {
                 actions = ['setTargetTemperature', 'incrementTargetTemperature', 'decrementTargetTemperature', 'getTargetTemperature'];
                 type = '';
             } else if (obj.common.role === 'level.color.hue') {

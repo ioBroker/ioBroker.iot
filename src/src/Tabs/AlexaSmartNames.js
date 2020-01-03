@@ -290,9 +290,9 @@ class AlexaSmartNames extends Component {
     }
 
     onReadyUpdate(id, state) {
-        console.log('Update ' + id + ' ' + state.val + '/' + state.ack);
+        console.log('Update ' + id + ' ' + (state ? state.val + '/' + state.ack : 'null'));
         if (state && state.ack === true && state.val === true) {
-            if (this.devTimer) clearTimeout(this.devTimer);
+            this.devTimer && clearTimeout(this.devTimer);
             this.devTimer = setTimeout(() => {
                 this.devTimer = null;
                 this.browse();
@@ -574,18 +574,15 @@ class AlexaSmartNames extends Component {
         // If some of sub channels in change list or in last changed
         if (dev.additionalApplianceDetails.group && !changed && id !== this.state.lastChanged) {
             const channels = dev.additionalApplianceDetails.channels;
-            for (const chan in channels) {
-                if (channels.hasOwnProperty(chan)) {
-                    for (let i = 0; i < channels[chan].length; i++) {
-                        const id = channels[chan][i].id;
-                        if (this.state.changed.indexOf(id) !== -1) {
-                            background = CHANGED_COLOR;
-                        } else if (this.state.lastChanged === id) {
-                            background = LAST_CHANGED_COLOR;
-                        }
+            channels.forEach(chan =>
+                channels[chan].forEach(el => {
+                    if (this.state.changed.indexOf(el.id) !== -1) {
+                        background = CHANGED_COLOR;
+                    } else if (this.state.lastChanged === el.id) {
+                        background = LAST_CHANGED_COLOR;
                     }
-                }
-            }
+                })
+            );
         }
 
         return [
