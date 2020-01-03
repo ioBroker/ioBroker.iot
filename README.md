@@ -246,6 +246,9 @@ Following types are supported:
 - `ifttt` - acting like IFTTT (actually not required, but for tests purposes)
 
 ## Changelog
+### 1.1.11 (2020-01-03)
+* (TA2k) Google Home handling and visualization improved.
+
 ### 1.1.10 (2020-01-03)
 * (bluefox) Now is allowed to selected the temperature values as alexa states
 * (bluefox) Allowed to set type immediately after insertion of new state

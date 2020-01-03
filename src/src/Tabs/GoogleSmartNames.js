@@ -60,7 +60,7 @@ const styles = () => ({})
 class GoogleSmartNames extends Component {
     constructor(props) {
         super(props);
-
+        this.myTableRef =  React.createRef();
         this.state = {
             editedSmartName: '',
             editId: '',
@@ -84,6 +84,11 @@ class GoogleSmartNames extends Component {
                     wordBreak: "break-all"
                   }},
                 { title: 'Smartnames', field: 'name.nicknames' },
+                { title: 'ioBType', field: 'ioType',editable: 'never', cellStyle: {
+                    maxWidth: "4rem",
+                    overflow: "hidden",
+                    wordBreak: "break-all"
+                  }},
                 { title: 'Type', field: 'type' ,  lookup: { 
                     "action.devices.types.AC_UNIT": 'Air conditioning unit	', 
                     "action.devices.types.AIRFRESHENER": 'Air Freshener' ,
@@ -173,6 +178,30 @@ class GoogleSmartNames extends Component {
                     overflow: "hidden",
                     wordBreak: "break-all"
                   } },
+                  { title: 'Conversation to GH', field: 'displayConv2GH' ,  cellStyle: {
+                    maxWidth: "4rem",
+                    overflow: "hidden",
+                    wordBreak: "break-all"
+                  },  
+                  editComponent: props => (
+                    <div>Conversation to Google Home = function(value)&#123; <br></br>
+                     <textarea cols="40" rows="20"
+                        value={props.value}
+                        onChange={e => props.onChange(e.target.value)}
+                      />     &#125;</div>
+                )}, { title: 'Conversation to ioB', field: 'displayConv2iob' , cellStyle: {
+                    maxWidth: "4rem",
+                    overflow: "hidden",
+                    wordBreak: "break-all"
+                    },  
+                    editComponent: props => (
+                        <div>Conversation to ioBroker = function(value)&#123; <br></br>
+                        <textarea cols="40" rows="20"
+                        value={props.value}
+                        onChange={e => props.onChange(e.target.value)}
+                        />     &#125;</div>
+                    )},  
+                  
               ]
         };
 
@@ -195,7 +224,6 @@ class GoogleSmartNames extends Component {
             });
         });
     }
-
     browse(isIndicate) {
         if (Date.now() - this.lastBrowse < 500) return;
         this.lastBrowse = Date.now();
@@ -248,12 +276,12 @@ class GoogleSmartNames extends Component {
     }
 
     componentWillMount() {
-        this.props.socket.subscribeState(`${this.props.adapterName}.${this.props.instance}.smart.updates`, this.onReadyUpdateBound);
+        this.props.socket.subscribeState(`${this.props.adapterName}.${this.props.instance}.smart.updatesGH`, this.onReadyUpdateBound);
         this.props.socket.subscribeState(`${this.props.adapterName}.${this.props.instance}.smart.updatesResult`, this.onResultUpdateBound);
     }
 
     componentWillUnmount() {
-        this.props.socket.unsubscribeState(`${this.props.adapterName}.${this.props.instance}.smart.updates`, this.onReadyUpdateBound);
+        this.props.socket.unsubscribeState(`${this.props.adapterName}.${this.props.instance}.smart.updatesGH`, this.onReadyUpdateBound);
         this.props.socket.unsubscribeState(`${this.props.adapterName}.${this.props.instance}.smart.updatesResult`, this.onResultUpdateBound);
         if (this.timerChanged) {
             clearTimeout(this.timerChanged);
@@ -403,6 +431,12 @@ class GoogleSmartNames extends Component {
                             this.setState({message: I18n.t('Attributes has not correct JSON format.')})
                         }
                     }
+                    if (newData.conv2GH) {
+                        obj.common.smartName.ghConv2GH = newData.displayConv2GH;
+                    }
+                    if (newData.conv2iob) {
+                        obj.common.smartName.ghConv2iob = newData.displayConv2iob;
+                    }
                     return this.props.socket.setObject(newData.id, obj);
                 })
                 .then(() => {
@@ -476,11 +510,21 @@ class GoogleSmartNames extends Component {
                                         this.timerChanged = null;
                                     }, 30000);
                                 }
-                                obj.common.smartName.ghType="action.devices.types.LIGHT"
+                                
+                                if (!obj.common.smartName) {
+
+                                    obj.common.smartName = {ghType:"action.devices.types.LIGHT"}
+                                    obj.common.smartName = {ghTraits:["action.devices.traits.OnOff"]}
+                                } else {
+
+                                    obj.common.smartName.ghType="action.devices.types.LIGHT"
+                                    obj.common.smartName.ghTraits=["action.devices.traits.OnOff"];
+                                }
+                                
                                 this.props.socket.setObject(obj._id, obj)
                                     .then(() => {
                                         this.informInstance(obj._id);
-                                        this.setState({message: I18n.t('Please add action and trait to complete the Google Home state.')});})
+                                        this.setState({message: I18n.t('Please add type and trait to complete the Google Home state.')});})
                                     .catch(err => this.setState({message: err}));
                             } else {
                                 this.setState({message: I18n.t('Invalid ID')});
@@ -520,25 +564,65 @@ class GoogleSmartNames extends Component {
                 <span>{Utils.renderTextWithA(I18n.t("<a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/' > TRAIT</a> after adding a state.   To add multiple traits add a different id and trait but same smartname, type and room. Comma separated for mutiple smartnames.  To assign a room please use the ioBroker Enums/Aufzählungen.  With attributes you can for example set a range for the color temperature "))}</span>
                 <span>  {Utils.renderTextWithA(I18n.t("<a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/colorsetting'> Infos about Attributes you can find here.</a> Empty attribute is {}"))}</span>
                 </div>
+
                 </div>
+                <br></br>
+                <div style={{ flex: "100%"}}><div style={{fontWeight:"bold"}}>{Utils.renderTextWithA(I18n.t("For help use this forum <a target='_blank' rel='noopener noreferrer' href='https://forum.iobroker.net/topic/24061/google-home-assistant-iobroker-einrichten-nutzen/'>thread</a>"))}</div></div>
+             
                 
                 <div>
                 <MaterialTable
                 style ={{marginTop:"1rem",display: "inline-block"}}
                 title=""
+                tableRef={this.myTableRef}
+                onRowClick={(e, rowData) => {
+                    this.myTableRef.current.onTreeExpandChanged(rowData.tableData.path, rowData)
+                }
+            }
+           
                 columns={this.state.columns}
+                parentChildData={(row, rows) => {
+                    const result = rows.find(function(element) {
+                        if (element.id && row.parentId && element.id === row.parentId) {
+                            console.log(row.parentId)
+                            return true;
+                        };
+                      })
+                      console.log(result)
+                      return result
+                }} 
                 data={this.state.devices}
                 icons={tableIcons}
                 isLoading={this.state.browse }
                 options={{
                     actionsColumnIndex: -1,
-                    paging: false
+                    paging: false, 
+                    rowStyle: (rowData) => {
+                        let background = '#FFF'
+                        if (rowData.smartEnum) {
+                            background = '#F7FFEA'
+                        }
+                        if (rowData.ioType === "channel" || rowData.ioType === "device") {
+                            if (rowData.smartEnum) {
+                                background = '#eafff2'
+                            } else {
+                                background = '#E2FFFF'
+                            }
+                            
+                        }
+                        if  (this.state.selectedRow && this.state.selectedRow.tableData.id === rowData.tableData.id) {
+                            background =  '#EEE'
+                        }
+
+
+                        return {backgroundColor:  background}
+                      }
                   }}
                
                 editable={{
-                  
+                    
                     onRowUpdate: (newData, oldData) => {
-                        if (Array.isArray(newData.name.nicknames)) {
+                        if (newData.name.nicknames && Array.isArray(newData.name.nicknames)) {
                             newData.name.nicknames = newData.name.nicknames.join(",");
                         }
                         this.editedSmartName = newData.name.nicknames
