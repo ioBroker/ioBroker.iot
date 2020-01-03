@@ -218,6 +218,7 @@ class AlexaSmartNames extends Component {
         this.state = {
             editedSmartName: '',
             editId: '',
+            editedSmartType: null,
             editObjectName: '',
             deleteId: '',
 
@@ -353,7 +354,12 @@ class AlexaSmartNames extends Component {
                         smartName = smartName[I18n.getLanguage()] || smartName.en;
                     }
                     this.editedSmartName = smartName;
-                    this.setState({editId: id, editedSmartName: smartName, editObjectName: Utils.getObjectNameFromObj(obj, null, {language: I18n.getLanguage()})});
+                    let editedSmartType = null;
+                    if (!device.additionalApplianceDetails.group) {
+                        editedSmartType = device.additionalApplianceDetails.smartType;
+                    }
+
+                    this.setState({editId: id, editedSmartType, editedSmartName: smartName, editObjectName: Utils.getObjectNameFromObj(obj, null, {language: I18n.getLanguage()})});
                 });
             return true;
         } else {
@@ -477,7 +483,7 @@ class AlexaSmartNames extends Component {
         });
     }
 
-    renderSelectType(dev, lineNum, id, type) {
+    renderSelectTypeSelector(type, onChange) {
         if (type !== false) {
             const items = [
                 (<MenuItem key="_" value="_"><em>{I18n.t('no type')}</em></MenuItem>)
@@ -487,12 +493,16 @@ class AlexaSmartNames extends Component {
             }
             return (
                 <FormControl>
-                    <Select value={type || '_'} onChange={e => this.onParamsChange(id, undefined, e.target.value)}>{items}</Select>
+                    <Select value={type || '_'} onChange={e => onChange(e.target.value === '_' ? '' : e.target.value)}>{items}</Select>
                     <FormHelperText className={this.props.classes.devSubLineTypeTitle}>{I18n.t('Types')}</FormHelperText>
                 </FormControl>);
         } else {
             return '';
         }
+    }
+
+    renderSelectType(dev, lineNum, id, type) {
+        return this.renderSelectTypeSelector(type, value => this.onParamsChange(id, undefined, value));
     }
 
     renderChannels(dev, lineNum) {
@@ -623,7 +633,9 @@ class AlexaSmartNames extends Component {
         // Check if the name is duplicate
         this.addChanged(this.state.editId, () => {
             const id = this.state.editId;
-            this.setState({editId: '', editObjectName: '', lastChanged: id});
+            const editedSmartType = this.state.editedSmartType;
+
+            this.setState({editId: '', editObjectName: '', lastChanged: id, editedSmartType: null});
 
             this.timerChanged && clearTimeout(this.timerChanged);
             this.timerChanged = setTimeout(() => {
@@ -633,7 +645,8 @@ class AlexaSmartNames extends Component {
 
             this.props.socket.getObject(id)
                 .then(obj => {
-                    Utils.updateSmartName(obj, this.editedSmartName, undefined, undefined, this.props.adapterName + '.' + this.props.instance, this.props.native.noCommon);
+                    Utils.updateSmartName(obj, this.editedSmartName, undefined, editedSmartType === null ? undefined : editedSmartType, this.props.adapterName + '.' + this.props.instance, this.props.native.noCommon);
+
                     return this.props.socket.setObject(id, obj);
                 })
                 .then(() => {
@@ -667,6 +680,7 @@ class AlexaSmartNames extends Component {
                         helperText={I18n.t('You can enter several names divided by comma')}
                         margin="normal"
                     />
+                    {this.state.editedSmartType !== null ? this.renderSelectTypeSelector(this.state.editedSmartType, value => this.setState({editedSmartType: value})) : null}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => this.changeSmartName()} color="primary" autoFocus>{I18n.t('Ok')}</Button>

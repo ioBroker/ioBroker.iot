@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.1.9",
+        "version": "1.1.10",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.1.10": {
+                "en": "Now is allowed to selected the temperature values as alexa states\nAllowed to set type immediately after insertion of new state",
+                "de": "Nun dürfen die Temperaturwerte wie von alexa angegeben ausgewählt werden\nDarf unmittelbar nach dem Einfügen eines neuen Status gesetzt werden",
+                "ru": "Теперь разрешено выбирать значения температуры в виде алексей состояний\nПозволяет устанавливать тип сразу после вставки нового состояния",
+                "pt": "Agora é permitido selecionar os valores de temperatura como estados alexa\nPermitido definir o tipo imediatamente após a inserção do novo estado",
+                "nl": "Het is nu toegestaan om de temperatuurwaarden te selecteren zoals Alexa aangeeft\nToegestaan om het type direct na het invoegen van een nieuwe status in te stellen",
+                "fr": "Maintenant, il est autorisé de sélectionner les valeurs de température comme états alexa\nAutorisé à définir le type immédiatement après l'insertion d'un nouvel état",
+                "it": "Ora è consentito selezionare i valori di temperatura come afferma alexa\nAutorizzato a impostare il tipo immediatamente dopo l'inserimento del nuovo stato",
+                "es": "Ahora se permite seleccionar los valores de temperatura como indica alexa\nSe permite establecer el tipo inmediatamente después de la inserción del nuevo estado",
+                "pl": "Teraz można wybrać wartości temperatur jako stany Alexa\nDozwolone jest ustawienie typu natychmiast po wstawieniu nowego stanu",
+                "zh-cn": "现在允许选择温度值作为Alexa状态\n插入新状态后允许立即设置类型"
+            },
             "1.1.9": {
                 "en": "Fixed: sometimes the configuration could not be loaded",
                 "de": "Behoben: Manchmal konnte die Konfiguration nicht geladen werden",
