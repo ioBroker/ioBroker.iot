@@ -246,7 +246,7 @@ Following types are supported:
 - `ifttt` - acting like IFTTT (actually not required, but for tests purposes)
 
 ## Changelog
-### 1.1.11 (2020-01-03)
+### 1.1.12 (2020-01-04)
 * (TA2k) Google Home handling and visualization improved.
 
 ### 1.1.10 (2020-01-03)
