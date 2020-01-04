@@ -585,7 +585,7 @@ class AlexaSmartNames extends Component {
         if (dev.additionalApplianceDetails.group && !changed && id !== this.state.lastChanged) {
             const channels = dev.additionalApplianceDetails.channels;
             try {
-                channels && channels.forEach(chan =>
+                channels && Object.keys(channels).forEach(chan =>
                     chan && channels[chan].forEach(el => {
                         if (this.state.changed.indexOf(el.id) !== -1) {
                             background = CHANGED_COLOR;
