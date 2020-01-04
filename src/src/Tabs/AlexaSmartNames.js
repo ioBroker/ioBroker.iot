@@ -584,15 +584,19 @@ class AlexaSmartNames extends Component {
         // If some of sub channels in change list or in last changed
         if (dev.additionalApplianceDetails.group && !changed && id !== this.state.lastChanged) {
             const channels = dev.additionalApplianceDetails.channels;
-            channels.forEach(chan =>
-                channels[chan].forEach(el => {
-                    if (this.state.changed.indexOf(el.id) !== -1) {
-                        background = CHANGED_COLOR;
-                    } else if (this.state.lastChanged === el.id) {
-                        background = LAST_CHANGED_COLOR;
-                    }
-                })
-            );
+            try {
+                channels && channels.forEach(chan =>
+                    chan && channels[chan].forEach(el => {
+                        if (this.state.changed.indexOf(el.id) !== -1) {
+                            background = CHANGED_COLOR;
+                        } else if (this.state.lastChanged === el.id) {
+                            background = LAST_CHANGED_COLOR;
+                        }
+                    })
+                );
+            } catch (error) {
+                console.log(error)
+            }
         }
 
         return [
