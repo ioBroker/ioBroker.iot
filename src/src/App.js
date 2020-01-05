@@ -45,6 +45,13 @@ class App extends GenericApp {
             'pl': require('./i18n/pl'),
             'zh-cn': require('./i18n/zh-cn'),
         };
+        // get actual port
+        extendedProps.socket = extendedProps.socket || {};
+        extendedProps.socket.port = parseInt(window.location.port, 10);
+        // for debug purposes
+        if (extendedProps.socket.port === 3000) {
+            extendedProps.socket.port = 8081;
+        }
         super(extendedProps);
     }
 
