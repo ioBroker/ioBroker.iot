@@ -2,6 +2,7 @@ Gruntfile.js
 tasks
 ./webSite
 .git
+.github
 node_modules
 .ideatest
 .travis.yml
