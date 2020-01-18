@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.2.0",
+        "version": "1.2.1",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.2.1": {
+                "en": "Fixed problem if the port of admin is not 8081",
+                "de": "Problem behoben, wenn der Port von admin nicht 8081 ist",
+                "ru": "Исправлена проблема, если порт администратора не 8081",
+                "pt": "Corrigido o problema se a porta do administrador não for 8081",
+                "nl": "Probleem opgelost als de poort van admin niet 8081 is",
+                "fr": "Correction d'un problème si le port d'administration n'est pas 8081",
+                "it": "Risolto problema se la porta di amministrazione non è 8081",
+                "es": "Se solucionó el problema si el puerto de administración no es 8081",
+                "pl": "Naprawiono problem, jeśli port administratora nie jest 8081",
+                "zh-cn": "解决了如果管理端口不是8081的问题"
+            },
             "1.1.11": {
                 "en": "Google Home handling and visualization improved.",
                 "de": "Die Handhabung und Visualisierung von Google Home wurde verbessert.",
