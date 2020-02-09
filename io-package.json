@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.3.0",
+        "version": "1.3.1",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,7 +28,7 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
-            "1.3.0": {
+            "1.3.1": {
                 "en": "compatibility with Admin >4.0.0 added",
                 "de": "Kompatibilität mit Admin> 4.0.0 hinzugefügt",
                 "ru": "добавлена совместимость с Admin> 4.0.0",
@@ -184,8 +184,10 @@
         "materialize": true,
         "dependencies": [
             {
-                "js-controller": ">=0.9.0",
                 "admin": ">=4.0.1"
+            },
+            {
+                "js-controller": ">=0.9.0"
             }
         ],
         "preserveSettings": "smartName",
