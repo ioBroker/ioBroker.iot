@@ -246,7 +246,7 @@ Following types are supported:
 - `ifttt` - acting like IFTTT (actually not required, but for tests purposes)
 
 ## Changelog
-### 1.3.1 (2020-02-09)
+### 1.3.2 (2020-02-10)
 * (Apollon77) Dependency updates
 * (APollon77) Make compatible with Admin > 4.0 because of updated socket.io
 

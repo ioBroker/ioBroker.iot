@@ -48,10 +48,21 @@ class App extends GenericApp {
         // get actual port
         extendedProps.socket = extendedProps.socket || {};
         extendedProps.socket.port = parseInt(window.location.port, 10);
-        // for debug purposes
-        if (extendedProps.socket.port === 3000) {
+        if (isNaN(extendedProps.socket.port)) {
+            switch (window.location.protocol) {
+                case 'https:':
+                    extendedProps.socket.port = 443;
+                    break;
+                case 'http:':
+                    extendedProps.socket.port = 80;
+                    break;
+            }
+        }
+        // for debug and fallback purposes
+        if (!extendedProps.socket.port || extendedProps.socket.port === 3000) {
             extendedProps.socket.port = 8081;
         }
+
         super(extendedProps);
     }
 
