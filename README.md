@@ -246,6 +246,9 @@ Following types are supported:
 - `ifttt` - acting like IFTTT (actually not required, but for tests purposes)
 
 ## Changelog
+### 1.3.3 (2020-02-12)
+* (Apollon77) fix alisa error with invalid smartName attributes
+
 ### 1.3.2 (2020-02-10)
 * (Apollon77) usage with all kinds of admin ports and reverse proxies optimized
 
