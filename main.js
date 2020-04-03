@@ -27,6 +27,7 @@ let alexaCustom    = null;
 let alexaCustomBlood = null;
 let yandexAlisa    = null;
 let device         = null;
+let defaultHistory = null;
 
 let connected      = false;
 let uuid           = null;
@@ -46,12 +47,13 @@ function startAdapter(options) {
                 if (lang !== 'en' && lang !== 'de' && lang !== 'ru') {
                     lang = 'en';
                 }
+                defaultHistory= obj.common.defaultHistory;
 
                 alexaSH2 && alexaSH2.setLanguage(lang);
                 alexaSH3 && alexaSH3.setLanguage(lang);
                 yandexAlisa && yandexAlisa.setLanguage(lang);
                 alexaCustom && alexaCustom.setLanguage(lang);
-                alexaCustomBlood && alexaCustomBlood.setLanguage(lang);
+                alexaCustomBlood && alexaCustomBlood.setLanguage(lang, defaultHistory);
                 googleHome && googleHome.setLanguage(lang);
             }
         },
@@ -957,6 +959,8 @@ function main() {
             lang = 'en';
         }
 
+        defaultHistory = obj.common.defaultHistory;
+
         adapter.config.amazonAlexa && alexaSH2 && alexaSH2.setLanguage(lang, translate);
         adapter.config.amazonAlexa && alexaSH2 && alexaSH2.updateDevices();
 
@@ -970,7 +974,7 @@ function main() {
         yandexAlisa && yandexAlisa.updateDevices();
 
         alexaCustom && alexaCustom.setLanguage(lang, translate);
-        alexaCustomBlood && alexaCustomBlood.setLanguage(lang, translate);
+        alexaCustomBlood && alexaCustomBlood.setSettings(lang, defaultHistory);
 
         adapter.getForeignObject('system.meta.uuid', (err, oUuid) => {
             secret = (obj && obj.native && obj.native.secret) || 'Zgfr56gFe87jJOM';

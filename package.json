@@ -18,7 +18,13 @@
     "type": "git",
     "url": "https://github.com/ioBroker/ioBroker.iot"
   },
+  "optionalDependencies": {
+    "sharp": "~0.24.1"
+  },
   "dependencies": {
+    "canvas": "^2.6.1",
+    "echarts": "^4.7.0",
+    "jsdom": "^16.2.2",
     "moment": "^2.24.0",
     "aws-iot-device-sdk": "^2.2.3",
     "iobroker.type-detector": "^0.1.9",

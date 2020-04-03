@@ -247,7 +247,7 @@ Following types are supported:
 
 ## Changelog
 ### 1.4.0 (2020-04-03)
-* (Apollon77) The blood glucose request supported now
+* (bluefox) The blood glucose request supported now
 
 ### 1.3.4 (2020-02-26)
 * (TA2k) Fixed deconz issues in Google Home
