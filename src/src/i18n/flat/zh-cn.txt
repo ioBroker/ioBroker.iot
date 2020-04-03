@@ -1,5 +1,8 @@
 （如果不需要行为，则设为0）
 您可以输入多个名称除以逗号
+
+
+
 活性
 添加设备
 添加服务
@@ -10,6 +13,7 @@ Alisa设备
 允许自签名证书
 亚马逊Alexa
 你确定吗？
+
 必须禁用身份验证。您可以为云创建额外的第二个实例。
 取消
 无法添加此对象，因为不支持。
@@ -37,6 +41,7 @@ Alisa设备
 错误
 扩展选项
 过滤
+
 功能
 获得实际温度
 获取新的连接证书
@@ -66,6 +71,9 @@ IFTTT关键
 个人设置（仅限专业）
 Ping超时（ms）
 首先将函数放在名称中
+
+
+
 请选择对象ID ...
 请以小写字母书写您的电子邮件
 读锁定状态
@@ -86,6 +94,7 @@ Ping超时（ms）
 设置锁定状态
 设定百分比
 设定目标温度
+血糖的简短答案
 智能设备
 智能枚举
 智能媒体
@@ -93,6 +102,7 @@ Ping超时（ms）
 聪明的名字
 %s的智能名称
 要应用此设置，必须重新启动适配器。同意？
+
 关掉
 打开
 类型
@@ -116,6 +126,9 @@ ID
 名称
 角色
 房间
+在写支持之前，请确保您已阅读并理解网页的说明： <a target="_blank" href="https://www.iobroker.net/#de/documentation/cloud/iot.md">https</a> : <a target="_blank" href="https://www.iobroker.net/#zh-cn/documentation/cloud/iot.md">//www.iobroker.net</a>
+如果与Iot的连接仍然存在问题，则可以在<a target="_blank" href="https://forum.iobroker.net/category/123/cloud-services">论坛上</a>请求支持
+并且只有在那之后，您才应该写一封电子邮件到<a target="_blank" href="mailto:support@iobroker.com">support@iobroker.com</a>
 没有iobroker.pro账号？在<a href="https://iobroker.pro/accessRemote" target="_blank"> https://iobroker.pro </a>上购买以获得有效访问权限，或免费获取，但访问受限。
 除以逗号。使用*允许所有服务。
 您可以在“文档”下找到您的密钥<a href='https://ifttt.com/maker_webhooks' target='_blank'> </a>

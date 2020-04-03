@@ -12,6 +12,9 @@ import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import Snackbar from '@material-ui/core/Snackbar';
 import Chip from '@material-ui/core/Chip';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+
 import {MdRefresh as IconRefresh} from 'react-icons/md';
 import {MdClose as IconClose} from 'react-icons/md';
 import {MdAdd as IconAdd} from 'react-icons/md';
@@ -19,6 +22,7 @@ import {MdAdd as IconAdd} from 'react-icons/md';
 import CopyContentImg from '@iobroker/adapter-react/assets/copy-content.svg';
 import I18n from '@iobroker/adapter-react/i18n';
 import Utils from '@iobroker/adapter-react/Components/Utils';
+import DialogSelectID from "@iobroker/adapter-react/Dialogs/SelectID";
 
 const styles = theme => ({
     tab: {
@@ -84,6 +88,7 @@ class Services extends Component {
         this.state = {
             running: false,
             toast: '',
+            showSelectId: false,
             text2commandList: [],
             nightscoutList: [],
             addValue: '',
@@ -113,7 +118,7 @@ class Services extends Component {
     }
 
     onKeyChanged(id, state) {
-        this.setState({key: state.val});
+        state && this.setState({key: state.val});
     }
 
     renderInput(title, attr, type) {
@@ -196,6 +201,25 @@ class Services extends Component {
         const email = this.props.native.login.replace(/[^\w\d-_]/g, '_');
         const secret = this.props.native.nightscoutPass;
         return email + (secret ? '-' + secret : '');
+    }
+
+    getSelectIdDialog(attr) {
+        if (this.state.showSelectId) {
+            return (<DialogSelectID
+                key="dialogSelectID3"
+                prefix={'../..'}
+                connection={this.props.socket}
+                selected={this.props.native[attr]}
+                statesOnly={true}
+                onClose={() => this.setState({showSelectId: false})}
+                onOk={selected => {
+                    this.setState({showSelectId: false});
+                    this.props.onChange(attr, selected);
+                }}
+            />);
+        } else {
+            return null;
+        }
     }
 
     renderChips(label, attr) {
@@ -298,16 +322,33 @@ class Services extends Component {
                     type="text"
                     margin="normal"
                 />) : null}
-                {this.props.native.nightscout ? (<TextField
-                    style={{marginTop: 3.5}}
-                    label={I18n.t('Nightscout api-secret')}
-                    className={this.props.classes.input + ' ' + this.props.classes.controlElement + ' ' + this.props.classes.normalSize}
-                    value={this.calcNightscoutSecret()}
-                    type="text"
-                    readOnly={true}
-                    margin="normal"
-                />) : null}
+                <br/>
+                <br/>
+                <div className={this.props.classes.controlElement}>
+                    <TextField
+                        label={I18n.t('Read blood sugar from')}
+                        className={this.props.classes.input + ' ' + this.props.classes.controlElement}
+                        value={this.props.native.amazonAlexaBlood || ''}
+                        type="text"
+                        onChange={e => this.props.onChange('amazonAlexaBlood', e.target.value)}
+                        margin="normal"
+                    />
+                    <Fab size="small" color="secondary" onClick={() => this.setState({showSelectId: true})} aria-label="Add" style={{marginLeft: 5, marginTop: 10}}><IconAdd /></Fab>
+                    <FormControlLabel  className={this.props.classes.controlElement}
+                        control={
+                            <Checkbox
+                                style={{paddingLeft: 30}}
+                                checked={this.props.native.amazonAlexaBloodShortAnswer || false}
+                                onChange={e => this.props.onChange('amazonAlexaBloodShortAnswer', e.target.checked)}
+                                color="primary"
+                            />
+                        }
+                        label={I18n.t('Short answer for blood sugar')}
+                    />
+                </div>
+                <br/>
                 {this.renderToast()}
+                {this.getSelectIdDialog('amazonAlexaBlood')}
             </form>
         );
     }

@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.3.4",
+        "version": "1.4.0",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.4.0":  {
+                "en": "The blood glucose request supported now",
+                "de": "Die Blutzuckeranfrage wird jetzt unterstützt",
+                "ru": "Опрос глюкозы в крови теперь поддерживается",
+                "pt": "A solicitação de glicose no sangue agora é suportada",
+                "nl": "Het verzoek om bloedglucose wordt nu ondersteund",
+                "fr": "La demande de glycémie est prise en charge maintenant",
+                "it": "La richiesta di glicemia supportata ora",
+                "es": "La solicitud de glucosa en sangre es compatible ahora",
+                "pl": "Obsługiwane teraz żądanie glukozy we krwi",
+                "zh-cn": "现在支持血糖要求"
+            },
             "1.3.4": {
                   "en": "Fixed deconz issues in Google Home",
                   "de": "Deconz-Probleme in Google Home wurden behoben",
@@ -230,6 +242,8 @@
         "iftttKey": "",
         "replaces": "",
         "amazonAlexa": true,
+        "amazonAlexaBlood": "",
+        "amazonAlexaBloodShortAnswer": false,
         "googleHome": false,
         "yandexAlisa": false,
         "allowedServices": "",

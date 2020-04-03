@@ -1,5 +1,8 @@
 (Impostare su 0 se il comportamento non è desiderato)
 È possibile inserire diversi nomi divisi per virgola
+
+
+
 Attivo
 Aggiungi dispositivo
 Aggiungi servizio
@@ -10,6 +13,7 @@ Permetti l'accesso amministratore (solo pro)
 Consenti certificati autofirmati
 Amazon Alexa
 Sei sicuro?
+
 L'autenticazione deve essere disabilitata. È possibile creare un extra di seconda istanza per il cloud.
 Annulla
 Impossibile aggiungere questo oggetto, perché non supportato.
@@ -37,6 +41,7 @@ Modifica il nome intelligente
 Errore
 Opzioni estese
 Filtro
+
 funzioni
 Ottieni la temperatura effettiva
 Ottieni nuovi certificati di connessione
@@ -66,6 +71,9 @@ Opzioni
 Impostazioni personali (solo pro)
 Timeout del ping (ms)
 Inserisci la funzione nei nomi prima
+
+
+
 Si prega di selezionare l'oggetto ID ...
 Si prega di scrivere la tua email solo in lettere minuscole
 Leggi lo stato di blocco
@@ -86,6 +94,7 @@ Imposta la temperatura del colore
 Imposta lo stato di blocco
 Imposta la percentuale
 Imposta la temperatura target
+Risposta breve per zucchero nel sangue
 Dispositivi intelligenti
 Smart Enums
 Smart Media
@@ -93,6 +102,7 @@ Enumerazioni intelligenti
 Nome intelligente
 Nome intelligente per %s
 Per applicare questa impostazione, è necessario riavviare l'adattatore. Essere d'accordo?
+
 Spegni
 Accendere
 Genere
@@ -116,6 +126,9 @@ ID
 Nome
 Ruolo
 Camera
+Prima di scrivere per il supporto, assicurarsi di aver letto e compreso le istruzioni della pagina Web: <a target="_blank" href="https://www.iobroker.net/#en/documentation/cloud/iot.md">https://www.iobroker.net</a>
+Se hai ancora problemi con la connessione a Iot, puoi richiedere supporto a <a target="_blank" href="https://forum.iobroker.net/category/123/cloud-services">Forum</a>
+e solo dopo dovrai scrivere una email a <a target="_blank" href="mailto:support@iobroker.com">support@iobroker.com</a>
 Nessun account iobroker.pro? Compralo su <a href="https://iobroker.pro/accessRemote" target="_blank"> https://iobroker.pro </a> per l'accesso convalidato o ottieni l'accesso gratuito, ma limitato.
 diviso per virgola. Usa * per consentire tutti i servizi.
 Puoi trovare la tua chiave <a href='https://ifttt.com/maker_webhooks' target='_blank'> qui </a> in 'Documentazione'

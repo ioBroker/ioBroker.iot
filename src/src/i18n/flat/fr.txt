@@ -1,5 +1,8 @@
 (Mettre à 0 si le comportement n'est pas désiré)
 Vous pouvez entrer plusieurs noms divisés par une virgule
+
+
+
 actif
 Ajouter un appareil
 Ajouter un service
@@ -10,6 +13,7 @@ Autoriser l'accès administrateur (uniquement pro)
 Autoriser les certificats auto-signés
 Amazon Alexa
 Êtes-vous sûr?
+
 L'authentification doit être désactivée. Vous pouvez créer une seconde instance supplémentaire pour le cloud.
 Annuler
 Impossible d'ajouter cet objet, car non pris en charge.
@@ -37,6 +41,7 @@ Modifier le nom intelligent
 Erreur
 Options étendues
 Filtre
+
 Les fonctions
 Obtenir la température réelle
 Obtenir de nouveaux certificats de connexion
@@ -66,6 +71,9 @@ Options
 Paramètres personnels (uniquement pro)
 Ping timeout (ms)
 Placez la fonction dans les noms en premier
+
+
+
 Veuillez sélectionner l'ID d'objet ...
 S'il vous plaît écrivez votre email uniquement en minuscules
 État verrouillé
@@ -86,6 +94,7 @@ Régler la température de couleur
 Définir l'état de verrouillage
 Définir le pourcentage
 Régler la température cible
+Réponse courte pour la glycémie
 Smart Devices
 Smart Enums
 Smart Media
@@ -93,6 +102,7 @@ Smart enums
 Nom intelligent
 Nom intelligent pour %s
 Pour appliquer ce paramètre, l'adaptateur doit être redémarré. Se mettre d'accord?
+
 Éteindre
 Allumer
 Type
@@ -116,6 +126,9 @@ ID
 prénom
 Rôle
 Pièce
+Avant d'écrire au support, assurez-vous d'avoir lu et compris les instructions de la page Web: <a target="_blank" href="https://www.iobroker.net/#en/documentation/cloud/iot.md">https://www.iobroker.net</a>
+Si vous rencontrez toujours des problèmes avec la connexion à Iot, vous pouvez demander une assistance dans le <a target="_blank" href="https://forum.iobroker.net/category/123/cloud-services">forum</a>
+et seulement après cela, vous devez écrire un e-mail à <a target="_blank" href="mailto:support@iobroker.com">support@iobroker.com</a>
 Pas de compte iobroker.pro? Achetez-le sur <a href="https://iobroker.pro/accessRemote" target="_blank"> https://iobroker.pro </a> pour un accès validé ou obtenez gratuitement un accès limité.
 divisé par virgule. Utilisez * pour autoriser tous les services.
 Vous pouvez trouver votre clé <a href='https://ifttt.com/maker_webhooks' target='_blank'> ici </a> sous 'Documentation'

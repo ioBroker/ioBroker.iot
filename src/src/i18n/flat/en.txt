@@ -1,5 +1,8 @@
 (Set to 0 if behavior not desired)
 You can enter several names divided by comma
+
+
+
 Active
 Add device
 Add service
@@ -10,6 +13,7 @@ Allow admin access (only pro)
 Allow self-signed certificates
 Amazon Alexa
 Are you sure?
+
 Authentication must be disabled. You can create a second instance extra for the cloud.
 Cancel
 Cannot add this object, because not supported.
@@ -37,6 +41,7 @@ Edit smart name
 Error
 Extended options
 Filter
+
 Functions
 Get actual temperature
 Get new connection certificates
@@ -66,6 +71,9 @@ Options
 Personal settings (only pro)
 Ping timeout(ms)
 Place function in names first
+
+
+
 Please select object ID...
 Please write your email only in lower case letters
 Read lock state
@@ -86,6 +94,7 @@ Set color temperature
 Set lock state
 Set percentage
 Set target temperature
+Short answer for blood sugar
 Smart Devices
 Smart Enums
 Smart Media
@@ -93,6 +102,7 @@ Smart enums
 Smart name
 Smart name for %s
 To apply this setting, the adapter must be restarted. Agree?
+
 Turn off
 Turn on
 Type
@@ -116,6 +126,9 @@ ID
 Name
 Role
 Room
+Before writing to support be sure you have read and understand the instructions of the web page: <a target="_blank" href="https://www.iobroker.net/#en/documentation/cloud/iot.md">https://www.iobroker.net</a>
+If you still have issue with the connection to Iot, you can request support im <a target="_blank" href="https://forum.iobroker.net/category/123/cloud-services">Forum</a>
+and only after that you should write an email to <a target="_blank" href="mailto:support@iobroker.com">support@iobroker.com</a>
 No iobroker.pro account? Buy it on <a href="https://iobroker.pro/accessRemote" target="_blank">https://iobroker.pro</a> for validated access or get for free, but limited access.
 divided by comma. Use * to allow all services.
 You can find your key <a href='https://ifttt.com/maker_webhooks' target='_blank'>here</a> under 'Documentation'

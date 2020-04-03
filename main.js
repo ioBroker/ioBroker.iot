@@ -8,12 +8,14 @@ const utils        = require('@iobroker/adapter-core'); // Get common adapter ut
 const AlexaSH2     = require('./lib/alexaSmartHomeV2');
 const AlexaSH3     = require('./lib/alexaSmartHomeV3');
 const AlexaCustom  = require('./lib/alexaCustom');
+const AlexaCustomBlood = require('./lib/alexaCustomBlood');
 const GoogleHome   = require('./lib/GoogleHome');
 const YandexAlisa  = require('./lib/alisa');
 const fs           = require('fs');
 const request      = require('request');
 // @ts-ignore
 const adapterName  = require('./package.json').name.split('.').pop();
+const ALEXA_CUSTOM_BLOOD_SUGAR = 'amzn1.ask.skill.a499fa96-f795-42a5-a911-584c223d03e1';
 
 let recalcTimeout  = null;
 let lang           = 'de';
@@ -22,6 +24,7 @@ let alexaSH2       = null;
 let alexaSH3       = null;
 let googleHome     = null;
 let alexaCustom    = null;
+let alexaCustomBlood = null;
 let yandexAlisa    = null;
 let device         = null;
 
@@ -48,11 +51,12 @@ function startAdapter(options) {
                 alexaSH3 && alexaSH3.setLanguage(lang);
                 yandexAlisa && yandexAlisa.setLanguage(lang);
                 alexaCustom && alexaCustom.setLanguage(lang);
+                alexaCustomBlood && alexaCustomBlood.setLanguage(lang);
                 googleHome && googleHome.setLanguage(lang);
             }
         },
         stateChange: (id, state) => {
-            state && adapter.config.googleHome && googleHome && googleHome.updateState(id, state);
+            state && adapter.config.googleHome  && googleHome && googleHome.updateState(id, state);
             state && adapter.config.amazonAlexa && alexaSH3 && alexaSH3.updateState && alexaSH3.updateState(id, state);
             state && adapter.config.yandexAlisa && yandexAlisa && yandexAlisa.updateState && yandexAlisa.updateState(id, state);
 
@@ -618,10 +622,18 @@ function processMessage(type, request, callback) {
             }
         } else
         if (request && !request.header) {
-            if (alexaCustom) {
-                alexaCustom.process(request, adapter.config.amazonAlexa, response => callback(response));
+            if (request && request.session && request.session.application && request.session.application.applicationId === ALEXA_CUSTOM_BLOOD_SUGAR) {
+                if (alexaCustomBlood) {
+                    alexaCustomBlood.process(request, adapter.config.amazonAlexaBlood, response => callback(response));
+                } else {
+                    callback({error: 'Service is disabled'});
+                }
             } else {
-                callback({error: 'Service is disabled'});
+                if (alexaCustom) {
+                    alexaCustom.process(request, adapter.config.amazonAlexa, response => callback(response));
+                } else {
+                    callback({error: 'Service is disabled'});
+                }
             }
         } else {
             if (alexaSH2) {
@@ -876,6 +888,7 @@ function main() {
         alexaSH2    = new AlexaSH2(adapter);
         alexaSH3    = new AlexaSH3(adapter);
         alexaCustom = new AlexaCustom(adapter);
+        alexaCustomBlood = new AlexaCustomBlood(adapter);
     }
     if (adapter.config.yandexAlisa) {
         yandexAlisa = new YandexAlisa(adapter);
@@ -957,6 +970,7 @@ function main() {
         yandexAlisa && yandexAlisa.updateDevices();
 
         alexaCustom && alexaCustom.setLanguage(lang, translate);
+        alexaCustomBlood && alexaCustomBlood.setLanguage(lang, translate);
 
         adapter.getForeignObject('system.meta.uuid', (err, oUuid) => {
             secret = (obj && obj.native && obj.native.secret) || 'Zgfr56gFe87jJOM';

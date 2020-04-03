@@ -1,5 +1,8 @@
 (Ustaw na 0, jeśli zachowanie nie jest pożądane)
 Możesz wprowadzić kilka nazw podzielonych przecinkami
+
+
+
 Aktywny
 Dodaj urządzenie
 Dodaj usługę
@@ -10,6 +13,7 @@ Zezwalaj na dostęp administratora (tylko pro)
 Zezwalaj na certyfikaty z podpisem własnym
 Amazon Alexa
 Jesteś pewny?
+
 Uwierzytelnianie musi być wyłączone. Możesz utworzyć dodatkową instancję dodatkową dla chmury.
 Anuluj
 Nie można dodać tego obiektu, ponieważ nie jest obsługiwany.
@@ -37,6 +41,7 @@ Edytuj inteligentną nazwę
 Błąd
 Rozszerzone opcje
 Filtr
+
 Funkcje
 Uzyskaj rzeczywistą temperaturę
 Uzyskaj nowe certyfikaty połączeń
@@ -66,6 +71,9 @@ Opcje
 Ustawienia osobiste (tylko pro)
 Limit czasu pingowania (ms)
 Najpierw umieść funkcję w imionach
+
+
+
 Wybierz identyfikator obiektu ...
 Napisz swój e-mail tylko małymi literami
 Czytaj stan blokady
@@ -86,6 +94,7 @@ Ustaw temperaturę barwową
 Ustaw stan blokady
 Ustaw procent
 Ustaw temperaturę docelową
+Krótka odpowiedź na cukier we krwi
 Inteligentne urządzenia
 Inteligentne wyliczenia
 Smart Media
@@ -93,6 +102,7 @@ Inteligentne enumy
 Inteligentna nazwa
 Inteligentna nazwa dla %s
 Aby zastosować to ustawienie, adapter musi zostać zrestartowany. Zgodzić się?
+
 Wyłączyć
 Włączyć
 Rodzaj
@@ -116,6 +126,9 @@ ID
 Imię
 Rola
 Sala
+Przed napisaniem do wsparcia upewnij się, że przeczytałeś i zrozumiałeś instrukcje strony: <a target="_blank" href="https://www.iobroker.net/#en/documentation/cloud/iot.md">https://www.iobroker.net</a>
+Jeśli nadal masz problem z połączeniem z Iot, możesz poprosić o wsparcie na <a target="_blank" href="https://forum.iobroker.net/category/123/cloud-services">Forum</a>
+i dopiero potem powinieneś napisać e-mail na <a target="_blank" href="mailto:support@iobroker.com">adres support@iobroker.com</a>
 Brak konta iobroker.pro? Kup go na <a href="https://iobroker.pro/accessRemote" target="_blank"> https://iobroker.pro </a> w celu zweryfikowania dostępu lub uzyskaj bezpłatny, ale ograniczony dostęp.
 podzielone przecinkiem. Użyj *, aby zezwolić na wszystkie usługi.
 Możesz znaleźć klucz <a href='https://ifttt.com/maker_webhooks' target='_blank'> tutaj </a> w sekcji "Dokumentacja"

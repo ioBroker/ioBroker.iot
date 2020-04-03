@@ -234,6 +234,9 @@ class Options extends Component {
                         label={I18n.t('Request email with password one more time')}
                     />
                     <p style={{fontWeight: 'bold'}}>{Utils.renderTextWithA(I18n.t('help_tip'))}</p>
+                    <p style={{fontWeight: 'bold', paddingTop: 20}}>{Utils.renderTextWithA(I18n.t('help_link_tip1'))}</p>
+                    <p style={{fontWeight: 'bold'}}>{Utils.renderTextWithA(I18n.t('help_link_tip2'))}</p>
+                    <p style={{fontWeight: 'bold', color: 'red'}}>{Utils.renderTextWithA(I18n.t('help_link_tip3'))}</p>
                 </div>
                 <div className={this.props.classes.column + ' ' + this.props.classes.columnLogo}>{this.renderCard()}</div>
                 {this.renderHint()}

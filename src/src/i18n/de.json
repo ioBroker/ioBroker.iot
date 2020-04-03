@@ -1,6 +1,9 @@
 {
   "(Set to 0 if behavior not desired)": "(Auf 0 setzten, falls das Verhalten unerwünscht ist)",
   "(you can separate names with comma)": "Sie können mehrere kommaseparierte Namen eingeben",
+  "<a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/' > TRAIT</a> after adding a state.   To add multiple traits add a different id and trait but same smartname, type and room. Comma separated for mutiple smartnames.  To assign a room please use the ioBroker Enums/Aufzählungen.  With attributes you can for example set a range for the color temperature ": "",
+  "<a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/'> TRAIT</a> after adding a state.   To add multiple traits add a different id and trait but same smartname, type and room. Comma separated for mutiple smartnames.  To assign a room please use the ioBroker Enums/Aufzählungen.  With attributes you can for example set a range for the color temperature ": "<a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/'> TRAIT</a> nachdem du ein ioBroker State hinzugefügt hast.  Für mehrere Traits füge unterschiedliche State IDs hinzu und verwende den gleichen SmartName, Type und Raum. Kommasepariert kannst du mehrere Smartnamen hinzufügen.  Um ein Raum zuzuordnen verwende die Aufzählungen in ioBroker und ordne ihn über Objekte hinzu. Mit den Attributes kannst du z.B. den Farbtemperaturberich festlegen ",
+  "<a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/colorsetting'> Infos about Attributes you can find here.</a> Empty attribute is {}": "<a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/colorsetting' > Infos über Attribute kannst du hier finden.</a> Ein leeres Attribut ist {}",
   "Active": "aktiv",
   "Add device": "Gerät hinzufügen",
   "Add service": "Dienst hinzufügen",
@@ -11,6 +14,7 @@
   "Allow self-signed certificates": "Erlaube selbst-signierte Zertifikate",
   "Amazon Alexa": "Amazon Alexa",
   "Are you sure?": "Sind Sie sicher?",
+  "Attributes has not correct JSON format.": "Attributes ist nicht im korrekten JSON Format",
   "Authentication must be disabled. You can create second instance extra for cloud.": "Die Authentifizierung muss deaktiviert sein. Sie können zweite Instanz extra für Cloud erstellen.",
   "Cancel": "Abbrechen",
   "Cannot add this object": "Dieses Objekt kann nicht hinzugefügt werden, da es nicht unterstützt wird.",
@@ -38,6 +42,7 @@
   "Error": "Fehler",
   "Extended options": "Erweiterte Einstellungen",
   "Filter": "Filter",
+  "For help use this forum <a target='_blank' rel='noopener noreferrer' href='https://forum.iobroker.net/topic/24061/google-home-assistant-iobroker-einrichten-nutzen/'>thread</a>": "Für Hilfe besuche diesen <a target='_blank' rel='noopener noreferrer' href='https://forum.iobroker.net/topic/24061/google-home-assistant-iobroker-einrichten-nutzen/'>Forumbeitrag</a>",
   "Functions": "Funktionen",
   "Get actual temperature": "Aktuelle Temperatur abrufen",
   "Get new connection certificates": "Erhalten Sie neue Verbindungszertifikate",
@@ -67,6 +72,9 @@
   "Personal settings (only pro)": "Eigene Einstellungen (nur pro)",
   "Ping timeout:": "Ping-Timeout(ms)",
   "Place function in names first": "Platziere Funktionsnamen vorne",
+  "Please add action and trait to complete the Google Home state.": "",
+  "Please add type and trait to complete the Google Home state.": "Bitte füge eine Type und Trait hinzu um den Google Home State zu vervollständigen.",
+  "Please select a  <a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/guides/'>TYPE</a> and a": "Bitte wähle  <a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/guides/' > TYPE</a> und ein ",
   "Please select object ID...": "Bitte Objekt ID auswählen ...",
   "Please write your email only in lower case letters": "Bitte schreiben Sie Ihre E-Mail nur in Kleinbuchstaben",
   "Read lock state": "Sperrstatus lesen",
@@ -94,14 +102,15 @@
   "Smart name": "Smart-Name",
   "Smart name for %s": "Intelligenter Name für %s",
   "To apply this setting, the restart of adapter must be done. Agree?": "Um diese Einstellung zu ändern, es ist erforderlich diese Instanz neu zu starten. Einverstanden?",
+  "To auto detect devices please assign a room and function to the channel if no channel available than assign to a device. Not only to the state or device. And enable them under SmartEnum/Intelligente Aufzählung": "Für automatische Erkennung, unter Objekte ordne einem Channel (Device wenn kein Channel vorhanden ist) ein Raum und Funktion zu. Es reicht nicht einem State oder Device den Raum zuzuordnen. Räume/Funktionen können unter Aufzählung (Anzeigen über den weißen Pfeil oben rechts) hinzugefügt werden und müssen im IoT Adapter unter Intelligente Aufzählung aktiviert werden. Um manuelle States wieder automatisch erkennen zu lassen muss der State gelöscht werden.",
   "Turn off": "Abschalten",
   "Turn on": "Anschalten",
   "Type": "Typ",
   "Types": "Typen",
+  "Use Nightscout instance": "Benutze Nightscout Instanz",
   "Use following link for IFTTT": "Benutze folgenden Link für IFTTT",
   "Use following link for custom service": "Benutze folgende Link für einen eigenen Service",
   "Use text2command instance": "Benutze text2command Instanz",
-  "Use Nightscout instance": "Benutze Nightscout Instanz",
   "Value": "Wert",
   "White list for services": "White list für Services",
   "Write response to": "Schreibe Antwort ins",
@@ -117,6 +126,9 @@
   "filter_name": "Name",
   "filter_role": "Rolle",
   "filter_room": "Zimmer",
+  "help_link_tip1": "Stellen Sie vor dem Schreiben an den Support sicher, dass Sie die Anweisungen auf der Webseite gelesen und verstanden haben: <a target=\"_blank\" href=\"https://www.iobroker.net/#de/documentation/cloud/iot.md\">https://www.iobroker.net</a>",
+  "help_link_tip2": "Wenn Sie immer noch Probleme mit der Verbindung zu Iot haben, können Sie im <a target=\"_blank\" href=\"https://forum.iobroker.net/category/11/cloud-dienste\">Forum</a> Support anfordern",
+  "help_link_tip3": "und erst danach sollten Sie eine E-Mail an <a target=\"_blank\" href=\"mailto:support@iobroker.com\">support@iobroker.com</a> schreiben",
   "help_tip": "Kein iobroker.pro-Konto? Kaufen Sie es auf <a href=\"https://iobroker.pro/accessRemote\" target=\"_blank\"> https://iobroker.pro </a> für den validierten Zugriff oder erhalten Sie kostenlosen, aber eingeschränkten Zugriff.",
   "info_allowedServices": "durch Komma getrennt. Benutze * um alle Services zu erlauben.",
   "info_iftttKey": "Der Schlüssel kann <a href='https://ifttt.com/maker_webhooks' target='_blank'>hier</a> unter 'Documentation' gefunden werden",
@@ -143,16 +155,5 @@
   "tooltip_ts": "Zeitstempel",
   "tooltip_user": "Nutzer",
   "tooltip_value": "Wert",
-  "Please add type and trait to complete the Google Home state.":"Bitte füge eine Type und Trait hinzu um den Google Home State zu vervollständigen.",
-  "Attributes has not correct JSON format.":"Attributes ist nicht im korrekten JSON Format",
-  "To auto detect devices please assign a room and function to the channel if no channel available than assign to a device. Not only to the state or device. And enable them under SmartEnum/Intelligente Aufzählung":
-  "Für automatische Erkennung, unter Objekte ordne einem Channel (Device wenn kein Channel vorhanden ist) ein Raum und Funktion zu. Es reicht nicht einem State oder Device den Raum zuzuordnen. Räume/Funktionen können unter Aufzählung (Anzeigen über den weißen Pfeil oben rechts) hinzugefügt werden und müssen im IoT Adapter unter Intelligente Aufzählung aktiviert werden. Um manuelle States wieder automatisch erkennen zu lassen muss der State gelöscht werden.",
-  "Please select a  <a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/guides/'>TYPE</a> and a":
-  "Bitte wähle  <a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/guides/' > TYPE</a> und ein ",
-  "<a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/' > TRAIT</a> after adding a state.   To add multiple traits add a different id and trait but same smartname, type and room. Comma separated for mutiple smartnames.  To assign a room please use the ioBroker Enums/Aufzählungen.  With attributes you can for example set a range for the color temperature ":
-  "<a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/' > TRAIT</a> nachdem du ein ioBroker State hinzugefügt hast.  Für mehrere Traits füge unterschiedliche State IDs hinzu und verwende den gleichen SmartName, Type und Raum. Kommasepariert kannst du mehrere Smartnamen hinzufügen.  Um ein Raum zuzuordnen verwende die Aufzählungen in ioBroker und ordne ihn über Objekte hinzu. Mit den Attributes kannst du z.B. den Farbtemperaturberich festlegen ",
-  "<a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/colorsetting'> Infos about Attributes you can find here.</a> Empty attribute is {}":
-  "<a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/colorsetting' > Infos über Attribute kannst du hier finden.</a> Ein leeres Attribut ist {}",
-  "For help use this forum <a target='_blank' rel='noopener noreferrer' href='https://forum.iobroker.net/topic/24061/google-home-assistant-iobroker-einrichten-nutzen/'>thread</a>":
-  "Für Hilfe besuche diesen <a target='_blank' rel='noopener noreferrer' href='https://forum.iobroker.net/topic/24061/google-home-assistant-iobroker-einrichten-nutzen/'>Forumbeitrag</a>"
+  "Short answer for blood sugar": "Kurze Antwort für Blutzucker"
 }

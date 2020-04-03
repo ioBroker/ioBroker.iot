@@ -1,5 +1,8 @@
 (Set to 0 if behavior not desired)
 (you can separate names with comma)
+<a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/' > TRAIT</a> after adding a state.   To add multiple traits add a different id and trait but same smartname, type and room. Comma separated for mutiple smartnames.  To assign a room please use the ioBroker Enums/Aufzählungen.  With attributes you can for example set a range for the color temperature 
+<a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/'> TRAIT</a> after adding a state.   To add multiple traits add a different id and trait but same smartname, type and room. Comma separated for mutiple smartnames.  To assign a room please use the ioBroker Enums/Aufzählungen.  With attributes you can for example set a range for the color temperature 
+<a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/colorsetting'> Infos about Attributes you can find here.</a> Empty attribute is {}
 Active
 Add device
 Add service
@@ -10,6 +13,7 @@ Allow admin access (only pro)
 Allow self-signed certificates
 Amazon Alexa
 Are you sure?
+Attributes has not correct JSON format.
 Authentication must be disabled. You can create second instance extra for cloud.
 Cancel
 Cannot add this object
@@ -37,6 +41,7 @@ Edit smart name
 Error
 Extended options
 Filter
+For help use this forum <a target='_blank' rel='noopener noreferrer' href='https://forum.iobroker.net/topic/24061/google-home-assistant-iobroker-einrichten-nutzen/'>thread</a>
 Functions
 Get actual temperature
 Get new connection certificates
@@ -66,6 +71,9 @@ Options
 Personal settings (only pro)
 Ping timeout:
 Place function in names first
+Please add action and trait to complete the Google Home state.
+Please add type and trait to complete the Google Home state.
+Please select a  <a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/guides/'>TYPE</a> and a
 Please select object ID...
 Please write your email only in lower case letters
 Read lock state
@@ -86,6 +94,7 @@ Set color temperature
 Set lock state
 Set percentage
 Set target temperature
+Short answer for blood sugar
 Smart Devices
 Smart Enums
 Smart Media
@@ -93,6 +102,7 @@ Smart enums
 Smart name
 Smart name for %s
 To apply this setting, the restart of adapter must be done. Agree?
+To auto detect devices please assign a room and function to the channel if no channel available than assign to a device. Not only to the state or device. And enable them under SmartEnum/Intelligente Aufzählung
 Turn off
 Turn on
 Type
@@ -116,6 +126,9 @@ filter_id
 filter_name
 filter_role
 filter_room
+help_link_tip1
+help_link_tip2
+help_link_tip3
 help_tip
 info_allowedServices
 info_iftttKey

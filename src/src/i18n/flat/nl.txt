@@ -1,5 +1,8 @@
 (Stel in op 0 als gedrag niet gewenst is)
 U kunt verschillende namen invoeren, gescheiden door een komma
+
+
+
 Actief
 Voeg toestel toe
 Service toevoegen
@@ -10,6 +13,7 @@ Beheerrechten toestaan ​​(alleen pro)
 Sta zelf-ondertekende certificaten toe
 Amazon Alexa
 Weet je het zeker?
+
 Verificatie moet zijn uitgeschakeld. U kunt een tweede exemplaar extra voor de cloud maken.
 Annuleer
 Kan dit object niet toevoegen, omdat het niet wordt ondersteund.
@@ -37,6 +41,7 @@ Bewerk slimme naam
 Fout
 Uitgebreide opties
 Filter
+
 functies
 Krijg de werkelijke temperatuur
 Ontvang nieuwe verbindingscertificaten
@@ -66,6 +71,9 @@ opties
 Persoonlijke instellingen (alleen pro)
 Ping-timeout (ms)
 Plaats eerst de functie in namen
+
+
+
 Selecteer een object-ID ...
 Schrijf uw e-mail alleen in kleine letters
 Lees de vergrendelingsstatus
@@ -86,6 +94,7 @@ Stel de kleurtemperatuur in
 Stel de vergrendelingsstatus in
 Percentage instellen
 Stel de doeltemperatuur in
+Kort antwoord voor bloedsuiker
 Slimme apparaten
 Smart Enums
 Smart Media
@@ -93,6 +102,7 @@ Slim enums
 Slimme naam
 Slimme naam voor %s
 Om deze instelling toe te passen, moet de adapter opnieuw worden opgestart. Mee eens?
+
 Uitschakelen
 Aanzetten
 Type
@@ -116,6 +126,9 @@ ID kaart
 Naam
 Rol
 Kamer
+Voordat u ter ondersteuning schrijft, moet u ervoor zorgen dat u de instructies van de webpagina hebt gelezen en begrepen: <a target="_blank" href="https://www.iobroker.net/#en/documentation/cloud/iot.md">https://www.iobroker.net</a>
+Als je nog steeds problemen hebt met de verbinding met Iot, kun je support im <a target="_blank" href="https://forum.iobroker.net/category/123/cloud-services">Forum</a> aanvragen
+en pas daarna moet u een e-mail schrijven naar <a target="_blank" href="mailto:support@iobroker.com">support@iobroker.com</a>
 Geen iobroker.pro-account? Koop het op <a href="https://iobroker.pro/accessRemote" target="_blank"> https://iobroker.pro </a> voor gevalideerde toegang of krijg gratis toegang, maar beperkte toegang.
 gedeeld door een komma. Gebruik * om alle services toe te staan.
 Je kunt je belangrijkste <a href='https://ifttt.com/maker_webhooks' target='_blank'>hier</a> vinden onder 'Documentatie'

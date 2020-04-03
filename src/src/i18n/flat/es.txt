@@ -1,5 +1,8 @@
 (Se establece en 0 si no se desea el comportamiento)
 Puede ingresar varios nombres divididos por coma
+
+
+
 Activo
 Añadir dispositivo
 Añadir servicio
@@ -10,6 +13,7 @@ Permitir acceso de administrador (solo pro)
 Permitir certificados autofirmados
 Amazon Alexa
 ¿Estás seguro?
+
 La autenticación debe estar deshabilitada. Puede crear una segunda instancia extra para la nube.
 Cancelar
 No se puede agregar este objeto porque no es compatible.
@@ -37,6 +41,7 @@ Editar nombre inteligente
 Error
 Opciones extendidas
 Filtrar
+
 Funciones
 Obtener la temperatura real
 Obtenga nuevos certificados de conexión
@@ -66,6 +71,9 @@ Opciones
 Configuración personal (solo pro)
 Tiempo de espera de ping (ms)
 Coloque la función en los nombres primero
+
+
+
 Por favor seleccione ID de objeto ...
 Por favor escriba su correo electrónico sólo en minúsculas
 Estado de bloqueo de lectura
@@ -86,6 +94,7 @@ Ajustar la temperatura de color
 Establecer el estado de bloqueo
 Establecer porcentaje
 Ajustar la temperatura objetivo
+Respuesta corta para azúcar en la sangre
 Dispositivos inteligentes
 Smart Enums
 Smart Media
@@ -93,6 +102,7 @@ Enums inteligentes
 Nombre inteligente
 Nombre inteligente para %s
 Para aplicar esta configuración, el adaptador debe reiniciarse. ¿De acuerdo?
+
 Apagar
 Encender
 Tipo
@@ -116,6 +126,9 @@ CARNÉ DE IDENTIDAD
 Nombre
 Papel
 Habitación
+Antes de escribir a soporte, asegúrese de haber leído y entendido las instrucciones de la página web: <a target="_blank" href="https://www.iobroker.net/#en/documentation/cloud/iot.md">https://www.iobroker.net</a>
+Si aún tiene problemas con la conexión a Iot, puede solicitar asistencia en el <a target="_blank" href="https://forum.iobroker.net/category/123/cloud-services">foro</a>
+y solo después de eso, debe escribir un correo electrónico a <a target="_blank" href="mailto:support@iobroker.com">support@iobroker.com</a>
 ¿No hay una cuenta iobroker.pro? Cómprelo en <a href="https://iobroker.pro/accessRemote" target="_blank"> https://iobroker.pro </a> para obtener acceso validado u obtenga de forma gratuita, pero con acceso limitado.
 dividido por coma. Use * para permitir todos los servicios.
 Puede encontrar su clave <a href='https://ifttt.com/maker_webhooks' target='_blank'> aquí </a> en 'Documentación'
