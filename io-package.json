@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.4.1",
+        "version": "1.4.2",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.42":  {
+                "en": "Fix updateState for Google Home",
+                "de": "Fix updateState für Google Home",
+                "ru": "Исправление updateState для Google Home",
+                "pt": "Corrigir updateState para a Página inicial do Google",
+                "nl": "UpdateState voor Google Home repareren",
+                "fr": "Correction de updateState pour Google Home",
+                "it": "Correggi updateState per Google Home",
+                "es": "Corregir updateState para Google Home",
+                "pl": "Napraw aktualizację Stan dla Google Home",
+                "zh-cn": "修复Google Home的updateState"
+            },
             "1.4.1":  {
                 "en": "The blood glucose request supported now",
                 "de": "Die Blutzuckeranfrage wird jetzt unterstützt",

@@ -246,6 +246,9 @@ Following types are supported:
 - `ifttt` - acting like IFTTT (actually not required, but for tests purposes)
 
 ## Changelog
+### 1.4.2 (2020-04-08)
+* (TA2k) Fix updateState for Google Home
+
 ### 1.4.1 (2020-04-04)
 * (bluefox) The blood glucose request supported now
 
