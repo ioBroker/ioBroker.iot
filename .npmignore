@@ -1,4 +1,4 @@
-Gruntfile.js
+gulpfile.js
 tasks
 ./webSite
 .git
@@ -12,3 +12,5 @@ admin/i18n
 package-lock.json
 tsconfig.json
 iob_npm.done
+.idea/
+test/

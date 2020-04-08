@@ -28,7 +28,7 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
-            "1.42":  {
+            "1.4.2":  {
                 "en": "Fix updateState for Google Home",
                 "de": "Fix updateState für Google Home",
                 "ru": "Исправление updateState для Google Home",
@@ -124,90 +124,6 @@
                 "es": "Ahora se permite seleccionar los valores de temperatura como indica alexa\nSe permite establecer el tipo inmediatamente después de la inserción del nuevo estado",
                 "pl": "Teraz można wybrać wartości temperatur jako stany Alexa\nDozwolone jest ustawienie typu natychmiast po wstawieniu nowego stanu",
                 "zh-cn": "现在允许选择温度值作为Alexa状态\n插入新状态后允许立即设置类型"
-            },
-            "1.1.9": {
-                "en": "Fixed: sometimes the configuration could not be loaded",
-                "de": "Behoben: Manchmal konnte die Konfiguration nicht geladen werden",
-                "ru": "Исправлено: иногда конфигурация не могла быть загружена",
-                "pt": "Corrigido: às vezes a configuração não pôde ser carregada",
-                "nl": "Opgelost: soms kon de configuratie niet worden geladen",
-                "fr": "Corrigé: parfois la configuration ne pouvait pas être chargée",
-                "it": "Risolto: a volte la configurazione non poteva essere caricata",
-                "es": "Solucionado: a veces la configuración no se podía cargar",
-                "pl": "Naprawiono: czasami konfiguracja nie mogła zostać załadowana",
-                "zh-cn": "修复：有时无法加载配置"
-            },
-            "1.1.8": {
-              "en": "Optimization of google home communication was done ",
-              "de": "Die Google Home-Kommunikation wurde optimiert",
-              "ru": "Оптимизация Google Home Communication была проведена",
-              "pt": "A otimização da comunicação doméstica do Google foi realizada",
-              "nl": "Optimalisatie van Google Home-communicatie is voltooid",
-              "fr": "L'optimisation de la communication google home a été effectuée",
-              "it": "L'ottimizzazione della comunicazione domestica di Google è stata eseguita",
-              "es": "Se realizó la optimización de la comunicación doméstica de google",
-              "pl": "Optymalizacja domowej komunikacji Google została wykonana",
-              "zh-cn": "谷歌家庭通信的优化已经完成"
-            },
-            "1.1.7": {
-                "en": "The sending rate to google home is limited now",
-                "de": "Die Versandrate für Google Home ist jetzt begrenzt",
-                "ru": "Скорость отправки в Google Home теперь ограничена",
-                "pt": "A taxa de envio para o google home é limitada agora",
-                "nl": "De verzendingssnelheid naar Google Home is nu beperkt",
-                "fr": "Le tarif d'envoi à google home est limité maintenant",
-                "it": "La velocità di invio a google home è ora limitata",
-                "es": "La tasa de envío a Google Home es limitada ahora",
-                "pl": "Szybkość wysyłania do Google Home jest teraz ograniczona",
-                "zh-cn": "谷歌回家的发送速度现在有限"
-            },
-            "1.1.6": {
-                "en": "Room fix for Google Home and LinkedDevices",
-                "de": "Raumkorrektur für Google Home und LinkedDevices",
-                "ru": "Исправление комнаты для Google Home и LinkedDevices",
-                "pt": "Correção de quarto para o Google Home e o LinkedDevices",
-                "nl": "Ruimtefix voor Google Home en LinkedDevices",
-                "fr": "Correction de pièce pour Google Home et LinkedDevices",
-                "it": "Correzione della camera per Google Home e LinkedDevices",
-                "es": "Arreglo de sala para Google Home y LinkedDevices",
-                "pl": "Poprawka pokoju dla Google Home i LinkedDevices",
-                "zh-cn": "Google Home和LinkedDevices的房间修复"
-            },
-            "1.1.4": {
-                "en": "decreased keepalive value to fix issue with disconnect ",
-                "de": "Der Keepalive-Wert wurde verringert, um das Problem mit der Verbindungsunterbrechung zu beheben",
-                "ru": "уменьшено значение keepalive для устранения проблемы с отключением",
-                "pt": "valor keepalive diminuído para corrigir o problema com a desconexão",
-                "nl": "verminderde bewaarwaarde om probleem met loskoppelen op te lossen",
-                "fr": "valeur keepalive réduite pour résoudre le problème de déconnexion",
-                "it": "diminuzione del valore keepalive per risolvere il problema con disconnessione",
-                "es": "Disminución del valor de keepalive para solucionar el problema con la desconexión",
-                "pl": "zmniejszono wartość podtrzymania, aby rozwiązać problem z rozłączeniem",
-                "zh-cn": "降低keepalive值以解决断开连接问题"
-            },
-            "1.1.3": {
-                "en": "Google Home problem fixed with LinkedDevices",
-                "de": "Google Home-Problem mit LinkedDevices behoben",
-                "ru": "Проблема Google Home устранена с помощью LinkedDevices",
-                "pt": "Problema na Página inicial do Google corrigido com o LinkedDevices",
-                "nl": "Google Home-probleem opgelost met LinkedDevices",
-                "fr": "Problème de Google Home résolu avec LinkedDevices",
-                "it": "Problema di Google Home risolto con LinkedDevices",
-                "es": "Problema de Google Home solucionado con LinkedDevices",
-                "pl": "Problem Google Home naprawiony w LinkedDevices",
-                "zh-cn": "使用LinkedDevices修复Google Home问题"
-            },
-            "1.0.4": {
-                "en": "Fixed password encoding. Please enter password anew!",
-                "de": "Feste Passwortverschlüsselung. Bitte Passwort erneut eingeben!",
-                "ru": "Исправлена кодировка пароля. Пожалуйста, введите пароль заново!",
-                "pt": "Codificação de senha fixa. Por favor, insira a senha novamente!",
-                "nl": "Vaste wachtwoordcodering. Voer het wachtwoord opnieuw in!",
-                "fr": "Correction du codage du mot de passe. Veuillez entrer votre mot de passe à nouveau!",
-                "it": "Codifica password fissa. Inserisci di nuovo la password!",
-                "es": "Se arregló la codificación de contraseña. Por favor ingrese la contraseña nuevamente!",
-                "pl": "Naprawiono kodowanie hasła. Wprowadź hasło ponownie!",
-                "zh-cn": "固定密码编码。请重新输入密码！"
             }
         },
         "authors": [

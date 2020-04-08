@@ -12,7 +12,7 @@ It is not for remote access to your ioBroker instance. Use ioBroker.cloud adapte
 ## Settings
 To use cloud adapter you should first to register on the ioBroker cloud [https://iobroker.pro](https://iobroker.pro).
 
-[Refference to google API type settings](https://developers.google.com/actions/smarthome/guides/)
+[Reference to google API type settings](https://developers.google.com/actions/smarthome/guides/)
 
 ![Intro](img/intro.png)
 
