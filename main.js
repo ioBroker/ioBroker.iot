@@ -15,7 +15,6 @@ const fs           = require('fs');
 const request      = require('request');
 // @ts-ignore
 const adapterName  = require('./package.json').name.split('.').pop();
-const ALEXA_CUSTOM_BLOOD_SUGAR = 'amzn1.ask.skill.a499fa96-f795-42a5-a911-584c223d03e1';
 
 let recalcTimeout  = null;
 let lang           = 'de';
@@ -624,7 +623,7 @@ function processMessage(type, request, callback) {
             }
         } else
         if (request && !request.header) {
-            if (request && request.session && request.session.application && request.session.application.applicationId === ALEXA_CUSTOM_BLOOD_SUGAR) {
+            if (request && request.session && request.session.application && alexaCustomBlood && request.session.application.applicationId === alexaCustomBlood.getAppId()) {
                 if (alexaCustomBlood) {
                     alexaCustomBlood.process(request, adapter.config.amazonAlexaBlood, response => callback(response));
                 } else {
