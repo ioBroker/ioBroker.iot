@@ -248,6 +248,11 @@ Following types are supported:
 - `ifttt` - acting like IFTTT (actually not required, but for tests purposes)
 
 ## Changelog
+### 1.4.3 (2020-04-14)
+* (Apollon77) remove js-controller 3.0 warnings and replace adapter.objects access
+* (Apollon77) add linux dependencies for canvas library
+* (Apollon77) add sentry configuration
+
 ### 1.4.2 (2020-04-08)
 * (TA2k) Fix updateState for Google Home
 
