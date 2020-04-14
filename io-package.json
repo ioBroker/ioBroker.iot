@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.4.2",
+        "version": "1.4.3",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.4.3":  {
+                "en": "linux dependencies and sentry error reporting added, remove js-controller 3.0 warnings",
+                "de": "Linux-Abhängigkeiten und Sentry-Fehlerberichte hinzugefügt, entfernen Sie die Warnungen von js-controller 3.0",
+                "ru": "Добавлены зависимости от linux и сообщения об ошибках, удалите предупреждения js-controller 3.0",
+                "pt": "adicionado dependência de linux e relatório de erro de sentinela, remova os avisos do js-controller 3.0",
+                "nl": "linux-afhankelijkheden en sentry-foutrapportage toegevoegd, verwijder js-controller 3.0-waarschuwingen",
+                "fr": "Dépendances Linux et rapports d'erreurs sentinelles ajoutés, suppression des avertissements js-controller 3.0",
+                "it": "Aggiunte dipendenze Linux e segnalazione errori sentinella, rimuovere gli avvisi js-controller 3.0",
+                "es": "dependencias de Linux e informes de errores de centinela agregados, elimine las advertencias de js-controller 3.0",
+                "pl": "dodane zależności Linux i raportowanie błędów sentry, usuń ostrzeżenia js-controller 3.0",
+                "zh-cn": "添加了linux依赖项和哨兵错误报告，删除了js-controller 3.0警告"
+            },
             "1.4.2":  {
                 "en": "Fix updateState for Google Home",
                 "de": "Fix updateState für Google Home",
@@ -156,7 +168,15 @@
             }
         ],
         "preserveSettings": "smartName",
-        "blockly": true
+        "blockly": true,
+        "osDependencies" : {
+            "linux": ["libcairo2-dev", "libpango1.0-dev", "libjpeg-dev", "libgif-dev", "librsvg2-dev"]
+        },
+        "plugins": {
+            "sentry": {
+                "dsn": "https://20987eaf91ef49de821771499fdb4e1a@sentry.iobroker.net/40"
+            }
+        }
     },
     "native": {
         "login": "email.com",

@@ -9,6 +9,8 @@
 This adapter is ONLY for communication with Amazon Alexa, Google Home and Nightscout.
 It is not for remote access to your ioBroker instance. Use ioBroker.cloud adapter for that.
 
+**This adapter uses Sentry libraries to automatically report exceptions and code errors to the developers.** For more details and for information how to disable the error reporting see [Sentry-Plugin Documentation](https://github.com/ioBroker/plugin-sentry#plugin-sentry)! Sentry reporting is used starting with js-controller 3.0.
+
 ## Settings
 To use cloud adapter you should first to register on the ioBroker cloud [https://iobroker.pro](https://iobroker.pro).
 
