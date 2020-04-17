@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.4.4",
+        "version": "1.4.5",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.4.5":  {
+                "en": "Sentry error reporting added also to React Frontend",
+                "de": "Sentry-Fehlerberichte wurden auch zu React Frontend hinzugefügt",
+                "ru": "Также добавлены отчеты об ошибках Sentry в React Frontend.",
+                "pt": "Relatório de erro de sentinela adicionado também ao React Frontend",
+                "nl": "Sentry-foutrapportage ook toegevoegd aan React Frontend",
+                "fr": "Rapport d'erreur Sentry ajouté également à React Frontend",
+                "it": "La segnalazione degli errori di sentinella è stata aggiunta anche a React Frontend",
+                "es": "El informe de errores centinela también se agregó a React Frontend",
+                "pl": "Dodano raportowanie błędów wartowników również w React Frontend",
+                "zh-cn": "Sentry错误报告也已添加到React Frontend"
+            },
             "1.4.4":  {
                 "en": "linux dependencies and sentry error reporting added, remove js-controller 3.0 warnings",
                 "de": "Linux-Abhängigkeiten und Sentry-Fehlerberichte hinzugefügt, entfernen Sie die Warnungen von js-controller 3.0",
