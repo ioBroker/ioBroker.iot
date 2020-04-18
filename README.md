@@ -248,7 +248,7 @@ Following types are supported:
 - `ifttt` - acting like IFTTT (actually not required, but for tests purposes)
 
 ## Changelog
-### 1.4.5 (2020-04-18)
+### 1.4.6 (2020-04-18)
 * (Apollon77) Add Sentry error reporting to React Frontend
 
 ### 1.4.4 (2020-04-14)

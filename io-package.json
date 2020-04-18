@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.4.5",
+        "version": "1.4.6",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,7 +28,7 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
-            "1.4.5":  {
+            "1.4.6":  {
                 "en": "Sentry error reporting added also to React Frontend",
                 "de": "Sentry-Fehlerberichte wurden auch zu React Frontend hinzugefügt",
                 "ru": "Также добавлены отчеты об ошибках Sentry в React Frontend.",
