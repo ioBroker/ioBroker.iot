@@ -185,10 +185,12 @@
         "materialize": true,
         "dependencies": [
             {
-                "admin": ">=4.0.1"
-            },
-            {
                 "js-controller": ">=2.0.0"
+            }
+        ],
+        "globalDependencies": [
+            {
+                "admin": ">=4.0.1"
             }
         ],
         "preserveSettings": "smartName",
