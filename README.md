@@ -248,6 +248,11 @@ Following types are supported:
 - `ifttt` - acting like IFTTT (actually not required, but for tests purposes)
 
 ## Changelog
+
+### 1.4.7 (2020-04-23)
+* fix pot crash when timeouts in communications to Google happens (Sentry IOBROKER-IOT-2)
+* fix pot crash when google answers without customData (Sentry IOBROKER-IOT-1)
+
 ### 1.4.6 (2020-04-18)
 * (Apollon77) Add Sentry error reporting to React Frontend
 
