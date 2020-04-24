@@ -1,8 +1,19 @@
 'use strict';
 
-goog.provide('Blockly.JavaScript.Sendto');
+if (typeof goog !== 'undefined') {
+    goog.provide('Blockly.JavaScript.Sendto');
 
-goog.require('Blockly.JavaScript');
+    goog.require('Blockly.JavaScript');
+}
+
+Blockly.Translate = Blockly.Translate || function (word, lang) {
+    lang = lang || systemLang;
+    if (Blockly.Words && Blockly.Words[word]) {
+        return Blockly.Words[word][lang] || Blockly.Words[word].en;
+    } else {
+        return word;
+    }
+};
 
 // --- ifttt --------------------------------------------------
 Blockly.Words['ifttt_iot']           = {'en': 'Send text to IFTTT via iot',  'de': 'Sende Text zu IFTTT über iot',       'ru': 'Послать текст в IFTTT через iot'};
@@ -63,44 +74,41 @@ Blockly.Blocks['ifttt_iot'] = {
                     options.push(['iot.' + n, '.' + n]);
                 }
             }
-            if (!options.length) {
-                for (var k = 0; k <= 4; k++) {
-                    options.push(['iot.' + k, '.' + k]);
-                }
-            }
-        } else {
-            for (var u = 0; u <= 4; u++) {
-                options.push(['iot.' + u, '.' + u]);
+        }
+
+        if (!options.length) {
+            for (var k = 0; k <= 4; k++) {
+                options.push(['iot.' + k, '.' + k]);
             }
         }
 
         this.appendDummyInput('INSTANCE')
-            .appendField(Blockly.Words['ifttt_iot'][systemLang])
+            .appendField(Blockly.Translate('ifttt_iot'))
             .appendField(new Blockly.FieldDropdown(options), 'INSTANCE');
 
         this.appendValueInput('EVENT')
-            .appendField(Blockly.Words['ifttt_event'][systemLang]);
+            .appendField(Blockly.Translate('ifttt_event'));
 
         var input = this.appendValueInput('VALUE1')
-            .appendField(Blockly.Words['ifttt_value1'][systemLang]);
+            .appendField(Blockly.Translate('ifttt_value1'));
         if (input.connection) input.connection._optional = true;
 
         input = this.appendValueInput('VALUE2')
-            .appendField(Blockly.Words['ifttt_value2'][systemLang]);
+            .appendField(Blockly.Translate('ifttt_value2'));
         if (input.connection) input.connection._optional = true;
 
         input = this.appendValueInput('VALUE3')
-            .appendField(Blockly.Words['ifttt_value3'][systemLang]);
+            .appendField(Blockly.Translate('ifttt_value3'));
         if (input.connection) input.connection._optional = true;
 
         this.appendDummyInput('LOG')
-            .appendField(Blockly.Words['ifttt_log'][systemLang])
+            .appendField(Blockly.Translate('ifttt_log'))
             .appendField(new Blockly.FieldDropdown([
-                [Blockly.Words['ifttt_log_none'][systemLang],  ''],
-                [Blockly.Words['ifttt_log_info'][systemLang],  'log'],
-                [Blockly.Words['ifttt_log_debug'][systemLang], 'debug'],
-                [Blockly.Words['ifttt_log_warn'][systemLang],  'warn'],
-                [Blockly.Words['ifttt_log_error'][systemLang], 'error']
+                [Blockly.Translate('ifttt_log_none'),  ''],
+                [Blockly.Translate('ifttt_log_info'),  'log'],
+                [Blockly.Translate('ifttt_log_debug'), 'debug'],
+                [Blockly.Translate('ifttt_log_warn'),  'warn'],
+                [Blockly.Translate('ifttt_log_error'), 'error']
             ]), 'LOG');
 
         this.setInputsInline(false);
@@ -108,18 +116,18 @@ Blockly.Blocks['ifttt_iot'] = {
         this.setNextStatement(true, null);
 
         this.setColour(Blockly.Sendto.HUE);
-        this.setTooltip(Blockly.Words['ifttt_tooltip'][systemLang]);
-        this.setHelpUrl(Blockly.Words['ifttt_help'][systemLang]);
+        this.setTooltip(Blockly.Translate('ifttt_tooltip'));
+        this.setHelpUrl(Blockly.Translate('ifttt_help'));
     }
 };
 
 Blockly.JavaScript['ifttt_iot'] = function(block) {
     var dropdown_instance = block.getFieldValue('INSTANCE');
-    var event = Blockly.JavaScript.valueToCode(block, 'EVENT', Blockly.JavaScript.ORDER_ATOMIC);
+    var event    = Blockly.JavaScript.valueToCode(block, 'EVENT', Blockly.JavaScript.ORDER_ATOMIC);
     var logLevel = block.getFieldValue('LOG');
-    var value1  = Blockly.JavaScript.valueToCode(block, 'VALUE1', Blockly.JavaScript.ORDER_ATOMIC);
-    var value2  = Blockly.JavaScript.valueToCode(block, 'VALUE2', Blockly.JavaScript.ORDER_ATOMIC);
-    var value3  = Blockly.JavaScript.valueToCode(block, 'VALUE3', Blockly.JavaScript.ORDER_ATOMIC);
+    var value1   = Blockly.JavaScript.valueToCode(block, 'VALUE1', Blockly.JavaScript.ORDER_ATOMIC);
+    var value2   = Blockly.JavaScript.valueToCode(block, 'VALUE2', Blockly.JavaScript.ORDER_ATOMIC);
+    var value3   = Blockly.JavaScript.valueToCode(block, 'VALUE3', Blockly.JavaScript.ORDER_ATOMIC);
 
     var logText;
     if (logLevel) {
