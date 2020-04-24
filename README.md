@@ -248,7 +248,7 @@ Following types are supported:
 - `ifttt` - acting like IFTTT (actually not required, but for tests purposes)
 
 ## Changelog
-### 1.4.8 (2020-04-24)
+### 1.4.9 (2020-04-24)
 * (bluefox) Fixed crashes reported by sentry
 
 ### 1.4.7 (2020-04-23)
