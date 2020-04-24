@@ -186,6 +186,7 @@ function startAdapter(options) {
 
     return adapter;
 }
+
 function sendDataToIFTTT(obj) {
     if (!obj) {
         adapter.log.warn('No data to send to IFTTT');

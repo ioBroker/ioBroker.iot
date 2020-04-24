@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.4.7",
+        "version": "1.4.8",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.4.8": {
+                "en": "Fixed crashes reported by \"sentry\"",
+                "de": "Von \"sentry\" gemeldete Abstürze behoben",
+                "ru": "Исправлены сбои, о которых сообщал \"sentry\"",
+                "pt": "Corrigidas falhas relatadas por \"sentry\"",
+                "nl": "Fixed crashes gemeld door \"sentry\"",
+                "fr": "Correction de plantages signalés par la \"sentry\"",
+                "it": "Risolti crash segnalati da \"sentry\"",
+                "es": "Se corrigieron bloqueos informados por \"sentry\"",
+                "pl": "Naprawiono awarie zgłaszane przez „sentry”",
+                "zh-cn": "修复了“哨兵”报告的崩溃问题"
+            },
             "1.4.7":  {
                 "en": "potential crash case fixed",
                 "de": "Möglicher Crash-Fall behoben",

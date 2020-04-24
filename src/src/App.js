@@ -120,7 +120,7 @@ class App extends GenericApp {
                         common={this.common}
                         socket={this.socket}
                         native={this.state.native}
-                        onError={text => this.setState({errorText: text})}
+                        onError={text => this.setState({errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text})}
                         onLoad={native => this.onLoadConfig(native)}
                         instance={this.instance}
                         adapterName={this.adapterName}
@@ -131,7 +131,7 @@ class App extends GenericApp {
                         common={this.common}
                         socket={this.socket}
                         native={this.state.native}
-                        onError={text => this.setState({errorText: text})}
+                        onError={text => this.setState({errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text})}
                         instance={this.instance}
                         adapterName={this.adapterName}
                     />)}
@@ -140,7 +140,7 @@ class App extends GenericApp {
                         common={this.common}
                         socket={this.socket}
                         native={this.state.native}
-                        onError={text => this.setState({errorText: text})}
+                        onError={text => this.setState({errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text})}
                         adapterName={this.adapterName}
                         instance={this.instance}
                     />)}
@@ -149,7 +149,7 @@ class App extends GenericApp {
                         common={this.common}
                         socket={this.socket}
                         native={this.state.native}
-                        onError={text => this.setState({errorText: text})}
+                        onError={text => this.setState({errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text})}
                         adapterName={this.adapterName}
                         instance={this.instance}
                     />)}
@@ -158,7 +158,7 @@ class App extends GenericApp {
                         common={this.common}
                         socket={this.socket}
                         native={this.state.native}
-                        onError={text => this.setState({errorText: text})}
+                        onError={text => this.setState({errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text})}
                         adapterName={this.adapterName}
                         instance={this.instance}
                     />)}
@@ -167,7 +167,7 @@ class App extends GenericApp {
                         common={this.common}
                         socket={this.socket}
                         native={this.state.native}
-                        onError={text => this.setState({errorText: text})}
+                        onError={text => this.setState({errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text})}
                         instance={this.instance}
                         adapterName={this.adapterName}
                         onChange={(attr, value) => this.updateNativeValue(attr, value)}
@@ -177,7 +177,7 @@ class App extends GenericApp {
                         common={this.common}
                         socket={this.socket}
                         native={this.state.native}
-                        onError={text => this.setState({errorText: text})}
+                        onError={text => this.setState({errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text})}
                         instance={this.instance}
                         adapterName={this.adapterName}
                         onShowError={error => this.showError(error)}

@@ -500,7 +500,7 @@ gulp.task('copy', () => {
 
 gulp.task('renameIndex', done => {
     if (fs.existsSync(__dirname + '/admin/index.html')) {
-        fs.renameSync(__dirname + '/admin/index.html', __dirname + '/admin/index_m.html')
+        fs.renameSync(__dirname + '/admin/index.html', __dirname + '/admin/index_m.html');
     }
     done();
 });

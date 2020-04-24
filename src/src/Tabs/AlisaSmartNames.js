@@ -262,19 +262,19 @@ class AlisaDevices extends Component {
     }
 
     browse(isIndicate) {
-        if (Date.now() - this.lastBrowse < 500) return;
+        if (Date.now() - this.lastBrowse < 500) {
+            return;
+        }
 
         this.lastBrowse = Date.now();
+
         if (isIndicate) {
             this.setState({loading: true, browse: true});
         } else {
             this.setState({browse: true});
         }
 
-        console.log('Send BROWSE!');
-
         this.browseTimer = setTimeout(() => {
-            console.log('Browse timeout!');
             this.browseTimer = null;
             this.browseTimerCount++;
             if (this.browseTimerCount < 5) {
@@ -296,14 +296,11 @@ class AlisaDevices extends Component {
                 this.waitForUpdateID = null;
             }
 
-            console.log('BROWSE received.');
-
             this.setState({devices: list, loading: false, changed: [], browse: false});
         });
     }
 
     onReadyUpdate(id, state) {
-        console.log('Update ' + id + ' ' + (state ? state.val + '/' + state.ack : 'null'));
         if (state && state.ack === true && state.val === true) {
             if (this.devTimer) clearTimeout(this.devTimer);
             this.devTimer = setTimeout(() => {
@@ -624,7 +621,10 @@ class AlisaDevices extends Component {
                 open={true}
                 maxWidth="sm"
                 fullWidth={true}
-                onClose={() => this.handleOk()}
+                onClose={() => {
+                    this.editedSmartName = null;
+                    this.setState({editId: '', editedSmartName: ''});
+                }}
                 aria-labelledby="message-dialog-title"
                 aria-describedby="message-dialog-description"
             >
@@ -661,7 +661,7 @@ class AlisaDevices extends Component {
                 open={true}
                 maxWidth="sm"
                 fullWidth={true}
-                onClose={() => this.handleOk()}
+                onClose={() => this.setState({showConfirmation: ''})}
                 aria-labelledby="confirmation-dialog-title"
                 aria-describedby="confirmation-dialog-description"
             >

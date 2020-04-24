@@ -12,7 +12,6 @@ import FormControl from '@material-ui/core/FormControl';
 import {MdAdd as IconAdd} from 'react-icons/md';
 import {MdRefresh as IconRefresh} from 'react-icons/md';
 
-
 import I18n from '@iobroker/adapter-react/i18n';
 import MessageDialog from '@iobroker/adapter-react/Dialogs/Message';
 import DialogSelectID from '@iobroker/adapter-react/Dialogs/SelectID';
@@ -34,7 +33,6 @@ import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 
- 
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
     Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -53,9 +51,9 @@ const tableIcons = {
     SortArrow: forwardRef((props, ref) => <ArrowUpward {...props} ref={ref} />),
     ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
     ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
-  };
+};
 
-const styles = () => ({})
+const styles = () => ({});
 
 class GoogleSmartNames extends Component {
     constructor(props) {
@@ -78,140 +76,144 @@ class GoogleSmartNames extends Component {
             expanded: [],
             lastChanged: '',
             columns: [
-                { title: 'Id', field: 'id' , editable: 'never' ,   cellStyle: {
-                    maxWidth: "12rem",
-                    overflow: "hidden",
-                    wordBreak: "break-all"
-                  }},
-                { title: 'Smartnames', field: 'name.nicknames' },
-                { title: 'ioBType', field: 'ioType',editable: 'never', cellStyle: {
-                    maxWidth: "4rem",
-                    overflow: "hidden",
-                    wordBreak: "break-all"
-                  }},
-                { title: 'Type', field: 'type' ,  lookup: { 
-                    "action.devices.types.AC_UNIT": 'Air conditioning unit	', 
-                    "action.devices.types.AIRFRESHENER": 'Air Freshener' ,
-                    "action.devices.types.AIRPURIFIER": 'Air purifier' ,
-                    "action.devices.types.AWNING": 'Awning' ,
-                    "action.devices.types.BLINDS": 'Blinds' ,
-                    "action.devices.types.BOILER": 'Boiler' ,
-                    "action.devices.types.CAMERA": 'Camera' ,
-                    "action.devices.types.COFFEE_MAKER": 'Coffee maker' ,
-                    "action.devices.types.CURTAIN": 'Curtain' ,
-                    "action.devices.types.DISHWASHER": 'Dishwasher' ,
-                    "action.devices.types.DOOR": 'Door' ,
-                    "action.devices.types.DRYER": 'Dryer' ,
-                    "action.devices.types.FAN": 'Fan' ,
-                    "action.devices.types.FIREPLACE": 'Fireplace' ,
-                    "action.devices.types.GARAGE": 'Garage' ,
-                    "action.devices.types.GATE": 'Gate' ,
-                    "action.devices.types.HEATER": 'Heater' ,
-                    "action.devices.types.HOOD": 'Hood' ,
-                    "action.devices.types.KETTLE": 'Kettle' ,
-                    "action.devices.types.LIGHT": 'Light' ,
-                    "action.devices.types.LOCK": 'Lock' ,
-                    "action.devices.types.MOP": 'Mop' ,
-                    "action.devices.types.MICROWAVE": 'Microwave' ,
-                    "action.devices.types.OUTLET": 'Outlet' ,
-                    "action.devices.types.OVEN": 'Oven' ,
-                    "action.devices.types.PERGOLA": 'Pergola' ,
-                    "action.devices.types.REFRIGERATOR": 'Refrigerator' ,
-                    "action.devices.types.SCENE": 'Scene' ,
-                    "action.devices.types.SECURITYSYSTEM": 'Security System' ,
-                    "action.devices.types.SENSOR": 'Sensor' ,
-                    "action.devices.types.SHUTTER": 'Shutter' ,
-                    "action.devices.types.SHOWER": 'Shower' ,
-                    "action.devices.types.SPEAKER": 'Speaker' ,
-                    "action.devices.types.SPRINKLER": 'Sprinkler' ,
-                    "action.devices.types.SWITCH": 'Switch' ,
-                    "action.devices.types.THERMOSTAT": 'Thermostat' ,
-                    "action.devices.types.VACUUM": 'Vacuum' ,
-                    "action.devices.types.VALVE": 'Valve' ,
-                    "action.devices.types.WASHER": 'Washer' ,
-                    "action.devices.types.WATERHEATER": 'Water heater' ,
-                    "action.devices.types.WINDOW": 'Window' 
+                {title: 'Id', field: 'id', editable: 'never', cellStyle: {
+                    maxWidth: '12rem',
+                    overflow: 'hidden',
+                    wordBreak: 'break-all'
                 }},
-                { title: 'Funktion/Trait', field: 'displayTraits' ,  lookup: { 
-                    // "action.devices.traits.ArmDisarm":'ArmDisarm',
-                    "action.devices.traits.Brightness":'Brightness',
-                    // "action.devices.traits.CameraStream":'CameraStream',
-                    "action.devices.traits.ColorSetting_temperature":'ColorSetting_Temperature',
-                    "action.devices.traits.ColorSetting_spectrumRGB":'ColorSetting_RGB',
-                    // "action.devices.traits.Dock":'Dock',
-                    "action.devices.traits.FanSpeed":'FanSpeed',
-                    // "action.devices.traits.LightEffects":'LightEffects',
-                    // "action.devices.traits.Locator":'Locator',
-                    "action.devices.traits.LockUnlock":'LockUnlock',
-                    "action.devices.traits.Modes":'Modes',
-                    "action.devices.traits.OnOff":'OnOff',
-                    "action.devices.traits.OpenClose":'OpenClose',
-                    // "action.devices.traits.RunCycle":'RunCycle',
-                    "action.devices.traits.Scene":'Scene',
-                    // "action.devices.traits.Sensor":'Sensor',
-                    "action.devices.traits.StartStop":'StartStop',
-                    "action.devices.traits.TemperatureControl_temperatureSetpointCelsius":'Oven_SetTemp',
-                    "action.devices.traits.TemperatureControl_temperatureAmbientCelsius":'Oven_StatusTemp',
-                    "action.devices.traits.TemperatureSetting_thermostatMode":'Thermostat_Mode',
-                    "action.devices.traits.TemperatureSetting_thermostatTemperatureSetpoint":'Thermostat_SetTemp',
-                    "action.devices.traits.TemperatureSetting_thermostatTemperatureAmbient":'Thermostat_StatusTemp',
-                    "action.devices.traits.TemperatureSetting_thermostatHumidityAmbient":'Thermostat_StatusHumidity',
-                    // "action.devices.traits.Timer":'Timer',
-                    "action.devices.traits.Toggles":'Toggles',
-                    "action.devices.traits.Volume":'Volume',
+                {title: 'Smartnames', field: 'name.nicknames'},
+                {title: 'ioBType', field: 'ioType',editable: 'never', cellStyle: {
+                    maxWidth: '4rem',
+                    overflow: 'hidden',
+                    wordBreak: 'break-all'
+                }},
+                {title: 'Type', field: 'type',  lookup: {
+                    'action.devices.types.AC_UNIT':         'Air conditioning unit',
+                    'action.devices.types.AIRFRESHENER':    'Air Freshener',
+                    'action.devices.types.AIRPURIFIER':     'Air purifier',
+                    'action.devices.types.AWNING':          'Awning',
+                    'action.devices.types.BLINDS':          'Blinds',
+                    'action.devices.types.BOILER':          'Boiler',
+                    'action.devices.types.CAMERA':          'Camera',
+                    'action.devices.types.COFFEE_MAKER':    'Coffee maker',
+                    'action.devices.types.CURTAIN':         'Curtain',
+                    'action.devices.types.DISHWASHER':      'Dishwasher',
+                    'action.devices.types.DOOR':            'Door',
+                    'action.devices.types.DRYER':           'Dryer',
+                    'action.devices.types.FAN':             'Fan',
+                    'action.devices.types.FIREPLACE':       'Fireplace',
+                    'action.devices.types.GARAGE':          'Garage',
+                    'action.devices.types.GATE':            'Gate',
+                    'action.devices.types.HEATER':          'Heater',
+                    'action.devices.types.HOOD':            'Hood',
+                    'action.devices.types.KETTLE':          'Kettle',
+                    'action.devices.types.LIGHT':           'Light',
+                    'action.devices.types.LOCK':            'Lock',
+                    'action.devices.types.MOP':             'Mop',
+                    'action.devices.types.MICROWAVE':       'Microwave',
+                    'action.devices.types.OUTLET':          'Outlet',
+                    'action.devices.types.OVEN':            'Oven',
+                    'action.devices.types.PERGOLA':         'Pergola',
+                    'action.devices.types.REFRIGERATOR':    'Refrigerator',
+                    'action.devices.types.SCENE':           'Scene',
+                    'action.devices.types.SECURITYSYSTEM':  'Security System',
+                    'action.devices.types.SENSOR':          'Sensor',
+                    'action.devices.types.SHUTTER':         'Shutter',
+                    'action.devices.types.SHOWER':          'Shower',
+                    'action.devices.types.SPEAKER':         'Speaker',
+                    'action.devices.types.SPRINKLER':       'Sprinkler',
+                    'action.devices.types.SWITCH':          'Switch',
+                    'action.devices.types.THERMOSTAT':      'Thermostat',
+                    'action.devices.types.VACUUM':          'Vacuum',
+                    'action.devices.types.VALVE':           'Valve',
+                    'action.devices.types.WASHER':          'Washer',
+                    'action.devices.types.WATERHEATER':     'Water heater',
+                    'action.devices.types.WINDOW':          'Window'
+                }},
+                { title: 'Funktion/Trait', field: 'displayTraits',  lookup: {
+                    // 'action.devices.traits.ArmDisarm':   'ArmDisarm',
+                    'action.devices.traits.Brightness':     'Brightness',
+                    // 'action.devices.traits.CameraStream': 'CameraStream',
+                    'action.devices.traits.ColorSetting_temperature': 'ColorSetting_Temperature',
+                    'action.devices.traits.ColorSetting_spectrumRGB': 'ColorSetting_RGB',
+                    // 'action.devices.traits.Dock':        'Dock',
+                    'action.devices.traits.FanSpeed':       'FanSpeed',
+                    // 'action.devices.traits.LightEffects': 'LightEffects',
+                    // 'action.devices.traits.Locator':     'Locator',
+                    'action.devices.traits.LockUnlock':     'LockUnlock',
+                    'action.devices.traits.Modes':          'Modes',
+                    'action.devices.traits.OnOff':          'OnOff',
+                    'action.devices.traits.OpenClose':      'OpenClose',
+                    // 'action.devices.traits.RunCycle':    'RunCycle',
+                    'action.devices.traits.Scene':          'Scene',
+                    // 'action.devices.traits.Sensor':      'Sensor',
+                    'action.devices.traits.StartStop':      'StartStop',
+                    'action.devices.traits.TemperatureControl_temperatureSetpointCelsius':      'Oven_SetTemp',
+                    'action.devices.traits.TemperatureControl_temperatureAmbientCelsius':       'Oven_StatusTemp',
+                    'action.devices.traits.TemperatureSetting_thermostatMode':                  'Thermostat_Mode',
+                    'action.devices.traits.TemperatureSetting_thermostatTemperatureSetpoint':   'Thermostat_SetTemp',
+                    'action.devices.traits.TemperatureSetting_thermostatTemperatureAmbient':    'Thermostat_StatusTemp',
+                    'action.devices.traits.TemperatureSetting_thermostatHumidityAmbient':       'Thermostat_StatusHumidity',
+                    // 'action.devices.traits.Timer':       'Timer',
+                    'action.devices.traits.Toggles':        'Toggles',
+                    'action.devices.traits.Volume':         'Volume',
                     }},
 
-                { title: 'Attributes', field: 'displayAttributes' ,   cellStyle: {
-                    maxWidth: "12rem",
-                    overflow: "hidden",
-                    wordBreak: "break-all"
-                  },  
-                editComponent: props => (
-                    <textarea cols="40" rows="20"
-                      value={props.value}
-                      onChange={e => props.onChange(e.target.value)}
-                    />
-                  )},
-                { title: 'Room', field: 'roomHint', editable: 'never' },
-                { title: 'Automatisch', field: 'smartEnum', editable: 'never',cellStyle: {
-                    maxWidth: "3rem",
-                    overflow: "hidden",
-                    wordBreak: "break-all"
-                  } },
-                  { title: 'Conversation to GH', field: 'displayConv2GH' ,  cellStyle: {
-                    maxWidth: "4rem",
-                    overflow: "hidden",
-                    wordBreak: "break-all"
-                  },  
-                  editComponent: props => (
-                    <div>Conversation to Google Home = function(value)&#123; <br></br>
-                     <textarea cols="40" rows="20"
-                        value={props.value}
-                        onChange={e => props.onChange(e.target.value)}
-                      />     &#125;</div>
-                )}, { title: 'Conversation to ioB', field: 'displayConv2iob' , cellStyle: {
-                    maxWidth: "4rem",
-                    overflow: "hidden",
-                    wordBreak: "break-all"
+                {title: 'Attributes', field: 'displayAttributes',   cellStyle: {
+                        maxWidth: '12rem',
+                        overflow: 'hidden',
+                        wordBreak: 'break-all'
+                    },
+                    editComponent: props => (<textarea cols="40" rows="20"
+                          value={props.value}
+                          onChange={e => props.onChange(e.target.value)}
+                        />)
+                },
+                {title: 'Room', field: 'roomHint', editable: 'never'},
+                {title: 'Automatisch', field: 'smartEnum', editable: 'never',cellStyle: {
+                    maxWidth: '3rem',
+                    overflow: 'hidden',
+                    wordBreak: 'break-all'
+                }},
+                {title: 'Conversation to GH', field: 'displayConv2GH',  cellStyle: {
+                        maxWidth: '4rem',
+                        overflow: 'hidden',
+                        wordBreak: 'break-all'
+                    },
+                    editComponent: props => (
+                        <div>Conversation to Google Home = function(value)&#123; <br/>
+                            <textarea cols="40" rows="20"
+                                value={props.value}
+                                onChange={e => props.onChange(e.target.value)}
+                            />
+                            &#125;
+                        </div>
+                    )
+                },
+                { title: 'Conversation to ioB', field: 'displayConv2iob', cellStyle: {
+                    maxWidth: '4rem',
+                    overflow: 'hidden',
+                    wordBreak: 'break-all'
                     },  
                     editComponent: props => (
-                        <div>Conversation to ioBroker = function(value)&#123; <br></br>
-                        <textarea cols="40" rows="20"
-                        value={props.value}
-                        onChange={e => props.onChange(e.target.value)}
-                        />     &#125;</div>
-                    )},  
-                  
+                        <div>Conversation to ioBroker = function(value)&#123; <br/>
+                            <textarea cols="40" rows="20"
+                                value={props.value}
+                                onChange={e => props.onChange(e.target.value)}
+                            />
+                            &#125;
+                        </div>
+                    )},
               ]
         };
 
-        this.timerChanged = null;
-        this.browseTimer = null;
-        this.browseTimerCount = 0;
-        this.editedSmartName = '';
+        this.timerChanged        = null;
+        this.browseTimer         = null;
+        this.browseTimerCount    = 0;
+        this.editedSmartName     = '';
 
-        this.waitForUpdateID = null;
-        this.onReadyUpdateBound = this.onReadyUpdate.bind(this);
+        this.waitForUpdateID     = null;
+        this.onReadyUpdateBound  = this.onReadyUpdate.bind(this);
         this.onResultUpdateBound = this.onResultUpdate.bind(this);
 
         this.props.socket.getObject(`system.adapter.${this.props.adapterName}.${this.props.instance}`).then(obj => {
@@ -224,6 +226,7 @@ class GoogleSmartNames extends Component {
             });
         });
     }
+
     browse(isIndicate) {
         if (Date.now() - this.lastBrowse < 500) return;
         this.lastBrowse = Date.now();
@@ -313,13 +316,13 @@ class GoogleSmartNames extends Component {
         }
     }
 
-     onEdit(id, devices) {
+    onEdit(id, devices) {
         devices = devices || this.state.devices;
         const device = devices.find(dev => dev.id === id);
         if (device) {
             this.props.socket.getObject(id)
                 .then(obj => {
-                    let smartName = device.common.smartName  ?  device.common.smartName  : device._id;
+                    let smartName = device.common && device.common.smartName ? device.common.smartName : device._id;
                     if (typeof smartName === 'object' && smartName) {
                         smartName = smartName[I18n.getLanguage()] || smartName.en;
                     }
@@ -356,9 +359,6 @@ class GoogleSmartNames extends Component {
                 .catch(err => this.props.onError(err));
         });
     }
-
-
-   
 
     renderSelectByOn(id, type) {
         // type = '-', 'stored', false or number [5-100]
@@ -404,13 +404,16 @@ class GoogleSmartNames extends Component {
         });
     }
 
-    
     onGHParamsChange(newData, oldData) {
         this.addChanged(newData.id, () => {
             this.props.socket.getObject(newData.id)
                 .then(obj => {
-                  //  id, newData.type, newData.displayTraits, newData.displayAttributes
+                    if (!obj || !obj.common) {
+                        return this.setState({message: I18n.t(`Object %s is invalid. No common found.`, newData.id)});
+                    }
+                    //  id, newData.type, newData.displayTraits, newData.displayAttributes
                     Utils.updateSmartName(obj, this.editedSmartName, undefined, undefined, this.props.adapterName + '.' + this.props.instance, this.props.native.noCommon);
+
                     if (JSON.stringify(newData.displayTraits) !== JSON.stringify(oldData.displayTraits)) {
                         if (!Array.isArray(newData.displayTraits)) {
                             newData.displayTraits=[newData.displayTraits]
@@ -422,11 +425,11 @@ class GoogleSmartNames extends Component {
                         obj.common.smartName.ghType = newData.type;
                     }
                     if (newData.displayAttributes !== oldData.displayAttributes ) {
-                        obj.common.smartName.ghAttributes = newData.displayAttributes
+                        obj.common.smartName.ghAttributes = newData.displayAttributes;
                         try {
-                            if(obj.common.smartName.ghAttributes) {
-                            JSON.parse(obj.common.smartName.ghAttributes)
-                        }
+                            if (obj.common.smartName.ghAttributes) {
+                                JSON.parse(obj.common.smartName.ghAttributes)
+                            }
                         } catch (error) {
                             this.setState({message: I18n.t('Attributes has not correct JSON format.')})
                         }
@@ -446,7 +449,6 @@ class GoogleSmartNames extends Component {
                 .catch(err => this.props.onError(err));
         });
     }
-   
 
     renderMessage() {
         if (this.state.message) {
@@ -497,6 +499,10 @@ class GoogleSmartNames extends Component {
                     this.props.socket.getObject(selected)
                         .then(obj => {
                             if (obj) {
+                                if (!obj.common) {
+                                    return this.setState({message: I18n.t(`Object %s is invalid. No common found.`, selected)});
+                                }
+
                                 const name = Utils.getObjectNameFromObj(obj, null, {language: I18n.getLanguage()});
                                 Utils.updateSmartName(obj, (name || I18n.t('Device name')).replace(/[-_.]+/g, ' '), undefined, undefined, this.props.adapterName + '.' + this.props.instance, this.props.native.noCommon);
                                 this.addChanged(obj._id);
@@ -512,19 +518,18 @@ class GoogleSmartNames extends Component {
                                 }
                                 
                                 if (!obj.common.smartName) {
-
-                                    obj.common.smartName = {ghType:"action.devices.types.LIGHT"}
-                                    obj.common.smartName = {ghTraits:["action.devices.traits.OnOff"]}
+                                    obj.common.smartName = {ghType: 'action.devices.types.LIGHT'};
+                                    obj.common.smartName = {ghTraits: ['action.devices.traits.OnOff']}
                                 } else {
-
-                                    obj.common.smartName.ghType="action.devices.types.LIGHT"
-                                    obj.common.smartName.ghTraits=["action.devices.traits.OnOff"];
+                                    obj.common.smartName.ghType = 'action.devices.types.LIGHT';
+                                    obj.common.smartName.ghTraits = ['action.devices.traits.OnOff'];
                                 }
                                 
                                 this.props.socket.setObject(obj._id, obj)
                                     .then(() => {
                                         this.informInstance(obj._id);
-                                        this.setState({message: I18n.t('Please add type and trait to complete the Google Home state.')});})
+                                        this.setState({message: I18n.t('Please add type and trait to complete the Google Home state.')});
+                                    })
                                     .catch(err => this.setState({message: err}));
                             } else {
                                 this.setState({message: I18n.t('Invalid ID')});
@@ -536,8 +541,6 @@ class GoogleSmartNames extends Component {
             return null;
         }
     }
-
-    
 
     render() {
         if (this.state.loading) {
@@ -551,145 +554,140 @@ class GoogleSmartNames extends Component {
                 style ={{marginLeft:"1rem"}} size="small" color="primary" aria-label="Refresh" className={this.props.classes.button}
                       onClick={() => this.browse(true)} disabled={this.state.browse}>{this.state.browse ? (<CircularProgress size={20} />) : (<IconRefresh/>)}</Fab>
 
-            
                 {this.renderMessage()}
                 {this.getSelectIdDialog()}
-                <div style={{marginTop:"4rem",display: "flex"}}>
-                <div style={{ flex: "50%"}}><div style={{fontWeight:"bold"}}> Auto Mode</div>
-                <div style={{marginTop:"0.8rem",marginRight:"0.8rem",}}>{I18n.t('To auto detect devices please assign a room and function to the channel if no channel available than assign to a device. Not only to the state or device. And enable them under SmartEnum/Intelligente Aufzählung')}</div>
-              
+                <div style={{marginTop: "4rem", display: "flex"}}>
+                    <div style={{flex: "50%"}}>
+                        <div style={{fontWeight:"bold"}}>${I18n.t('Auto Mode')}</div>
+                        <div style={{marginTop: "0.8rem", marginRight: "0.8rem",}}>{I18n.t('To auto detect devices please assign a room and function to the channel if no channel available than assign to a device. Not only to the state or device. And enable them under SmartEnum/Intelligente Aufzählung')}</div>
+                    </div>
+                    <div style={{flex: "50%"}}><div style={{fontWeight: "bold"}}>${I18n.t('Manual Mode')}</div>
+                        <span>{Utils.renderTextWithA(I18n.t("Please select a <a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/guides/'>TYPE</a> and a"))}</span>
+                        <span>{Utils.renderTextWithA(I18n.t("<a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/'>TRAIT</a> after adding a state. To add multiple traits add a different id and trait but same smart name, type and room. Comma separated for the multiple smart names. To assign a room please use the ioBroker Enums/Aufzählungen. With attributes you can for example set a range for the color temperature"))}</span>
+                        <span>  {Utils.renderTextWithA(I18n.t("<a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/colorsetting'>Infos about Attributes you can find here.</a> Empty attribute is {}"))}</span>
+                    </div>
                 </div>
-                <div style={{ flex: "50%"}}><div style={{fontWeight:"bold"}}>Manuell Mode</div>
-                <span>{Utils.renderTextWithA(I18n.t("Please select a  <a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/guides/'>TYPE</a> and a"))}</span>
-                <span>{Utils.renderTextWithA(I18n.t("<a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/' > TRAIT</a> after adding a state.   To add multiple traits add a different id and trait but same smartname, type and room. Comma separated for mutiple smartnames.  To assign a room please use the ioBroker Enums/Aufzählungen.  With attributes you can for example set a range for the color temperature "))}</span>
-                <span>  {Utils.renderTextWithA(I18n.t("<a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/colorsetting'> Infos about Attributes you can find here.</a> Empty attribute is {}"))}</span>
+                <br/>
+                <div style={{flex: "100%"}}>
+                    <div style={{fontWeight: "bold"}}>{Utils.renderTextWithA(I18n.t("For help use this forum <a target='_blank' rel='noopener noreferrer' href='https://forum.iobroker.net/topic/24061/google-home-assistant-iobroker-einrichten-nutzen/'>thread</a>"))}</div>
                 </div>
-
-                </div>
-                <br></br>
-                <div style={{ flex: "100%"}}><div style={{fontWeight:"bold"}}>{Utils.renderTextWithA(I18n.t("For help use this forum <a target='_blank' rel='noopener noreferrer' href='https://forum.iobroker.net/topic/24061/google-home-assistant-iobroker-einrichten-nutzen/'>thread</a>"))}</div></div>
-             
-                
                 <div>
-                <MaterialTable
-                style ={{marginTop:"1rem",display: "inline-block"}}
-                title=""
-                tableRef={this.myTableRef}
-                onRowClick={(e, rowData) => {
-                    this.myTableRef.current.onTreeExpandChanged(rowData.tableData.path, rowData)
-                }
-            }
-           
-                columns={this.state.columns}
-                parentChildData={(row, rows) => {
-                    const result = rows.find(function(element) {
-                        if (element.id && row.parentId && element.id === row.parentId) {
-                            console.log(row.parentId)
-                            return true;
-                        };
-                      })
-                      console.log(result)
-                      return result
-                }} 
-                data={this.state.devices}
-                icons={tableIcons}
-                isLoading={this.state.browse }
-                options={{
-                    actionsColumnIndex: -1,
-                    paging: false, 
-                    rowStyle: (rowData) => {
-                        let background = '#FFF'
-                        if (rowData.smartEnum) {
-                            background = '#F7FFEA'
-                        }
-                        if (rowData.ioType === "channel" || rowData.ioType === "device") {
-                            if (rowData.smartEnum) {
-                                background = '#eafff2'
-                            } else {
-                                background = '#E2FFFF'
-                            }
-                            
-                        }
-                        if  (this.state.selectedRow && this.state.selectedRow.tableData.id === rowData.tableData.id) {
-                            background =  '#EEE'
-                        }
+                    <MaterialTable
+                        style ={{marginTop: "1rem", display: "inline-block"}}
+                        title=""
+                        tableRef={this.myTableRef}
+                        onRowClick={(e, rowData) => {
+                            this.myTableRef.current.onTreeExpandChanged(rowData.tableData.path, rowData)
+                        }}
+                        columns={this.state.columns}
+                        parentChildData={(row, rows) => {
+                            const result = rows.find(function(element) {
+                                if (element.id && row.parentId && element.id === row.parentId) {
+                                    console.log(row.parentId);
+                                    return true;
+                                }
+                              });
+                              console.log(result);
+                              return result;
+                        }}
+                        data={this.state.devices}
+                        icons={tableIcons}
+                        isLoading={this.state.browse }
+                        options={{
+                            actionsColumnIndex: -1,
+                            paging: false,
+                            rowStyle: (rowData) => {
+                                let background = '#FFF';
+                                if (rowData.smartEnum) {
+                                    background = '#F7FFEA';
+                                }
+                                if (rowData.ioType === 'channel' || rowData.ioType === 'device') {
+                                    if (rowData.smartEnum) {
+                                        background = '#eafff2';
+                                    } else {
+                                        background = '#E2FFFF';
+                                    }
+                                }
 
+                                if  (this.state.selectedRow && this.state.selectedRow.tableData.id === rowData.tableData.id) {
+                                    background = '#EEE';
+                                }
 
-                        return {backgroundColor:  background}
-                      }
-                  }}
-               
-                editable={{
-                    
-                    onRowUpdate: (newData, oldData) => {
-                        if (newData.name.nicknames && Array.isArray(newData.name.nicknames)) {
-                            newData.name.nicknames = newData.name.nicknames.join(",");
-                        }
-                        this.editedSmartName = newData.name.nicknames
-                        this.setState({editId: newData.id});
-                       
-                    return new Promise(resolve => {
-                        this.setState({browse:true})
-                        setTimeout(() => {
-                            if(!newData.type || !newData.displayTraits) {
-                                this.setState({message: I18n.t('Please add action and trait to complete the Google Home state.')});
-                            }
-                        
-                        this.onGHParamsChange(newData, oldData);
-                        resolve();
-                        const devices = [...this.state.devices];
-                        devices[devices.indexOf(oldData)] = newData;
-                        this.setState({ ...this.state, devices });
-                        }, 500);
-                    })},
-                    onRowDelete: (oldData) => {
-                    // if smartenum set smartname on false if not delete/reset smartname content
-                    if (oldData.smartEnum=== "X") {
-                        this.setState({deleteId: oldData.id});
-                    } else {
-                        this.props.socket.getObject(oldData.id)
-                        .then(obj => {
-                            if (obj.common["smartName"]) {
-                                delete obj.common["smartName"]["ghTraits"]
-                                delete obj.common["smartName"]["ghType"]
-                                delete obj.common["smartName"]["ghAttributes"]
-                            }
-                            
-                            return this.props.socket.setObject(oldData.id, obj);
-                        })
-                    }
-                    return new Promise(resolve => {
-                        setTimeout(() => {
-                            if (this.state.deleteId) {
-                                this.onDelete();
-                            } else {
+                                return {backgroundColor:  background}
+                              }
+                          }}
 
-                            this.informInstance(oldData.id);
-                            }
-                            resolve();
-                            const devices = [...this.state.devices];
-                            devices.splice(devices.indexOf(oldData), 1);
-                            this.setState({ ...this.state, devices });
-                        }, 600);
-                    })
-                    }
-                }}
-                /></div>
+                        editable={{
+                            onRowUpdate: (newData, oldData) => {
+                                if (newData.name.nicknames && Array.isArray(newData.name.nicknames)) {
+                                    newData.name.nicknames = newData.name.nicknames.join(',');
+                                }
+                                this.editedSmartName = newData.name.nicknames;
+                                this.setState({editId: newData.id});
 
+                                return new Promise(resolve => {
+                                    this.setState({browse: true});
+
+                                    setTimeout(() => {
+                                        if (!newData.type || !newData.displayTraits) {
+                                            this.setState({message: I18n.t('Please add action and trait to complete the Google Home state.')});
+                                        }
+
+                                        this.onGHParamsChange(newData, oldData);
+                                        resolve();
+                                        const devices = [...this.state.devices];
+                                        devices[devices.indexOf(oldData)] = newData;
+                                        this.setState({ ...this.state, devices});
+                                    }, 500);
+                                });
+                            },
+                            onRowDelete: (oldData) => {
+                                // if smartenum set smartname on false if not delete/reset smartname content
+                                if (oldData.smartEnum=== 'X') {
+                                    this.setState({deleteId: oldData.id});
+                                } else {
+                                    this.props.socket.getObject(oldData.id)
+                                        .then(obj => {
+                                            if (obj && obj.common && obj.common['smartName']) {
+                                                delete obj.common['smartName']['ghTraits'];
+                                                delete obj.common['smartName']['ghType'];
+                                                delete obj.common['smartName']['ghAttributes'];
+                                            }
+                                            return this.props.socket.setObject(oldData.id, obj);
+                                        });
+                                }
+
+                                return new Promise(resolve => {
+                                    setTimeout(() => {
+                                        if (this.state.deleteId) {
+                                            this.onDelete();
+                                        } else {
+                                            this.informInstance(oldData.id);
+                                        }
+                                        resolve();
+                                        const devices = [...this.state.devices];
+                                        devices.splice(devices.indexOf(oldData), 1);
+                                        this.setState({ ...this.state, devices });
+                                    }, 600);
+                                })
+                            }
+                        }}
+                    />
+                </div>
             </form>
         );
     }
 }
 
 GoogleSmartNames.propTypes = {
-    common: PropTypes.object.isRequired,
-    native: PropTypes.object.isRequired,
-    instance: PropTypes.number.isRequired,
+    common:      PropTypes.object.isRequired,
+    native:      PropTypes.object.isRequired,
+    instance:    PropTypes.number.isRequired,
     adapterName: PropTypes.string.isRequired,
-    onError: PropTypes.func,
-    onLoad: PropTypes.func,
-    onChange: PropTypes.func,
-    socket: PropTypes.object.isRequired,
+    onError:     PropTypes.func,
+    onLoad:      PropTypes.func,
+    onChange:    PropTypes.func,
+    socket:      PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(GoogleSmartNames);
