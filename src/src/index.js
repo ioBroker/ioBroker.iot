@@ -24,7 +24,7 @@ function build() {
 }
 
 Sentry.init({
-    dsn: "https://8f4cd4fe94f94e2a88e9da0f033f27fc@sentry.iobroker.net/57",
+    dsn: "https://5ad729dbed504d15aa8bde423cae9a8e@sentry.iobroker.net/57",
     release: 'iobroker.iot@' + version,
     integrations: [
         new SentryIntegrations.Dedupe()
