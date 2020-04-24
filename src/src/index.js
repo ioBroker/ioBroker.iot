@@ -6,10 +6,12 @@ import { MuiThemeProvider} from '@material-ui/core/styles';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import {version} from '../package.json';
 
 import createTheme from '@iobroker/adapter-react/createTheme';
 
 let theme = 'light';
+console.log('iobroker.iot@' + version);
 
 function build() {
     return ReactDOM.render(<MuiThemeProvider theme={createTheme(theme)}>
@@ -22,6 +24,7 @@ function build() {
 
 Sentry.init({
     dsn: "https://8f4cd4fe94f94e2a88e9da0f033f27fc@sentry.iobroker.net/57",
+    release: 'iobroker.iot@' + version,
     integrations: [
         new SentryIntegrations.Dedupe()
     ]

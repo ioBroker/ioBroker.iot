@@ -477,6 +477,10 @@ gulp.task('translateAndUpdateWordsJS', gulp.series('translate', 'adminLanguages2
 
 gulp.task('build', done => {
     const { exec } = require('child_process');
+    const version = JSON.parse(fs.readFileSync(__dirname + '/package.json').toString('utf8')).version;
+    const data = JSON.parse(fs.readFileSync(__dirname + '/src/package.json').toString('utf8'));
+    data.version = version;
+    fs.writeFileSync(__dirname + '/src/package.json', JSON.stringify(data, null, 2));
 
     if (!fs.existsSync(__dirname + '/src/node_modules')) {
         const child = exec('npm install', {stdio: [process.stdin, process.stdout, process.stderr], cwd: __dirname + '/src'});

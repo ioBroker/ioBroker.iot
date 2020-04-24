@@ -25,7 +25,6 @@ import {FaPowerOff as IconOn} from 'react-icons/fa';
 import {FaThermometerHalf as IconTemperature} from 'react-icons/fa';
 import {FaLongArrowAltUp as IconUp} from 'react-icons/fa';
 import {FaLongArrowAltDown as IconDown} from 'react-icons/fa';
-import {FaPercentage as IconPercentage} from 'react-icons/fa';
 import {FaPalette as IconColor} from 'react-icons/fa';
 import {FaLightbulb as IconBulb} from 'react-icons/fa';
 import {FaLockOpen as IconLock} from 'react-icons/fa';

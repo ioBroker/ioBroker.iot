@@ -581,14 +581,16 @@ class GoogleSmartNames extends Component {
                         }}
                         columns={this.state.columns}
                         parentChildData={(row, rows) => {
-                            const result = rows.find(function(element) {
+                            const result = rows.find((element) => {
                                 if (element.id && row.parentId && element.id === row.parentId) {
                                     console.log(row.parentId);
                                     return true;
+                                } else {
+                                    return false;
                                 }
-                              });
-                              console.log(result);
-                              return result;
+                            });
+                            console.log(result);
+                            return result;
                         }}
                         data={this.state.devices}
                         icons={tableIcons}

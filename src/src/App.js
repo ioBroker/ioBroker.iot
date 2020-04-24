@@ -56,6 +56,9 @@ class App extends GenericApp {
                 case 'http:':
                     extendedProps.socket.port = 80;
                     break;
+                default:
+                    // invalid protocol
+                    break;
             }
         }
         // for debug and fallback purposes
@@ -63,7 +66,7 @@ class App extends GenericApp {
             extendedProps.socket.port = 8081;
         }
 
-        super(extendedProps);
+        super(props, extendedProps);
     }
 
     getSelectedTab() {
