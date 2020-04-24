@@ -10,7 +10,8 @@ import {version} from '../package.json';
 
 import createTheme from '@iobroker/adapter-react/createTheme';
 
-let theme = 'light';
+let theme = window.localStorage ? window.localStorage.getItem('App.theme') || 'light' : 'light';
+
 console.log('iobroker.iot@' + version);
 
 function build() {
