@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.4.10",
+        "version": "1.4.11",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.4.11": {
+                "en": "Corrected IOBROKER-IOT-REACT-F",
+                "de": "Korrigierter IOBROKER-IOT-REACT-F",
+                "ru": "Исправленный IOBROKER-IOT-REACT-F",
+                "pt": "IOBROKER-IOT-REACT-F corrigido",
+                "nl": "IOBROKER-IOT-REACT-F gecorrigeerd",
+                "fr": "IOBROKER-IOT-REACT-F corrigé",
+                "it": "IOBROKER-IOT-REACT-F corretto",
+                "es": "IOBROKER-IOT-REACT-F corregido",
+                "pl": "Poprawiony IOBROKER-IOT-REACT-F",
+                "zh-cn": "更正了IOBROKER-IOT-REACT-F"
+            },
             "1.4.10": {
                 "en": "Fixed crashes reported by \"sentry\"",
                 "de": "Von \"sentry\" gemeldete Abstürze behoben",

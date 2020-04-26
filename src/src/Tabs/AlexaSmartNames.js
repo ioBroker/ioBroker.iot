@@ -667,7 +667,10 @@ class AlexaSmartNames extends Component {
                 open={true}
                 maxWidth="sm"
                 fullWidth={true}
-                onClose={() => this.handleOk()}
+                onClose={() => {
+                    this.editedSmartName = null;
+                    this.setState({editId: '', editedSmartName: ''});
+                }}
                 aria-labelledby="message-dialog-title"
                 aria-describedby="message-dialog-description"
             >
@@ -705,7 +708,7 @@ class AlexaSmartNames extends Component {
                 open={true}
                 maxWidth="sm"
                 fullWidth={true}
-                onClose={() => this.handleOk()}
+                onClose={() => this.setState({showConfirmation: ''})}
                 aria-labelledby="confirmation-dialog-title"
                 aria-describedby="confirmation-dialog-description"
             >

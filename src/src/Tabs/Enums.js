@@ -275,7 +275,7 @@ class Enums extends Component {
                 open={true}
                 maxWidth="sm"
                 fullWidth={true}
-                onClose={() => this.handleOk()}
+                onClose={() => this.setState({editId: ''})}
                 aria-labelledby="message-dialog-title"
                 aria-describedby="message-dialog-description"
             >

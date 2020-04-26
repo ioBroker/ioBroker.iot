@@ -248,6 +248,9 @@ Following types are supported:
 - `ifttt` - acting like IFTTT (actually not required, but for tests purposes)
 
 ## Changelog
+### 1.4.11 (2020-04-26)
+* (bluefox) fixed IOBROKER-IOT-REACT-F
+
 ### 1.4.10 (2020-04-24)
 * (bluefox) Fixed crashes reported by sentry
 
