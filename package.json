@@ -29,17 +29,17 @@
         "aws-iot-device-sdk": "^2.2.4",
         "iobroker.type-detector": "^0.1.9",
         "request": "^2.88.2",
-        "@iobroker/adapter-core": "^2.2.1",
+        "@iobroker/adapter-core": "^2.3.1",
         "uuid": "^3.4.0"
     },
     "devDependencies": {
         "@types/iobroker": "^3.0.6",
-        "@types/node": "^13.13.2",
+        "@types/node": "^13.13.4",
         "axios": "^0.19.2",
         "chai": "^4.2.0",
         "del": "^5.1.0",
         "gulp": "^4.0.2",
-        "mocha": "^7.1.1"
+        "mocha": "^7.1.2"
     },
     "bugs": {
         "url": "https://github.com/ioBroker/ioBroker.iot/issues"

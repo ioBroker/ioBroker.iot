@@ -66,7 +66,7 @@ class App extends GenericApp {
             extendedProps.socket.port = 8081;
         }
 
-        super(props, extendedProps);
+        super(extendedProps);
     }
 
     getSelectedTab() {
