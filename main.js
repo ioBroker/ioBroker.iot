@@ -948,6 +948,14 @@ function main() {
 
     adapter.log.info('Connecting with ' + adapter.config.cloudUrl);
     adapter.getForeignObject('system.config', (err, obj) => {
+        if (!obj) {
+            adapter.log.warn('Object system.config not found. Please check your installation!');
+            obj = {
+                common: {
+                }
+            };
+        }
+
         if (adapter.config.language) {
             translate = true;
             lang = adapter.config.language;
