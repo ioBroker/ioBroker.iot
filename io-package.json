@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.4.11",
+        "version": "1.4.12",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.4.12": {
+                "en": "error case handled where system.config objects does not exist (Sentry IOBROKER-IOT-5)",
+                "de": "Fehlerfall behandelt, wenn system.config-Objekte nicht vorhanden sind (Sentry IOBROKER-IOT-5)",
+                "ru": "обрабатывается случай ошибки, когда объекты system.config не существуют (Sentry IOBROKER-IOT-5)",
+                "pt": "caso de erro tratado onde os objetos system.config não existem (Sentry IOBROKER-IOT-5)",
+                "nl": "foutgeval afgehandeld waar system.config-objecten niet bestaan (Sentry IOBROKER-IOT-5)",
+                "fr": "cas d'erreur géré lorsque les objets system.config n'existent pas (Sentry IOBROKER-IOT-5)",
+                "it": "caso di errore gestito dove non esistono oggetti system.config (Sentry IOBROKER-IOT-5)",
+                "es": "caso de error manejado donde los objetos system.config no existen (Sentry IOBROKER-IOT-5)",
+                "pl": "rozpatrywany przypadek błędu, gdy obiekty system.config nie istnieją (Sentry IOBROKER-IOT-5)",
+                "zh-cn": "在不存在system.config对象的情况下处理的错误情况（Sentry IOBROKER-IOT-5）"
+            },
             "1.4.11": {
                 "en": "Alternative ports issue solved, Corrected IOBROKER-IOT-REACT-F",
                 "de": "Problem mit alternativen Ports behoben, IOBROKER-IOT-REACT-F behoben",
@@ -52,7 +64,7 @@
                 "pl": "Naprawiono awarie zgłaszane przez „sentry”",
                 "zh-cn": "修复了“哨兵”报告的崩溃问题"
             },
-            "1.4.7":  {
+            "1.4.7": {
                 "en": "potential crash case fixed",
                 "de": "Möglicher Crash-Fall behoben",
                 "ru": "случай возможного сбоя исправлен",
@@ -64,7 +76,7 @@
                 "pl": "naprawiono potencjalną awarię",
                 "zh-cn": "修复潜在的崩溃案例"
             },
-            "1.4.6":  {
+            "1.4.6": {
                 "en": "Sentry error reporting added also to React Frontend",
                 "de": "Sentry-Fehlerberichte wurden auch zu React Frontend hinzugefügt",
                 "ru": "Также добавлены отчеты об ошибках Sentry в React Frontend.",
@@ -76,7 +88,7 @@
                 "pl": "Dodano raportowanie błędów wartowników również w React Frontend",
                 "zh-cn": "Sentry错误报告也已添加到React Frontend"
             },
-            "1.4.4":  {
+            "1.4.4": {
                 "en": "linux dependencies and sentry error reporting added, remove js-controller 3.0 warnings",
                 "de": "Linux-Abhängigkeiten und Sentry-Fehlerberichte hinzugefügt, entfernen Sie die Warnungen von js-controller 3.0",
                 "ru": "Добавлены зависимости от linux и сообщения об ошибках, удалите предупреждения js-controller 3.0",
@@ -88,7 +100,7 @@
                 "pl": "dodane zależności Linux i raportowanie błędów sentry, usuń ostrzeżenia js-controller 3.0",
                 "zh-cn": "添加了linux依赖项和哨兵错误报告，删除了js-controller 3.0警告"
             },
-            "1.4.2":  {
+            "1.4.2": {
                 "en": "Fix updateState for Google Home",
                 "de": "Fix updateState für Google Home",
                 "ru": "Исправление updateState для Google Home",
@@ -100,7 +112,7 @@
                 "pl": "Napraw aktualizację Stan dla Google Home",
                 "zh-cn": "修复Google Home的updateState"
             },
-            "1.4.1":  {
+            "1.4.1": {
                 "en": "The blood glucose request supported now",
                 "de": "Die Blutzuckeranfrage wird jetzt unterstützt",
                 "ru": "Опрос глюкозы в крови теперь поддерживается",
@@ -113,18 +125,17 @@
                 "zh-cn": "现在支持血糖要求"
             },
             "1.3.4": {
-                  "en": "Fixed deconz issues in Google Home",
-                  "de": "Deconz-Probleme in Google Home wurden behoben",
-                  "ru": "Исправлены проблемы с деконцами в Google Home",
-                  "pt": "Problemas de deconz corrigidos na Página inicial do Google",
-                  "nl": "Deconz-problemen in Google Home opgelost",
-                  "fr": "Correction de problèmes de déconzation dans Google Home",
-                  "it": "Risolti i problemi di deconzolo in Google Home",
-                  "es": "Se corrigieron problemas de descontaminación en Google Home",
-                  "pl": "Naprawiono problemy z dekonzowaniem w Google Home",
-                  "zh-cn": "修复了Google Home中的deconz问题"
-            
-              },
+                "en": "Fixed deconz issues in Google Home",
+                "de": "Deconz-Probleme in Google Home wurden behoben",
+                "ru": "Исправлены проблемы с деконцами в Google Home",
+                "pt": "Problemas de deconz corrigidos na Página inicial do Google",
+                "nl": "Deconz-problemen in Google Home opgelost",
+                "fr": "Correction de problèmes de déconzation dans Google Home",
+                "it": "Risolti i problemi di deconzolo in Google Home",
+                "es": "Se corrigieron problemas de descontaminación en Google Home",
+                "pl": "Naprawiono problemy z dekonzowaniem w Google Home",
+                "zh-cn": "修复了Google Home中的deconz问题"
+            },
             "1.3.2": {
                 "en": "usage with all kinds of admin ports and reverse proxies optimized",
                 "de": "Verwendung mit allen Arten von Admin-Ports und Reverse-Proxys optimiert",
@@ -217,8 +228,14 @@
         ],
         "preserveSettings": "smartName",
         "blockly": true,
-        "osDependencies" : {
-            "linux": ["libcairo2-dev", "libpango1.0-dev", "libjpeg-dev", "libgif-dev", "librsvg2-dev"]
+        "osDependencies": {
+            "linux": [
+                "libcairo2-dev",
+                "libpango1.0-dev",
+                "libjpeg-dev",
+                "libgif-dev",
+                "librsvg2-dev"
+            ]
         },
         "plugins": {
             "sentry": {
