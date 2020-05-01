@@ -248,6 +248,9 @@ Following types are supported:
 - `ifttt` - acting like IFTTT (actually not required, but for tests purposes)
 
 ## Changelog
+### 1.4.13 (2020-05-01)
+* (bluefox) Fixed the problem if admin is not on 8081 port
+
 ### 1.4.12 (2020-04-30)
 * (Apollon77) error case handled where system.config objects does not exist (Sentry IOBROKER-IOT-5)
 

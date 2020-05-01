@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.4.12",
+        "version": "1.4.13",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.4.13": {
+                "en": "Fixed the problem if admin is not on 8081 port",
+                "de": "Das Problem wurde behoben, wenn sich der Administrator nicht am 8081-Port befindet",
+                "ru": "Исправлена проблема, если администратор не на 8081 порт",
+                "pt": "Corrigido o problema se o administrador não estiver na porta 8081",
+                "nl": "Het probleem is opgelost als de beheerder niet op de 8081-poort staat",
+                "fr": "Correction du problème si l'administrateur n'est pas sur le port 8081",
+                "it": "Risolto il problema se l'amministratore non si trovava sulla porta 8081",
+                "es": "Se solucionó el problema si el administrador no está en el puerto 8081",
+                "pl": "Naprawiono problem, jeśli admin nie ma portu 8081",
+                "zh-cn": "修复了管理员不在8081端口上的问题"
+            },
             "1.4.12": {
                 "en": "error case handled where system.config objects does not exist (Sentry IOBROKER-IOT-5)",
                 "de": "Fehlerfall behandelt, wenn system.config-Objekte nicht vorhanden sind (Sentry IOBROKER-IOT-5)",
