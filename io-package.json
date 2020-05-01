@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.4.13",
+        "version": "1.4.14",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,7 +28,7 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
-            "1.4.13": {
+            "1.4.14": {
                 "en": "Fixed the problem if admin is not on 8081 port",
                 "de": "Das Problem wurde behoben, wenn sich der Administrator nicht am 8081-Port befindet",
                 "ru": "Исправлена проблема, если администратор не на 8081 порт",

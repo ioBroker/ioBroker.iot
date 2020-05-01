@@ -45,28 +45,8 @@ class App extends GenericApp {
             'pl': require('./i18n/pl'),
             'zh-cn': require('./i18n/zh-cn'),
         };
-        // get actual port
-        extendedProps.socket = extendedProps.socket || {};
-        extendedProps.socket.port = parseInt(window.location.port, 10);
-        if (isNaN(extendedProps.socket.port)) {
-            switch (window.location.protocol) {
-                case 'https:':
-                    extendedProps.socket.port = 443;
-                    break;
-                case 'http:':
-                    extendedProps.socket.port = 80;
-                    break;
-                default:
-                    // invalid protocol
-                    break;
-            }
-        }
-        // for debug and fallback purposes
-        if (!extendedProps.socket.port || extendedProps.socket.port === 3000) {
-            extendedProps.socket.port = 8081;
-        }
 
-        super(extendedProps);
+        super(props, extendedProps);
     }
 
     getSelectedTab() {
