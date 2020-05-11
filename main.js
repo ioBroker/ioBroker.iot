@@ -801,7 +801,7 @@ function startDevice(clientId, login, password, retry) {
                     let type = topic.substring(clientId.length + 9);
 
                     processMessage(type, request, response =>
-                        device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
+                        device && device.publish('response/' + clientId + '/' + type, JSON.stringify(response)));
                 }
             });
         }).catch(e => {
