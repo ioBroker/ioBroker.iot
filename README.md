@@ -249,7 +249,7 @@ Following types are supported:
 
 ## Changelog
 
-### __WORK IN PROGRESS__
+### 1.4.18 (2020-05-11)
 * (Apollon77) Make sure that invalid configured states or values without timestamp do not crash adapter (Sentry IOBROKER-IOT-8)
 * (Apollon77) Make sure publishes after disconnect to not break adapter (Sentry IOBROKER-IOT-A)
 
