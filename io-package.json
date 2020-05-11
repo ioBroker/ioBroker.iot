@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.4.14",
+        "version": "1.4.15",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.4.15": {
+                "en": "Better error output is implemented",
+                "de": "Eine bessere Fehlerausgabe ist implementiert",
+                "ru": "Улучшен вывод ошибок",
+                "pt": "Melhor saída de erro é implementada",
+                "nl": "Er wordt een betere foutuitvoer geïmplementeerd",
+                "fr": "Une meilleure sortie d'erreur est implémentée",
+                "it": "È stato implementato un migliore output degli errori",
+                "es": "Se implementa una mejor salida de error",
+                "pl": "Zaimplementowano lepsze wyjście błędu",
+                "zh-cn": "实现更好的错误输出"
+            },
             "1.4.14": {
                 "en": "Fixed the problem if admin is not on 8081 port",
                 "de": "Das Problem wurde behoben, wenn sich der Administrator nicht am 8081-Port befindet",

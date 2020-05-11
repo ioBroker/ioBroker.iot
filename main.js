@@ -414,41 +414,40 @@ function readUrlKey() {
 
 function createUrlKey(login, pass) {
     return new Promise((resolve, reject) => {
-        let done = false;
         let req;
         let timeout = setTimeout(() => {
-            if (!done)  {
-                done = true;
+            if (timeout)  {
+                timeout = null;
+                req && req.abort();
                 reject('timeout');
             }
-            req && req.abort();
         }, 15000);
 
         adapter.log.debug('Fetching URL key...');
         req = request.get(`https://generate-key.iobroker.in/v1/generateUrlKey?user=${encodeURIComponent(login)}&pass=${encodeURIComponent(pass)}`, (error, response, body) => {
             req = null;
-            clearTimeout(timeout);
-            if (error) {
-                if (!done)  {
-                    done = true;
+            if (timeout) {
+                clearTimeout(timeout);
+                timeout = null;
+                if (error) {
                     reject(error);
-                }
-            } else {
-                let data;
-                try {
-                    data = JSON.parse(body)
-                } catch (e) {
-                    return reject('Cannot parse URL key answer: ' + JSON.stringify(e));
-                }
-                if (data.error) {
-                    adapter.log.error('Cannot fetch URL key: ' + JSON.stringify(data.error));
-                    reject(data);
-                } else if (data.key) {
-                    writeUrlKey(data.key)
-                        .then(() => resolve(data.key));
                 } else {
-                    adapter.log.error('Cannot fetch URL key: ' + JSON.stringify(data));
-                    reject(data);
+                    let data;
+                    try {
+                        data = JSON.parse(body)
+                    } catch (e) {
+                        return reject('Cannot parse URL key answer: ' + JSON.stringify(e));
+                    }
+                    if (data.error) {
+                        adapter.log.error('Cannot fetch URL key: ' + JSON.stringify(data.error));
+                        reject(data);
+                    } else if (data.key) {
+                        writeUrlKey(data.key)
+                            .then(() => resolve(data.key));
+                    } else {
+                        adapter.log.error('Cannot fetch URL key: ' + JSON.stringify(data));
+                        reject(data);
+                    }
                 }
             }
         });
@@ -519,14 +518,13 @@ function fetchKeys(login, pass, _forceUserCreation) {
     return new Promise((resolve, reject) => {
         adapter.getState('certs.forceUserCreate', (err, state) => {
             let forceUserCreation = state && state.val;
-            let done = false;
             let req;
             let timeout = setTimeout(() => {
-                if (!done) {
-                    done = true;
+                if (!timeout) {
+                    timeout = null;
+                    req && req.abort();
                     reject('timeout');
                 }
-                req && req.abort();
             }, 15000);
 
             // erase flag, if user must be created anew, but remember the state
@@ -537,31 +535,31 @@ function fetchKeys(login, pass, _forceUserCreation) {
             adapter.log.debug('Fetching keys...');
             req = request.get(`https://create-user.iobroker.in/v1/createUser?user=${encodeURIComponent(login)}&pass=${encodeURIComponent(pass)}&forceRecreate=${forceUserCreation}`, (error, response, body) => {
                 req = null;
-                clearTimeout(timeout);
-                if (error) {
-                    if (!done) {
-                        done = true;
+                if (timeout) {
+                    clearTimeout(timeout);
+                    timeout = null;
+                    if (error) {
                         reject(error);
-                    }
-                } else {
-                    let data;
-                    try {
-                        data = JSON.parse(body)
-                    } catch (e) {
-                        return reject('Cannot parse answer: ' + JSON.stringify(e));
-                    }
-                    if (data.error) {
-                        adapter.log.error('Cannot fetch keys: ' + JSON.stringify(data.error));
-                        reject(data);
-                    } else if (data.certificates) {
-                        writeKeys(data.certificates)
-                            .then(() => resolve({
-                                private: data.certificates.keyPair.PrivateKey,
-                                certificate: data.certificates.certificatePem
-                            }));
                     } else {
-                        adapter.log.error('Cannot fetch keys: ' + JSON.stringify(data));
-                        reject(data);
+                        let data;
+                        try {
+                            data = JSON.parse(body)
+                        } catch (e) {
+                            return reject('Cannot parse answer: ' + JSON.stringify(e));
+                        }
+                        if (data.error) {
+                            adapter.log.error('Cannot fetch keys: ' + JSON.stringify(data.error));
+                            reject(data);
+                        } else if (data.certificates) {
+                            writeKeys(data.certificates)
+                                .then(() => resolve({
+                                    private:     data.certificates.keyPair.PrivateKey,
+                                    certificate: data.certificates.certificatePem
+                                }));
+                        } else {
+                            adapter.log.error('Cannot fetch keys: ' + JSON.stringify(data));
+                            reject(data);
+                        }
                     }
                 }
             });
@@ -771,7 +769,7 @@ function startDevice(clientId, login, password, retry) {
             if (e === 'Not exists') {
                 return createUrlKey(login, password);
             } else {
-                throw new Error(e);
+                throw new Error(e && e.error ? e.error : e);
             }
         })
         .then(key => {
@@ -806,14 +804,15 @@ function startDevice(clientId, login, password, retry) {
                 }
             });
         }).catch(e => {
-            if (e && e.message) {
-                adapter.log.error('Cannot read keys: ' + JSON.stringify(e.message) + ' / ' + e.toString());
+            if (e && typeof e === 'object' && e.message) {
+                adapter.log.error('Cannot read keys: ' + e.message);
             } else {
-                adapter.log.error('Cannot read keys: ' + JSON.stringify(e) + ' / ' + e.toString());
+                adapter.log.error('Cannot read keys: ' + JSON.stringify(e) + ' / ' + (e && e.toString()));
             }
 
             if (e === 'timeout' && retry < 10) {
-                setTimeout(() => startDevice(clientId, login, password, retry + 1), 10000);
+                setTimeout(() =>
+                    startDevice(clientId, login, password, retry + 1), 10000);
             }
         });
 }
