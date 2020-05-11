@@ -189,14 +189,6 @@ class Options extends Component {
         />);
     }
 
-    renderPasswordHint() {
-        if (this.props.native.pass && this.props.native.pass.includes('%')) {
-            return <div className={ this.props.classes.cannotUse }>${I18n.t('cannot_use_password')}</div>
-        } else {
-            return null;
-        }
-    }
-
     render() {
         return (
             <form className={this.props.classes.tab}>
@@ -210,7 +202,6 @@ class Options extends Component {
                 <div className={this.props.classes.column + ' ' + this.props.classes.columnSettings}>
                     {this.renderInput('ioBroker.pro Login', 'login')}<br/>
                     {this.renderInput('ioBroker.pro Password', 'pass', 'password')}<br/>
-                    {this.renderPasswordHint()}
                     {this.renderCheckbox('Amazon Alexa', 'amazonAlexa', {marginTop: 10})}<br/>
                     <FormControlLabel key="googleHome" style={{ paddingTop: 5 }} className={this.props.classes.controlElement}
                         control={

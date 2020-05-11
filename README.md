@@ -248,7 +248,7 @@ Following types are supported:
 - `ifttt` - acting like IFTTT (actually not required, but for tests purposes)
 
 ## Changelog
-### 1.4.16 (2020-05-11)
+### 1.4.17 (2020-05-11)
 * (bluefox) Better error output is implemented
 
 ### 1.4.14 (2020-05-01)

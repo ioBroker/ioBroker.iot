@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.4.16",
+        "version": "1.4.17",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,7 +28,7 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
-            "1.4.16": {
+            "1.4.17": {
                 "en": "Better error output is implemented",
                 "de": "Eine bessere Fehlerausgabe ist implementiert",
                 "ru": "Улучшен вывод ошибок",
