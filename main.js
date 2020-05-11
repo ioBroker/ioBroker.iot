@@ -13,6 +13,7 @@ const GoogleHome   = require('./lib/GoogleHome');
 const YandexAlisa  = require('./lib/alisa');
 const fs           = require('fs');
 const request      = require('request');
+const version      = require('./package.json').version;
 // @ts-ignore
 const adapterName  = require('./package.json').name.split('.').pop();
 
@@ -424,7 +425,7 @@ function createUrlKey(login, pass) {
         }, 15000);
 
         adapter.log.debug('Fetching URL key...');
-        req = request.get(`https://generate-key.iobroker.in/v1/generateUrlKey?user=${encodeURIComponent(login)}&pass=${encodeURIComponent(pass)}`, (error, response, body) => {
+        req = request.get(`https://generate-key.iobroker.in/v1/generateUrlKey?user=${encodeURIComponent(login)}&pass=${encodeURIComponent(pass)}&version=${version}`, (error, response, body) => {
             req = null;
             if (timeout) {
                 clearTimeout(timeout);
@@ -533,7 +534,7 @@ function fetchKeys(login, pass, _forceUserCreation) {
             }
 
             adapter.log.debug('Fetching keys...');
-            req = request.get(`https://create-user.iobroker.in/v1/createUser?user=${encodeURIComponent(login)}&pass=${encodeURIComponent(pass)}&forceRecreate=${forceUserCreation}`, (error, response, body) => {
+            req = request.get(`https://create-user.iobroker.in/v1/createUser?user=${encodeURIComponent(login)}&pass=${encodeURIComponent(pass)}&forceRecreate=${forceUserCreation}&version=${version}`, (error, response, body) => {
                 req = null;
                 if (timeout) {
                     clearTimeout(timeout);

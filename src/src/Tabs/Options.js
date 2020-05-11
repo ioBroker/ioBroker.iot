@@ -50,6 +50,10 @@ const styles = theme => ({
     },
     columnSettings: {
         width: 'calc(100% - 370px)',
+    },
+    cannotUse: {
+        color: 'red',
+        fontWeight: 'bold',
     }
 });
 
@@ -63,6 +67,7 @@ class Options extends Component {
             showHint: false,
             toast: '',
             isInstanceAlive: false,
+            errorWithPercent: false,
         };
 
         this.props.socket.getObject(`system.adapter.${this.props.adapterName}.${this.props.instance}`).then(obj =>
@@ -184,6 +189,14 @@ class Options extends Component {
         />);
     }
 
+    renderPasswordHint() {
+        if (this.props.native.pass && this.props.native.pass.includes('%')) {
+            return <div className={ this.props.classes.cannotUse }>${I18n.t('cannot_use_password')}</div>
+        } else {
+            return null;
+        }
+    }
+
     render() {
         return (
             <form className={this.props.classes.tab}>
@@ -197,8 +210,9 @@ class Options extends Component {
                 <div className={this.props.classes.column + ' ' + this.props.classes.columnSettings}>
                     {this.renderInput('ioBroker.pro Login', 'login')}<br/>
                     {this.renderInput('ioBroker.pro Password', 'pass', 'password')}<br/>
+                    {this.renderPasswordHint()}
                     {this.renderCheckbox('Amazon Alexa', 'amazonAlexa', {marginTop: 10})}<br/>
-                    <FormControlLabel key="googleHome" style={{paddingTop: 5}} className={this.props.classes.controlElement}
+                    <FormControlLabel key="googleHome" style={{ paddingTop: 5 }} className={this.props.classes.controlElement}
                         control={
                           <Checkbox
                               checked={this.props.native.googleHome}

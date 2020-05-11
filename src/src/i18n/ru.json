@@ -155,5 +155,6 @@
   "tooltip_ts": "Отметка времени",
   "tooltip_user": "пользователь",
   "tooltip_value": "Значение",
-  "Short answer for blood sugar": "Краткий ответ на уровень сахара в крови"
+  "Short answer for blood sugar": "Краткий ответ на уровень сахара в крови",
+  "cannot_use_password": "Вы не можете использовать% в пароле. Мы работаем над исправлением."
 }

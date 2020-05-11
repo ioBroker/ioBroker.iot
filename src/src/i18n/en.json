@@ -155,5 +155,6 @@
   "tooltip_ts": "Time stamp",
   "tooltip_user": "User",
   "tooltip_value": "Value",
-  "Short answer for blood sugar": "Short answer for blood sugar"
+  "Short answer for blood sugar": "Short answer for blood sugar",
+  "cannot_use_password": "You cannot use % in password. We are working on the fix."
 }

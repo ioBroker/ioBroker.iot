@@ -155,5 +155,6 @@
   "tooltip_ts": "时间戳",
   "tooltip_user": "用户",
   "tooltip_value": "值",
-  "Short answer for blood sugar": "血糖的简短答案"
+  "Short answer for blood sugar": "血糖的简短答案",
+  "cannot_use_password": "您不能在密码中使用％。我们正在努力解决。"
 }

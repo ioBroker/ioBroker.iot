@@ -155,5 +155,6 @@
   "tooltip_ts": "Tijdstempel",
   "tooltip_user": "Gebruiker",
   "tooltip_value": "Waarde",
-  "Short answer for blood sugar": "Kort antwoord voor bloedsuiker"
+  "Short answer for blood sugar": "Kort antwoord voor bloedsuiker",
+  "cannot_use_password": "U kunt% in wachtwoord niet gebruiken. We werken aan de oplossing."
 }

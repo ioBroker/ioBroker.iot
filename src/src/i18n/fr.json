@@ -155,5 +155,6 @@
   "tooltip_ts": "Horodatage",
   "tooltip_user": "Utilisateur",
   "tooltip_value": "Valeur",
-  "Short answer for blood sugar": "Réponse courte pour la glycémie"
+  "Short answer for blood sugar": "Réponse courte pour la glycémie",
+  "cannot_use_password": "Vous ne pouvez pas utiliser% dans le mot de passe. Nous travaillons sur le correctif."
 }

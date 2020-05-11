@@ -155,5 +155,6 @@
   "tooltip_ts": "Sello de tiempo",
   "tooltip_user": "Usuario",
   "tooltip_value": "Valor",
-  "Short answer for blood sugar": "Respuesta corta para azúcar en la sangre"
+  "Short answer for blood sugar": "Respuesta corta para azúcar en la sangre",
+  "cannot_use_password": "No puede usar% en la contraseña. Estamos trabajando en la solución."
 }
