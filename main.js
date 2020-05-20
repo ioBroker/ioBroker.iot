@@ -49,12 +49,12 @@ function startAdapter(options) {
                 }
                 defaultHistory= obj.common.defaultHistory;
 
-                alexaSH2 && alexaSH2.setLanguage(lang);
-                alexaSH3 && alexaSH3.setLanguage(lang);
-                yandexAlisa && yandexAlisa.setLanguage(lang);
-                alexaCustom && alexaCustom.setLanguage(lang);
+                alexaSH2         && alexaSH2.setLanguage(lang);
+                alexaSH3         && alexaSH3.setLanguage(lang);
+                yandexAlisa      && yandexAlisa.setLanguage(lang);
+                alexaCustom      && alexaCustom.setLanguage(lang);
                 alexaCustomBlood && alexaCustomBlood.setLanguage(lang, defaultHistory);
-                googleHome && googleHome.setLanguage(lang);
+                googleHome       && googleHome.setLanguage(lang);
             }
         },
         stateChange: (id, state) => {
@@ -890,6 +890,9 @@ function main() {
         alexaSH2    = new AlexaSH2(adapter);
         alexaSH3    = new AlexaSH3(adapter);
         alexaCustom = new AlexaCustom(adapter);
+
+    }
+    if (adapter.config.amazonAlexaBlood) {
         alexaCustomBlood = new AlexaCustomBlood(adapter);
     }
     if (adapter.config.yandexAlisa) {
@@ -908,7 +911,6 @@ function main() {
             }
         });
 
-
     adapter.config.allowedServices = (adapter.config.allowedServices || '').split(/[,\s]+/);
     for (let s = 0; s < adapter.config.allowedServices.length; s++) {
         adapter.config.allowedServices[s] = adapter.config.allowedServices[s].trim();
@@ -918,8 +920,12 @@ function main() {
     adapter.config.cloudUrl = adapter.config.cloudUrl || 'a18wym7vjdl22g.iot.eu-west-1.amazonaws.com';
 
     if (!adapter.config.login || !adapter.config.pass) {
-        adapter.log.error('No cloud credentials found. Please get one on https://iobroker.pro');
-        return;
+        return adapter.log.error('No cloud credentials found. Please get one on https://iobroker.pro');
+    }
+
+    // check password
+    if (adapter.config.pass.length < 8 || !adapter.config.pass.match(/[a-z]/) || !adapter.config.pass.match(/[A-Z]/) || !adapter.config.pass.match(/\d/)) {
+        return adapter.log.error('The password must be at least 8 characters long and have numbers, upper and lower case letters. Please change the password in the profile https://iobroker.pro/accountProfile.');
     }
 
     if (adapter.config.iftttKey) {

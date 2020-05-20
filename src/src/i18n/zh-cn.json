@@ -156,5 +156,6 @@
   "tooltip_user": "用户",
   "tooltip_value": "值",
   "Short answer for blood sugar": "血糖的简短答案",
-  "cannot_use_password": "您不能在密码中使用％。我们正在努力解决。"
+  "cannot_use_password": "您不能在密码中使用％。我们正在努力解决。",
+  "invalid_password_warning": "密码长度必须至少为8个字符，并且必须包含数字，大小写字母。请在ioBroker.pro配置文件中进行更改\n"
 }

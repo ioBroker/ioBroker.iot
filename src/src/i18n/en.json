@@ -156,5 +156,6 @@
   "tooltip_user": "User",
   "tooltip_value": "Value",
   "Short answer for blood sugar": "Short answer for blood sugar",
-  "cannot_use_password": "You cannot use % in password. We are working on the fix."
+  "cannot_use_password": "You cannot use % in password. We are working on the fix.",
+  "invalid_password_warning": "Password must be at least 8 characters long and must have numbers, upper and lower case letters. Please change it in the ioBroker.pro profile\n"
 }

@@ -156,5 +156,6 @@
   "tooltip_user": "Usuario",
   "tooltip_value": "Valor",
   "Short answer for blood sugar": "Respuesta corta para azúcar en la sangre",
-  "cannot_use_password": "No puede usar% en la contraseña. Estamos trabajando en la solución."
+  "cannot_use_password": "No puede usar% en la contraseña. Estamos trabajando en la solución.",
+  "invalid_password_warning": "La contraseña debe tener al menos 8 caracteres y debe tener números, letras mayúsculas y minúsculas. Por favor cámbielo en el perfil ioBroker.pro\n"
 }

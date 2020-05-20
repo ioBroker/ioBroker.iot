@@ -76,13 +76,24 @@ class Options extends Component {
 
     }
 
+    checkPassword(pass) {
+        if (pass.length < 8 || !pass.match(/[a-z]/) || !pass.match(/[A-Z]/) || !pass.match(/\d/)) {
+            return I18n.t('invalid_password_warning');
+        } else {
+            return false;
+        }
+    }
+
     renderInput(title, attr, type) {
+        const error = attr === 'pass' && this.checkPassword(this.props.native[attr]);
         return (<TextField
-            label={I18n.t(title)}
-            className={this.props.classes.input}
-            value={this.props.native[attr]}
-            type={type || 'text'}
-            onChange={e => this.props.onChange(attr, e.target.value)}
+            label={ I18n.t(title) }
+            error={ !!error  }
+            className={ this.props.classes.input }
+            value={ this.props.native[attr] }
+            type={ type || 'text' }
+            helperText={ error || '' }
+            onChange={ e => this.props.onChange(attr, e.target.value) }
             margin="normal"
         />);
     }

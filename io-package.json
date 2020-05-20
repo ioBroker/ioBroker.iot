@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.4.18",
+        "version": "1.5.0",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.5.0": {
+                "en": "Changed requirements for password.\nDo not try load the \"sharp\" if blood sugar not enabled",
+                "de": "Geänderte Anforderungen für Passwort.\nVersuchen Sie nicht, das \"scharfe\" zu laden, wenn der Blutzucker nicht aktiviert ist",
+                "ru": "Изменены требования к паролю.\nНе пытайтесь загрузить «острый», если уровень сахара в крови не включен",
+                "pt": "Requisitos alterados para senha.\nNão tente carregar o \"afiado\" se o açúcar no sangue não estiver ativado",
+                "nl": "Gewijzigde vereisten voor wachtwoord.\nProbeer de \"scherpe\" niet te laden als de bloedsuikerspiegel niet is ingeschakeld",
+                "fr": "Exigences modifiées pour le mot de passe.\nN'essayez pas de charger le \"pointu\" si la glycémie n'est pas activée",
+                "it": "Requisiti modificati per la password.\nNon provare a caricare il \"sharp\" se lo zucchero nel sangue non è abilitato",
+                "es": "Se modificaron los requisitos para la contraseña.\nNo intente cargar el \"fuerte\" si el azúcar en la sangre no está habilitado",
+                "pl": "Zmieniono wymagania dotyczące hasła.\nNie próbuj ładować „ostre”, jeśli cukier we krwi nie jest włączony",
+                "zh-cn": "更改了密码要求。\n如果未启用血糖，请勿尝试加载“锐利”"
+            },
             "1.4.18": {
                 "en": "Make sure that invalid configured states or values without timestamp do not crash adapter (Sentry IOBROKER-IOT-8)\nMake sure publishes after disconnect to not break adapter (Sentry IOBROKER-IOT-A)",
                 "de": "Stellen Sie sicher, dass ungültige konfigurierte Zustände oder Werte ohne Zeitstempel den Adapter nicht zum Absturz bringen (Sentry IOBROKER-IOT-8).\nStellen Sie sicher, dass nach dem Trennen veröffentlicht wird, um den Adapter nicht zu beschädigen (Sentry IOBROKER-IOT-A).",
