@@ -238,6 +238,7 @@ class Options extends Component {
                             onClick={ () => this.resetCerts(true) }>
                         <IconReload  style={{ marginRight: 8 }}/>{ I18n.t('Create IoT credentials anew') }
                     </Button>
+                    <p>{ Utils.renderTextWithA(I18n.t('forum_tip')) }</p>
                     <p style={{ fontWeight: 'bold' }}>{ Utils.renderTextWithA(I18n.t('help_tip')) }</p>
                     <p style={{ fontWeight: 'bold', paddingTop: 20}}>{ Utils.renderTextWithA(I18n.t('help_link_tip1')) }</p>
                     <p style={{ fontWeight: 'bold' }}>{ Utils.renderTextWithA(I18n.t('help_link_tip2')) }</p>

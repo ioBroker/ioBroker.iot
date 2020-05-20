@@ -160,5 +160,6 @@
   "invalid_password_warning": "Password must be at least 8 characters long and must have numbers, upper and lower case letters. Please change it in the ioBroker.pro profile\n",
   "new_certs_tip": "If you made a restore from backup, or moved your instance from one device to other or deleted the IoT instance and added it again you must load the connection security certificates with this button",
   "new_credentials_tip": "If you restored your ioBroker.pro password you can synchronise your password with Alexa/Google/Alisa with this button.",
-  "Create IoT credentials anew": "Create IoT credentials anew"
+  "Create IoT credentials anew": "Create IoT credentials anew",
+  "forum_tip": "Any questions in any language please ask here in forum: <a href=\"https://forum.iobroker.net/post/435797\" target=\"_blank\">link</a>"
 }

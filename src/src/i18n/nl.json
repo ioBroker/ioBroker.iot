@@ -160,5 +160,6 @@
   "invalid_password_warning": "Wachtwoord moet minimaal 8 tekens lang zijn en moet cijfers, hoofdletters en kleine letters bevatten. Wijzig dit in het ioBroker.pro-profiel\n",
   "new_certs_tip": "Als u een herstelbewerking hebt uitgevoerd vanaf een back-up of uw instantie van het ene apparaat naar het andere hebt verplaatst of het IoT-exemplaar hebt verwijderd en opnieuw hebt toegevoegd, moet u de verbindingsbeveiligingscertificaten met deze knop laden",
   "new_credentials_tip": "Als je je ioBroker.pro-wachtwoord hebt hersteld, kun je je wachtwoord synchroniseren met Alexa / Google / Alisa met deze knop.",
-  "Create IoT credentials anew": "Maak opnieuw IoT-inloggegevens"
+  "Create IoT credentials anew": "Maak opnieuw IoT-inloggegevens",
+  "forum_tip": "Voor vragen in welke taal dan ook, stel deze hier op het forum: <a href=\"https://forum.iobroker.net/post/435797\" target=\"_blank\"> link </a>"
 }

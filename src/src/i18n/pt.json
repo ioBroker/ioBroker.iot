@@ -160,5 +160,6 @@
   "invalid_password_warning": "A senha deve ter pelo menos 8 caracteres e deve ter números, letras maiúsculas e minúsculas. Altere-o no perfil ioBroker.pro\n",
   "new_certs_tip": "Se você fez uma restauração a partir do backup ou moveu sua instância de um dispositivo para outro ou excluiu a instância da IoT e a adicionou novamente, carregue os certificados de segurança da conexão com este botão",
   "new_credentials_tip": "Se você restaurou sua senha do ioBroker.pro, pode sincronizá-la com Alexa / Google / Alisa com este botão.",
-  "Create IoT credentials anew": "Crie credenciais de IoT novamente"
+  "Create IoT credentials anew": "Crie credenciais de IoT novamente",
+  "forum_tip": "Qualquer dúvida em qualquer idioma, pergunte aqui no fórum: <a href=\"https://forum.iobroker.net/post/435797\" target=\"_blank\"> link </a>"
 }
