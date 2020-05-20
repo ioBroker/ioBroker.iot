@@ -157,5 +157,8 @@
   "tooltip_value": "Valore",
   "Short answer for blood sugar": "Risposta breve per zucchero nel sangue",
   "cannot_use_password": "Non è possibile utilizzare% nella password. Stiamo lavorando alla correzione.",
-  "invalid_password_warning": "La password deve contenere almeno 8 caratteri e deve contenere numeri, lettere maiuscole e minuscole. Si prega di cambiarlo nel profilo ioBroker.pro\n"
+  "invalid_password_warning": "La password deve contenere almeno 8 caratteri e deve contenere numeri, lettere maiuscole e minuscole. Si prega di cambiarlo nel profilo ioBroker.pro\n",
+  "new_certs_tip": "Se hai effettuato un ripristino dal backup o hai spostato l'istanza da un dispositivo all'altro o hai eliminato l'istanza IoT e l'hai aggiunta di nuovo, devi caricare i certificati di sicurezza della connessione con questo pulsante",
+  "new_credentials_tip": "Se hai ripristinato la tua password ioBroker.pro puoi sincronizzare la tua password con Alexa / Google / Alisa con questo pulsante.",
+  "Create IoT credentials anew": "Crea nuovamente le credenziali IoT"
 }

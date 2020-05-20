@@ -31,6 +31,7 @@ const styles = theme => ({
     },
     button: {
         marginRight: 20,
+        marginBottom: 40,
     },
     card: {
         maxWidth: 345,
@@ -63,8 +64,6 @@ class Options extends Component {
 
         this.state = {
             inAction: false,
-            forceUserCreate: false,
-            showHint: false,
             toast: '',
             isInstanceAlive: false,
             errorWithPercent: false,
@@ -117,14 +116,15 @@ class Options extends Component {
         </Card>);
     }
 
-    resetCerts() {
-        this.setState({inAction: true});
+    resetCerts(forceUserCreate) {
+        this.setState({ inAction: true });
+
         this.props.socket.setState('iot.' + this.props.instance + '.certs.private', {val: '', ack: true})
             .then(() => this.props.socket.setState('iot.' + this.props.instance + '.certs.id', {val: '', ack: true}))
             .then(() => this.props.socket.setState('iot.' + this.props.instance + '.certs.public', {val: '', ack: true}))
             .then(() => this.props.socket.setState('iot.' + this.props.instance + '.certs.certificate', {val: '', ack: true}))
             .then(() => {
-                if (this.state.forceUserCreate) {
+                if (forceUserCreate) {
                     return this.props.socket.setState('iot.' + this.props.instance + '.certs.forceUserCreate', {val: true, ack: true});
                 } else {
                     return Promise.resolve();
@@ -144,10 +144,6 @@ class Options extends Component {
             .then(() => this.setState({toast: I18n.t('Certificates will be updated after start')}))
             .catch(err => this.props.onError(err))
             .then(() => this.setState({inAction: false}));
-    }
-
-    onForceUserCreate() {
-        this.setState({forceUserCreate: !this.state.forceUserCreate, showHint: !this.state.forceUserCreate});
     }
 
     renderToast() {
@@ -179,14 +175,6 @@ class Options extends Component {
             />);
     }
 
-    renderHint() {
-        if (this.state.showHint) {
-            return (<Message text={I18n.t('Click now Get new connection certificates to request new temporary password')} onClose={() => this.setState({showHint: false})}/>);
-        } else {
-            return null;
-        }
-    }
-
     renderCheckbox(title, attr, style) {
         return (<FormControlLabel key={attr} style={Object.assign({paddingTop: 5}, style)} className={this.props.classes.controlElement}
               control={
@@ -202,19 +190,20 @@ class Options extends Component {
 
     render() {
         return (
-            <form className={this.props.classes.tab}>
+            <form className={ this.props.classes.tab }>
                 <Logo
-                    instance={this.props.instance}
-                    common={this.props.common}
-                    native={this.props.native}
-                    onError={text => this.setState({errorText: text})}
-                    onLoad={this.props.onLoad}
+                    instance={ this.props.instance }
+                    common={ this.props.common }
+                    native={ this.props.native }
+                    onError={ text => this.setState({errorText: text}) }
+                    onLoad={ this.props.onLoad }
                 />
-                <div className={this.props.classes.column + ' ' + this.props.classes.columnSettings}>
-                    {this.renderInput('ioBroker.pro Login', 'login')}<br/>
-                    {this.renderInput('ioBroker.pro Password', 'pass', 'password')}<br/>
-                    {this.renderCheckbox('Amazon Alexa', 'amazonAlexa', {marginTop: 10})}<br/>
-                    <FormControlLabel key="googleHome" style={{ paddingTop: 5 }} className={this.props.classes.controlElement}
+                <div className={ this.props.classes.column + ' ' + this.props.classes.columnSettings }>
+                    { this.renderInput('ioBroker.pro Login', 'login') }<br/>
+                    { this.renderInput('ioBroker.pro Password', 'pass', 'password') }<br/>
+                    { this.renderCheckbox('Amazon Alexa', 'amazonAlexa') }
+                    <FormControlLabel key="googleHome" className={ this.props.classes.controlElement }
+                                      style={{ marginTop: 5 }}
                         control={
                           <Checkbox
                               checked={this.props.native.googleHome}
@@ -229,34 +218,33 @@ class Options extends Component {
                         }
                         label={I18n.t('Google Home')}
                     />
-                    {/*this.renderCheckbox('Google Home', 'googleHome', {marginTop: 10})*/}<br/>
-                    {this.renderCheckbox('Yandex Алиса', 'yandexAlisa', {marginTop: 10})}<br/>
+                    {this.renderCheckbox('Yandex Алиса', 'yandexAlisa')}
                     <br/>
+
+                    <p>{I18n.t('new_certs_tip')}</p>
                     <Button variant="outlined"
-                            className={this.props.classes.button}
-                            disabled={this.state.inAction || !this.state.isInstanceAlive}
-                            title={!this.state.isInstanceAlive ? I18n.t('Instance must be enabled') : ''}
-                            onClick={() => this.resetCerts()}>
-                        <IconReload/>{I18n.t('Get new connection certificates')}
+                            className={ this.props.classes.button }
+                            disabled={ this.state.inAction || !this.state.isInstanceAlive }
+                            title={ !this.state.isInstanceAlive ? I18n.t('Instance must be enabled') : '' }
+                            onClick={ () => this.resetCerts() }>
+                        <IconReload style={{ marginRight: 8 }}/>{ I18n.t('Get new connection certificates') }
                     </Button>
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                checked={this.state.forceUserCreate}
-                                onChange={() => this.onForceUserCreate()}
-                                color="primary"
-                            />
-                        }
-                        label={I18n.t('Request email with password one more time')}
-                    />
-                    <p style={{fontWeight: 'bold'}}>{Utils.renderTextWithA(I18n.t('help_tip'))}</p>
-                    <p style={{fontWeight: 'bold', paddingTop: 20}}>{Utils.renderTextWithA(I18n.t('help_link_tip1'))}</p>
-                    <p style={{fontWeight: 'bold'}}>{Utils.renderTextWithA(I18n.t('help_link_tip2'))}</p>
-                    <p style={{fontWeight: 'bold', color: 'red'}}>{Utils.renderTextWithA(I18n.t('help_link_tip3'))}</p>
+
+                    <p>{I18n.t('new_credentials_tip')}</p>
+                    <Button variant="outlined"
+                            className={ this.props.classes.button }
+                            disabled={ this.state.inAction || !this.state.isInstanceAlive }
+                            title={ !this.state.isInstanceAlive ? I18n.t('Instance must be enabled') : '' }
+                            onClick={ () => this.resetCerts(true) }>
+                        <IconReload  style={{ marginRight: 8 }}/>{ I18n.t('Create IoT credentials anew') }
+                    </Button>
+                    <p style={{ fontWeight: 'bold' }}>{ Utils.renderTextWithA(I18n.t('help_tip')) }</p>
+                    <p style={{ fontWeight: 'bold', paddingTop: 20}}>{ Utils.renderTextWithA(I18n.t('help_link_tip1')) }</p>
+                    <p style={{ fontWeight: 'bold' }}>{ Utils.renderTextWithA(I18n.t('help_link_tip2')) }</p>
+                    <p style={{ fontWeight: 'bold', color: 'red'}}>{ Utils.renderTextWithA(I18n.t('help_link_tip3')) }</p>
                 </div>
-                <div className={this.props.classes.column + ' ' + this.props.classes.columnLogo}>{this.renderCard()}</div>
-                {this.renderHint()}
-                {this.renderToast()}
+                <div className={this.props.classes.column + ' ' + this.props.classes.columnLogo}>{this.renderCard() }</div>
+                { this.renderToast() }
             </form>
         );
     }
