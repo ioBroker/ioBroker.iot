@@ -19,7 +19,6 @@ import {MdClose as IconClose} from 'react-icons/md';
 
 import I18n from '@iobroker/adapter-react/i18n';
 import Logo from './Logo';
-import Message from '@iobroker/adapter-react/Dialogs/Message';
 
 const styles = theme => ({
     tab: {
