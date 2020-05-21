@@ -14,7 +14,31 @@ jobs:
           node-version: 10
       - run: npm i
       - run: npm run build
+      - name: Send mail on fail
+        uses: dawidd6/action-send-mail@v2
+        if: ${{ failure() }}
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{secrets.MAIL_USERNAME}}
+          password: ${{secrets.MAIL_PASSWORD}}
+          subject: Github Actions job result
+          body: Build job of ${{github.repository}} failed!
+          to: ${{secrets.MAIL_TARGET}}
+          from: Github Actions
       - run: npm test
+      - name: Send mail on fail
+        uses: dawidd6/action-send-mail@v2
+        if: ${{ failure() }}
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{secrets.MAIL_USERNAME}}
+          password: ${{secrets.MAIL_PASSWORD}}
+          subject: Github Actions job result
+          body: Tests of ${{github.repository}} failed!
+          to: ${{secrets.MAIL_TARGET}}
+          from: Github Actions
 
   publish-npm:
     needs: build
@@ -27,6 +51,30 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - run: npm i
       - run: npm run build
+      - name: Send mail on fail
+        uses: dawidd6/action-send-mail@v2
+        if: ${{ failure() }}
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{secrets.MAIL_USERNAME}}
+          password: ${{secrets.MAIL_PASSWORD}}
+          subject: Github Actions job result
+          body: Build job of ${{github.repository}} failed!
+          to: ${{secrets.MAIL_TARGET}}
+          from: Github Actions
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+      - name: Send mail on fail
+        uses: dawidd6/action-send-mail@v2
+        if: ${{ failure() }}
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{secrets.MAIL_USERNAME}}
+          password: ${{secrets.MAIL_PASSWORD}}
+          subject: Github Actions job result
+          body: Publish of ${{github.repository}} failed!
+          to: ${{secrets.MAIL_TARGET}}
+          from: Github Actions

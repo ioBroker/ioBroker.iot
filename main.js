@@ -838,7 +838,7 @@ function updateNightscoutSecret() {
                 if (body.error) {
                     adapter.log.error('Api-Secret cannot be updated: ' + body.error);
                 } else {
-                    adapter.log.debug('Api-Secret updated: ' + body);
+                    adapter.log.debug('Api-Secret updated: ' + JSON.stringify(body));
                 }
             }
             resolve();
