@@ -923,10 +923,6 @@ function main() {
         return adapter.log.error('No cloud credentials found. Please get one on https://iobroker.pro');
     }
 
-    // check password
-    if (adapter.config.pass.length < 8 || !adapter.config.pass.match(/[a-z]/) || !adapter.config.pass.match(/[A-Z]/) || !adapter.config.pass.match(/\d/)) {
-        return adapter.log.error('The password must be at least 8 characters long and have numbers, upper and lower case letters. Please change the password in the profile https://iobroker.pro/accountProfile.');
-    }
 
     if (adapter.config.iftttKey) {
         adapter.subscribeStates('services.ifttt');
@@ -993,6 +989,12 @@ function main() {
         adapter.getForeignObject('system.meta.uuid', (err, oUuid) => {
             secret = (obj && obj.native && obj.native.secret) || 'Zgfr56gFe87jJOM';
             adapter.config.pass = decrypt(secret, adapter.config.pass);
+
+            // check password
+            if (adapter.config.pass.length < 8 || !adapter.config.pass.match(/[a-z]/) || !adapter.config.pass.match(/[A-Z]/) || !adapter.config.pass.match(/\d/)) {
+                return adapter.log.error('The password must be at least 8 characters long and have numbers, upper and lower case letters. Please change the password in the profile https://iobroker.pro/accountProfile.');
+            }
+
             if (oUuid && oUuid.native) {
                 uuid = oUuid.native.uuid;
             }

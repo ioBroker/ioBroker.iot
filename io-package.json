@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.5.1",
+        "version": "1.5.2",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,7 +28,7 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
-            "1.5.1": {
+            "1.5.2": {
                 "en": "Changed requirements for password.\nDo not try load the \"sharp\" if blood sugar not enabled",
                 "de": "Geänderte Anforderungen für Passwort.\nVersuchen Sie nicht, das \"scharfe\" zu laden, wenn der Blutzucker nicht aktiviert ist",
                 "ru": "Изменены требования к паролю.\nНе пытайтесь загрузить «острый», если уровень сахара в крови не включен",

@@ -248,7 +248,7 @@ Following types are supported:
 - `ifttt` - acting like IFTTT (actually not required, but for tests purposes)
 
 ## Changelog
-### 1.5.1 (2020-05-20)
+### 1.5.2 (2020-05-21)
 * (bluefox) Changed requirements for password
 * (bluefox) Do not try load the "sharp" if blood sugar not enabled
 
