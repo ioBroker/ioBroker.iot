@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.5.2",
+        "version": "1.5.3",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.5.3": {
+                "en": "Small change for nightscout",
+                "de": "Kleingeld für Nachtscout",
+                "ru": "Небольшая смена для Nachtscout",
+                "pt": "Pequena mudança para nightcout",
+                "nl": "Kleine verandering voor nachtscout",
+                "fr": "Petite monnaie pour le nightcout",
+                "it": "Piccolo cambio per nightscout",
+                "es": "Pequeño cambio para nightcout",
+                "pl": "Mała zmiana na nightcout",
+                "zh-cn": "夜侦察员的零钱"
+            },
             "1.5.2": {
                 "en": "Changed requirements for password.\nDo not try load the \"sharp\" if blood sugar not enabled",
                 "de": "Geänderte Anforderungen für Passwort.\nVersuchen Sie nicht, das \"scharfe\" zu laden, wenn der Blutzucker nicht aktiviert ist",

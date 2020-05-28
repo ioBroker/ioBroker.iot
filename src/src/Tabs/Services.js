@@ -322,6 +322,15 @@ class Services extends Component {
                     type="text"
                     margin="normal"
                 />) : null}
+                {this.props.native.nightscout ? (<TextField
+                    style={{marginTop: 3.5}}
+                    label={I18n.t('Nightscout api-secret')}
+                    className={this.props.classes.input + ' ' + this.props.classes.controlElement + ' ' + this.props.classes.normalSize}
+                    value={this.calcNightscoutSecret()}
+                    type="text"
+                    readOnly={true}
+                    margin="normal"
+                />) : null}
                 <br/>
                 <br/>
                 <div className={this.props.classes.controlElement}>
