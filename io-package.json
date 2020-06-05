@@ -30,8 +30,8 @@
         "news": {
             "1.5.3": {
                 "en": "Small change for nightscout",
-                "de": "Kleingeld für Nachtscout",
-                "ru": "Небольшая смена для Nachtscout",
+                "de": "Kleine Änderung für Nachtscout",
+                "ru": "Небольшое изменение для Nachtscout",
                 "pt": "Pequena mudança para nightcout",
                 "nl": "Kleine verandering voor nachtscout",
                 "fr": "Petite monnaie pour le nightcout",
@@ -42,8 +42,8 @@
             },
             "1.5.2": {
                 "en": "Changed requirements for password.\nDo not try load the \"sharp\" if blood sugar not enabled",
-                "de": "Geänderte Anforderungen für Passwort.\nVersuchen Sie nicht, das \"scharfe\" zu laden, wenn der Blutzucker nicht aktiviert ist",
-                "ru": "Изменены требования к паролю.\nНе пытайтесь загрузить «острый», если уровень сахара в крови не включен",
+                "de": "Geänderte Anforderungen für Passwort.\nEs wird nicht versucht, das \"sharp\" Modul zu laden, wenn der Nightscout nicht aktiviert ist",
+                "ru": "Изменены требования к паролю.\nНе пытайется загрузить «sharp», если nightscout не включен",
                 "pt": "Requisitos alterados para senha.\nNão tente carregar o \"afiado\" se o açúcar no sangue não estiver ativado",
                 "nl": "Gewijzigde vereisten voor wachtwoord.\nProbeer de \"scherpe\" niet te laden als de bloedsuikerspiegel niet is ingeschakeld",
                 "fr": "Exigences modifiées pour le mot de passe.\nN'essayez pas de charger le \"pointu\" si la glycémie n'est pas activée",
