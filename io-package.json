@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.5.3",
+        "version": "1.6.0",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.6.0": {
+                "en": "Used new SelectID Dialog in GUI",
+                "de": "Verwendeter neuer SelectID-Dialog in der GUI",
+                "ru": "Используется новый диалог SelectID в GUI",
+                "pt": "Novo diálogo SelectID usado na GUI",
+                "nl": "Nieuwe SelectID-dialoog in GUI gebruikt",
+                "fr": "Nouvelle boîte de dialogue SelectID utilisée dans l'interface graphique",
+                "it": "Usato nuova finestra di dialogo SelectID nella GUI",
+                "es": "Se usó el nuevo cuadro de diálogo SelectID en la GUI",
+                "pl": "Użyto nowego okna dialogowego SelectID w GUI",
+                "zh-cn": "在GUI中使用了新的SelectID对话框"
+            },
             "1.5.3": {
                 "en": "Small change for nightscout",
                 "de": "Kleine Änderung für Nachtscout",
