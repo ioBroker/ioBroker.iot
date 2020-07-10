@@ -106,48 +106,68 @@ function startAdapter(options) {
                     case 'browse':
                         if (obj.callback) {
                             adapter.log.info('Request devices');
-                            alexaSH2 && alexaSH2.updateDevices(() => {
-                                adapter.sendTo(obj.from, obj.command, alexaSH2.getDevices(), obj.callback);
-                                adapter.setState('smart.updates', false, true);
-                            });
+                            if (alexaSH2) {
+                                alexaSH2.updateDevices(() => {
+                                    adapter.sendTo(obj.from, obj.command, alexaSH2.getDevices(), obj.callback);
+                                    adapter.setState('smart.updates', false, true);
+                                });
+                            } else {
+                                adapter.sendTo(obj.from, obj.command, {error: 'not activated'}, obj.callback);
+                            }
                         }
                         break;
 
                     case 'browse3':
                         if (obj.callback) {
                             adapter.log.info('Request V3 devices');
-                            alexaSH3 && alexaSH3.updateDevices(() => {
-                                adapter.sendTo(obj.from, obj.command, alexaSH3.getDevices(), obj.callback);
-                                adapter.setState('smart.updates3', false, true);
-                            });
+                            if (alexaSH3) {
+                                alexaSH3.updateDevices(() => {
+                                    adapter.sendTo(obj.from, obj.command, alexaSH3.getDevices(), obj.callback);
+                                    adapter.setState('smart.updates3', false, true);
+                                });
+                            } else {
+                                adapter.sendTo(obj.from, obj.command, {error: 'not activated'}, obj.callback);
+                            }
                         }
                         break;
 
                     case 'browseGH':
                         if (obj.callback) {
                             adapter.log.info('Request google home devices');
-                            googleHome && googleHome.updateDevices(() => {
-                                adapter.sendTo(obj.from, obj.command, googleHome.getDevices(), obj.callback);
-                                adapter.setState('smart.updatesGH', false, true);
-                            });
+                            if (googleHome) {
+                                googleHome.updateDevices(() => {
+                                    adapter.sendTo(obj.from, obj.command, googleHome.getDevices(), obj.callback);
+                                    adapter.setState('smart.updatesGH', false, true);
+                                });
+                            } else {
+                                adapter.sendTo(obj.from, obj.command, {error: 'not activated'}, obj.callback);
+                            }
                         }
                         break;
                     case 'browseAlisa':
                         if (obj.callback) {
                             adapter.log.info('Request Yandex Alice devices');
-                            yandexAlisa && yandexAlisa.updateDevices(() => {
-                                adapter.sendTo(obj.from, obj.command, yandexAlisa.getDevices(), obj.callback);
-                                adapter.setState('smart.updatesYA', false, true);
-                            });
+                            if (yandexAlisa) {
+                                yandexAlisa.updateDevices(() => {
+                                    adapter.sendTo(obj.from, obj.command, yandexAlisa.getDevices(), obj.callback);
+                                    adapter.setState('smart.updatesYA', false, true);
+                                });
+                            } else {
+                                adapter.sendTo(obj.from, obj.command, {error: 'not activated'}, obj.callback);
+                            }
                         }
                         break;
                     case 'enums':
                         if (obj.callback) {
                             adapter.log.info('Request enums');
-                            alexaSH2 && alexaSH2.updateDevices(() => {
-                                adapter.sendTo(obj.from, obj.command, alexaSH2.getEnums(), obj.callback);
-                                adapter.setState('smart.updates', false, true);
-                            });
+                            if (alexaSH2) {
+                                alexaSH2.updateDevices(() => {
+                                    adapter.sendTo(obj.from, obj.command, alexaSH2.getEnums(), obj.callback);
+                                    adapter.setState('smart.updates', false, true);
+                                });
+                            } else {
+                                adapter.sendTo(obj.from, obj.command, {error: 'not activated'}, obj.callback);
+                            }
                         }
                         break;
 
@@ -922,7 +942,6 @@ function main() {
     if (!adapter.config.login || !adapter.config.pass) {
         return adapter.log.error('No cloud credentials found. Please get one on https://iobroker.pro');
     }
-
 
     if (adapter.config.iftttKey) {
         adapter.subscribeStates('services.ifttt');

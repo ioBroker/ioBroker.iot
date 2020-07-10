@@ -130,7 +130,7 @@ class GoogleSmartNames extends Component {
                     'action.devices.types.WATERHEATER':     'Water heater',
                     'action.devices.types.WINDOW':          'Window'
                 }},
-                { title: 'Funktion/Trait', field: 'displayTraits',  lookup: {
+                {title: 'Funktion/Trait', field: 'displayTraits',  lookup: {
                     // 'action.devices.traits.ArmDisarm':   'ArmDisarm',
                     'action.devices.traits.Brightness':     'Brightness',
                     // 'action.devices.traits.CameraStream': 'CameraStream',
@@ -247,20 +247,26 @@ class GoogleSmartNames extends Component {
             }
         }, 10000);
 
-        this.props.socket.sendTo(this.props.adapterName + '.' + this.props.instance, 'browseGH', null, list => {
-            this.browseTimer && clearTimeout(this.browseTimer);
-            this.browseTimerCount = 0;
-            this.browseTimer = null;
-            if (this.waitForUpdateID) {
-                if (!this.onEdit(this.waitForUpdateID, list)) {
-                    this.setState({message: I18n.t('Device %s was not added', this.waitForUpdateID)});
-                }
-                this.waitForUpdateID = null;
-            }
-            console.log('BROWSE received.');
+        this.props.socket.sendTo(this.props.adapterName + '.' + this.props.instance, 'browseGH', null)
+            .then(list => {
+                this.browseTimer && clearTimeout(this.browseTimer);
+                this.browseTimerCount = 0;
+                this.browseTimer = null;
 
-            this.setState({devices: list, loading: false, changed: [], browse: false});
-        });
+                if (list && list.error) {
+                    this.setState({message: I18n.t(list.error)});
+                } else {
+                    if (this.waitForUpdateID) {
+                        if (!this.onEdit(this.waitForUpdateID, list)) {
+                            this.setState({message: I18n.t('Device %s was not added', this.waitForUpdateID)});
+                        }
+                        this.waitForUpdateID = null;
+                    }
+                    console.log('BROWSE received.');
+
+                    this.setState({devices: list, loading: false, changed: [], browse: false});
+                }
+            });
     }
 
     onReadyUpdate(id, state) {
@@ -278,7 +284,7 @@ class GoogleSmartNames extends Component {
         state && state.ack === true && state.val && this.setState({message: state.val});
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.props.socket.subscribeState(`${this.props.adapterName}.${this.props.instance}.smart.updatesGH`, this.onReadyUpdateBound);
         this.props.socket.subscribeState(`${this.props.adapterName}.${this.props.instance}.smart.updatesResult`, this.onResultUpdateBound);
     }
@@ -431,7 +437,7 @@ class GoogleSmartNames extends Component {
                                 JSON.parse(obj.common.smartName.ghAttributes)
                             }
                         } catch (error) {
-                            this.setState({message: I18n.t('Attributes has not correct JSON format.')})
+                            this.setState({message: I18n.t('Attributes has not correct JSON format.')});
                         }
                     }
                     if (newData.conv2GH) {
@@ -487,11 +493,11 @@ class GoogleSmartNames extends Component {
     getSelectIdDialog() {
         if (this.state.showSelectId) {
             return (<DialogSelectID
-                key="dialogSelectID1"
+                key="dialogSelectGoogle"
                 prefix={'../..'}
-                connection={this.props.socket}
+                socket={this.props.socket}
                 selected={''}
-                statesOnly={true}
+                types={['state']}
                 onClose={() => this.setState({showSelectId: false})}
                 onOk={(selected) => {
                     this.setState({showSelectId: false});
@@ -547,6 +553,8 @@ class GoogleSmartNames extends Component {
             return (<CircularProgress  key="alexaProgress" />);
         }
 
+        const manualModeHint = I18n.t('manualModeHint');
+
         return (
             <form key="gh" className={this.props.classes.tab}>
                 <Fab size="small" color="secondary" aria-label="Add" className={this.props.classes.button} onClick={() => this.setState({showSelectId: true})}><IconAdd /></Fab>
@@ -558,13 +566,12 @@ class GoogleSmartNames extends Component {
                 {this.getSelectIdDialog()}
                 <div style={{marginTop: "4rem", display: "flex"}}>
                     <div style={{flex: "50%"}}>
-                        <div style={{fontWeight:"bold"}}>${I18n.t('Auto Mode')}</div>
+                        <div style={{fontWeight:"bold"}}>{I18n.t('Auto Mode')}</div>
                         <div style={{marginTop: "0.8rem", marginRight: "0.8rem",}}>{I18n.t('To auto detect devices please assign a room and function to the channel if no channel available than assign to a device. Not only to the state or device. And enable them under SmartEnum/Intelligente Aufzählung')}</div>
                     </div>
-                    <div style={{flex: "50%"}}><div style={{fontWeight: "bold"}}>${I18n.t('Manual Mode')}</div>
-                        <span>{Utils.renderTextWithA(I18n.t("Please select a <a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/guides/'>TYPE</a> and a"))}</span>
-                        <span>{Utils.renderTextWithA(I18n.t("<a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/'>TRAIT</a> after adding a state. To add multiple traits add a different id and trait but same smart name, type and room. Comma separated for the multiple smart names. To assign a room please use the ioBroker Enums/Aufzählungen. With attributes you can for example set a range for the color temperature"))}</span>
-                        <span>  {Utils.renderTextWithA(I18n.t("<a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/colorsetting'>Infos about Attributes you can find here.</a> Empty attribute is {}"))}</span>
+                    <div style={{flex: "50%"}}>
+                        <div style={{fontWeight: "bold"}}>{I18n.t('Manual Mode')}</div>
+                        <span>{Utils.renderTextWithA(manualModeHint)}</span>
                     </div>
                 </div>
                 <br/>
@@ -573,7 +580,7 @@ class GoogleSmartNames extends Component {
                 </div>
                 <div>
                     <MaterialTable
-                        style ={{marginTop: "1rem", display: "inline-block"}}
+                        style={{marginTop: '1rem', display: 'inline-block'}}
                         title=""
                         tableRef={this.myTableRef}
                         onRowClick={(e, rowData) => {
@@ -599,20 +606,20 @@ class GoogleSmartNames extends Component {
                             actionsColumnIndex: -1,
                             paging: false,
                             rowStyle: (rowData) => {
-                                let background = '#FFF';
+                                let background = this.props.themeType === 'dark' ? '#000' : '#FFF';
                                 if (rowData.smartEnum) {
-                                    background = '#F7FFEA';
+                                    background = this.props.themeType === 'dark' ? '#1b1e18' : '#F7FFEA';
                                 }
                                 if (rowData.ioType === 'channel' || rowData.ioType === 'device') {
                                     if (rowData.smartEnum) {
-                                        background = '#eafff2';
+                                        background = this.props.themeType === 'dark' ? '#3d3d3d' : '#eafff2';
                                     } else {
-                                        background = '#E2FFFF';
+                                        background = this.props.themeType === 'dark' ? '#3e4b4b' : '#E2FFFF';
                                     }
                                 }
 
                                 if  (this.state.selectedRow && this.state.selectedRow.tableData.id === rowData.tableData.id) {
-                                    background = '#EEE';
+                                    background = this.props.themeType === 'dark' ? '#212121' : '#EEE';
                                 }
 
                                 return {backgroundColor:  background}
@@ -690,6 +697,7 @@ GoogleSmartNames.propTypes = {
     onLoad:      PropTypes.func,
     onChange:    PropTypes.func,
     socket:      PropTypes.object.isRequired,
+    themeType:   PropTypes.string.isRequired,
 };
 
 export default withStyles(styles)(GoogleSmartNames);

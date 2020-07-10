@@ -19,10 +19,10 @@ import {MdRefresh as IconRefresh} from 'react-icons/md';
 import {MdClose as IconClose} from 'react-icons/md';
 import {MdAdd as IconAdd} from 'react-icons/md';
 
-import CopyContentImg from '@iobroker/adapter-react/assets/copy-content.svg';
+import IconCopy from '@iobroker/adapter-react/Components/CopyIcon';
 import I18n from '@iobroker/adapter-react/i18n';
 import Utils from '@iobroker/adapter-react/Components/Utils';
-import DialogSelectID from "@iobroker/adapter-react/Dialogs/SelectID";
+import DialogSelectID from '@iobroker/adapter-react/Dialogs/SelectID';
 
 const styles = theme => ({
     tab: {
@@ -105,7 +105,7 @@ class Services extends Component {
                     })));
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.props.socket.subscribeState('iot.' + this.props.instance + '.certs.urlKey', this.onKeyChangedBound);
 
         this.props.socket.getObject(`system.adapter.${this.props.adapterName}.${this.props.instance}`).then(obj =>
@@ -208,9 +208,9 @@ class Services extends Component {
             return (<DialogSelectID
                 key="dialogSelectID3"
                 prefix={'../..'}
-                connection={this.props.socket}
+                socket={this.props.socket}
                 selected={this.props.native[attr]}
-                statesOnly={true}
+                types={['state']}
                 onClose={() => this.setState({showSelectId: false})}
                 onOk={selected => {
                     this.setState({showSelectId: false});
@@ -274,7 +274,7 @@ class Services extends Component {
                     readOnly={true}
                     margin="normal"
                 />
-                <Fab size="small" style={{marginTop: 10, marginLeft: 5}} onClick={() => Utils.copyToClipboard(`https://service.iobroker.in/v1/iotService?service=ifttt&key=${this.state.key}&user=${encodeURIComponent(this.props.native.login)}`)} ><img src={CopyContentImg} alt="Copy" /></Fab><br/>
+                <Fab size="small" style={{marginTop: 10, marginLeft: 5}} onClick={() => Utils.copyToClipboard(`https://service.iobroker.in/v1/iotService?service=ifttt&key=${this.state.key}&user=${encodeURIComponent(this.props.native.login)}`)} ><IconCopy /></Fab><br/>
                 <br/>
 
                 {this.renderChips('White list for services', 'allowedServices')}<br/>
@@ -288,7 +288,7 @@ class Services extends Component {
                     readOnly={true}
                     margin="normal"
                 />
-                <Fab size="small" style={{marginTop: 10, marginLeft: 5}} onClick={() => Utils.copyToClipboard(`https://service.iobroker.in/v1/iotService?service=custom_<SERVICE_NAME>&key=${this.state.key}&user=${encodeURIComponent(this.props.native.login)}&data=<SOME_TEXT>`)}><img src={CopyContentImg} alt="Copy" /></Fab><br/>
+                <Fab size="small" style={{marginTop: 10, marginLeft: 5}} onClick={() => Utils.copyToClipboard(`https://service.iobroker.in/v1/iotService?service=custom_<SERVICE_NAME>&key=${this.state.key}&user=${encodeURIComponent(this.props.native.login)}&data=<SOME_TEXT>`)}><IconCopy /></Fab><br/>
 
                 <FormControl className={this.props.classes.input + ' ' + this.props.classes.controlElement} style={{paddingTop: 20}}>
                     <Select

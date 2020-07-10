@@ -283,20 +283,25 @@ class AlisaDevices extends Component {
             }
         }, 10000);
 
-        this.props.socket.sendTo(this.props.adapterName + '.' + this.props.instance, 'browseAlisa', null, list => {
-            this.browseTimer && clearTimeout(this.browseTimer);
-            this.browseTimerCount = 0;
-            this.browseTimer = null;
+        this.props.socket.sendTo(this.props.adapterName + '.' + this.props.instance, 'browseAlisa', null)
+            .then(list => {
+                this.browseTimer && clearTimeout(this.browseTimer);
+                this.browseTimerCount = 0;
+                this.browseTimer = null;
 
-            if (this.waitForUpdateID) {
-                if (!this.onEdit(this.waitForUpdateID, list)) {
-                    this.setState({message: I18n.t('Device %s was not added', this.waitForUpdateID)});
+                if (list && list.error) {
+                    this.setState({message: I18n.t(list.error)});
+                } else {
+                    if (this.waitForUpdateID) {
+                        if (!this.onEdit(this.waitForUpdateID, list)) {
+                            this.setState({message: I18n.t('Device %s was not added', this.waitForUpdateID)});
+                        }
+                        this.waitForUpdateID = null;
+                    }
+
+                    this.setState({devices: list, loading: false, changed: [], browse: false});
                 }
-                this.waitForUpdateID = null;
-            }
-
-            this.setState({devices: list, loading: false, changed: [], browse: false});
-        });
+            });
     }
 
     onReadyUpdate(id, state) {
@@ -313,7 +318,7 @@ class AlisaDevices extends Component {
         state && state.ack === true && state.val && this.setState({message: state.val});
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.props.socket.subscribeState(`${this.props.adapterName}.${this.props.instance}.smart.updates`, this.onReadyUpdateBound);
         this.props.socket.subscribeState(`${this.props.adapterName}.${this.props.instance}.smart.updatesResult`, this.onResultUpdateBound);
     }
@@ -681,11 +686,11 @@ class AlisaDevices extends Component {
     getSelectIdDialog() {
         if (this.state.showSelectId) {
             return (<DialogSelectID
-                key="dialogSelectID1"
+                key="dialogSelectAlisa"
                 prefix={'../..'}
-                connection={this.props.socket}
+                socket={this.props.socket}
                 selected={''}
-                statesOnly={true}
+                types={['state']}
                 onClose={() => this.setState({showSelectId: false})}
                 onOk={(selected, name) => {
                     this.setState({showSelectId: false});

@@ -54,6 +54,11 @@ const styles = theme => ({
     cannotUse: {
         color: 'red',
         fontWeight: 'bold',
+    },
+    hintUnsaved: {
+        fontSize: 12,
+        color: 'red',
+        fontStyle: 'italic',
     }
 });
 
@@ -68,11 +73,23 @@ class Options extends Component {
             errorWithPercent: false,
         };
 
-        this.props.socket.getObject(`system.adapter.${this.props.adapterName}.${this.props.instance}`).then(obj =>
-            this.props.socket.getState(`system.adapter.${this.props.adapterName}.${this.props.instance}.alive`).then(state =>
-                this.setState({isInstanceAlive: obj && obj.common && obj.common.enabled && state && state.val})));
-
+        this.props.socket.getState(`system.adapter.${this.props.adapterName}.${this.props.instance}.alive`).then(state =>
+            this.setState({isInstanceAlive: state && state.val}));
     }
+
+    componentDidMount() {
+        this.props.socket.subscribeState(`system.adapter.${this.props.adapterName}.${this.props.instance}.alive`, this.onAliveChanged);
+    }
+
+    componentWillUnmount() {
+        this.props.socket.unsubscribeState(`system.adapter.${this.props.adapterName}.${this.props.instance}.alive`, this.onAliveChanged);
+    }
+
+    onAliveChanged = (id, state) => {
+        if (id === `system.adapter.${this.props.adapterName}.${this.props.instance}.alive`) {
+            this.setState({isInstanceAlive: state && state.val});
+        }
+    };
 
     checkPassword(pass) {
         if (pass.length < 8 || !pass.match(/[a-z]/) || !pass.match(/[A-Z]/) || !pass.match(/\d/)) {
@@ -221,18 +238,20 @@ class Options extends Component {
                     <br/>
 
                     <p>{I18n.t('new_certs_tip')}</p>
+                    {this.props.changed ? <div className={this.props.classes.hintUnsaved}>{I18n.t('Save settings before pressing this button')}</div> : null}
                     <Button variant="outlined"
                             className={ this.props.classes.button }
-                            disabled={ this.state.inAction || !this.state.isInstanceAlive }
+                            disabled={ this.props.changed || this.state.inAction || !this.state.isInstanceAlive }
                             title={ !this.state.isInstanceAlive ? I18n.t('Instance must be enabled') : '' }
                             onClick={ () => this.resetCerts() }>
                         <IconReload style={{ marginRight: 8 }}/>{ I18n.t('Get new connection certificates') }
                     </Button>
 
                     <p>{I18n.t('new_credentials_tip')}</p>
+                    {this.props.changed ? <div className={this.props.classes.hintUnsaved}>{I18n.t('Save settings before pressing this button')}</div> : null}
                     <Button variant="outlined"
                             className={ this.props.classes.button }
-                            disabled={ this.state.inAction || !this.state.isInstanceAlive }
+                            disabled={ this.props.changed || this.state.inAction || !this.state.isInstanceAlive }
                             title={ !this.state.isInstanceAlive ? I18n.t('Instance must be enabled') : '' }
                             onClick={ () => this.resetCerts(true) }>
                         <IconReload  style={{ marginRight: 8 }}/>{ I18n.t('Create IoT credentials anew') }
@@ -258,6 +277,7 @@ Options.propTypes = {
     onError: PropTypes.func,
     onLoad: PropTypes.func,
     onChange: PropTypes.func,
+    changed: PropTypes.bool,
     socket: PropTypes.object.isRequired,
 };
 

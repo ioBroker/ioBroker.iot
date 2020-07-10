@@ -66,7 +66,7 @@ Poziom wyłączenia dla przełączników w%
 poza
 Ok
 na
-Włącz / Wyłącz
+Włącz/Wyłącz
 Opcje
 Ustawienia osobiste (tylko pro)
 Limit czasu pingowania (ms)

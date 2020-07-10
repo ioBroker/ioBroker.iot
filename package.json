@@ -1,6 +1,6 @@
 {
   "name": "iobroker.iot",
-  "version": "1.5.3",
+  "version": "1.6.0",
   "description": "This adapter allows to communicate Amazon Alexa and Google Home with ioBroker.",
   "author": {
     "name": "bluefox",
@@ -19,13 +19,13 @@
     "url": "https://github.com/ioBroker/ioBroker.iot"
   },
   "optionalDependencies": {
-    "sharp": "0.25.2",
+    "sharp": "0.25.4",
     "canvas": "^2.6.1"
   },
   "dependencies": {
     "echarts": "^4.8.0",
-    "jsdom": "^16.2.2",
-    "moment": "^2.26.0",
+    "jsdom": "^16.3.0",
+    "moment": "^2.27.0",
     "aws-iot-device-sdk": "^2.2.6",
     "iobroker.type-detector": "^0.1.9",
     "request": "^2.88.2",

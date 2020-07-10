@@ -106,9 +106,9 @@ class ExtendedOptions extends Component {
             return (<DialogSelectID
                 key="dialogSelectID2"
                 prefix={'../..'}
-                connection={this.props.socket}
+                socket={this.props.socket}
                 selected={this.props.native[attr]}
-                statesOnly={true}
+                types={['state']}
                 onClose={() => this.setState({showSelectId: false})}
                 onOk={selected => {
                     this.setState({showSelectId: false});
