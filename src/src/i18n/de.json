@@ -32,7 +32,7 @@
   "Default": "Standard",
   "Device %s was not added": "Gerät %s wurde nicht hinzugefügt",
   "Device will be deactivated.": "Gerät wird für die Sprachsteuerung deaktiviert.",
-  "Device will be disabled.": "Gerät wird aus der Liste entfernt.",
+  "Device will be disabled.": "Gerät %s wird aus der Liste entfernt.",
   "Dimmer": "Dimmer",
   "Duplicate name": "Name wurde schon benutzt",
   "Edit smart name": "Smartname editieren",

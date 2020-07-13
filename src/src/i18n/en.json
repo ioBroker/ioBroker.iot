@@ -32,7 +32,7 @@
   "Default": "Default",
   "Device %s was not added": "Device %s was not added",
   "Device will be deactivated.": "Device will be deactivated.",
-  "Device will be disabled.": "Device will be disabled.",
+  "Device will be disabled.": "Device %s will be disabled.",
   "Dimmer": "Dimmer",
   "Duplicate name": "Duplicate name",
   "Edit smart name": "Edit smart name",

@@ -718,7 +718,7 @@ class AlexaSmartNames extends Component {
                 aria-labelledby="confirmation-dialog-title"
                 aria-describedby="confirmation-dialog-description"
             >
-                <DialogTitle id="confirmation-dialog-title">{this.props.title || I18n.t('Device will be disabled.')}</DialogTitle>
+                <DialogTitle id="confirmation-dialog-title">{this.props.title || I18n.t('Device %s will be disabled.', this.state.deleteId)}</DialogTitle>
                 <DialogContent>
                     <p>{I18n.t('Are you sure?')}</p>
                 </DialogContent>

@@ -32,7 +32,7 @@
   "Default": "Standaard",
   "Device %s was not added": "Apparaat %s is niet toegevoegd",
   "Device will be deactivated.": "Apparaat wordt gedeactiveerd.",
-  "Device will be disabled.": "Apparaat zal worden uitgeschakeld.",
+  "Device will be disabled.": "Apparaat %s zal worden uitgeschakeld.",
   "Dimmer": "dimmer",
   "Duplicate name": "Dubbele naam",
   "Edit smart name": "Bewerk slimme naam",

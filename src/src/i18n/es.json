@@ -32,7 +32,7 @@
   "Default": "Defecto",
   "Device %s was not added": "El dispositivo %s no fue agregado",
   "Device will be deactivated.": "El dispositivo se desactivará.",
-  "Device will be disabled.": "El dispositivo estará deshabilitado.",
+  "Device will be disabled.": "El dispositivo %s estará deshabilitado.",
   "Dimmer": "Regulador de intensidad",
   "Duplicate name": "Nombre duplicado",
   "Edit smart name": "Editar nombre inteligente",

@@ -32,7 +32,7 @@
   "Default": "По умолчанию",
   "Device %s was not added": "Устройство %s не было добавлено",
   "Device will be deactivated.": "Устройство будет недоступно для голосового управления.",
-  "Device will be disabled.": "Устройство исчезнет из списка.",
+  "Device will be disabled.": "Устройство %s исчезнет из списка.",
   "Dimmer": "Диммер",
   "Duplicate name": "Имя уже используется",
   "Edit smart name": "Редактировать имя",

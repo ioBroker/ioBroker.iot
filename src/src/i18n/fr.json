@@ -32,7 +32,7 @@
   "Default": "Défaut",
   "Device %s was not added": "Le périphérique %s n'a pas été ajouté",
   "Device will be deactivated.": "L'appareil sera désactivé.",
-  "Device will be disabled.": "L'appareil sera désactivé.",
+  "Device will be disabled.": "L'appareil %s sera désactivé.",
   "Dimmer": "Variateur",
   "Duplicate name": "Nom en double",
   "Edit smart name": "Modifier le nom intelligent",
