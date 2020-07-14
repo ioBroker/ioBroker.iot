@@ -125,6 +125,7 @@ class App extends GenericApp {
                         />)}
                         {this.state.selectedTab === 'alexa' && (<TabAlexaSmartNames
                             key="alexa"
+                            themeType={this.state.themeType}
                             common={this.common}
                             socket={this.socket}
                             native={this.state.native}
@@ -144,6 +145,7 @@ class App extends GenericApp {
                         />)}
                         {this.state.selectedTab === 'alisa' && (<TabAlisaSmartNames
                             key="alisa"
+                            themeType={this.state.themeType}
                             common={this.common}
                             socket={this.socket}
                             native={this.state.native}

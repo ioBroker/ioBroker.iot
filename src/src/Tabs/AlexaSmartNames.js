@@ -6,7 +6,6 @@ import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import Fab from '@material-ui/core/Fab';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Input from '@material-ui/core/Input';
 import Badge from '@material-ui/core/Badge';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -20,7 +19,7 @@ import {MdClear as IconClear} from 'react-icons/md';
 import {MdDelete as IconDelete} from 'react-icons/md';
 import {MdFormatAlignJustify as IconExpand} from 'react-icons/md';
 import {MdDragHandle as IconCollapse} from 'react-icons/md';
-
+import {MdList as IconList} from 'react-icons/md';
 import {FaPowerOff as IconOn} from 'react-icons/fa';
 import {FaThermometerHalf as IconTemperature} from 'react-icons/fa';
 import {FaLongArrowAltUp as IconUp} from 'react-icons/fa';
@@ -31,6 +30,7 @@ import {FaLightbulb as IconBulb} from 'react-icons/fa';
 import {FaLockOpen as IconLock} from 'react-icons/fa';
 import {FaThermometer as IconThermometer} from 'react-icons/fa';
 
+
 import Utils from '@iobroker/adapter-react/Components/Utils'
 import I18n from '@iobroker/adapter-react/i18n';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -39,6 +39,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import Dialog from '@material-ui/core/Dialog';
 import MessageDialog from '@iobroker/adapter-react/Dialogs/Message';
 import DialogSelectID from '@iobroker/adapter-react/Dialogs/SelectID';
+import copy from "copy-to-clipboard";
 
 const colorOn = '#aba613';
 const colorOff = '#444';
@@ -203,7 +204,21 @@ const styles = theme => ({
     },
     devSubLineTypeTitle: {
         marginTop: 0
-    }
+    },
+    headerRow: {
+        paddingLeft: theme.spacing(1),
+        background: theme.palette.primary.main,
+    },
+    headerCell: {
+        display: 'inline-block',
+        verticalAlign: 'top',
+        width: '100%'
+    },
+    tableCell: {
+        display: 'inline-block',
+        verticalAlign: 'top',
+        width: '100%'
+    },
 });
 
 class AlexaSmartNames extends Component {
@@ -222,6 +237,7 @@ class AlexaSmartNames extends Component {
             editObjectName: '',
             deleteId: '',
 
+            showListOfDevices: false,
             showSelectId: false,
             showConfirmation: '',
             changed: [],
@@ -579,7 +595,7 @@ class AlexaSmartNames extends Component {
         const expanded = this.state.expanded.indexOf(friendlyName) !== -1;
         const id = dev.additionalApplianceDetails.id;
 
-        let background = (lineNum % 2) ? '#f1f1f1' : 'inherit';
+        let background = (lineNum % 2) ? (this.props.themeType === 'dark' ? '#272727' : '#f1f1f1') : 'inherit';
         const changed = this.state.changed.indexOf(id) !== -1;
         if (changed) {
             background = CHANGED_COLOR;
@@ -785,6 +801,43 @@ class AlexaSmartNames extends Component {
         return (<div key="listDevices" className={this.props.classes.columnDiv}>{result}</div>);
     }
 
+    renderListOfDevices() {
+        if (!this.state.showListOfDevices) {
+            return null;
+        }
+        const classes = this.props.classes;
+
+        return <Dialog
+            open={true}
+            maxWidth="xl"
+            fullWidth
+            onClose={() => this.setState({showListOfDevices: false})}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+        >
+            <DialogTitle id="alert-dialog-title">{I18n.t('List of devices to print out, e.g. to give all device names to your partner.')} <span role="img" aria-label="smile">😄</span></DialogTitle>
+            <DialogContent>
+                <div className={ classes.headerRow } >
+                    <div className={ classes.headerCell }>{ I18n.t('Name') }</div>
+                </div>
+                <div className={ this.props.classes.tableDiv } >
+                    { this.state.devices.map((item, i) => <div key={i}>
+                        <div className={ classes.tableCell }>{ item.friendlyName }</div>
+                    </div>)
+                    }
+                </div>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={() => {
+                    this.setState({showListOfDevices: false});
+                    const lines = this.state.devices.map(item => item.friendlyName);
+                    copy(lines.join('\n'));
+                }} color="primary">{I18n.t('Copy to clipboard')}</Button>
+                <Button onClick={() => this.setState({showListOfDevices: false})} autoFocus>{I18n.t('Close')}</Button>
+            </DialogActions>
+        </Dialog>
+    }
+
     render() {
         if (this.state.loading) {
             return (<CircularProgress  key="alexaProgress" />);
@@ -795,19 +848,29 @@ class AlexaSmartNames extends Component {
                 <Fab size="small" color="secondary" aria-label="Add" className={this.props.classes.button} onClick={() => this.setState({showSelectId: true})}><IconAdd /></Fab>
                 <Fab size="small" color="primary" aria-label="Refresh" className={this.props.classes.button}
                       onClick={() => this.browse(true)} disabled={this.state.browse}>{this.state.browse ? (<CircularProgress size={20} />) : (<IconRefresh/>)}</Fab>
-
-                <Input
+                <Fab style={{marginLeft: '1rem'}}
+                     title={I18n.t('Show all devices for print out')}
+                     size="small" aria-label="List of devices" className={this.props.classes.button}
+                     onClick={() => this.setState({showListOfDevices: true})} disabled={this.state.browse}><IconList/></Fab>
+                <TextField
                     placeholder={I18n.t('Filter')}
                     className={this.state.filter}
                     value={this.state.filter}
                     onChange={e => this.setState({filter: e.target.value})}
+                    InputProps={{
+                        endAdornment: this.state.filter ? (
+                            <IconButton onClick={() => this.setState({ filter: '' })}>
+                                <IconClear />
+                            </IconButton>
+                        ) : undefined,
+                    }}
                 />
-                <IconButton aria-label="Clear" className={this.props.classes.button} onClick={() => this.setState({filter: ''})}><IconClear fontSize="large" /></IconButton>
                 {this.renderDevices()}
                 {this.renderMessage()}
                 {this.renderEditDialog()}
                 {this.getSelectIdDialog()}
                 {this.renderConfirmDialog()}
+                {this.renderListOfDevices()}
             </form>
         );
     }
@@ -822,6 +885,7 @@ AlexaSmartNames.propTypes = {
     onLoad: PropTypes.func,
     onChange: PropTypes.func,
     socket: PropTypes.object.isRequired,
+    themeType: PropTypes.string,
 };
 
 export default withStyles(styles)(AlexaSmartNames);

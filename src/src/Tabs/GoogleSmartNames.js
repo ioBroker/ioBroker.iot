@@ -1,22 +1,30 @@
 import React, {Component, forwardRef} from 'react';
 import {withStyles} from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
-import Utils from '@iobroker/adapter-react/Components/Utils'
+import MaterialTable from 'material-table';
+import copy from 'copy-to-clipboard';
+
 import Fab from '@material-ui/core/Fab';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
-
-import {MdAdd as IconAdd} from 'react-icons/md';
-import {MdRefresh as IconRefresh} from 'react-icons/md';
+import Toolbar from '@material-ui/core/Toolbar';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import IconButton from "@material-ui/core/IconButton";
 
 import I18n from '@iobroker/adapter-react/i18n';
 import MessageDialog from '@iobroker/adapter-react/Dialogs/Message';
 import DialogSelectID from '@iobroker/adapter-react/Dialogs/SelectID';
+import Utils from '@iobroker/adapter-react/Components/Utils'
+import ExpertIcon from '@iobroker/adapter-react/Components/ExpertIcon'
 
-import MaterialTable from 'material-table';
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowUpward from '@material-ui/icons/ArrowUpward';
 import Check from '@material-ui/icons/Check';
@@ -32,6 +40,11 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import {MdAdd as IconAdd} from 'react-icons/md';
+import {MdRefresh as IconRefresh} from 'react-icons/md';
+import {MdHelpOutline as IconHelp} from 'react-icons/md';
+import {MdList as IconList} from 'react-icons/md';
+import {MdClear as IconClear} from 'react-icons/md';
 
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -53,7 +66,35 @@ const tableIcons = {
     ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
 
-const styles = () => ({});
+const styles = theme => ({
+    tab: {
+        height: '100%',
+        overflow: 'hidden',
+    },
+    tableDiv: {
+        height: 'calc(100% - 48px)',
+        overflow: 'auto',
+    },
+    searchText: {
+        width: 150,
+        marginLeft: theme.spacing(1),
+        verticalAlign: 'middle'
+    },
+    headerRow: {
+        paddingLeft: theme.spacing(1),
+        background: theme.palette.primary.main,
+    },
+    headerCell: {
+        display: 'inline-block',
+        verticalAlign: 'top',
+        width: '30%'
+    },
+    tableCell: {
+        display: 'inline-block',
+        verticalAlign: 'top',
+        width: '30%'
+    }
+});
 
 class GoogleSmartNames extends Component {
     constructor(props) {
@@ -65,7 +106,10 @@ class GoogleSmartNames extends Component {
             editObjectName: '',
             deleteId: '',
 
+            expertMode: window.localStorage.getItem('App.expertMode') !== 'true',
+            helpHidden: window.localStorage.getItem('App.helpHidden') === 'true',
             showSelectId: false,
+            searchText: '',
             showConfirmation: '',
             changed: [],
             devices: [],
@@ -76,18 +120,18 @@ class GoogleSmartNames extends Component {
             expanded: [],
             lastChanged: '',
             columns: [
-                {title: 'Id', field: 'id', editable: 'never', cellStyle: {
+                {title: I18n.t('ID'), field: 'id', editable: 'never', cellStyle: {
                     maxWidth: '12rem',
                     overflow: 'hidden',
                     wordBreak: 'break-all'
                 }},
-                {title: 'Smartnames', field: 'name.nicknames'},
-                {title: 'ioBType', field: 'ioType',editable: 'never', cellStyle: {
+                {title: I18n.t('Smart names'), field: 'name.nicknames'},
+                {title: I18n.t('ioBType'), field: 'ioType', editable: 'never', cellStyle: {
                     maxWidth: '4rem',
                     overflow: 'hidden',
                     wordBreak: 'break-all'
                 }},
-                {title: 'Type', field: 'type',  lookup: {
+                {title: I18n.t('Type'), field: 'type',  lookup: {
                     'action.devices.types.AC_UNIT':         'Air conditioning unit',
                     'action.devices.types.AIRFRESHENER':    'Air Freshener',
                     'action.devices.types.AIRPURIFIER':     'Air purifier',
@@ -130,7 +174,7 @@ class GoogleSmartNames extends Component {
                     'action.devices.types.WATERHEATER':     'Water heater',
                     'action.devices.types.WINDOW':          'Window'
                 }},
-                {title: 'Funktion/Trait', field: 'displayTraits',  lookup: {
+                {title: I18n.t('Function/Trait'), field: 'displayTraits',  lookup: {
                     // 'action.devices.traits.ArmDisarm':   'ArmDisarm',
                     'action.devices.traits.Brightness':     'Brightness',
                     // 'action.devices.traits.CameraStream': 'CameraStream',
@@ -159,30 +203,35 @@ class GoogleSmartNames extends Component {
                     'action.devices.traits.Volume':         'Volume',
                     }},
 
-                {title: 'Attributes', field: 'displayAttributes',   cellStyle: {
+                {title: I18n.t('Attributes'), field: 'displayAttributes',   cellStyle: {
                         maxWidth: '12rem',
                         overflow: 'hidden',
                         wordBreak: 'break-all'
                     },
-                    editComponent: props => (<textarea cols="40" rows="20"
+                    expertMode: true,
+                    editComponent: props => (<textarea rows={4} style={{width: '100%', resize: 'vertical'}}
                           value={props.value}
                           onChange={e => props.onChange(e.target.value)}
                         />)
                 },
-                {title: 'Room', field: 'roomHint', editable: 'never'},
-                {title: 'Automatisch', field: 'smartEnum', editable: 'never',cellStyle: {
-                    maxWidth: '3rem',
-                    overflow: 'hidden',
-                    wordBreak: 'break-all'
-                }},
-                {title: 'Conversation to GH', field: 'displayConv2GH',  cellStyle: {
+                {title: I18n.t('Room'), field: 'roomHint', editable: 'never'},
+                {title: I18n.t('Auto'), field: 'smartEnum', editable: 'never',
+                    cellStyle: {
+                        maxWidth: '3rem',
+                        overflow: 'hidden',
+                        wordBreak: 'break-all'
+                    },
+                    expertMode: true,
+                },
+                {title: I18n.t('Conversation to GH'), field: 'displayConv2GH',  cellStyle: {
                         maxWidth: '4rem',
                         overflow: 'hidden',
                         wordBreak: 'break-all'
                     },
+                    expertMode: true,
                     editComponent: props => (
                         <div>Conversation to Google Home = function(value)&#123; <br/>
-                            <textarea cols="40" rows="20"
+                            <textarea rows={4} style={{width: '100%', resize: 'vertical'}}
                                 value={props.value}
                                 onChange={e => props.onChange(e.target.value)}
                             />
@@ -190,14 +239,15 @@ class GoogleSmartNames extends Component {
                         </div>
                     )
                 },
-                { title: 'Conversation to ioB', field: 'displayConv2iob', cellStyle: {
+                { title: I18n.t('Conversation to ioB'), field: 'displayConv2iob', cellStyle: {
                     maxWidth: '4rem',
                     overflow: 'hidden',
                     wordBreak: 'break-all'
-                    },  
+                    },
+                    expertMode: true,
                     editComponent: props => (
                         <div>Conversation to ioBroker = function(value)&#123; <br/>
-                            <textarea cols="40" rows="20"
+                            <textarea rows={4} style={{width: '100%', resize: 'vertical'}}
                                 value={props.value}
                                 onChange={e => props.onChange(e.target.value)}
                             />
@@ -548,45 +598,123 @@ class GoogleSmartNames extends Component {
         }
     }
 
+    renderListOfDevices() {
+        if (!this.state.showListOfDevices) {
+            return null;
+        }
+        const classes = this.props.classes;
+
+        return <Dialog
+            open={true}
+            maxWidth="xl"
+            fullWidth
+            onClose={() => this.setState({showListOfDevices: false})}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+        >
+            <DialogTitle id="alert-dialog-title">{I18n.t('List of devices to print out, e.g. to give all device names to your partner.')} <span role="img" aria-label="smile">😄</span></DialogTitle>
+            <DialogContent>
+                <div className={ classes.headerRow } >
+                    <div className={ classes.headerCell }>{ I18n.t('Name') }</div>
+                    <div className={ classes.headerCell }>{ I18n.t('Function') }</div>
+                    <div className={ classes.headerCell }>{ I18n.t('Room') }</div>
+                </div>
+                <div className={ this.props.classes.tableDiv } >
+                    { this.state.devices.map((item, i) => <div key={i}>
+                            <div className={ classes.tableCell }>{ item.name.nicknames.join(', ') }</div>
+                            <div className={ classes.tableCell }>{ item.displayTraits.map(n => n.replace('action.devices.traits.', '')).join(', ') }</div>
+                            <div className={ classes.tableCell }>{ item.roomHint }</div>
+                        </div>)
+                    }
+                </div>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={() => {
+                    this.setState({showListOfDevices: false});
+                    const lines = this.state.devices.map(item => item.name.nicknames.join(', ') + '\t' + item.displayTraits + '\t' + item.roomHint);
+                    copy(lines.join('\n'));
+                }} color="primary">{I18n.t('Copy to clipboard')}</Button>
+                <Button onClick={() => this.setState({showListOfDevices: false})} autoFocus>{I18n.t('Close')}</Button>
+            </DialogActions>
+        </Dialog>
+    }
+
     render() {
         if (this.state.loading) {
             return (<CircularProgress  key="alexaProgress" />);
         }
 
         const manualModeHint = I18n.t('manualModeHint');
+        const searchText = this.state.searchText.toLowerCase();
+        const devices = this.state.searchText ? this.state.devices.filter(item =>
+            item.name?.name?.toLowerCase().includes(searchText) ||
+            item.name?.defaultNames?.find(n => n.toLowerCase().includes(searchText)) ||
+            item.name?.nicknames?.find(n => n.toLowerCase().includes(searchText)))
+            : this.state.devices;
 
-        return (
-            <form key="gh" className={this.props.classes.tab}>
+        return <form key="gh" className={this.props.classes.tab}>
+            <Toolbar variant="dense">
                 <Fab size="small" color="secondary" aria-label="Add" className={this.props.classes.button} onClick={() => this.setState({showSelectId: true})}><IconAdd /></Fab>
-                <Fab 
-                style ={{marginLeft:"1rem"}} size="small" color="primary" aria-label="Refresh" className={this.props.classes.button}
-                      onClick={() => this.browse(true)} disabled={this.state.browse}>{this.state.browse ? (<CircularProgress size={20} />) : (<IconRefresh/>)}</Fab>
-
-                {this.renderMessage()}
-                {this.getSelectIdDialog()}
-                <div style={{marginTop: "4rem", display: "flex"}}>
-                    <div style={{flex: "50%"}}>
+                <Fab style={{marginLeft: '1rem'}} size="small" color="primary" aria-label="Refresh" className={this.props.classes.button}
+                     onClick={() => this.browse(true)} disabled={this.state.browse}>{this.state.browse ? <CircularProgress size={20} /> : <IconRefresh/>}</Fab>
+                <Fab style={{marginLeft: '1rem'}} size="small" color={this.state.helpHidden ? 'default' : 'primary'} aria-label="Help" className={this.props.classes.button}
+                     title={I18n.t('Show/Hide help')}
+                     onClick={() => {
+                         window.localStorage.setItem('App.helpHidden', this.state.helpHidden ? 'false' : 'true');
+                         this.setState({helpHidden: !this.state.helpHidden});
+                     }} disabled={this.state.browse}><IconHelp/></Fab>
+                <Fab style={{marginLeft: '1rem'}}
+                     size="small"
+                     color={this.state.expertMode ? 'primary' : 'default'} aria-label="Help" className={this.props.classes.button}
+                     title={I18n.t('Toggle expert mode')}
+                     onClick={() => {
+                         window.localStorage.setItem('App.expertMode', this.state.expertMode ? 'false' : 'true');
+                         this.setState({expertMode: !this.state.expertMode});
+                     }} disabled={this.state.browse}><ExpertIcon/></Fab>
+                <Fab style={{marginLeft: '1rem'}}
+                     title={I18n.t('Show all devices for print out')}
+                     size="small" aria-label="List of devices" className={this.props.classes.button}
+                     onClick={() => this.setState({showListOfDevices: true})} disabled={this.state.browse}><IconList/></Fab>
+                <TextField
+                    className={this.props.classes.searchText}
+                    label={I18n.t('Filter')}
+                    value={this.state.searchText} onChange={e => this.setState({searchText: e.target.value})}
+                    InputProps={{
+                        endAdornment: this.state.searchText ? (
+                            <IconButton onClick={() => this.setState({ searchText: '' })}>
+                                <IconClear />
+                            </IconButton>
+                        ) : undefined,
+                    }}
+                />
+            </Toolbar>
+            <div className={this.props.classes.tableDiv}>
+                {!this.state.helpHidden ? <div style={{marginTop: '4rem', display: 'flex'}}>
+                    <div style={{flex: '50%'}}>
                         <div style={{fontWeight:"bold"}}>{I18n.t('Auto Mode')}</div>
                         <div style={{marginTop: "0.8rem", marginRight: "0.8rem",}}>{I18n.t('To auto detect devices please assign a room and function to the channel if no channel available than assign to a device. Not only to the state or device. And enable them under SmartEnum/Intelligente Aufzählung')}</div>
                     </div>
-                    <div style={{flex: "50%"}}>
-                        <div style={{fontWeight: "bold"}}>{I18n.t('Manual Mode')}</div>
+                    <div style={{flex: '50%'}}>
+                        <div style={{fontWeight: 'bold'}}>{I18n.t('Manual Mode')}</div>
                         <span>{Utils.renderTextWithA(manualModeHint)}</span>
                     </div>
-                </div>
-                <br/>
-                <div style={{flex: "100%"}}>
+                </div> : null}
+                {!this.state.helpHidden ? <br/> : null}
+                {!this.state.helpHidden ? <div style={{flex: '100%'}}>
                     <div style={{fontWeight: "bold"}}>{Utils.renderTextWithA(I18n.t("For help use this forum <a target='_blank' rel='noopener noreferrer' href='https://forum.iobroker.net/topic/24061/google-home-assistant-iobroker-einrichten-nutzen/'>thread</a>"))}</div>
-                </div>
+                </div> : null}
                 <div>
                     <MaterialTable
+                        components={{
+                            Toolbar: props => <span/>
+                        }}
                         style={{marginTop: '1rem', display: 'inline-block'}}
                         title=""
                         tableRef={this.myTableRef}
                         onRowClick={(e, rowData) => {
                             this.myTableRef.current.onTreeExpandChanged(rowData.tableData.path, rowData)
                         }}
-                        columns={this.state.columns}
+                        columns={this.state.expertMode ? this.state.columns : this.state.columns.filter(item => !item.expertMode)}
                         parentChildData={(row, rows) => {
                             const result = rows.find((element) => {
                                 if (element.id && row.parentId && element.id === row.parentId) {
@@ -599,12 +727,13 @@ class GoogleSmartNames extends Component {
                             console.log(result);
                             return result;
                         }}
-                        data={this.state.devices}
+                        data={devices}
                         icons={tableIcons}
-                        isLoading={this.state.browse }
+                        isLoading={this.state.browse}
                         options={{
                             actionsColumnIndex: -1,
                             paging: false,
+                            search: false,
                             rowStyle: (rowData) => {
                                 let background = this.props.themeType === 'dark' ? '#000' : '#FFF';
                                 if (rowData.smartEnum) {
@@ -623,9 +752,8 @@ class GoogleSmartNames extends Component {
                                 }
 
                                 return {backgroundColor:  background}
-                              }
-                          }}
-
+                            }
+                        }}
                         editable={{
                             onRowUpdate: (newData, oldData) => {
                                 if (newData.name.nicknames && Array.isArray(newData.name.nicknames)) {
@@ -652,7 +780,7 @@ class GoogleSmartNames extends Component {
                             },
                             onRowDelete: (oldData) => {
                                 // if smartenum set smartname on false if not delete/reset smartname content
-                                if (oldData.smartEnum=== 'X') {
+                                if (oldData.smartEnum === 'X') {
                                     this.setState({deleteId: oldData.id});
                                 } else {
                                     this.props.socket.getObject(oldData.id)
@@ -683,8 +811,11 @@ class GoogleSmartNames extends Component {
                         }}
                     />
                 </div>
-            </form>
-        );
+            </div>
+            {this.renderMessage()}
+            {this.getSelectIdDialog()}
+            {this.renderListOfDevices()}
+        </form>;
     }
 }
 
