@@ -73,7 +73,7 @@ Alexa, change the kitchen to the color chocolate
 ```
 
 ### Lock
-To have the possibility to lock the locks, the state must have the role "switch.lock" and have native.LOCK_VALUE to determine the lock state.
+To have the possibility to lock the locks, the state must have the role "switch.lock" and have "native.LOCK_VALUE" to determine the lock state. If you need a seperate Value to control the Lock you can use "native.CONTROL VALUE".
 
 ```
 Alexa, is "lock name" locked/unlocked
