@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.6.1",
+        "version": "1.6.3",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.6.3": {
+                "en": "Added french letters to allowed symbols",
+                "de": "Den erlaubten Symbolen wurden französische Buchstaben hinzugefügt",
+                "ru": "Добавлены французские буквы в разрешенные символы",
+                "pt": "Adicionadas letras francesas aos símbolos permitidos",
+                "nl": "Franse letters toegevoegd aan toegestane symbolen",
+                "fr": "Ajout de lettres françaises aux symboles autorisés",
+                "it": "Aggiunte lettere francesi ai simboli consentiti",
+                "es": "Se agregaron letras francesas a los símbolos permitidos",
+                "pl": "Dodano francuskie litery do dozwolonych symboli",
+                "zh-cn": "在允许的符号中添加了法语字母"
+            },
             "1.6.1": {
                 "en": "Used new SelectID Dialog in GUI",
                 "de": "Verwendeter neuer SelectID-Dialog in der GUI",

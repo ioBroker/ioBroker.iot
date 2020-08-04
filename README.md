@@ -253,7 +253,7 @@ Following types are supported:
 -->
 
 ## Changelog
-### __WORK IN PROGRESS__
+### 1.6.3 (2020-08-04)
 * (bluefox) Added french letters to allowed symbols
 
 ### 1.6.1 (2020-07-10)
