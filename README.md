@@ -247,7 +247,15 @@ Following types are supported:
 - `alisa` - acting with Yandex Алиса
 - `ifttt` - acting like IFTTT (actually not required, but for tests purposes)
 
+<!--
+	Placeholder for the next version (at the beginning of the line):
+	### __WORK IN PROGRESS__
+-->
+
 ## Changelog
+### __WORK IN PROGRESS__
+* (bluefox) Added french letters to allowed symbols
+
 ### 1.6.1 (2020-07-10)
 * (bluefox) Used new SelectID Dialog in GUI
 
