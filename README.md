@@ -254,7 +254,7 @@ Following types are supported:
 
 ## Changelog
 
-### __WORK IN PROGRESS__
+### 1.6.4 (2020-08-06)
 * (Apollon77) crash prevented (Sentry IOBROKER-IOT-V)
 
 ### 1.6.3 (2020-08-04)

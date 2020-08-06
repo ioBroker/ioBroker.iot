@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.6.3",
+        "version": "1.6.4",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.6.4": {
+                "en": "crash prevented (Sentry IOBROKER-IOT-V)",
+                "de": "Absturz verhindert (Sentry IOBROKER-IOT-V)",
+                "ru": "сбой предотвращен (Sentry IOBROKER-IOT-V)",
+                "pt": "travamento evitado (Sentry IOBROKER-IOT-V)",
+                "nl": "crash voorkomen (Sentry IOBROKER-IOT-V)",
+                "fr": "crash évité (Sentry IOBROKER-IOT-V)",
+                "it": "crash prevenuto (Sentry IOBROKER-IOT-V)",
+                "es": "accidente prevenido (Sentry IOBROKER-IOT-V)",
+                "pl": "zapobieganie awariom (Sentry IOBROKER-IOT-V)",
+                "zh-cn": "防止崩溃（Sentry IOBROKER-IOT-V）"
+            },
             "1.6.3": {
                 "en": "Added french letters to allowed symbols",
                 "de": "Den erlaubten Symbolen wurden französische Buchstaben hinzugefügt",
