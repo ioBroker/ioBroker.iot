@@ -1,9 +1,9 @@
 {
   "name": "iot-admin",
-  "version": "1.6.1",
+  "version": "1.6.4",
   "private": true,
   "dependencies": {
-    "@iobroker/adapter-react": "^1.1.2",
+    "@iobroker/adapter-react": "^1.1.4",
     "@material-ui/core": "^4.11.0",
     "@sentry/browser": "^5.19.2",
     "@sentry/integrations": "^5.19.2",
