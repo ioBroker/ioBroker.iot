@@ -253,6 +253,10 @@ Following types are supported:
 -->
 
 ## Changelog
+
+### __WORK IN PROGRESS__
+* (Apollon77) crash prevented (Sentry IOBROKER-IOT-V)
+
 ### 1.6.3 (2020-08-04)
 * (bluefox) Added french letters to allowed symbols
 
