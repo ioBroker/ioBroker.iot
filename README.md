@@ -253,7 +253,7 @@ Following types are supported:
 -->
 
 ## Changelog
-### __WORK IN PROGRESS__
+### 1.7.0 (2020-08-14)
 * (bluefox) Added blinds, lock and thermostat to Alise
 
 ### 1.6.4 (2020-08-06)
