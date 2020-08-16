@@ -76,7 +76,7 @@ const actionsMapping = {
     getLockState: {color: colorRead, icon: IconLock, desc: 'Read lock state'},
 };
 
-const SMARTTYPES = ['LIGHT', 'SWITCH', 'THERMOSTAT', 'ACTIVITY_TRIGGER', 'SCENE_TRIGGER', 'SMARTPLUG', 'SMARTLOCK', 'CAMERA', 'THERMOSTAT.AC'];
+const SMARTTYPES = ['LIGHT', 'SWITCH', 'THERMOSTAT', 'ACTIVITY_TRIGGER', 'SCENE_TRIGGER', 'SMARTPLUG', 'SMARTLOCK', 'CAMERA', 'THERMOSTAT.AC', 'VACUUM_CLEANER'];
 
 const styles = theme => ({
     tab: {
