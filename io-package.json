@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.7.0",
+        "version": "1.7.1",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,17 +28,17 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
-            "1.7.0": {
-                "en": "Added blinds, lock and thermostat to Alise",
-                "de": "Alise wurden Jalousien, Schloss und Thermostat hinzugefügt",
+            "1.7.1": {
+                "en": "Added blinds, lock and thermostat to Alisa",
+                "de": "Alisa wurden Jalousien, Schloss und Thermostat hinzugefügt",
                 "ru": "Добавлены жалюзи, замок и термостат Алисе.",
-                "pt": "Adicionou cortinas, fechadura e termostato para Alise",
-                "nl": "Jaloezieën, slot en thermostaat toegevoegd aan Alise",
-                "fr": "Ajout de stores, serrure et thermostat à Alise",
-                "it": "Aggiunte persiane, serratura e termostato ad Alise",
-                "es": "Se agregaron persianas, cerradura y termostato a Alise",
-                "pl": "Dodano rolety, zamek i termostat do Alise",
-                "zh-cn": "在Alise中增加了百叶窗，锁和恒温器"
+                "pt": "Adicionou cortinas, fechadura e termostato para Alisa",
+                "nl": "Jaloezieën, slot en thermostaat toegevoegd aan Alisa",
+                "fr": "Ajout de stores, serrure et thermostat à Alisa",
+                "it": "Aggiunte persiane, serratura e termostato ad Alisa",
+                "es": "Se agregaron persianas, cerradura y termostato a Alisa",
+                "pl": "Dodano rolety, zamek i termostat do Alisa",
+                "zh-cn": "在Alisa中增加了百叶窗，锁和恒温器"
             },
             "1.6.4": {
                 "en": "crash prevented (Sentry IOBROKER-IOT-V)",

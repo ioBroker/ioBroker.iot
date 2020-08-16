@@ -45,9 +45,12 @@ const colorOff = '#444';
 const colorSet = '#00c6ff';
 const colorRGB = '#ff7ee3';
 const colorRead = '#00bc00';
+const colorThermometer = '#bc1600';
 const CHANGED_COLOR = '#e7000040';
-const DEFAULT_CHANNEL_COLOR = '#e9e9e9';
-const LAST_CHANGED_COLOR = '#b4ffbe';
+const DEFAULT_CHANNEL_COLOR_DARK = '#6e6e6e';
+const DEFAULT_CHANNEL_COLOR_LIGHT = '#e9e9e9';
+const LAST_CHANGED_COLOR_DARK = '#5c8f65';
+const LAST_CHANGED_COLOR_LIGHT = '#b4ffbe';
 
 const actionsMapping = {
     OnOff: {color: colorOn, icon: IconOn, desc: 'On/Off'},
@@ -73,7 +76,7 @@ const actionsMapping = {
     getLockState: {color: colorRead, icon: IconLock, desc: 'Read lock state'},
 };
 
-const SMARTTYPES = ['LIGHT', 'SWITCH', 'THERMOSTAT', 'ACTIVITY_TRIGGER', 'SCENE_TRIGGER', 'SMARTPLUG', 'SMARTLOCK', 'CAMERA'];
+const SMARTTYPES = ['LIGHT', 'SWITCH', 'THERMOSTAT', 'ACTIVITY_TRIGGER', 'SCENE_TRIGGER', 'SMARTPLUG', 'SMARTLOCK', 'CAMERA', 'THERMOSTAT.AC'];
 
 const styles = theme => ({
     tab: {
@@ -428,22 +431,30 @@ class AlisaDevices extends Component {
         }
 
         dev.actions.sort((a, b) => {
-            if (a === b) return 0;
-            if (a === 'OnOff') return -1;
-            if (b === 'OnOff') return 1;
+            if (a === b) {
+                return 0;
+            }
+            if (a === 'OnOff') {
+                return -1;
+            }
+            if (b === 'OnOff') {
+                return 1;
+            }
             return 0;
         });
 
         Object.keys(actionsMapping).forEach(action => {
-            if (dev.actions.indexOf(action) !== -1) {
+            if (dev.actions.includes(action)) {
                 const Icon = actionsMapping[action].icon;
-                actions.push((<span key={action} title={actionsMapping[action].desc}><Icon className={this.props.classes.actionIcon} style={{color: actionsMapping[action].color}}/></span>));
+                actions.push(<span key={action} title={actionsMapping[action].desc}>
+                    <Icon className={this.props.classes.actionIcon} style={{color: actionsMapping[action].color}}/>
+                </span>);
             }
         });
         // add unknown actions
         for (let a = 0; a < dev.actions.length; a++) {
             if (!actionsMapping[dev.actions[a]]) {
-                actions.push((<span key={dev.actions[a]}>{dev.actions[a]}</span>));
+                actions.push(<span key={dev.actions[a]}>{dev.actions[a]}</span>);
             }
         }
         return actions;
@@ -509,7 +520,7 @@ class AlisaDevices extends Component {
 
         const id = dev.main.getId;
         const name = dev.func;
-        let background = DEFAULT_CHANNEL_COLOR;/*this.state.changed.indexOf(id) !== -1 ? CHANGED_COLOR : DEFAULT_CHANNEL_COLOR;
+        let background = this.props.themeType === 'dark' ? DEFAULT_CHANNEL_COLOR_DARK : DEFAULT_CHANNEL_COLOR_LIGHT;/*this.state.changed.indexOf(id) !== -1 ? CHANGED_COLOR : DEFAULT_CHANNEL_COLOR;
         if (this.state.lastChanged === id && background === DEFAULT_CHANNEL_COLOR) {
             background = LAST_CHANGED_COLOR;
         }*/
@@ -573,7 +584,7 @@ class AlisaDevices extends Component {
         if (changed) {
             background = CHANGED_COLOR;
         } else if (dev.iobID === this.state.lastChanged) {
-            background = LAST_CHANGED_COLOR;
+            background = this.props.themeType === 'dark' ? LAST_CHANGED_COLOR_DARK : LAST_CHANGED_COLOR_LIGHT;
         }
 
         //const isComplex = dev.
