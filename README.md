@@ -253,7 +253,7 @@ Following types are supported:
 -->
 
 ## Changelog
-### 1.7.2 (2020-08-16)
+### 1.7.3 (2020-08-16)
 * (bluefox) Added vacuum cleaner to Alisa
 
 ### 1.7.1 (2020-08-16)

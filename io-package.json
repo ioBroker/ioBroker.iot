@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.7.2",
+        "version": "1.7.3",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,7 +28,7 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
-            "1.7.2": {
+            "1.7.3": {
                 "en": "Added vacuum cleaner to Alisa",
                 "de": "Alisa Staubsauger hinzugefügt",
                 "ru": "Добавлен пылесос Алисе",
