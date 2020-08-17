@@ -253,6 +253,9 @@ Following types are supported:
 -->
 
 ## Changelog
+### __WORK In PROGRESS__
+* (Apollon77) Crash prevented (Sentry IOBROKER-IOT-W)
+
 ### 1.7.3 (2020-08-16)
 * (bluefox) Added vacuum cleaner to Alisa
 
