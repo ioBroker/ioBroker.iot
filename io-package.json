@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.7.3",
+        "version": "1.7.4",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.7.4": {
+                "en": "Crash prevented (Sentry IOBROKER-IOT-W)\nValues for modes will be converted to numbers in Alisa",
+                "de": "Absturz verhindert (Sentry IOBROKER-IOT-W)\nWerte für Modi werden in Alisa in Zahlen umgewandelt",
+                "ru": "Сбой предотвращен (Sentry IOBROKER-IOT-W)\nЗначения для режимов будут преобразованы в числа в Алисе.",
+                "pt": "Travamento evitado (Sentinela IOBROKER-IOT-W)\nOs valores dos modos serão convertidos em números no Alisa",
+                "nl": "Crash voorkomen (Sentry IOBROKER-IOT-W)\nWaarden voor modi worden in Alisa geconverteerd naar getallen",
+                "fr": "Crash évité (Sentry IOBROKER-IOT-W)\nLes valeurs des modes seront converties en nombres dans Alisa",
+                "it": "Crash prevenuto (Sentry IOBROKER-IOT-W)\nI valori per le modalità verranno convertiti in numeri in Alisa",
+                "es": "Accidente prevenido (Sentry IOBROKER-IOT-W)\nLos valores de los modos se convertirán a números en Alisa",
+                "pl": "Zapobiegano awariom (Sentry IOBROKER-IOT-W)\nWartości trybów zostaną przekonwertowane na liczby w Alisa",
+                "zh-cn": "防止崩溃（Sentry IOBROKER-IOT-W）\n模式的值将在Alisa中转换为数字"
+            },
             "1.7.3": {
                 "en": "Added vacuum cleaner to Alisa",
                 "de": "Alisa Staubsauger hinzugefügt",
@@ -100,18 +112,6 @@
                 "pl": "Mała zmiana na nightcout",
                 "zh-cn": "夜侦察员的零钱"
             },
-            "1.5.2": {
-                "en": "Changed requirements for password.\nDo not try load the \"sharp\" if blood sugar not enabled",
-                "de": "Geänderte Anforderungen für Passwort.\nEs wird nicht versucht, das \"sharp\" Modul zu laden, wenn der Nightscout nicht aktiviert ist",
-                "ru": "Изменены требования к паролю.\nНе пытайется загрузить «sharp», если nightscout не включен",
-                "pt": "Requisitos alterados para senha.\nNão tente carregar o \"afiado\" se o açúcar no sangue não estiver ativado",
-                "nl": "Gewijzigde vereisten voor wachtwoord.\nProbeer de \"scherpe\" niet te laden als de bloedsuikerspiegel niet is ingeschakeld",
-                "fr": "Exigences modifiées pour le mot de passe.\nN'essayez pas de charger le \"pointu\" si la glycémie n'est pas activée",
-                "it": "Requisiti modificati per la password.\nNon provare a caricare il \"sharp\" se lo zucchero nel sangue non è abilitato",
-                "es": "Se modificaron los requisitos para la contraseña.\nNo intente cargar el \"fuerte\" si el azúcar en la sangre no está habilitado",
-                "pl": "Zmieniono wymagania dotyczące hasła.\nNie próbuj ładować „ostre”, jeśli cukier we krwi nie jest włączony",
-                "zh-cn": "更改了密码要求。\n如果未启用血糖，请勿尝试加载“锐利”"
-            },
             "1.4.18": {
                 "en": "Make sure that invalid configured states or values without timestamp do not crash adapter (Sentry IOBROKER-IOT-8)\nMake sure publishes after disconnect to not break adapter (Sentry IOBROKER-IOT-A)",
                 "de": "Stellen Sie sicher, dass ungültige konfigurierte Zustände oder Werte ohne Zeitstempel den Adapter nicht zum Absturz bringen (Sentry IOBROKER-IOT-8).\nStellen Sie sicher, dass nach dem Trennen veröffentlicht wird, um den Adapter nicht zu beschädigen (Sentry IOBROKER-IOT-A).",
@@ -123,18 +123,6 @@
                 "es": "Asegúrese de que los estados o valores configurados no válidos sin marca de tiempo no bloqueen el adaptador (Sentry IOBROKER-IOT-8)\nAsegúrese de publicar después de desconectar para no romper el adaptador (Sentry IOBROKER-IOT-A)",
                 "pl": "Upewnij się, że nieprawidłowe skonfigurowane stany lub wartości bez znacznika czasu nie powodują awarii adaptera (Sentry IOBROKER-IOT-8)\nUpewnij się, że publikowanie po odłączeniu nie powoduje uszkodzenia adaptera (Sentry IOBROKER-IOT-A)",
                 "zh-cn": "确保无效的配置状态或没有时间戳的值不会使适配器崩溃（Sentry IOBROKER-IOT-8）\n确保在断开连接后发布以不破坏适配器（Sentry IOBROKER-IOT-A）"
-            },
-            "1.4.17": {
-                "en": "Better error output is implemented",
-                "de": "Eine bessere Fehlerausgabe ist implementiert",
-                "ru": "Улучшен вывод ошибок",
-                "pt": "Melhor saída de erro é implementada",
-                "nl": "Er wordt een betere foutuitvoer geïmplementeerd",
-                "fr": "Une meilleure sortie d'erreur est implémentée",
-                "it": "È stato implementato un migliore output degli errori",
-                "es": "Se implementa una mejor salida de error",
-                "pl": "Zaimplementowano lepsze wyjście błędu",
-                "zh-cn": "实现更好的错误输出"
             }
         },
         "authors": [
