@@ -256,7 +256,7 @@ Following types are supported:
 -->
 
 ## Changelog
-### 1.7.4 (2020-08-16)
+###  __WORK IN PROGRESS__
 * (Apollon77) Crash prevented (Sentry IOBROKER-IOT-W)
 * (bluefox) Values for modes will be converted to numbers in Alisa
 
