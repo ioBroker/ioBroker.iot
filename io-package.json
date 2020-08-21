@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.7.4",
+        "version": "1.7.5",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.7.5": {
+                "en": "Crash prevented (Sentry IOBROKER-IOT-W)\nValues for modes will be converted to numbers in Alisa",
+                "de": "Absturz verhindert (Sentry IOBROKER-IOT-W)\nWerte für Modi werden in Alisa in Zahlen umgewandelt",
+                "ru": "Сбой предотвращен (Sentry IOBROKER-IOT-W)\nЗначения для режимов будут преобразованы в числа в Алисе.",
+                "pt": "Travamento evitado (Sentinela IOBROKER-IOT-W)\nOs valores dos modos serão convertidos em números no Alisa",
+                "nl": "Crash voorkomen (Sentry IOBROKER-IOT-W)\nWaarden voor modi worden in Alisa geconverteerd naar getallen",
+                "fr": "Crash évité (Sentry IOBROKER-IOT-W)\nLes valeurs des modes seront converties en nombres dans Alisa",
+                "it": "Crash prevenuto (Sentry IOBROKER-IOT-W)\nI valori per le modalità verranno convertiti in numeri in Alisa",
+                "es": "Accidente prevenido (Sentry IOBROKER-IOT-W)\nLos valores de los modos se convertirán a números en Alisa",
+                "pl": "Zapobiegano awariom (Sentry IOBROKER-IOT-W)\nWartości trybów zostaną przekonwertowane na liczby w Alisa",
+                "zh-cn": "防止崩溃（Sentry IOBROKER-IOT-W）\n模式的值将在Alisa中转换为数字"
+            },
             "1.7.4": {
                 "en": "Crash prevented (Sentry IOBROKER-IOT-W)\nValues for modes will be converted to numbers in Alisa",
                 "de": "Absturz verhindert (Sentry IOBROKER-IOT-W)\nWerte für Modi werden in Alisa in Zahlen umgewandelt",
