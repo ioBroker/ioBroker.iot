@@ -50,7 +50,8 @@
     "test": "node node_modules/mocha/bin/mocha --exit",
     "prepublishOnly": "node node_modules/gulp/bin/gulp.js",
     "build": "node node_modules/gulp/bin/gulp.js",
-    "release": "release-script"
+    "release": "release-script",
+    "beforePush": "node node_modules/gulp/bin/gulp.js"
   },
   "license": "MIT",
   "readmeFilename": "README.md"
