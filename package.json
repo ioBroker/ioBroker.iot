@@ -33,10 +33,10 @@
     "uuid": "^8.3.0"
   },
   "devDependencies": {
-    "@alcalzone/release-script": "^1.6.0",
-    "@types/iobroker": "^3.0.11",
-    "@types/node": "^14.0.27",
-    "axios": "^0.19.2",
+    "@alcalzone/release-script": "^1.7.0",
+    "@types/iobroker": "^3.0.12",
+    "@types/node": "^14.6.0",
+    "axios": "^0.20.0",
     "chai": "^4.2.0",
     "del": "^5.1.0",
     "gulp": "^4.0.2",
@@ -50,8 +50,7 @@
     "test": "node node_modules/mocha/bin/mocha --exit",
     "prepublishOnly": "node node_modules/gulp/bin/gulp.js",
     "build": "node node_modules/gulp/bin/gulp.js",
-    "release": "release-script",
-    "beforePush": "node node_modules/gulp/bin/gulp.js"
+    "release": "release-script"
   },
   "license": "MIT",
   "readmeFilename": "README.md"
