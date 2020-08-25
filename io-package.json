@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.7.5",
+        "version": "1.7.6",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.7.6": {
+                "en": "Some colors were changed in dark mode.",
+                "de": "Einige Farben wurden im Dunkelmodus geändert.",
+                "ru": "Некоторые цвета были изменены в темном режиме.",
+                "pt": "Algumas cores foram alteradas no modo escuro.",
+                "nl": "Sommige kleuren zijn gewijzigd in de donkere modus.",
+                "fr": "Certaines couleurs ont été modifiées en mode sombre.",
+                "it": "Alcuni colori sono stati modificati in modalità scura.",
+                "es": "Algunos colores se cambiaron en modo oscuro.",
+                "pl": "Niektóre kolory zostały zmienione w trybie ciemnym.",
+                "zh-cn": "在黑暗模式下更改了某些颜色。"
+            },
             "1.7.5": {
                 "en": "Crash prevented (Sentry IOBROKER-IOT-W)\nValues for modes will be converted to numbers in Alisa",
                 "de": "Absturz verhindert (Sentry IOBROKER-IOT-W)\nWerte für Modi werden in Alisa in Zahlen umgewandelt",

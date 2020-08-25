@@ -256,7 +256,7 @@ Following types are supported:
 -->
 
 ## Changelog
-### __WORK IN PROGRESS__
+### 1.7.6 (2020-08-25)
 * (bluefox) Some colors were changed in dark mode.
 
 ### 1.7.5 (2020-08-21)
