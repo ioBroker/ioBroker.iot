@@ -46,9 +46,10 @@ const colorOff = '#444';
 const colorSet = '#00c6ff';
 const colorRead = '#00bc00';
 const CHANGED_COLOR = '#e7000040';
-const DEFAULT_CHANNEL_COLOR = '#e9e9e9';
-const LAST_CHANGED_COLOR = '#b4ffbe';
-
+const DEFAULT_CHANNEL_COLOR_DARK = '#4f4f4f';
+const DEFAULT_CHANNEL_COLOR_LIGHT = '#e9e9e9';
+const LAST_CHANGED_COLOR_DARK = '#5c8f65';
+const LAST_CHANGED_COLOR_LIGHT = '#b4ffbe';
 const actionsMapping = {
     turnOn: {color: colorOn, icon: IconOn, desc: 'Turn on'},
     turnOff: {color: colorOff, icon: IconOn, desc: 'Turn off'},
@@ -542,9 +543,9 @@ class AlexaSmartNames extends Component {
                 if (channels.hasOwnProperty(chan)) {
                     for (let i = 0; i < channels[chan].length; i++) {
                         const id = channels[chan][i].id;
-                        let background = this.state.changed.indexOf(id) !== -1 ? CHANGED_COLOR : DEFAULT_CHANNEL_COLOR;
-                        if (this.state.lastChanged === id && background === DEFAULT_CHANNEL_COLOR) {
-                            background = LAST_CHANGED_COLOR;
+                        let background = this.state.changed.indexOf(id) !== -1 ? CHANGED_COLOR : this.props.themeType === 'dark' ? DEFAULT_CHANNEL_COLOR_DARK : DEFAULT_CHANNEL_COLOR_LIGHT;
+                        if (this.state.lastChanged === id && (background === DEFAULT_CHANNEL_COLOR_DARK || background === DEFAULT_CHANNEL_COLOR_LIGHT)) {
+                            background = this.props.themeType === 'dark' ? LAST_CHANGED_COLOR_DARK : LAST_CHANGED_COLOR_LIGHT;
                         }
                         result.push((<div key={'sub' + id} className={classes.devSubLine} style={(c % 2) ? {} : {background}}>
                             <div className={this.props.classes.devLineActions + ' ' + this.props.classes.channelLineActions}>{this.renderActions(channels[chan][i])}</div>
@@ -562,9 +563,9 @@ class AlexaSmartNames extends Component {
         } else {
             const id = dev.additionalApplianceDetails.id;
             const name = dev.additionalApplianceDetails.name || id;
-            let background = this.state.changed.indexOf(id) !== -1 ? CHANGED_COLOR : DEFAULT_CHANNEL_COLOR;
-            if (this.state.lastChanged === id && background === DEFAULT_CHANNEL_COLOR) {
-                background = LAST_CHANGED_COLOR;
+            let background = this.state.changed.indexOf(id) !== -1 ? CHANGED_COLOR : this.props.themeType === 'dark' ? DEFAULT_CHANNEL_COLOR_DARK : DEFAULT_CHANNEL_COLOR_LIGHT;
+            if (this.state.lastChanged === id && (background === DEFAULT_CHANNEL_COLOR_DARK || background === DEFAULT_CHANNEL_COLOR_LIGHT)) {
+                background = this.props.themeType === 'dark' ? LAST_CHANGED_COLOR_DARK : LAST_CHANGED_COLOR_LIGHT;
             }
             result.push((<div key={'sub' + id} className={classes.devSubLine} style={{background}}>
                 <div className={this.props.classes.devLineActions + ' ' + this.props.classes.channelLineActions} style={{width: 80}}>{this.renderActions(dev)}</div>
@@ -600,7 +601,7 @@ class AlexaSmartNames extends Component {
         if (changed) {
             background = CHANGED_COLOR;
         } else if (id === this.state.lastChanged) {
-            background = LAST_CHANGED_COLOR;
+            background = this.props.themeType === 'dark' ? LAST_CHANGED_COLOR_DARK : LAST_CHANGED_COLOR_LIGHT;
         }
 
         // If some of sub channels in change list or in last changed
@@ -612,7 +613,7 @@ class AlexaSmartNames extends Component {
                         if (this.state.changed.indexOf(el.id) !== -1) {
                             background = CHANGED_COLOR;
                         } else if (this.state.lastChanged === el.id) {
-                            background = LAST_CHANGED_COLOR;
+                            background = this.props.themeType === 'dark' ? LAST_CHANGED_COLOR_DARK : LAST_CHANGED_COLOR_LIGHT;
                         }
                     })
                 );
