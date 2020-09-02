@@ -256,7 +256,7 @@ Following types are supported:
 -->
 
 ## Changelog
-### __WORK IN PROGRESS__
+### 1.7.7 (2020-09-02)
 * (bluefox) Added information about changed linking process.
 
 ### 1.7.6 (2020-08-25)

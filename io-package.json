@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.7.6",
+        "version": "1.7.7",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.7.7": {
+                "en": "Added information about changed linking process.",
+                "de": "Informationen zum geänderten Verknüpfungsprozess hinzugefügt.",
+                "ru": "Добавлена информация об изменении процесса связывания.",
+                "pt": "Adicionadas informações sobre o processo de vinculação alterado.",
+                "nl": "Informatie toegevoegd over gewijzigd koppelingsproces.",
+                "fr": "Ajout d'informations sur le processus de liaison modifié.",
+                "it": "Aggiunte informazioni sul processo di collegamento modificato.",
+                "es": "Se agregó información sobre el proceso de vinculación modificado.",
+                "pl": "Dodano informacje o zmienionym procesie łączenia.",
+                "zh-cn": "添加了有关更改链接过程的信息。"
+            },
             "1.7.6": {
                 "en": "Some colors were changed in dark mode.",
                 "de": "Einige Farben wurden im Dunkelmodus geändert.",
