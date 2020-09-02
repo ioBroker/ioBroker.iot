@@ -168,5 +168,11 @@
   "Attributes": "属性",
   "Auto": "自动地",
   "Conversation to GH": "转换为GH",
-  "Conversation to ioB": "转换为ioB"
+  "Conversation to ioB": "转换为ioB",
+  "Information: The skill linking process was changed!": "信息：技能链接过程已更改！",
+  "The linking process has been changed for a few months.": "链接过程已更改了几个月。",
+  "Now there is no temporary password that will be sent by email.": "现在没有将通过电子邮件发送的临时密码。",
+  "The password is equal with ioBroker.pro and with password that was entered here in the settings!": "密码与ioBroker.pro以及在设置中输入的密码相同！",
+  "Not understood": "不明白",
+  "Roger that": "收到"
 }

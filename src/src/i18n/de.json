@@ -168,5 +168,11 @@
   "Attributes": "Attribute",
   "Auto": "Automatisch",
   "Conversation to GH": "In GH konvertieren",
-  "Conversation to ioB": "In ioB konvertieren"
+  "Conversation to ioB": "In ioB konvertieren",
+  "Information: The skill linking process was changed!": "Information: Der Skill Linking Prozess wurde geändert!",
+  "The linking process has been changed for a few months.": "Der Verknüpfungsprozess wurde vor einigen Monaten geändert.",
+  "Now there is no temporary password that will be sent by email.": "Jetzt gibt es kein temporäres Passwort, das per E-Mail gesendet wird.",
+  "The password is equal with ioBroker.pro and with password that was entered here in the settings!": "Das Passwort ist gleich mit ioBroker.pro und mit dem Passwort, das hier in den Einstellungen eingegeben wurde!",
+  "Not understood": "Nicht verstanden",
+  "Roger that": "Verstanden"
 }

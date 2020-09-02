@@ -242,6 +242,19 @@
             "native": {}
         },
         {
+            "_id": "info.ackTempPassword",
+            "type": "state",
+            "common": {
+                "role": "indicator",
+                "name": "If user have read about temp password for iot",
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        },
+        {
             "_id": "info.remoteTill",
             "type": "state",
             "common": {

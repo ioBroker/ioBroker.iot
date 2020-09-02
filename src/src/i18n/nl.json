@@ -168,5 +168,11 @@
   "Attributes": "Attributen",
   "Auto": "Automatisch",
   "Conversation to GH": "Converteer naar GH",
-  "Conversation to ioB": "Converteer naar ioB"
+  "Conversation to ioB": "Converteer naar ioB",
+  "Information: The skill linking process was changed!": "Informatie: het proces voor het koppelen van vaardigheden is gewijzigd!",
+  "The linking process has been changed for a few months.": "Het koppelingsproces is voor een paar maanden gewijzigd.",
+  "Now there is no temporary password that will be sent by email.": "Nu is er geen tijdelijk wachtwoord dat per e-mail wordt verzonden.",
+  "The password is equal with ioBroker.pro and with password that was entered here in the settings!": "Het wachtwoord is gelijk aan ioBroker.pro en met het wachtwoord dat hier in de instellingen is ingevoerd!",
+  "Not understood": "Niet begrepen",
+  "Roger that": "Begrepen"
 }
