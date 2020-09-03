@@ -6,7 +6,6 @@ import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import Fab from '@material-ui/core/Fab';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Input from '@material-ui/core/Input';
 import Badge from '@material-ui/core/Badge';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -20,6 +19,7 @@ import {MdClear as IconClear} from 'react-icons/md';
 import {MdDelete as IconDelete} from 'react-icons/md';
 import {MdFormatAlignJustify as IconExpand} from 'react-icons/md';
 import {MdDragHandle as IconCollapse} from 'react-icons/md';
+import {MdList as IconList} from 'react-icons/md';
 
 import {FaPowerOff as IconOn} from 'react-icons/fa';
 import {FaThermometerHalf as IconTemperature} from 'react-icons/fa';
@@ -38,15 +38,19 @@ import DialogActions from '@material-ui/core/DialogActions';
 import Dialog from '@material-ui/core/Dialog';
 import MessageDialog from '@iobroker/adapter-react/Dialogs/Message';
 import DialogSelectID from '@iobroker/adapter-react/Dialogs/SelectID';
+import copy from "copy-to-clipboard";
 
 const colorOn = '#aba613';
 const colorOff = '#444';
 const colorSet = '#00c6ff';
 const colorRGB = '#ff7ee3';
 const colorRead = '#00bc00';
+//const colorThermometer = '#bc1600';
 const CHANGED_COLOR = '#e7000040';
-const DEFAULT_CHANNEL_COLOR = '#e9e9e9';
-const LAST_CHANGED_COLOR = '#b4ffbe';
+const DEFAULT_CHANNEL_COLOR_DARK = '#4f4f4f';
+const DEFAULT_CHANNEL_COLOR_LIGHT = '#e9e9e9';
+const LAST_CHANGED_COLOR_DARK = '#5c8f65';
+const LAST_CHANGED_COLOR_LIGHT = '#b4ffbe';
 
 const actionsMapping = {
     OnOff: {color: colorOn, icon: IconOn, desc: 'On/Off'},
@@ -72,7 +76,7 @@ const actionsMapping = {
     getLockState: {color: colorRead, icon: IconLock, desc: 'Read lock state'},
 };
 
-const SMARTTYPES = ['LIGHT', 'SWITCH', 'THERMOSTAT', 'ACTIVITY_TRIGGER', 'SCENE_TRIGGER', 'SMARTPLUG', 'SMARTLOCK', 'CAMERA'];
+const SMARTTYPES = ['LIGHT', 'SWITCH', 'THERMOSTAT', 'ACTIVITY_TRIGGER', 'SCENE_TRIGGER', 'SMARTPLUG', 'SMARTLOCK', 'CAMERA', 'THERMOSTAT.AC', 'VACUUM_CLEANER'];
 
 const styles = theme => ({
     tab: {
@@ -210,7 +214,21 @@ const styles = theme => ({
     },
     devSubLineTypeTitle: {
         marginTop: 0
-    }
+    },
+    headerRow: {
+        paddingLeft: theme.spacing(1),
+        background: theme.palette.primary.main,
+    },
+    headerCell: {
+        display: 'inline-block',
+        verticalAlign: 'top',
+        width: '100%'
+    },
+    tableCell: {
+        display: 'inline-block',
+        verticalAlign: 'top',
+        width: '100%'
+    },
 });
 
 class AlisaDevices extends Component {
@@ -367,7 +385,7 @@ class AlisaDevices extends Component {
                         smartName = smartName[I18n.getLanguage()] || smartName.en;
                     }
                     this.editedSmartName = smartName;
-                    this.setState({editId: id, editedSmartName: smartName, editObjectName:smartName/* Utils.getObjectNameFromObj(obj, null, {language: I18n.getLanguage()})*/});
+                    this.setState({editId: id, editedSmartName: smartName, editObjectName: smartName/* Utils.getObjectNameFromObj(obj, null, {language: I18n.getLanguage()})*/});
                 });
             return true;
         } else {
@@ -413,22 +431,30 @@ class AlisaDevices extends Component {
         }
 
         dev.actions.sort((a, b) => {
-            if (a === b) return 0;
-            if (a === 'OnOff') return -1;
-            if (b === 'OnOff') return 1;
+            if (a === b) {
+                return 0;
+            }
+            if (a === 'OnOff') {
+                return -1;
+            }
+            if (b === 'OnOff') {
+                return 1;
+            }
             return 0;
         });
 
         Object.keys(actionsMapping).forEach(action => {
-            if (dev.actions.indexOf(action) !== -1) {
+            if (dev.actions.includes(action)) {
                 const Icon = actionsMapping[action].icon;
-                actions.push((<span key={action} title={actionsMapping[action].desc}><Icon className={this.props.classes.actionIcon} style={{color: actionsMapping[action].color}}/></span>));
+                actions.push(<span key={action} title={actionsMapping[action].desc}>
+                    <Icon className={this.props.classes.actionIcon} style={{color: actionsMapping[action].color}}/>
+                </span>);
             }
         });
         // add unknown actions
         for (let a = 0; a < dev.actions.length; a++) {
             if (!actionsMapping[dev.actions[a]]) {
-                actions.push((<span key={dev.actions[a]}>{dev.actions[a]}</span>));
+                actions.push(<span key={dev.actions[a]}>{dev.actions[a]}</span>);
             }
         }
         return actions;
@@ -494,7 +520,7 @@ class AlisaDevices extends Component {
 
         const id = dev.main.getId;
         const name = dev.func;
-        let background = DEFAULT_CHANNEL_COLOR;/*this.state.changed.indexOf(id) !== -1 ? CHANGED_COLOR : DEFAULT_CHANNEL_COLOR;
+        let background = this.props.themeType === 'dark' ? DEFAULT_CHANNEL_COLOR_DARK : DEFAULT_CHANNEL_COLOR_LIGHT;/*this.state.changed.indexOf(id) !== -1 ? CHANGED_COLOR : DEFAULT_CHANNEL_COLOR;
         if (this.state.lastChanged === id && background === DEFAULT_CHANNEL_COLOR) {
             background = LAST_CHANGED_COLOR;
         }*/
@@ -553,12 +579,12 @@ class AlisaDevices extends Component {
     renderDevice(dev, lineNum) {
         //return (<div key={lineNum}>{JSON.stringify(dev)}</div>);
         const expanded = this.state.expanded.indexOf(dev.name) !== -1;
-        let background = (lineNum % 2) ? '#f1f1f1' : 'inherit';
+        let background = (lineNum % 2) ? (this.props.themeType === 'dark' ? '#272727' : '#f1f1f1') : 'inherit';
         const changed = this.state.changed.indexOf(dev.iobID) !== -1;
         if (changed) {
             background = CHANGED_COLOR;
         } else if (dev.iobID === this.state.lastChanged) {
-            background = LAST_CHANGED_COLOR;
+            background = this.props.themeType === 'dark' ? LAST_CHANGED_COLOR_DARK : LAST_CHANGED_COLOR_LIGHT;
         }
 
         //const isComplex = dev.
@@ -587,7 +613,7 @@ class AlisaDevices extends Component {
 
     renderMessage() {
         if (this.state.message) {
-            return (<MessageDialog text={this.state.message} onClose={() => this.setState({message: ''})}/>);
+            return <MessageDialog text={this.state.message} onClose={() => this.setState({message: ''})}/>;
         } else {
             return null;
         }
@@ -736,6 +762,43 @@ class AlisaDevices extends Component {
         return (<div key="listDevices" className={this.props.classes.columnDiv}>{result}</div>);
     }
 
+    renderListOfDevices() {
+        if (!this.state.showListOfDevices) {
+            return null;
+        }
+        const classes = this.props.classes;
+
+        return <Dialog
+            open={true}
+            maxWidth="xl"
+            fullWidth
+            onClose={() => this.setState({showListOfDevices: false})}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+        >
+            <DialogTitle id="alert-dialog-title">{I18n.t('List of devices to print out, e.g. to give all device names to your partner.')} <span role="img" aria-label="smile">😄</span></DialogTitle>
+            <DialogContent>
+                <div className={ classes.headerRow } >
+                    <div className={ classes.headerCell }>{ I18n.t('Name') }</div>
+                </div>
+                <div className={ this.props.classes.tableDiv } >
+                    { this.state.devices.map((item, i) => <div key={i}>
+                        <div className={ classes.tableCell }>{ item.name }</div>
+                    </div>)
+                    }
+                </div>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={() => {
+                    this.setState({showListOfDevices: false});
+                    const lines = this.state.devices.map(item => item.name);
+                    copy(lines.join('\n'));
+                }} color="primary">{I18n.t('Copy to clipboard')}</Button>
+                <Button onClick={() => this.setState({showListOfDevices: false})} autoFocus>{I18n.t('Close')}</Button>
+            </DialogActions>
+        </Dialog>
+    }
+
     render() {
         if (this.state.loading) {
             return (<CircularProgress  key="alexaProgress" />);
@@ -746,19 +809,29 @@ class AlisaDevices extends Component {
                 <Fab size="small" color="secondary" aria-label="Add" className={this.props.classes.button} onClick={() => this.setState({showSelectId: true})}><IconAdd /></Fab>
                 <Fab size="small" color="primary" aria-label="Refresh" className={this.props.classes.button}
                       onClick={() => this.browse(true)} disabled={this.state.browse}>{this.state.browse ? (<CircularProgress size={20} />) : (<IconRefresh/>)}</Fab>
-
-                <Input
+                <Fab style={{marginLeft: '1rem'}}
+                     title={I18n.t('Show all devices for print out')}
+                     size="small" aria-label="List of devices" className={this.props.classes.button}
+                     onClick={() => this.setState({showListOfDevices: true})} disabled={this.state.browse}><IconList/></Fab>
+                <TextField
                     placeholder={I18n.t('Filter')}
                     className={this.state.filter}
                     value={this.state.filter}
                     onChange={e => this.setState({filter: e.target.value})}
+                    InputProps={{
+                        endAdornment: this.state.filter ? (
+                            <IconButton onClick={() => this.setState({ filter: '' })}>
+                                <IconClear />
+                            </IconButton>
+                        ) : undefined,
+                    }}
                 />
-                <IconButton aria-label="Clear" className={this.props.classes.button} onClick={() => this.setState({filter: ''})}><IconClear fontSize="large" /></IconButton>
                 {this.renderDevices()}
                 {this.renderMessage()}
                 {this.renderEditDialog()}
                 {this.getSelectIdDialog()}
                 {this.renderConfirmDialog()}
+                {this.renderListOfDevices()}
             </form>
         );
     }
@@ -773,6 +846,7 @@ AlisaDevices.propTypes = {
     onLoad: PropTypes.func,
     onChange: PropTypes.func,
     socket: PropTypes.object.isRequired,
+    themeType: PropTypes.string,
 };
 
 export default withStyles(styles)(AlisaDevices);

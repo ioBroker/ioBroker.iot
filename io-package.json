@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.6.0",
+        "version": "1.7.7",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,7 +28,103 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
-            "1.6.0": {
+            "1.7.7": {
+                "en": "Added information about changed linking process.",
+                "de": "Informationen zum geänderten Verknüpfungsprozess hinzugefügt.",
+                "ru": "Добавлена информация об изменении процесса связывания.",
+                "pt": "Adicionadas informações sobre o processo de vinculação alterado.",
+                "nl": "Informatie toegevoegd over gewijzigd koppelingsproces.",
+                "fr": "Ajout d'informations sur le processus de liaison modifié.",
+                "it": "Aggiunte informazioni sul processo di collegamento modificato.",
+                "es": "Se agregó información sobre el proceso de vinculación modificado.",
+                "pl": "Dodano informacje o zmienionym procesie łączenia.",
+                "zh-cn": "添加了有关更改链接过程的信息。"
+            },
+            "1.7.6": {
+                "en": "Some colors were changed in dark mode.",
+                "de": "Einige Farben wurden im Dunkelmodus geändert.",
+                "ru": "Некоторые цвета были изменены в темном режиме.",
+                "pt": "Algumas cores foram alteradas no modo escuro.",
+                "nl": "Sommige kleuren zijn gewijzigd in de donkere modus.",
+                "fr": "Certaines couleurs ont été modifiées en mode sombre.",
+                "it": "Alcuni colori sono stati modificati in modalità scura.",
+                "es": "Algunos colores se cambiaron en modo oscuro.",
+                "pl": "Niektóre kolory zostały zmienione w trybie ciemnym.",
+                "zh-cn": "在黑暗模式下更改了某些颜色。"
+            },
+            "1.7.5": {
+                "en": "Crash prevented (Sentry IOBROKER-IOT-W)\nValues for modes will be converted to numbers in Alisa",
+                "de": "Absturz verhindert (Sentry IOBROKER-IOT-W)\nWerte für Modi werden in Alisa in Zahlen umgewandelt",
+                "ru": "Сбой предотвращен (Sentry IOBROKER-IOT-W)\nЗначения для режимов будут преобразованы в числа в Алисе.",
+                "pt": "Travamento evitado (Sentinela IOBROKER-IOT-W)\nOs valores dos modos serão convertidos em números no Alisa",
+                "nl": "Crash voorkomen (Sentry IOBROKER-IOT-W)\nWaarden voor modi worden in Alisa geconverteerd naar getallen",
+                "fr": "Crash évité (Sentry IOBROKER-IOT-W)\nLes valeurs des modes seront converties en nombres dans Alisa",
+                "it": "Crash prevenuto (Sentry IOBROKER-IOT-W)\nI valori per le modalità verranno convertiti in numeri in Alisa",
+                "es": "Accidente prevenido (Sentry IOBROKER-IOT-W)\nLos valores de los modos se convertirán a números en Alisa",
+                "pl": "Zapobiegano awariom (Sentry IOBROKER-IOT-W)\nWartości trybów zostaną przekonwertowane na liczby w Alisa",
+                "zh-cn": "防止崩溃（Sentry IOBROKER-IOT-W）\n模式的值将在Alisa中转换为数字"
+            },
+            "1.7.4": {
+                "en": "Crash prevented (Sentry IOBROKER-IOT-W)\nValues for modes will be converted to numbers in Alisa",
+                "de": "Absturz verhindert (Sentry IOBROKER-IOT-W)\nWerte für Modi werden in Alisa in Zahlen umgewandelt",
+                "ru": "Сбой предотвращен (Sentry IOBROKER-IOT-W)\nЗначения для режимов будут преобразованы в числа в Алисе.",
+                "pt": "Travamento evitado (Sentinela IOBROKER-IOT-W)\nOs valores dos modos serão convertidos em números no Alisa",
+                "nl": "Crash voorkomen (Sentry IOBROKER-IOT-W)\nWaarden voor modi worden in Alisa geconverteerd naar getallen",
+                "fr": "Crash évité (Sentry IOBROKER-IOT-W)\nLes valeurs des modes seront converties en nombres dans Alisa",
+                "it": "Crash prevenuto (Sentry IOBROKER-IOT-W)\nI valori per le modalità verranno convertiti in numeri in Alisa",
+                "es": "Accidente prevenido (Sentry IOBROKER-IOT-W)\nLos valores de los modos se convertirán a números en Alisa",
+                "pl": "Zapobiegano awariom (Sentry IOBROKER-IOT-W)\nWartości trybów zostaną przekonwertowane na liczby w Alisa",
+                "zh-cn": "防止崩溃（Sentry IOBROKER-IOT-W）\n模式的值将在Alisa中转换为数字"
+            },
+            "1.7.3": {
+                "en": "Added vacuum cleaner to Alisa",
+                "de": "Alisa Staubsauger hinzugefügt",
+                "ru": "Добавлен пылесос Алисе",
+                "pt": "Adicionou aspirador de pó a Alisa",
+                "nl": "Stofzuiger toegevoegd aan Alisa",
+                "fr": "Aspirateur ajouté à Alisa",
+                "it": "Aggiunto aspirapolvere ad Alisa",
+                "es": "Aspiradora agregada a Alisa",
+                "pl": "Dodano odkurzacz do Alisy",
+                "zh-cn": "向Alisa添加了吸尘器"
+            },
+            "1.7.1": {
+                "en": "Added blinds, lock and thermostat to Alisa",
+                "de": "Alisa wurden Jalousien, Schloss und Thermostat hinzugefügt",
+                "ru": "Добавлены жалюзи, замок и термостат Алисе.",
+                "pt": "Adicionou cortinas, fechadura e termostato para Alisa",
+                "nl": "Jaloezieën, slot en thermostaat toegevoegd aan Alisa",
+                "fr": "Ajout de stores, serrure et thermostat à Alisa",
+                "it": "Aggiunte persiane, serratura e termostato ad Alisa",
+                "es": "Se agregaron persianas, cerradura y termostato a Alisa",
+                "pl": "Dodano rolety, zamek i termostat do Alisa",
+                "zh-cn": "在Alisa中增加了百叶窗，锁和恒温器"
+            },
+            "1.6.4": {
+                "en": "crash prevented (Sentry IOBROKER-IOT-V)",
+                "de": "Absturz verhindert (Sentry IOBROKER-IOT-V)",
+                "ru": "сбой предотвращен (Sentry IOBROKER-IOT-V)",
+                "pt": "travamento evitado (Sentry IOBROKER-IOT-V)",
+                "nl": "crash voorkomen (Sentry IOBROKER-IOT-V)",
+                "fr": "crash évité (Sentry IOBROKER-IOT-V)",
+                "it": "crash prevenuto (Sentry IOBROKER-IOT-V)",
+                "es": "accidente prevenido (Sentry IOBROKER-IOT-V)",
+                "pl": "zapobieganie awariom (Sentry IOBROKER-IOT-V)",
+                "zh-cn": "防止崩溃（Sentry IOBROKER-IOT-V）"
+            },
+            "1.6.3": {
+                "en": "Added french letters to allowed symbols",
+                "de": "Den erlaubten Symbolen wurden französische Buchstaben hinzugefügt",
+                "ru": "Добавлены французские буквы в разрешенные символы",
+                "pt": "Adicionadas letras francesas aos símbolos permitidos",
+                "nl": "Franse letters toegevoegd aan toegestane symbolen",
+                "fr": "Ajout de lettres françaises aux symboles autorisés",
+                "it": "Aggiunte lettere francesi ai simboli consentiti",
+                "es": "Se agregaron letras francesas a los símbolos permitidos",
+                "pl": "Dodano francuskie litery do dozwolonych symboli",
+                "zh-cn": "在允许的符号中添加了法语字母"
+            },
+            "1.6.1": {
                 "en": "Used new SelectID Dialog in GUI",
                 "de": "Verwendeter neuer SelectID-Dialog in der GUI",
                 "ru": "Используется новый диалог SelectID в GUI",
@@ -52,18 +148,6 @@
                 "pl": "Mała zmiana na nightcout",
                 "zh-cn": "夜侦察员的零钱"
             },
-            "1.5.2": {
-                "en": "Changed requirements for password.\nDo not try load the \"sharp\" if blood sugar not enabled",
-                "de": "Geänderte Anforderungen für Passwort.\nEs wird nicht versucht, das \"sharp\" Modul zu laden, wenn der Nightscout nicht aktiviert ist",
-                "ru": "Изменены требования к паролю.\nНе пытайется загрузить «sharp», если nightscout не включен",
-                "pt": "Requisitos alterados para senha.\nNão tente carregar o \"afiado\" se o açúcar no sangue não estiver ativado",
-                "nl": "Gewijzigde vereisten voor wachtwoord.\nProbeer de \"scherpe\" niet te laden als de bloedsuikerspiegel niet is ingeschakeld",
-                "fr": "Exigences modifiées pour le mot de passe.\nN'essayez pas de charger le \"pointu\" si la glycémie n'est pas activée",
-                "it": "Requisiti modificati per la password.\nNon provare a caricare il \"sharp\" se lo zucchero nel sangue non è abilitato",
-                "es": "Se modificaron los requisitos para la contraseña.\nNo intente cargar el \"fuerte\" si el azúcar en la sangre no está habilitado",
-                "pl": "Zmieniono wymagania dotyczące hasła.\nNie próbuj ładować „ostre”, jeśli cukier we krwi nie jest włączony",
-                "zh-cn": "更改了密码要求。\n如果未启用血糖，请勿尝试加载“锐利”"
-            },
             "1.4.18": {
                 "en": "Make sure that invalid configured states or values without timestamp do not crash adapter (Sentry IOBROKER-IOT-8)\nMake sure publishes after disconnect to not break adapter (Sentry IOBROKER-IOT-A)",
                 "de": "Stellen Sie sicher, dass ungültige konfigurierte Zustände oder Werte ohne Zeitstempel den Adapter nicht zum Absturz bringen (Sentry IOBROKER-IOT-8).\nStellen Sie sicher, dass nach dem Trennen veröffentlicht wird, um den Adapter nicht zu beschädigen (Sentry IOBROKER-IOT-A).",
@@ -75,54 +159,6 @@
                 "es": "Asegúrese de que los estados o valores configurados no válidos sin marca de tiempo no bloqueen el adaptador (Sentry IOBROKER-IOT-8)\nAsegúrese de publicar después de desconectar para no romper el adaptador (Sentry IOBROKER-IOT-A)",
                 "pl": "Upewnij się, że nieprawidłowe skonfigurowane stany lub wartości bez znacznika czasu nie powodują awarii adaptera (Sentry IOBROKER-IOT-8)\nUpewnij się, że publikowanie po odłączeniu nie powoduje uszkodzenia adaptera (Sentry IOBROKER-IOT-A)",
                 "zh-cn": "确保无效的配置状态或没有时间戳的值不会使适配器崩溃（Sentry IOBROKER-IOT-8）\n确保在断开连接后发布以不破坏适配器（Sentry IOBROKER-IOT-A）"
-            },
-            "1.4.17": {
-                "en": "Better error output is implemented",
-                "de": "Eine bessere Fehlerausgabe ist implementiert",
-                "ru": "Улучшен вывод ошибок",
-                "pt": "Melhor saída de erro é implementada",
-                "nl": "Er wordt een betere foutuitvoer geïmplementeerd",
-                "fr": "Une meilleure sortie d'erreur est implémentée",
-                "it": "È stato implementato un migliore output degli errori",
-                "es": "Se implementa una mejor salida de error",
-                "pl": "Zaimplementowano lepsze wyjście błędu",
-                "zh-cn": "实现更好的错误输出"
-            },
-            "1.4.14": {
-                "en": "Fixed the problem if admin is not on 8081 port",
-                "de": "Das Problem wurde behoben, wenn sich der Administrator nicht am 8081-Port befindet",
-                "ru": "Исправлена проблема, если администратор не на 8081 порт",
-                "pt": "Corrigido o problema se o administrador não estiver na porta 8081",
-                "nl": "Het probleem is opgelost als de beheerder niet op de 8081-poort staat",
-                "fr": "Correction du problème si l'administrateur n'est pas sur le port 8081",
-                "it": "Risolto il problema se l'amministratore non si trovava sulla porta 8081",
-                "es": "Se solucionó el problema si el administrador no está en el puerto 8081",
-                "pl": "Naprawiono problem, jeśli admin nie ma portu 8081",
-                "zh-cn": "修复了管理员不在8081端口上的问题"
-            },
-            "1.4.12": {
-                "en": "error case handled where system.config objects does not exist (Sentry IOBROKER-IOT-5)",
-                "de": "Fehlerfall behandelt, wenn system.config-Objekte nicht vorhanden sind (Sentry IOBROKER-IOT-5)",
-                "ru": "обрабатывается случай ошибки, когда объекты system.config не существуют (Sentry IOBROKER-IOT-5)",
-                "pt": "caso de erro tratado onde os objetos system.config não existem (Sentry IOBROKER-IOT-5)",
-                "nl": "foutgeval afgehandeld waar system.config-objecten niet bestaan (Sentry IOBROKER-IOT-5)",
-                "fr": "cas d'erreur géré lorsque les objets system.config n'existent pas (Sentry IOBROKER-IOT-5)",
-                "it": "caso di errore gestito dove non esistono oggetti system.config (Sentry IOBROKER-IOT-5)",
-                "es": "caso de error manejado donde los objetos system.config no existen (Sentry IOBROKER-IOT-5)",
-                "pl": "rozpatrywany przypadek błędu, gdy obiekty system.config nie istnieją (Sentry IOBROKER-IOT-5)",
-                "zh-cn": "在不存在system.config对象的情况下处理的错误情况（Sentry IOBROKER-IOT-5）"
-            },
-            "1.4.11": {
-                "en": "Alternative ports issue solved, Corrected IOBROKER-IOT-REACT-F",
-                "de": "Problem mit alternativen Ports behoben, IOBROKER-IOT-REACT-F behoben",
-                "ru": "Решена проблема с альтернативными портами, исправлено IOBROKER-IOT-REACT-F",
-                "pt": "Problema de portas alternativas resolvido, IOBROKER-IOT-REACT-F corrigido",
-                "nl": "Probleem met alternatieve poorten opgelost, gecorrigeerd IOBROKER-IOT-REACT-F",
-                "fr": "Problème de ports alternatifs résolu, IOBROKER-IOT-REACT-F corrigé",
-                "it": "Problema relativo alle porte alternative risolto, IOBROKER-IOT-REACT-F corretto",
-                "es": "Problema de puertos alternativos resuelto, IOBROKER-IOT-REACT-F corregido",
-                "pl": "Rozwiązany problem alternatywnych portów, poprawiony IOBROKER-IOT-REACT-F",
-                "zh-cn": "替代端口问题已解决，IOBROKER-IOT-REACT-F已更正"
             }
         },
         "authors": [
@@ -210,6 +246,19 @@
             "common": {
                 "role": "indicator.connected",
                 "name": "If connected to cloud",
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.ackTempPassword",
+            "type": "state",
+            "common": {
+                "role": "indicator",
+                "name": "If user have read about temp password for iot",
                 "type": "boolean",
                 "read": true,
                 "write": false,

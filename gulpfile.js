@@ -553,7 +553,7 @@ function build() {
 
 gulp.task('3-build', () => build());
 
-gulp.task('3-build-dep', gulp.series('2-npm', '3-build'));
+gulp.task('3-build-dep', gulp.series('2-npm-dep', '3-build'));
 
 gulp.task('5-copy', () =>
     gulp.src(['src/build/*/**', 'src/build/*'])

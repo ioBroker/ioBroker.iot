@@ -73,7 +73,7 @@ Alexa, change the kitchen to the color chocolate
 ```
 
 ### Lock
-To have the possibility to lock the locks, the state must have the role "switch.lock" and have native.LOCK_VALUE to determine the lock state.
+To have the possibility to lock the locks, the state must have the role "switch.lock" and have "native.LOCK_VALUE" to determine the lock state. If you need a seperate Value to control the Lock you can use "native.CONTROL VALUE".
 
 ```
 Alexa, is "lock name" locked/unlocked
@@ -247,8 +247,38 @@ Following types are supported:
 - `alisa` - acting with Yandex Алиса
 - `ifttt` - acting like IFTTT (actually not required, but for tests purposes)
 
+## Yandex Алиса
+[instructions](doc/alisa.md)
+
+<!--
+	Placeholder for the next version (at the beginning of the line):
+	### __WORK IN PROGRESS__
+-->
+
 ## Changelog
-### 1.6.0 (2020-07-10)
+### 1.7.7 (2020-09-02)
+* (bluefox) Added information about changed linking process.
+
+### 1.7.6 (2020-08-25)
+* (bluefox) Some colors were changed in dark mode.
+
+### 1.7.5 (2020-08-21)
+* (Apollon77) Crash prevented (Sentry IOBROKER-IOT-W)
+* (bluefox) Values for modes will be converted to numbers in Alisa
+
+### 1.7.3 (2020-08-16)
+* (bluefox) Added vacuum cleaner to Alisa
+
+### 1.7.1 (2020-08-16)
+* (bluefox) Added blinds, lock and thermostat to Alisa
+
+### 1.6.4 (2020-08-06)
+* (Apollon77) crash prevented (Sentry IOBROKER-IOT-V)
+
+### 1.6.3 (2020-08-04)
+* (bluefox) Added french letters to allowed symbols
+
+### 1.6.1 (2020-07-10)
 * (bluefox) Used new SelectID Dialog in GUI
 
 ### 1.5.3 (2020-05-28)

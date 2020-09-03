@@ -1,11 +1,18 @@
 import React from 'react';
 import {withStyles} from '@material-ui/core/styles';
+import { MuiThemeProvider } from '@material-ui/core/styles';
+
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import GenericApp from '@iobroker/adapter-react/GenericApp';
 import Loader from '@iobroker/adapter-react/Components/Loader'
-import { MuiThemeProvider } from '@material-ui/core/styles';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Button from '@material-ui/core/Button';
 
 import I18n from '@iobroker/adapter-react/i18n';
 import TabOptions from './Tabs/Options';
@@ -50,6 +57,15 @@ class App extends GenericApp {
         super(props, extendedProps);
     }
 
+    onConnectionReady() {
+        this.socket.getState(`${this.adapterName}.${this.instance}.info.ackTempPassword`)
+            .then(state => {
+                if (!state || !state.val) {
+                    this.setState({showAckTempPasswordDialog: true});
+                }
+            });
+    }
+
     getSelectedTab() {
         const tab = this.state.selectedTab;
         if (!tab || tab === 'options') {
@@ -76,6 +92,41 @@ class App extends GenericApp {
         if (tab === 'services') {
             const offset = (this.state.native.amazonAlexa ? 1 : 0) + (this.state.native.googleHome ? 1 : 0) + (this.state.native.yandexAlisa ? 1 : 0);
             return 3 + offset;
+        }
+    }
+
+    renderAckTempPasswordDialog() {
+        if (!this.state.showAckTempPasswordDialog) {
+            return null;
+        } else {
+            return <Dialog
+                open={true}
+                onClose={() => this.setState({showAckTempPasswordDialog: false}, () => setTimeout(() => this.setState({showAckTempPasswordDialog: true}), 1000))}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">{I18n.t('Information: The skill linking process was changed!')}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        {I18n.t('The linking process has been changed for a few months.')}
+                        {I18n.t('Now there is no temporary password that will be sent by email.')}<br/><br/>
+                        <b>{I18n.t('The password is equal with ioBroker.pro and with password that was entered here in the settings!')}</b>
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        onClick={() => this.setState({showAckTempPasswordDialog: false}, () => setTimeout(() => this.setState({showAckTempPasswordDialog: true}), 1000))} autoFocus>
+                        {I18n.t('Not understood')}
+                    </Button>
+                    <Button onClick={() =>
+                        this.socket.setState(`${this.adapterName}.${this.instance}.info.ackTempPassword`, true, true)
+                            .then(() =>
+                                this.setState({showAckTempPasswordDialog: false}))
+                    } color="primary" >
+                        {I18n.t('Roger that')}
+                    </Button>
+                </DialogActions>
+            </Dialog>
         }
     }
 
@@ -125,6 +176,7 @@ class App extends GenericApp {
                         />)}
                         {this.state.selectedTab === 'alexa' && (<TabAlexaSmartNames
                             key="alexa"
+                            themeType={this.state.themeType}
                             common={this.common}
                             socket={this.socket}
                             native={this.state.native}
@@ -144,6 +196,7 @@ class App extends GenericApp {
                         />)}
                         {this.state.selectedTab === 'alisa' && (<TabAlisaSmartNames
                             key="alisa"
+                            themeType={this.state.themeType}
                             common={this.common}
                             socket={this.socket}
                             native={this.state.native}
@@ -175,6 +228,7 @@ class App extends GenericApp {
                     </div>
                     {this.renderError()}
                     {this.renderSaveCloseButtons()}
+                    {this.renderAckTempPasswordDialog()}
                 </div>
             </MuiThemeProvider>
         );
