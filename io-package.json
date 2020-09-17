@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.7.7",
+        "version": "1.7.8",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.7.8": {
+                "en": "Updated GUI for config",
+                "de": "Aktualisierte GUI für die Konfiguration",
+                "ru": "Обновлен графический интерфейс для конфигурации",
+                "pt": "GUI atualizada para configuração",
+                "nl": "Bijgewerkte GUI voor config",
+                "fr": "Interface graphique mise à jour pour la configuration",
+                "it": "GUI aggiornata per config",
+                "es": "GUI actualizada para la configuración",
+                "pl": "Zaktualizowano GUI dla config",
+                "zh-cn": "更新了配置的GUI"
+            },
             "1.7.7": {
                 "en": "Added information about changed linking process.",
                 "de": "Informationen zum geänderten Verknüpfungsprozess hinzugefügt.",
