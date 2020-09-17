@@ -256,7 +256,7 @@ Following types are supported:
 -->
 
 ## Changelog
-### 1.7.8 (2020-09-17)
+### 1.7.9 (2020-09-17)
 * (bluefox) Updated GUI for config.
 
 ### 1.7.7 (2020-09-02)
