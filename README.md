@@ -256,7 +256,7 @@ Following types are supported:
 -->
 
 ## Changelog
-### __WORK IN PROGRESS__
+### 1.7.11 (2020-09-24)
 * (bluefox) Updated the select ID dialog.
 
 ### 1.7.9 (2020-09-17)

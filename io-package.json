@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.7.9",
+        "version": "1.7.11",
         "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
@@ -28,6 +28,18 @@
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "news": {
+            "1.7.11": {
+                "en": "Updated the select ID dialog.",
+                "de": "Das Dialogfeld \"ID auswählen\" wurde aktualisiert.",
+                "ru": "Обновлен диалог выбора идентификатора.",
+                "pt": "Atualizado a caixa de diálogo de seleção de ID.",
+                "nl": "Het dialoogvenster ID selecteren bijgewerkt.",
+                "fr": "Mise à jour de la boîte de dialogue de sélection d'ID.",
+                "it": "Aggiornata la finestra di dialogo Seleziona ID.",
+                "es": "Se actualizó el cuadro de diálogo Seleccionar ID.",
+                "pl": "Zaktualizowano okno dialogowe wyboru identyfikatora.",
+                "zh-cn": "更新了选择ID对话框。"
+            },
             "1.7.9": {
                 "en": "Updated GUI for config",
                 "de": "Aktualisierte GUI für die Konfiguration",
