@@ -711,9 +711,9 @@ class AlisaDevices extends Component {
 
     getSelectIdDialog() {
         if (this.state.showSelectId) {
-            return (<DialogSelectID
+            return <DialogSelectID
                 key="dialogSelectAlisa"
-                prefix={'../..'}
+                imagePrefix={'../..'}
                 socket={this.props.socket}
                 selected={''}
                 types={['state']}
@@ -746,7 +746,7 @@ class AlisaDevices extends Component {
                             }
                         });
                 }}
-            />);
+            />;
         } else {
             return null;
         }

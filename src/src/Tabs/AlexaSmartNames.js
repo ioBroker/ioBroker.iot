@@ -751,9 +751,9 @@ class AlexaSmartNames extends Component {
 
     getSelectIdDialog() {
         if (this.state.showSelectId) {
-            return (<DialogSelectID
+            return <DialogSelectID
                 key="dialogSelectID1"
-                prefix={'../..'}
+                imagePrefix={'../..'}
                 socket={this.props.socket}
                 selected={''}
                 types={['state']}
@@ -786,7 +786,7 @@ class AlexaSmartNames extends Component {
                             }
                         });
                 }}
-            />);
+            />;
         } else {
             return null;
         }

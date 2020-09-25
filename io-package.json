@@ -1,34 +1,9 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.7.11",
-        "title": "IoT Assistants",
-        "titleLang": {
-            "en": "IoT cloud connection",
-            "de": "Cloud IoT-Verbindung",
-            "ru": "Соединение Cloud IoT",
-            "pt": "Conexão Cloud IoT",
-            "nl": "Cloud IoT-verbinding",
-            "fr": "Connexion Cloud IoT",
-            "it": "Connessione Cloud IoT",
-            "es": "Conexión IoT en la nube",
-            "pl": "Połączenie Cloud IoT",
-            "zh-cn": "IoT云连接"
-        },
-        "desc": {
-            "en": "Connects your ioBroker server to the ioBroker IoT cloud",
-            "de": "Verbindet Ihren ioBroker-Server mit der ioBroker IoT-Cloud",
-            "ru": "Соединяет ваш сервер ioBroker с облаком ioBroker IoT",
-            "pt": "Conecta seu servidor ioBroker à nuvem IoT do ioBroker",
-            "nl": "Verbindt uw ioBroker-server met de ioBroker IoT-cloud",
-            "fr": "Connecte votre serveur ioBroker au cloud ioBroker IoT",
-            "it": "Collega il tuo server ioBroker al cloud IoT IoBroker",
-            "es": "Conecta su servidor ioBroker a la nube ioBroker IoT",
-            "pl": "Łączy twój serwer ioBroker z chmurą IoT ioBroker",
-            "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
-        },
+        "version": "1.7.12",
         "news": {
-            "1.7.11": {
+            "1.7.12": {
                 "en": "Updated the select ID dialog.",
                 "de": "Das Dialogfeld \"ID auswählen\" wurde aktualisiert.",
                 "ru": "Обновлен диалог выбора идентификатора.",
@@ -159,31 +134,32 @@
                 "es": "Se usó el nuevo cuadro de diálogo SelectID en la GUI",
                 "pl": "Użyto nowego okna dialogowego SelectID w GUI",
                 "zh-cn": "在GUI中使用了新的SelectID对话框"
-            },
-            "1.5.3": {
-                "en": "Small change for nightscout",
-                "de": "Kleine Änderung für Nachtscout",
-                "ru": "Небольшое изменение для Nachtscout",
-                "pt": "Pequena mudança para nightcout",
-                "nl": "Kleine verandering voor nachtscout",
-                "fr": "Petite monnaie pour le nightcout",
-                "it": "Piccolo cambio per nightscout",
-                "es": "Pequeño cambio para nightcout",
-                "pl": "Mała zmiana na nightcout",
-                "zh-cn": "夜侦察员的零钱"
-            },
-            "1.4.18": {
-                "en": "Make sure that invalid configured states or values without timestamp do not crash adapter (Sentry IOBROKER-IOT-8)\nMake sure publishes after disconnect to not break adapter (Sentry IOBROKER-IOT-A)",
-                "de": "Stellen Sie sicher, dass ungültige konfigurierte Zustände oder Werte ohne Zeitstempel den Adapter nicht zum Absturz bringen (Sentry IOBROKER-IOT-8).\nStellen Sie sicher, dass nach dem Trennen veröffentlicht wird, um den Adapter nicht zu beschädigen (Sentry IOBROKER-IOT-A).",
-                "ru": "Убедитесь, что недопустимые настроенные состояния или значения без метки времени не вызывают сбой адаптера (Sentry IOBROKER-IOT-8)\nУбедитесь, что публикуется после отключения, чтобы не сломать адаптер (Sentry IOBROKER-IOT-A)",
-                "pt": "Certifique-se de que estados ou valores configurados inválidos sem o carimbo de data e hora não travem o adaptador (Sentry IOBROKER-IOT-8)\nCertifique-se de publicar após desconectar, para não quebrar o adaptador (Sentry IOBROKER-IOT-A)",
-                "nl": "Zorg ervoor dat ongeldig geconfigureerde staten of waarden zonder tijdstempel de adapter niet laten crashen (Sentry IOBROKER-IOT-8)\nZorg ervoor dat u publiceert nadat de verbinding is verbroken om de adapter niet te breken (Sentry IOBROKER-IOT-A)",
-                "fr": "Assurez-vous que les états ou valeurs configurés non valides sans horodatage ne plantent pas l'adaptateur (Sentry IOBROKER-IOT-8)\nAssurez-vous que la publication après la déconnexion ne casse pas l'adaptateur (Sentry IOBROKER-IOT-A)",
-                "it": "Assicurarsi che gli stati o i valori non validi configurati senza data / ora non si arrestino in modo anomalo nell'adattatore (Sentry IOBROKER-IOT-8)\nAssicurarsi che pubblica dopo la disconnessione per non interrompere l'adattatore (Sentry IOBROKER-IOT-A)",
-                "es": "Asegúrese de que los estados o valores configurados no válidos sin marca de tiempo no bloqueen el adaptador (Sentry IOBROKER-IOT-8)\nAsegúrese de publicar después de desconectar para no romper el adaptador (Sentry IOBROKER-IOT-A)",
-                "pl": "Upewnij się, że nieprawidłowe skonfigurowane stany lub wartości bez znacznika czasu nie powodują awarii adaptera (Sentry IOBROKER-IOT-8)\nUpewnij się, że publikowanie po odłączeniu nie powoduje uszkodzenia adaptera (Sentry IOBROKER-IOT-A)",
-                "zh-cn": "确保无效的配置状态或没有时间戳的值不会使适配器崩溃（Sentry IOBROKER-IOT-8）\n确保在断开连接后发布以不破坏适配器（Sentry IOBROKER-IOT-A）"
             }
+        },
+        "title": "IoT Assistants",
+        "titleLang": {
+            "en": "IoT cloud connection",
+            "de": "Cloud IoT-Verbindung",
+            "ru": "Соединение Cloud IoT",
+            "pt": "Conexão Cloud IoT",
+            "nl": "Cloud IoT-verbinding",
+            "fr": "Connexion Cloud IoT",
+            "it": "Connessione Cloud IoT",
+            "es": "Conexión IoT en la nube",
+            "pl": "Połączenie Cloud IoT",
+            "zh-cn": "IoT云连接"
+        },
+        "desc": {
+            "en": "Connects your ioBroker server to the ioBroker IoT cloud",
+            "de": "Verbindet Ihren ioBroker-Server mit der ioBroker IoT-Cloud",
+            "ru": "Соединяет ваш сервер ioBroker с облаком ioBroker IoT",
+            "pt": "Conecta seu servidor ioBroker à nuvem IoT do ioBroker",
+            "nl": "Verbindt uw ioBroker-server met de ioBroker IoT-cloud",
+            "fr": "Connecte votre serveur ioBroker au cloud ioBroker IoT",
+            "it": "Collega il tuo server ioBroker al cloud IoT IoBroker",
+            "es": "Conecta su servidor ioBroker a la nube ioBroker IoT",
+            "pl": "Łączy twój serwer ioBroker z chmurą IoT ioBroker",
+            "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "authors": [
             "bluefox <dogafox@gmail.com>"

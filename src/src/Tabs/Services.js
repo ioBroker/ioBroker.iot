@@ -205,9 +205,9 @@ class Services extends Component {
 
     getSelectIdDialog(attr) {
         if (this.state.showSelectId) {
-            return (<DialogSelectID
+            return <DialogSelectID
                 key="dialogSelectID3"
-                prefix={'../..'}
+                imagePrefix={'../..'}
                 socket={this.props.socket}
                 selected={this.props.native[attr]}
                 types={['state']}
@@ -216,7 +216,7 @@ class Services extends Component {
                     this.setState({showSelectId: false});
                     this.props.onChange(attr, selected);
                 }}
-            />);
+            />;
         } else {
             return null;
         }

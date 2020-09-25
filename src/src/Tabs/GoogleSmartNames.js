@@ -542,9 +542,9 @@ class GoogleSmartNames extends Component {
 
     getSelectIdDialog() {
         if (this.state.showSelectId) {
-            return (<DialogSelectID
+            return <DialogSelectID
                 key="dialogSelectGoogle"
-                prefix={'../..'}
+                imagePrefix={'../..'}
                 socket={this.props.socket}
                 selected={''}
                 types={['state']}
@@ -572,7 +572,7 @@ class GoogleSmartNames extends Component {
                                         this.timerChanged = null;
                                     }, 30000);
                                 }
-                                
+
                                 if (!obj.common.smartName) {
                                     obj.common.smartName = {ghType: 'action.devices.types.LIGHT'};
                                     obj.common.smartName = {ghTraits: ['action.devices.traits.OnOff']}
@@ -580,7 +580,7 @@ class GoogleSmartNames extends Component {
                                     obj.common.smartName.ghType = 'action.devices.types.LIGHT';
                                     obj.common.smartName.ghTraits = ['action.devices.traits.OnOff'];
                                 }
-                                
+
                                 this.props.socket.setObject(obj._id, obj)
                                     .then(() => {
                                         this.informInstance(obj._id);
@@ -592,7 +592,7 @@ class GoogleSmartNames extends Component {
                             }
                         });
                 }}
-            />);
+            />;
         } else {
             return null;
         }

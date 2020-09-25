@@ -63,7 +63,7 @@ class ExtendedOptions extends Component {
         };
 
     }
-    
+
     renderInput(title, attr, type) {
         return (<TextField
             label={I18n.t(title)}
@@ -103,9 +103,9 @@ class ExtendedOptions extends Component {
 
     getSelectIdDialog(attr) {
         if (this.state.showSelectId) {
-            return (<DialogSelectID
+            return <DialogSelectID
                 key="dialogSelectID2"
-                prefix={'../..'}
+                imagePrefix={'../..'}
                 socket={this.props.socket}
                 selected={this.props.native[attr]}
                 types={['state']}
@@ -114,7 +114,7 @@ class ExtendedOptions extends Component {
                     this.setState({showSelectId: false});
                     this.props.onChange(attr, selected);
                 }}
-            />);
+            />;
         } else {
             return null;
         }
