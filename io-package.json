@@ -191,6 +191,7 @@
             }
         ],
         "preserveSettings": "smartName",
+        "eraseOnUpload": true,
         "blockly": true,
         "osDependencies": {
             "linux": [
