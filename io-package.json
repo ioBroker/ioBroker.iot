@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.7.12",
+        "version": "1.7.13",
         "news": {
+            "1.7.13": {
+                "en": "add eraseOnUpload flag for js-controller 3.2+",
+                "de": "füge eraseOnUpload Flag für js-controller 3.2+ hinzu",
+                "ru": "добавить флаг eraseOnUpload для js-controller 3.2+",
+                "pt": "adicionar sinalizador eraseOnUpload para js-controller 3.2+",
+                "nl": "voeg eraseOnUpload-vlag toe voor js-controller 3.2+",
+                "fr": "ajouter un indicateur eraseOnUpload pour js-controller 3.2+",
+                "it": "aggiungi il flag eraseOnUpload per js-controller 3.2+",
+                "es": "agregue el indicador eraseOnUpload para js-controller 3.2+",
+                "pl": "dodaj flagę eraseOnUpload dla js-controller 3.2+",
+                "zh-cn": "为js-controller 3.2+添加deleteOnUpload标志"
+            },
             "1.7.12": {
                 "en": "Updated the select ID dialog.",
                 "de": "Das Dialogfeld \"ID auswählen\" wurde aktualisiert.",
