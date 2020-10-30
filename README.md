@@ -256,6 +256,10 @@ Following types are supported:
 -->
 
 ## Changelog
+
+### __WORK IN PROGRESS__
+* (foxriver76) add eraseOnUpload flag for js-controller 3.2+
+
 ### 1.7.12 (2020-09-25)
 * (bluefox) Updated the select ID dialog.
 
