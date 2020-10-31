@@ -47,9 +47,9 @@
   },
   "main": "main.js",
   "scripts": {
-    "test": "node node_modules/mocha/bin/mocha --exit",
-    "prepublishOnly": "node node_modules/gulp/bin/gulp.js",
-    "build": "node node_modules/gulp/bin/gulp.js",
+    "test": "mocha --exit",
+    "prepublishOnly": "gulp.js",
+    "build": "gulp.js",
     "release": "release-script"
   },
   "license": "MIT",
