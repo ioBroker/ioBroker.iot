@@ -48,8 +48,8 @@
   "main": "main.js",
   "scripts": {
     "test": "mocha --exit",
-    "prepublishOnly": "gulp.js",
-    "build": "gulp.js",
+    "prepublishOnly": "gulp",
+    "build": "gulp",
     "release": "release-script"
   },
   "license": "MIT",
