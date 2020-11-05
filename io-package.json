@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.7.13",
+        "version": "1.7.14",
         "news": {
+            "1.7.14": {
+                "en": "* Updated the select ID dialog.\n\n#### 1.7.13 (2020-10-30)\n* add eraseOnUpload flag for js-controller 3.2+",
+                "de": "* Der Dialog zur Auswahl der ID wurde aktualisiert.\n\n#### 1.7.13 (2020-10-30)\n* EraseOnUpload-Flag für js-controller 3.2+ hinzufügen",
+                "ru": "* Обновлен диалог выбора идентификатора.\n\n#### 1.7.13 (30.10.2020)\n* добавить флаг eraseOnUpload для js-контроллера 3.2+",
+                "pt": "* Atualizado a caixa de diálogo de seleção de ID.\n\n#### 1.7.13 (2020-10-30)\n* adicionar sinalizador eraseOnUpload para js-controller 3.2+",
+                "nl": "* Bijgewerkt het dialoogvenster ID selecteren.\n\n#### 1.7.13 (30-10-2020)\n* voeg eraseOnUpload-vlag toe voor js-controller 3.2+",
+                "fr": "* Mise à jour de la boîte de dialogue de sélection d'ID.\n\n#### 1.7.13 (30/10/2020)\n* ajouter le drapeau eraseOnUpload pour js-controller 3.2+",
+                "it": "* Aggiornata la finestra di dialogo Seleziona ID.\n\n#### 1.7.13 (2020-10-30)\n* aggiungi il flag eraseOnUpload per js-controller 3.2+",
+                "es": "* Se actualizó el diálogo de selección de ID.\n\n#### 1.7.13 (30-10-2020)\n* agregar la bandera eraseOnUpload para js-controller 3.2+",
+                "pl": "* Zaktualizowano okno dialogowe wyboru identyfikatora.\n\n#### 1.7.13 (2020-10-30)\n* dodaj flagę eraseOnUpload dla js-controller 3.2+",
+                "zh-cn": "*更新了选择ID对话框。\n\n#### 1.7.13（2020-10-30）\n*为js-controller 3.2+添加deleteOnUpload标志"
+            },
             "1.7.13": {
                 "en": "add eraseOnUpload flag for js-controller 3.2+",
                 "de": "füge eraseOnUpload Flag für js-controller 3.2+ hinzu",

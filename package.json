@@ -1,6 +1,6 @@
 {
   "name": "iobroker.iot",
-  "version": "1.7.13",
+  "version": "1.7.14",
   "description": "This adapter allows to communicate Amazon Alexa and Google Home with ioBroker.",
   "author": {
     "name": "bluefox",
@@ -50,7 +50,7 @@
     "test": "mocha --exit",
     "prepublishOnly": "gulp",
     "build": "gulp",
-    "release": "release-script"
+    "release": "node node_modules/@alcalzone/release-script/bin/release.js"
   },
   "license": "MIT",
   "readmeFilename": "README.md"
