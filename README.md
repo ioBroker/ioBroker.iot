@@ -256,7 +256,7 @@ Following types are supported:
 -->
 
 ## Changelog
-### __WORK IN PROGRESS__
+### 1.7.15 (2020-11-05)
 * (Morluktom) Corrected the request for temperature
 
 ### 1.7.14 (2020-11-05)

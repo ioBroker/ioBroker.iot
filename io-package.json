@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.7.14",
+        "version": "1.7.15",
         "news": {
+            "1.7.15": {
+                "en": "Corrected the request for temperature",
+                "de": "Die Temperaturanfrage wurde korrigiert",
+                "ru": "Исправлен запрос температуры",
+                "pt": "Corrigido o pedido de temperatura",
+                "nl": "Het verzoek om temperatuur gecorrigeerd",
+                "fr": "Correction de la demande de température",
+                "it": "Corretta la richiesta di temperatura",
+                "es": "Se corrigió la solicitud de temperatura.",
+                "pl": "Poprawiono żądanie temperatury",
+                "zh-cn": "更正了温度要求"
+            },
             "1.7.14": {
                 "en": "* Updated the select ID dialog.\n\n#### 1.7.13 (2020-10-30)\n* add eraseOnUpload flag for js-controller 3.2+",
                 "de": "* Der Dialog zur Auswahl der ID wurde aktualisiert.\n\n#### 1.7.13 (2020-10-30)\n* EraseOnUpload-Flag für js-controller 3.2+ hinzufügen",
