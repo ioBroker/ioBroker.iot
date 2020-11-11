@@ -174,5 +174,6 @@
   "Now there is no temporary password that will be sent by email.": "Ora non esiste una password temporanea che verrà inviata tramite e-mail.",
   "The password is equal with ioBroker.pro and with password that was entered here in the settings!": "La password è uguale a ioBroker.pro e alla password che è stata inserita qui nelle impostazioni!",
   "Not understood": "Non compreso",
-  "Roger that": "Ricevuto"
+  "Roger that": "Ricevuto",
+  "Read blood sugar from": "Leggi lo zucchero nel sangue da"
 }

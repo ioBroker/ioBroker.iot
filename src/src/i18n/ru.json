@@ -174,5 +174,6 @@
   "Now there is no temporary password that will be sent by email.": "Теперь нет временного пароля, который отправлялся по электронной почте.",
   "The password is equal with ioBroker.pro and with password that was entered here in the settings!": "Пароль совпадает с ioBroker.pro и с паролем, который был введен здесь в настройках!",
   "Not understood": "Не понятно",
-  "Roger that": "Понятно"
+  "Roger that": "Понятно",
+  "Read blood sugar from": "Считывать уровень сахара в крови из"
 }

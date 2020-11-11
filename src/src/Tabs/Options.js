@@ -205,67 +205,65 @@ class Options extends Component {
     }
 
     render() {
-        return (
-            <form className={ this.props.classes.tab }>
-                <Logo
-                    instance={ this.props.instance }
-                    common={ this.props.common }
-                    native={ this.props.native }
-                    onError={ text => this.setState({errorText: text}) }
-                    onLoad={ this.props.onLoad }
+        return <form className={ this.props.classes.tab }>
+            <Logo
+                instance={ this.props.instance }
+                common={ this.props.common }
+                native={ this.props.native }
+                onError={ text => this.setState({errorText: text}) }
+                onLoad={ this.props.onLoad }
+            />
+            <div className={ this.props.classes.column + ' ' + this.props.classes.columnSettings }>
+                { this.renderInput('ioBroker.pro Login', 'login') }<br/>
+                { this.renderInput('ioBroker.pro Password', 'pass', 'password') }<br/>
+                { this.renderCheckbox('Amazon Alexa', 'amazonAlexa') }
+                <FormControlLabel key="googleHome" className={ this.props.classes.controlElement }
+                                  style={{ marginTop: 5 }}
+                    control={
+                      <Checkbox
+                          checked={this.props.native.googleHome}
+                          onChange={() => {
+                              // activate alexa if google home is on (temporary)
+                              const newVal = !this.props.native.googleHome;
+                              this.props.onChange('googleHome', newVal, () =>
+                                  newVal && this.props.onChange('amazonAlexa', true));
+                          }}
+                          color="primary"
+                      />
+                    }
+                    label={I18n.t('Google Home')}
                 />
-                <div className={ this.props.classes.column + ' ' + this.props.classes.columnSettings }>
-                    { this.renderInput('ioBroker.pro Login', 'login') }<br/>
-                    { this.renderInput('ioBroker.pro Password', 'pass', 'password') }<br/>
-                    { this.renderCheckbox('Amazon Alexa', 'amazonAlexa') }
-                    <FormControlLabel key="googleHome" className={ this.props.classes.controlElement }
-                                      style={{ marginTop: 5 }}
-                        control={
-                          <Checkbox
-                              checked={this.props.native.googleHome}
-                              onChange={() => {
-                                  // activate alexa if google home is on (temporary)
-                                  const newVal = !this.props.native.googleHome;
-                                  this.props.onChange('googleHome', newVal, () =>
-                                      newVal && this.props.onChange('amazonAlexa', true));
-                              }}
-                              color="primary"
-                          />
-                        }
-                        label={I18n.t('Google Home')}
-                    />
-                    {this.renderCheckbox('Yandex Алиса', 'yandexAlisa')}
-                    <br/>
+                {this.renderCheckbox('Yandex Алиса', 'yandexAlisa')}
+                <br/>
 
-                    <p>{I18n.t('new_certs_tip')}</p>
-                    {this.props.changed ? <div className={this.props.classes.hintUnsaved}>{I18n.t('Save settings before pressing this button')}</div> : null}
-                    <Button variant="outlined"
-                            className={ this.props.classes.button }
-                            disabled={ this.props.changed || this.state.inAction || !this.state.isInstanceAlive }
-                            title={ !this.state.isInstanceAlive ? I18n.t('Instance must be enabled') : '' }
-                            onClick={ () => this.resetCerts() }>
-                        <IconReload style={{ marginRight: 8 }}/>{ I18n.t('Get new connection certificates') }
-                    </Button>
+                <p>{I18n.t('new_certs_tip')}</p>
+                {this.props.changed ? <div className={this.props.classes.hintUnsaved}>{I18n.t('Save settings before pressing this button')}</div> : null}
+                <Button variant="outlined"
+                        className={ this.props.classes.button }
+                        disabled={ this.props.changed || this.state.inAction || !this.state.isInstanceAlive }
+                        title={ !this.state.isInstanceAlive ? I18n.t('Instance must be enabled') : '' }
+                        onClick={ () => this.resetCerts() }>
+                    <IconReload style={{ marginRight: 8 }}/>{ I18n.t('Get new connection certificates') }
+                </Button>
 
-                    <p>{I18n.t('new_credentials_tip')}</p>
-                    {this.props.changed ? <div className={this.props.classes.hintUnsaved}>{I18n.t('Save settings before pressing this button')}</div> : null}
-                    <Button variant="outlined"
-                            className={ this.props.classes.button }
-                            disabled={ this.props.changed || this.state.inAction || !this.state.isInstanceAlive }
-                            title={ !this.state.isInstanceAlive ? I18n.t('Instance must be enabled') : '' }
-                            onClick={ () => this.resetCerts(true) }>
-                        <IconReload  style={{ marginRight: 8 }}/>{ I18n.t('Create IoT credentials anew') }
-                    </Button>
-                    <p>{ Utils.renderTextWithA(I18n.t('forum_tip')) }</p>
-                    <p style={{ fontWeight: 'bold' }}>{ Utils.renderTextWithA(I18n.t('help_tip')) }</p>
-                    <p style={{ fontWeight: 'bold', paddingTop: 20}}>{ Utils.renderTextWithA(I18n.t('help_link_tip1')) }</p>
-                    <p style={{ fontWeight: 'bold' }}>{ Utils.renderTextWithA(I18n.t('help_link_tip2')) }</p>
-                    <p style={{ fontWeight: 'bold', color: 'red'}}>{ Utils.renderTextWithA(I18n.t('help_link_tip3')) }</p>
-                </div>
-                <div className={this.props.classes.column + ' ' + this.props.classes.columnLogo}>{this.renderCard() }</div>
-                { this.renderToast() }
-            </form>
-        );
+                <p>{I18n.t('new_credentials_tip')}</p>
+                {this.props.changed ? <div className={this.props.classes.hintUnsaved}>{I18n.t('Save settings before pressing this button')}</div> : null}
+                <Button variant="outlined"
+                        className={ this.props.classes.button }
+                        disabled={ this.props.changed || this.state.inAction || !this.state.isInstanceAlive }
+                        title={ !this.state.isInstanceAlive ? I18n.t('Instance must be enabled') : '' }
+                        onClick={ () => this.resetCerts(true) }>
+                    <IconReload  style={{ marginRight: 8 }}/>{ I18n.t('Create IoT credentials anew') }
+                </Button>
+                <p>{ Utils.renderTextWithA(I18n.t('forum_tip')) }</p>
+                <p style={{ fontWeight: 'bold' }}>{ Utils.renderTextWithA(I18n.t('help_tip')) }</p>
+                <p style={{ fontWeight: 'bold', paddingTop: 20}}>{ Utils.renderTextWithA(I18n.t('help_link_tip1')) }</p>
+                <p style={{ fontWeight: 'bold' }}>{ Utils.renderTextWithA(I18n.t('help_link_tip2')) }</p>
+                <p style={{ fontWeight: 'bold', color: 'red'}}>{ Utils.renderTextWithA(I18n.t('help_link_tip3')) }</p>
+            </div>
+            <div className={this.props.classes.column + ' ' + this.props.classes.columnLogo}>{this.renderCard() }</div>
+            { this.renderToast() }
+        </form>;
     }
 }
 

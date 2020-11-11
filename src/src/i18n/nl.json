@@ -174,5 +174,6 @@
   "Now there is no temporary password that will be sent by email.": "Nu is er geen tijdelijk wachtwoord dat per e-mail wordt verzonden.",
   "The password is equal with ioBroker.pro and with password that was entered here in the settings!": "Het wachtwoord is gelijk aan ioBroker.pro en met het wachtwoord dat hier in de instellingen is ingevoerd!",
   "Not understood": "Niet begrepen",
-  "Roger that": "Begrepen"
+  "Roger that": "Begrepen",
+  "Read blood sugar from": "Lees de bloedsuikerspiegel van"
 }
