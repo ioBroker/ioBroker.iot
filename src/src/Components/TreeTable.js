@@ -1,0 +1,313 @@
+import React from 'react';
+
+import PropTypes from 'prop-types';
+import {withStyles} from '@material-ui/core/styles';
+import clsx from 'clsx';
+
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+import IconButton from '@material-ui/core/IconButton';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import TextField from '@material-ui/core/TextField';
+
+import IconEdit from '@material-ui/icons/Edit';
+import IconDelete from '@material-ui/icons/Delete';
+import IconExpand from '@material-ui/icons/NavigateNext';
+import IconCollapse from '@material-ui/icons/ExpandMore';
+import IconCheck from '@material-ui/icons/Check';
+import IconClose from '@material-ui/icons/Close';
+
+function getAttr(obj, attr, lookup) {
+    if (typeof attr === 'string') {
+        attr = attr.split('.');
+    }
+
+    if (!obj) {
+        return null;
+    }
+
+    if (attr.length === 1) {
+        if (lookup && lookup[obj[attr[0]]]) {
+            return lookup[obj[attr[0]]];
+        } else {
+            return obj[attr[0]];
+        }
+    } else {
+        const name = attr.shift();
+        return getAttr(obj[name], attr);
+    }
+}
+
+function setAttr(obj, attr, value) {
+    if (typeof attr === 'string') {
+        attr = attr.split('.');
+    }
+
+    if (attr.length === 1) {
+        return obj[attr[0]] = value;
+    } else {
+        const name = attr.shift();
+        if (obj[name] === null || obj[name] === undefined) {
+            obj[name] = {};
+        }
+        return setAttr(obj[name], attr, value);
+    }
+}
+
+const styles = theme => ({
+    cell: {
+        paddingTop: 0,
+        paddingBottom: 0,
+        paddingLeft: 4,
+        paddingRight: 4,
+    },
+    rowMainWithChildren: {
+
+    },
+    rowMainWithoutChildren: {
+
+    },
+    rowNoEdit: {
+        opacity: 0.3
+    },
+    cellExpand: {
+        width: 30,
+    },
+    cellButton: {
+        width: 30,
+    },
+    cellHeader: {
+        fontWeight: 'bold',
+        background: theme.palette.type === 'dark' ? '#888' : '#888',
+        color: theme.palette.type === 'dark' ? '#EEE' : '#111',
+        height: 48,
+    },
+    width_name_nicknames: {
+        maxWidth: 150,
+    },
+    width_ioType: {
+        maxWidth: 100,
+    },
+    width_type: {
+        maxWidth: 100,
+    },
+    width_displayTraits: {
+        maxWidth: 100,
+    },
+    width_roomHint: {
+        maxWidth: 100,
+    },
+    rowSecondary: {
+        fontStyle: 'italic',
+    },
+    cellSecondary: {
+        fontSize: 10,
+    }
+});
+
+class TreeTable extends React.Component {
+    constructor(props) {
+        super(props);
+
+        let opened = window.localStorage.getItem('iot.ghome.opened') || '[]';
+        try {
+            opened = JSON.parse(opened) || [];
+        } catch (e) {
+            opened = [];
+        }
+        if (!Array.isArray(opened)) {
+            opened = [];
+        }
+
+        this.state = {
+            opened,
+            editMode: false,
+            deleteMode: false,
+            editData: null,
+        }
+    }
+
+    renderCell(item, col, level, i) {
+        if (this.state.editMode === i && col.editable !== 'never') {
+            let val = getAttr(item, col.field);
+            if (Array.isArray(val)) {
+                val = val[0];
+            }
+            return <TableCell
+                className={clsx(this.props.classes.cell, level && this.props.classes.cellSecondary)}
+                style={col.cellStyle}
+                component="th" >{
+                    col.lookup ?
+                        <Select
+                            onChange={e => {
+                                const editData = this.state.editData ? {...this.state.editData} : {};
+                                if (e.target.value === val) {
+                                    delete editData[col.field];
+                                } else {
+                                    editData[col.field] = e.target.value;
+                                }
+                                this.setState({editData});
+                            }}
+                            value={(this.state.editData && this.state.editData[col.field]) || val}
+                        >
+                            {Object.keys(col.lookup).map(v => <MenuItem value={v}>{col.lookup[v]}</MenuItem>)}
+                        </Select>
+                        :
+                        <TextField
+                            value={this.state.editData && this.state.editData[col.field] !== undefined ? this.state.editData[col.field] : val}
+                            onChange={e => {
+                                const editData = this.state.editData ? {...this.state.editData} : {};
+                                if (e.target.value === val) {
+                                    delete editData[col.field];
+                                } else {
+                                    editData[col.field] = e.target.value;
+                                }
+                                this.setState({editData});
+                            }}
+                        />
+            }</TableCell>;
+        } else {
+            return <TableCell
+                className={clsx(this.props.classes.cell, level && this.props.classes.cellSecondary)}
+                style={col.cellStyle}
+                component="th" >{getAttr(item, col.field, col.lookup)}</TableCell>;
+        }
+    }
+
+    renderLine(item, level) {
+        level = level || 0;
+        const i = this.props.data.indexOf(item);
+        if (!item) {
+            return null;
+        }
+        if (!level && item.parentId) {
+            return null;
+        } else if (level && !item.parentId) {
+            return null; // should never happens
+        } else {
+            // try to find children
+            const children = this.props.data.filter(it => it.parentId === item.id);
+            const opened = this.state.opened.includes(item.id);
+
+            return [
+                <TableRow
+                    key={item.id}
+                    className={clsx(
+                        this.props.classes.row,
+                        level  && this.props.classes.rowSecondary,
+                        !level && children.length && this.props.classes.rowMainWithChildren,
+                        !level && !children.length && this.props.classes.rowMainWithoutChildren,
+                        this.state.editMode !== false && this.state.editMode !== i && this.props.classes.rowNoEdit,
+                        this.state.deleteMode !== false && this.state.deleteMode !== i && this.props.classes.rowNoEdit,
+                    )}
+                >
+                    <TableCell className={clsx(this.props.classes.cell, this.props.classes.cellExpand, level && this.props.classes.cellSecondary)}>
+                        {children.length ? <IconButton onClick={() => {
+                            const opened = [...this.state.opened];
+                            const pos = opened.indexOf(item.id);
+                            if (pos === -1) {
+                                opened.push(item.id);
+                                opened.sort();
+                            } else {
+                                opened.splice(pos, 1);
+                            }
+
+                            this.setState({opened});
+                        }}>
+                                {opened ? <IconCollapse/> : <IconExpand/>}
+                            </IconButton>  : null}
+                    </TableCell>
+                    <TableCell scope="row"
+                       className={clsx(this.props.classes.cell, level && this.props.classes.cellSecondary)}
+                       style={this.props.columns[0].cellStyle}>
+                        {getAttr(item, this.props.columns[0].field, this.props.columns[0].lookup)}
+                    </TableCell>
+                    {this.props.columns.map((col, ii) =>
+                        !ii ? null : this.renderCell(item, col, level, i))}
+                    <TableCell className={clsx(this.props.classes.cell, this.props.classes.cellButton)}>
+                        {this.state.editMode === i || this.state.deleteMode === i ?
+                            <IconButton
+                                disabled={this.state.deleteMode !== false || !this.state.editData || !Object.keys(this.state.editData).length}
+                                onClick={() => {
+                                if (this.state.editMode !== false) {
+                                    const newData = JSON.parse(JSON.stringify(item));
+                                    Object.keys(this.state.editData).forEach(attr => setAttr(newData, attr, this.state.editData[attr]));
+                                    this.setState({editMode: false}, () => this.props.onUpdate(newData, item))
+                                } else {
+                                    this.setState({deleteMode: false}, () => this.props.onDelete(item))
+                                }
+                            }}>
+                                <IconCheck/>
+                            </IconButton>
+                            :
+                            <IconButton
+                                disabled={this.state.editMode !== false}
+                                onClick={() => this.setState({editMode: i, editData: null})}>
+                                <IconEdit/>
+                            </IconButton>}
+                    </TableCell>
+                    <TableCell className={clsx(this.props.classes.cell, this.props.classes.cellButton)}>
+                        {this.state.editMode === i || this.state.deleteMode === i ?
+                            <IconButton onClick={() => this.setState({editMode: false, deleteMode: false})}>
+                                <IconClose/>
+                            </IconButton>
+                            :
+                            <IconButton
+                                disabled={this.state.deleteMode !== false}
+                                onClick={() => this.setState({deleteMode: i})}>
+                                <IconDelete/>
+                            </IconButton>
+                        }
+                    </TableCell>
+                </TableRow>,
+                !level && this.state.opened.includes(item.id) ? children.map(item => this.renderLine(item, level + 1)) : null,
+            ];
+        }
+    }
+
+    render() {
+        return <TableContainer component={Paper}>
+            <Table className={this.props.classes.table} aria-label="simple table" size="small" stickyHeader={true}>
+                <TableHead>
+                    <TableRow>
+                        <TableCell component="th" className={clsx(this.props.classes.cell, this.props.classes.cellHeader, this.props.classes.cellExpand)}/>
+                        <TableCell component="th"
+                                   className={clsx(this.props.classes.cell, this.props.classes.cellHeader, this.props.classes['width_' + this.props.columns[0].field.replace(/\./g, '_')])}
+                                   style={this.props.columns[0].cellStyle}>
+                            {this.props.columns[0].title}
+                        </TableCell>
+                        {this.props.columns.map((col, i) =>
+                            !i ? null : <TableCell
+                                className={clsx(this.props.classes.cell, this.props.classes.cellHeader, this.props.classes['width_' + col.field.replace(/\./g, '_')])}
+                                style={col.cellStyle}
+                                component="th"
+                                >{col.title}</TableCell>)}
+                        <TableCell component="th" className={clsx(this.props.classes.cell, this.props.classes.cellHeader, this.props.classes.cellButton)}/>
+                        <TableCell component="th" className={clsx(this.props.classes.cell, this.props.classes.cellHeader, this.props.classes.cellButton)}/>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {this.props.data.map(item => this.renderLine(item))}
+                </TableBody>
+            </Table>
+        </TableContainer>
+    }
+}
+
+TreeTable.propTypes = {
+    data: PropTypes.object.isRequired,
+    loading: PropTypes.bool,
+    columns: PropTypes.bool,
+    onUpdate: PropTypes.func,
+    onDelete: PropTypes.func,
+    themeType: PropTypes.string,
+};
+
+export default withStyles(styles)(TreeTable);
+

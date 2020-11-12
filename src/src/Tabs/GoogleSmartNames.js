@@ -1,7 +1,8 @@
-import React, {Component, forwardRef} from 'react';
+import React, {Component} from 'react';
 import {withStyles} from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
-import MaterialTable from 'material-table';
+//import MaterialTable from 'material-table';
+// import  {forwardRef} from 'react';
 import copy from 'copy-to-clipboard';
 
 import Fab from '@material-ui/core/Fab';
@@ -24,8 +25,9 @@ import MessageDialog from '@iobroker/adapter-react/Dialogs/Message';
 import DialogSelectID from '@iobroker/adapter-react/Dialogs/SelectID';
 import Utils from '@iobroker/adapter-react/Components/Utils'
 import ExpertIcon from '@iobroker/adapter-react/Components/ExpertIcon'
+import TreeTable from '../Components/TreeTable';
 
-import AddBox from '@material-ui/icons/AddBox';
+/*import AddBox from '@material-ui/icons/AddBox';
 import ArrowUpward from '@material-ui/icons/ArrowUpward';
 import Check from '@material-ui/icons/Check';
 import ChevronLeft from '@material-ui/icons/ChevronLeft';
@@ -39,14 +41,14 @@ import LastPage from '@material-ui/icons/LastPage';
 import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
-import ViewColumn from '@material-ui/icons/ViewColumn';
+import ViewColumn from '@material-ui/icons/ViewColumn';*/
 import {MdAdd as IconAdd} from 'react-icons/md';
 import {MdRefresh as IconRefresh} from 'react-icons/md';
 import {MdHelpOutline as IconHelp} from 'react-icons/md';
 import {MdList as IconList} from 'react-icons/md';
 import {MdClear as IconClear} from 'react-icons/md';
 
-const tableIcons = {
+/*const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
     Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
     Clear: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
@@ -64,7 +66,7 @@ const tableIcons = {
     SortArrow: forwardRef((props, ref) => <ArrowUpward {...props} ref={ref} />),
     ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
     ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
-};
+};*/
 
 const styles = theme => ({
     tab: {
@@ -636,7 +638,11 @@ class GoogleSmartNames extends Component {
                 }} color="primary">{I18n.t('Copy to clipboard')}</Button>
                 <Button onClick={() => this.setState({showListOfDevices: false})} autoFocus>{I18n.t('Close')}</Button>
             </DialogActions>
-        </Dialog>
+        </Dialog>;
+    }
+
+    renderTable() {
+        //return <
     }
 
     render() {
@@ -704,19 +710,69 @@ class GoogleSmartNames extends Component {
                     <div style={{fontWeight: "bold"}}>{Utils.renderTextWithA(I18n.t("For help use this forum <a target='_blank' rel='noopener noreferrer' href='https://forum.iobroker.net/topic/24061/google-home-assistant-iobroker-einrichten-nutzen/'>thread</a>"))}</div>
                 </div> : null}
                 <div>
-                    <MaterialTable
-                        components={{
-                            Toolbar: props => <span/>
+                    <TreeTable
+                        columns={this.state.expertMode ? this.state.columns : this.state.columns.filter(item => !item.expertMode)}
+                        data={devices}
+                        onUpdate={(newData, oldData) => {
+                            if (newData.name.nicknames && Array.isArray(newData.name.nicknames)) {
+                                newData.name.nicknames = newData.name.nicknames.join(',');
+                            }
+                            this.editedSmartName = newData.name.nicknames;
+                            this.setState({editId: newData.id}, () => {
+                                if (!newData.type || !newData.displayTraits) {
+                                    this.setState({browse: true, message: I18n.t('Please add action and trait to complete the Google Home state.')});
+                                } else {
+                                    this.setState({browse: true});
+                                }
+
+                                this.onGHParamsChange(newData, oldData);
+                                const devices = [...this.state.devices];
+                                devices[devices.indexOf(oldData)] = newData;
+                                this.setState({ ...this.state, devices});
+                            });
                         }}
+
+                        onDelete={oldData => {
+                            // if smartenum set smartname on false if not delete/reset smartname content
+                            if (oldData.smartEnum === 'X') {
+                                this.setState({deleteId: oldData.id});
+                            } else {
+                                this.props.socket.getObject(oldData.id)
+                                    .then(obj => {
+                                        if (obj && obj.common && obj.common['smartName']) {
+                                            delete obj.common['smartName']['ghTraits'];
+                                            delete obj.common['smartName']['ghType'];
+                                            delete obj.common['smartName']['ghAttributes'];
+                                        }
+                                        return this.props.socket.setObject(oldData.id, obj);
+                                    });
+                            }
+
+                            return new Promise(resolve => {
+                                setTimeout(() => {
+                                    if (this.state.deleteId) {
+                                        this.onDelete();
+                                    } else {
+                                        this.informInstance(oldData.id);
+                                    }
+                                    resolve();
+                                    const devices = [...this.state.devices];
+                                    devices.splice(devices.indexOf(oldData), 1);
+                                    this.setState({ ...this.state, devices });
+                                }, 600);
+                            })
+                        }}
+                    />
+                    {/*<MaterialTable
+                        components={{Toolbar: props => <span/>}}
                         style={{marginTop: '1rem', display: 'inline-block'}}
                         title=""
                         tableRef={this.myTableRef}
-                        onRowClick={(e, rowData) => {
-                            this.myTableRef.current.onTreeExpandChanged(rowData.tableData.path, rowData)
-                        }}
+                        onRowClick={(e, rowData) =>
+                            this.myTableRef.current.onTreeExpandChanged(rowData.tableData.path, rowData)}
                         columns={this.state.expertMode ? this.state.columns : this.state.columns.filter(item => !item.expertMode)}
                         parentChildData={(row, rows) => {
-                            const result = rows.find((element) => {
+                            const result = rows.find(element => {
                                 if (element.id && row.parentId && element.id === row.parentId) {
                                     console.log(row.parentId);
                                     return true;
@@ -724,7 +780,6 @@ class GoogleSmartNames extends Component {
                                     return false;
                                 }
                             });
-                            console.log(result);
                             return result;
                         }}
                         data={devices}
@@ -809,7 +864,7 @@ class GoogleSmartNames extends Component {
                                 })
                             }
                         }}
-                    />
+                    />*/}
                 </div>
             </div>
             {this.renderMessage()}

@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.7.15",
+        "version": "1.8.0",
         "news": {
+            "1.8.0": {
+                "en": "The google home table was rewritten",
+                "de": "Die Google Home-Tabelle wurde neu geschrieben",
+                "ru": "Переписана домашняя таблица google",
+                "pt": "A tabela inicial do Google foi reescrita",
+                "nl": "De Google Home-tabel is herschreven",
+                "fr": "La table Google Home a été réécrite",
+                "it": "La tabella di Google Home è stata riscritta",
+                "es": "Se reescribió la tabla de inicio de Google",
+                "pl": "Tabela domu google została przepisana",
+                "zh-cn": "谷歌主表被重写"
+            },
             "1.7.15": {
                 "en": "Corrected the request for temperature",
                 "de": "Die Temperaturanfrage wurde korrigiert",
