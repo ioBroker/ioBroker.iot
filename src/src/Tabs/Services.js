@@ -110,7 +110,7 @@ class Services extends Component {
 
         this.props.socket.getObject(`system.adapter.${this.props.adapterName}.${this.props.instance}`).then(obj =>
             this.props.socket.getState(`system.adapter.${this.props.adapterName}.${this.props.instance}.alive`).then(state =>
-                this.setState({isInstanceAlive: obj && obj.common && obj.common.enabled && state && state.val})));
+                this.setState({isInstanceAlive: obj && obj.common && state && state.val})));
     }
 
     componentWillUnmount() {

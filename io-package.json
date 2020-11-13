@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.8.0",
+        "version": "1.8.1",
         "news": {
+            "1.8.1": {
+                "en": "The deletion of google home devices was corrected",
+                "de": "Das Löschen von Google Home-Geräten wurde korrigiert",
+                "ru": "Исправлено удаление домашних устройств google.",
+                "pt": "A exclusão de dispositivos domésticos do Google foi corrigida",
+                "nl": "De verwijdering van Google Home-apparaten is gecorrigeerd",
+                "fr": "La suppression des appareils Google Home a été corrigée",
+                "it": "L'eliminazione dei dispositivi Google Home è stata corretta",
+                "es": "Se corrigió la eliminación de dispositivos domésticos de Google",
+                "pl": "Poprawiono usuwanie urządzeń domowych Google",
+                "zh-cn": "删除了Google家用设备的问题已得到纠正"
+            },
             "1.8.0": {
                 "en": "The google home table was rewritten",
                 "de": "Die Google Home-Tabelle wurde neu geschrieben",

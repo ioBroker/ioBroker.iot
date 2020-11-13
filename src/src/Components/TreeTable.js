@@ -61,6 +61,16 @@ function setAttr(obj, attr, value) {
 }
 
 const styles = theme => ({
+    tableContainer: {
+        width: '100%',
+        height: '100%',
+        overflow: 'auto'
+    },
+    table: {
+        width: '100%',
+        minWidth: 800,
+        maxWidth: 1920,
+    },
     cell: {
         paddingTop: 0,
         paddingBottom: 0,
@@ -140,6 +150,7 @@ class TreeTable extends React.Component {
                 val = val[0];
             }
             return <TableCell
+                key={col.field}
                 className={clsx(this.props.classes.cell, level && this.props.classes.cellSecondary)}
                 style={col.cellStyle}
                 component="th" >{
@@ -174,6 +185,7 @@ class TreeTable extends React.Component {
             }</TableCell>;
         } else {
             return <TableCell
+                key={col.field}
                 className={clsx(this.props.classes.cell, level && this.props.classes.cellSecondary)}
                 style={col.cellStyle}
                 component="th" >{getAttr(item, col.field, col.lookup)}</TableCell>;
@@ -233,7 +245,9 @@ class TreeTable extends React.Component {
                     <TableCell className={clsx(this.props.classes.cell, this.props.classes.cellButton)}>
                         {this.state.editMode === i || this.state.deleteMode === i ?
                             <IconButton
-                                disabled={this.state.deleteMode !== false || !this.state.editData || !Object.keys(this.state.editData).length}
+                                disabled={
+                                    this.state.editMode !== false && (!this.state.editData || !Object.keys(this.state.editData).length)
+                                }
                                 onClick={() => {
                                 if (this.state.editMode !== false) {
                                     const newData = JSON.parse(JSON.stringify(item));
@@ -272,7 +286,7 @@ class TreeTable extends React.Component {
     }
 
     render() {
-        return <TableContainer component={Paper}>
+        return <div className={clsx(this.props.classes.tableContainer, this.props.className)}>
             <Table className={this.props.classes.table} aria-label="simple table" size="small" stickyHeader={true}>
                 <TableHead>
                     <TableRow>
@@ -284,6 +298,7 @@ class TreeTable extends React.Component {
                         </TableCell>
                         {this.props.columns.map((col, i) =>
                             !i ? null : <TableCell
+                                key={col.field}
                                 className={clsx(this.props.classes.cell, this.props.classes.cellHeader, this.props.classes['width_' + col.field.replace(/\./g, '_')])}
                                 style={col.cellStyle}
                                 component="th"
@@ -296,14 +311,15 @@ class TreeTable extends React.Component {
                     {this.props.data.map(item => this.renderLine(item))}
                 </TableBody>
             </Table>
-        </TableContainer>
+        </div>;
     }
 }
 
 TreeTable.propTypes = {
-    data: PropTypes.object.isRequired,
+    data: PropTypes.array.isRequired,
+    className: PropTypes.string,
     loading: PropTypes.bool,
-    columns: PropTypes.bool,
+    columns: PropTypes.array,
     onUpdate: PropTypes.func,
     onDelete: PropTypes.func,
     themeType: PropTypes.string,

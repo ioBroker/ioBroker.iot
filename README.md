@@ -256,6 +256,9 @@ Following types are supported:
 -->
 
 ## Changelog
+### 1.8.1 (2020-11-13)
+* (bluefox) The deletion of google home devices was corrected
+
 ### 1.8.0 (2020-11-12)
 * (bluefox) The google home table was rewritten
 

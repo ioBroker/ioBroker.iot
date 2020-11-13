@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
 import {withStyles} from '@material-ui/core/styles';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import PropTypes from 'prop-types';
-//import MaterialTable from 'material-table';
-// import  {forwardRef} from 'react';
 import copy from 'copy-to-clipboard';
 
 import Fab from '@material-ui/core/Fab';
@@ -27,46 +26,12 @@ import Utils from '@iobroker/adapter-react/Components/Utils'
 import ExpertIcon from '@iobroker/adapter-react/Components/ExpertIcon'
 import TreeTable from '../Components/TreeTable';
 
-/*import AddBox from '@material-ui/icons/AddBox';
-import ArrowUpward from '@material-ui/icons/ArrowUpward';
-import Check from '@material-ui/icons/Check';
-import ChevronLeft from '@material-ui/icons/ChevronLeft';
-import ChevronRight from '@material-ui/icons/ChevronRight';
-import Clear from '@material-ui/icons/Clear';
-import DeleteOutline from '@material-ui/icons/DeleteOutline';
-import Edit from '@material-ui/icons/Edit';
-import FilterList from '@material-ui/icons/FilterList';
-import FirstPage from '@material-ui/icons/FirstPage';
-import LastPage from '@material-ui/icons/LastPage';
-import Remove from '@material-ui/icons/Remove';
-import SaveAlt from '@material-ui/icons/SaveAlt';
-import Search from '@material-ui/icons/Search';
-import ViewColumn from '@material-ui/icons/ViewColumn';*/
 import {MdAdd as IconAdd} from 'react-icons/md';
 import {MdRefresh as IconRefresh} from 'react-icons/md';
 import {MdHelpOutline as IconHelp} from 'react-icons/md';
 import {MdList as IconList} from 'react-icons/md';
 import {MdClear as IconClear} from 'react-icons/md';
 
-/*const tableIcons = {
-    Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
-    Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
-    Clear: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
-    Delete: forwardRef((props, ref) => <DeleteOutline {...props} ref={ref} />),
-    DetailPanel: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
-    Edit: forwardRef((props, ref) => <Edit {...props} ref={ref} />),
-    Export: forwardRef((props, ref) => <SaveAlt {...props} ref={ref} />),
-    Filter: forwardRef((props, ref) => <FilterList {...props} ref={ref} />),
-    FirstPage: forwardRef((props, ref) => <FirstPage {...props} ref={ref} />),
-    LastPage: forwardRef((props, ref) => <LastPage {...props} ref={ref} />),
-    NextPage: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
-    PreviousPage: forwardRef((props, ref) => <ChevronLeft {...props} ref={ref} />),
-    ResetSearch: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
-    Search: forwardRef((props, ref) => <Search {...props} ref={ref} />),
-    SortArrow: forwardRef((props, ref) => <ArrowUpward {...props} ref={ref} />),
-    ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
-    ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
-};*/
 
 const styles = theme => ({
     tab: {
@@ -74,8 +39,9 @@ const styles = theme => ({
         overflow: 'hidden',
     },
     tableDiv: {
+        width: '100%',
         height: 'calc(100% - 48px)',
-        overflow: 'auto',
+        overflow: 'hidden',
     },
     searchText: {
         width: 150,
@@ -287,7 +253,7 @@ class GoogleSmartNames extends Component {
         } else {
             this.setState({browse: true});
         }
-        console.log('Send BROWSE!');
+
         this.browseTimer = setTimeout(() => {
             console.log('Browse timeout!');
             this.browseTimer = null;
@@ -314,7 +280,6 @@ class GoogleSmartNames extends Component {
                         }
                         this.waitForUpdateID = null;
                     }
-                    console.log('BROWSE received.');
 
                     this.setState({devices: list, loading: false, changed: [], browse: false});
                 }
@@ -337,12 +302,12 @@ class GoogleSmartNames extends Component {
     }
 
     componentDidMount() {
-        this.props.socket.subscribeState(`${this.props.adapterName}.${this.props.instance}.smart.updatesGH`, this.onReadyUpdateBound);
+        this.props.socket.subscribeState(`${this.props.adapterName}.${this.props.instance}.smart.updatesGH`,     this.onReadyUpdateBound);
         this.props.socket.subscribeState(`${this.props.adapterName}.${this.props.instance}.smart.updatesResult`, this.onResultUpdateBound);
     }
 
     componentWillUnmount() {
-        this.props.socket.unsubscribeState(`${this.props.adapterName}.${this.props.instance}.smart.updatesGH`, this.onReadyUpdateBound);
+        this.props.socket.unsubscribeState(`${this.props.adapterName}.${this.props.instance}.smart.updatesGH`,     this.onReadyUpdateBound);
         this.props.socket.unsubscribeState(`${this.props.adapterName}.${this.props.instance}.smart.updatesResult`, this.onResultUpdateBound);
         if (this.timerChanged) {
             clearTimeout(this.timerChanged);
@@ -641,16 +606,71 @@ class GoogleSmartNames extends Component {
         </Dialog>;
     }
 
-    renderTable() {
-        //return <
+    renderInstructions() {
+        if (this.state.helpHidden || this.props.smallDisplay) {
+            return null;
+        }
+        const manualModeHint = I18n.t('manualModeHint');
+        return <div style={{width: '100%'}} >
+            <div style={{marginTop: '4rem', display: 'flex'}}>
+                <div style={{flex: '50%'}}>
+                    <div style={{fontWeight:"bold"}}>{I18n.t('Auto Mode')}</div>
+                    <div style={{marginTop: "0.8rem", marginRight: "0.8rem",}}>{I18n.t('To auto detect devices please assign a room and function to the channel if no channel available than assign to a device. Not only to the state or device. And enable them under SmartEnum/Intelligente Aufzählung')}</div>
+                </div>
+                <div style={{flex: '50%'}}>
+                    <div style={{fontWeight: 'bold'}}>{I18n.t('Manual Mode')}</div>
+                    <span>{Utils.renderTextWithA(manualModeHint)}</span>
+                </div>
+            </div>
+            <br/>
+            <div style={{flex: '100%'}}>
+                <div style={{fontWeight: "bold"}}>{Utils.renderTextWithA(I18n.t("For help use this forum <a target='_blank' rel='noopener noreferrer' href='https://forum.iobroker.net/topic/24061/google-home-assistant-iobroker-einrichten-nutzen/'>thread</a>"))}</div>
+            </div>
+        </div>;
+    }
+
+    renderToolbar() {
+        return <Toolbar variant="dense">
+            <Fab size="small" color="secondary" aria-label="Add" className={this.props.classes.button} onClick={() => this.setState({showSelectId: true})}><IconAdd /></Fab>
+            <Fab style={{marginLeft: '1rem'}} size="small" color="primary" aria-label="Refresh" className={this.props.classes.button}
+                 onClick={() => this.browse(true)} disabled={this.state.browse}>{this.state.browse ? <CircularProgress size={20} /> : <IconRefresh/>}</Fab>
+            <Fab style={{marginLeft: '1rem'}} size="small" color={this.state.helpHidden ? 'default' : 'primary'} aria-label="Help" className={this.props.classes.button}
+                 title={I18n.t('Show/Hide help')}
+                 onClick={() => {
+                     window.localStorage.setItem('App.helpHidden', this.state.helpHidden ? 'false' : 'true');
+                     this.setState({helpHidden: !this.state.helpHidden});
+                 }} disabled={this.state.browse}><IconHelp/></Fab>
+            <Fab style={{marginLeft: '1rem'}}
+                 size="small"
+                 color={this.state.expertMode ? 'primary' : 'default'} aria-label="Help" className={this.props.classes.button}
+                 title={I18n.t('Toggle expert mode')}
+                 onClick={() => {
+                     window.localStorage.setItem('App.expertMode', this.state.expertMode ? 'false' : 'true');
+                     this.setState({expertMode: !this.state.expertMode});
+                 }} disabled={this.state.browse}><ExpertIcon/></Fab>
+            <Fab style={{marginLeft: '1rem'}}
+                 title={I18n.t('Show all devices for print out')}
+                 size="small" aria-label="List of devices" className={this.props.classes.button}
+                 onClick={() => this.setState({showListOfDevices: true})} disabled={this.state.browse}><IconList/></Fab>
+            {!this.props.smallDisplay ? <TextField
+                className={this.props.classes.searchText}
+                label={I18n.t('Filter')}
+                value={this.state.searchText} onChange={e => this.setState({searchText: e.target.value})}
+                InputProps={{
+                    endAdornment: this.state.searchText ? (
+                        <IconButton onClick={() => this.setState({ searchText: '' })}>
+                            <IconClear />
+                        </IconButton>
+                    ) : undefined,
+                }}
+            /> : null}
+        </Toolbar>;
     }
 
     render() {
         if (this.state.loading) {
-            return (<CircularProgress  key="alexaProgress" />);
+            return <CircularProgress  key="alexaProgress" />;
         }
-
-        const manualModeHint = I18n.t('manualModeHint');
         const searchText = this.state.searchText.toLowerCase();
         const devices = this.state.searchText ? this.state.devices.filter(item =>
             item.name?.name?.toLowerCase().includes(searchText) ||
@@ -659,213 +679,62 @@ class GoogleSmartNames extends Component {
             : this.state.devices;
 
         return <form key="gh" className={this.props.classes.tab}>
-            <Toolbar variant="dense">
-                <Fab size="small" color="secondary" aria-label="Add" className={this.props.classes.button} onClick={() => this.setState({showSelectId: true})}><IconAdd /></Fab>
-                <Fab style={{marginLeft: '1rem'}} size="small" color="primary" aria-label="Refresh" className={this.props.classes.button}
-                     onClick={() => this.browse(true)} disabled={this.state.browse}>{this.state.browse ? <CircularProgress size={20} /> : <IconRefresh/>}</Fab>
-                <Fab style={{marginLeft: '1rem'}} size="small" color={this.state.helpHidden ? 'default' : 'primary'} aria-label="Help" className={this.props.classes.button}
-                     title={I18n.t('Show/Hide help')}
-                     onClick={() => {
-                         window.localStorage.setItem('App.helpHidden', this.state.helpHidden ? 'false' : 'true');
-                         this.setState({helpHidden: !this.state.helpHidden});
-                     }} disabled={this.state.browse}><IconHelp/></Fab>
-                <Fab style={{marginLeft: '1rem'}}
-                     size="small"
-                     color={this.state.expertMode ? 'primary' : 'default'} aria-label="Help" className={this.props.classes.button}
-                     title={I18n.t('Toggle expert mode')}
-                     onClick={() => {
-                         window.localStorage.setItem('App.expertMode', this.state.expertMode ? 'false' : 'true');
-                         this.setState({expertMode: !this.state.expertMode});
-                     }} disabled={this.state.browse}><ExpertIcon/></Fab>
-                <Fab style={{marginLeft: '1rem'}}
-                     title={I18n.t('Show all devices for print out')}
-                     size="small" aria-label="List of devices" className={this.props.classes.button}
-                     onClick={() => this.setState({showListOfDevices: true})} disabled={this.state.browse}><IconList/></Fab>
-                <TextField
-                    className={this.props.classes.searchText}
-                    label={I18n.t('Filter')}
-                    value={this.state.searchText} onChange={e => this.setState({searchText: e.target.value})}
-                    InputProps={{
-                        endAdornment: this.state.searchText ? (
-                            <IconButton onClick={() => this.setState({ searchText: '' })}>
-                                <IconClear />
-                            </IconButton>
-                        ) : undefined,
+            {this.renderToolbar()}
+            {this.renderInstructions()}
+            <div className={this.props.classes.tableDiv}>
+                <TreeTable
+                    columns={this.state.expertMode ? this.state.columns : this.state.columns.filter(item => !item.expertMode)}
+                    data={devices}
+                    onUpdate={(newData, oldData) => {
+                        if (newData.name.nicknames && Array.isArray(newData.name.nicknames)) {
+                            newData.name.nicknames = newData.name.nicknames.join(',');
+                        }
+                        this.editedSmartName = newData.name.nicknames;
+                        this.setState({editId: newData.id}, () => {
+                            if (!newData.type || !newData.displayTraits) {
+                                this.setState({browse: true, message: I18n.t('Please add action and trait to complete the Google Home state.')});
+                            } else {
+                                this.setState({browse: true});
+                            }
+
+                            this.onGHParamsChange(newData, oldData);
+                            const devices = [...this.state.devices];
+                            devices[devices.indexOf(oldData)] = newData;
+                            this.setState({ ...this.state, devices});
+                        });
+                    }}
+
+                    onDelete={oldData => {
+                        // if smartenum set smartname on false if not delete/reset smartname content
+                        if (oldData.smartEnum === 'X') {
+                            this.setState({deleteId: oldData.id});
+                        } else {
+                            this.props.socket.getObject(oldData.id)
+                                .then(obj => {
+                                    if (obj && obj.common && obj.common['smartName']) {
+                                        delete obj.common['smartName']['ghTraits'];
+                                        delete obj.common['smartName']['ghType'];
+                                        delete obj.common['smartName']['ghAttributes'];
+                                    }
+                                    return this.props.socket.setObject(oldData.id, obj);
+                                });
+                        }
+
+                        return new Promise(resolve => {
+                            setTimeout(() => {
+                                if (this.state.deleteId) {
+                                    this.onDelete();
+                                } else {
+                                    this.informInstance(oldData.id);
+                                }
+                                resolve();
+                                const devices = [...this.state.devices];
+                                devices.splice(devices.indexOf(oldData), 1);
+                                this.setState({ ...this.state, devices });
+                            }, 600);
+                        })
                     }}
                 />
-            </Toolbar>
-            <div className={this.props.classes.tableDiv}>
-                {!this.state.helpHidden ? <div style={{marginTop: '4rem', display: 'flex'}}>
-                    <div style={{flex: '50%'}}>
-                        <div style={{fontWeight:"bold"}}>{I18n.t('Auto Mode')}</div>
-                        <div style={{marginTop: "0.8rem", marginRight: "0.8rem",}}>{I18n.t('To auto detect devices please assign a room and function to the channel if no channel available than assign to a device. Not only to the state or device. And enable them under SmartEnum/Intelligente Aufzählung')}</div>
-                    </div>
-                    <div style={{flex: '50%'}}>
-                        <div style={{fontWeight: 'bold'}}>{I18n.t('Manual Mode')}</div>
-                        <span>{Utils.renderTextWithA(manualModeHint)}</span>
-                    </div>
-                </div> : null}
-                {!this.state.helpHidden ? <br/> : null}
-                {!this.state.helpHidden ? <div style={{flex: '100%'}}>
-                    <div style={{fontWeight: "bold"}}>{Utils.renderTextWithA(I18n.t("For help use this forum <a target='_blank' rel='noopener noreferrer' href='https://forum.iobroker.net/topic/24061/google-home-assistant-iobroker-einrichten-nutzen/'>thread</a>"))}</div>
-                </div> : null}
-                <div>
-                    <TreeTable
-                        columns={this.state.expertMode ? this.state.columns : this.state.columns.filter(item => !item.expertMode)}
-                        data={devices}
-                        onUpdate={(newData, oldData) => {
-                            if (newData.name.nicknames && Array.isArray(newData.name.nicknames)) {
-                                newData.name.nicknames = newData.name.nicknames.join(',');
-                            }
-                            this.editedSmartName = newData.name.nicknames;
-                            this.setState({editId: newData.id}, () => {
-                                if (!newData.type || !newData.displayTraits) {
-                                    this.setState({browse: true, message: I18n.t('Please add action and trait to complete the Google Home state.')});
-                                } else {
-                                    this.setState({browse: true});
-                                }
-
-                                this.onGHParamsChange(newData, oldData);
-                                const devices = [...this.state.devices];
-                                devices[devices.indexOf(oldData)] = newData;
-                                this.setState({ ...this.state, devices});
-                            });
-                        }}
-
-                        onDelete={oldData => {
-                            // if smartenum set smartname on false if not delete/reset smartname content
-                            if (oldData.smartEnum === 'X') {
-                                this.setState({deleteId: oldData.id});
-                            } else {
-                                this.props.socket.getObject(oldData.id)
-                                    .then(obj => {
-                                        if (obj && obj.common && obj.common['smartName']) {
-                                            delete obj.common['smartName']['ghTraits'];
-                                            delete obj.common['smartName']['ghType'];
-                                            delete obj.common['smartName']['ghAttributes'];
-                                        }
-                                        return this.props.socket.setObject(oldData.id, obj);
-                                    });
-                            }
-
-                            return new Promise(resolve => {
-                                setTimeout(() => {
-                                    if (this.state.deleteId) {
-                                        this.onDelete();
-                                    } else {
-                                        this.informInstance(oldData.id);
-                                    }
-                                    resolve();
-                                    const devices = [...this.state.devices];
-                                    devices.splice(devices.indexOf(oldData), 1);
-                                    this.setState({ ...this.state, devices });
-                                }, 600);
-                            })
-                        }}
-                    />
-                    {/*<MaterialTable
-                        components={{Toolbar: props => <span/>}}
-                        style={{marginTop: '1rem', display: 'inline-block'}}
-                        title=""
-                        tableRef={this.myTableRef}
-                        onRowClick={(e, rowData) =>
-                            this.myTableRef.current.onTreeExpandChanged(rowData.tableData.path, rowData)}
-                        columns={this.state.expertMode ? this.state.columns : this.state.columns.filter(item => !item.expertMode)}
-                        parentChildData={(row, rows) => {
-                            const result = rows.find(element => {
-                                if (element.id && row.parentId && element.id === row.parentId) {
-                                    console.log(row.parentId);
-                                    return true;
-                                } else {
-                                    return false;
-                                }
-                            });
-                            return result;
-                        }}
-                        data={devices}
-                        icons={tableIcons}
-                        isLoading={this.state.browse}
-                        options={{
-                            actionsColumnIndex: -1,
-                            paging: false,
-                            search: false,
-                            rowStyle: (rowData) => {
-                                let background = this.props.themeType === 'dark' ? '#000' : '#FFF';
-                                if (rowData.smartEnum) {
-                                    background = this.props.themeType === 'dark' ? '#1b1e18' : '#F7FFEA';
-                                }
-                                if (rowData.ioType === 'channel' || rowData.ioType === 'device') {
-                                    if (rowData.smartEnum) {
-                                        background = this.props.themeType === 'dark' ? '#3d3d3d' : '#eafff2';
-                                    } else {
-                                        background = this.props.themeType === 'dark' ? '#3e4b4b' : '#E2FFFF';
-                                    }
-                                }
-
-                                if  (this.state.selectedRow && this.state.selectedRow.tableData.id === rowData.tableData.id) {
-                                    background = this.props.themeType === 'dark' ? '#212121' : '#EEE';
-                                }
-
-                                return {backgroundColor:  background}
-                            }
-                        }}
-                        editable={{
-                            onRowUpdate: (newData, oldData) => {
-                                if (newData.name.nicknames && Array.isArray(newData.name.nicknames)) {
-                                    newData.name.nicknames = newData.name.nicknames.join(',');
-                                }
-                                this.editedSmartName = newData.name.nicknames;
-                                this.setState({editId: newData.id});
-
-                                return new Promise(resolve => {
-                                    this.setState({browse: true});
-
-                                    setTimeout(() => {
-                                        if (!newData.type || !newData.displayTraits) {
-                                            this.setState({message: I18n.t('Please add action and trait to complete the Google Home state.')});
-                                        }
-
-                                        this.onGHParamsChange(newData, oldData);
-                                        resolve();
-                                        const devices = [...this.state.devices];
-                                        devices[devices.indexOf(oldData)] = newData;
-                                        this.setState({ ...this.state, devices});
-                                    }, 500);
-                                });
-                            },
-                            onRowDelete: (oldData) => {
-                                // if smartenum set smartname on false if not delete/reset smartname content
-                                if (oldData.smartEnum === 'X') {
-                                    this.setState({deleteId: oldData.id});
-                                } else {
-                                    this.props.socket.getObject(oldData.id)
-                                        .then(obj => {
-                                            if (obj && obj.common && obj.common['smartName']) {
-                                                delete obj.common['smartName']['ghTraits'];
-                                                delete obj.common['smartName']['ghType'];
-                                                delete obj.common['smartName']['ghAttributes'];
-                                            }
-                                            return this.props.socket.setObject(oldData.id, obj);
-                                        });
-                                }
-
-                                return new Promise(resolve => {
-                                    setTimeout(() => {
-                                        if (this.state.deleteId) {
-                                            this.onDelete();
-                                        } else {
-                                            this.informInstance(oldData.id);
-                                        }
-                                        resolve();
-                                        const devices = [...this.state.devices];
-                                        devices.splice(devices.indexOf(oldData), 1);
-                                        this.setState({ ...this.state, devices });
-                                    }, 600);
-                                })
-                            }
-                        }}
-                    />*/}
-                </div>
             </div>
             {this.renderMessage()}
             {this.getSelectIdDialog()}
@@ -886,4 +755,7 @@ GoogleSmartNames.propTypes = {
     themeType:   PropTypes.string.isRequired,
 };
 
-export default withStyles(styles)(GoogleSmartNames);
+export const withMediaQuery = () => Component => props =>
+    <Component smallDisplay={useMediaQuery('(max-width:600px)')} {...props} />;
+
+export default withStyles(styles)(withMediaQuery()(GoogleSmartNames));
