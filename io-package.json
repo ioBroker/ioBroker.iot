@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.8.1",
+        "version": "1.8.2",
         "news": {
+            "1.8.2": {
+                "en": "Added the debug outputs for google home",
+                "de": "Die Debug-Ausgaben für Google Home wurden hinzugefügt",
+                "ru": "Добавлены отладочные данные для дома Google",
+                "pt": "Adicionadas as saídas de depuração para google home",
+                "nl": "De debug-uitgangen voor Google Home toegevoegd",
+                "fr": "Ajout des sorties de débogage pour Google Home",
+                "it": "Aggiunti gli output di debug per Google Home",
+                "es": "Se agregaron las salidas de depuración para Google Home.",
+                "pl": "Dodano wyjścia debugowania dla google home",
+                "zh-cn": "添加了Google Home的调试输出"
+            },
             "1.8.1": {
                 "en": "The deletion of google home devices was corrected",
                 "de": "Das Löschen von Google Home-Geräten wurde korrigiert",
