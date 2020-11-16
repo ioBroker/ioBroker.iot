@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.8.2",
+        "version": "1.8.3",
         "news": {
+            "1.8.3": {
+                "en": "Trying to fix the set to false at start for google home",
+                "de": "Der Versuch, das Set beim Start für Google Home auf false zu setzen",
+                "ru": "Попытка исправить значение false при запуске для дома Google",
+                "pt": "Tentando corrigir o conjunto para falso no início do google home",
+                "nl": "Ik probeer de set bij het starten op false te herstellen voor Google Home",
+                "fr": "Essayer de corriger l'ensemble sur false au démarrage pour Google Home",
+                "it": "Cercando di correggere il set su false all'inizio per Google Home",
+                "es": "Intentando arreglar el conjunto en falso al inicio de la página principal de Google",
+                "pl": "Próbuję ustawić wartość false na początku dla Google Home",
+                "zh-cn": "尝试在Google Home启动时将其设置为false"
+            },
             "1.8.2": {
                 "en": "Added the debug outputs for google home",
                 "de": "Die Debug-Ausgaben für Google Home wurden hinzugefügt",
