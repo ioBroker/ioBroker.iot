@@ -32,7 +32,6 @@ import {MdHelpOutline as IconHelp} from 'react-icons/md';
 import {MdList as IconList} from 'react-icons/md';
 import {MdClear as IconClear} from 'react-icons/md';
 
-
 const styles = theme => ({
     tab: {
         height: '100%',
@@ -40,8 +39,8 @@ const styles = theme => ({
     },
     tableDiv: {
         width: '100%',
-        height: 'calc(100% - 48px)',
         overflow: 'hidden',
+        height: 'calc(100% - 48px)',
     },
     searchText: {
         width: 150,
@@ -63,6 +62,9 @@ const styles = theme => ({
         width: '30%'
     }
 });
+
+const MOBILE_HEIGHT = 400;
+const MOBILE_WIDTH = 400;
 
 class GoogleSmartNames extends Component {
     constructor(props) {
@@ -87,6 +89,7 @@ class GoogleSmartNames extends Component {
             browse: false,
             expanded: [],
             lastChanged: '',
+            helpHeight: 0,
             columns: [
                 {title: I18n.t('ID'), field: 'id', editable: 'never', cellStyle: {
                     maxWidth: '12rem',
@@ -233,6 +236,7 @@ class GoogleSmartNames extends Component {
         this.waitForUpdateID     = null;
         this.onReadyUpdateBound  = this.onReadyUpdate.bind(this);
         this.onResultUpdateBound = this.onResultUpdate.bind(this);
+        this.helpRef             = React.createRef();
 
         this.props.socket.getObject(`system.adapter.${this.props.adapterName}.${this.props.instance}`).then(obj => {
             this.props.socket.getState(`system.adapter.${this.props.adapterName}.${this.props.instance}.alive`).then(state => {
@@ -283,6 +287,9 @@ class GoogleSmartNames extends Component {
 
                     this.setState({devices: list, loading: false, changed: [], browse: false});
                 }
+            })
+            .catch(error => {
+                this.setState({message: I18n.t(error)});
             });
     }
 
@@ -475,7 +482,7 @@ class GoogleSmartNames extends Component {
 
     renderMessage() {
         if (this.state.message) {
-            return (<MessageDialog text={this.state.message} onClose={() => this.setState({message: ''})}/>);
+            return <MessageDialog text={this.state.message} onClose={() => this.setState({message: ''})}/>;
         } else {
             return null;
         }
@@ -607,11 +614,14 @@ class GoogleSmartNames extends Component {
     }
 
     renderInstructions() {
-        if (this.state.helpHidden || this.props.smallDisplay) {
+        const desktop = true || window.innerHeight > MOBILE_HEIGHT && window.innerWidth > MOBILE_WIDTH;
+
+        if (this.state.helpHidden || this.props.smallDisplay || !desktop) {
             return null;
         }
+
         const manualModeHint = I18n.t('manualModeHint');
-        return <div style={{width: '100%'}} >
+        return <div style={{width: '100%'}} ref={this.helpRef}>
             <div style={{marginTop: '4rem', display: 'flex'}}>
                 <div style={{flex: '50%'}}>
                     <div style={{fontWeight:"bold"}}>{I18n.t('Auto Mode')}</div>
@@ -630,16 +640,18 @@ class GoogleSmartNames extends Component {
     }
 
     renderToolbar() {
+        const desktop = true || window.innerHeight > MOBILE_HEIGHT && window.innerWidth > MOBILE_WIDTH;
+
         return <Toolbar variant="dense">
             <Fab size="small" color="secondary" aria-label="Add" className={this.props.classes.button} onClick={() => this.setState({showSelectId: true})}><IconAdd /></Fab>
             <Fab style={{marginLeft: '1rem'}} size="small" color="primary" aria-label="Refresh" className={this.props.classes.button}
                  onClick={() => this.browse(true)} disabled={this.state.browse}>{this.state.browse ? <CircularProgress size={20} /> : <IconRefresh/>}</Fab>
-            <Fab style={{marginLeft: '1rem'}} size="small" color={this.state.helpHidden ? 'default' : 'primary'} aria-label="Help" className={this.props.classes.button}
+            {desktop && !this.state.hideHelp ? <Fab style={{marginLeft: '1rem'}} size="small" color={this.state.helpHidden ? 'default' : 'primary'} aria-label="Help" className={this.props.classes.button}
                  title={I18n.t('Show/Hide help')}
                  onClick={() => {
                      window.localStorage.setItem('App.helpHidden', this.state.helpHidden ? 'false' : 'true');
                      this.setState({helpHidden: !this.state.helpHidden});
-                 }} disabled={this.state.browse}><IconHelp/></Fab>
+                 }} disabled={this.state.browse}><IconHelp/></Fab> : null }
             <Fab style={{marginLeft: '1rem'}}
                  size="small"
                  color={this.state.expertMode ? 'primary' : 'default'} aria-label="Help" className={this.props.classes.button}
@@ -667,6 +679,21 @@ class GoogleSmartNames extends Component {
         </Toolbar>;
     }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.helpRef.current) {
+            const h = this.helpRef.current.clientHeight;
+            if (this.state.helpHeight !== h) {
+                if (!this.state.helpHidden && h + 64 + 48 + 200 > window.innerHeight) {
+                    setTimeout(() => this.setState({helpHeight: h, helpHidden: true, hideHelp: true}), 50);
+                } else {
+                    setTimeout(() => this.setState({helpHeight: h}), 50);
+                }
+            }
+        } else if (this.state.helpHeight) {
+            setTimeout(() => this.setState({helpHeight: 0}), 50);
+        }
+    }
+
     render() {
         if (this.state.loading) {
             return <CircularProgress  key="alexaProgress" />;
@@ -681,7 +708,7 @@ class GoogleSmartNames extends Component {
         return <form key="gh" className={this.props.classes.tab}>
             {this.renderToolbar()}
             {this.renderInstructions()}
-            <div className={this.props.classes.tableDiv}>
+            <div className={this.props.classes.tableDiv} style={{height: `calc(100% - ${48 + (this.state.helpHeight ? this.state.helpHeight + 64 : 0)}px)`}}>
                 <TreeTable
                     columns={this.state.expertMode ? this.state.columns : this.state.columns.filter(item => !item.expertMode)}
                     data={devices}

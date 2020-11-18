@@ -927,7 +927,13 @@ function main() {
         })
         .catch(err => {
             if (adapter.config.googleHome) {
-                adapter.log.error('Cannot read URL key: ' + err);
+                if (err === 'Not exists') {
+                    return createUrlKey(adapter.config.login, adapter.config.pass)
+                        .then(key => googleHome = new GoogleHome(adapter, key))
+                        .catch(err => adapter.log.error('Cannot read URL key: ' + (typeof err === 'object' ? JSON.stringify(err) : err)));
+                } else {
+                    adapter.log.error('Cannot read URL key: ' + (typeof err === 'object' ? JSON.stringify(err) : err));
+                }
             }
         });
 

@@ -141,7 +141,7 @@ class App extends GenericApp {
             <MuiThemeProvider theme={this.state.theme}>
                 <div className="App" style={{background: this.state.theme.palette.background.default, color: this.state.theme.palette.text.primary}}>
                     <AppBar position="static">
-                        <Tabs value={this.getSelectedTab()} onChange={(e, index) => this.selectTab(e.target.parentNode.dataset.name, index)}>
+                        <Tabs value={this.getSelectedTab()} onChange={(e, index) => this.selectTab(e.target.parentNode.dataset.name, index)} scrollButtons="auto">
                             <Tab label={I18n.t('Options')} data-name="options" />
                             <Tab label={I18n.t('Smart enums')} data-name="enums" />
                             {this.state.native.amazonAlexa && <Tab selected={this.state.selectedTab === 'alexa'} label={I18n.t('Alexa devices')} data-name="alexa" />}

@@ -256,6 +256,9 @@ Following types are supported:
 -->
 
 ## Changelog
+### 1.8.4 (2020-11-18)
+* (bluefox) Corrected the configuration table for google home
+
 ### 1.8.3 (2020-11-16)
 * (bluefox) Trying to fix the set to false at start for google home
 
