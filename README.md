@@ -256,7 +256,7 @@ Following types are supported:
 -->
 
 ## Changelog
-### __WORK IN PROGRESS__
+### 1.8.5 (2020-11-23)
 * (bluefox) Corrected the configuration table for google home
 
 ### 1.8.4 (2020-11-18)

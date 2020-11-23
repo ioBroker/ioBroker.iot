@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.8.4",
+        "version": "1.8.5",
         "news": {
+            "1.8.5": {
+                "en": "Corrected the configuration table for google home",
+                "de": "Die Konfigurationstabelle für Google Home wurde korrigiert",
+                "ru": "Исправлена таблица конфигурации для Google Home",
+                "pt": "Corrigida a tabela de configuração do google home",
+                "nl": "De configuratietabel voor Google Home is gecorrigeerd",
+                "fr": "Correction du tableau de configuration pour Google Home",
+                "it": "Corretta la tabella di configurazione per Google Home",
+                "es": "Se corrigió la tabla de configuración para la página principal de Google.",
+                "pl": "Poprawiono tabelę konfiguracji dla google home",
+                "zh-cn": "更正了Google Home的配置表"
+            },
             "1.8.4": {
                 "en": "Corrected the configuration table for google home",
                 "de": "Die Konfigurationstabelle für Google Home wurde korrigiert",
