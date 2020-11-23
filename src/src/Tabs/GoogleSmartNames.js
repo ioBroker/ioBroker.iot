@@ -60,11 +60,11 @@ const styles = theme => ({
         display: 'inline-block',
         verticalAlign: 'top',
         width: '30%'
-    }
+    },
 });
 
 const MOBILE_HEIGHT = 400;
-const MOBILE_WIDTH = 400;
+const MOBILE_WIDTH  = 400;
 
 class GoogleSmartNames extends Component {
     constructor(props) {
@@ -94,13 +94,13 @@ class GoogleSmartNames extends Component {
                 {title: I18n.t('ID'), field: 'id', editable: 'never', cellStyle: {
                     maxWidth: '12rem',
                     overflow: 'hidden',
-                    wordBreak: 'break-all'
+                    wordBreak: 'break-word'
                 }},
                 {title: I18n.t('Smart names'), field: 'name.nicknames'},
                 {title: I18n.t('ioBType'), field: 'ioType', editable: 'never', cellStyle: {
                     maxWidth: '4rem',
                     overflow: 'hidden',
-                    wordBreak: 'break-all'
+                    wordBreak: 'break-word'
                 }},
                 {title: I18n.t('Type'), field: 'type',  lookup: {
                     'action.devices.types.AC_UNIT':         'Air conditioning unit',
@@ -177,7 +177,7 @@ class GoogleSmartNames extends Component {
                 {title: I18n.t('Attributes'), field: 'displayAttributes',   cellStyle: {
                         maxWidth: '12rem',
                         overflow: 'hidden',
-                        wordBreak: 'break-all'
+                        wordBreak: 'break-word'
                     },
                     expertMode: true,
                     editComponent: props => (<textarea rows={4} style={{width: '100%', resize: 'vertical'}}
@@ -190,14 +190,14 @@ class GoogleSmartNames extends Component {
                     cellStyle: {
                         maxWidth: '3rem',
                         overflow: 'hidden',
-                        wordBreak: 'break-all'
+                        wordBreak: 'break-word'
                     },
                     expertMode: true,
                 },
                 {title: I18n.t('Conversation to GH'), field: 'displayConv2GH',  cellStyle: {
                         maxWidth: '4rem',
                         overflow: 'hidden',
-                        wordBreak: 'break-all'
+                        wordBreak: 'break-word'
                     },
                     expertMode: true,
                     editComponent: props => (
@@ -213,7 +213,7 @@ class GoogleSmartNames extends Component {
                 { title: I18n.t('Conversation to ioB'), field: 'displayConv2iob', cellStyle: {
                     maxWidth: '4rem',
                     overflow: 'hidden',
-                    wordBreak: 'break-all'
+                    wordBreak: 'break-word'
                     },
                     expertMode: true,
                     editComponent: props => (
@@ -614,7 +614,7 @@ class GoogleSmartNames extends Component {
     }
 
     renderInstructions() {
-        const desktop = true || window.innerHeight > MOBILE_HEIGHT && window.innerWidth > MOBILE_WIDTH;
+        const desktop = window.innerHeight > MOBILE_HEIGHT && window.innerWidth > MOBILE_WIDTH;
 
         if (this.state.helpHidden || this.props.smallDisplay || !desktop) {
             return null;
@@ -640,7 +640,7 @@ class GoogleSmartNames extends Component {
     }
 
     renderToolbar() {
-        const desktop = true || window.innerHeight > MOBILE_HEIGHT && window.innerWidth > MOBILE_WIDTH;
+        const desktop = window.innerHeight > MOBILE_HEIGHT && window.innerWidth > MOBILE_WIDTH;
 
         return <Toolbar variant="dense">
             <Fab size="small" color="secondary" aria-label="Add" className={this.props.classes.button} onClick={() => this.setState({showSelectId: true})}><IconAdd /></Fab>

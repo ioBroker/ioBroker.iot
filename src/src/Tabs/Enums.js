@@ -7,7 +7,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Switch from '@material-ui/core/Switch';
 import {MdEdit as IconEdit} from 'react-icons/md';
 
-import Utils from '@iobroker/adapter-react/Components/Utils'
+import Utils from '@iobroker/adapter-react/Components/Utils';
 import I18n from '@iobroker/adapter-react/i18n';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -211,7 +211,7 @@ class Enums extends Component {
         }
         let name = Utils.getObjectNameFromObj(obj);
 
-        return (<div key={obj._id} className={this.props.classes.enumLine} style={{background: this.state.changed.indexOf(obj._id) !== -1 ? CHANGED_COLOR : 'inherit'}}>
+        return <div key={obj._id} className={this.props.classes.enumLine} style={{background: this.state.changed.indexOf(obj._id) !== -1 ? CHANGED_COLOR : 'inherit'}}>
             <span className={this.props.classes.enumLineName} style={{opacity: smartName === false ? 0.5: 1}}>{smartName || null}{smartName ? (<span className={this.props.classes.enumLineSubName}> ({name})</span>) : name}</span>
             <span className={this.props.classes.enumLineId} style={{opacity: smartName === false ? 0.5: 1}}>{obj._id}</span>
             <Switch
@@ -223,7 +223,7 @@ class Enums extends Component {
                 <IconEdit fontSize="small" />
             </IconButton>
 
-        </div>);
+        </div>;
     }
 
     renderEnums(name) {

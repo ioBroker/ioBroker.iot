@@ -9,6 +9,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import TableSortLabel from '@material-ui/core/TableSortLabel';
 import IconButton from '@material-ui/core/IconButton';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -95,6 +96,8 @@ const styles = theme => ({
         background: theme.palette.type === 'dark' ? '#888' : '#888',
         color: theme.palette.type === 'dark' ? '#EEE' : '#111',
         height: 48,
+        wordBreak: 'break-word',
+        whiteSpace: 'pre',
     },
     width_name_nicknames: {
         maxWidth: 150,
@@ -116,8 +119,54 @@ const styles = theme => ({
     },
     cellSecondary: {
         fontSize: 10,
-    }
+    },
+    visuallyHidden: {
+        border: 0,
+        clip: 'rect(0 0 0 0)',
+        height: 1,
+        margin: -1,
+        overflow: 'hidden',
+        padding: 0,
+        position: 'absolute',
+        top: 20,
+        width: 1,
+    },
 });
+
+function descendingComparator(a, b, orderBy, lookup) {
+    const _a = getAttr(a, orderBy, lookup) || '';
+    const _b = getAttr(b, orderBy, lookup) || '';
+
+    if (_b < _a) {
+        return -1;
+    } else
+    if (_b > _a) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+function getComparator(order, orderBy, lookup) {
+    return order === 'desc'
+        ? (a, b) => descendingComparator(a, b, orderBy, lookup)
+        : (a, b) => -descendingComparator(a, b, orderBy, lookup);
+}
+
+function stableSort(array, comparator) {
+    const stabilizedThis = array.map((el, index) => [el, index]);
+
+    stabilizedThis.sort((a, b) => {
+        const order = comparator(a[0], b[0]);
+        if (order) {
+            return order;
+        } else {
+            return a[1] - b[1];
+        }
+    });
+
+    return stabilizedThis.map(el => el[0]);
+}
 
 class TreeTable extends React.Component {
     constructor(props) {
@@ -138,6 +187,8 @@ class TreeTable extends React.Component {
             editMode: false,
             deleteMode: false,
             editData: null,
+            order: 'asc',
+            orderBy: this.props.columns[0].field,
         }
     }
 
@@ -243,9 +294,7 @@ class TreeTable extends React.Component {
                     <TableCell className={clsx(this.props.classes.cell, this.props.classes.cellButton)}>
                         {this.state.editMode === i || this.state.deleteMode === i ?
                             <IconButton
-                                disabled={
-                                    this.state.editMode !== false && (!this.state.editData || !Object.keys(this.state.editData).length)
-                                }
+                                disabled={this.state.editMode !== false && (!this.state.editData || !Object.keys(this.state.editData).length)}
                                 onClick={() => {
                                 if (this.state.editMode !== false) {
                                     const newData = JSON.parse(JSON.stringify(item));
@@ -283,30 +332,67 @@ class TreeTable extends React.Component {
         }
     }
 
+    handleRequestSort(property) {
+        const isAsc = this.state.orderBy === property && this.state.order === 'asc';
+        this.setState({order: isAsc ? 'desc' : 'asc', orderBy: property});
+    }
+
+    renderHead() {
+        return <TableHead>
+            <TableRow>
+                <TableCell component="th" className={clsx(this.props.classes.cell, this.props.classes.cellHeader, this.props.classes.cellExpand)}/>
+                <TableCell
+                    component="th"
+                    className={clsx(this.props.classes.cell, this.props.classes.cellHeader, this.props.classes['width_' + this.props.columns[0].field.replace(/\./g, '_')])}
+                    style={this.props.columns[0].cellStyle}
+                    sortDirection={this.state.orderBy === this.props.columns[0].field ? this.state.order : false}
+                >
+                    <TableSortLabel
+                        active={this.state.orderBy === this.props.columns[0].field}
+                        direction={this.state.orderBy === this.props.columns[0].field ? this.state.order : 'asc'}
+                        onClick={() => this.handleRequestSort(this.props.columns[0].field)}
+                    >
+                        {this.props.columns[0].title}
+                        {this.state.orderBy === this.props.columns[0].field ?
+                            <span className={this.props.classes.visuallyHidden}>
+                                {this.state.order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                            </span> : null}
+                    </TableSortLabel>
+                </TableCell>
+                {this.props.columns.map((col, i) =>
+                    !i ? null : <TableCell
+                        key={col.field}
+                        className={clsx(this.props.classes.cell, this.props.classes.cellHeader, this.props.classes['width_' + col.field.replace(/\./g, '_')])}
+                        style={col.cellStyle}
+                        component="th"
+                    >
+                        <TableSortLabel
+                            active={this.state.orderBy === col.field}
+                            direction={this.state.orderBy === col.field ? this.state.order : 'asc'}
+                            onClick={() => this.handleRequestSort(col.field)}
+                        >
+                            {col.title}
+                            {this.state.orderBy === col.field ?
+                                <span className={this.props.classes.visuallyHidden}>
+                                    {this.state.order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                </span> : null}
+                        </TableSortLabel>
+                </TableCell>)}
+                <TableCell component="th" className={clsx(this.props.classes.cell, this.props.classes.cellHeader, this.props.classes.cellButton)}/>
+                <TableCell component="th" className={clsx(this.props.classes.cell, this.props.classes.cellHeader, this.props.classes.cellButton)}/>
+            </TableRow>
+        </TableHead>;
+    }
+
     render() {
+        const lookup = this.props.columns.find(col => col.field === this.state.orderBy).lookup;
+        const table = stableSort(this.props.data, getComparator(this.state.order, this.state.orderBy, lookup));
+
         return <div className={clsx(this.props.classes.tableContainer, this.props.className)}>
             <Table className={this.props.classes.table} aria-label="simple table" size="small" stickyHeader={true}>
-                <TableHead>
-                    <TableRow>
-                        <TableCell component="th" className={clsx(this.props.classes.cell, this.props.classes.cellHeader, this.props.classes.cellExpand)}/>
-                        <TableCell component="th"
-                                   className={clsx(this.props.classes.cell, this.props.classes.cellHeader, this.props.classes['width_' + this.props.columns[0].field.replace(/\./g, '_')])}
-                                   style={this.props.columns[0].cellStyle}>
-                            {this.props.columns[0].title}
-                        </TableCell>
-                        {this.props.columns.map((col, i) =>
-                            !i ? null : <TableCell
-                                key={col.field}
-                                className={clsx(this.props.classes.cell, this.props.classes.cellHeader, this.props.classes['width_' + col.field.replace(/\./g, '_')])}
-                                style={col.cellStyle}
-                                component="th"
-                                >{col.title}</TableCell>)}
-                        <TableCell component="th" className={clsx(this.props.classes.cell, this.props.classes.cellHeader, this.props.classes.cellButton)}/>
-                        <TableCell component="th" className={clsx(this.props.classes.cell, this.props.classes.cellHeader, this.props.classes.cellButton)}/>
-                    </TableRow>
-                </TableHead>
+                {this.renderHead()}
                 <TableBody>
-                    {this.props.data.map(item => this.renderLine(item))}
+                    {table.map(item => this.renderLine(item))}
                 </TableBody>
             </Table>
         </div>;
