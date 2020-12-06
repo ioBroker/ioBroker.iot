@@ -116,7 +116,7 @@ Liste blanche pour les services
 Écrire une réponse à
 Yandex Алиса
 Vous pouvez entrer plusieurs noms divisés par une virgule
-Si vous utilisez la compétence Alexa, veuillez écrire une critique pour nous <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/create-review/?ref-suffix=war_dp' target='_blank' class='here'>ici</a>.<br>Des exemples peuvent être trouvés <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/reviews' target='_blank'> ici </a>.
+Si vous utilisez la compétence Alexa, veuillez écrire une critique pour nous <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/create-review/?ref-suffix=war_dp' target='_blank' class='here'>ici</a>. Des exemples peuvent être trouvés <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/reviews' target='_blank'> ici </a>.
 par le
 nettoyer
 défaut

@@ -116,7 +116,7 @@ White list for services
 Write response to
 Yandex Алиса
 You can enter several names divided by comma
-If you use the Alexa Skill, please write a review for us <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/create-review/?ref-suffix=war_dp' target='_blank' class='here'>here</a>.<br>Examples can be found <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/reviews' target='_blank'>here</a>.
+If you use the Alexa Skill, please write a review for us <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/create-review/?ref-suffix=war_dp' target='_blank' class='here'>here</a>. Examples can be found <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/reviews' target='_blank'>here</a>.
 by ON
 clear
 default

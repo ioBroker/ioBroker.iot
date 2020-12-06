@@ -116,7 +116,7 @@ Smart имя
 Писать ответ в
 Yandex Алиса
 Вы можете ввести несколько имен, разделенных запятой
-Если вы используете Alexa, пожалуйста оставьте свой отзыв <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/create-review/?ref-suffix=war_dp' target='_blank' class='here'>здесь</a>.<br>Примеры отзывов можно посмотреть <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/reviews' target='_blank'>здесь</a>.
+Если вы используете Alexa, пожалуйста оставьте свой отзыв <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/create-review/?ref-suffix=war_dp' target='_blank' class='here'>здесь</a>. Примеры отзывов можно посмотреть <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/reviews' target='_blank'>здесь</a>.
 при ВКЛ
 очистить
 системный

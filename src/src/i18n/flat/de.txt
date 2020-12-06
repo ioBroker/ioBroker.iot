@@ -1,7 +1,7 @@
 (Auf 0 setzten, falls das Verhalten unerwünscht ist)
 Sie können mehrere kommaseparierte Namen eingeben
 
-<a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/'> TRAIT</a> nachdem du ein ioBroker State hinzugefügt hast.  Für mehrere Traits füge unterschiedliche State IDs hinzu und verwende den gleichen SmartName, Type und Raum. Kommasepariert kannst du mehrere Smartnamen hinzufügen.  Um ein Raum zuzuordnen verwende die Aufzählungen in ioBroker und ordne ihn über Objekte hinzu. Mit den Attributes kannst du z.B. den Farbtemperaturberich festlegen 
+<a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/'> TRAIT</a> nachdem du ein ioBroker State hinzugefügt hast.  Für mehrere Traits füge unterschiedliche State IDs hinzu und verwende den gleichen SmartName, Type und Raum. Kommasepariert kannst du mehrere Smartnamen hinzufügen.  Um ein Raum zuzuordnen verwende die Aufzählungen in ioBroker und ordne ihn über Objekte hinzu. Mit den Attributes kannst du z.B. den Farbtemperaturberich festlegen
 <a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/colorsetting' > Infos über Attribute kannst du hier finden.</a> Ein leeres Attribut ist {}
 aktiv
 Gerät hinzufügen
@@ -73,7 +73,7 @@ Ping-Timeout(ms)
 Platziere Funktionsnamen vorne
 
 Bitte füge eine Type und Trait hinzu um den Google Home State zu vervollständigen.
-Bitte wähle  <a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/guides/' > TYPE</a> und ein 
+Bitte wähle  <a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/guides/' > TYPE</a> und ein
 Bitte Objekt ID auswählen ...
 Bitte schreiben Sie Ihre E-Mail nur in Kleinbuchstaben
 Sperrstatus lesen
@@ -116,7 +116,7 @@ White list für Services
 Schreibe Antwort ins
 Yandex Алиса
 Sie können mehrere durch Komma getrennte Namen eingeben
-Falls du den Alexa Skill benutzt, schreibe doch bitte <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/create-review/?ref-suffix=war_dp' target='_blank' class='here'>hier</a> eine Review.<br>Beispiele kann man <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/reviews' target='_blank'>hier</a> anschauen.
+Falls du den Alexa Skill benutzt, schreibe doch bitte <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/create-review/?ref-suffix=war_dp' target='_blank' class='here'>hier</a> eine Review. Beispiele kann man <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/reviews' target='_blank'>hier</a> anschauen.
 bei AN
 löschen
 Systemsprache

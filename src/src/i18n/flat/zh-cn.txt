@@ -116,7 +116,7 @@ Ping超时（ms）
 写回复
 YandexАлиса
 您可以输入多个名称除以逗号
-如果您使用Alexa技能，请为我们写一篇评论<a href ='http：//alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/create-review/？ref-suffix = war_dp 'target ='_ blank'class ='here'>此处</a>。<br>示例可以找到<a href ='http：//alexa.amazon.de/spa/index.html#skills/dp/ B07L66BFF9 /评论'target ='_ blank'>此处</a>。
+如果您使用Alexa技能，请为我们写一篇评论<a href ='http：//alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/create-review/？ref-suffix = war_dp 'target ='_ blank'class ='here'>此处</a>。 示例可以找到<a href ='http：//alexa.amazon.de/spa/index.html#skills/dp/ B07L66BFF9 /评论'target ='_ blank'>此处</a>。
 通过ON
 明确
 默认
