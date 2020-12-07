@@ -116,7 +116,7 @@ Witte lijst voor services
 Schrijf reactie op
 Yandex Алиса
 U kunt verschillende namen invoeren, gescheiden door een komma
-Als je de Alexa Skill gebruikt, schrijf dan een recensie voor ons <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/create-review/?ref-suffix=war_dp' target='_blank' class='here'>hier</a>.<br>Voorbeelden zijn <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/reviews' target='_blank'> hier </a> te vinden.
+Als je de Alexa Skill gebruikt, schrijf dan een recensie voor ons <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/create-review/?ref-suffix=war_dp' target='_blank' class='here'>hier</a>. Voorbeelden zijn <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/reviews' target='_blank'> hier </a> te vinden.
 door ON
 wissen
 standaard

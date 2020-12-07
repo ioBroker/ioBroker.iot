@@ -116,7 +116,7 @@ Lista blanca de servicios
 Escribir respuesta a
 Yandex Алиса
 Puede introducir varios nombres divididos por comas
-Si usa Alexa Skill, escriba una opinión para nosotros <a href = 'http: //alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/create-review/? Ref-suffix = war_dp 'target =' _ blank 'class =' ​​here '> aquí </a>.<br>Se pueden encontrar ejemplos <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/reviews' target='blank'> aquí </a>.
+Si usa Alexa Skill, escriba una opinión para nosotros <a href = 'http: //alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/create-review/? Ref-suffix = war_dp 'target =' _ blank 'class =' ​​here '> aquí </a>. Se pueden encontrar ejemplos <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/reviews' target='blank'> aquí </a>.
 por el
 limpiar
 defecto

@@ -1,6 +1,6 @@
 (Defina para 0 se o comportamento não for desejado)
 Você pode inserir vários nomes divididos por vírgula
-<a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/' > TRAIT</a> depois de adicionar um estado ioBroker. Para várias características, adicione IDs de estado diferentes e use o mesmo nome inteligente, tipo e espaço. Além disso, você pode adicionar vários nomes inteligentes. Para mapear uma sala, use os marcadores no ioBroker e branco para adicioná-los aos objetos. Com os atributos, você pode, por exemplo. Definir o relatório de temperatura da cor 
+<a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/' > TRAIT</a> depois de adicionar um estado ioBroker. Para várias características, adicione IDs de estado diferentes e use o mesmo nome inteligente, tipo e espaço. Além disso, você pode adicionar vários nomes inteligentes. Para mapear uma sala, use os marcadores no ioBroker e branco para adicioná-los aos objetos. Com os atributos, você pode, por exemplo. Definir o relatório de temperatura da cor
 
 <a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/colorsetting'> você pode encontrar informações sobre atributos aqui.</a> Um atributo vazio é {}
 Ativo
@@ -73,7 +73,7 @@ Tempo limite de ping (ms)
 Coloque a função na frente dos nomes
 Adicione ação e característica para concluir o estado da Página inicial do Google.
 
-Por favor escolha um <a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/guides/' > TYPE</a> e um 
+Por favor escolha um <a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/guides/' > TYPE</a> e um
 Por favor selecione o ID do objeto ...
 Por favor, escreva seu e-mail apenas em letras minúsculas
 Ler estado de bloqueio
@@ -116,7 +116,7 @@ Lista branca para serviços
 Escreva a resposta para
 Yandex Alice
 Você pode inserir vários nomes divididos por vírgula
-Se você usa o ioBroker skill para a Alexa, escreva um comentário para nós <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/create-review/?ref-suffix=war_dp' target='_blank' class='here'>aqui</a>.<br>Exemplos podem ser encontrados <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/reviews' target='_blank'>aqui</a>.
+Se você usa o ioBroker skill para a Alexa, escreva um comentário para nós <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/create-review/?ref-suffix=war_dp' target='_blank' class='here'>aqui</a>. Exemplos podem ser encontrados <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/reviews' target='_blank'>aqui</a>.
 por ON
 limpar
 padrão

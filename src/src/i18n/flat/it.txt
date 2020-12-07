@@ -116,7 +116,7 @@ Lista bianca per i servizi
 Scrivi risposta a
 Yandex Алиса
 È possibile inserire diversi nomi divisi per virgola
-Se usi Alexa Skill, scrivi una recensione per noi <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/create-review/?ref-suffix=war_dp' target='_blank' class='here'>here</a>.<br>Gli esempi possono essere trovati <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/reviews' target='_blank'> qui </a>.
+Se usi Alexa Skill, scrivi una recensione per noi <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/create-review/?ref-suffix=war_dp' target='_blank' class='here'>here</a>. Gli esempi possono essere trovati <a href='http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/reviews' target='_blank'> qui </a>.
 da ON
 cancellare
 predefinito
