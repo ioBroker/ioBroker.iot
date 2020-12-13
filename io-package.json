@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.8.5",
+        "version": "1.8.6",
         "news": {
+            "1.8.6": {
+                "en": "Try to fix google home error",
+                "de": "Versuchen Sie, den Google Home-Fehler zu beheben",
+                "ru": "Попробуйте исправить ошибку Google Home",
+                "pt": "Tente corrigir o erro do Google Home",
+                "nl": "Probeer de Google Home-fout op te lossen",
+                "fr": "Essayez de corriger l'erreur Google Home",
+                "it": "Prova a correggere l'errore di Google Home",
+                "es": "Intenta corregir el error de inicio de Google",
+                "pl": "Spróbuj naprawić błąd strony głównej Google",
+                "zh-cn": "尝试修复Google Home错误"
+            },
             "1.8.5": {
                 "en": "Corrected the configuration table for google home",
                 "de": "Die Konfigurationstabelle für Google Home wurde korrigiert",
@@ -230,18 +242,6 @@
                 "es": "Se agregaron letras francesas a los símbolos permitidos",
                 "pl": "Dodano francuskie litery do dozwolonych symboli",
                 "zh-cn": "在允许的符号中添加了法语字母"
-            },
-            "1.6.1": {
-                "en": "Used new SelectID Dialog in GUI",
-                "de": "Verwendeter neuer SelectID-Dialog in der GUI",
-                "ru": "Используется новый диалог SelectID в GUI",
-                "pt": "Novo diálogo SelectID usado na GUI",
-                "nl": "Nieuwe SelectID-dialoog in GUI gebruikt",
-                "fr": "Nouvelle boîte de dialogue SelectID utilisée dans l'interface graphique",
-                "it": "Usato nuova finestra di dialogo SelectID nella GUI",
-                "es": "Se usó el nuevo cuadro de diálogo SelectID en la GUI",
-                "pl": "Użyto nowego okna dialogowego SelectID w GUI",
-                "zh-cn": "在GUI中使用了新的SelectID对话框"
             }
         },
         "title": "IoT Assistants",

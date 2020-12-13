@@ -105,7 +105,7 @@ class ExtendedOptions extends Component {
         if (this.state.showSelectId) {
             return <DialogSelectID
                 key="dialogSelectID2"
-                imagePrefix={'../..'}
+                imagePrefix="../.."
                 socket={this.props.socket}
                 selected={this.props.native[attr]}
                 types={['state']}

@@ -753,7 +753,7 @@ class AlexaSmartNames extends Component {
         if (this.state.showSelectId) {
             return <DialogSelectID
                 key="dialogSelectID1"
-                imagePrefix={'../..'}
+                imagePrefix="../.."
                 socket={this.props.socket}
                 selected={''}
                 types={['state']}

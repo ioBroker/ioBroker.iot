@@ -89,20 +89,30 @@ class GoogleSmartNames extends Component {
             browse: false,
             expanded: [],
             lastChanged: '',
-            helpHeight: 0,
-            columns: [
-                {title: I18n.t('ID'), field: 'id', editable: 'never', cellStyle: {
+            helpHeight: 0
+        };
+
+        this.columns = [
+            {
+                title: I18n.t('ID'),
+                field: 'id',
+                editable: 'never',
+                cellStyle: {
                     maxWidth: '12rem',
                     overflow: 'hidden',
                     wordBreak: 'break-word'
-                }},
-                {title: I18n.t('Smart names'), field: 'name.nicknames'},
-                {title: I18n.t('ioBType'), field: 'ioType', editable: 'never', cellStyle: {
+                }
+            },
+            {title: I18n.t('Smart names'), field: 'name.nicknames'},
+            {title: I18n.t('ioBType'), field: 'ioType', editable: 'never', cellStyle: {
                     maxWidth: '4rem',
                     overflow: 'hidden',
                     wordBreak: 'break-word'
                 }},
-                {title: I18n.t('Type'), field: 'type',  lookup: {
+            {
+                title: I18n.t('Type'),
+                field: 'type',
+                lookup: {
                     'action.devices.types.AC_UNIT':         'Air conditioning unit',
                     'action.devices.types.AIRFRESHENER':    'Air Freshener',
                     'action.devices.types.AIRPURIFIER':     'Air purifier',
@@ -144,8 +154,9 @@ class GoogleSmartNames extends Component {
                     'action.devices.types.WASHER':          'Washer',
                     'action.devices.types.WATERHEATER':     'Water heater',
                     'action.devices.types.WINDOW':          'Window'
-                }},
-                {title: I18n.t('Function/Trait'), field: 'displayTraits',  lookup: {
+                }
+            },
+            {title: I18n.t('Function/Trait'), field: 'displayTraits',  lookup: {
                     // 'action.devices.traits.ArmDisarm':   'ArmDisarm',
                     'action.devices.traits.Brightness':     'Brightness',
                     // 'action.devices.traits.CameraStream': 'CameraStream',
@@ -172,61 +183,63 @@ class GoogleSmartNames extends Component {
                     // 'action.devices.traits.Timer':       'Timer',
                     'action.devices.traits.Toggles':        'Toggles',
                     'action.devices.traits.Volume':         'Volume',
-                    }},
+                }},
 
-                {title: I18n.t('Attributes'), field: 'displayAttributes',   cellStyle: {
-                        maxWidth: '12rem',
-                        overflow: 'hidden',
-                        wordBreak: 'break-word'
-                    },
-                    expertMode: true,
-                    editComponent: props => (<textarea rows={4} style={{width: '100%', resize: 'vertical'}}
-                          value={props.value}
-                          onChange={e => props.onChange(e.target.value)}
-                        />)
+            {
+                title: I18n.t('Attributes'),
+                field: 'displayAttributes',
+                cellStyle: {
+                    maxWidth: '12rem',
+                    overflow: 'hidden',
+                    wordBreak: 'break-word'
                 },
-                {title: I18n.t('Room'), field: 'roomHint', editable: 'never'},
-                {title: I18n.t('Auto'), field: 'smartEnum', editable: 'never',
-                    cellStyle: {
-                        maxWidth: '3rem',
-                        overflow: 'hidden',
-                        wordBreak: 'break-word'
-                    },
-                    expertMode: true,
+                expertMode: true,
+                editComponent: props => <textarea rows={4} style={{width: '100%', resize: 'vertical'}}
+                                                  value={props.value}
+                                                  onChange={e => props.onChange(e.target.value)}
+                />
+            },
+            {title: I18n.t('Room'), field: 'roomHint', editable: 'never'},
+            {title: I18n.t('Auto'), field: 'smartEnum', editable: 'never',
+                cellStyle: {
+                    maxWidth: '3rem',
+                    overflow: 'hidden',
+                    wordBreak: 'break-word'
                 },
-                {title: I18n.t('Conversation to GH'), field: 'displayConv2GH',  cellStyle: {
-                        maxWidth: '4rem',
-                        overflow: 'hidden',
-                        wordBreak: 'break-word'
-                    },
-                    expertMode: true,
-                    editComponent: props => (
-                        <div>Conversation to Google Home = function(value)&#123; <br/>
-                            <textarea rows={4} style={{width: '100%', resize: 'vertical'}}
-                                value={props.value}
-                                onChange={e => props.onChange(e.target.value)}
-                            />
-                            &#125;
-                        </div>
-                    )
-                },
-                { title: I18n.t('Conversation to ioB'), field: 'displayConv2iob', cellStyle: {
+                expertMode: true,
+            },
+            {title: I18n.t('Conversation to GH'), field: 'displayConv2GH',  cellStyle: {
                     maxWidth: '4rem',
                     overflow: 'hidden',
                     wordBreak: 'break-word'
-                    },
-                    expertMode: true,
-                    editComponent: props => (
-                        <div>Conversation to ioBroker = function(value)&#123; <br/>
-                            <textarea rows={4} style={{width: '100%', resize: 'vertical'}}
-                                value={props.value}
-                                onChange={e => props.onChange(e.target.value)}
-                            />
-                            &#125;
-                        </div>
-                    )},
-              ]
-        };
+                },
+                expertMode: true,
+                editComponent: props => (
+                    <div>Conversation to Google Home = function(value)&#123; <br/>
+                        <textarea rows={4} style={{width: '100%', resize: 'vertical'}}
+                                  value={props.value}
+                                  onChange={e => props.onChange(e.target.value)}
+                        />
+                        &#125;
+                    </div>
+                )
+            },
+            { title: I18n.t('Conversation to ioB'), field: 'displayConv2iob', cellStyle: {
+                    maxWidth: '4rem',
+                    overflow: 'hidden',
+                    wordBreak: 'break-word'
+                },
+                expertMode: true,
+                editComponent: props => (
+                    <div>Conversation to ioBroker = function(value)&#123; <br/>
+                        <textarea rows={4} style={{width: '100%', resize: 'vertical'}}
+                                  value={props.value}
+                                  onChange={e => props.onChange(e.target.value)}
+                        />
+                        &#125;
+                    </div>
+                )},
+        ];
 
         this.timerChanged        = null;
         this.browseTimer         = null;
@@ -518,7 +531,7 @@ class GoogleSmartNames extends Component {
         if (this.state.showSelectId) {
             return <DialogSelectID
                 key="dialogSelectGoogle"
-                imagePrefix={'../..'}
+                imagePrefix="../.."
                 socket={this.props.socket}
                 selected={''}
                 types={['state']}
@@ -634,7 +647,7 @@ class GoogleSmartNames extends Component {
             </div>
             <br/>
             <div style={{flex: '100%'}}>
-                <div style={{fontWeight: "bold"}}>{Utils.renderTextWithA(I18n.t("For help use this forum <a target='_blank' rel='noopener noreferrer' href='https://forum.iobroker.net/topic/24061/google-home-assistant-iobroker-einrichten-nutzen/'>thread</a>"))}</div>
+                <div style={{fontWeight: "bold"}}>{Utils.renderTextWithA(I18n.t('For help use this forum'))}</div>
             </div>
         </div>;
     }
@@ -710,7 +723,7 @@ class GoogleSmartNames extends Component {
             {this.renderInstructions()}
             <div className={this.props.classes.tableDiv} style={{height: `calc(100% - ${48 + (this.state.helpHeight ? this.state.helpHeight + 64 : 0)}px)`}}>
                 <TreeTable
-                    columns={this.state.expertMode ? this.state.columns : this.state.columns.filter(item => !item.expertMode)}
+                    columns={this.state.expertMode ? this.columns : this.columns.filter(item => !item.expertMode)}
                     data={devices}
                     onUpdate={(newData, oldData) => {
                         if (newData.name.nicknames && Array.isArray(newData.name.nicknames)) {
