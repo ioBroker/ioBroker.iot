@@ -15,14 +15,13 @@ function checkConnectionOfAdapter(cb, counter) {
     counter = counter || 0;
     console.log('Try check #' + counter);
     if (counter > 30) {
-        if (cb) cb('Cannot check connection');
-        return;
+        return cb && cb('Cannot check connection');
     }
 
     states.getState('system.adapter.' + adapterShortName + '.0.alive', function (err, state) {
         if (err) console.error(err);
         if (state && state.val) {
-            if (cb) cb();
+            cb && cb();
         } else {
             setTimeout(() => checkConnectionOfAdapter(cb, counter + 1), 1000);
         }
@@ -32,21 +31,18 @@ function checkConnectionOfAdapter(cb, counter) {
 function checkValueOfState(id, value, cb, counter) {
     counter = counter || 0;
     if (counter > 20) {
-        if (cb) cb('Cannot check value Of State ' + id);
-        return;
+        return cb && cb('Cannot check value Of State ' + id);
     }
 
     states.getState(id, function (err, state) {
-        if (err) console.error(err);
+        err && console.error(err);
         if (value === null && !state) {
-            if (cb) cb();
+            cb && cb();
         } else
         if (state && (value === undefined || state.val === value)) {
-            if (cb) cb();
+            cb && cb();
         } else {
-            setTimeout(function () {
-                checkValueOfState(id, value, cb, counter + 1);
-            }, 500);
+            setTimeout(() => checkValueOfState(id, value, cb, counter + 1), 500);
         }
     });
 }
