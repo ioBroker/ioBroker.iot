@@ -9,7 +9,7 @@ const AlexaSH2     = require('./lib/alexaSmartHomeV2');
 const AlexaSH3     = require('./lib/alexaSmartHomeV3');
 const AlexaCustom  = require('./lib/alexaCustom');
 const AlexaCustomBlood = require('./lib/alexaCustomBlood');
-const GoogleHome   = require('./lib/GoogleHome');
+const GoogleHome   = require('./lib/googleHome');
 const YandexAlisa  = require('./lib/alisa');
 const fs           = require('fs');
 const request      = require('request');
@@ -413,7 +413,7 @@ function decrypt(key, value) {
         try {
             value = new Buffer(value.substring(7), 'base64').toString('ascii')
         } catch (e) {
-            adapter.log.error('Cannot decrypt key: ' + e);
+            adapter.log.error(`Cannot decrypt key: ${e}`);
         }
     }
 
@@ -484,14 +484,15 @@ function writeUrlKey(key) {
 
 function readKeys() {
     let privateKey;
-    return adapter.getStateAsync('certs.private', (err, priv) => {
-        if (!priv || !priv.val) {
-            return Promise.reject('Not exists');
-        } else {
-            privateKey = priv.val;
-            return adapter.getStateAsync('certs.certificate');
-        }
-    })
+    return adapter.getStateAsync('certs.private')
+        .then(priv => {
+            if (!priv || !priv.val) {
+                return Promise.reject('Not exists');
+            } else {
+                privateKey = priv.val;
+                return adapter.getStateAsync('certs.certificate');
+            }
+        })
         .then(certificate => {
             if (!certificate || !certificate.val) {
                 return Promise.reject('Not exists');
@@ -508,7 +509,7 @@ function writeKeys(data) {
     return          adapter.setStateAsync('certs.private',     encrypt(secret, data.keyPair.PrivateKey), true)
         .then(() => adapter.setStateAsync('certs.public',      encrypt(secret, data.keyPair.PublicKey),  true))
         .then(() => adapter.setStateAsync('certs.certificate', encrypt(secret, data.certificatePem),     true))
-        .then(() => adapter.setStateAsync('certs.id',          data.certificateId,                       true));
+        .then(() => adapter.setStateAsync('certs.id',          data.certificateId,                               true));
 }
 
 function fetchKeys(login, pass, _forceUserCreation) {
@@ -775,8 +776,8 @@ function startDevice(clientId, login, password, retry) {
 
             connectStarted = Date.now();
             device = new DeviceModule({
-                privateKey: new Buffer(certs.private),
-                clientCert: new Buffer(certs.certificate),
+                privateKey: Buffer.from(certs.private),
+                clientCert: Buffer.from(certs.certificate),
                 caCert:     fs.readFileSync(__dirname + '/keys/root-CA.crt'),
                 clientId,
                 username:   'ioBroker',

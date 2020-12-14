@@ -24,9 +24,7 @@ function checkConnectionOfAdapter(cb, counter) {
         if (state && state.val) {
             if (cb) cb();
         } else {
-            setTimeout(function () {
-                checkConnectionOfAdapter(cb, counter + 1);
-            }, 1000);
+            setTimeout(() => checkConnectionOfAdapter(cb, counter + 1), 1000);
         }
     });
 }
