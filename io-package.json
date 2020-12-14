@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.8.6",
+        "version": "1.8.7",
         "news": {
+            "1.8.7": {
+                "en": "Corrected the \"google home\" error",
+                "de": "Der Fehler \"Google Home\" wurde behoben",
+                "ru": "Исправлена ошибка \"Google Home\"",
+                "pt": "Corrigido o erro \"google home\"",
+                "nl": "De fout 'Google Home' is gecorrigeerd",
+                "fr": "Correction de l'erreur \"google home\"",
+                "it": "Corretto l'errore \"google home\"",
+                "es": "Se corrigió el error \"inicio de Google\".",
+                "pl": "Poprawiono błąd „google home”",
+                "zh-cn": "更正了“ Google主页”错误"
+            },
             "1.8.6": {
                 "en": "Try to fix google home error",
                 "de": "Versuchen Sie, den Google Home-Fehler zu beheben",
@@ -230,18 +242,6 @@
                 "es": "accidente prevenido (Sentry IOBROKER-IOT-V)",
                 "pl": "zapobieganie awariom (Sentry IOBROKER-IOT-V)",
                 "zh-cn": "防止崩溃（Sentry IOBROKER-IOT-V）"
-            },
-            "1.6.3": {
-                "en": "Added french letters to allowed symbols",
-                "de": "Den erlaubten Symbolen wurden französische Buchstaben hinzugefügt",
-                "ru": "Добавлены французские буквы в разрешенные символы",
-                "pt": "Adicionadas letras francesas aos símbolos permitidos",
-                "nl": "Franse letters toegevoegd aan toegestane symbolen",
-                "fr": "Ajout de lettres françaises aux symboles autorisés",
-                "it": "Aggiunte lettere francesi ai simboli consentiti",
-                "es": "Se agregaron letras francesas a los símbolos permitidos",
-                "pl": "Dodano francuskie litery do dozwolonych symboli",
-                "zh-cn": "在允许的符号中添加了法语字母"
             }
         },
         "title": "IoT Assistants",
