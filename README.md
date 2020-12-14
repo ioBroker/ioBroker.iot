@@ -256,7 +256,7 @@ Following types are supported:
 -->
 
 ## Changelog
-### 1.8.7 (2020-12-14)
+### 1.8.8 (2020-12-14)
 * (bluefox) Corrected the "google home" error
 
 ### 1.8.6 (2020-12-13)

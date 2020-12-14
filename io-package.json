@@ -1,9 +1,9 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.8.7",
+        "version": "1.8.8",
         "news": {
-            "1.8.7": {
+            "1.8.8": {
                 "en": "Corrected the \"google home\" error",
                 "de": "Der Fehler \"Google Home\" wurde behoben",
                 "ru": "Исправлена ошибка \"Google Home\"",
