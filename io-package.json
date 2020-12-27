@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.8.8",
+        "version": "1.8.9",
         "news": {
+            "1.8.9": {
+                "en": "Updated configuration GUI to the latest state",
+                "de": "Die Konfigurations-GUI wurde auf den neuesten Stand gebracht",
+                "ru": "Обновлен графический интерфейс конфигурации до последнего состояния",
+                "pt": "GUI de configuração atualizada para o estado mais recente",
+                "nl": "Bijgewerkte configuratie-GUI naar de nieuwste staat",
+                "fr": "Interface graphique de configuration mise à jour au dernier état",
+                "it": "Aggiornata la GUI di configurazione allo stato più recente",
+                "es": "GUI de configuración actualizada al último estado",
+                "pl": "Zaktualizowano GUI konfiguracji do najnowszego stanu",
+                "zh-cn": "将配置GUI更新为最新状态"
+            },
             "1.8.8": {
                 "en": "Corrected the \"google home\" error",
                 "de": "Der Fehler \"Google Home\" wurde behoben",
@@ -230,18 +242,6 @@
                 "es": "Se agregaron persianas, cerradura y termostato a Alisa",
                 "pl": "Dodano rolety, zamek i termostat do Alisa",
                 "zh-cn": "在Alisa中增加了百叶窗，锁和恒温器"
-            },
-            "1.6.4": {
-                "en": "crash prevented (Sentry IOBROKER-IOT-V)",
-                "de": "Absturz verhindert (Sentry IOBROKER-IOT-V)",
-                "ru": "сбой предотвращен (Sentry IOBROKER-IOT-V)",
-                "pt": "travamento evitado (Sentry IOBROKER-IOT-V)",
-                "nl": "crash voorkomen (Sentry IOBROKER-IOT-V)",
-                "fr": "crash évité (Sentry IOBROKER-IOT-V)",
-                "it": "crash prevenuto (Sentry IOBROKER-IOT-V)",
-                "es": "accidente prevenido (Sentry IOBROKER-IOT-V)",
-                "pl": "zapobieganie awariom (Sentry IOBROKER-IOT-V)",
-                "zh-cn": "防止崩溃（Sentry IOBROKER-IOT-V）"
             }
         },
         "title": "IoT Assistants",

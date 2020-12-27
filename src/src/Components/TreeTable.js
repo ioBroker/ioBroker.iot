@@ -385,7 +385,7 @@ class TreeTable extends React.Component {
     }
 
     render() {
-        const lookup = this.props.columns.find(col => col.field === this.state.orderBy).lookup;
+        const lookup = this.props.columns ? this.props.columns.find(col => col.field === this.state.orderBy).lookup : '';
         const table = stableSort(this.props.data, getComparator(this.state.order, this.state.orderBy, lookup));
 
         return <div className={clsx(this.props.classes.tableContainer, this.props.className)}>

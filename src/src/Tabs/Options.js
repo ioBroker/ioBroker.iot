@@ -18,7 +18,7 @@ import {MdRefresh as IconReload} from 'react-icons/md';
 import {MdClose as IconClose} from 'react-icons/md';
 
 import I18n from '@iobroker/adapter-react/i18n';
-import Logo from './Logo';
+import Logo from '@iobroker/adapter-react/Components/Logo';
 
 const styles = theme => ({
     tab: {
