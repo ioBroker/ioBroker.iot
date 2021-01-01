@@ -36,7 +36,7 @@
     "@alcalzone/release-script": "^1.8.1",
     "@types/iobroker": "^3.2.7",
     "@types/node": "^14.14.10",
-    "axios": "^0.21.0",
+    "axios": "^0.21.1",
     "chai": "^4.2.0",
     "del": "^6.0.0",
     "gulp": "^4.0.2",
