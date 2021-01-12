@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.8.9",
-        "news": {
+        "version": "1.8.10",
+        "news": { 
+            "1.8.10": { 
+                "en": "Corrected the request for percentage values",
+                "de": "Die Anforderung für Prozentwerte wurde korrigiert",
+                "ru": "Поправил запрос процентных значений",
+                "pt": "Corrigido o pedido de valores percentuais",
+                "nl": "Het verzoek om percentagewaarden gecorrigeerd",
+                "fr": "Correction de la demande de valeurs en pourcentage",
+                "it": "Corretta la richiesta di valori percentuali",
+                "es": "Se corrigió la solicitud de valores porcentuales.",
+                "pl": "Poprawiono żądanie wartości procentowych",
+                "zh-cn": "更正了对百分比值的要求"
+        }, 
             "1.8.9": {
                 "en": "Updated configuration GUI to the latest state",
                 "de": "Die Konfigurations-GUI wurde auf den neuesten Stand gebracht",

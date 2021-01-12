@@ -256,6 +256,9 @@ Following types are supported:
 -->
 
 ## Changelog
+### 1.8.10 (2020-01-12)
+* (Morluktom) Alexa - Corrected the request for percentage values
+
 ### 1.8.9 (2020-12-27)
 * (bluefox) Updated configuration GUI to the latest state
 
