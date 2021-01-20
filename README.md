@@ -256,7 +256,7 @@ Following types are supported:
 -->
 
 ## Changelog
-### __WORK IN PROGRESS__
+### 1.8.11 (2021-01-20)
 * (Morluktom) Alexa - Corrected the request for percentage values
 
 ### 1.8.10 (2021-01-20)

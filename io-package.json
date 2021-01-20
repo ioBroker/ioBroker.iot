@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.8.10",
+        "version": "1.8.11",
         "news": {
+            "1.8.11": {
+                "en": "Alexa - Corrected the request for percentage values",
+                "de": "Alexa - Die Anfrage nach Prozentwerten wurde korrigiert",
+                "ru": "Alexa - Исправлен запрос процентных значений",
+                "pt": "Alexa - corrigiu a solicitação de valores percentuais",
+                "nl": "Alexa - Het verzoek om percentagewaarden gecorrigeerd",
+                "fr": "Alexa - Correction de la demande de valeurs en pourcentage",
+                "it": "Alexa: corretta la richiesta di valori percentuali",
+                "es": "Alexa: se corrigió la solicitud de valores porcentuales",
+                "pl": "Alexa - poprawiono żądanie wartości procentowych",
+                "zh-cn": "Alexa-更正了对百分比值的要求"
+            },
             "1.8.10": {
                 "en": "Added the reconnect strategy if DNS address cannot be resolved",
                 "de": "Die Strategie zum erneuten Verbinden wurde hinzugefügt, wenn die DNS-Adresse nicht aufgelöst werden kann",
@@ -230,18 +242,6 @@
                 "es": "Accidente prevenido (Sentry IOBROKER-IOT-W)\nLos valores de los modos se convertirán a números en Alisa",
                 "pl": "Zapobiegano awariom (Sentry IOBROKER-IOT-W)\nWartości trybów zostaną przekonwertowane na liczby w Alisa",
                 "zh-cn": "防止崩溃（Sentry IOBROKER-IOT-W）\n模式的值将在Alisa中转换为数字"
-            },
-            "1.7.3": {
-                "en": "Added vacuum cleaner to Alisa",
-                "de": "Alisa Staubsauger hinzugefügt",
-                "ru": "Добавлен пылесос Алисе",
-                "pt": "Adicionou aspirador de pó a Alisa",
-                "nl": "Stofzuiger toegevoegd aan Alisa",
-                "fr": "Aspirateur ajouté à Alisa",
-                "it": "Aggiunto aspirapolvere ad Alisa",
-                "es": "Aspiradora agregada a Alisa",
-                "pl": "Dodano odkurzacz do Alisy",
-                "zh-cn": "向Alisa添加了吸尘器"
             }
         },
         "title": "IoT Assistants",
