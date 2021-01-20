@@ -749,6 +749,24 @@ function processMessage(type, request, callback) {
     }
 }
 
+function closeDevice() {
+    return new Promise(resolve => {
+        if (device) {
+            try {
+                device.end(true, () => {
+                    device = null;
+                    resolve();
+                });
+            } catch (e) {
+                device = null;
+                resolve();
+            }
+        } else {
+            resolve();
+        }
+    });
+}
+
 function startDevice(clientId, login, password, retry) {
     retry = retry || 0;
     let certs;
@@ -774,6 +792,10 @@ function startDevice(clientId, login, password, retry) {
         .then(key => {
             adapter.log.debug(`URL key is ${JSON.stringify(key)}, clientId: ${clientId}`);
 
+            // destroy old device
+            return closeDevice();
+        })
+        .then(() => {
             connectStarted = Date.now();
             device = new DeviceModule({
                 privateKey: Buffer.from(certs.private),
@@ -787,12 +809,23 @@ function startDevice(clientId, login, password, retry) {
                 keepalive:  60
             });
 
-            device.subscribe('command/' + clientId + '/#');
+            device.subscribe(`command/${clientId}/#`);
             device.on('connect', onConnect);
             device.on('close', onDisconnect);
             device.on('reconnect', () => adapter.log.debug('reconnect'));
             device.on('offline', () => adapter.log.debug('offline'));
-            device.on('error', error => adapter.log.error(`Error by device connection: ${(error && error.message && JSON.stringify(error.message)) || JSON.stringify(error)}`));
+            device.on('error', error => {
+                const errorTxt = (error && error.message && JSON.stringify(error.message)) || JSON.stringify(error);
+                adapter.log.error(`Error by device connection: ${errorTxt}`);
+
+                // restart iot device if DNS cannot be resolved
+                if (errorTxt.includes('EAI_AGAIN')) {
+                    adapter.log.error(`DNS name of ${adapter.config.cloudUrl} cannot be resolved: connection will be retried in 10 seconds.`);
+                    setTimeout(() =>
+                        startDevice(clientId, login, password), 10000);
+                }
+            });
+
             device.on('message', (topic, request) => {
                 adapter.log.debug(`Request ${topic}`);
                 if (topic.startsWith(`command/${clientId}/`)) {
@@ -911,9 +944,9 @@ function main() {
                 if (err === 'Not exists') {
                     return createUrlKey(adapter.config.login, adapter.config.pass)
                         .then(key => googleHome = new GoogleHome(adapter, key))
-                        .catch(err => adapter.log.error('Cannot read URL key: ' + (typeof err === 'object' ? JSON.stringify(err) : err)));
+                        .catch(err => adapter.log.error(`Cannot read URL key: ${typeof err === 'object' ? JSON.stringify(err) : err}`));
                 } else {
-                    adapter.log.error('Cannot read URL key: ' + (typeof err === 'object' ? JSON.stringify(err) : err));
+                    adapter.log.error(`Cannot read URL key: ${typeof err === 'object' ? JSON.stringify(err) : err}`);
                 }
             }
         })

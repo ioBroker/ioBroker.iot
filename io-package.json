@@ -2,19 +2,19 @@
     "common": {
         "name": "iot",
         "version": "1.8.10",
-        "news": { 
-            "1.8.10": { 
-                "en": "Corrected the request for percentage values",
-                "de": "Die Anforderung für Prozentwerte wurde korrigiert",
-                "ru": "Поправил запрос процентных значений",
-                "pt": "Corrigido o pedido de valores percentuais",
-                "nl": "Het verzoek om percentagewaarden gecorrigeerd",
-                "fr": "Correction de la demande de valeurs en pourcentage",
-                "it": "Corretta la richiesta di valori percentuali",
-                "es": "Se corrigió la solicitud de valores porcentuales.",
-                "pl": "Poprawiono żądanie wartości procentowych",
-                "zh-cn": "更正了对百分比值的要求"
-        }, 
+        "news": {
+            "1.8.10": {
+                "en": "Added the reconnect strategy if DNS address cannot be resolved",
+                "de": "Die Strategie zum erneuten Verbinden wurde hinzugefügt, wenn die DNS-Adresse nicht aufgelöst werden kann",
+                "ru": "Добавлена стратегия переподключения, если DNS-адрес не может быть разрешен",
+                "pt": "Adicionada a estratégia de reconexão se o endereço DNS não puder ser resolvido",
+                "nl": "De strategie voor opnieuw verbinden toegevoegd als het DNS-adres niet kan worden opgelost",
+                "fr": "Ajout de la stratégie de reconnexion si l'adresse DNS ne peut pas être résolue",
+                "it": "Aggiunta la strategia di riconnessione se l'indirizzo DNS non può essere risolto",
+                "es": "Se agregó la estrategia de reconexión si la dirección DNS no se puede resolver",
+                "pl": "Dodano strategię ponownego łączenia, jeśli nie można rozwiązać adresu DNS",
+                "zh-cn": "如果无法解析DNS地址，则添加了重新连接策略"
+            },
             "1.8.9": {
                 "en": "Updated configuration GUI to the latest state",
                 "de": "Die Konfigurations-GUI wurde auf den neuesten Stand gebracht",
@@ -242,18 +242,6 @@
                 "es": "Aspiradora agregada a Alisa",
                 "pl": "Dodano odkurzacz do Alisy",
                 "zh-cn": "向Alisa添加了吸尘器"
-            },
-            "1.7.1": {
-                "en": "Added blinds, lock and thermostat to Alisa",
-                "de": "Alisa wurden Jalousien, Schloss und Thermostat hinzugefügt",
-                "ru": "Добавлены жалюзи, замок и термостат Алисе.",
-                "pt": "Adicionou cortinas, fechadura e termostato para Alisa",
-                "nl": "Jaloezieën, slot en thermostaat toegevoegd aan Alisa",
-                "fr": "Ajout de stores, serrure et thermostat à Alisa",
-                "it": "Aggiunte persiane, serratura e termostato ad Alisa",
-                "es": "Se agregaron persianas, cerradura y termostato a Alisa",
-                "pl": "Dodano rolety, zamek i termostat do Alisa",
-                "zh-cn": "在Alisa中增加了百叶窗，锁和恒温器"
             }
         },
         "title": "IoT Assistants",
