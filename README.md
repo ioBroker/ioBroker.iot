@@ -256,6 +256,9 @@ Following types are supported:
 -->
 
 ## Changelog
+### 1.8.10 (2021-01-20)
+* (bluefox) Added the reconnect strategy if DNS address cannot be resolved
+
 ### 1.8.9 (2020-12-27)
 * (bluefox) Updated configuration GUI to the latest state
 
