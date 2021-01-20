@@ -256,6 +256,9 @@ Following types are supported:
 -->
 
 ## Changelog
+### __WORK IN PROGRESS__
+* (Morluktom) Alexa - Corrected the request for percentage values
+
 ### 1.8.10 (2021-01-20)
 * (bluefox) Added the reconnect strategy if DNS address cannot be resolved
 
