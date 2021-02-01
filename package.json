@@ -23,7 +23,7 @@
     "canvas": "^2.6.1"
   },
   "dependencies": {
-    "echarts": "^4.9.0",
+    "echarts": "^5.0.1",
     "jsdom": "^16.4.0",
     "moment": "^2.29.1",
     "aws-iot-device-sdk": "^2.2.6",
