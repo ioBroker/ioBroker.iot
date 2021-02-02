@@ -256,6 +256,9 @@ Following types are supported:
 -->
 
 ## Changelog
+### 1.8.12 (2021-02-02)
+* (bluefox) Fixed the dimmer issue with alisa.
+
 ### 1.8.11 (2021-01-20)
 * (Morluktom) Alexa - Corrected the request for percentage values
 
