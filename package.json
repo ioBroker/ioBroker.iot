@@ -33,9 +33,9 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@alcalzone/release-script": "^1.8.1",
-    "@types/iobroker": "^3.2.7",
-    "@types/node": "^14.14.20",
+    "@alcalzone/release-script": "^1.8.3",
+    "@types/iobroker": "^3.2.8",
+    "@types/node": "^14.14.22",
     "axios": "^0.21.1",
     "chai": "^4.2.0",
     "del": "^6.0.0",
@@ -50,7 +50,7 @@
     "test": "mocha --exit",
     "prepublishOnly": "gulp",
     "build": "gulp",
-    "release": "node node_modules/@alcalzone/release-script/bin/release.js"
+    "release": "release-script"
   },
   "license": "MIT",
   "readmeFilename": "README.md"
