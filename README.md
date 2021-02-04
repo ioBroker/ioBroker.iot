@@ -257,7 +257,7 @@ Following types are supported:
 
 ## Changelog
 
-### __WORK IN PROGRESS__
+### 1.8.13 (2021-02-04)
 * (Apollon77) add missing object smart.lastObjectID
 
 ### 1.8.12 (2021-02-02)
