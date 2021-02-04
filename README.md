@@ -256,6 +256,10 @@ Following types are supported:
 -->
 
 ## Changelog
+
+### __WORK IN PROGRESS__
+* (Apollon77) add missing object smart.lastObjectID
+
 ### 1.8.12 (2021-02-02)
 * (bluefox) Fixed the dimmer issue with alisa.
 

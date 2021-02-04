@@ -448,6 +448,18 @@
             "native": {}
         },
         {
+            "_id": "smart.lastObjectID",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": "Last accessed object id",
+                "type": "string",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
             "_id": "smart.updates",
             "type": "state",
             "common": {
