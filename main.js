@@ -405,13 +405,13 @@ function encrypt(key, value) {
     for(let i = 0; i < value.length; i++) {
         result += String.fromCharCode(key[i % key.length].charCodeAt(0) ^ value.charCodeAt(i));
     }
-    return 'base64:' + new Buffer(result).toString('base64');
+    return 'base64:' + Buffer.from(result).toString('base64');
 }
 
 function decrypt(key, value) {
     if (value.startsWith('base64:')) {
         try {
-            value = new Buffer(value.substring(7), 'base64').toString('ascii')
+            value = Buffer.from(value.substring(7), 'base64').toString('ascii')
         } catch (e) {
             adapter.log.error(`Cannot decrypt key: ${e}`);
         }

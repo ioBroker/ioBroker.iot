@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.8.13",
+        "version": "1.8.14",
         "news": {
+            "1.8.14": {
+                "en": "allowed the control of the blinds in alisa",
+                "de": "erlaubte die Kontrolle der Jalousien in Alisa",
+                "ru": "разрешил управление жалюзи в Алисе",
+                "pt": "permitiu o controle das persianas em alisa",
+                "nl": "stond de bediening van de jaloezieën toe in alisa",
+                "fr": "a permis le contrôle des stores dans alisa",
+                "it": "ha permesso il controllo dei bui in alisa",
+                "es": "permitió el control de las persianas en alisa",
+                "pl": "pozwolił na kontrolę żaluzji w alisa",
+                "zh-cn": "允许控制alisa中的百叶窗"
+            },
             "1.8.13": {
                 "en": "add missing object smart.lastObjectID",
                 "de": "fehlendes Objekt smart.lastObjectID hinzufügen",
@@ -230,18 +242,6 @@
                 "es": "Se agregó información sobre el proceso de vinculación modificado.",
                 "pl": "Dodano informacje o zmienionym procesie łączenia.",
                 "zh-cn": "添加了有关更改链接过程的信息。"
-            },
-            "1.7.6": {
-                "en": "Some colors were changed in dark mode.",
-                "de": "Einige Farben wurden im Dunkelmodus geändert.",
-                "ru": "Некоторые цвета были изменены в темном режиме.",
-                "pt": "Algumas cores foram alteradas no modo escuro.",
-                "nl": "Sommige kleuren zijn gewijzigd in de donkere modus.",
-                "fr": "Certaines couleurs ont été modifiées en mode sombre.",
-                "it": "Alcuni colori sono stati modificati in modalità scura.",
-                "es": "Algunos colores se cambiaron en modo oscuro.",
-                "pl": "Niektóre kolory zostały zmienione w trybie ciemnym.",
-                "zh-cn": "在黑暗模式下更改了某些颜色。"
             }
         },
         "title": "IoT Assistants",
