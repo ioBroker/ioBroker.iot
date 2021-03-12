@@ -29,6 +29,9 @@ import {FaPalette as IconColor} from 'react-icons/fa';
 import {FaLightbulb as IconBulb} from 'react-icons/fa';
 import {FaLockOpen as IconLock} from 'react-icons/fa';
 import {FaThermometer as IconThermometer} from 'react-icons/fa';
+import {FaTint as IconHumidity} from 'react-icons/fa';
+import {FaMale as IconMotion} from 'react-icons/fa';
+import {FaLink as IconContact} from 'react-icons/fa';
 
 import Utils from '@iobroker/adapter-react/Components/Utils'
 import I18n from '@iobroker/adapter-react/i18n';
@@ -74,6 +77,13 @@ const actionsMapping = {
 
     setLockState: {color: colorSet, icon: IconLock, desc: 'Set lock state'},
     getLockState: {color: colorRead, icon: IconLock, desc: 'Read lock state'},
+
+    getActualTemperature: {color: colorRead, icon: IconThermometer, desc: 'Get actual temperature'},
+    getActualHumidity: {color: colorRead, icon: IconHumidity, desc: 'Get actual humidity'},
+
+    getMotion: {color: colorRead, icon: IconMotion, desc: 'Get motion'},
+    getContact: {color: colorRead, icon: IconContact, desc: 'Get contact'},
+
 };
 
 const SMARTTYPES = ['LIGHT', 'SWITCH', 'THERMOSTAT', 'ACTIVITY_TRIGGER', 'SCENE_TRIGGER', 'SMARTPLUG', 'SMARTLOCK', 'CAMERA', 'THERMOSTAT.AC', 'VACUUM_CLEANER'];
@@ -356,7 +366,7 @@ class AlisaDevices extends Component {
 
     addChanged(id, cb) {
         const changed = JSON.parse(JSON.stringify(this.state.changed));
-        if (changed.indexOf(id) === -1) {
+        if (!changed.includes(id)) {
             changed.push(id);
             this.setState({changed}, () => cb && cb());
         } else {
@@ -498,17 +508,14 @@ class AlisaDevices extends Component {
 
     renderSelectType(dev, lineNum, id, type) {
         if (type !== false) {
-            const items = [
-                (<MenuItem key="_" value="_"><em>{I18n.t('no type')}</em></MenuItem>)
-            ];
+            const items = [<MenuItem key="_" value="_"><em>{I18n.t('no type')}</em></MenuItem>];
             for (let i = 0; i < SMARTTYPES.length; i++) {
-                items.push((<MenuItem  key={SMARTTYPES[i]} value={SMARTTYPES[i]}><em>{I18n.t(SMARTTYPES[i])}</em></MenuItem>));
+                items.push(<MenuItem  key={SMARTTYPES[i]} value={SMARTTYPES[i]}><em>{I18n.t(SMARTTYPES[i])}</em></MenuItem>);
             }
-            return (
-                <FormControl>
-                    <Select value={type || '_'} onChange={e => this.onParamsChange(id, undefined, e.target.value)}>{items}</Select>
-                    <FormHelperText className={this.props.classes.devSubLineTypeTitle}>{I18n.t('Types')}</FormHelperText>
-                </FormControl>);
+            return <FormControl>
+                <Select value={type || '_'} onChange={e => this.onParamsChange(id, undefined, e.target.value)}>{items}</Select>
+                <FormHelperText className={this.props.classes.devSubLineTypeTitle}>{I18n.t('Types')}</FormHelperText>
+            </FormControl>;
         } else {
             return '';
         }
@@ -518,29 +525,28 @@ class AlisaDevices extends Component {
         const result = [];
         const classes = this.props.classes;
 
-        const id = dev.main.getId;
+        const id = dev.main.getId || dev.iobID;
         const name = dev.func;
         let background = this.props.themeType === 'dark' ? DEFAULT_CHANNEL_COLOR_DARK : DEFAULT_CHANNEL_COLOR_LIGHT;/*this.state.changed.indexOf(id) !== -1 ? CHANGED_COLOR : DEFAULT_CHANNEL_COLOR;
         if (this.state.lastChanged === id && background === DEFAULT_CHANNEL_COLOR) {
             background = LAST_CHANGED_COLOR;
         }*/
-        result.push((<div key={'sub' + id} className={classes.devSubLine} style={{background}}>
+        result.push(<div key={'sub' + id + '_' + lineNum} className={classes.devSubLine} style={{background}}>
             <div className={classes.devSubLineName}>{name.toUpperCase()}</div>
             <div className={classes.devSubSubLine}>
                 <div>{dev.main.getId}</div>
-                {dev.main.setId && dev.main.setId !== dev.main.getId ? (<div className={classes.devSubLineSetId}>{dev.main.setId}</div>) : null}
+                {dev.main.setId && dev.main.setId !== dev.main.getId ? <div className={classes.devSubLineSetId}>{dev.main.setId}</div> : null}
             </div>
-
-        </div>));
+        </div>);
 
         dev.attributes.forEach(attr => {
-            result.push((<div key={'sub' + attr.getId} className={classes.devSubLine} style={{background}}>
+            result.push(<div key={'sub' + attr.getId} className={classes.devSubLine} style={{background}}>
                 <div className={classes.devSubLineName}>{attr.name.toUpperCase()}</div>
                 <div className={classes.devSubSubLine}>
                     <div>{attr.getId}</div>
                     {attr.setId && attr.setId !== attr.getId ? (<div className={classes.devSubLineSetId}>{attr.setId}</div>) : null}
                 </div>
-            </div>));
+            </div>);
         });
 
         /*if (dev.additionalApplianceDetails.group) {
@@ -578,9 +584,9 @@ class AlisaDevices extends Component {
 
     renderDevice(dev, lineNum) {
         //return (<div key={lineNum}>{JSON.stringify(dev)}</div>);
-        const expanded = this.state.expanded.indexOf(dev.name) !== -1;
+        const expanded = this.state.expanded.includes(dev.name);
         let background = (lineNum % 2) ? (this.props.themeType === 'dark' ? '#272727' : '#f1f1f1') : 'inherit';
-        const changed = this.state.changed.indexOf(dev.iobID) !== -1;
+        const changed = this.state.changed.includes(dev.iobID);
         if (changed) {
             background = CHANGED_COLOR;
         } else if (dev.iobID === this.state.lastChanged) {
@@ -590,7 +596,7 @@ class AlisaDevices extends Component {
         //const isComplex = dev.
 
         return [
-            (<div key={'line' + lineNum} className={this.props.classes.devLine} style={{background}}>
+            <div key={'line' + lineNum} className={this.props.classes.devLine} style={{background}}>
                 <div className={this.props.classes.devLineNumber}>{lineNum + 1}.</div>
                 <IconButton className={this.props.classes.devLineExpand} onClick={() => this.onExpand(lineNum)}>
                     {dev.attributes.length ?
@@ -606,7 +612,7 @@ class AlisaDevices extends Component {
                 <IconButton aria-label="Edit" className={this.props.classes.devLineEdit} onClick={() => this.onEdit(dev.iobID)}><IconEdit fontSize="middle" /></IconButton>
                 <IconButton aria-label="Delete" className={this.props.classes.devLineDelete} onClick={() => this.onAskDelete(dev.iobID)}><IconDelete fontSize="middle" /></IconButton>
 
-            </div>),
+            </div>,
             expanded ? this.renderChannels(dev, lineNum) : null
         ];
     }
@@ -637,17 +643,15 @@ class AlisaDevices extends Component {
                     Utils.updateSmartName(obj, this.editedSmartName, undefined, undefined, this.props.adapterName + '.' + this.props.instance, this.props.native.noCommon);
                     return this.props.socket.setObject(id, obj);
                 })
-                .then(() => {
-                    // update obj
-                    this.informInstance(id);
-                })
+                // update obj
+                .then(() => this.informInstance(id))
                 .catch(err => this.props.onError(err));
         });
     }
 
     renderEditDialog() {
         if (this.state.editId) {
-            return (<Dialog
+            return <Dialog
                 open={true}
                 maxWidth="sm"
                 fullWidth={true}
@@ -679,7 +683,7 @@ class AlisaDevices extends Component {
                         this.setState({editId: '', editedSmartName: ''});
                     }}>{I18n.t('Cancel')}</Button>
                 </DialogActions>
-            </Dialog>)
+            </Dialog>;
         } else {
             return null;
         }
@@ -687,7 +691,7 @@ class AlisaDevices extends Component {
 
     renderConfirmDialog() {
         if (this.state.showConfirmation) {
-            return (<Dialog
+            return <Dialog
                 open={true}
                 maxWidth="sm"
                 fullWidth={true}
@@ -703,7 +707,7 @@ class AlisaDevices extends Component {
                     <Button onClick={() => this.onDelete()} color="primary" autoFocus>{I18n.t('Ok')}</Button>
                     <Button onClick={() => this.setState({showConfirmation: ''})}>{I18n.t('Cancel')}</Button>
                 </DialogActions>
-            </Dialog>)
+            </Dialog>;
         } else {
             return null;
         }
@@ -756,10 +760,12 @@ class AlisaDevices extends Component {
         const filter = this.state.filter.toLowerCase();
         const result = [];
         for (let i = 0; i < this.state.devices.length; i++) {
-            if (this.state.filter && this.state.devices[i].name.toLowerCase().indexOf(filter) === -1 ) continue;
+            if (this.state.filter && this.state.devices[i].name.toLowerCase().indexOf(filter) === -1 ) {
+                continue;
+            }
             result.push(this.renderDevice(this.state.devices[i], i));
         }
-        return (<div key="listDevices" className={this.props.classes.columnDiv}>{result}</div>);
+        return <div key="listDevices" className={this.props.classes.columnDiv}>{result}</div>;
     }
 
     renderListOfDevices() {
@@ -796,7 +802,7 @@ class AlisaDevices extends Component {
                 }} color="primary">{I18n.t('Copy to clipboard')}</Button>
                 <Button onClick={() => this.setState({showListOfDevices: false})} autoFocus>{I18n.t('Close')}</Button>
             </DialogActions>
-        </Dialog>
+        </Dialog>;
     }
 
     render() {
@@ -804,36 +810,34 @@ class AlisaDevices extends Component {
             return (<CircularProgress  key="alexaProgress" />);
         }
 
-        return (
-            <form key="alexa" className={this.props.classes.tab}>
-                <Fab size="small" color="secondary" aria-label="Add" className={this.props.classes.button} onClick={() => this.setState({showSelectId: true})}><IconAdd /></Fab>
-                <Fab size="small" color="primary" aria-label="Refresh" className={this.props.classes.button}
-                      onClick={() => this.browse(true)} disabled={this.state.browse}>{this.state.browse ? (<CircularProgress size={20} />) : (<IconRefresh/>)}</Fab>
-                <Fab style={{marginLeft: '1rem'}}
-                     title={I18n.t('Show all devices for print out')}
-                     size="small" aria-label="List of devices" className={this.props.classes.button}
-                     onClick={() => this.setState({showListOfDevices: true})} disabled={this.state.browse}><IconList/></Fab>
-                <TextField
-                    placeholder={I18n.t('Filter')}
-                    className={this.state.filter}
-                    value={this.state.filter}
-                    onChange={e => this.setState({filter: e.target.value})}
-                    InputProps={{
-                        endAdornment: this.state.filter ? (
-                            <IconButton onClick={() => this.setState({ filter: '' })}>
-                                <IconClear />
-                            </IconButton>
-                        ) : undefined,
-                    }}
-                />
-                {this.renderDevices()}
-                {this.renderMessage()}
-                {this.renderEditDialog()}
-                {this.getSelectIdDialog()}
-                {this.renderConfirmDialog()}
-                {this.renderListOfDevices()}
-            </form>
-        );
+        return <form key="alexa" className={this.props.classes.tab}>
+            <Fab size="small" color="secondary" aria-label="Add" className={this.props.classes.button} onClick={() => this.setState({showSelectId: true})}><IconAdd /></Fab>
+            <Fab size="small" color="primary" aria-label="Refresh" className={this.props.classes.button}
+                  onClick={() => this.browse(true)} disabled={this.state.browse}>{this.state.browse ? (<CircularProgress size={20} />) : (<IconRefresh/>)}</Fab>
+            <Fab style={{marginLeft: '1rem'}}
+                 title={I18n.t('Show all devices for print out')}
+                 size="small" aria-label="List of devices" className={this.props.classes.button}
+                 onClick={() => this.setState({showListOfDevices: true})} disabled={this.state.browse}><IconList/></Fab>
+            <TextField
+                placeholder={I18n.t('Filter')}
+                className={this.state.filter}
+                value={this.state.filter}
+                onChange={e => this.setState({filter: e.target.value})}
+                InputProps={{
+                    endAdornment: this.state.filter ? (
+                        <IconButton onClick={() => this.setState({ filter: '' })}>
+                            <IconClear />
+                        </IconButton>
+                    ) : undefined,
+                }}
+            />
+            {this.renderDevices()}
+            {this.renderMessage()}
+            {this.renderEditDialog()}
+            {this.getSelectIdDialog()}
+            {this.renderConfirmDialog()}
+            {this.renderListOfDevices()}
+        </form>;
     }
 }
 

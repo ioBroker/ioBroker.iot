@@ -902,6 +902,9 @@ function main() {
     if (adapter.config.login !== (adapter.config.login || '').trim().toLowerCase()) {
         adapter.log.error('Please write your login only in lowercase!');
     }
+    if (!adapter.config.login || !adapter.config.pass) {
+        return adapter.log.error('No cloud credentials found. Please get one on https://iobroker.pro');
+    }
 
     adapter.config.deviceOffLevel = parseFloat(adapter.config.deviceOffLevel) || 0;
     adapter.config.concatWord     = (adapter.config.concatWord || '').toString().trim();
@@ -913,7 +916,7 @@ function main() {
     if (adapter.config.replaces) {
         let text = [];
         for (let r = 0; r < adapter.config.replaces.length; r++) {
-            text.push('"' + adapter.config.replaces + '"');
+            text.push(`"${adapter.config.replaces}"`);
         }
         adapter.log.debug('Following strings will be replaced in names: ' + text.join(', '));
     }
@@ -929,21 +932,38 @@ function main() {
     if (adapter.config.yandexAlisa) {
         yandexAlisa = new YandexAlisa(adapter);
     }
-
     let systemConfig;
     // read URL keys from server
     readUrlKey()
         .then(key => {
             if (adapter.config.googleHome) {
                 googleHome = new GoogleHome(adapter, key);
+            }// no else
+            if (false && adapter.config.yandexAlisa) {
+                yandexAlisa = new YandexAlisa(adapter, key);
             }
         })
         .catch(err => {
+            let promise;
+            if (adapter.config.googleHome || adapter.config.yandexAlisa) {
+                promise = createUrlKey(adapter.config.login, adapter.config.pass)
+            }
+
             if (adapter.config.googleHome) {
                 // create keys automatically if they do not exist
                 if (err === 'Not exists') {
-                    return createUrlKey(adapter.config.login, adapter.config.pass)
+                    return promise
                         .then(key => googleHome = new GoogleHome(adapter, key))
+                        .catch(err => adapter.log.error(`Cannot read URL key: ${typeof err === 'object' ? JSON.stringify(err) : err}`));
+                } else {
+                    adapter.log.error(`Cannot read URL key: ${typeof err === 'object' ? JSON.stringify(err) : err}`);
+                }
+            }// no else
+            if (adapter.config.yandexAlisa) {
+                // create keys automatically if they do not exist
+                if (err === 'Not exists') {
+                    return promise
+                        .then(key => yandexAlisa = new YandexAlisa(adapter, key))
                         .catch(err => adapter.log.error(`Cannot read URL key: ${typeof err === 'object' ? JSON.stringify(err) : err}`));
                 } else {
                     adapter.log.error(`Cannot read URL key: ${typeof err === 'object' ? JSON.stringify(err) : err}`);

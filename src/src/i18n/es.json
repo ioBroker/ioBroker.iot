@@ -175,5 +175,8 @@
   "The password is equal with ioBroker.pro and with password that was entered here in the settings!": "¡La contraseña es igual a ioBroker.pro y con la contraseña que se ingresó aquí en la configuración!",
   "Not understood": "No se entiende",
   "Roger that": "Entendido",
-  "Read blood sugar from": "Leer azúcar en sangre de"
+  "Read blood sugar from": "Leer azúcar en sangre de",
+  "Get actual humidity": "Obtenga la humedad real",
+  "Get motion": "Obtener movimiento",
+  "Get contact": "Obtener estado de contacto"
 }

@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.8.14",
+        "version": "1.8.15",
         "news": {
+            "1.8.15": {
+                "en": "implemented the sensor functionality in alisa",
+                "de": "implementierte die Sensorfunktionalität in alisa",
+                "ru": "реализовал сенсорный функционал в алисе",
+                "pt": "implementou a funcionalidade do sensor no alisa",
+                "nl": "de sensorfunctie geïmplementeerd in alisa",
+                "fr": "implémenté la fonctionnalité de capteur dans alisa",
+                "it": "implementato la funzionalità del sensore in alisa",
+                "es": "implementó la funcionalidad del sensor en alisa",
+                "pl": "zaimplementował funkcjonalność czujnika w alisa",
+                "zh-cn": "在alisa中实现了传感器功能"
+            },
             "1.8.14": {
                 "en": "allowed the control of the blinds in alisa",
                 "de": "erlaubte die Kontrolle der Jalousien in Alisa",
@@ -230,18 +242,6 @@
                 "es": "GUI actualizada para la configuración",
                 "pl": "Zaktualizowano GUI dla config",
                 "zh-cn": "更新了配置的GUI"
-            },
-            "1.7.7": {
-                "en": "Added information about changed linking process.",
-                "de": "Informationen zum geänderten Verknüpfungsprozess hinzugefügt.",
-                "ru": "Добавлена информация об изменении процесса связывания.",
-                "pt": "Adicionadas informações sobre o processo de vinculação alterado.",
-                "nl": "Informatie toegevoegd over gewijzigd koppelingsproces.",
-                "fr": "Ajout d'informations sur le processus de liaison modifié.",
-                "it": "Aggiunte informazioni sul processo di collegamento modificato.",
-                "es": "Se agregó información sobre el proceso de vinculación modificado.",
-                "pl": "Dodano informacje o zmienionym procesie łączenia.",
-                "zh-cn": "添加了有关更改链接过程的信息。"
             }
         },
         "title": "IoT Assistants",

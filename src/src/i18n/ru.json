@@ -175,5 +175,8 @@
   "The password is equal with ioBroker.pro and with password that was entered here in the settings!": "Пароль совпадает с ioBroker.pro и с паролем, который был введен здесь в настройках!",
   "Not understood": "Не понятно",
   "Roger that": "Понятно",
-  "Read blood sugar from": "Считывать уровень сахара в крови из"
+  "Read blood sugar from": "Считывать уровень сахара в крови из",
+  "Get actual humidity": "Получите фактическую влажность",
+  "Get motion": "Получить движение",
+  "Get contact": "Получить статус контакта"
 }

@@ -175,5 +175,8 @@
   "The password is equal with ioBroker.pro and with password that was entered here in the settings!": "Hasło jest równe z ioBroker.pro i hasłem, które zostało wprowadzone tutaj w ustawieniach!",
   "Not understood": "Nie rozumiem",
   "Roger that": "Przyjąłem",
-  "Read blood sugar from": "Odczytaj poziom cukru we krwi"
+  "Read blood sugar from": "Odczytaj poziom cukru we krwi",
+  "Get actual humidity": "Uzyskaj aktualną wilgotność",
+  "Get motion": "Wpraw się w ruch",
+  "Get contact": "Uzyskaj status kontaktu"
 }

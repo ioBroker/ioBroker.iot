@@ -175,5 +175,8 @@
   "The password is equal with ioBroker.pro and with password that was entered here in the settings!": "密码与ioBroker.pro以及在设置中输入的密码相同！",
   "Not understood": "不明白",
   "Roger that": "收到",
-  "Read blood sugar from": "从读取血糖"
+  "Read blood sugar from": "从读取血糖",
+  "Get actual humidity": "获取实际湿度",
+  "Get motion": "动起来",
+  "Get contact": "获取联系状态"
 }
