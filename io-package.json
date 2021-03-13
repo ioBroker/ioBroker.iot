@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.8.15",
+        "version": "1.8.16",
         "news": {
+            "1.8.16": {
+                "en": "fixed the blind functionality in alisa",
+                "de": "Die Blindfunktionalität in Alisa wurde behoben",
+                "ru": "исправлена работа слепых в алисе",
+                "pt": "consertou a funcionalidade cega em alisa",
+                "nl": "repareerde de blinde functionaliteit in alisa",
+                "fr": "correction de la fonctionnalité aveugle dans alisa",
+                "it": "corretta la funzionalità dei ciechi in alisa",
+                "es": "Se arregló la funcionalidad ciega en alisa",
+                "pl": "naprawiono funkcję niewidomych w alisa",
+                "zh-cn": "修复了alisa中的盲目功能"
+            },
             "1.8.15": {
                 "en": "implemented the sensor functionality in alisa",
                 "de": "implementierte die Sensorfunktionalität in alisa",
@@ -230,18 +242,6 @@
                 "es": "Se actualizó el cuadro de diálogo Seleccionar ID.",
                 "pl": "Zaktualizowano okno dialogowe wyboru identyfikatora.",
                 "zh-cn": "更新了选择ID对话框。"
-            },
-            "1.7.9": {
-                "en": "Updated GUI for config",
-                "de": "Aktualisierte GUI für die Konfiguration",
-                "ru": "Обновлен графический интерфейс для конфигурации",
-                "pt": "GUI atualizada para configuração",
-                "nl": "Bijgewerkte GUI voor config",
-                "fr": "Interface graphique mise à jour pour la configuration",
-                "it": "GUI aggiornata per config",
-                "es": "GUI actualizada para la configuración",
-                "pl": "Zaktualizowano GUI dla config",
-                "zh-cn": "更新了配置的GUI"
             }
         },
         "title": "IoT Assistants",
