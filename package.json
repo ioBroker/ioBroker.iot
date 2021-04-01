@@ -35,7 +35,7 @@
   "devDependencies": {
     "@alcalzone/release-script": "^1.8.3",
     "@types/iobroker": "^3.2.8",
-    "@types/node": "^14.14.33",
+    "@types/node": "^14.14.37",
     "axios": "^0.21.1",
     "chai": "^4.3.3",
     "del": "^6.0.0",
