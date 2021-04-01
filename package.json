@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "echarts": "^4.9.0",
-    "jsdom": "^16.5.0",
+    "jsdom": "^16.5.2",
     "moment": "^2.29.1",
     "aws-iot-device-sdk": "^2.2.6",
     "iobroker.type-detector": "^1.0.8",
