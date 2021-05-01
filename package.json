@@ -20,7 +20,7 @@
   },
   "optionalDependencies": {
     "sharp": "0.28.1",
-    "canvas": "^2.6.1"
+    "canvas": "^2.7.0"
   },
   "dependencies": {
     "echarts": "^4.9.0",
