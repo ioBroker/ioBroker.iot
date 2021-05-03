@@ -726,7 +726,7 @@ function processMessage(type, request, callback) {
                             native: {}
                         }, err => {
                             if (!err) {
-                                adapter.setState('services.custom_' + _type, request, false, err =>
+                                adapter.setState('services.custom_' + _type, request, true, err =>
                                     callback({result: err || 'Ok'}));
                             } else {
                                 adapter.log.error(`Cannot control ${'.services.custom_' + _type}: ${JSON.stringify(err)}`);
@@ -734,7 +734,7 @@ function processMessage(type, request, callback) {
                             }
                         });
                     } else {
-                        adapter.setState('services.custom_' + _type, request, false, err =>
+                        adapter.setState('services.custom_' + _type, request, true, err =>
                             callback({result: err || 'Ok'}));
                     }
                 });
