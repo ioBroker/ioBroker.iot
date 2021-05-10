@@ -417,7 +417,7 @@
             "common": {
                 "role": "state",
                 "name": "Last command",
-                "type": "string",
+                "type": "mixed",
                 "read": true,
                 "write": false
             },
