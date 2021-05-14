@@ -924,7 +924,6 @@ function main() {
         alexaSH2    = new AlexaSH2(adapter);
         alexaSH3    = new AlexaSH3(adapter);
         alexaCustom = new AlexaCustom(adapter);
-
     }
     if (adapter.config.amazonAlexaBlood) {
         alexaCustomBlood = new AlexaCustomBlood(adapter);

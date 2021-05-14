@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import {withStyles} from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
+import clsx from 'clsx';
+
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
@@ -29,7 +31,9 @@ import {FaPalette as IconColor} from 'react-icons/fa';
 import {FaLightbulb as IconBulb} from 'react-icons/fa';
 import {FaLockOpen as IconLock} from 'react-icons/fa';
 import {FaThermometer as IconThermometer} from 'react-icons/fa';
-
+import IconCopy from '@material-ui/icons/FileCopy';
+import IconClose from '@material-ui/icons/Close';
+import IconCheck from '@material-ui/icons/Check';
 
 import Utils from '@iobroker/adapter-react/Components/Utils'
 import I18n from '@iobroker/adapter-react/i18n';
@@ -314,7 +318,7 @@ class AlexaSmartNames extends Component {
     }
 
     onReadyUpdate(id, state) {
-        console.log('Update ' + id + ' ' + (state ? state.val + '/' + state.ack : 'null'));
+        console.log(`Update ${id} ${state ? `${state.val}/${state.ack}` : 'null'}`);
         if (state && state.ack === true && state.val === true) {
             this.devTimer && clearTimeout(this.devTimer);
             this.devTimer = setTimeout(() => {
@@ -439,13 +443,13 @@ class AlexaSmartNames extends Component {
         Object.keys(actionsMapping).forEach(action => {
             if (dev.actions.indexOf(action) !== -1) {
                 const Icon = actionsMapping[action].icon;
-                actions.push((<span key={action} title={actionsMapping[action].desc}><Icon className={this.props.classes.actionIcon} style={{color: actionsMapping[action].color}}/></span>));
+                actions.push(<span key={action} title={actionsMapping[action].desc}><Icon className={this.props.classes.actionIcon} style={{color: actionsMapping[action].color}}/></span>);
             }
         });
         // add unknown actions
         for (let a = 0; a < dev.actions.length; a++) {
             if (!actionsMapping[dev.actions[a]]) {
-                actions.push((<span key={dev.actions[a]}>{dev.actions[a]}</span>));
+                actions.push(<span key={dev.actions[a]}>{dev.actions[a]}</span>);
             }
         }
         return actions;
@@ -466,16 +470,16 @@ class AlexaSmartNames extends Component {
         // type = '-', 'stored', false or number [5-100]
         if (type !== false) {
             const items = [
-                (<MenuItem key="_" value=""><em>{I18n.t('Default')}</em></MenuItem>),
-                (<MenuItem key="last" value="stored">{I18n.t('last value')}</MenuItem>)
+                <MenuItem key="_" value=""><em>{I18n.t('Default')}</em></MenuItem>,
+                <MenuItem key="last" value="stored">{I18n.t('last value')}</MenuItem>
             ];
             for (let i = 5; i <= 100; i += 5) {
-                items.push((<MenuItem  key={i.toString()} value={i.toString()}>{i}%</MenuItem>));
+                items.push(<MenuItem  key={i.toString()} value={i.toString()}>{i}%</MenuItem>);
             }
-            return (<FormControl className={this.props.classes.devSubLineByOn}>
+            return <FormControl className={this.props.classes.devSubLineByOn}>
                 <Select className={this.props.classes.devSubLineByOnSelect} value={(type || '').toString()} onChange={e => this.onParamsChange(id, e.target.value)}>{items}</Select>
                 <FormHelperText className={this.props.classes.devSubLineTypeTitle}>{I18n.t('by ON')}</FormHelperText>
-            </FormControl>);
+            </FormControl>;
         } else {
             return null;
         }
@@ -508,17 +512,14 @@ class AlexaSmartNames extends Component {
 
     renderSelectTypeSelector(type, onChange) {
         if (type !== false) {
-            const items = [
-                (<MenuItem key="_" value="_"><em>{I18n.t('no type')}</em></MenuItem>)
-            ];
+            const items = [<MenuItem key="_" value="_"><em>{I18n.t('no type')}</em></MenuItem>];
             for (let i = 0; i < SMARTTYPES.length; i++) {
-                items.push((<MenuItem  key={SMARTTYPES[i]} value={SMARTTYPES[i]}><em>{I18n.t(SMARTTYPES[i])}</em></MenuItem>));
+                items.push(<MenuItem  key={SMARTTYPES[i]} value={SMARTTYPES[i]}><em>{I18n.t(SMARTTYPES[i])}</em></MenuItem>);
             }
-            return (
-                <FormControl>
-                    <Select value={type || '_'} onChange={e => onChange(e.target.value === '_' ? '' : e.target.value)}>{items}</Select>
-                    <FormHelperText className={this.props.classes.devSubLineTypeTitle}>{I18n.t('Types')}</FormHelperText>
-                </FormControl>);
+            return <FormControl>
+                <Select value={type || '_'} onChange={e => onChange(e.target.value === '_' ? '' : e.target.value)}>{items}</Select>
+                <FormHelperText className={this.props.classes.devSubLineTypeTitle}>{I18n.t('Types')}</FormHelperText>
+            </FormControl>;
         } else {
             return '';
         }
@@ -547,15 +548,15 @@ class AlexaSmartNames extends Component {
                         if (this.state.lastChanged === id && (background === DEFAULT_CHANNEL_COLOR_DARK || background === DEFAULT_CHANNEL_COLOR_LIGHT)) {
                             background = this.props.themeType === 'dark' ? LAST_CHANGED_COLOR_DARK : LAST_CHANGED_COLOR_LIGHT;
                         }
-                        result.push((<div key={'sub' + id} className={classes.devSubLine} style={(c % 2) ? {} : {background}}>
-                            <div className={this.props.classes.devLineActions + ' ' + this.props.classes.channelLineActions}>{this.renderActions(channels[chan][i])}</div>
+                        result.push(<div key={'sub' + id} className={classes.devSubLine} style={(c % 2) ? {} : {background}}>
+                            <div className={clsx(this.props.classes.devLineActions, this.props.classes.channelLineActions)}>{this.renderActions(channels[chan][i])}</div>
                             <div className={classes.devSubLineName} title={id}>{(names[id] || id)}
-                                {id !== names[id] ? (<span className={classes.devSubSubLineName}>{id}</span>) : null}
+                                {id !== names[id] ? <span className={classes.devSubSubLineName}>{id}</span> : null}
                             </div>
                             {this.renderSelectType(dev, lineNum, id, smarttypes[id])}
                             {this.renderSelectByOn(dev, lineNum, id, types[id])}
                             <IconButton aria-label="Delete" className={this.props.classes.devSubLineDelete} onClick={() => this.onAskDelete(id, lineNum)}><IconDelete fontSize="middle" /></IconButton>
-                        </div>));
+                        </div>);
                         c++;
                     }
                 }
@@ -567,12 +568,12 @@ class AlexaSmartNames extends Component {
             if (this.state.lastChanged === id && (background === DEFAULT_CHANNEL_COLOR_DARK || background === DEFAULT_CHANNEL_COLOR_LIGHT)) {
                 background = this.props.themeType === 'dark' ? LAST_CHANGED_COLOR_DARK : LAST_CHANGED_COLOR_LIGHT;
             }
-            result.push((<div key={'sub' + id} className={classes.devSubLine} style={{background}}>
-                <div className={this.props.classes.devLineActions + ' ' + this.props.classes.channelLineActions} style={{width: 80}}>{this.renderActions(dev)}</div>
+            result.push(<div key={'sub' + id} className={classes.devSubLine} style={{background}}>
+                <div className={clsx(this.props.classes.devLineActions, this.props.classes.channelLineActions)} style={{width: 80}}>{this.renderActions(dev)}</div>
                 <div className={classes.devSubLineName} title={(id || '')}>{name}</div>
                 {this.renderSelectType(dev, lineNum, id, dev.additionalApplianceDetails.smartType)}
                 {this.renderSelectByOn(dev, lineNum, id, dev.additionalApplianceDetails.byON)}
-            </div>));
+            </div>);
         }
         return result;
     }
@@ -583,7 +584,7 @@ class AlexaSmartNames extends Component {
         if (!dev.additionalApplianceDetails.group && dev.additionalApplianceDetails.nameModified) {
             title = friendlyName;
         } else {
-            title = (<span className={this.props.classes.devModified} title={I18n.t('modified')}>{friendlyName}</span>);
+            title = <span className={this.props.classes.devModified} title={I18n.t('modified')}>{friendlyName}</span>;
         }
 
         let devCount = 0;
@@ -623,33 +624,33 @@ class AlexaSmartNames extends Component {
         }
 
         return [
-            (<div key={'line' + lineNum} className={this.props.classes.devLine} style={{background}}>
+            <div key={'line' + lineNum} className={this.props.classes.devLine} style={{background}}>
                 <div className={this.props.classes.devLineNumber}>{lineNum + 1}.</div>
                 <IconButton className={this.props.classes.devLineExpand} onClick={() => this.onExpand(lineNum)}>
                     {devCount > 1 ?
-                        (<Badge badgeContent={devCount} color="primary">
-                            {expanded ? (<IconCollapse/>) : (<IconExpand />)}
-                        </Badge>) :
-                        (expanded ? (<IconCollapse/>) : (<IconExpand />))}
+                        <Badge badgeContent={devCount} color="primary">
+                            {expanded ? <IconCollapse/> : <IconExpand />}
+                        </Badge> :
+                        (expanded ? <IconCollapse/> : <IconExpand />)}
                 </IconButton>
                 <div className={this.props.classes.devLineNameBlock} style={{display: 'inline-block', position: 'relative'}}>
                     <span className={this.props.classes.devLineName}>{title}</span>
                     <span className={this.props.classes.devLineDescription}>{dev.friendlyDescription}</span>
-                    {changed ? (<CircularProgress className={this.props.classes.devLineProgress} size={20}/>) : null}
+                    {changed ? <CircularProgress className={this.props.classes.devLineProgress} size={20}/> : null}
                 </div>
                 <span className={this.props.classes.devLineActions}>{this.renderActions(dev)}</span>
                 {!dev.additionalApplianceDetails.group ?
-                    (<IconButton aria-label="Edit" className={this.props.classes.devLineEdit} onClick={() => this.onEdit(id)}><IconEdit fontSize="middle" /></IconButton>) : null}
+                    <IconButton aria-label="Edit" className={this.props.classes.devLineEdit} onClick={() => this.onEdit(id)}><IconEdit fontSize="middle" /></IconButton> : null}
                 {!dev.additionalApplianceDetails.group ?
-                    (<IconButton aria-label="Delete" className={this.props.classes.devLineDelete} onClick={() => this.onAskDelete(id)}><IconDelete fontSize="middle" /></IconButton>) : null}
-            </div>),
+                    <IconButton aria-label="Delete" className={this.props.classes.devLineDelete} onClick={() => this.onAskDelete(id)}><IconDelete fontSize="middle" /></IconButton> : null}
+            </div>,
             expanded ? this.renderChannels(dev, lineNum) : null
         ];
     }
 
     renderMessage() {
         if (this.state.message) {
-            return (<MessageDialog text={this.state.message} onClose={() => this.setState({message: ''})}/>);
+            return <MessageDialog text={this.state.message} onClose={() => this.setState({message: ''})}/>;
         } else {
             return null;
         }
@@ -686,7 +687,7 @@ class AlexaSmartNames extends Component {
 
     renderEditDialog() {
         if (this.state.editId) {
-            return (<Dialog
+            return <Dialog
                 open={true}
                 maxWidth="sm"
                 fullWidth={true}
@@ -703,6 +704,7 @@ class AlexaSmartNames extends Component {
                     <TextField
                         style={{width: '100%'}}
                         label={I18n.t('Smart name')}
+                        autoFocus
                         onKeyDown={e =>
                             e.keyCode === 13 && this.changeSmartName(e)}
                         onChange={e => this.editedSmartName = e.target.value}
@@ -713,13 +715,21 @@ class AlexaSmartNames extends Component {
                     {this.state.editedSmartType !== null ? this.renderSelectTypeSelector(this.state.editedSmartType, value => this.setState({editedSmartType: value})) : null}
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => this.changeSmartName()} color="primary" autoFocus>{I18n.t('Ok')}</Button>
-                    <Button onClick={() => {
+                    <Button
+                        variant="contained"
+                        onClick={() => this.changeSmartName()}
+                        color="primary"
+                        startIcon={<IconCheck/>}
+                    >{I18n.t('Ok')}
+                    </Button>
+                    <Button variant="contained" onClick={() => {
                         this.editedSmartName = null;
                         this.setState({editId: '', editedSmartName: ''});
-                    }}>{I18n.t('Cancel')}</Button>
+                    }}
+                    startIcon={<IconClose/>}
+                    >{I18n.t('Cancel')}</Button>
                 </DialogActions>
-            </Dialog>)
+            </Dialog>;
         } else {
             return null;
         }
@@ -727,7 +737,7 @@ class AlexaSmartNames extends Component {
 
     renderConfirmDialog() {
         if (this.state.showConfirmation) {
-            return (<Dialog
+            return <Dialog
                 open={true}
                 maxWidth="sm"
                 fullWidth={true}
@@ -740,10 +750,19 @@ class AlexaSmartNames extends Component {
                     <p>{I18n.t('Are you sure?')}</p>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => this.onDelete()} color="primary" autoFocus>{I18n.t('Ok')}</Button>
-                    <Button onClick={() => this.setState({showConfirmation: ''})}>{I18n.t('Cancel')}</Button>
+                    <Button
+                        variant="contained"
+                        onClick={() => this.onDelete()}
+                        color="primary"
+                        autoFocus
+                        startIcon={<IconDelete/>}
+                    >{I18n.t('Delete')}</Button>
+                    <Button
+                        variant="contained"
+                        startIcon={<IconClose/>}
+                        onClick={() => this.setState({showConfirmation: ''})}>{I18n.t('Cancel')}</Button>
                 </DialogActions>
-            </Dialog>)
+            </Dialog>;
         } else {
             return null;
         }
@@ -799,7 +818,7 @@ class AlexaSmartNames extends Component {
             if (this.state.filter && this.state.devices[i].friendlyName.toLowerCase().indexOf(filter) === -1 ) continue;
             result.push(this.renderDevice(this.state.devices[i], i));
         }
-        return (<div key="listDevices" className={this.props.classes.columnDiv}>{result}</div>);
+        return <div key="listDevices" className={this.props.classes.columnDiv}>{result}</div>;
     }
 
     renderListOfDevices() {
@@ -829,26 +848,30 @@ class AlexaSmartNames extends Component {
                 </div>
             </DialogContent>
             <DialogActions>
-                <Button onClick={() => {
+                <Button variant="outlined" onClick={() => {
                     this.setState({showListOfDevices: false});
                     const lines = this.state.devices.map(item => item.friendlyName);
                     copy(lines.join('\n'));
-                }} color="primary">{I18n.t('Copy to clipboard')}</Button>
-                <Button onClick={() => this.setState({showListOfDevices: false})} autoFocus>{I18n.t('Close')}</Button>
+                }} color="primary"
+                startIcon={<IconCopy/>}
+                >{I18n.t('Copy to clipboard')}</Button>
+                <Button variant="contained"
+                        startIcon={<IconClose/>}
+                        onClick={() => this.setState({showListOfDevices: false})} autoFocus>{I18n.t('Close')}</Button>
             </DialogActions>
-        </Dialog>
+        </Dialog>;
     }
 
     render() {
         if (this.state.loading) {
-            return (<CircularProgress  key="alexaProgress" />);
+            return <CircularProgress  key="alexaProgress" />;
         }
 
         return (
             <form key="alexa" className={this.props.classes.tab}>
                 <Fab size="small" color="secondary" aria-label="Add" className={this.props.classes.button} onClick={() => this.setState({showSelectId: true})}><IconAdd /></Fab>
                 <Fab size="small" color="primary" aria-label="Refresh" className={this.props.classes.button}
-                      onClick={() => this.browse(true)} disabled={this.state.browse}>{this.state.browse ? (<CircularProgress size={20} />) : (<IconRefresh/>)}</Fab>
+                      onClick={() => this.browse(true)} disabled={this.state.browse}>{this.state.browse ? <CircularProgress size={20} /> : <IconRefresh/>}</Fab>
                 <Fab style={{marginLeft: '1rem'}}
                      title={I18n.t('Show all devices for print out')}
                      size="small" aria-label="List of devices" className={this.props.classes.button}

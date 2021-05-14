@@ -15,6 +15,8 @@ import DialogActions from '@material-ui/core/DialogActions';
 import Dialog from '@material-ui/core/Dialog';
 import MessageDialog from '@iobroker/adapter-react/Dialogs/Message';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import IconClose from "@material-ui/icons/Close";
+import IconCheck from "@material-ui/icons/Check";
 
 const CHANGED_COLOR = '#e7000040';
 
@@ -212,7 +214,7 @@ class Enums extends Component {
         let name = Utils.getObjectNameFromObj(obj);
 
         return <div key={obj._id} className={this.props.classes.enumLine} style={{background: this.state.changed.indexOf(obj._id) !== -1 ? CHANGED_COLOR : 'inherit'}}>
-            <span className={this.props.classes.enumLineName} style={{opacity: smartName === false ? 0.5: 1}}>{smartName || null}{smartName ? (<span className={this.props.classes.enumLineSubName}> ({name})</span>) : name}</span>
+            <span className={this.props.classes.enumLineName} style={{opacity: smartName === false ? 0.5: 1}}>{smartName || null}{smartName ? <span className={this.props.classes.enumLineSubName}> ({name})</span> : name}</span>
             <span className={this.props.classes.enumLineId} style={{opacity: smartName === false ? 0.5: 1}}>{obj._id}</span>
             <Switch
                 className={this.props.classes.enumLineEnabled}
@@ -232,7 +234,7 @@ class Enums extends Component {
 
     renderMessage() {
         if (this.state.message) {
-            return (<MessageDialog text={this.state.message} onClose={() => this.setState({message: ''})}/>);
+            return <MessageDialog text={this.state.message} onClose={() => this.setState({message: ''})}/>;
         } else {
             return null;
         }
@@ -271,7 +273,7 @@ class Enums extends Component {
         if (this.state.editId) {
             const obj = this.state.funcs.find(e => e._id === this.state.editId) || this.state.rooms.find(e => e._id === this.state.editId);
 
-            return (<Dialog
+            return <Dialog
                 open={true}
                 maxWidth="sm"
                 fullWidth={true}
@@ -282,6 +284,7 @@ class Enums extends Component {
                 <DialogTitle id="message-dialog-title">{this.props.title || I18n.t('Smart name for %s', Utils.getObjectNameFromObj(obj, null, {language: I18n.getLanguage()}))}</DialogTitle>
                 <DialogContent>
                     <TextField
+                        autoFocus
                         style={{width: '100%'}}
                         label={I18n.t('Smart name')}
                         onChange={e => this.setState({editedSmartName: e.target.value})}
@@ -291,10 +294,19 @@ class Enums extends Component {
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => this.changeSmartName()} color="primary" autoFocus>{I18n.t('Ok')}</Button>
-                    <Button onClick={() => this.setState({editId: ''})}>{I18n.t('Cancel')}</Button>
+                    <Button
+                        variant="contained"
+                        onClick={() => this.changeSmartName()}
+                        color="primary"
+                        startIcon={<IconCheck/>}
+                    >{I18n.t('Ok')}</Button>
+                    <Button
+                        variant="contained"
+                        onClick={() => this.setState({editId: ''})}
+                        startIcon={<IconClose/>}
+                    >{I18n.t('Cancel')}</Button>
                 </DialogActions>
-            </Dialog>)
+            </Dialog>;
         } else {
             return null;
         }
@@ -302,7 +314,7 @@ class Enums extends Component {
 
     render() {
         if (this.state.loading) {
-            return (<CircularProgress />);
+            return <CircularProgress />;
         }
         return (
             <form className={this.props.classes.tab}>

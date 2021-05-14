@@ -17,13 +17,17 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import IconButton from "@material-ui/core/IconButton";
+import IconButton from '@material-ui/core/IconButton';
+
+import IconCopy from '@material-ui/icons/FileCopy';
+import IconClose from '@material-ui/icons/Close';
 
 import I18n from '@iobroker/adapter-react/i18n';
 import MessageDialog from '@iobroker/adapter-react/Dialogs/Message';
 import DialogSelectID from '@iobroker/adapter-react/Dialogs/SelectID';
 import Utils from '@iobroker/adapter-react/Components/Utils'
-import ExpertIcon from '@iobroker/adapter-react/Components/ExpertIcon'
+import ExpertIcon from '@iobroker/adapter-react/icons/IconExpert';
+
 import TreeTable from '../Components/TreeTable';
 
 import {MdAdd as IconAdd} from 'react-icons/md';
@@ -407,16 +411,16 @@ class GoogleSmartNames extends Component {
         // type = '-', 'stored', false or number [5-100]
         if (type !== false) {
             const items = [
-                (<MenuItem key="_" value=""><em>{I18n.t('Default')}</em></MenuItem>),
-                (<MenuItem key="last" value="stored">{I18n.t('last value')}</MenuItem>)
+                <MenuItem key="_" value=""><em>{I18n.t('Default')}</em></MenuItem>,
+                <MenuItem key="last" value="stored">{I18n.t('last value')}</MenuItem>
             ];
             for (let i = 5; i <= 100; i += 5) {
-                items.push((<MenuItem  key={i.toString()} value={i.toString()}>{i}%</MenuItem>));
+                items.push(<MenuItem  key={i.toString()} value={i.toString()}>{i}%</MenuItem>);
             }
-            return (<FormControl className={this.props.classes.devSubLineByOn}>
+            return <FormControl className={this.props.classes.devSubLineByOn}>
                 <Select className={this.props.classes.devSubLineByOnSelect} value={(type || '').toString()} onChange={e => this.onParamsChange(id, e.target.value)}>{items}</Select>
                 <FormHelperText className={this.props.classes.devSubLineTypeTitle}>{I18n.t('by ON')}</FormHelperText>
-            </FormControl>);
+            </FormControl>;
         } else {
             return null;
         }
@@ -616,12 +620,12 @@ class GoogleSmartNames extends Component {
                 </div>
             </DialogContent>
             <DialogActions>
-                <Button onClick={() => {
+                <Button variant="outlined" onClick={() => {
                     this.setState({showListOfDevices: false});
                     const lines = this.state.devices.map(item => item.name.nicknames.join(', ') + '\t' + item.displayTraits + '\t' + item.roomHint);
                     copy(lines.join('\n'));
-                }} color="primary">{I18n.t('Copy to clipboard')}</Button>
-                <Button onClick={() => this.setState({showListOfDevices: false})} autoFocus>{I18n.t('Close')}</Button>
+                }} color="primary" startIcon={<IconCopy/>}>{I18n.t('Copy to clipboard')}</Button>
+                <Button startIcon={<IconClose/>} variant="contained" onClick={() => this.setState({showListOfDevices: false})} autoFocus>{I18n.t('Close')}</Button>
             </DialogActions>
         </Dialog>;
     }

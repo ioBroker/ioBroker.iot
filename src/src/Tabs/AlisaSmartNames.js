@@ -20,7 +20,6 @@ import {MdDelete as IconDelete} from 'react-icons/md';
 import {MdFormatAlignJustify as IconExpand} from 'react-icons/md';
 import {MdDragHandle as IconCollapse} from 'react-icons/md';
 import {MdList as IconList} from 'react-icons/md';
-
 import {FaPowerOff as IconOn} from 'react-icons/fa';
 import {FaThermometerHalf as IconTemperature} from 'react-icons/fa';
 import {FaLongArrowAltUp as IconUp} from 'react-icons/fa';
@@ -32,6 +31,8 @@ import {FaThermometer as IconThermometer} from 'react-icons/fa';
 import {FaTint as IconHumidity} from 'react-icons/fa';
 import {FaMale as IconMotion} from 'react-icons/fa';
 import {FaLink as IconContact} from 'react-icons/fa';
+import IconCopy from '@material-ui/icons/FileCopy';
+import IconClose from '@material-ui/icons/Close';
 
 import Utils from '@iobroker/adapter-react/Components/Utils'
 import I18n from '@iobroker/adapter-react/i18n';
@@ -42,6 +43,7 @@ import Dialog from '@material-ui/core/Dialog';
 import MessageDialog from '@iobroker/adapter-react/Dialogs/Message';
 import DialogSelectID from '@iobroker/adapter-react/Dialogs/SelectID';
 import copy from "copy-to-clipboard";
+import IconCheck from "@material-ui/icons/Check";
 
 const colorOn = '#aba613';
 const colorOff = '#444';
@@ -544,7 +546,7 @@ class AlisaDevices extends Component {
                 <div className={classes.devSubLineName}>{attr.name.toUpperCase()}</div>
                 <div className={classes.devSubSubLine}>
                     <div>{attr.getId}</div>
-                    {attr.setId && attr.setId !== attr.getId ? (<div className={classes.devSubLineSetId}>{attr.setId}</div>) : null}
+                    {attr.setId && attr.setId !== attr.getId ? <div className={classes.devSubLineSetId}>{attr.setId}</div> : null}
                 </div>
             </div>);
         });
@@ -564,15 +566,15 @@ class AlisaDevices extends Component {
                         if (this.state.lastChanged === id && background === DEFAULT_CHANNEL_COLOR) {
                             background = LAST_CHANGED_COLOR;
                         }
-                        result.push((<div key={'sub' + id} className={classes.devSubLine} style={(c % 2) ? {} : {background}}>
-                            <div className={this.props.classes.devLineActions + ' ' + this.props.classes.channelLineActions}>{this.renderActions(channels[chan][i])}</div>
+                        result.push(<div key={'sub' + id} className={classes.devSubLine} style={(c % 2) ? {} : {background}}>
+                            <div className={clsx(this.props.classes.devLineActions,this.props.classes.channelLineActions)}>{this.renderActions(channels[chan][i])}</div>
                             <div className={classes.devSubLineName} title={id}>{(names[id] || id)}
-                                {id !== names[id] ? (<span className={classes.devSubSubLineName}>{id}</span>) : null}
+                                {id !== names[id] ? <span className={classes.devSubSubLineName}>{id}</span> : null}
                             </div>
                             {this.renderSelectType(dev, lineNum, id, smarttypes[id])}
                             {this.renderSelectByOn(dev, lineNum, id, types[id])}
                             <IconButton aria-label="Delete" className={this.props.classes.devSubLineDelete} onClick={() => this.onAskDelete(id, lineNum)}><IconDelete fontSize="middle" /></IconButton>
-                        </div>));
+                        </div>);
                         c++;
                     }
                 }
@@ -583,7 +585,7 @@ class AlisaDevices extends Component {
     }
 
     renderDevice(dev, lineNum) {
-        //return (<div key={lineNum}>{JSON.stringify(dev)}</div>);
+        //return <div key={lineNum}>{JSON.stringify(dev)}</div>;
         const expanded = this.state.expanded.includes(dev.name);
         let background = (lineNum % 2) ? (this.props.themeType === 'dark' ? '#272727' : '#f1f1f1') : 'inherit';
         const changed = this.state.changed.includes(dev.iobID);
@@ -600,13 +602,13 @@ class AlisaDevices extends Component {
                 <div className={this.props.classes.devLineNumber}>{lineNum + 1}.</div>
                 <IconButton className={this.props.classes.devLineExpand} onClick={() => this.onExpand(lineNum)}>
                     {dev.attributes.length ?
-                        (<Badge badgeContent={dev.attributes.length} color="primary">{expanded ? (<IconCollapse/>) : (<IconExpand />)}</Badge>) :
-                        (expanded ? (<IconCollapse/>) : (<IconExpand />))}
+                        <Badge badgeContent={dev.attributes.length} color="primary">{expanded ? <IconCollapse/> : <IconExpand />}</Badge> :
+                        (expanded ? <IconCollapse/> : <IconExpand />)}
                 </IconButton>
                 <div className={this.props.classes.devLineNameBlock} style={{display: 'inline-block', position: 'relative'}}>
                     <span className={this.props.classes.devLineName}>{dev.name}</span>
                     <span className={this.props.classes.devLineDescription}>{dev.description}</span>
-                    {changed ? (<CircularProgress className={this.props.classes.devLineProgress} size={20}/>) : null}
+                    {changed ? <CircularProgress className={this.props.classes.devLineProgress} size={20}/> : null}
                 </div>
                 <span className={this.props.classes.devLineActions}>{this.renderActions(dev)}</span>
                 <IconButton aria-label="Edit" className={this.props.classes.devLineEdit} onClick={() => this.onEdit(dev.iobID)}><IconEdit fontSize="middle" /></IconButton>
@@ -668,6 +670,7 @@ class AlisaDevices extends Component {
                     <TextField
                         style={{width: '100%'}}
                         label={I18n.t('Smart name')}
+                        autoFocus
                         onKeyDown={e =>
                             e.keyCode === 13 && this.changeSmartName(e)}
                         onChange={e => this.editedSmartName = e.target.value}
@@ -677,8 +680,16 @@ class AlisaDevices extends Component {
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => this.changeSmartName()} color="primary" autoFocus>{I18n.t('Ok')}</Button>
-                    <Button onClick={() => {
+                    <Button
+                        variant="contained"
+                        onClick={() => this.changeSmartName()}
+                        color="primary"
+                        startIcon={<IconCheck/>}
+                    >{I18n.t('Ok')}</Button>
+                    <Button
+                        variant="contained"
+                        startIcon={<IconClose/>}
+                        onClick={() => {
                         this.editedSmartName = null;
                         this.setState({editId: '', editedSmartName: ''});
                     }}>{I18n.t('Cancel')}</Button>
@@ -704,8 +715,18 @@ class AlisaDevices extends Component {
                     <p>{I18n.t('Are you sure?')}</p>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => this.onDelete()} color="primary" autoFocus>{I18n.t('Ok')}</Button>
-                    <Button onClick={() => this.setState({showConfirmation: ''})}>{I18n.t('Cancel')}</Button>
+                    <Button
+                        variant="contained"
+                        onClick={() => this.onDelete()}
+                        color="primary"
+                        autoFocus
+                        startIcon={<IconDelete/>}
+                    >{I18n.t('Delete')}</Button>
+                    <Button
+                        variant="contained"
+                        onClick={() => this.setState({showConfirmation: ''})}
+                        startIcon={<IconClose/>}
+                    >{I18n.t('Cancel')}</Button>
                 </DialogActions>
             </Dialog>;
         } else {
@@ -795,25 +816,31 @@ class AlisaDevices extends Component {
                 </div>
             </DialogContent>
             <DialogActions>
-                <Button onClick={() => {
+                <Button variant="outlined" onClick={() => {
                     this.setState({showListOfDevices: false});
                     const lines = this.state.devices.map(item => item.name);
                     copy(lines.join('\n'));
-                }} color="primary">{I18n.t('Copy to clipboard')}</Button>
-                <Button onClick={() => this.setState({showListOfDevices: false})} autoFocus>{I18n.t('Close')}</Button>
+                }}
+                        color="primary"
+                        startIcon={<IconCopy/>}
+                >{I18n.t('Copy to clipboard')}</Button>
+                <Button
+                    variant="contained"
+                    startIcon={<IconClose/>}
+                    onClick={() => this.setState({showListOfDevices: false})} autoFocus>{I18n.t('Close')}</Button>
             </DialogActions>
         </Dialog>;
     }
 
     render() {
         if (this.state.loading) {
-            return (<CircularProgress  key="alexaProgress" />);
+            return <CircularProgress key="alexaProgress" />;
         }
 
         return <form key="alexa" className={this.props.classes.tab}>
             <Fab size="small" color="secondary" aria-label="Add" className={this.props.classes.button} onClick={() => this.setState({showSelectId: true})}><IconAdd /></Fab>
             <Fab size="small" color="primary" aria-label="Refresh" className={this.props.classes.button}
-                  onClick={() => this.browse(true)} disabled={this.state.browse}>{this.state.browse ? (<CircularProgress size={20} />) : (<IconRefresh/>)}</Fab>
+                  onClick={() => this.browse(true)} disabled={this.state.browse}>{this.state.browse ? <CircularProgress size={20} /> : <IconRefresh/>}</Fab>
             <Fab style={{marginLeft: '1rem'}}
                  title={I18n.t('Show all devices for print out')}
                  size="small" aria-label="List of devices" className={this.props.classes.button}

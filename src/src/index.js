@@ -13,7 +13,6 @@ import Utils from '@iobroker/adapter-react/Components/Utils';
 window.adapterName = 'iot';
 let themeName = Utils.getThemeName();
 
-
 console.log('iobroker.' + window.adapterName + '@' + version + ' using theme "' + themeName + '"');
 
 function build() {

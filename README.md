@@ -257,6 +257,9 @@ Following types are supported:
 ### __WORK IN PROGRESS__
 * (foxriver76) we now write data received from custom services with acknowledge flag
 
+### 1.8.19 (2021-05-14)
+* (bluefox) Only added one debug output
+
 ### 1.8.16 (2021-03-13)
 * (bluefox) fixed the blind functionality in alisa
 
