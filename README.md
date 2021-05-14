@@ -254,6 +254,9 @@ Following types are supported:
 -->
 
 ## Changelog
+### __WORK IN PROGRESS__
+* (foxriver76) we now write data received from custom services with acknowledge flag
+
 ### 1.8.19 (2021-05-14)
 * (bluefox) Only added one debug output
 
