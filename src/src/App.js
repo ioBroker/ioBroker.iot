@@ -115,18 +115,19 @@ class App extends GenericApp {
                 </DialogContent>
                 <DialogActions>
                     <Button
+                        variant="contained"
                         onClick={() => this.setState({showAckTempPasswordDialog: false}, () => setTimeout(() => this.setState({showAckTempPasswordDialog: true}), 1000))} autoFocus>
                         {I18n.t('Not understood')}
                     </Button>
-                    <Button onClick={() =>
+                    <Button variant="contained" onClick={() =>
                         this.socket.setState(`${this.adapterName}.${this.instance}.info.ackTempPassword`, true, true)
                             .then(() =>
                                 this.setState({showAckTempPasswordDialog: false}))
-                    } color="primary" >
+                    } color="primary" autoFocus>
                         {I18n.t('Roger that')}
                     </Button>
                 </DialogActions>
-            </Dialog>
+            </Dialog>;
         }
     }
 
@@ -153,7 +154,7 @@ class App extends GenericApp {
                     </AppBar>
 
                     <div className={this.isIFrame ? this.props.classes.tabContentIFrame : this.props.classes.tabContent}>
-                        {(this.state.selectedTab === 'options' || !this.state.selectedTab) && (<TabOptions
+                        {(this.state.selectedTab === 'options' || !this.state.selectedTab) && <TabOptions
                             key="options"
                             common={this.common}
                             socket={this.socket}
@@ -164,8 +165,8 @@ class App extends GenericApp {
                             adapterName={this.adapterName}
                             changed={this.state.changed}
                             onChange={(attr, value, cb) => this.updateNativeValue(attr, value, cb)}
-                        />)}
-                        {this.state.selectedTab === 'enums' && (<TabEnums
+                        />}
+                        {this.state.selectedTab === 'enums' && <TabEnums
                             key="enums"
                             common={this.common}
                             socket={this.socket}
@@ -173,8 +174,8 @@ class App extends GenericApp {
                             onError={text => this.setState({errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text})}
                             instance={this.instance}
                             adapterName={this.adapterName}
-                        />)}
-                        {this.state.selectedTab === 'alexa' && (<TabAlexaSmartNames
+                        />}
+                        {this.state.selectedTab === 'alexa' && <TabAlexaSmartNames
                             key="alexa"
                             themeType={this.state.themeType}
                             common={this.common}
@@ -183,8 +184,8 @@ class App extends GenericApp {
                             onError={text => this.setState({errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text})}
                             adapterName={this.adapterName}
                             instance={this.instance}
-                        />)}
-                            {this.state.selectedTab === 'google' && (<TabGoogleSmartNames
+                        />}
+                            {this.state.selectedTab === 'google' && <TabGoogleSmartNames
                             key="google"
                             themeType={this.state.themeType}
                             common={this.common}
@@ -193,8 +194,8 @@ class App extends GenericApp {
                             onError={text => this.setState({errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text})}
                             adapterName={this.adapterName}
                             instance={this.instance}
-                        />)}
-                        {this.state.selectedTab === 'alisa' && (<TabAlisaSmartNames
+                        />}
+                        {this.state.selectedTab === 'alisa' && <TabAlisaSmartNames
                             key="alisa"
                             themeType={this.state.themeType}
                             common={this.common}
@@ -203,8 +204,8 @@ class App extends GenericApp {
                             onError={text => this.setState({errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text})}
                             adapterName={this.adapterName}
                             instance={this.instance}
-                        />)}
-                        {this.state.selectedTab === 'extended' && (<TabExtended
+                        />}
+                        {this.state.selectedTab === 'extended' && <TabExtended
                             key="extended"
                             common={this.common}
                             socket={this.socket}
@@ -213,8 +214,8 @@ class App extends GenericApp {
                             instance={this.instance}
                             adapterName={this.adapterName}
                             onChange={(attr, value) => this.updateNativeValue(attr, value)}
-                        />)}
-                        {this.state.selectedTab === 'services' && (<TabServices
+                        />}
+                        {this.state.selectedTab === 'services' && <TabServices
                             key="services"
                             common={this.common}
                             socket={this.socket}
@@ -224,7 +225,7 @@ class App extends GenericApp {
                             adapterName={this.adapterName}
                             onShowError={error => this.showError(error)}
                             onChange={(attr, value) => this.updateNativeValue(attr, value)}
-                        />)}
+                        />}
                     </div>
                     {this.renderError()}
                     {this.renderSaveCloseButtons()}

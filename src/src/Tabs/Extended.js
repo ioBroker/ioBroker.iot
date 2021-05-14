@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import {withStyles} from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
+import clsx from 'clsx';
+
 import TextField from '@material-ui/core/TextField';
 import Input from '@material-ui/core/Input';
 import FormHelperText from '@material-ui/core/FormHelperText';
@@ -65,31 +67,31 @@ class ExtendedOptions extends Component {
     }
 
     renderInput(title, attr, type) {
-        return (<TextField
+        return <TextField
             label={I18n.t(title)}
-            className={this.props.classes.input + ' ' + this.props.classes.controlElement}
+            className={clsx(this.props.classes.input, this.props.classes.controlElement)}
             value={this.props.native[attr]}
             type={type || 'text'}
             onChange={e => this.props.onChange(attr, e.target.value)}
             margin="normal"
-        />);
+        />;
     }
 
     renderSelect(title, attr, options, style) {
-        return (<FormControl className={this.props.classes.input + ' ' + this.props.classes.controlElement} style={Object.assign({paddingTop: 5}, style)}>
+        return <FormControl className={clsx(this.props.classes.input, this.props.classes.controlElement)} style={Object.assign({paddingTop: 5}, style)}>
             <Select
                 value={this.props.native[attr] || '_'}
                 onChange={e => this.props.onChange(attr, e.target.value === '_' ? '' : e.target.value)}
                 input={<Input name={attr} id={attr + '-helper'} />}
             >
-                {options.map(item => (<MenuItem key={'key-' + item.value} value={item.value || '_'}>{I18n.t(item.title)}</MenuItem>))}
+                {options.map(item => <MenuItem key={'key-' + item.value} value={item.value || '_'}>{I18n.t(item.title)}</MenuItem>)}
             </Select>
             <FormHelperText>{I18n.t(title)}</FormHelperText>
-        </FormControl>);
+        </FormControl>;
     }
 
     renderCheckbox(title, attr, style) {
-        return (<FormControlLabel key={attr} style={Object.assign({paddingTop: 5}, style)} className={this.props.classes.controlElement}
+        return <FormControlLabel key={attr} style={Object.assign({paddingTop: 5}, style)} className={this.props.classes.controlElement}
             control={
                 <Checkbox
                     checked={this.props.native[attr]}
@@ -98,7 +100,7 @@ class ExtendedOptions extends Component {
                 />
             }
             label={I18n.t(title)}
-        />);
+        />;
     }
 
     getSelectIdDialog(attr) {

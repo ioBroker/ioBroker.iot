@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import {withStyles} from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
+import clsx from 'clsx';
+
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -101,7 +103,7 @@ class Options extends Component {
 
     renderInput(title, attr, type) {
         const error = attr === 'pass' && this.checkPassword(this.props.native[attr]);
-        return (<TextField
+        return <TextField
             label={ I18n.t(title) }
             error={ !!error  }
             className={ this.props.classes.input }
@@ -110,11 +112,11 @@ class Options extends Component {
             helperText={ error || '' }
             onChange={ e => this.props.onChange(attr, e.target.value) }
             margin="normal"
-        />);
+        />;
     }
 
     renderCard() {
-        return (<Card className={this.props.classes.card}>
+        return <Card className={this.props.classes.card}>
             <CardActionArea>
                 <CardMedia
                     className={this.props.classes.media}
@@ -124,12 +126,12 @@ class Options extends Component {
                 <CardContent>{Utils.renderTextWithA(I18n.t('amazon link'))}</CardContent>
             </CardActionArea>
             <CardActions style={{textAlign: 'center'}} >
-                <Button size="small" color="primary" style={{textAlign: 'center'}} onClick={() => {
+                <Button variant="outlined" size="small" color="primary" style={{textAlign: 'center'}} onClick={() => {
                     const win = window.open('http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/reviews', '_blank');
                     win.focus();
                 }}>{I18n.t('Review')}</Button>
             </CardActions>
-        </Card>);
+        </Card>;
     }
 
     resetCerts(forceUserCreate) {
@@ -192,7 +194,7 @@ class Options extends Component {
     }
 
     renderCheckbox(title, attr, style) {
-        return (<FormControlLabel key={attr} style={Object.assign({paddingTop: 5}, style)} className={this.props.classes.controlElement}
+        return <FormControlLabel key={attr} style={Object.assign({paddingTop: 5}, style)} className={this.props.classes.controlElement}
               control={
                   <Checkbox
                       checked={this.props.native[attr]}
@@ -201,7 +203,7 @@ class Options extends Component {
                   />
               }
               label={I18n.t(title)}
-        />);
+        />;
     }
 
     render() {
@@ -213,7 +215,7 @@ class Options extends Component {
                 onError={ text => this.setState({errorText: text}) }
                 onLoad={ this.props.onLoad }
             />
-            <div className={ this.props.classes.column + ' ' + this.props.classes.columnSettings }>
+            <div className={clsx(this.props.classes.column, this.props.classes.columnSettings) }>
                 { this.renderInput('ioBroker.pro Login', 'login') }<br/>
                 { this.renderInput('ioBroker.pro Password', 'pass', 'password') }<br/>
                 { this.renderCheckbox('Amazon Alexa', 'amazonAlexa') }
@@ -261,7 +263,7 @@ class Options extends Component {
                 <p style={{ fontWeight: 'bold' }}>{ Utils.renderTextWithA(I18n.t('help_link_tip2')) }</p>
                 <p style={{ fontWeight: 'bold', color: 'red'}}>{ Utils.renderTextWithA(I18n.t('help_link_tip3')) }</p>
             </div>
-            <div className={this.props.classes.column + ' ' + this.props.classes.columnLogo}>{this.renderCard() }</div>
+            <div className={clsx(this.props.classes.column, this.props.classes.columnLogo)}>{this.renderCard() }</div>
             { this.renderToast() }
         </form>;
     }
