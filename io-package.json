@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.8.20",
+        "version": "1.8.21",
         "news": {
+            "1.8.21": {
+                "en": "Fixed the encryption of the password. Warning: if you see the message in the log, that password is invalid, please enter the password in configuration dialog one more time and save.",
+                "de": "Die Verschlüsselung des Passworts wurde behoben. Warnung: Wenn Sie die Meldung im Protokoll sehen, dass dieses Kennwort ungültig ist, geben Sie das Kennwort noch einmal im Konfigurationsdialog ein und speichern Sie es.",
+                "ru": "Исправлено шифрование пароля. Предупреждение: если вы видите сообщение в журнале, это недействительный пароль, пожалуйста, введите пароль в диалоговом окне конфигурации еще раз и сохраните.",
+                "pt": "Corrigida a criptografia da senha. Aviso: se você ver a mensagem no log, essa senha é inválida, digite a senha na caixa de diálogo de configuração mais uma vez e salve.",
+                "nl": "De versleuteling van het wachtwoord opgelost. Waarschuwing: als u het bericht in het logboek ziet, is dat wachtwoord ongeldig. Voer het wachtwoord nog een keer in het configuratiedialoogvenster in en sla het op.",
+                "fr": "Correction du cryptage du mot de passe. Attention: si vous voyez le message dans le journal, ce mot de passe n'est pas valide, veuillez saisir à nouveau le mot de passe dans la boîte de dialogue de configuration et enregistrez-le.",
+                "it": "Corretta la crittografia della password. Attenzione: se vedi il messaggio nel registro, la password non è valida, inserisci la password nella finestra di dialogo di configurazione ancora una volta e salva.",
+                "es": "Se corrigió el cifrado de la contraseña. Advertencia: si ve el mensaje en el registro, esa contraseña no es válida, ingrese la contraseña en el cuadro de diálogo de configuración una vez más y guarde.",
+                "pl": "Naprawiono szyfrowanie hasła. Ostrzeżenie: jeśli zobaczysz komunikat w dzienniku, to hasło jest nieprawidłowe, wprowadź hasło jeszcze raz w oknie dialogowym konfiguracji i zapisz.",
+                "zh-cn": "修复了密码的加密。警告：如果您在日志中看到消息，表明密码无效，请再次在配置对话框中输入密码并保存。"
+            },
             "1.8.20": {
                 "en": "we now write data received from custom services with acknowledge flag",
                 "de": "Wir schreiben jetzt Daten, die von benutzerdefinierten Diensten empfangen wurden, mit dem Bestätigungsflag",
@@ -230,18 +242,6 @@
                 "es": "Se corrigió la eliminación de dispositivos domésticos de Google",
                 "pl": "Poprawiono usuwanie urządzeń domowych Google",
                 "zh-cn": "删除了Google家用设备的问题已得到纠正"
-            },
-            "1.8.0": {
-                "en": "The google home table was rewritten",
-                "de": "Die Google Home-Tabelle wurde neu geschrieben",
-                "ru": "Переписана домашняя таблица google",
-                "pt": "A tabela inicial do Google foi reescrita",
-                "nl": "De Google Home-tabel is herschreven",
-                "fr": "La table Google Home a été réécrite",
-                "it": "La tabella di Google Home è stata riscritta",
-                "es": "Se reescribió la tabla de inicio de Google",
-                "pl": "Tabela domu google została przepisana",
-                "zh-cn": "谷歌主表被重写"
             }
         },
         "title": "IoT Assistants",
@@ -292,7 +292,7 @@
         "materialize": true,
         "dependencies": [
             {
-                "admin": ">=4.0.1"
+                "admin": ">=5.0.26"
             },
             {
                 "js-controller": ">=2.0.0"
@@ -316,6 +316,10 @@
             }
         }
     },
+    "protectedNative": [
+        "login",
+        "pass"
+    ],
     "native": {
         "login": "email.com",
         "pass": "",
