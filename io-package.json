@@ -278,6 +278,8 @@
         "loglevel": "info",
         "readme": "https://github.com/ioBroker/ioBroker.iot/blob/master/README.md",
         "icon": "iot.png",
+        "connectionType": "cloud",
+        "dataSource": "push",
         "keywords": [
             "web",
             "Cloud",
