@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.8.21",
+        "version": "1.8.22",
         "news": {
+            "1.8.22": {
+                "en": "Make it admin4 compatible",
+                "de": "Machen Sie es admin4 kompatibel",
+                "ru": "Сделайте его совместимым с admin4",
+                "pt": "Torne-o compatível com admin4",
+                "nl": "Maak het admin4-compatibel",
+                "fr": "Rendez-le compatible avec admin4",
+                "it": "Rendilo compatibile con admin4",
+                "es": "Hágalo compatible con admin4",
+                "pl": "Spraw, aby był zgodny z admin4",
+                "zh-cn": "使它与admin4兼容"
+            },
             "1.8.21": {
                 "en": "Fixed the encryption of the password. Warning: if you see the message in the log, that password is invalid, please enter the password in configuration dialog one more time and save.",
                 "de": "Die Verschlüsselung des Passworts wurde behoben. Warnung: Wenn Sie die Meldung im Protokoll sehen, dass dieses Kennwort ungültig ist, geben Sie das Kennwort noch einmal im Konfigurationsdialog ein und speichern Sie es.",
@@ -230,18 +242,6 @@
                 "es": "Se agregaron las salidas de depuración para Google Home.",
                 "pl": "Dodano wyjścia debugowania dla google home",
                 "zh-cn": "添加了Google Home的调试输出"
-            },
-            "1.8.1": {
-                "en": "The deletion of google home devices was corrected",
-                "de": "Das Löschen von Google Home-Geräten wurde korrigiert",
-                "ru": "Исправлено удаление домашних устройств google.",
-                "pt": "A exclusão de dispositivos domésticos do Google foi corrigida",
-                "nl": "De verwijdering van Google Home-apparaten is gecorrigeerd",
-                "fr": "La suppression des appareils Google Home a été corrigée",
-                "it": "L'eliminazione dei dispositivi Google Home è stata corretta",
-                "es": "Se corrigió la eliminación de dispositivos domésticos de Google",
-                "pl": "Poprawiono usuwanie urządzeń domowych Google",
-                "zh-cn": "删除了Google家用设备的问题已得到纠正"
             }
         },
         "title": "IoT Assistants",
@@ -292,14 +292,6 @@
         "messagebox": true,
         "stopBeforeUpdate": true,
         "materialize": true,
-        "dependencies": [
-            {
-                "admin": ">=5.0.26"
-            },
-            {
-                "js-controller": ">=2.0.0"
-            }
-        ],
         "preserveSettings": "smartName",
         "eraseOnUpload": true,
         "blockly": true,

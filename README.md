@@ -254,6 +254,9 @@ Following types are supported:
 -->
 
 ## Changelog
+### 1.8.22 (2021-05-16)
+* (bluefox) Make it admin4 compatible
+
 ### 1.8.21 (2021-05-16)
 * (bluefox) Fixed the encryption of the password. Warning: if you see the message in the log, that password is invalid, please enter the password in configuration dialog one more time and save.
 
