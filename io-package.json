@@ -4,16 +4,16 @@
         "version": "1.8.20",
         "news": {
             "1.8.20": {
-                "en": "Only added one debug output",
-                "de": "Es wurde nur eine Debug-Ausgabe hinzugefügt",
-                "ru": "Добавлен только один вывод отладки",
-                "pt": "Adicionou apenas uma saída de depuração",
-                "nl": "Slechts één foutopsporingsoutput toegevoegd",
-                "fr": "Ajout d'une seule sortie de débogage",
-                "it": "Aggiunto solo un output di debug",
-                "es": "Solo se agregó una salida de depuración",
-                "pl": "Dodano tylko jedno wyjście debugowania",
-                "zh-cn": "仅添加了一个调试输出"
+                "en": "we now write data received from custom services with acknowledge flag",
+                "de": "Wir schreiben jetzt Daten, die von benutzerdefinierten Diensten empfangen wurden, mit dem Bestätigungsflag",
+                "ru": "теперь мы записываем данные, полученные от пользовательских сервисов, с флагом подтверждения",
+                "pt": "agora gravamos dados recebidos de serviços personalizados com sinalização de reconhecimento",
+                "nl": "we schrijven nu gegevens die zijn ontvangen van aangepaste services met een bevestigingsvlag",
+                "fr": "nous écrivons maintenant les données reçues des services personnalisés avec l'indicateur de confirmation",
+                "it": "ora scriviamo i dati ricevuti dai servizi personalizzati con flag di riconoscimento",
+                "es": "ahora escribimos los datos recibidos de los servicios personalizados con una marca de reconocimiento",
+                "pl": "teraz zapisujemy dane otrzymane od usług niestandardowych z flagą potwierdzenia",
+                "zh-cn": "现在，我们编写从自定义服务接收的带有确认标志的数据"
             },
             "1.8.19": {
                 "en": "Only added one debug output",
@@ -417,7 +417,7 @@
             "common": {
                 "role": "state",
                 "name": "Last command",
-                "type": "string",
+                "type": "mixed",
                 "read": true,
                 "write": false
             },
