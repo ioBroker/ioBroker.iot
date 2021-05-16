@@ -127,11 +127,41 @@ class Options extends Component {
             </CardActionArea>
             <CardActions style={{textAlign: 'center'}} >
                 <Button variant="outlined" size="small" color="primary" style={{textAlign: 'center'}} onClick={() => {
-                    const win = window.open('http://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/reviews', '_blank');
+                    const win = window.open('https://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/reviews', '_blank');
                     win.focus();
                 }}>{I18n.t('Review')}</Button>
+                {this.props.native.amazonAlexa ?
+                    <Button
+                        title="Debug"
+                        onClick={() => this.onDebug()}
+                        style={{opacity: this.state.debugVisible ? 1 : 0}}
+                        onMouseEnter={() => this.setState({debugVisible: true})}
+                        onMouseLeave={() => this.setState({debugVisible: false})}
+                    >Debug</Button> : null}
             </CardActions>
         </Card>;
+    }
+
+    onDebug() {
+        this.props.socket.sendTo(this.props.adapterName + '.' + this.props.instance, 'debug', null)
+            .then(data => {
+                const file = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+                if (window.navigator.msSaveOrOpenBlob) // IE10+
+                    window.navigator.msSaveOrOpenBlob(file, 'debug.json');
+                else { // Others
+                    const a = document.createElement('a');
+                    const url = URL.createObjectURL(file);
+                    a.href = url;
+                    a.download = 'debug.json';
+                    document.body.appendChild(a);
+                    a.click();
+
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);
+                    }, 0);
+                }
+            });
     }
 
     resetCerts(forceUserCreate) {
@@ -165,32 +195,33 @@ class Options extends Component {
     }
 
     renderToast() {
-        if (!this.state.toast) return null;
-        return (
-            <Snackbar
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                }}
-                open={true}
-                autoHideDuration={6000}
-                onClose={() => this.setState({toast: ''})}
-                ContentProps={{
-                    'aria-describedby': 'message-id',
-                }}
-                message={<span id="message-id">{this.state.toast}</span>}
-                action={[
-                    <IconButton
-                        key="close"
-                        aria-label="Close"
-                        color="inherit"
-                        className={this.props.classes.close}
-                        onClick={() => this.setState({toast: ''})}
-                    >
-                        <IconClose />
-                    </IconButton>,
-                ]}
-            />);
+        if (!this.state.toast) {
+            return null;
+        }
+        return <Snackbar
+            anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+            }}
+            open={true}
+            autoHideDuration={6000}
+            onClose={() => this.setState({toast: ''})}
+            ContentProps={{
+                'aria-describedby': 'message-id',
+            }}
+            message={<span id="message-id">{this.state.toast}</span>}
+            action={[
+                <IconButton
+                    key="close"
+                    aria-label="Close"
+                    color="inherit"
+                    className={this.props.classes.close}
+                    onClick={() => this.setState({toast: ''})}
+                >
+                    <IconClose />
+                </IconButton>,
+            ]}
+        />;
     }
 
     renderCheckbox(title, attr, style) {
@@ -209,6 +240,7 @@ class Options extends Component {
     render() {
         return <form className={ this.props.classes.tab }>
             <Logo
+                classes={{}}
                 instance={ this.props.instance }
                 common={ this.props.common }
                 native={ this.props.native }
@@ -249,7 +281,8 @@ class Options extends Component {
                 </Button>
 
                 <p>{I18n.t('new_credentials_tip')}</p>
-                {this.props.changed ? <div className={this.props.classes.hintUnsaved}>{I18n.t('Save settings before pressing this button')}</div> : null}
+                {this.props.changed ?
+                    <div className={this.props.classes.hintUnsaved}>{I18n.t('Save settings before pressing this button')}</div> : null}
                 <Button variant="outlined"
                         className={ this.props.classes.button }
                         disabled={ this.props.changed || this.state.inAction || !this.state.isInstanceAlive }

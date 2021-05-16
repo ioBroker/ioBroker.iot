@@ -1,3 +1,0 @@
-files:
-  - source: /src/src/i18n/en.json
-    translation: /src/src/i18n/%two_letters_code%.json

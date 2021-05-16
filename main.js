@@ -145,6 +145,7 @@ function startAdapter(options) {
                             }
                         }
                         break;
+
                     case 'browseAlisa':
                         if (obj.callback) {
                             adapter.log.info('Request Yandex Alice devices');
@@ -158,6 +159,7 @@ function startAdapter(options) {
                             }
                         }
                         break;
+
                     case 'enums':
                         if (obj.callback) {
                             adapter.log.info('Request enums');
@@ -193,6 +195,11 @@ function startAdapter(options) {
 
                     case 'alexaCustomResponse':
                         alexaCustom && alexaCustom.setResponse(obj.message);
+                        break;
+
+                    case 'debug':
+                        alexaSH2.getDebug(data =>
+                            adapter.sendTo(obj.from, obj.command, data, obj.callback));
                         break;
 
                     default:

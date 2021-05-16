@@ -254,7 +254,7 @@ Following types are supported:
 -->
 
 ## Changelog
-### 1.8.19 (2021-05-14)
+### 1.8.20 (2021-05-16)
 * (bluefox) Only added one debug output
 
 ### 1.8.16 (2021-03-13)

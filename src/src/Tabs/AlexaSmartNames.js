@@ -867,36 +867,34 @@ class AlexaSmartNames extends Component {
             return <CircularProgress  key="alexaProgress" />;
         }
 
-        return (
-            <form key="alexa" className={this.props.classes.tab}>
-                <Fab size="small" color="secondary" aria-label="Add" className={this.props.classes.button} onClick={() => this.setState({showSelectId: true})}><IconAdd /></Fab>
-                <Fab size="small" color="primary" aria-label="Refresh" className={this.props.classes.button}
-                      onClick={() => this.browse(true)} disabled={this.state.browse}>{this.state.browse ? <CircularProgress size={20} /> : <IconRefresh/>}</Fab>
-                <Fab style={{marginLeft: '1rem'}}
-                     title={I18n.t('Show all devices for print out')}
-                     size="small" aria-label="List of devices" className={this.props.classes.button}
-                     onClick={() => this.setState({showListOfDevices: true})} disabled={this.state.browse}><IconList/></Fab>
-                <TextField
-                    placeholder={I18n.t('Filter')}
-                    className={this.state.filter}
-                    value={this.state.filter}
-                    onChange={e => this.setState({filter: e.target.value})}
-                    InputProps={{
-                        endAdornment: this.state.filter ? (
-                            <IconButton onClick={() => this.setState({ filter: '' })}>
-                                <IconClear />
-                            </IconButton>
-                        ) : undefined,
-                    }}
-                />
-                {this.renderDevices()}
-                {this.renderMessage()}
-                {this.renderEditDialog()}
-                {this.getSelectIdDialog()}
-                {this.renderConfirmDialog()}
-                {this.renderListOfDevices()}
-            </form>
-        );
+        return <form key="alexa" className={this.props.classes.tab}>
+            <Fab size="small" color="secondary" aria-label="Add" className={this.props.classes.button} onClick={() => this.setState({showSelectId: true})}><IconAdd /></Fab>
+            <Fab size="small" color="primary" aria-label="Refresh" className={this.props.classes.button}
+                  onClick={() => this.browse(true)} disabled={this.state.browse}>{this.state.browse ? <CircularProgress size={20} /> : <IconRefresh/>}</Fab>
+            <Fab style={{marginLeft: '1rem'}}
+                 title={I18n.t('Show all devices for print out')}
+                 size="small" aria-label="List of devices" className={this.props.classes.button}
+                 onClick={() => this.setState({showListOfDevices: true})} disabled={this.state.browse}><IconList/></Fab>
+            <TextField
+                placeholder={I18n.t('Filter')}
+                className={this.state.filter}
+                value={this.state.filter}
+                onChange={e => this.setState({filter: e.target.value})}
+                InputProps={{
+                    endAdornment: this.state.filter ? (
+                        <IconButton onClick={() => this.setState({ filter: '' })}>
+                            <IconClear />
+                        </IconButton>
+                    ) : undefined,
+                }}
+            />
+            {this.renderDevices()}
+            {this.renderMessage()}
+            {this.renderEditDialog()}
+            {this.getSelectIdDialog()}
+            {this.renderConfirmDialog()}
+            {this.renderListOfDevices()}
+        </form>;
     }
 }
 

@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "iot",
-        "version": "1.8.19",
+        "version": "1.8.20",
         "news": {
+            "1.8.20": {
+                "en": "Only added one debug output",
+                "de": "Es wurde nur eine Debug-Ausgabe hinzugefügt",
+                "ru": "Добавлен только один вывод отладки",
+                "pt": "Adicionou apenas uma saída de depuração",
+                "nl": "Slechts één foutopsporingsoutput toegevoegd",
+                "fr": "Ajout d'une seule sortie de débogage",
+                "it": "Aggiunto solo un output di debug",
+                "es": "Solo se agregó una salida de depuración",
+                "pl": "Dodano tylko jedno wyjście debugowania",
+                "zh-cn": "仅添加了一个调试输出"
+            },
             "1.8.19": {
                 "en": "Only added one debug output",
                 "de": "Es wurde nur eine Debug-Ausgabe hinzugefügt",
@@ -230,18 +242,6 @@
                 "es": "Se reescribió la tabla de inicio de Google",
                 "pl": "Tabela domu google została przepisana",
                 "zh-cn": "谷歌主表被重写"
-            },
-            "1.7.15": {
-                "en": "Corrected the request for temperature",
-                "de": "Die Temperaturanfrage wurde korrigiert",
-                "ru": "Исправлен запрос температуры",
-                "pt": "Corrigido o pedido de temperatura",
-                "nl": "Het verzoek om temperatuur gecorrigeerd",
-                "fr": "Correction de la demande de température",
-                "it": "Corretta la richiesta di temperatura",
-                "es": "Se corrigió la solicitud de temperatura.",
-                "pl": "Poprawiono żądanie temperatury",
-                "zh-cn": "更正了温度要求"
             }
         },
         "title": "IoT Assistants",
