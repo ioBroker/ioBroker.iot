@@ -276,8 +276,10 @@ class Options extends Component {
                         className={ this.props.classes.button }
                         disabled={ this.props.changed || this.state.inAction || !this.state.isInstanceAlive }
                         title={ !this.state.isInstanceAlive ? I18n.t('Instance must be enabled') : '' }
-                        onClick={ () => this.resetCerts() }>
-                    <IconReload style={{ marginRight: 8 }}/>{ I18n.t('Get new connection certificates') }
+                        onClick={ () => this.resetCerts() }
+                        startIcon={<IconReload />}
+                >
+                    { I18n.t('Get new connection certificates') }
                 </Button>
 
                 <p>{I18n.t('new_credentials_tip')}</p>
@@ -287,8 +289,10 @@ class Options extends Component {
                         className={ this.props.classes.button }
                         disabled={ this.props.changed || this.state.inAction || !this.state.isInstanceAlive }
                         title={ !this.state.isInstanceAlive ? I18n.t('Instance must be enabled') : '' }
-                        onClick={ () => this.resetCerts(true) }>
-                    <IconReload  style={{ marginRight: 8 }}/>{ I18n.t('Create IoT credentials anew') }
+                        onClick={ () => this.resetCerts(true) }
+                        startIcon={<IconReload />}
+                >
+                    { I18n.t('Create IoT credentials anew') }
                 </Button>
                 <p>{ Utils.renderTextWithA(I18n.t('forum_tip')) }</p>
                 <p style={{ fontWeight: 'bold' }}>{ Utils.renderTextWithA(I18n.t('help_tip')) }</p>

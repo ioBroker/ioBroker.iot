@@ -259,8 +259,10 @@ class Services extends Component {
                 disabled={!this.state.isInstanceAlive || this.state.running}
                 color="primary"
                 title={!this.state.isInstanceAlive ? I18n.t('Instance must be enabled') : ''}
-                onClick={() => this.reissueUrlKey()}>
-                <IconRefresh />{I18n.t('Get new service URL key')}
+                onClick={() => this.reissueUrlKey()}
+                startIcon={<IconRefresh />}
+            >
+                {I18n.t('Get new service URL key')}
             </Button><br/>
 
             {this.renderInput('IFTTT key', 'iftttKey')}<br/>
