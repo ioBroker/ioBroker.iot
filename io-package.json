@@ -292,6 +292,11 @@
         "messagebox": true,
         "stopBeforeUpdate": true,
         "materialize": true,
+        "dependencies": [
+            {
+                "js-controller": ">=2.0.0"
+            }
+        ],
         "preserveSettings": "smartName",
         "eraseOnUpload": true,
         "blockly": true,
