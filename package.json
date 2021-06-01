@@ -27,7 +27,7 @@
     "aws-iot-device-sdk": "^2.2.6",
     "echarts": "^4.9.0",
     "iobroker.type-detector": "^1.0.8",
-    "jsdom": "^16.5.3",
+    "jsdom": "^16.6.0",
     "moment": "^2.29.1",
     "request": "^2.88.2",
     "uuid": "^8.3.2"
