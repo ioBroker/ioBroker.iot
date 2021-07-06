@@ -1,10 +1,13 @@
 ![Logo](admin/iot.png)
 # ioBroker IoT Adapter
 
-![Number of Installations](http://iobroker.live/badges/iot-installed.svg) ![Number of Installations](http://iobroker.live/badges/iot-stable.svg) [![NPM version](http://img.shields.io/npm/v/iobroker.iot.svg)](https://www.npmjs.com/package/iobroker.iot)
-[![Downloads](https://img.shields.io/npm/dm/iobroker.iot.svg)](https://www.npmjs.com/package/iobroker.iot)
+![Number of Installations](http://iobroker.live/badges/iot-installed.svg)
+![Number of Installations](http://iobroker.live/badges/iot-stable.svg)
+[![NPM version](http://img.shields.io/npm/v/iobroker.iot.svg)](https://www.npmjs.com/package/iobroker.iot)
 
-[![NPM](https://nodei.co/npm/iobroker.iot.png?downloads=true)](https://nodei.co/npm/iobroker.iot/)
+![Test and Release](https://github.com/ioBroker/ioBroker.iot/workflows/Test%20and%20Release/badge.svg)
+[![Translation status](https://weblate.iobroker.net/widgets/adapters/-/iot/svg-badge.svg)](https://weblate.iobroker.net/engage/adapters/?utm_source=widget)
+[![Downloads](https://img.shields.io/npm/dm/iobroker.iot.svg)](https://www.npmjs.com/package/iobroker.iot)
 
 This adapter is ONLY for communication with Amazon Alexa, Google Home and Nightscout.
 It is not for remote access to your ioBroker instance. Use ioBroker.cloud adapter for that.

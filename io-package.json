@@ -280,6 +280,7 @@
         "icon": "iot.png",
         "connectionType": "cloud",
         "dataSource": "push",
+        "tier": 3,
         "keywords": [
             "web",
             "Cloud",
