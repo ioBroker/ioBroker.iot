@@ -70,9 +70,9 @@ jobs:
         run: npm install
 
       - name: Run local tests
+        #         npm downgrade to 6 (mainly for node.js 16) is needed because else testing fails
+        #         after installing additional adapters
         run: |
-#         npm downgrade to 6 (mainly for node.js 16) is needed because else testing fails
-#         after installing additional adapters
           npm install -g npm@6
           npm test
 #      - name: Run unit tests
