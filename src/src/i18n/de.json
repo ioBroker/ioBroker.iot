@@ -1,7 +1,7 @@
 {
     "(Set to 0 if behavior not desired)": "(Auf 0 setzten, falls das Verhalten unerwünscht ist)",
-    "(you can separate names with comma)": "Man kann mehrere kommaseparierte Namen eingeben",
-    "Active": "aktiv",
+    "(you can separate names with comma)": "Du kannst mehrere Namen seperiert mit Kommas angeben",
+    "Active": "Aktiv",
     "Add device": "Gerät hinzufügen",
     "Add service": "Dienst hinzufügen",
     "Addresses": "Adressen",
