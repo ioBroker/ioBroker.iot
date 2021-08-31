@@ -40,7 +40,7 @@
     "chai": "^4.3.4",
     "del": "^6.0.0",
     "gulp": "^4.0.2",
-    "mocha": "^9.0.2"
+    "mocha": "^9.0.3"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.iot/issues"
