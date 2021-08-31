@@ -1,7 +1,7 @@
 {
     "(Set to 0 if behavior not desired)": "(Auf 0 setzten, falls das Verhalten unerwünscht ist)",
-    "(you can separate names with comma)": "Man kann mehrere kommaseparierte Namen eingeben",
-    "Active": "aktiv",
+    "(you can separate names with comma)": "Mehrere Namen können separiert mit Kommas angegeben werden",
+    "Active": "Aktiv",
     "Add device": "Gerät hinzufügen",
     "Add service": "Dienst hinzufügen",
     "Addresses": "Adressen",
@@ -126,7 +126,7 @@
     "ioBroker.pro Login": "ioBroker.pro Login",
     "ioBroker.pro Password": "ioBroker.pro Passwort",
     "last value": "letzter Wert",
-    "modified": "Der Name wurde vom Anwender geändert",
+    "modified": "Der Name wurde vom Benutzer geändert",
     "no type": "kein Typ",
     "tooltip_allowSelfSignedCertificate": "Wenn man eine eigene Cloud verwendet, man kann die Benutzung von selbst-signierten Zertifikaten erlauben.",
     "tooltip_apikey": "Dieser Schlüssel wird benötigt um mit der Cloud zu kommunizieren. Man kann den Schlüssel unter https://iobroker.net bekommen. Es sieht wie folgt aus nickname_f1f439a0-001a-11e7-bc64-92361f002671",
