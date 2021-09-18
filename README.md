@@ -21,6 +21,11 @@ To use cloud adapter you should first to register on the ioBroker cloud [https:/
 
 ![Intro](img/intro.png)
 
+### Limits
+Everything has a limits, so the Amazon Alexa too. Alexa can support only up to 300 devices.
+
+Google Cloud and Alisa should be cleared
+
 ### Language
 If you select "default" language the smart names of devices and of enumerations will not be translated. If some language specified all known names will be translated into this language.
 It is done to switch fast between many languages for demonstration purposes.
