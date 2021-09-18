@@ -84,7 +84,7 @@ class ExtendedOptions extends Component {
                 onChange={e => this.props.onChange(attr, e.target.value === '_' ? '' : e.target.value)}
                 input={<Input name={attr} id={attr + '-helper'} />}
             >
-                {options.map(item => <MenuItem key={'key-' + item.value} value={item.value || '_'}>{I18n.t(item.title)}</MenuItem>)}
+                {options.map(item => <MenuItem key={'key-' + item.value} value={item.value || '_'}>{item.noTranslation ? item.title : I18n.t(item.title)}</MenuItem>)}
             </Select>
             <FormHelperText>{I18n.t(title)}</FormHelperText>
         </FormControl>;
@@ -128,9 +128,9 @@ class ExtendedOptions extends Component {
                 {this.renderInput('Cloud URL', 'cloudUrl')}<br/>
                 {this.renderSelect('Language', 'language', [
                     {title: 'default', value: ''},
-                    {title: 'english', value: 'en'},
-                    {title: 'Deutsch', value: 'de'},
-                    {title: 'русский', value: 'ru'}
+                    {title: 'english', value: 'en', noTranslation: true},
+                    {title: 'Deutsch', value: 'de', noTranslation: true},
+                    {title: 'русский', value: 'ru', noTranslation: true}
                 ], {marginTop: 10})}<br/>
                 {this.renderCheckbox('Place function in names first', 'functionFirst', {marginTop: 10})}<br/>
                 {this.renderInput('Concatenate words with', 'concatWord')}<br/>

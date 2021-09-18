@@ -618,7 +618,7 @@ function processMessage(type, request, callback) {
             }
         }
 
-        adapter.log.debug(Date.now() + ' ALEXA: ' + JSON.stringify(request));
+        adapter.log.debug(`${Date.now()} ALEXA: ${JSON.stringify(request)}`);
 
         if (request && request.directive) {
             if (alexaSH3) {
@@ -686,7 +686,7 @@ function processMessage(type, request, callback) {
             }
         }
 
-        adapter.log.debug(Date.now() + ' ALISA: ' + JSON.stringify(request));
+        adapter.log.debug(`${Date.now()} ALISA: ${JSON.stringify(request)}`);
         if (yandexAlisa) {
             yandexAlisa.process(request, adapter.config.yandexAlisa, response => callback(response));
         } else {
@@ -709,7 +709,7 @@ function processMessage(type, request, callback) {
 
             if (type.startsWith('text2command')) {
                 if (adapter.config.text2command !== undefined && adapter.config.text2command !== '') {
-                    adapter.setForeignState('text2command.' + adapter.config.text2command + '.text', request,
+                    adapter.setForeignState(`text2command.${adapter.config.text2command}.text`, request,
                         err => callback({result: err || 'Ok'}));
                 } else {
                     adapter.log.warn('Received service text2command, but instance is not defined');
@@ -721,7 +721,7 @@ function processMessage(type, request, callback) {
                 adapter.getObject('services.custom_' + _type, (err, obj) => {
                     if (!obj) {
                         adapter.setObjectNotExists('services.custom_' + _type, {
-                            _id: adapter.namespace + '.services.custom_' + _type,
+                            _id: `${adapter.namespace}.services.custom_${_type}`,
                             type: 'state',
                             common: {
                                 name: 'Service for ' + _type,
@@ -838,8 +838,12 @@ function startDevice(clientId, login, password, retry) {
                 if (topic.startsWith(`command/${clientId}/`)) {
                     let type = topic.substring(clientId.length + 9);
 
-                    processMessage(type, request, response =>
-                        device && device.publish(`response/${clientId}/${type}`, JSON.stringify(response)));
+                    processMessage(type, request, response => {
+                        if (adapter.common.loglevel === 'debug') {
+                            adapter.log.debug('Response: ' + JSON.stringify(response));
+                        }
+                        device && device.publish(`response/${clientId}/${type}`, JSON.stringify(response))
+                    });
                 }
             });
         }).catch(e => {

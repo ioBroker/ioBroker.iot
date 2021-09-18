@@ -1,626 +1,470 @@
 {
-    "common": {
-        "name": "iot",
-        "version": "1.8.22",
-        "news": {
-            "1.8.22": {
-                "en": "Make it admin4 compatible",
-                "de": "Machen Sie es admin4 kompatibel",
-                "ru": "Сделайте его совместимым с admin4",
-                "pt": "Torne-o compatível com admin4",
-                "nl": "Maak het admin4-compatibel",
-                "fr": "Rendez-le compatible avec admin4",
-                "it": "Rendilo compatibile con admin4",
-                "es": "Hágalo compatible con admin4",
-                "pl": "Spraw, aby był zgodny z admin4",
-                "zh-cn": "使它与admin4兼容"
-            },
-            "1.8.21": {
-                "en": "Fixed the encryption of the password. Warning: if you see the message in the log, that password is invalid, please enter the password in configuration dialog one more time and save.",
-                "de": "Die Verschlüsselung des Passworts wurde behoben. Warnung: Wenn Sie die Meldung im Protokoll sehen, dass dieses Kennwort ungültig ist, geben Sie das Kennwort noch einmal im Konfigurationsdialog ein und speichern Sie es.",
-                "ru": "Исправлено шифрование пароля. Предупреждение: если вы видите сообщение в журнале, это недействительный пароль, пожалуйста, введите пароль в диалоговом окне конфигурации еще раз и сохраните.",
-                "pt": "Corrigida a criptografia da senha. Aviso: se você ver a mensagem no log, essa senha é inválida, digite a senha na caixa de diálogo de configuração mais uma vez e salve.",
-                "nl": "De versleuteling van het wachtwoord opgelost. Waarschuwing: als u het bericht in het logboek ziet, is dat wachtwoord ongeldig. Voer het wachtwoord nog een keer in het configuratiedialoogvenster in en sla het op.",
-                "fr": "Correction du cryptage du mot de passe. Attention: si vous voyez le message dans le journal, ce mot de passe n'est pas valide, veuillez saisir à nouveau le mot de passe dans la boîte de dialogue de configuration et enregistrez-le.",
-                "it": "Corretta la crittografia della password. Attenzione: se vedi il messaggio nel registro, la password non è valida, inserisci la password nella finestra di dialogo di configurazione ancora una volta e salva.",
-                "es": "Se corrigió el cifrado de la contraseña. Advertencia: si ve el mensaje en el registro, esa contraseña no es válida, ingrese la contraseña en el cuadro de diálogo de configuración una vez más y guarde.",
-                "pl": "Naprawiono szyfrowanie hasła. Ostrzeżenie: jeśli zobaczysz komunikat w dzienniku, to hasło jest nieprawidłowe, wprowadź hasło jeszcze raz w oknie dialogowym konfiguracji i zapisz.",
-                "zh-cn": "修复了密码的加密。警告：如果您在日志中看到消息，表明密码无效，请再次在配置对话框中输入密码并保存。"
-            },
-            "1.8.20": {
-                "en": "we now write data received from custom services with acknowledge flag",
-                "de": "Wir schreiben jetzt Daten, die von benutzerdefinierten Diensten empfangen wurden, mit dem Bestätigungsflag",
-                "ru": "теперь мы записываем данные, полученные от пользовательских сервисов, с флагом подтверждения",
-                "pt": "agora gravamos dados recebidos de serviços personalizados com sinalização de reconhecimento",
-                "nl": "we schrijven nu gegevens die zijn ontvangen van aangepaste services met een bevestigingsvlag",
-                "fr": "nous écrivons maintenant les données reçues des services personnalisés avec l'indicateur de confirmation",
-                "it": "ora scriviamo i dati ricevuti dai servizi personalizzati con flag di riconoscimento",
-                "es": "ahora escribimos los datos recibidos de los servicios personalizados con una marca de reconocimiento",
-                "pl": "teraz zapisujemy dane otrzymane od usług niestandardowych z flagą potwierdzenia",
-                "zh-cn": "现在，我们编写从自定义服务接收的带有确认标志的数据"
-            },
-            "1.8.19": {
-                "en": "Only added one debug output",
-                "de": "Es wurde nur eine Debug-Ausgabe hinzugefügt",
-                "ru": "Добавлен только один вывод отладки",
-                "pt": "Adicionou apenas uma saída de depuração",
-                "nl": "Slechts één foutopsporingsoutput toegevoegd",
-                "fr": "Ajout d'une seule sortie de débogage",
-                "it": "Aggiunto solo un output di debug",
-                "es": "Solo se agregó una salida de depuración",
-                "pl": "Dodano tylko jedno wyjście debugowania",
-                "zh-cn": "仅添加了一个调试输出"
-            },
-            "1.8.18": {
-                "en": "Only added one debug output",
-                "de": "Es wurde nur eine Debug-Ausgabe hinzugefügt",
-                "ru": "Добавлен только один вывод отладки",
-                "pt": "Adicionou apenas uma saída de depuração",
-                "nl": "Slechts één foutopsporingsoutput toegevoegd",
-                "fr": "Ajout d'une seule sortie de débogage",
-                "it": "Aggiunto solo un output di debug",
-                "es": "Solo se agregó una salida de depuración",
-                "pl": "Dodano tylko jedno wyjście debugowania",
-                "zh-cn": "仅添加了一个调试输出"
-            },
-            "1.8.17": {
-                "en": "Only added one debug output",
-                "de": "Es wurde nur eine Debug-Ausgabe hinzugefügt",
-                "ru": "Добавлен только один вывод отладки",
-                "pt": "Adicionou apenas uma saída de depuração",
-                "nl": "Slechts één foutopsporingsoutput toegevoegd",
-                "fr": "Ajout d'une seule sortie de débogage",
-                "it": "Aggiunto solo un output di debug",
-                "es": "Solo se agregó una salida de depuración",
-                "pl": "Dodano tylko jedno wyjście debugowania",
-                "zh-cn": "仅添加了一个调试输出"
-            },
-            "1.8.16": {
-                "en": "fixed the blind functionality in alisa",
-                "de": "Die Blindfunktionalität in Alisa wurde behoben",
-                "ru": "исправлена работа слепых в алисе",
-                "pt": "consertou a funcionalidade cega em alisa",
-                "nl": "repareerde de blinde functionaliteit in alisa",
-                "fr": "correction de la fonctionnalité aveugle dans alisa",
-                "it": "corretta la funzionalità dei ciechi in alisa",
-                "es": "Se arregló la funcionalidad ciega en alisa",
-                "pl": "naprawiono funkcję niewidomych w alisa",
-                "zh-cn": "修复了alisa中的盲目功能"
-            },
-            "1.8.15": {
-                "en": "implemented the sensor functionality in alisa",
-                "de": "implementierte die Sensorfunktionalität in alisa",
-                "ru": "реализовал сенсорный функционал в алисе",
-                "pt": "implementou a funcionalidade do sensor no alisa",
-                "nl": "de sensorfunctie geïmplementeerd in alisa",
-                "fr": "implémenté la fonctionnalité de capteur dans alisa",
-                "it": "implementato la funzionalità del sensore in alisa",
-                "es": "implementó la funcionalidad del sensor en alisa",
-                "pl": "zaimplementował funkcjonalność czujnika w alisa",
-                "zh-cn": "在alisa中实现了传感器功能"
-            },
-            "1.8.14": {
-                "en": "allowed the control of the blinds in alisa",
-                "de": "erlaubte die Kontrolle der Jalousien in Alisa",
-                "ru": "разрешил управление жалюзи в Алисе",
-                "pt": "permitiu o controle das persianas em alisa",
-                "nl": "stond de bediening van de jaloezieën toe in alisa",
-                "fr": "a permis le contrôle des stores dans alisa",
-                "it": "ha permesso il controllo dei bui in alisa",
-                "es": "permitió el control de las persianas en alisa",
-                "pl": "pozwolił na kontrolę żaluzji w alisa",
-                "zh-cn": "允许控制alisa中的百叶窗"
-            },
-            "1.8.13": {
-                "en": "add missing object smart.lastObjectID",
-                "de": "fehlendes Objekt smart.lastObjectID hinzufügen",
-                "ru": "добавить недостающий объект smart.lastObjectID",
-                "pt": "adicionar objeto ausente smart.lastObjectID",
-                "nl": "voeg ontbrekend object smart.lastObjectID toe",
-                "fr": "ajouter un objet manquant smart.lastObjectID",
-                "it": "aggiungi oggetto mancante smart.lastObjectID",
-                "es": "agregar objeto faltante smart.lastObjectID",
-                "pl": "dodaj brakujący obiekt smart.lastObjectID",
-                "zh-cn": "添加缺少的对象smart.lastObjectID"
-            },
-            "1.8.12": {
-                "en": "Fixed the dimmer issue with alisa.",
-                "de": "Das Dimmer-Problem mit Alisa wurde behoben.",
-                "ru": "Исправлена проблема с диммером у Алисы.",
-                "pt": "Corrigido o problema do dimmer com alisa.",
-                "nl": "Het dimmerprobleem met alisa opgelost.",
-                "fr": "Correction du problème de gradateur avec alisa.",
-                "it": "Risolto il problema del dimmer con alisa.",
-                "es": "Se corrigió el problema del atenuador con alisa.",
-                "pl": "Naprawiono problem ze ściemniaczem alisy.",
-                "zh-cn": "修复了alisa的调光问题。"
-            },
-            "1.8.11": {
-                "en": "Alexa - Corrected the request for percentage values",
-                "de": "Alexa - Die Anfrage nach Prozentwerten wurde korrigiert",
-                "ru": "Alexa - Исправлен запрос процентных значений",
-                "pt": "Alexa - corrigiu a solicitação de valores percentuais",
-                "nl": "Alexa - Het verzoek om percentagewaarden gecorrigeerd",
-                "fr": "Alexa - Correction de la demande de valeurs en pourcentage",
-                "it": "Alexa: corretta la richiesta di valori percentuali",
-                "es": "Alexa: se corrigió la solicitud de valores porcentuales",
-                "pl": "Alexa - poprawiono żądanie wartości procentowych",
-                "zh-cn": "Alexa-更正了对百分比值的要求"
-            },
-            "1.8.10": {
-                "en": "Added the reconnect strategy if DNS address cannot be resolved",
-                "de": "Die Strategie zum erneuten Verbinden wurde hinzugefügt, wenn die DNS-Adresse nicht aufgelöst werden kann",
-                "ru": "Добавлена стратегия переподключения, если DNS-адрес не может быть разрешен",
-                "pt": "Adicionada a estratégia de reconexão se o endereço DNS não puder ser resolvido",
-                "nl": "De strategie voor opnieuw verbinden toegevoegd als het DNS-adres niet kan worden opgelost",
-                "fr": "Ajout de la stratégie de reconnexion si l'adresse DNS ne peut pas être résolue",
-                "it": "Aggiunta la strategia di riconnessione se l'indirizzo DNS non può essere risolto",
-                "es": "Se agregó la estrategia de reconexión si la dirección DNS no se puede resolver",
-                "pl": "Dodano strategię ponownego łączenia, jeśli nie można rozwiązać adresu DNS",
-                "zh-cn": "如果无法解析DNS地址，则添加了重新连接策略"
-            },
-            "1.8.9": {
-                "en": "Updated configuration GUI to the latest state",
-                "de": "Die Konfigurations-GUI wurde auf den neuesten Stand gebracht",
-                "ru": "Обновлен графический интерфейс конфигурации до последнего состояния",
-                "pt": "GUI de configuração atualizada para o estado mais recente",
-                "nl": "Bijgewerkte configuratie-GUI naar de nieuwste staat",
-                "fr": "Interface graphique de configuration mise à jour au dernier état",
-                "it": "Aggiornata la GUI di configurazione allo stato più recente",
-                "es": "GUI de configuración actualizada al último estado",
-                "pl": "Zaktualizowano GUI konfiguracji do najnowszego stanu",
-                "zh-cn": "将配置GUI更新为最新状态"
-            },
-            "1.8.8": {
-                "en": "Corrected the \"google home\" error",
-                "de": "Der Fehler \"Google Home\" wurde behoben",
-                "ru": "Исправлена ошибка \"Google Home\"",
-                "pt": "Corrigido o erro \"google home\"",
-                "nl": "De fout 'Google Home' is gecorrigeerd",
-                "fr": "Correction de l'erreur \"google home\"",
-                "it": "Corretto l'errore \"google home\"",
-                "es": "Se corrigió el error \"inicio de Google\".",
-                "pl": "Poprawiono błąd „google home”",
-                "zh-cn": "更正了“ Google主页”错误"
-            },
-            "1.8.6": {
-                "en": "Try to fix google home error",
-                "de": "Versuchen Sie, den Google Home-Fehler zu beheben",
-                "ru": "Попробуйте исправить ошибку Google Home",
-                "pt": "Tente corrigir o erro do Google Home",
-                "nl": "Probeer de Google Home-fout op te lossen",
-                "fr": "Essayez de corriger l'erreur Google Home",
-                "it": "Prova a correggere l'errore di Google Home",
-                "es": "Intenta corregir el error de inicio de Google",
-                "pl": "Spróbuj naprawić błąd strony głównej Google",
-                "zh-cn": "尝试修复Google Home错误"
-            },
-            "1.8.5": {
-                "en": "Corrected the configuration table for google home",
-                "de": "Die Konfigurationstabelle für Google Home wurde korrigiert",
-                "ru": "Исправлена таблица конфигурации для Google Home",
-                "pt": "Corrigida a tabela de configuração do google home",
-                "nl": "De configuratietabel voor Google Home is gecorrigeerd",
-                "fr": "Correction du tableau de configuration pour Google Home",
-                "it": "Corretta la tabella di configurazione per Google Home",
-                "es": "Se corrigió la tabla de configuración para la página principal de Google.",
-                "pl": "Poprawiono tabelę konfiguracji dla google home",
-                "zh-cn": "更正了Google Home的配置表"
-            },
-            "1.8.4": {
-                "en": "Corrected the configuration table for google home",
-                "de": "Die Konfigurationstabelle für Google Home wurde korrigiert",
-                "ru": "Исправлена таблица конфигурации для Google Home",
-                "pt": "Corrigida a tabela de configuração do google home",
-                "nl": "De configuratietabel voor Google Home is gecorrigeerd",
-                "fr": "Correction du tableau de configuration pour Google Home",
-                "it": "Corretta la tabella di configurazione per Google Home",
-                "es": "Se corrigió la tabla de configuración para la página principal de Google.",
-                "pl": "Poprawiono tabelę konfiguracji dla google home",
-                "zh-cn": "更正了Google Home的配置表"
-            },
-            "1.8.3": {
-                "en": "Trying to fix the set to false at start for google home",
-                "de": "Der Versuch, das Set beim Start für Google Home auf false zu setzen",
-                "ru": "Попытка исправить значение false при запуске для дома Google",
-                "pt": "Tentando corrigir o conjunto para falso no início do google home",
-                "nl": "Ik probeer de set bij het starten op false te herstellen voor Google Home",
-                "fr": "Essayer de corriger l'ensemble sur false au démarrage pour Google Home",
-                "it": "Cercando di correggere il set su false all'inizio per Google Home",
-                "es": "Intentando arreglar el conjunto en falso al inicio de la página principal de Google",
-                "pl": "Próbuję ustawić wartość false na początku dla Google Home",
-                "zh-cn": "尝试在Google Home启动时将其设置为false"
-            },
-            "1.8.2": {
-                "en": "Added the debug outputs for google home",
-                "de": "Die Debug-Ausgaben für Google Home wurden hinzugefügt",
-                "ru": "Добавлены отладочные данные для дома Google",
-                "pt": "Adicionadas as saídas de depuração para google home",
-                "nl": "De debug-uitgangen voor Google Home toegevoegd",
-                "fr": "Ajout des sorties de débogage pour Google Home",
-                "it": "Aggiunti gli output di debug per Google Home",
-                "es": "Se agregaron las salidas de depuración para Google Home.",
-                "pl": "Dodano wyjścia debugowania dla google home",
-                "zh-cn": "添加了Google Home的调试输出"
-            }
-        },
-        "title": "IoT Assistants",
-        "titleLang": {
-            "en": "IoT cloud connection",
-            "de": "Cloud IoT-Verbindung",
-            "ru": "Соединение Cloud IoT",
-            "pt": "Conexão Cloud IoT",
-            "nl": "Cloud IoT-verbinding",
-            "fr": "Connexion Cloud IoT",
-            "it": "Connessione Cloud IoT",
-            "es": "Conexión IoT en la nube",
-            "pl": "Połączenie Cloud IoT",
-            "zh-cn": "IoT云连接"
-        },
-        "desc": {
-            "en": "Connects your ioBroker server to the ioBroker IoT cloud",
-            "de": "Verbindet Ihren ioBroker-Server mit der ioBroker IoT-Cloud",
-            "ru": "Соединяет ваш сервер ioBroker с облаком ioBroker IoT",
-            "pt": "Conecta seu servidor ioBroker à nuvem IoT do ioBroker",
-            "nl": "Verbindt uw ioBroker-server met de ioBroker IoT-cloud",
-            "fr": "Connecte votre serveur ioBroker au cloud ioBroker IoT",
-            "it": "Collega il tuo server ioBroker al cloud IoT IoBroker",
-            "es": "Conecta su servidor ioBroker a la nube ioBroker IoT",
-            "pl": "Łączy twój serwer ioBroker z chmurą IoT ioBroker",
-            "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
-        },
-        "authors": [
-            "bluefox <dogafox@gmail.com>"
-        ],
-        "license": "MIT",
-        "platform": "Javascript/Node.js",
-        "mode": "daemon",
-        "loglevel": "info",
-        "readme": "https://github.com/ioBroker/ioBroker.iot/blob/master/README.md",
-        "icon": "iot.png",
-        "connectionType": "cloud",
-        "dataSource": "push",
-        "tier": 3,
-        "keywords": [
-            "web",
-            "Cloud",
-            "communication"
-        ],
-        "enabled": false,
-        "compact": true,
-        "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.iot/master/admin/iot.png",
-        "type": "communication",
-        "messagebox": true,
-        "stopBeforeUpdate": true,
-        "materialize": true,
-        "dependencies": [
-            {
-                "admin": ">=4.0.1"
-            },
-            {
-                "js-controller": ">=2.0.0"
-            }
-        ],
-        "preserveSettings": "smartName",
-        "eraseOnUpload": true,
-        "blockly": true,
-        "osDependencies": {
-            "linux": [
-                "libcairo2-dev",
-                "libpango1.0-dev",
-                "libjpeg-dev",
-                "libgif-dev",
-                "librsvg2-dev"
-            ]
-        },
-        "plugins": {
-            "sentry": {
-                "dsn": "https://20987eaf91ef49de821771499fdb4e1a@sentry.iobroker.net/40"
-            }
-        }
+  "common": {
+    "name": "iot",
+    "version": "1.8.23",
+    "news": {
+      "1.8.23": {
+        "en": "Fixed the response for the heating control",
+        "de": "Die Reaktion der Heizungssteuerung wurde korrigiert",
+        "ru": "Исправлен отклик на контроль нагрева",
+        "pt": "Corrigida a resposta para o controle de aquecimento",
+        "nl": "De reactie voor de verwarmingsregeling opgelost",
+        "fr": "Correction de la réponse pour la commande de chauffage",
+        "it": "Risolta la risposta per il controllo del riscaldamento",
+        "es": "Se corrigió la respuesta para el control de calefacción.",
+        "pl": "Poprawiono odpowiedź na sterowanie ogrzewaniem",
+        "zh-cn": "修复了加热控制的响应"
+      },
+      "1.8.22": {
+        "en": "Make it admin4 compatible",
+        "de": "Machen Sie es admin4 kompatibel",
+        "ru": "Сделайте его совместимым с admin4",
+        "pt": "Torne-o compatível com admin4",
+        "nl": "Maak het admin4-compatibel",
+        "fr": "Rendez-le compatible avec admin4",
+        "it": "Rendilo compatibile con admin4",
+        "es": "Hágalo compatible con admin4",
+        "pl": "Spraw, aby był zgodny z admin4",
+        "zh-cn": "使它与admin4兼容"
+      },
+      "1.8.21": {
+        "en": "Fixed the encryption of the password. Warning: if you see the message in the log, that password is invalid, please enter the password in configuration dialog one more time and save.",
+        "de": "Die Verschlüsselung des Passworts wurde behoben. Warnung: Wenn Sie die Meldung im Protokoll sehen, dass dieses Kennwort ungültig ist, geben Sie das Kennwort noch einmal im Konfigurationsdialog ein und speichern Sie es.",
+        "ru": "Исправлено шифрование пароля. Предупреждение: если вы видите сообщение в журнале, это недействительный пароль, пожалуйста, введите пароль в диалоговом окне конфигурации еще раз и сохраните.",
+        "pt": "Corrigida a criptografia da senha. Aviso: se você ver a mensagem no log, essa senha é inválida, digite a senha na caixa de diálogo de configuração mais uma vez e salve.",
+        "nl": "De versleuteling van het wachtwoord opgelost. Waarschuwing: als u het bericht in het logboek ziet, is dat wachtwoord ongeldig. Voer het wachtwoord nog een keer in het configuratiedialoogvenster in en sla het op.",
+        "fr": "Correction du cryptage du mot de passe. Attention: si vous voyez le message dans le journal, ce mot de passe n'est pas valide, veuillez saisir à nouveau le mot de passe dans la boîte de dialogue de configuration et enregistrez-le.",
+        "it": "Corretta la crittografia della password. Attenzione: se vedi il messaggio nel registro, la password non è valida, inserisci la password nella finestra di dialogo di configurazione ancora una volta e salva.",
+        "es": "Se corrigió el cifrado de la contraseña. Advertencia: si ve el mensaje en el registro, esa contraseña no es válida, ingrese la contraseña en el cuadro de diálogo de configuración una vez más y guarde.",
+        "pl": "Naprawiono szyfrowanie hasła. Ostrzeżenie: jeśli zobaczysz komunikat w dzienniku, to hasło jest nieprawidłowe, wprowadź hasło jeszcze raz w oknie dialogowym konfiguracji i zapisz.",
+        "zh-cn": "修复了密码的加密。警告：如果您在日志中看到消息，表明密码无效，请再次在配置对话框中输入密码并保存。"
+      },
+      "1.8.20": {
+        "en": "we now write data received from custom services with acknowledge flag",
+        "de": "Wir schreiben jetzt Daten, die von benutzerdefinierten Diensten empfangen wurden, mit dem Bestätigungsflag",
+        "ru": "теперь мы записываем данные, полученные от пользовательских сервисов, с флагом подтверждения",
+        "pt": "agora gravamos dados recebidos de serviços personalizados com sinalização de reconhecimento",
+        "nl": "we schrijven nu gegevens die zijn ontvangen van aangepaste services met een bevestigingsvlag",
+        "fr": "nous écrivons maintenant les données reçues des services personnalisés avec l'indicateur de confirmation",
+        "it": "ora scriviamo i dati ricevuti dai servizi personalizzati con flag di riconoscimento",
+        "es": "ahora escribimos los datos recibidos de los servicios personalizados con una marca de reconocimiento",
+        "pl": "teraz zapisujemy dane otrzymane od usług niestandardowych z flagą potwierdzenia",
+        "zh-cn": "现在，我们编写从自定义服务接收的带有确认标志的数据"
+      },
+      "1.8.19": {
+        "en": "Only added one debug output",
+        "de": "Es wurde nur eine Debug-Ausgabe hinzugefügt",
+        "ru": "Добавлен только один вывод отладки",
+        "pt": "Adicionou apenas uma saída de depuração",
+        "nl": "Slechts één foutopsporingsoutput toegevoegd",
+        "fr": "Ajout d'une seule sortie de débogage",
+        "it": "Aggiunto solo un output di debug",
+        "es": "Solo se agregó una salida de depuración",
+        "pl": "Dodano tylko jedno wyjście debugowania",
+        "zh-cn": "仅添加了一个调试输出"
+      },
+      "1.8.18": {
+        "en": "Only added one debug output",
+        "de": "Es wurde nur eine Debug-Ausgabe hinzugefügt",
+        "ru": "Добавлен только один вывод отладки",
+        "pt": "Adicionou apenas uma saída de depuração",
+        "nl": "Slechts één foutopsporingsoutput toegevoegd",
+        "fr": "Ajout d'une seule sortie de débogage",
+        "it": "Aggiunto solo un output di debug",
+        "es": "Solo se agregó una salida de depuración",
+        "pl": "Dodano tylko jedno wyjście debugowania",
+        "zh-cn": "仅添加了一个调试输出"
+      },
+      "1.8.17": {
+        "en": "Only added one debug output",
+        "de": "Es wurde nur eine Debug-Ausgabe hinzugefügt",
+        "ru": "Добавлен только один вывод отладки",
+        "pt": "Adicionou apenas uma saída de depuração",
+        "nl": "Slechts één foutopsporingsoutput toegevoegd",
+        "fr": "Ajout d'une seule sortie de débogage",
+        "it": "Aggiunto solo un output di debug",
+        "es": "Solo se agregó una salida de depuración",
+        "pl": "Dodano tylko jedno wyjście debugowania",
+        "zh-cn": "仅添加了一个调试输出"
+      }
     },
-    "protectedNative": [
-        "login",
-        "pass"
+    "title": "IoT Assistants",
+    "titleLang": {
+      "en": "IoT cloud connection",
+      "de": "Cloud IoT-Verbindung",
+      "ru": "Соединение Cloud IoT",
+      "pt": "Conexão Cloud IoT",
+      "nl": "Cloud IoT-verbinding",
+      "fr": "Connexion Cloud IoT",
+      "it": "Connessione Cloud IoT",
+      "es": "Conexión IoT en la nube",
+      "pl": "Połączenie Cloud IoT",
+      "zh-cn": "IoT云连接"
+    },
+    "desc": {
+      "en": "Connects your ioBroker server to the ioBroker IoT cloud",
+      "de": "Verbindet Ihren ioBroker-Server mit der ioBroker IoT-Cloud",
+      "ru": "Соединяет ваш сервер ioBroker с облаком ioBroker IoT",
+      "pt": "Conecta seu servidor ioBroker à nuvem IoT do ioBroker",
+      "nl": "Verbindt uw ioBroker-server met de ioBroker IoT-cloud",
+      "fr": "Connecte votre serveur ioBroker au cloud ioBroker IoT",
+      "it": "Collega il tuo server ioBroker al cloud IoT IoBroker",
+      "es": "Conecta su servidor ioBroker a la nube ioBroker IoT",
+      "pl": "Łączy twój serwer ioBroker z chmurą IoT ioBroker",
+      "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
+    },
+    "authors": [
+      "bluefox <dogafox@gmail.com>"
     ],
-    "native": {
-        "login": "email.com",
-        "pass": "",
-        "language": "",
-        "cloudUrl": "a18wym7vjdl22g.iot.eu-west-1.amazonaws.com",
-        "functionFirst": false,
-        "concatWord": "",
-        "responseOID": "",
-        "restartOnDisconnect": false,
-        "iftttKey": "",
-        "replaces": "",
-        "amazonAlexa": true,
-        "amazonAlexaBlood": "",
-        "amazonAlexaBloodShortAnswer": false,
-        "googleHome": false,
-        "yandexAlisa": false,
-        "allowedServices": "",
-        "text2command": "0",
-        "nightscout": "",
-        "nightscoutPass": "myBlood",
-        "noCommon": false,
-        "debug": false
+    "license": "MIT",
+    "platform": "Javascript/Node.js",
+    "mode": "daemon",
+    "loglevel": "info",
+    "readme": "https://github.com/ioBroker/ioBroker.iot/blob/master/README.md",
+    "icon": "iot.png",
+    "connectionType": "cloud",
+    "dataSource": "push",
+    "tier": 3,
+    "keywords": [
+      "web",
+      "Cloud",
+      "communication"
+    ],
+    "enabled": false,
+    "compact": true,
+    "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.iot/master/admin/iot.png",
+    "type": "communication",
+    "messagebox": true,
+    "stopBeforeUpdate": true,
+    "materialize": true,
+    "dependencies": [
+      {
+        "admin": ">=4.0.1"
+      },
+      {
+        "js-controller": ">=2.0.0"
+      }
+    ],
+    "preserveSettings": "smartName",
+    "eraseOnUpload": true,
+    "blockly": true,
+    "osDependencies": {
+      "linux": [
+        "libcairo2-dev",
+        "libpango1.0-dev",
+        "libjpeg-dev",
+        "libgif-dev",
+        "librsvg2-dev"
+      ]
     },
-    "objects": [],
-    "instanceObjects": [
-        {
-            "_id": "info",
-            "type": "channel",
-            "common": {
-                "name": "Information"
-            },
-            "native": {}
-        },
-        {
-            "_id": "info.connection",
-            "type": "state",
-            "common": {
-                "role": "indicator.connected",
-                "name": "If connected to cloud",
-                "type": "boolean",
-                "read": true,
-                "write": false,
-                "def": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "info.ackTempPassword",
-            "type": "state",
-            "common": {
-                "role": "indicator",
-                "name": "If user have read about temp password for iot",
-                "type": "boolean",
-                "read": true,
-                "write": false,
-                "def": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "info.remoteTill",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "Time till pro access is available",
-                "type": "string",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "smart.lastFunction",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "Last controlled function",
-                "type": "string",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "smart.lastRoom",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "Last controlled room",
-                "type": "string",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "smart.lastCommand",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "Last command",
-                "type": "mixed",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "smart.lastCommandObj",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "Last command as object",
-                "type": "string",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "smart.lastResponse",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "Last textual response",
-                "type": "string",
-                "read": true,
-                "write": true
-            },
-            "native": {}
-        },
-        {
-            "_id": "smart.lastObjectID",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "Last accessed object id",
-                "type": "string",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "smart.updates",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "If updates of configuration is ready",
-                "type": "boolean",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "smart.updates3",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "If updates of V3 configuration is ready",
-                "type": "boolean",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "smart.updatesGH",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "If updates of google home configuration is ready",
-                "type": "boolean",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "smart.updatesYA",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "If updates of yandex alice configuration is ready",
-                "type": "boolean",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "smart.updatesResult",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "Result for last devices update",
-                "type": "string",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "services",
-            "type": "channel",
-            "common": {
-                "name": "Information"
-            },
-            "native": {}
-        },
-        {
-            "_id": "certs",
-            "type": "channel",
-            "common": {
-                "expert": true,
-                "name": "Certificates"
-            },
-            "native": {}
-        },
-        {
-            "_id": "certs.id",
-            "type": "state",
-            "common": {
-                "expert": true,
-                "role": "state",
-                "name": "Certificate ID",
-                "type": "string",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "certs.public",
-            "type": "state",
-            "common": {
-                "expert": true,
-                "role": "state",
-                "name": "Public key",
-                "type": "string",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "certs.private",
-            "type": "state",
-            "common": {
-                "expert": true,
-                "role": "state",
-                "name": "Private key",
-                "type": "string",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "certs.certificate",
-            "type": "state",
-            "common": {
-                "expert": true,
-                "role": "state",
-                "name": "Certificate",
-                "type": "string",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "certs.urlKey",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "URL Key",
-                "desc": "Used for access this instance via URL",
-                "type": "string",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "certs.forceUserCreate",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "Force user creation",
-                "desc": "Used to get the email with temp password anew",
-                "def": false,
-                "type": "boolean",
-                "read": true,
-                "write": true
-            },
-            "native": {}
-        }
-    ]
+    "plugins": {
+      "sentry": {
+        "dsn": "https://20987eaf91ef49de821771499fdb4e1a@sentry.iobroker.net/40"
+      }
+    }
+  },
+  "protectedNative": [
+    "login",
+    "pass"
+  ],
+  "native": {
+    "login": "email.com",
+    "pass": "",
+    "language": "",
+    "cloudUrl": "a18wym7vjdl22g.iot.eu-west-1.amazonaws.com",
+    "functionFirst": false,
+    "concatWord": "",
+    "responseOID": "",
+    "restartOnDisconnect": false,
+    "iftttKey": "",
+    "replaces": "",
+    "amazonAlexa": true,
+    "amazonAlexaBlood": "",
+    "amazonAlexaBloodShortAnswer": false,
+    "googleHome": false,
+    "yandexAlisa": false,
+    "allowedServices": "",
+    "text2command": "0",
+    "nightscout": "",
+    "nightscoutPass": "myBlood",
+    "noCommon": false,
+    "debug": false
+  },
+  "objects": [],
+  "instanceObjects": [
+    {
+      "_id": "info",
+      "type": "channel",
+      "common": {
+        "name": "Information"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.connection",
+      "type": "state",
+      "common": {
+        "role": "indicator.connected",
+        "name": "If connected to cloud",
+        "type": "boolean",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.ackTempPassword",
+      "type": "state",
+      "common": {
+        "role": "indicator",
+        "name": "If user have read about temp password for iot",
+        "type": "boolean",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.remoteTill",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "Time till pro access is available",
+        "type": "string",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "smart.lastFunction",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "Last controlled function",
+        "type": "string",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "smart.lastRoom",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "Last controlled room",
+        "type": "string",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "smart.lastCommand",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "Last command",
+        "type": "mixed",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "smart.lastCommandObj",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "Last command as object",
+        "type": "string",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "smart.lastResponse",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "Last textual response",
+        "type": "string",
+        "read": true,
+        "write": true
+      },
+      "native": {}
+    },
+    {
+      "_id": "smart.lastObjectID",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "Last accessed object id",
+        "type": "string",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "smart.updates",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "If updates of configuration is ready",
+        "type": "boolean",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "smart.updates3",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "If updates of V3 configuration is ready",
+        "type": "boolean",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "smart.updatesGH",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "If updates of google home configuration is ready",
+        "type": "boolean",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "smart.updatesYA",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "If updates of yandex alice configuration is ready",
+        "type": "boolean",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "smart.updatesResult",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "Result for last devices update",
+        "type": "string",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "services",
+      "type": "channel",
+      "common": {
+        "name": "Information"
+      },
+      "native": {}
+    },
+    {
+      "_id": "certs",
+      "type": "channel",
+      "common": {
+        "expert": true,
+        "name": "Certificates"
+      },
+      "native": {}
+    },
+    {
+      "_id": "certs.id",
+      "type": "state",
+      "common": {
+        "expert": true,
+        "role": "state",
+        "name": "Certificate ID",
+        "type": "string",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "certs.public",
+      "type": "state",
+      "common": {
+        "expert": true,
+        "role": "state",
+        "name": "Public key",
+        "type": "string",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "certs.private",
+      "type": "state",
+      "common": {
+        "expert": true,
+        "role": "state",
+        "name": "Private key",
+        "type": "string",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "certs.certificate",
+      "type": "state",
+      "common": {
+        "expert": true,
+        "role": "state",
+        "name": "Certificate",
+        "type": "string",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "certs.urlKey",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "URL Key",
+        "desc": "Used for access this instance via URL",
+        "type": "string",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "certs.forceUserCreate",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "Force user creation",
+        "desc": "Used to get the email with temp password anew",
+        "def": false,
+        "type": "boolean",
+        "read": true,
+        "write": true
+      },
+      "native": {}
+    }
+  ]
 }

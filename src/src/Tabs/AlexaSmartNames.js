@@ -276,7 +276,9 @@ class AlexaSmartNames extends Component {
     }
 
     browse(isIndicate) {
-        if (Date.now() - this.lastBrowse < 500) return;
+        if (Date.now() - this.lastBrowse < 500) {
+            return;
+        }
         this.lastBrowse = Date.now();
         if (isIndicate) {
             this.setState({loading: true, browse: true});
@@ -311,7 +313,16 @@ class AlexaSmartNames extends Component {
                     }
                     console.log('BROWSE received.');
 
-                    this.setState({devices: list, loading: false, changed: [], browse: false});
+                    this.setState({
+                        devices: list,
+                        loading: false,
+                        changed: [],
+                        browse: false
+                    });
+
+                    if (list.length > 300) {
+                        this.props.onError(I18n.t('Too many devices (%s) configured. Max number is 300', list.length));
+                    }
                 }
             })
             .catch(e => this.setState({message: I18n.t('Error %s', e)}));

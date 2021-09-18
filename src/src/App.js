@@ -54,6 +54,8 @@ class App extends GenericApp {
             'zh-cn': require('./i18n/zh-cn'),
         };
 
+        extendedProps.sentryDSN = window.sentryDSN;
+
         super(props, extendedProps);
     }
 

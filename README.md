@@ -91,7 +91,7 @@ Alexa, lock the "lock name"
 ## How names will be generated
 The adapter tries to generate virtual devices for smart home control (e.g. Amazon Alexa or Google Home).
 
-The are two important enumerations for that: rooms and functions.
+There are two important enumerations for that: rooms and functions.
 
 Rooms are like: living room, bathroom, sleeping room.
 Functions are like: light, blind, heating.
@@ -101,9 +101,9 @@ Following conditions must be met to get the state in the automatically generated
 - the state must be in some "function" enumeration.
 - the state must have role ("state", "switch" or "level.*", e.g. level.dimmer) if not directly included into "functions".
 It can be that the channel is in the "functions", but state itself not.
-- the state must be writable: common.write = true
-- the state dimmer must have common.type as 'number'
-- the state heating must have common.unit as '°C', '°F' or '°K' and common.type as 'number'
+- the state must be writable: `common.write` = true
+- the state dimmer must have `common.type` as 'number'
+- the state heating must have `common.unit` as '°C', '°F' or '°K' and `common.type` as `number`
 
 If the state is only in "functions" and not in any "room", the name of state will be used.
 
@@ -124,9 +124,9 @@ If the group has more than one state, the group must be renamed via the enumerat
 To create own groups the user can install "scenes" adapter or create "script" in Javascript adapter.
 
 ### Replaces
-You can specify strings, that could be automatically replaced in the devices names. E. g. if you set replaces to:
+You can specify strings, that could be automatically replaced in the devices names. E.g. if you set replaces to:
 `.STATE,.LEVEL`, so all ".STATE" and ".LEVEL" will be deleted from names. Be careful with spaces.
-If you will set `.STATE, .LEVEL`, so ".STATE" and " .LEVEL" will be replaced and not ".LEVEL".
+If you set `.STATE, .LEVEL`, so ".STATE" and " .LEVEL" will be replaced and not ".LEVEL".
 
 ## Helper states
 - **smart.lastObjectID**: This state will be set if only one device was controlled by home skill (alexa, google home).
@@ -137,6 +137,12 @@ If you will set `.STATE, .LEVEL`, so ".STATE" and " .LEVEL" will be replaced and
 
 ## IFTTT
 [instructions](doc/ifttt.md)
+
+## Google Home
+If you see following error message in the log: `[GHOME] Invalid URL Pro key. Status auto-update is disabled you can set states but receive states only manually`.
+So you must generate the URL-Key anew:
+
+![Url key](img/url_key.png)
 
 ## Services
 There is a possibility to send messages to cloud adapter.
@@ -262,6 +268,9 @@ Following types are supported:
 -->
 
 ## Changelog
+### 1.8.23 (2021-09-18)
+* (bluefox) Fixed the response for the heating control
+
 ### 1.8.22 (2021-05-16)
 * (bluefox) Make it admin4 compatible
 
@@ -327,9 +336,6 @@ Following types are supported:
 
 ### 1.7.14 (2020-11-05)
 * (bluefox) Updated the select ID dialog.
-
-#### 1.7.13 (2020-10-30)
-* (foxriver76) add eraseOnUpload flag for js-controller 3.2+
 
 ### 1.7.12 (2020-09-25)
 * (bluefox) Updated the select ID dialog.
@@ -526,4 +532,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-

@@ -178,5 +178,6 @@
   "Read blood sugar from": "Read blood sugar from",
   "Get actual humidity": "Get actual humidity",
   "Get motion": "Get motion",
-  "Get contact": "Get contact status"
+  "Get contact": "Get contact status",
+  "Too many devices (%s) configured. Max number is 300": "Too many devices (%s) configured. Max number is 300!"
 }
