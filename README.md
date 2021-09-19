@@ -268,6 +268,9 @@ Following types are supported:
 -->
 
 ## Changelog
+### 1.8.24 (2021-09-19)
+* (bluefox) Respect the min/max limits by controlling
+
 ### 1.8.23 (2021-09-18)
 * (bluefox) Fixed the response for the heating control
 

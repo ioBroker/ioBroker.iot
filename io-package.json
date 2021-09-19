@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "iot",
-    "version": "1.8.23",
+    "version": "1.8.24",
     "news": {
+      "1.8.24": {
+        "en": "Respect the min/max limits by controlling",
+        "de": "Respektieren Sie die Min/Max-Grenzen durch Kontrolle",
+        "ru": "Соблюдайте минимальные / максимальные пределы, контролируя",
+        "pt": "Respeite os limites mín. / Máx. Controlando",
+        "nl": "Respecteer de min/max-limieten door te controleren",
+        "fr": "Respectez les limites min/max en contrôlant",
+        "it": "Rispettare i limiti min/max controllando",
+        "es": "Respete los límites mínimo / máximo controlando",
+        "pl": "Przestrzegaj limitów min/maks, kontrolując",
+        "zh-cn": "通过控制来尊重最小/最大限制"
+      },
       "1.8.23": {
         "en": "Fixed the response for the heating control",
         "de": "Die Reaktion der Heizungssteuerung wurde korrigiert",
@@ -64,18 +76,6 @@
         "zh-cn": "仅添加了一个调试输出"
       },
       "1.8.18": {
-        "en": "Only added one debug output",
-        "de": "Es wurde nur eine Debug-Ausgabe hinzugefügt",
-        "ru": "Добавлен только один вывод отладки",
-        "pt": "Adicionou apenas uma saída de depuração",
-        "nl": "Slechts één foutopsporingsoutput toegevoegd",
-        "fr": "Ajout d'une seule sortie de débogage",
-        "it": "Aggiunto solo un output di debug",
-        "es": "Solo se agregó una salida de depuración",
-        "pl": "Dodano tylko jedno wyjście debugowania",
-        "zh-cn": "仅添加了一个调试输出"
-      },
-      "1.8.17": {
         "en": "Only added one debug output",
         "de": "Es wurde nur eine Debug-Ausgabe hinzugefügt",
         "ru": "Добавлен только один вывод отладки",

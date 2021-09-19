@@ -1,6 +1,6 @@
 {
     "name": "iot-admin",
-    "version": "1.8.22",
+    "version": "1.8.23",
     "private": true,
     "dependencies": {
         "@iobroker/adapter-react": "^2.0.13",
