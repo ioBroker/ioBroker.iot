@@ -36,7 +36,7 @@
     "@alcalzone/release-script": "^3.3.0",
     "@alcalzone/release-script-plugin-iobroker": "^3.3.0",
     "@types/iobroker": "^3.3.4",
-    "@types/node": "^16.9.2",
+    "@types/node": "^16.10.2",
     "axios": "^0.21.4",
     "chai": "^4.3.4",
     "del": "^6.0.0",
