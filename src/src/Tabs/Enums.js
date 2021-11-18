@@ -175,7 +175,7 @@ class Enums extends Component {
     onToggleEnum(id) {
         let obj = this.state.funcs.find(e => e._id === id) || this.state.rooms.find(e => e._id === id);
 
-        let smartName = Utils.getSmartNameFromObj(obj);
+        let smartName = Utils.getSmartNameFromObj(obj, this.props.adapterName + '.' + this.props.instance, this.props.native.noCommon);
         obj = JSON.parse(JSON.stringify(obj));
         if (smartName !== false) {
             Utils.disableSmartName(obj, this.props.adapterName + '.' + this.props.instance, this.props.native.noCommon);

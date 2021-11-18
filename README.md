@@ -268,6 +268,9 @@ Following types are supported:
 -->
 
 ## Changelog
+### __WORK IN PROGRESS__
+* (bluefox) Corrected the enabling of the category
+ 
 ### 1.8.24 (2021-09-19)
 * (bluefox) Respect the min/max limits by controlling
 
