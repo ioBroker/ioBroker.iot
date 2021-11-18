@@ -298,7 +298,7 @@ class TreeTable extends React.Component {
                                 onClick={() => {
                                 if (this.state.editMode !== false) {
                                     const newData = JSON.parse(JSON.stringify(item));
-                                    Object.keys(this.state.editData).forEach(attr => setAttr(newData, attr, this.state.editData[attr]));
+                                    this.state.editData && Object.keys(this.state.editData).forEach(attr => setAttr(newData, attr, this.state.editData[attr]));
                                     this.setState({editMode: false}, () => this.props.onUpdate(newData, item))
                                 } else {
                                     this.setState({deleteMode: false}, () => this.props.onDelete(item))

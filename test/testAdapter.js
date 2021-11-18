@@ -18,7 +18,7 @@ function checkConnectionOfAdapter(cb, counter) {
         return cb && cb('Cannot check connection');
     }
 
-    states.getState('system.adapter.' + adapterShortName + '.0.alive', function (err, state) {
+    states.getState(`system.adapter.${adapterShortName}.0.alive`, function (err, state) {
         if (err) console.error(err);
         if (state && state.val) {
             cb && cb();

@@ -95,7 +95,7 @@ class Enums extends Component {
             .then(res => {
                 const funcs = [];
                 const rooms = [];
-                Object.keys(res).forEach(id => {
+                res && Object.keys(res).forEach(id => {
                     if (id.match(/^enum\.rooms\./)) {
                         rooms.push(res[id]);
                     } else
