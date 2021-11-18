@@ -48,12 +48,25 @@
     "url": "https://github.com/ioBroker/ioBroker.iot/issues"
   },
   "main": "main.js",
+  "files": [
+    "admin/",
+    "doc/",
+    "img/",
+    "keys/",
+    "lib/",
+    "io-package.json",
+    "LICENSE",
+    "main.js"
+  ],
   "scripts": {
     "test": "mocha --exit",
     "prepublishOnly": "gulp",
     "build": "gulp",
-    "release": "release-script patch --yes",
-    "release-minor": "release-script minor --yes"
+    "release": "release-script",
+    "release-patch": "release-script patch --yes",
+    "release-minor": "release-script minor --yes",
+    "release-major": "release-script major --yes"
+
   },
   "license": "MIT",
   "readmeFilename": "README.md"
