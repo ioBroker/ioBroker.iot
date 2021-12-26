@@ -179,5 +179,6 @@
     "Get actual humidity": "Get actual humidity",
     "Get motion": "Get motion",
     "Get contact": "Get contact status",
-    "Too many devices (%s) configured. Max number is 300": "Too many devices (%s) configured. Max number is 300!"
+    "Too many devices (%s) configured. Max number is 300": "Too many devices (%s) configured. Max number is 300!",
+    "Allow remote access": "Allow remote access"
 }

@@ -188,7 +188,8 @@
     "nightscout": "",
     "nightscoutPass": "myBlood",
     "noCommon": false,
-    "debug": false
+    "debug": false,
+    "remote": false
   },
   "objects": [],
   "instanceObjects": [

@@ -149,6 +149,7 @@ class ExtendedOptions extends Component {
                 </div>
                 {this.renderCheckbox('Debug outputs', 'debug')}
                 {this.getSelectIdDialog('responseOID')}
+                {this.renderCheckbox('Allow remote access', 'remote')}
             </form>
         );
     }

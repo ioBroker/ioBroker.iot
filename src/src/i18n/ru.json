@@ -179,5 +179,6 @@
   "Get actual humidity": "Получите фактическую влажность",
   "Get motion": "Получить движение",
   "Get contact": "Получить статус контакта",
-  "Too many devices (%s) configured. Max number is 300": "Настроено слишком много устройств (%s). Максимальное количество - 300!"
+  "Too many devices (%s) configured. Max number is 300": "Настроено слишком много устройств (%s). Максимальное количество - 300!",
+  "Allow remote access": "Разрешить удаленный доступ"
 }

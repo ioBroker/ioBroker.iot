@@ -179,5 +179,6 @@
   "Get actual humidity": "Verkrijg de werkelijke luchtvochtigheid",
   "Get motion": "Krijg beweging",
   "Get contact": "Krijg contactstatus",
-  "Too many devices (%s) configured. Max number is 300": "Te veel apparaten (%s) geconfigureerd. Maximaal aantal is 300!"
+  "Too many devices (%s) configured. Max number is 300": "Te veel apparaten (%s) geconfigureerd. Maximaal aantal is 300!",
+  "Allow remote access": "Externe toegang toestaan"
 }

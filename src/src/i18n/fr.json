@@ -179,5 +179,6 @@
   "Get actual humidity": "Obtenez l'humidité réelle",
   "Get motion": "Obtenez du mouvement",
   "Get contact": "Obtenir le statut du contact",
-  "Too many devices (%s) configured. Max number is 300": "Trop de périphériques (%s) configurés. Le nombre maximum est 300 !"
+  "Too many devices (%s) configured. Max number is 300": "Trop de périphériques (%s) configurés. Le nombre maximum est 300 !",
+  "Allow remote access": "Autoriser l'accès à distance"
 }

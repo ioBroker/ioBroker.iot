@@ -11,6 +11,7 @@ const AlexaCustom  = require('./lib/alexaCustom');
 const AlexaCustomBlood = require('./lib/alexaCustomBlood');
 const GoogleHome   = require('./lib/googleHome');
 const YandexAlisa  = require('./lib/alisa');
+const Remote       = require('./lib/remote');
 const fs           = require('fs');
 const request      = require('request');
 const packageJSON  = require('./package.json')
@@ -27,6 +28,7 @@ let googleHome     = null;
 let alexaCustom    = null;
 let alexaCustomBlood = null;
 let yandexAlisa    = null;
+let remote         = null;
 let device         = null;
 let defaultHistory = null;
 
@@ -57,11 +59,13 @@ function startAdapter(options) {
                 alexaCustomBlood && alexaCustomBlood.setLanguage(lang, defaultHistory);
                 googleHome       && googleHome.setLanguage(lang);
             }
+            id && remote.updateObject(id, obj);
         },
         stateChange: (id, state) => {
             state && adapter.config.googleHome  && googleHome && googleHome.updateState(id, state);
             state && adapter.config.amazonAlexa && alexaSH3 && alexaSH3.updateState && alexaSH3.updateState(id, state);
             state && adapter.config.yandexAlisa && yandexAlisa && yandexAlisa.updateState && yandexAlisa.updateState(id, state);
+            id && remote.updateState(id, state);
 
             if (id === adapter.namespace + '.smart.lastResponse' && state && !state.ack) {
                 alexaCustom && alexaCustom.setResponse(state.val);
@@ -73,6 +77,11 @@ function startAdapter(options) {
                     device.end();
                     device = null;
                 }
+                if (remote) {
+                    remote.destroy();
+                    remote = null;
+                }
+
                 callback();
             } catch (e) {
                 callback();
@@ -583,6 +592,15 @@ function processMessage(type, request, callback) {
         return callback && callback({error: 'invalid request'});
     }
 
+    if (type.startsWith('remote')) {
+        const start = Date.now();
+        return remote.process(request, type)
+            .then(response => {
+                response !== '___none___' && adapter.log.debug(`[REMOTE] Response in: ${Date.now() - start}ms (Length: ${Array.isArray(response) ? 'A ' + response.length : JSON.stringify(response).length}) for ${request}`);
+                callback(response);
+            })
+            .catch(err => adapter.log.error('Error in processing of remote request: ' + err.toString()));
+    } else
     if (type.startsWith('nightscout')) {
         if (adapter.config.nightscout) {
             adapter.getForeignStateAsync(`system.adapter.nightscout.${adapter.config.nightscout}.alive`)
@@ -815,6 +833,7 @@ function startDevice(clientId, login, password, retry) {
                 baseReconnectTimeMs: 5000,
                 keepalive:  60
             });
+            remote.registerDevice(device);
 
             device.subscribe(`command/${clientId}/#`);
             device.on('connect', onConnect);
@@ -838,11 +857,35 @@ function startDevice(clientId, login, password, retry) {
                 if (topic.startsWith(`command/${clientId}/`)) {
                     let type = topic.substring(clientId.length + 9);
 
-                    processMessage(type, request, response => {
-                        if (adapter.common.loglevel === 'debug') {
+                    processMessage(type, request, async response => {
+                        if (adapter.common.loglevel === 'debug' && !type.startsWith('remote')) {
                             adapter.log.debug('Response: ' + JSON.stringify(response));
                         }
-                        device && device.publish(`response/${clientId}/${type}`, JSON.stringify(response))
+                        if (device && response !== '___none___') {
+                            if (Array.isArray(response)) {
+                                try {
+                                    for (let m = 0; m < response.length; m++) {
+                                        const trunk = response[m];
+                                        await new Promise((resolve, reject) => device.publish(
+                                            `response/${clientId}/${type}`,
+                                            typeof trunk !== 'string' ? JSON.stringify(trunk) : trunk,
+                                            {qos: 1},
+                                            error => {
+                                                if (error) {
+                                                    reject(error);
+                                                } else {
+                                                    resolve();
+                                                }
+                                            }
+                                        ));
+                                    }
+                                } catch (err) {
+                                    adapter.log.error('[REMOTE] Cannot send packet: ' + err);
+                                }
+                            } else {
+                                device.publish(`response/${clientId}/${type}`, JSON.stringify(response));
+                            }
+                        }
                     });
                 }
             });
@@ -942,6 +985,9 @@ function main() {
     if (adapter.config.yandexAlisa) {
         yandexAlisa = new YandexAlisa(adapter);
     }
+
+    remote = new Remote(adapter, adapter.config.login.replace(/[^-_:a-zA-Z1-9]/g, '_'));
+
     let systemConfig;
     // read URL keys from server
     readUrlKey()
