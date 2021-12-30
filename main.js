@@ -14,7 +14,7 @@ const YandexAlisa  = require('./lib/alisa');
 const Remote       = require('./lib/remote');
 const fs           = require('fs');
 const request      = require('request');
-const packageJSON  = require('./package.json')
+const packageJSON  = require('./package.json');
 const version      = packageJSON.version;
 // @ts-ignore
 const adapterName  = packageJSON.name.split('.').pop();
@@ -58,6 +58,7 @@ function startAdapter(options) {
                 alexaCustom      && alexaCustom.setLanguage(lang);
                 alexaCustomBlood && alexaCustomBlood.setLanguage(lang, defaultHistory);
                 googleHome       && googleHome.setLanguage(lang);
+                remote.setLanguage(lang);
             }
             id && remote.updateObject(id, obj);
         },
@@ -394,11 +395,22 @@ function onDisconnect(event) {
     if (now - connectStarted < 500) {
         adapter.log.warn('Looks like your connection certificates are invalid. Please renew them via configuration dialog.');
     }
+
     if (typeof event === 'string') {
+        if (event.toLowerCase().includes('duplicate')) {
+            // disable adapter
+            adapter.log.error(`Two devices are trying to connect with the same iot account. This is not allowed. Stopping`);
+            adapter.getForeignObjectAsync('system.adapter.' + adapter.namespace)
+                .then(obj => {
+                    obj.common.enabled = false;
+                    return adapter.setForeignObjectAsync(obj._id, obj);
+                });
+        }
         adapter.log.info(`Connection changed: ${event}`);
     } else {
         adapter.log.info('Connection changed: disconnect');
     }
+
     if (connected) {
         adapter.log.info('Connection lost');
         connected = false;
@@ -596,7 +608,9 @@ function processMessage(type, request, callback) {
         const start = Date.now();
         return remote.process(request, type)
             .then(response => {
-                response !== '___none___' && adapter.log.debug(`[REMOTE] Response in: ${Date.now() - start}ms (Length: ${Array.isArray(response) ? 'A ' + response.length : JSON.stringify(response).length}) for ${request}`);
+                if (response !== Remote.NONE) {
+                    adapter.log.debug(`[REMOTE] Response in: ${Date.now() - start}ms (Length: ${Array.isArray(response) ? 'A ' + response.length : JSON.stringify(response).length}) for ${request}`);
+                }
                 callback(response);
             })
             .catch(err => adapter.log.error('Error in processing of remote request: ' + err.toString()));
@@ -1102,6 +1116,8 @@ function main() {
 
             alexaCustom && alexaCustom.setLanguage(lang, translate);
             alexaCustomBlood && alexaCustomBlood.setSettings(lang, defaultHistory);
+
+            remote.setLanguage(lang);
 
             return adapter.getForeignObjectAsync('system.meta.uuid');
         })
