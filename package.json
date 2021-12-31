@@ -28,6 +28,7 @@
     "echarts": "^4.9.0",
     "iobroker.type-detector": "^1.0.15",
     "jsdom": "^17.0.0",
+    "mime": "^3.0.0",
     "moment": "^2.29.1",
     "axios": "^0.24.0",
     "uuid": "^8.3.2"

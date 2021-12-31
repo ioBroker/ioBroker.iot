@@ -180,5 +180,7 @@
   "Get motion": "动起来",
   "Get contact": "获取联系状态",
   "Too many devices (%s) configured. Max number is 300": "配置了太多设备 (%s)。最大数量是 300！",
-  "Allow remote access": "允许远程访问"
+  "Allow remote access": "允许远程访问",
+  "Admin instance": "管理实例",
+  "Web instance": "网页实例"
 }

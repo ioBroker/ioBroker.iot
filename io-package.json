@@ -189,7 +189,9 @@
     "nightscoutPass": "myBlood",
     "noCommon": false,
     "debug": false,
-    "remote": false
+    "remote": false,
+    "remoteAdminInstance": "",
+    "remoteWebInstance": ""
   },
   "objects": [],
   "instanceObjects": [

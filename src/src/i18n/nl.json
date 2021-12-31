@@ -180,5 +180,7 @@
   "Get motion": "Krijg beweging",
   "Get contact": "Krijg contactstatus",
   "Too many devices (%s) configured. Max number is 300": "Te veel apparaten (%s) geconfigureerd. Maximaal aantal is 300!",
-  "Allow remote access": "Externe toegang toestaan"
+  "Allow remote access": "Externe toegang toestaan",
+  "Admin instance": "Beheerdersinstantie",
+  "Web instance": "Webinstantie"
 }

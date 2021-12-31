@@ -62,8 +62,32 @@ class ExtendedOptions extends Component {
 
         this.state = {
             showSelectId: false,
+            adminInstances: [],
+            webInstances: []
         };
+    }
 
+    componentDidMount() {
+        this.props.socket.getAdapterInstances('admin')
+            .then(adminInstances => {
+                // filter out instances with authentication
+                adminInstances = adminInstances
+                    .filter(item => !item.common.auth)
+                    .map(item => ({title: item.common.name + '.' + item._id.split('.').pop(), value: item.common.name + '.' + item._id.split('.').pop(), noTranslation: true}));
+
+                adminInstances.unshift({title: 'disabled', value: ''});
+
+                return this.props.socket.getAdapterInstances('web')
+                    .then(webInstances => {
+                        webInstances = webInstances
+                            .filter(item => !item.common.auth)
+                            .map(item => ({title: item.common.name + '.' + item._id.split('.').pop(), value: item.common.name + '.' + item._id.split('.').pop(), noTranslation: true}));
+
+                        webInstances.unshift({title: 'disabled', value: ''});
+
+                        this.setState({adminInstances, webInstances});
+                    });
+            });
     }
 
     renderInput(title, attr, type) {
@@ -78,7 +102,7 @@ class ExtendedOptions extends Component {
     }
 
     renderSelect(title, attr, options, style) {
-        return <FormControl className={clsx(this.props.classes.input, this.props.classes.controlElement)} style={Object.assign({paddingTop: 5}, style)}>
+        return <FormControl className={clsx(this.props.classes.input, this.props.classes.controlElement)} style={Object.assign({paddingTop: 5, paddingRight: 8}, style)}>
             <Select
                 value={this.props.native[attr] || '_'}
                 onChange={e => this.props.onChange(attr, e.target.value === '_' ? '' : e.target.value)}
@@ -149,7 +173,11 @@ class ExtendedOptions extends Component {
                 </div>
                 {this.renderCheckbox('Debug outputs', 'debug')}
                 {this.getSelectIdDialog('responseOID')}
-                {this.renderCheckbox('Allow remote access', 'remote')}
+                <div className={this.props.classes.controlElement}>
+                    {this.renderCheckbox('Allow remote access', 'remote')}
+                    {this.props.native.remote ? this.renderSelect('Admin instance', 'remoteAdminInstance', this.state.adminInstances, {width: 120, minWidth: 120}) : null}
+                    {this.props.native.remote ? this.renderSelect('Web instance', 'remoteWebInstance', this.state.webInstances, {width: 120, minWidth: 120}) : null}
+                </div>
             </form>
         );
     }

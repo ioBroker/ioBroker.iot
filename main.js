@@ -875,7 +875,7 @@ function startDevice(clientId, login, password, retry) {
                         if (adapter.common.loglevel === 'debug' && !type.startsWith('remote')) {
                             adapter.log.debug('Response: ' + JSON.stringify(response));
                         }
-                        if (device && response !== '___none___') {
+                        if (device && response !== Remote.NONE) {
                             if (Array.isArray(response)) {
                                 try {
                                     for (let m = 0; m < response.length; m++) {
@@ -897,6 +897,7 @@ function startDevice(clientId, login, password, retry) {
                                     adapter.log.error('[REMOTE] Cannot send packet: ' + err);
                                 }
                             } else {
+                                adapter.log.debug(`[REMOTE] Send command to 'response/${clientId}/${type}: ${JSON.stringify(response)}`);
                                 device.publish(`response/${clientId}/${type}`, JSON.stringify(response));
                             }
                         }

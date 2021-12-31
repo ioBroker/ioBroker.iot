@@ -180,5 +180,7 @@
   "Get motion": "Bewegung bekommen",
   "Get contact": "Kontaktstatus abrufen",
   "Too many devices (%s) configured. Max number is 300": "Zu viele Geräte (%s) konfiguriert. Maximale Anzahl ist 300!",
-  "Allow remote access": "Fernzugriff zulassen"
+  "Allow remote access": "Fernzugriff zulassen",
+  "Admin instance": "Admin-Instanz",
+  "Web instance": "Webinstanz"
 }
