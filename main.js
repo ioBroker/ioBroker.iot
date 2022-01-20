@@ -613,7 +613,8 @@ function processMessage(type, request, callback) {
                 }
                 callback(response);
             })
-            .catch(err => adapter.log.error('Error in processing of remote request: ' + err.toString()));
+            .catch(err =>
+                adapter.log.error('Error in processing of remote request: ' + err.toString()));
     } else
     if (type.startsWith('nightscout')) {
         if (adapter.config.nightscout) {

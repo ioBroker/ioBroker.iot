@@ -225,7 +225,7 @@ function languagesFlat2words(src) {
         if (dirs[l] === 'flat.txt')
             continue;
         const lang = dirs[l];
-        const values = fs.readFileSync(src + 'i18n/' + lang + '/flat.txt').toString().split('\n');
+        const values = fs.readFileSync(`${src}i18n/${lang}/flat.txt`).toString().split('\n');
         langs[lang] = {};
         keys.forEach(function (word, i) {
             langs[lang][word] = values[i];
@@ -345,7 +345,7 @@ async function translateNotExisting(obj, baseText, yandex) {
 
     if (t) {
         for (let l in languages) {
-            if (!obj[l]) {                
+            if (!obj[l]) {
                 const time = new Date().getTime();
                 obj[l] = await translate(t, l, yandex);
                 console.log('en -> ' + l + ' ' + (new Date().getTime() - time) + ' ms');
@@ -431,7 +431,7 @@ gulp.task('translate', async function () {
     if (i > -1) {
         yandex = process.argv[i + 1];
     }
-    
+
     if (iopackage && iopackage.common) {
         if (iopackage.common.news) {
             console.log('Translate News');

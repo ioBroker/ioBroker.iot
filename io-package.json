@@ -137,6 +137,7 @@
     "messagebox": true,
     "stopBeforeUpdate": true,
     "materialize": true,
+    "logTransporter": true,
     "dependencies": [
       {
         "admin": ">=4.0.1"

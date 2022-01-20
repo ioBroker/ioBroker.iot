@@ -26,7 +26,7 @@
     "@iobroker/adapter-core": "^2.5.1",
     "aws-iot-device-sdk": "^2.2.11",
     "echarts": "^4.9.0",
-    "iobroker.type-detector": "^1.0.15",
+    "iobroker.type-detector": "^1.0.17",
     "jsdom": "^17.0.0",
     "mime": "^3.0.0",
     "moment": "^2.29.1",
@@ -34,9 +34,9 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@alcalzone/release-script": "^3.4.2",
-    "@alcalzone/release-script-plugin-iobroker": "^3.4.1",
-    "@alcalzone/release-script-plugin-license": "^3.4.1",
+    "@alcalzone/release-script": "^3.5.0",
+    "@alcalzone/release-script-plugin-iobroker": "^3.5.0",
+    "@alcalzone/release-script-plugin-license": "^3.5.0",
     "@types/iobroker": "^3.3.4",
     "@types/node": "^17.0.5",
     "axios": "^0.24.0",
