@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "iot",
-    "version": "1.9.0",
+    "version": "1.9.1",
     "news": {
+      "1.9.1": {
+        "en": "Added experimental support for remote access",
+        "de": "Experimentelle Unterstützung für Fernzugriff hinzugefügt",
+        "ru": "Добавлена экспериментальная поддержка удаленного доступа.",
+        "pt": "Adicionado suporte experimental para acesso remoto",
+        "nl": "Experimentele ondersteuning toegevoegd voor toegang op afstand",
+        "fr": "Ajout d'un support expérimental pour l'accès à distance",
+        "it": "Aggiunto supporto sperimentale per l'accesso remoto",
+        "es": "Se agregó soporte experimental para acceso remoto.",
+        "pl": "Dodano eksperymentalne wsparcie dla zdalnego dostępu",
+        "zh-cn": "添加了对远程访问的实验性支持"
+      },
       "1.9.0": {
         "en": "Added experimental support for remote access",
         "de": "Experimentelle Unterstützung für Fernzugriff hinzugefügt",
@@ -74,18 +86,6 @@
         "es": "Se corrigió el cifrado de la contraseña. Advertencia: si ve el mensaje en el registro, esa contraseña no es válida, ingrese la contraseña en el cuadro de diálogo de configuración una vez más y guarde.",
         "pl": "Naprawiono szyfrowanie hasła. Ostrzeżenie: jeśli zobaczysz komunikat w dzienniku, to hasło jest nieprawidłowe, wprowadź hasło jeszcze raz w oknie dialogowym konfiguracji i zapisz.",
         "zh-cn": "修复了密码的加密。警告：如果您在日志中看到消息，表明密码无效，请再次在配置对话框中输入密码并保存。"
-      },
-      "1.8.20": {
-        "en": "we now write data received from custom services with acknowledge flag",
-        "de": "Wir schreiben jetzt Daten, die von benutzerdefinierten Diensten empfangen wurden, mit dem Bestätigungsflag",
-        "ru": "теперь мы записываем данные, полученные от пользовательских сервисов, с флагом подтверждения",
-        "pt": "agora gravamos dados recebidos de serviços personalizados com sinalização de reconhecimento",
-        "nl": "we schrijven nu gegevens die zijn ontvangen van aangepaste services met een bevestigingsvlag",
-        "fr": "nous écrivons maintenant les données reçues des services personnalisés avec l'indicateur de confirmation",
-        "it": "ora scriviamo i dati ricevuti dai servizi personalizzati con flag di riconoscimento",
-        "es": "ahora escribimos los datos recibidos de los servicios personalizados con una marca de reconocimiento",
-        "pl": "teraz zapisujemy dane otrzymane od usług niestandardowych z flagą potwierdzenia",
-        "zh-cn": "现在，我们编写从自定义服务接收的带有确认标志的数据"
       }
     },
     "title": "IoT Assistants",
