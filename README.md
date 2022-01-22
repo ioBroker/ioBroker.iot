@@ -268,6 +268,9 @@ Following types are supported:
 -->
 
 ## Changelog
+### __WORK IN PROGRESS__
+* (bluefox) Added experimental support for remote access
+
 ### 1.8.25 (2021-11-18)
 * (bluefox) Corrected the enabling of the category
 
@@ -519,7 +522,7 @@ Following types are supported:
 ## License
 The MIT License (MIT)
 
-Copyright (c) 2018-2021 bluefox <dogafox@gmail.com>
+Copyright (c) 2018-2022 bluefox <dogafox@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
