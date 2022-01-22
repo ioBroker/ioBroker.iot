@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "iot",
-    "version": "1.8.25",
+    "version": "1.9.0",
     "news": {
+      "1.9.0": {
+        "en": "Added experimental support for remote access",
+        "de": "Experimentelle Unterstützung für Fernzugriff hinzugefügt",
+        "ru": "Добавлена экспериментальная поддержка удаленного доступа.",
+        "pt": "Adicionado suporte experimental para acesso remoto",
+        "nl": "Experimentele ondersteuning toegevoegd voor toegang op afstand",
+        "fr": "Ajout d'un support expérimental pour l'accès à distance",
+        "it": "Aggiunto supporto sperimentale per l'accesso remoto",
+        "es": "Se agregó soporte experimental para acceso remoto.",
+        "pl": "Dodano eksperymentalne wsparcie dla zdalnego dostępu",
+        "zh-cn": "添加了对远程访问的实验性支持"
+      },
       "1.8.25": {
         "en": "Corrected the enabling of the category",
         "de": "Die Aktivierung der Kategorie wurde korrigiert",
@@ -74,18 +86,6 @@
         "es": "ahora escribimos los datos recibidos de los servicios personalizados con una marca de reconocimiento",
         "pl": "teraz zapisujemy dane otrzymane od usług niestandardowych z flagą potwierdzenia",
         "zh-cn": "现在，我们编写从自定义服务接收的带有确认标志的数据"
-      },
-      "1.8.19": {
-        "en": "Only added one debug output",
-        "de": "Es wurde nur eine Debug-Ausgabe hinzugefügt",
-        "ru": "Добавлен только один вывод отладки",
-        "pt": "Adicionou apenas uma saída de depuração",
-        "nl": "Slechts één foutopsporingsoutput toegevoegd",
-        "fr": "Ajout d'une seule sortie de débogage",
-        "it": "Aggiunto solo un output di debug",
-        "es": "Solo se agregó una salida de depuración",
-        "pl": "Dodano tylko jedno wyjście debugowania",
-        "zh-cn": "仅添加了一个调试输出"
       }
     },
     "title": "IoT Assistants",
