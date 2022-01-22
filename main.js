@@ -218,10 +218,14 @@ function startAdapter(options) {
                 }
             }
         },
-        ready: () => main()
+        ready: () => main(),
     });
 
     adapter = new utils.Adapter(options);
+
+    // warning: `adapter.log = obj => console.log(obj)` does not implemented. Only adapter.on('log', obj => console.log(obj))
+    adapter.on('log', obj =>
+        remote.onLog(obj));
 
     return adapter;
 }
