@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "iot",
-    "version": "1.9.1",
+    "version": "1.9.2",
     "news": {
+      "1.9.2": {
+        "en": "Added experimental support for remote access",
+        "de": "Experimentelle Unterstützung für Fernzugriff hinzugefügt",
+        "ru": "Добавлена экспериментальная поддержка удаленного доступа.",
+        "pt": "Adicionado suporte experimental para acesso remoto",
+        "nl": "Experimentele ondersteuning toegevoegd voor toegang op afstand",
+        "fr": "Ajout d'un support expérimental pour l'accès à distance",
+        "it": "Aggiunto supporto sperimentale per l'accesso remoto",
+        "es": "Se agregó soporte experimental para acceso remoto.",
+        "pl": "Dodano eksperymentalne wsparcie dla zdalnego dostępu",
+        "zh-cn": "添加了对远程访问的实验性支持"
+      },
       "1.9.1": {
         "en": "Added experimental support for remote access",
         "de": "Experimentelle Unterstützung für Fernzugriff hinzugefügt",
@@ -74,18 +86,6 @@
         "es": "Hágalo compatible con admin4",
         "pl": "Spraw, aby był zgodny z admin4",
         "zh-cn": "使它与admin4兼容"
-      },
-      "1.8.21": {
-        "en": "Fixed the encryption of the password. Warning: if you see the message in the log, that password is invalid, please enter the password in configuration dialog one more time and save.",
-        "de": "Die Verschlüsselung des Passworts wurde behoben. Warnung: Wenn Sie die Meldung im Protokoll sehen, dass dieses Kennwort ungültig ist, geben Sie das Kennwort noch einmal im Konfigurationsdialog ein und speichern Sie es.",
-        "ru": "Исправлено шифрование пароля. Предупреждение: если вы видите сообщение в журнале, это недействительный пароль, пожалуйста, введите пароль в диалоговом окне конфигурации еще раз и сохраните.",
-        "pt": "Corrigida a criptografia da senha. Aviso: se você ver a mensagem no log, essa senha é inválida, digite a senha na caixa de diálogo de configuração mais uma vez e salve.",
-        "nl": "De versleuteling van het wachtwoord opgelost. Waarschuwing: als u het bericht in het logboek ziet, is dat wachtwoord ongeldig. Voer het wachtwoord nog een keer in het configuratiedialoogvenster in en sla het op.",
-        "fr": "Correction du cryptage du mot de passe. Attention: si vous voyez le message dans le journal, ce mot de passe n'est pas valide, veuillez saisir à nouveau le mot de passe dans la boîte de dialogue de configuration et enregistrez-le.",
-        "it": "Corretta la crittografia della password. Attenzione: se vedi il messaggio nel registro, la password non è valida, inserisci la password nella finestra di dialogo di configurazione ancora una volta e salva.",
-        "es": "Se corrigió el cifrado de la contraseña. Advertencia: si ve el mensaje en el registro, esa contraseña no es válida, ingrese la contraseña en el cuadro de diálogo de configuración una vez más y guarde.",
-        "pl": "Naprawiono szyfrowanie hasła. Ostrzeżenie: jeśli zobaczysz komunikat w dzienniku, to hasło jest nieprawidłowe, wprowadź hasło jeszcze raz w oknie dialogowym konfiguracji i zapisz.",
-        "zh-cn": "修复了密码的加密。警告：如果您在日志中看到消息，表明密码无效，请再次在配置对话框中输入密码并保存。"
       }
     },
     "title": "IoT Assistants",

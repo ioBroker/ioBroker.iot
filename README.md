@@ -268,7 +268,7 @@ Following types are supported:
 -->
 
 ## Changelog
-### __WORK IN PROGRESS__
+### 1.9.2 (2022-01-26)
 * (bluefox) Added experimental support for remote access
 
 ### 1.8.25 (2021-11-18)
