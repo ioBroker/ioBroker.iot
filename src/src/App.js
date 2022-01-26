@@ -122,7 +122,7 @@ class App extends GenericApp {
                         {I18n.t('Not understood')}
                     </Button>
                     <Button variant="contained" onClick={() =>
-                        this.socket.setState(`${this.adapterName}.${this.instance}.info.ackTempPassword`, true, true)
+                        this.socket.setState(`${this.adapterName}.${this.instance}.info.ackTempPassword`, {val: true, ack: true})
                             .then(() =>
                                 this.setState({showAckTempPasswordDialog: false}))
                     } color="primary" autoFocus>
