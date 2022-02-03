@@ -268,6 +268,10 @@ Following types are supported:
 -->
 
 ## Changelog
+### __WORK IN PROGRESS__
+* (bluefox) Removed deprecated package `request`
+* (bluefox) Refactoring and better error handling
+
 ### 1.9.2 (2022-01-26)
 * (bluefox) Added experimental support for remote access
 
