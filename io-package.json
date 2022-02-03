@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "iot",
-    "version": "1.9.2",
+    "version": "1.9.3",
     "news": {
+      "1.9.3": {
+        "en": "Removed deprecated package `request`\nRefactoring and better error handling",
+        "de": "Veraltetes Paket „request“ entfernt\nRefactoring und bessere Fehlerbehandlung",
+        "ru": "Удален устаревший пакет `request`\nРефакторинг и улучшенная обработка ошибок",
+        "pt": "Remoção do pacote obsoleto `request`\nRefatoração e melhor tratamento de erros",
+        "nl": "Verwijderd verouderd pakket `verzoek`\nRefactoring en betere foutafhandeling",
+        "fr": "Suppression du package obsolète `request`\nRefactoring et meilleure gestion des erreurs",
+        "it": "Rimosso il pacchetto deprecato `richiesta`\nRefactoring e migliore gestione degli errori",
+        "es": "Se eliminó el paquete obsoleto `request`\nRefactorización y mejor manejo de errores",
+        "pl": "Usunięto przestarzały pakiet `request`\nRefaktoryzacja i lepsza obsługa błędów",
+        "zh-cn": "删除了不推荐使用的包 `request`\n重构和更好的错误处理"
+      },
       "1.9.2": {
         "en": "Added experimental support for remote access",
         "de": "Experimentelle Unterstützung für Fernzugriff hinzugefügt",
@@ -74,18 +86,6 @@
         "es": "Se corrigió la respuesta para el control de calefacción.",
         "pl": "Poprawiono odpowiedź na sterowanie ogrzewaniem",
         "zh-cn": "修复了加热控制的响应"
-      },
-      "1.8.22": {
-        "en": "Make it admin4 compatible",
-        "de": "Machen Sie es admin4 kompatibel",
-        "ru": "Сделайте его совместимым с admin4",
-        "pt": "Torne-o compatível com admin4",
-        "nl": "Maak het admin4-compatibel",
-        "fr": "Rendez-le compatible avec admin4",
-        "it": "Rendilo compatibile con admin4",
-        "es": "Hágalo compatible con admin4",
-        "pl": "Spraw, aby był zgodny z admin4",
-        "zh-cn": "使它与admin4兼容"
       }
     },
     "title": "IoT Assistants",

@@ -268,7 +268,7 @@ Following types are supported:
 -->
 
 ## Changelog
-### __WORK IN PROGRESS__
+### 1.9.3 (2022-02-03)
 * (bluefox) Removed deprecated package `request`
 * (bluefox) Refactoring and better error handling
 
