@@ -13,7 +13,7 @@ const GoogleHome   = require('./lib/googleHome');
 const YandexAlisa  = require('./lib/alisa');
 const Remote       = require('./lib/remote');
 const fs           = require('fs');
-const request      = require('request');
+const axios        = require('axios');
 const packageJSON  = require('./package.json');
 const version      = packageJSON.version;
 // @ts-ignore
@@ -37,6 +37,8 @@ let uuid           = null;
 let secret;
 let adapter;
 let connectStarted;
+
+const NONE = '___none___';
 
 function startAdapter(options) {
     options = options || {};
@@ -218,7 +220,9 @@ function startAdapter(options) {
                 }
             }
         },
-        ready: () => main(),
+        ready: () => main()
+            .then(() => {})
+            .catch(error => adapter.log.error('Error in main: ' + error.toString())),
     });
 
     adapter = new utils.Adapter(options);
@@ -232,57 +236,49 @@ function startAdapter(options) {
 
 function sendDataToIFTTT(obj) {
     if (!obj) {
-        adapter.log.warn('No data to send to IFTTT');
-        return;
-    }
+        return adapter.log.warn('No data to send to IFTTT');
+    } else
     if (!adapter.config.iftttKey && (typeof obj !== 'object' || !obj.key)) {
-        adapter.log.warn('No IFTTT key is defined');
-        return;
+        return adapter.log.warn('No IFTTT key is defined');
     }
-    let options;
+
+    let url;
+    let data;
     if (typeof obj !== 'object') {
-        options = {
-            uri: `https://maker.ifttt.com/trigger/state/with/key/${adapter.config.iftttKey}`,
-            method: 'POST',
-            json: {
-                value1:  adapter.namespace + '.services.ifttt',
-                value2: obj
-            }
+        url = `https://maker.ifttt.com/trigger/state/with/key/${adapter.config.iftttKey}`;
+        data = {
+            value1:  adapter.namespace + '.services.ifttt',
+            value2: obj
         };
     } else if (obj.event) {
         const event = obj.event;
         const key = obj.key;
         delete obj.event;
         delete obj.key;
-        options = {
-            uri: `https://maker.ifttt.com/trigger/${event}/with/key/${key || adapter.config.iftttKey}`,
-            method: 'POST',
-            json: obj
-        };
+        url = `https://maker.ifttt.com/trigger/${event}/with/key/${key || adapter.config.iftttKey}`;
+        data = obj
+    } else if (obj.val === undefined) {
+        return adapter.log.warn('No value is defined');
     } else {
-        if (obj.val === undefined) {
-            adapter.log.warn('No value is defined');
-            return;
-        }
         obj.id = obj.id || (adapter.namespace + '.services.ifttt');
-        options = {
-            uri: `https://maker.ifttt.com/trigger/state/with/key/${adapter.config.iftttKey}`,
-            method: 'POST',
-            json: {
-                value1: obj.id,
-                value2: obj.val,
-                value3: obj.ack
-            }
-        };
+        url = `https://maker.ifttt.com/trigger/state/with/key/${adapter.config.iftttKey}`;
+        data = {
+            value1: obj.id,
+            value2: obj.val,
+            value3: obj.ack
+        }
     }
-    if (options) {
-        request(options, (error, response, body) => {
-            if (!error && response.statusCode === 200) {
-                adapter.log.debug(`Response from IFTTT: ${JSON.stringify(body)}`);
-            } else {
-                adapter.log.warn(`Response from IFTTT: ${error ? JSON.stringify(error) : response && response.statusCode}`);
-            }
-        });
+
+    if (url) {
+        axios.post(url, data, {})
+            .then(response => adapter.log.debug(`Response from IFTTT: ${JSON.stringify(response.data)}`))
+            .catch(error => {
+                if (error.response) {
+                    adapter.log.warn(`Response from IFTTT: ${error.response.data ? JSON.stringify(error.response.data) : error.response.status}`);
+                } else {
+                    adapter.log.warn(`Response from IFTTT: ${error.code}`);
+                }
+            });
     } else {
         adapter.log.warn(`Invalid request to IFTTT: ${JSON.stringify(obj)}`);
     }
@@ -456,145 +452,117 @@ function decrypt(key, value) {
     return result;
 }
 
-function readUrlKey() {
-    return new Promise((resolve, reject) => {
-        adapter.getState('certs.urlKey', (err, key) => {
-            if (err || !key || !key.val) {
-                reject(err || 'Not exists');
-            } else {
-                resolve({key: key.val});
-            }
-        });
-    });
+async function readUrlKey() {
+    const key = await adapter.getStateAsync('certs.urlKey');
+
+    if (!key || !key.val) {
+        throw new Error('Not exists');
+    } else {
+        return {key: key.val};
+    }
 }
 
-function createUrlKey(login, pass) {
-    return new Promise((resolve, reject) => {
-        let req;
-        let timeout = setTimeout(() => {
-            if (timeout)  {
-                timeout = null;
-                req && req.abort();
-                reject('timeout');
-            }
-        }, 15000);
+async function createUrlKey(login, pass) {
+    adapter.log.debug('Fetching URL key...');
 
-        adapter.log.debug('Fetching URL key...');
-        req = request.get(`https://generate-key.iobroker.in/v1/generateUrlKey?user=${encodeURIComponent(login)}&pass=${encodeURIComponent(pass)}&version=${version}`, (error, response, body) => {
-            req = null;
-            if (timeout) {
-                clearTimeout(timeout);
-                timeout = null;
-                if (error) {
-                    reject(error);
-                } else {
-                    let data;
-                    try {
-                        data = JSON.parse(body)
-                    } catch (e) {
-                        return reject(`Cannot parse URL key answer: ${JSON.stringify(e)}`);
-                    }
-                    if (data.error) {
-                        adapter.log.error(`Cannot fetch URL key: ${JSON.stringify(data.error)}`);
-                        reject(data);
-                    } else if (data.key) {
-                        writeUrlKey(data.key)
-                            .then(() => resolve(data.key));
-                    } else {
-                        adapter.log.error(`Cannot fetch URL key: ${JSON.stringify(data)}`);
-                        reject(data);
-                    }
-                }
+    let response;
+    try {
+        response = await axios.get(
+            `https://generate-key.iobroker.in/v1/generateUrlKey?user=${encodeURIComponent(login)}&pass=${encodeURIComponent(pass)}&version=${version}`,
+            {
+                timeout: 15000,
+                validateStatus: status => status < 400
             }
-        });
-    });
+        );
+    } catch (error) {
+        if (error.response) {
+            throw new Error(error.response.data);
+        } else {
+            throw error;
+        }
+    }
+
+    if (response.data && response.data.error) {
+        adapter.log.error(`Cannot fetch URL key: ${JSON.stringify(response.data.error)}`);
+        throw new Error(response.data);
+    } else if (response.data && response.data.key) {
+        await adapter.setStateAsync('certs.urlKey', response.data.key, true);
+        return {key: response.data.key};
+    } else {
+        adapter.log.error(`Cannot fetch URL key: ${JSON.stringify(response.data)}`);
+        throw new Error(response.data);
+    }
 }
 
-function writeUrlKey(key) {
-    return adapter.setStateAsync('certs.urlKey', key, true);
-}
-
-function readKeys() {
+async function readCertificates() {
     let privateKey;
-    return adapter.getStateAsync('certs.private')
-        .then(priv => {
-            if (!priv || !priv.val) {
-                return Promise.reject('Not exists');
-            } else {
-                privateKey = priv.val;
-                return adapter.getStateAsync('certs.certificate');
-            }
-        })
-        .then(certificate => {
-            if (!certificate || !certificate.val) {
-                return Promise.reject('Not exists');
-            } else {
-                return {
-                    private: decrypt(secret, privateKey),
-                    certificate: decrypt(secret, certificate.val)
-                };
-            }
-        });
+    let certificate;
+
+    try {
+        privateKey  = await adapter.getStateAsync('certs.private');
+        certificate = await adapter.getStateAsync('certs.certificate');
+    } catch (error) {
+        throw new Error('Not exists');
+    }
+
+    if (!certificate || !certificate.val || !privateKey || !privateKey.val) {
+        throw new Error('Not exists');
+    } else {
+        return {
+            private: decrypt(secret, privateKey.val),
+            certificate: decrypt(secret, certificate.val)
+        };
+    }
 }
 
-function writeKeys(data) {
-    return          adapter.setStateAsync('certs.private',     encrypt(secret, data.keyPair.PrivateKey), true)
-        .then(() => adapter.setStateAsync('certs.public',      encrypt(secret, data.keyPair.PublicKey),  true))
-        .then(() => adapter.setStateAsync('certs.certificate', encrypt(secret, data.certificatePem),     true))
-        .then(() => adapter.setStateAsync('certs.id',          data.certificateId,                               true));
+async function writeKeys(data) {
+    await adapter.setStateAsync('certs.private',     encrypt(secret, data.keyPair.PrivateKey), true);
+    await adapter.setStateAsync('certs.public',      encrypt(secret, data.keyPair.PublicKey),  true);
+    await adapter.setStateAsync('certs.certificate', encrypt(secret, data.certificatePem),     true);
+    await adapter.setStateAsync('certs.id',          data.certificateId,                       true);
 }
 
-function fetchKeys(login, pass, _forceUserCreation) {
-    return adapter.getStateAsync('certs.forceUserCreate')
-        .then(state => {
-            let forceUserCreation = state && state.val;
+async function fetchKeys(login, pass, _forceUserCreation) {
+    let state;
 
-            return new Promise((resolve, reject) => {
-                let req;
-                let timeout = setTimeout(() => {
-                    if (!timeout) {
-                        timeout = null;
-                        req && req.abort();
-                        reject('timeout');
-                    }
-                }, 15000);
+    state = await adapter.getStateAsync('certs.forceUserCreate');
+    let forceUserCreation = state && state.val;
 
-                // erase flag, if user must be created anew, but remember the state
-                forceUserCreation && adapter.setState('certs.forceUserCreate', false, true);
+    if (forceUserCreation) {
+        await adapter.setStateAsync('certs.forceUserCreate', false, true);
+    }
 
-                adapter.log.debug('Fetching keys...');
-                req = request.get(`https://create-user.iobroker.in/v1/createUser?user=${encodeURIComponent(login)}&pass=${encodeURIComponent(pass)}&forceRecreate=${forceUserCreation}&version=${version}`, (error, response, body) => {
-                    req = null;
-                    if (timeout) {
-                        clearTimeout(timeout);
-                        timeout = null;
-                        if (error) {
-                            reject(error);
-                        } else {
-                            let data;
-                            try {
-                                data = JSON.parse(body)
-                            } catch (e) {
-                                return reject(`Cannot parse answer: ${JSON.stringify(e)}`);
-                            }
-                            if (data.error) {
-                                adapter.log.error(`Cannot fetch keys: ${JSON.stringify(data.error)}`);
-                                reject(data);
-                            } else if (data.certificates) {
-                                writeKeys(data.certificates)
-                                    .then(() => resolve({
-                                        private:     data.certificates.keyPair.PrivateKey,
-                                        certificate: data.certificates.certificatePem
-                                    }));
-                            } else {
-                                adapter.log.error(`Cannot fetch keys: ${JSON.stringify(data)}`);
-                                reject(data);
-                            }
-                        }
-                    }
-                });
-            });
-        });
+    adapter.log.debug('Fetching keys...');
+    let response;
+    try {
+        response = axios.get(
+            `https://create-user.iobroker.in/v1/createUser?user=${encodeURIComponent(login)}&pass=${encodeURIComponent(pass)}&forceRecreate=${forceUserCreation}&version=${version}`,
+            {
+                timeout: 15000,
+                validateStatus: status => status < 400
+            }
+        );
+    } catch (error) {
+        if (error.response) {
+            adapter.log.error(`Cannot fetch keys: ${JSON.stringify(error.response.data)}`);
+            throw new Error(error.response.data);
+        } else {
+            adapter.log.error(`Cannot fetch keys: ${JSON.stringify(error.code)}`);
+            throw error;
+        }
+    }
+    if (response.data.certificates) {
+        await writeKeys(response.data.certificates);
+
+        return {
+            private:     response.data.certificates.keyPair.PrivateKey,
+            certificate: response.data.certificates.certificatePem
+        };
+    } else {
+        adapter.log.error(`Cannot fetch keys: ${JSON.stringify(response.data)}`);
+        throw new Error(response.data);
+    }
+
 }
 
 function processMessage(type, request, callback) {
@@ -612,7 +580,7 @@ function processMessage(type, request, callback) {
         const start = Date.now();
         return remote.process(request, type)
             .then(response => {
-                if (response !== Remote.NONE) {
+                if (response !== NONE) {
                     adapter.log.debug(`[REMOTE] Response in: ${Date.now() - start}ms (Length: ${Array.isArray(response) ? 'A ' + response.length : JSON.stringify(response).length}) for ${request}`);
                 }
                 callback(response);
@@ -811,147 +779,143 @@ function closeDevice() {
     });
 }
 
-function startDevice(clientId, login, password, retry) {
+async function startDevice(clientId, login, password, retry) {
     retry = retry || 0;
     let certs;
-    return readKeys()
-        .catch(e => {
-            if (e === 'Not exists') {
-                return fetchKeys(login, password);
-            } else {
-                throw new Error(e);
-            }
-        })
-        .then(_certs => {
-            certs = _certs;
-            return readUrlKey();
-        })
-        .catch(e => {
-            if (e === 'Not exists') {
-                return createUrlKey(login, password);
-            } else {
-                throw new Error(e && e.error ? e.error : e);
-            }
-        })
-        .then(key => {
-            adapter.log.debug(`URL key is ${JSON.stringify(key)}, clientId: ${clientId}`);
+    let key;
 
-            // destroy old device
-            return closeDevice();
-        })
-        .then(() => {
-            connectStarted = Date.now();
-            device = new DeviceModule({
-                privateKey: Buffer.from(certs.private),
-                clientCert: Buffer.from(certs.certificate),
-                caCert:     fs.readFileSync(__dirname + '/keys/root-CA.crt'),
-                clientId,
-                username:   'ioBroker',
-                host:       adapter.config.cloudUrl,
-                debug:      !!adapter.config.debug,
-                baseReconnectTimeMs: 5000,
-                keepalive:  60
-            });
-            remote.registerDevice(device);
-
-            device.subscribe(`command/${clientId}/#`);
-            device.on('connect', onConnect);
-            device.on('close', onDisconnect);
-            device.on('reconnect', () => adapter.log.debug('reconnect'));
-            device.on('offline', () => adapter.log.debug('offline'));
-            device.on('error', error => {
-                const errorTxt = (error && error.message && JSON.stringify(error.message)) || JSON.stringify(error);
-                adapter.log.error(`Error by device connection: ${errorTxt}`);
-
-                // restart iot device if DNS cannot be resolved
-                if (errorTxt.includes('EAI_AGAIN')) {
-                    adapter.log.error(`DNS name of ${adapter.config.cloudUrl} cannot be resolved: connection will be retried in 10 seconds.`);
-                    setTimeout(() =>
-                        startDevice(clientId, login, password), 10000);
-                }
-            });
-
-            device.on('message', (topic, request) => {
-                adapter.log.debug(`Request ${topic}`);
-                if (topic.startsWith(`command/${clientId}/`)) {
-                    let type = topic.substring(clientId.length + 9);
-
-                    processMessage(type, request, async response => {
-                        if (adapter.common.loglevel === 'debug' && !type.startsWith('remote')) {
-                            adapter.log.debug('Response: ' + JSON.stringify(response));
-                        }
-                        if (device && response !== Remote.NONE) {
-                            if (Array.isArray(response)) {
-                                try {
-                                    for (let m = 0; m < response.length; m++) {
-                                        const trunk = response[m];
-                                        await new Promise((resolve, reject) => device.publish(
-                                            `response/${clientId}/${type}`,
-                                            typeof trunk !== 'string' ? JSON.stringify(trunk) : trunk,
-                                            {qos: 1},
-                                            error => {
-                                                if (error) {
-                                                    reject(error);
-                                                } else {
-                                                    resolve();
-                                                }
-                                            }
-                                        ));
-                                    }
-                                } catch (err) {
-                                    adapter.log.error('[REMOTE] Cannot send packet: ' + err);
-                                }
-                            } else {
-                                adapter.log.debug(`[REMOTE] Send command to 'response/${clientId}/${type}: ${JSON.stringify(response)}`);
-                                device.publish(`response/${clientId}/${type}`, JSON.stringify(response));
-                            }
-                        }
-                    });
-                }
-            });
-        }).catch(e => {
-            if (e && typeof e === 'object' && e.message) {
-                adapter.log.error(`Cannot read keys: ${e.message}`);
-            } else {
-                adapter.log.error(`Cannot read keys: ${JSON.stringify(e)} / ${e && e.toString()}`);
-            }
-
-            if (e === 'timeout' && retry < 10) {
-                setTimeout(() =>
-                    startDevice(clientId, login, password, retry + 1), 10000);
-            }
-        });
-}
-
-function updateNightscoutSecret() {
-    return new Promise(resolve => {
-        if (!adapter.config.nightscout) {
-            return resolve();
+    try {
+        certs = await readCertificates();
+    } catch (error) {
+        if (error.message === 'Not exists') {
+            certs = await fetchKeys(login, password);
+        } else {
+            throw error;
         }
-        const email = adapter.config.login.replace(/[^\w\d-_]/g, '_');
-        const secret = adapter.config.nightscoutPass;
-        const apiSecret = email + (secret ? '-' + secret : '');
-        const URL = `https://generate-key.iobroker.in/v1/generateUrlKey?user=${encodeURIComponent(adapter.config.login)}&pass=${encodeURIComponent(adapter.config.pass)}&apisecret=${encodeURIComponent(apiSecret)}`;
-        request(URL, (error, response, body) => {
-            if (error) {
-                adapter.log.warn('Cannot update api-secret: ' + error);
-            } else {
-                try {
-                    body = JSON.parse(body)
-                } catch (e) {
-                }
-                if (body.error) {
-                    adapter.log.error('Api-Secret cannot be updated: ' + body.error);
-                } else {
-                    adapter.log.debug('Api-Secret updated: ' + JSON.stringify(body));
-                }
-            }
-            resolve();
+    }
+
+    // destroy old device
+    await closeDevice();
+
+    try {
+        connectStarted = Date.now();
+        device = new DeviceModule({
+            privateKey: Buffer.from(certs.private),
+            clientCert: Buffer.from(certs.certificate),
+            caCert:     fs.readFileSync(__dirname + '/keys/root-CA.crt'),
+            clientId,
+            username:   'ioBroker',
+            host:       adapter.config.cloudUrl,
+            debug:      !!adapter.config.debug,
+            baseReconnectTimeMs: 5000,
+            keepalive:  60
         });
-    });
+        remote.registerDevice(device);
+
+        device.subscribe(`command/${clientId}/#`);
+        device.on('connect', onConnect);
+        device.on('close', onDisconnect);
+        device.on('reconnect', () => adapter.log.debug('reconnect'));
+        device.on('offline', () => adapter.log.debug('offline'));
+        device.on('error', error => {
+            const errorTxt = (error && error.message && JSON.stringify(error.message)) || JSON.stringify(error);
+            adapter.log.error(`Error by device connection: ${errorTxt}`);
+
+            // restart iot device if DNS cannot be resolved
+            if (errorTxt.includes('EAI_AGAIN')) {
+                adapter.log.error(`DNS name of ${adapter.config.cloudUrl} cannot be resolved: connection will be retried in 10 seconds.`);
+                setTimeout(() =>
+                    startDevice(clientId, login, password), 10000);
+            }
+        });
+
+        device.on('message', (topic, request) => {
+            adapter.log.debug(`Request ${topic}`);
+            if (topic.startsWith(`command/${clientId}/`)) {
+                let type = topic.substring(clientId.length + 9);
+
+                processMessage(type, request, async response => {
+                    if (adapter.common.loglevel === 'debug' && !type.startsWith('remote')) {
+                        adapter.log.debug('Response: ' + JSON.stringify(response));
+                    }
+                    if (device && response !== NONE) {
+                        if (Array.isArray(response)) {
+                            try {
+                                for (let m = 0; m < response.length; m++) {
+                                    const trunk = response[m];
+                                    await new Promise((resolve, reject) => device.publish(
+                                        `response/${clientId}/${type}`,
+                                        typeof trunk !== 'string' ? JSON.stringify(trunk) : trunk,
+                                        {qos: 1},
+                                        error => {
+                                            if (error) {
+                                                reject(error);
+                                            } else {
+                                                resolve();
+                                            }
+                                        }
+                                    ));
+                                }
+                            } catch (err) {
+                                adapter.log.error('[REMOTE] Cannot send packet: ' + err);
+                            }
+                        } else {
+                            adapter.log.debug(`[REMOTE] Send command to 'response/${clientId}/${type}: ${JSON.stringify(response)}`);
+                            device.publish(`response/${clientId}/${type}`, JSON.stringify(response));
+                        }
+                    }
+                });
+            }
+        });
+
+    } catch (error) {
+        if (error && typeof error === 'object' && error.message) {
+            adapter.log.error(`Cannot read keys: ${error.message}`);
+        } else {
+            adapter.log.error(`Cannot read keys: ${JSON.stringify(error)} / ${error && error.toString()}`);
+        }
+
+        if (error === 'timeout' && retry < 10) {
+            setTimeout(() =>
+                startDevice(clientId, login, password, retry + 1), 10000);
+        }
+    }
 }
 
-function main() {
+async function updateNightscoutSecret() {
+    if (!adapter.config.nightscout) {
+        return;
+    }
+
+    const email = adapter.config.login.replace(/[^\w\d-_]/g, '_');
+    const secret = adapter.config.nightscoutPass;
+    const apiSecret = email + (secret ? '-' + secret : '');
+    const URL = `https://generate-key.iobroker.in/v1/generateUrlKey?user=${encodeURIComponent(adapter.config.login)}&pass=${encodeURIComponent(adapter.config.pass)}&apisecret=${encodeURIComponent(apiSecret)}`;
+    let response;
+
+    try {
+        response = axios.get(
+            URL,
+            {
+                timeout: 15000,
+                validateStatus: status => status < 400
+            }
+        );
+        if (response.data.error) {
+            adapter.log.error('Api-Secret cannot be updated: ' + response.data.error);
+        } else {
+            adapter.log.debug('Api-Secret updated: ' + JSON.stringify(response.data));
+        }
+    } catch (error) {
+        if (error.response) {
+            adapter.log.warn(`Cannot update api-secret: ${error.response.data ? JSON.stringify(error.response.data) : error.response.status}`);
+        } else {
+            adapter.log.warn(`Cannot update api-secret: ${error.code}`);
+        }
+    }
+}
+
+async function main() {
     if (adapter.config.googleHome === undefined) {
         adapter.config.googleHome = false;
     }
@@ -965,6 +929,7 @@ function main() {
     }
 
     adapter.config.pingTimeout = parseInt(adapter.config.pingTimeout, 10) || 5000;
+
     if (adapter.config.pingTimeout < 3000) {
         adapter.config.pingTimeout = 3000;
     }
@@ -980,6 +945,17 @@ function main() {
         return adapter.log.error('No cloud credentials found. Please get one on https://iobroker.pro');
     }
 
+    let systemConfig = await adapter.getForeignObjectAsync('system.config');
+    if (!systemConfig) {
+        adapter.log.warn('Object system.config not found. Please check your installation!');
+        systemConfig = {common: {}};
+    }
+
+    const oUuid = await adapter.getForeignObjectAsync('system.meta.uuid');
+
+    secret = (systemConfig && systemConfig.native && systemConfig.native.secret) || 'Zgfr56gFe87jJOM';
+
+    adapter.config.pass           = decrypt(secret, adapter.config.pass);
     adapter.config.deviceOffLevel = parseFloat(adapter.config.deviceOffLevel) || 0;
     adapter.config.concatWord     = (adapter.config.concatWord || '').toString().trim();
     adapter.config.apikey         = (adapter.config.apikey || '').trim();
@@ -1008,141 +984,105 @@ function main() {
 
     remote = new Remote(adapter, adapter.config.login.replace(/[^-_:a-zA-Z1-9]/g, '_'));
 
-    let systemConfig;
     // read URL keys from server
-    readUrlKey()
-        .then(key => {
-            if (adapter.config.googleHome) {
-                googleHome = new GoogleHome(adapter, key);
-            }// no else
-            if (false && adapter.config.yandexAlisa) {
-                yandexAlisa = new YandexAlisa(adapter, key);
+    let key;
+    try {
+        key = await readUrlKey();
+    } catch (error) {
+        if (adapter.config.googleHome || adapter.config.yandexAlisa) {
+            try {
+                key = await createUrlKey(adapter.config.login, adapter.config.pass);
+            } catch (err) {
+                return adapter.log.error(`Cannot read URL key: ${typeof err === 'object' ? JSON.stringify(err) : err}`);
             }
-        })
-        .catch(err => {
-            let promise;
-            if (adapter.config.googleHome || adapter.config.yandexAlisa) {
-                promise = createUrlKey(adapter.config.login, adapter.config.pass)
-            }
+        }
+    }
 
-            if (adapter.config.googleHome) {
-                // create keys automatically if they do not exist
-                if (err === 'Not exists') {
-                    return promise
-                        .then(key => googleHome = new GoogleHome(adapter, key))
-                        .catch(err => adapter.log.error(`Cannot read URL key: ${typeof err === 'object' ? JSON.stringify(err) : err}`));
-                } else {
-                    adapter.log.error(`Cannot read URL key: ${typeof err === 'object' ? JSON.stringify(err) : err}`);
-                }
-            }// no else
-            if (adapter.config.yandexAlisa) {
-                // create keys automatically if they do not exist
-                if (err === 'Not exists') {
-                    return promise
-                        .then(key => yandexAlisa = new YandexAlisa(adapter, key))
-                        .catch(err => adapter.log.error(`Cannot read URL key: ${typeof err === 'object' ? JSON.stringify(err) : err}`));
-                } else {
-                    adapter.log.error(`Cannot read URL key: ${typeof err === 'object' ? JSON.stringify(err) : err}`);
-                }
-            }
-        })
-        .then(() => {
-            adapter.config.allowedServices = (adapter.config.allowedServices || '').split(/[,\s]+/);
-            for (let s = 0; s < adapter.config.allowedServices.length; s++) {
-                adapter.config.allowedServices[s] = adapter.config.allowedServices[s].trim();
-            }
+    if (adapter.config.googleHome) {
+        googleHome = new GoogleHome(adapter, key);
+    }// no else
+    if (adapter.config.yandexAlisa) {
+        yandexAlisa = new YandexAlisa(adapter, key);
+    }
 
-            adapter.setState('info.connection', false, true);
-            adapter.config.cloudUrl = adapter.config.cloudUrl || 'a18wym7vjdl22g.iot.eu-west-1.amazonaws.com';
+    adapter.config.allowedServices = (adapter.config.allowedServices || '').split(/[,\s]+/);
+    for (let s = 0; s < adapter.config.allowedServices.length; s++) {
+        adapter.config.allowedServices[s] = adapter.config.allowedServices[s].trim();
+    }
 
-            if (!adapter.config.login || !adapter.config.pass) {
-                return adapter.log.error('No cloud credentials found. Please get one on https://iobroker.pro');
-            }
+    adapter.setState('info.connection', false, true);
+    adapter.config.cloudUrl = adapter.config.cloudUrl || 'a18wym7vjdl22g.iot.eu-west-1.amazonaws.com';
 
-            if (adapter.config.iftttKey) {
-                adapter.subscribeStates('services.ifttt');
-                // create ifttt object
-                adapter.getObject('services.ifttt', (err, obj) => {
-                    if (!obj) {
-                        adapter.setObjectNotExists('services.ifttt', {
-                            _id: adapter.namespace + '.services.ifttt',
-                            type: 'state',
-                            common: {
-                                name: 'IFTTT value',
-                                write: true,
-                                role: 'state',
-                                read: true,
-                                type: 'mixed',
-                                desc: 'All written data will be sent to IFTTT. If no state specified all requests from IFTTT will be saved here'
-                            },
-                            native: {}
-                        });
-                    }
-                });
-            }
+    if (!adapter.config.login || !adapter.config.pass) {
+        return adapter.log.error('No cloud credentials found. Please get one on https://iobroker.pro');
+    }
 
-            adapter.subscribeStates('smart.*');
+    if (adapter.config.iftttKey) {
+        await adapter.subscribeStatesAsync('services.ifttt');
+        // create ifttt object
+        const iftttObj = await adapter.getObjectAsync('.services.ifttt');
+        if (!iftttObj) {
+            await adapter.setObjectNotExistsAsync('services.ifttt', {
+                _id: adapter.namespace + '.services.ifttt',
+                type: 'state',
+                common: {
+                    name: 'IFTTT value',
+                    write: true,
+                    role: 'state',
+                    read: true,
+                    type: 'mixed',
+                    desc: 'All written data will be sent to IFTTT. If no state specified all requests from IFTTT will be saved here'
+                },
+                native: {}
+            });
+        }
+    }
 
-            adapter.log.info('Connecting with ' + adapter.config.cloudUrl);
-            return adapter.getForeignObjectAsync('system.config');
-        })
-        .then(obj => {
-            if (!obj) {
-                adapter.log.warn('Object system.config not found. Please check your installation!');
-                obj = {
-                    common: {}
-                };
-            }
-            systemConfig = obj;
+    await adapter.subscribeStatesAsync('smart.*');
 
-            if (adapter.config.language) {
-                translate = true;
-                lang = adapter.config.language;
-            } else {
-                lang = obj.common.language;
-            }
+    adapter.log.info('Connecting with ' + adapter.config.cloudUrl);
 
-            if (lang !== 'en' && lang !== 'de' && lang !== 'ru') {
-                lang = 'en';
-            }
+    if (adapter.config.language) {
+        translate = true;
+        lang = adapter.config.language;
+    } else {
+        lang = systemConfig.common.language;
+    }
 
-            defaultHistory = obj.common.defaultHistory;
+    if (lang !== 'en' && lang !== 'de' && lang !== 'ru') {
+        lang = 'en';
+    }
 
-            adapter.config.amazonAlexa && alexaSH2 && alexaSH2.setLanguage(lang, translate);
-            adapter.config.amazonAlexa && alexaSH2 && alexaSH2.updateDevices();
+    defaultHistory = systemConfig.common.defaultHistory;
 
-            adapter.config.amazonAlexa && alexaSH3 && alexaSH3.setLanguage(lang, translate);
-            adapter.config.amazonAlexa && alexaSH3 && alexaSH3.updateDevices();
+    adapter.config.amazonAlexa && alexaSH2 && alexaSH2.setLanguage(lang, translate);
+    adapter.config.amazonAlexa && alexaSH2 && alexaSH2.updateDevices();
 
-            adapter.config.googleHome && googleHome && googleHome.setLanguage(lang, translate);
-            adapter.config.googleHome && googleHome && googleHome.updateDevices();
+    adapter.config.amazonAlexa && alexaSH3 && alexaSH3.setLanguage(lang, translate);
+    adapter.config.amazonAlexa && alexaSH3 && alexaSH3.updateDevices();
 
-            yandexAlisa && yandexAlisa.setLanguage(lang, translate);
-            yandexAlisa && yandexAlisa.updateDevices();
+    adapter.config.googleHome && googleHome && googleHome.setLanguage(lang, translate);
+    adapter.config.googleHome && googleHome && googleHome.updateDevices();
 
-            alexaCustom && alexaCustom.setLanguage(lang, translate);
-            alexaCustomBlood && alexaCustomBlood.setSettings(lang, defaultHistory);
+    yandexAlisa && yandexAlisa.setLanguage(lang, translate);
+    yandexAlisa && yandexAlisa.updateDevices();
 
-            remote.setLanguage(lang);
+    alexaCustom && alexaCustom.setLanguage(lang, translate);
+    alexaCustomBlood && alexaCustomBlood.setSettings(lang, defaultHistory);
 
-            return adapter.getForeignObjectAsync('system.meta.uuid');
-        })
-        .then(oUuid => {
-            secret = (systemConfig && systemConfig.native && systemConfig.native.secret) || 'Zgfr56gFe87jJOM';
-            adapter.config.pass = decrypt(secret, adapter.config.pass);
+    remote.setLanguage(lang);
+    // check password
+    if (adapter.config.pass.length < 8 || !adapter.config.pass.match(/[a-z]/) || !adapter.config.pass.match(/[A-Z]/) || !adapter.config.pass.match(/\d/)) {
+        return adapter.log.error('The password must be at least 8 characters long and have numbers, upper and lower case letters. Please change the password in the profile https://iobroker.pro/accountProfile.');
+    }
 
-            // check password
-            if (adapter.config.pass.length < 8 || !adapter.config.pass.match(/[a-z]/) || !adapter.config.pass.match(/[A-Z]/) || !adapter.config.pass.match(/\d/)) {
-                return adapter.log.error('The password must be at least 8 characters long and have numbers, upper and lower case letters. Please change the password in the profile https://iobroker.pro/accountProfile.');
-            }
+    if (oUuid && oUuid.native) {
+        uuid = oUuid.native.uuid;
+    }
 
-            if (oUuid && oUuid.native) {
-                uuid = oUuid.native.uuid;
-            }
-            return updateNightscoutSecret();
-        })
-        .then(() =>
-            startDevice(adapter.config.login.replace(/[^-_:a-zA-Z1-9]/g, '_'), adapter.config.login, adapter.config.pass));
+    await updateNightscoutSecret();
+
+    await startDevice(adapter.config.login.replace(/[^-_:a-zA-Z1-9]/g, '_'), adapter.config.login, adapter.config.pass);
 }
 
 // If started as allInOne mode => return function to create instance
