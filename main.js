@@ -536,7 +536,7 @@ async function fetchCertificates(login, pass, _forceUserCreation) {
         await adapter.setStateAsync('certs.forceUserCreate', false, true);
     }
 
-    adapter.log.debug('Fetching keys...');
+    adapter.log.debug('Fetching certificates...');
     let response;
     try {
         response = await axios.get(
