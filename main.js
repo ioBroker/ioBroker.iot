@@ -790,7 +790,6 @@ function closeDevice() {
 async function startDevice(clientId, login, password, retry) {
     retry = retry || 0;
     let certs;
-    let key;
 
     try {
         certs = await readCertificates();
