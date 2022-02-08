@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "iot",
-    "version": "1.9.3",
+    "version": "1.9.4",
     "news": {
+      "1.9.4": {
+        "en": "Fixed error with the certificates fetching",
+        "de": "Fehler beim Abrufen der Zertifikate behoben",
+        "ru": "Исправлена ошибка с получением сертификатов",
+        "pt": "Corrigido erro na busca de certificados",
+        "nl": "Fout opgelost bij het ophalen van de certificaten",
+        "fr": "Correction d'une erreur lors de la récupération des certificats",
+        "it": "Risolto errore con il recupero dei certificati",
+        "es": "Se corrigió el error con la obtención de certificados.",
+        "pl": "Naprawiono błąd podczas pobierania certyfikatów",
+        "zh-cn": "修复了获取证书的错误"
+      },
       "1.9.3": {
         "en": "Removed deprecated package `request`\nRefactoring and better error handling",
         "de": "Veraltetes Paket „request“ entfernt\nRefactoring und bessere Fehlerbehandlung",
@@ -74,18 +86,6 @@
         "es": "Respete los límites mínimo / máximo controlando",
         "pl": "Przestrzegaj limitów min/maks, kontrolując",
         "zh-cn": "通过控制来尊重最小/最大限制"
-      },
-      "1.8.23": {
-        "en": "Fixed the response for the heating control",
-        "de": "Die Reaktion der Heizungssteuerung wurde korrigiert",
-        "ru": "Исправлен отклик на контроль нагрева",
-        "pt": "Corrigida a resposta para o controle de aquecimento",
-        "nl": "De reactie voor de verwarmingsregeling opgelost",
-        "fr": "Correction de la réponse pour la commande de chauffage",
-        "it": "Risolta la risposta per il controllo del riscaldamento",
-        "es": "Se corrigió la respuesta para el control de calefacción.",
-        "pl": "Poprawiono odpowiedź na sterowanie ogrzewaniem",
-        "zh-cn": "修复了加热控制的响应"
       }
     },
     "title": "IoT Assistants",
