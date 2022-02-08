@@ -476,6 +476,10 @@ async function createUrlKey(login, pass) {
         );
     } catch (error) {
         if (error.response) {
+            if (error.response.status === 401) {
+                adapter.log.error(`Cannot create URL key because of invalid user or password`);
+            }
+
             throw new Error(error.response.data);
         } else {
             throw error;
@@ -522,7 +526,7 @@ async function writeKeys(data) {
     await adapter.setStateAsync('certs.id',          data.certificateId,                       true);
 }
 
-async function fetchKeys(login, pass, _forceUserCreation) {
+async function fetchCertificates(login, pass, _forceUserCreation) {
     let state;
 
     state = await adapter.getStateAsync('certs.forceUserCreate');
@@ -535,7 +539,7 @@ async function fetchKeys(login, pass, _forceUserCreation) {
     adapter.log.debug('Fetching keys...');
     let response;
     try {
-        response = axios.get(
+        response = await axios.get(
             `https://create-user.iobroker.in/v1/createUser?user=${encodeURIComponent(login)}&pass=${encodeURIComponent(pass)}&forceRecreate=${forceUserCreation}&version=${version}`,
             {
                 timeout: 15000,
@@ -544,14 +548,19 @@ async function fetchKeys(login, pass, _forceUserCreation) {
         );
     } catch (error) {
         if (error.response) {
-            adapter.log.error(`Cannot fetch keys: ${JSON.stringify(error.response.data)}`);
+            if (error.response.status === 401) {
+                adapter.log.error(`Cannot fetch connection certificates because of invalid user or password`);
+            } else {
+                adapter.log.error(`Cannot fetch connection certificates: ${JSON.stringify(error.response.data)}`);
+            }
             throw new Error(error.response.data);
         } else {
-            adapter.log.error(`Cannot fetch keys: ${JSON.stringify(error.code)}`);
+            adapter.log.error(`Cannot fetch connection certificates: ${JSON.stringify(error.code)}`);
             throw error;
         }
     }
-    if (response.data.certificates) {
+
+    if (response && response.data && response.data.certificates) {
         await writeKeys(response.data.certificates);
 
         return {
@@ -559,10 +568,9 @@ async function fetchKeys(login, pass, _forceUserCreation) {
             certificate: response.data.certificates.certificatePem
         };
     } else {
-        adapter.log.error(`Cannot fetch keys: ${JSON.stringify(response.data)}`);
+        adapter.log.error(`Cannot fetch connection certificates: ${JSON.stringify(response.data)}`);
         throw new Error(response.data);
     }
-
 }
 
 function processMessage(type, request, callback) {
@@ -788,7 +796,11 @@ async function startDevice(clientId, login, password, retry) {
         certs = await readCertificates();
     } catch (error) {
         if (error.message === 'Not exists') {
-            certs = await fetchKeys(login, password);
+            try {
+                certs = await fetchCertificates(login, password);
+            } catch (error) {
+
+            }
         } else {
             throw error;
         }
@@ -796,6 +808,10 @@ async function startDevice(clientId, login, password, retry) {
 
     // destroy old device
     await closeDevice();
+
+    if (!certs) {
+        return adapter.log.error(`Cannot read connection certificates`);
+    }
 
     try {
         connectStarted = Date.now();
@@ -867,12 +883,11 @@ async function startDevice(clientId, login, password, retry) {
                 });
             }
         });
-
     } catch (error) {
         if (error && typeof error === 'object' && error.message) {
-            adapter.log.error(`Cannot read keys: ${error.message}`);
+            adapter.log.error(`Cannot read connection certificates: ${error.message}`);
         } else {
-            adapter.log.error(`Cannot read keys: ${JSON.stringify(error)} / ${error && error.toString()}`);
+            adapter.log.error(`Cannot read connection certificates: ${JSON.stringify(error)} / ${error && error.toString()}`);
         }
 
         if (error === 'timeout' && retry < 10) {
@@ -894,7 +909,7 @@ async function updateNightscoutSecret() {
     let response;
 
     try {
-        response = axios.get(
+        response = await axios.get(
             URL,
             {
                 timeout: 15000,
