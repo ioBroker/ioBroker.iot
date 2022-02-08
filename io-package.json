@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "iot",
-    "version": "1.9.4",
+    "version": "1.9.5",
     "news": {
+      "1.9.5": {
+        "en": "Fixed Google home error with color control",
+        "de": "Google Home-Fehler mit Farbsteuerung behoben",
+        "ru": "Исправлена ошибка Google Home с управлением цветом",
+        "pt": "Corrigido o erro inicial do Google com controle de cores",
+        "nl": "Google Home-fout opgelost met kleurcontrole",
+        "fr": "Correction de l'erreur d'accueil de Google avec le contrôle des couleurs",
+        "it": "Risolto l'errore home di Google con il controllo del colore",
+        "es": "Se corrigió el error de inicio de Google con el control de color.",
+        "pl": "Naprawiono błąd domu Google z kontrolą kolorów",
+        "zh-cn": "修复了带有颜色控制的 Google Home 错误"
+      },
       "1.9.4": {
         "en": "Fixed error with the certificates fetching",
         "de": "Fehler beim Abrufen der Zertifikate behoben",
@@ -74,18 +86,6 @@
         "es": "Se corrigió la habilitación de la categoría.",
         "pl": "Poprawiono włączanie kategorii",
         "zh-cn": "更正了类别的启用"
-      },
-      "1.8.24": {
-        "en": "Respect the min/max limits by controlling",
-        "de": "Respektieren Sie die Min/Max-Grenzen durch Kontrolle",
-        "ru": "Соблюдайте минимальные / максимальные пределы, контролируя",
-        "pt": "Respeite os limites mín. / Máx. Controlando",
-        "nl": "Respecteer de min/max-limieten door te controleren",
-        "fr": "Respectez les limites min/max en contrôlant",
-        "it": "Rispettare i limiti min/max controllando",
-        "es": "Respete los límites mínimo / máximo controlando",
-        "pl": "Przestrzegaj limitów min/maks, kontrolując",
-        "zh-cn": "通过控制来尊重最小/最大限制"
       }
     },
     "title": "IoT Assistants",
