@@ -889,7 +889,7 @@ async function startDevice(clientId, login, password, retry) {
             adapter.log.error(`Cannot read connection certificates: ${JSON.stringify(error)} / ${error && error.toString()}`);
         }
 
-        if (error === 'timeout' && retry < 10) {
+        if ((error === 'timeout' || (error.message && error.message.includes('timeout'))) && retry < 10) {
             setTimeout(() =>
                 startDevice(clientId, login, password, retry + 1), 10000);
         }
