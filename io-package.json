@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "iot",
-    "version": "1.9.5",
+    "version": "1.9.6",
     "news": {
+      "1.9.6": {
+        "en": "Make sure to not remember the off value when using stored values for on\nFix crash case reported by Sentry (IOBROKER-IOT-3A)",
+        "de": "Achten Sie darauf, sich nicht den Aus-Wert zu merken, wenn Sie gespeicherte Werte für Ein verwenden\nVon Sentry gemeldeter Absturzfall behoben (IOBROKER-IOT-3A)",
+        "ru": "Убедитесь, что вы не помните значение выключения при использовании сохраненных значений для включения.\nИсправить случай сбоя, о котором сообщил Sentry (IOBROKER-IOT-3A)",
+        "pt": "Certifique-se de não lembrar o valor off ao usar valores armazenados para on\nCorrigir caso de falha relatado pelo Sentry (IOBROKER-IOT-3A)",
+        "nl": "Zorg ervoor dat u de uit-waarde niet onthoudt wanneer u opgeslagen waarden gebruikt voor aan\nHerstel crashgeval gemeld door Sentry (IOBROKER-IOT-3A)",
+        "fr": "Assurez-vous de ne pas vous souvenir de la valeur off lorsque vous utilisez des valeurs stockées pour on\nCorrection d'un cas de plantage signalé par Sentry (IOBROKER-IOT-3A)",
+        "it": "Assicurati di non ricordare il valore off quando usi i valori memorizzati per on\nRisolto il caso di crash segnalato da Sentry (IOBROKER-IOT-3A)",
+        "es": "Asegúrese de no recordar el valor de apagado cuando use valores almacenados para encendido\nArreglar el caso de bloqueo informado por Sentry (IOBROKER-IOT-3A)",
+        "pl": "Upewnij się, że nie pamiętasz wartości off podczas używania zapisanych wartości dla on\nNapraw przypadek awarii zgłoszony przez Sentry (IOBROKER-IOT-3A)",
+        "zh-cn": "确保在使用存储值时不要记住关闭值\n修复 Sentry 报告的崩溃案例 (IOBROKER-IOT-3A)"
+      },
       "1.9.5": {
         "en": "Fixed Google home error with color control",
         "de": "Google Home-Fehler mit Farbsteuerung behoben",
@@ -74,18 +86,6 @@
         "es": "Se agregó soporte experimental para acceso remoto.",
         "pl": "Dodano eksperymentalne wsparcie dla zdalnego dostępu",
         "zh-cn": "添加了对远程访问的实验性支持"
-      },
-      "1.8.25": {
-        "en": "Corrected the enabling of the category",
-        "de": "Die Aktivierung der Kategorie wurde korrigiert",
-        "ru": "Исправлено включение категории",
-        "pt": "Corrigida a habilitação da categoria",
-        "nl": "Het inschakelen van de categorie gecorrigeerd",
-        "fr": "Correction de l'activation de la catégorie",
-        "it": "Corretto l'abilitazione della categoria",
-        "es": "Se corrigió la habilitación de la categoría.",
-        "pl": "Poprawiono włączanie kategorii",
-        "zh-cn": "更正了类别的启用"
       }
     },
     "title": "IoT Assistants",
