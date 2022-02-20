@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "iot",
-    "version": "1.9.6",
+    "version": "1.9.7",
     "news": {
+      "1.9.7": {
+        "en": "Fix crash case reported by Sentry (IOBROKER-IOT-3C)",
+        "de": "Von Sentry gemeldeter Absturzfall behoben (IOBROKER-IOT-3C)",
+        "ru": "Исправить случай сбоя, о котором сообщил Sentry (IOBROKER-IOT-3C)",
+        "pt": "Corrigir caso de falha relatado pelo Sentry (IOBROKER-IOT-3C)",
+        "nl": "Herstel crashgeval gemeld door Sentry (IOBROKER-IOT-3C)",
+        "fr": "Correction d'un cas de plantage signalé par Sentry (IOBROKER-IOT-3C)",
+        "it": "Risolto il caso di crash segnalato da Sentry (IOBROKER-IOT-3C)",
+        "es": "Solucionar caso de bloqueo informado por Sentry (IOBROKER-IOT-3C)",
+        "pl": "Napraw przypadek awarii zgłoszony przez Sentry (IOBROKER-IOT-3C)",
+        "zh-cn": "修复 Sentry 报告的崩溃案例 (IOBROKER-IOT-3C)"
+      },
       "1.9.6": {
         "en": "Make sure to not remember the off value when using stored values for on\nFix crash case reported by Sentry (IOBROKER-IOT-3A)",
         "de": "Achten Sie darauf, sich nicht den Aus-Wert zu merken, wenn Sie gespeicherte Werte für Ein verwenden\nVon Sentry gemeldeter Absturzfall behoben (IOBROKER-IOT-3A)",
@@ -64,18 +76,6 @@
         "zh-cn": "添加了对远程访问的实验性支持"
       },
       "1.9.1": {
-        "en": "Added experimental support for remote access",
-        "de": "Experimentelle Unterstützung für Fernzugriff hinzugefügt",
-        "ru": "Добавлена экспериментальная поддержка удаленного доступа.",
-        "pt": "Adicionado suporte experimental para acesso remoto",
-        "nl": "Experimentele ondersteuning toegevoegd voor toegang op afstand",
-        "fr": "Ajout d'un support expérimental pour l'accès à distance",
-        "it": "Aggiunto supporto sperimentale per l'accesso remoto",
-        "es": "Se agregó soporte experimental para acceso remoto.",
-        "pl": "Dodano eksperymentalne wsparcie dla zdalnego dostępu",
-        "zh-cn": "添加了对远程访问的实验性支持"
-      },
-      "1.9.0": {
         "en": "Added experimental support for remote access",
         "de": "Experimentelle Unterstützung für Fernzugriff hinzugefügt",
         "ru": "Добавлена экспериментальная поддержка удаленного доступа.",

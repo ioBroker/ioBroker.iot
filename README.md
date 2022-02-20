@@ -268,8 +268,7 @@ Following types are supported:
 -->
 
 ## Changelog
-
-### __WORK IN PROGRESS__
+### 1.9.7 (2022-02-20)
 * (Apollon77) Fix crash case reported by Sentry (IOBROKER-IOT-3C)
 
 ### 1.9.6 (2022-02-19)
