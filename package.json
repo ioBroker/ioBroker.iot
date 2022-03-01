@@ -23,7 +23,7 @@
     "canvas": "^2.9.0"
   },
   "dependencies": {
-    "@iobroker/adapter-core": "^2.5.1",
+    "@iobroker/adapter-core": "^2.6.0",
     "aws-iot-device-sdk": "^2.2.11",
     "echarts": "^4.9.0",
     "iobroker.type-detector": "^1.0.17",
