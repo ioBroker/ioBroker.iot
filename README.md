@@ -268,8 +268,7 @@ Following types are supported:
 -->
 
 ## Changelog
-
-### __WORK IN PROGRESS__
+### 1.10.0 (2022-03-09)
 * (Apollon77) Respect min/max when calculating the value for byOn with % values
 
 ### 1.9.7 (2022-02-20)

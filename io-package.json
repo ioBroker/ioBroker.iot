@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "iot",
-    "version": "1.9.7",
+    "version": "1.10.0",
     "news": {
+      "1.10.0": {
+        "en": "Respect min/max when calculating the value for byOn with % values",
+        "de": "Beachten Sie Min/Max bei der Berechnung des Werts für byOn mit %-Werten",
+        "ru": "Соблюдайте минимальные/максимальные значения при расчете значения для byOn с процентными значениями.",
+        "pt": "Respeite min/max ao calcular o valor de byOn com valores %",
+        "nl": "Respecteer min/max bij het berekenen van de waarde voor byOn met % waarden",
+        "fr": "Respecter min/max lors du calcul de la valeur pour byOn avec des valeurs en %",
+        "it": "Rispettare min/max quando si calcola il valore per byOn con valori %.",
+        "es": "Respete min/max al calcular el valor de byOn con valores de %",
+        "pl": "Przestrzegaj min/max podczas obliczania wartości dla byOn z wartościami %",
+        "zh-cn": "使用 % 值计算 byOn 的值时尊重最小值/最大值"
+      },
       "1.9.7": {
         "en": "Fix crash case reported by Sentry (IOBROKER-IOT-3C)",
         "de": "Von Sentry gemeldeter Absturzfall behoben (IOBROKER-IOT-3C)",
@@ -64,18 +76,6 @@
         "zh-cn": "删除了不推荐使用的包 `request`\n重构和更好的错误处理"
       },
       "1.9.2": {
-        "en": "Added experimental support for remote access",
-        "de": "Experimentelle Unterstützung für Fernzugriff hinzugefügt",
-        "ru": "Добавлена экспериментальная поддержка удаленного доступа.",
-        "pt": "Adicionado suporte experimental para acesso remoto",
-        "nl": "Experimentele ondersteuning toegevoegd voor toegang op afstand",
-        "fr": "Ajout d'un support expérimental pour l'accès à distance",
-        "it": "Aggiunto supporto sperimentale per l'accesso remoto",
-        "es": "Se agregó soporte experimental para acceso remoto.",
-        "pl": "Dodano eksperymentalne wsparcie dla zdalnego dostępu",
-        "zh-cn": "添加了对远程访问的实验性支持"
-      },
-      "1.9.1": {
         "en": "Added experimental support for remote access",
         "de": "Experimentelle Unterstützung für Fernzugriff hinzugefügt",
         "ru": "Добавлена экспериментальная поддержка удаленного доступа.",
