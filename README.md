@@ -268,6 +268,11 @@ Following types are supported:
 -->
 
 ## Changelog
+
+### __WORK_IN_PROGRESS__
+* (Apollon77) Also support "stored" when a rgb state is turned on/off
+* (Apollon77) Fix control percent value to respect min/max correctly
+
 ### 1.10.0 (2022-03-09)
 * (Apollon77) Respect min/max when calculating the value for byOn with % values
 
