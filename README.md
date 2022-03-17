@@ -268,7 +268,7 @@ Following types are supported:
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 1.11.0 (2022-03-17)
 * (Apollon77) Also support "stored" when a rgb state is turned on/off
 * (Apollon77) Fix control percent value to respect min/max correctly
 * (bluefox) Support of response messages longer than 128k (zip)

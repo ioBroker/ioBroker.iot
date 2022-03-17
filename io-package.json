@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "iot",
-    "version": "1.10.0",
+    "version": "1.11.0",
     "news": {
+      "1.11.0": {
+        "en": "Also support \"stored\" when a rgb state is turned on/off\nFix control percent value to respect min/max correctly\nSupport of response messages longer than 128k (zip)",
+        "de": "Unterstützt auch „gespeichert“, wenn ein RGB-Status ein-/ausgeschaltet ist\nKorrigieren Sie den Kontrollprozentwert, um Min/Max korrekt einzuhalten\nUnterstützung von Antwortnachrichten, die länger als 128 KB (zip) sind",
+        "ru": "Также поддерживает «хранится», когда состояние rgb включено/выключено.\nИсправьте контрольное процентное значение, чтобы правильно соблюдать минимальное / максимальное значение.\nПоддержка ответных сообщений длиннее 128k (zip)",
+        "pt": "Também suporta \"armazenado\" quando um estado rgb é ativado/desativado\nCorrija o valor percentual de controle para respeitar o mínimo/máximo corretamente\nSuporte de mensagens de resposta com mais de 128k (zip)",
+        "nl": "Ondersteun ook \"opgeslagen\" wanneer een rgb-status is in-/uitgeschakeld\nCorrigeer de controlepercentagewaarde om min/max correct te respecteren\nOndersteuning van antwoordberichten langer dan 128k (zip)",
+        "fr": "Prend également en charge \"stocké\" lorsqu'un état RVB est activé/désactivé\nCorrection de la valeur du pourcentage de contrôle pour respecter correctement les min/max\nPrise en charge des messages de réponse de plus de 128k (zip)",
+        "it": "Supporta anche \"memorizzato\" quando uno stato rgb è attivato/disattivato\nFissare il valore percentuale di controllo per rispettare correttamente min/max\nSupporto di messaggi di risposta più lunghi di 128k (zip)",
+        "es": "También es compatible con \"almacenado\" cuando se activa o desactiva un estado rgb\nFijar el valor porcentual de control para respetar min/max correctamente\nSoporte de mensajes de respuesta de más de 128k (zip)",
+        "pl": "Obsługuje również „przechowywane”, gdy stan rgb jest włączony/wyłączony\nNapraw wartość procentową kontroli, aby poprawnie przestrzegać min/maks.\nObsługa wiadomości odpowiedzi dłuższych niż 128k (zip)",
+        "zh-cn": "还支持打开/关闭 rgb 状态时的“存储”\n修复控制百分比值以正确尊重最小值/最大值\n支持超过 128k (zip) 的响应消息"
+      },
       "1.10.0": {
         "en": "Respect min/max when calculating the value for byOn with % values",
         "de": "Beachten Sie Min/Max bei der Berechnung des Werts für byOn mit %-Werten",
@@ -74,18 +86,6 @@
         "es": "Se eliminó el paquete obsoleto `request`\nRefactorización y mejor manejo de errores",
         "pl": "Usunięto przestarzały pakiet `request`\nRefaktoryzacja i lepsza obsługa błędów",
         "zh-cn": "删除了不推荐使用的包 `request`\n重构和更好的错误处理"
-      },
-      "1.9.2": {
-        "en": "Added experimental support for remote access",
-        "de": "Experimentelle Unterstützung für Fernzugriff hinzugefügt",
-        "ru": "Добавлена экспериментальная поддержка удаленного доступа.",
-        "pt": "Adicionado suporte experimental para acesso remoto",
-        "nl": "Experimentele ondersteuning toegevoegd voor toegang op afstand",
-        "fr": "Ajout d'un support expérimental pour l'accès à distance",
-        "it": "Aggiunto supporto sperimentale per l'accesso remoto",
-        "es": "Se agregó soporte experimental para acceso remoto.",
-        "pl": "Dodano eksperymentalne wsparcie dla zdalnego dostępu",
-        "zh-cn": "添加了对远程访问的实验性支持"
       }
     },
     "title": "IoT Assistants",
