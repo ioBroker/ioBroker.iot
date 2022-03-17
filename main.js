@@ -15,6 +15,7 @@ const Remote       = require('./lib/remote');
 const fs           = require('fs');
 const axios        = require('axios');
 const packageJSON  = require('./package.json');
+const zlib         = require('zlib');
 const version      = packageJSON.version;
 // @ts-ignore
 const adapterName  = packageJSON.name.split('.').pop();
@@ -39,6 +40,7 @@ let adapter;
 let connectStarted;
 
 const NONE = '___none___';
+const MAX_IOT_MESSAGE_LENGTH = 127 * 1024;
 
 function startAdapter(options) {
     options = options || {};
@@ -876,7 +878,14 @@ async function startDevice(clientId, login, password, retry) {
                             }
                         } else {
                             adapter.log.debug(`[REMOTE] Send command to 'response/${clientId}/${type}: ${JSON.stringify(response)}`);
-                            device.publish(`response/${clientId}/${type}`, JSON.stringify(response));
+
+                            const msg = JSON.stringify(response);
+                            if (msg.length > MAX_IOT_MESSAGE_LENGTH) {
+                                let packed = zlib.deflateSync(msg).toString('base64');
+                                device.publish(`response/${clientId}/${type}`, packed);
+                            } else {
+                                device.publish(`response/${clientId}/${type}`, msg);
+                            }
                         }
                     }
                 });

@@ -462,7 +462,7 @@
       "common": {
         "role": "state",
         "name": "Force user creation",
-        "desc": "Used to get the email with temp password anew",
+        "desc": "Used to recreate the user and device anew",
         "def": false,
         "type": "boolean",
         "read": true,
