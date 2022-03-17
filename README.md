@@ -264,11 +264,11 @@ Following types are supported:
 
 <!--
 	Placeholder for the next version (at the beginning of the line):
-	### __WORK IN PROGRESS__
+	### **WORK IN PROGRESS**
 -->
 
 ## Changelog
-### __WORK_IN_PROGRESS__
+### **WORK IN PROGRESS**
 * (Apollon77) Also support "stored" when a rgb state is turned on/off
 * (Apollon77) Fix control percent value to respect min/max correctly
 * (bluefox) Support of response messages longer than 128k (zip)
