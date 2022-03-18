@@ -268,8 +268,7 @@ Following types are supported:
 -->
 
 ## Changelog
-
-### __WORK IN PROGRESS__
+### 1.11.1 (2022-03-18)
 * (Apollon77) Optimize logging when many devices are used
 
 ### 1.11.0 (2022-03-17)
