@@ -883,6 +883,9 @@ async function startDevice(clientId, login, password, retry) {
                             if (msg.length > MAX_IOT_MESSAGE_LENGTH) {
                                 let packed = zlib.deflateSync(msg).toString('base64');
                                 adapter.log.debug(`[REMOTE] Content was packed from ${msg.length} bytes to ${packed.length} bytes`);
+                                if (packed.length > MAX_IOT_MESSAGE_LENGTH) {
+                                    adapter.log.warn(`[REMOTE] Content was packed to ${packed.length} bytes which is still near/over the message limit!`);
+                                }
                                 device.publish(`response/${clientId}/${type}`, packed);
                             } else {
                                 device.publish(`response/${clientId}/${type}`, msg);
