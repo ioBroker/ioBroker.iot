@@ -882,6 +882,7 @@ async function startDevice(clientId, login, password, retry) {
                             const msg = JSON.stringify(response);
                             if (msg.length > MAX_IOT_MESSAGE_LENGTH) {
                                 let packed = zlib.deflateSync(msg).toString('base64');
+                                adapter.log.debug(`[REMOTE] Content was packed from ${msg.length} bytes to ${packed.length} bytes`);
                                 device.publish(`response/${clientId}/${type}`, packed);
                             } else {
                                 device.publish(`response/${clientId}/${type}`, msg);

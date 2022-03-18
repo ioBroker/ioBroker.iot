@@ -268,6 +268,10 @@ Following types are supported:
 -->
 
 ## Changelog
+
+### __WORK IN PROGRESS__
+* (Apollon77) Optimize logging when many devices are used
+
 ### 1.11.0 (2022-03-17)
 * (Apollon77) Also support "stored" when a rgb state is turned on/off
 * (Apollon77) Fix control percent value to respect min/max correctly
