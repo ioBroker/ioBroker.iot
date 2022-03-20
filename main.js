@@ -880,7 +880,7 @@ async function startDevice(clientId, login, password, retry) {
                             adapter.log.debug(`[REMOTE] Send command to 'response/${clientId}/${type}: ${JSON.stringify(response)}`);
 
                             const msg = JSON.stringify(response);
-                            if (msg.length > MAX_IOT_MESSAGE_LENGTH) {
+                            if (msg && msg.length > MAX_IOT_MESSAGE_LENGTH) {
                                 let packed = zlib.deflateSync(msg).toString('base64');
                                 adapter.log.debug(`[REMOTE] Content was packed from ${msg.length} bytes to ${packed.length} bytes`);
                                 if (packed.length > MAX_IOT_MESSAGE_LENGTH) {
