@@ -1012,12 +1012,21 @@ async function main() {
 
     remote = new Remote(adapter, adapter.config.login.replace(/[^-_:a-zA-Z1-9]/g, '_'));
 
+    adapter.config.allowedServices = (adapter.config.allowedServices || '')
+        .split(/[,\s]+/)
+        .map(s => s.trim())
+        .filter(s => s);
+
     // read URL keys from server
     let key;
     try {
         key = await readUrlKey();
     } catch (error) {
-        if (adapter.config.googleHome || adapter.config.yandexAlisa) {
+        if (adapter.config.googleHome ||
+            adapter.config.yandexAlisa ||
+            adapter.config.allowedServices.length ||
+            adapter.config.iftttKey
+        ) {
             try {
                 key = await createUrlKey(adapter.config.login, adapter.config.pass);
             } catch (err) {
@@ -1031,11 +1040,6 @@ async function main() {
     }// no else
     if (adapter.config.yandexAlisa) {
         yandexAlisa = new YandexAlisa(adapter, key);
-    }
-
-    adapter.config.allowedServices = (adapter.config.allowedServices || '').split(/[,\s]+/);
-    for (let s = 0; s < adapter.config.allowedServices.length; s++) {
-        adapter.config.allowedServices[s] = adapter.config.allowedServices[s].trim();
     }
 
     adapter.setState('info.connection', false, true);

@@ -263,6 +263,9 @@ Following types are supported:
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Added the generation of URL key for services
+
 ### 1.11.2 (2022-03-20)
 * (Apollon77) Fix crash case reported by Sentry (IOBROKER-IOT-3P)
 
