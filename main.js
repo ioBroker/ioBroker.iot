@@ -715,7 +715,7 @@ function processMessage(type, request, callback) {
             isCustom = true;
         }
 
-        if (adapter.config.allowedServices[0] === '*' || adapter.config.allowedServices.indexOf(_type) !== -1) {
+        if (adapter.config.allowedServices[0] === '*' || adapter.config.allowedServices.includes(_type)) {
             if (typeof request === 'object') {
                 request = JSON.stringify(request);
             } else {
@@ -888,6 +888,7 @@ async function startDevice(clientId, login, password, retry) {
                                 }
                                 device.publish(`response/${clientId}/${type}`, packed);
                             } else {
+                                // console.log(`Publish to "response/${clientId}/${type}": ${msg}`);
                                 device.publish(`response/${clientId}/${type}`, msg);
                             }
                         }
