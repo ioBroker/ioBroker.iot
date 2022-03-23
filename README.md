@@ -263,7 +263,7 @@ Following types are supported:
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 1.11.3 (2022-03-23)
 * (bluefox) Added the generation of URL key for services
 
 ### 1.11.2 (2022-03-20)

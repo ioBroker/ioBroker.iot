@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "iot",
-    "version": "1.11.2",
+    "version": "1.11.3",
     "news": {
+      "1.11.3": {
+        "en": "Added the generation of URL key for services",
+        "de": "Generierung von URL-Schlüsseln für Dienste hinzugefügt",
+        "ru": "Добавлена генерация URL-ключа для сервисов",
+        "pt": "Adicionada a geração de chave de URL para serviços",
+        "nl": "Het genereren van de URL-sleutel voor services toegevoegd",
+        "fr": "Ajout de la génération de clé URL pour les services",
+        "it": "Aggiunta la generazione della chiave URL per i servizi",
+        "es": "Se agregó la generación de clave de URL para servicios.",
+        "pl": "Dodano generowanie klucza URL dla usług",
+        "zh-cn": "为服务添加了 URL 密钥的生成"
+      },
       "1.11.2": {
         "en": "Fix crash case reported by Sentry (IOBROKER-IOT-3P)",
         "de": "Von Sentry gemeldeter Absturzfall behoben (IOBROKER-IOT-3P)",
@@ -74,18 +86,6 @@
         "es": "Asegúrese de no recordar el valor de apagado cuando use valores almacenados para encendido\nArreglar el caso de bloqueo informado por Sentry (IOBROKER-IOT-3A)",
         "pl": "Upewnij się, że nie pamiętasz wartości off podczas używania zapisanych wartości dla on\nNapraw przypadek awarii zgłoszony przez Sentry (IOBROKER-IOT-3A)",
         "zh-cn": "确保在使用存储值时不要记住关闭值\n修复 Sentry 报告的崩溃案例 (IOBROKER-IOT-3A)"
-      },
-      "1.9.5": {
-        "en": "Fixed Google home error with color control",
-        "de": "Google Home-Fehler mit Farbsteuerung behoben",
-        "ru": "Исправлена ошибка Google Home с управлением цветом",
-        "pt": "Corrigido o erro inicial do Google com controle de cores",
-        "nl": "Google Home-fout opgelost met kleurcontrole",
-        "fr": "Correction de l'erreur d'accueil de Google avec le contrôle des couleurs",
-        "it": "Risolto l'errore home di Google con il controllo del colore",
-        "es": "Se corrigió el error de inicio de Google con el control de color.",
-        "pl": "Naprawiono błąd domu Google z kontrolą kolorów",
-        "zh-cn": "修复了带有颜色控制的 Google Home 错误"
       }
     },
     "title": "IoT Assistants",
