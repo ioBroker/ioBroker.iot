@@ -263,7 +263,7 @@ Following types are supported:
 -->
 
 ## Changelog
-### __WORK IN PROGRESS__
+### 1.11.4 (2022-03-29)
 * (Apollon77) Fix crash cases reported by Sentry
 
 ### 1.11.3 (2022-03-23)

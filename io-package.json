@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "iot",
-    "version": "1.11.3",
+    "version": "1.11.4",
     "news": {
+      "1.11.4": {
+        "en": "Fix crash cases reported by Sentry",
+        "de": "Von Sentry gemeldete Absturzfälle beheben",
+        "ru": "Исправить случаи сбоев, о которых сообщил Sentry",
+        "pt": "Corrigir casos de travamento relatados pelo Sentinela",
+        "nl": "Herstel crashgevallen gemeld door Sentry",
+        "fr": "Correction des cas de plantage signalés par Sentry",
+        "it": "Risolvi i casi di crash segnalati da Sentry",
+        "es": "Solucionar casos de fallas informados por Sentry",
+        "pl": "Napraw przypadki awarii zgłoszone przez Sentry",
+        "zh-cn": "修复 Sentry 报告的崩溃案例"
+      },
       "1.11.3": {
         "en": "Added the generation of URL key for services",
         "de": "Generierung von URL-Schlüsseln für Dienste hinzugefügt",
@@ -74,18 +86,6 @@
         "es": "Solucionar caso de bloqueo informado por Sentry (IOBROKER-IOT-3C)",
         "pl": "Napraw przypadek awarii zgłoszony przez Sentry (IOBROKER-IOT-3C)",
         "zh-cn": "修复 Sentry 报告的崩溃案例 (IOBROKER-IOT-3C)"
-      },
-      "1.9.6": {
-        "en": "Make sure to not remember the off value when using stored values for on\nFix crash case reported by Sentry (IOBROKER-IOT-3A)",
-        "de": "Achten Sie darauf, sich nicht den Aus-Wert zu merken, wenn Sie gespeicherte Werte für Ein verwenden\nVon Sentry gemeldeter Absturzfall behoben (IOBROKER-IOT-3A)",
-        "ru": "Убедитесь, что вы не помните значение выключения при использовании сохраненных значений для включения.\nИсправить случай сбоя, о котором сообщил Sentry (IOBROKER-IOT-3A)",
-        "pt": "Certifique-se de não lembrar o valor off ao usar valores armazenados para on\nCorrigir caso de falha relatado pelo Sentry (IOBROKER-IOT-3A)",
-        "nl": "Zorg ervoor dat u de uit-waarde niet onthoudt wanneer u opgeslagen waarden gebruikt voor aan\nHerstel crashgeval gemeld door Sentry (IOBROKER-IOT-3A)",
-        "fr": "Assurez-vous de ne pas vous souvenir de la valeur off lorsque vous utilisez des valeurs stockées pour on\nCorrection d'un cas de plantage signalé par Sentry (IOBROKER-IOT-3A)",
-        "it": "Assicurati di non ricordare il valore off quando usi i valori memorizzati per on\nRisolto il caso di crash segnalato da Sentry (IOBROKER-IOT-3A)",
-        "es": "Asegúrese de no recordar el valor de apagado cuando use valores almacenados para encendido\nArreglar el caso de bloqueo informado por Sentry (IOBROKER-IOT-3A)",
-        "pl": "Upewnij się, że nie pamiętasz wartości off podczas używania zapisanych wartości dla on\nNapraw przypadek awarii zgłoszony przez Sentry (IOBROKER-IOT-3A)",
-        "zh-cn": "确保在使用存储值时不要记住关闭值\n修复 Sentry 报告的崩溃案例 (IOBROKER-IOT-3A)"
       }
     },
     "title": "IoT Assistants",
