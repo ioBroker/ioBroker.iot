@@ -1,5 +1,6 @@
-/* jshint -W097 */// jshint strict:false
-/*jslint node: true */
+/* jshint -W097 */
+/* jshint strict: false */
+/* jslint node: true */
 var expect = require('chai').expect;
 var setup  = require(__dirname + '/lib/setup');
 
@@ -72,7 +73,7 @@ describe('Test ' + adapterShortName + ' adapter', function() {
         this.timeout(600000); // because of first install from npm
 
         setup.setupController(async function () {
-            var config = await setup.getAdapterConfig();
+            const config = await setup.getAdapterConfig();
             // enable adapter
             config.common.enabled  = true;
             config.common.loglevel = 'debug';
@@ -81,11 +82,11 @@ describe('Test ' + adapterShortName + ' adapter', function() {
 
             await setup.setAdapterConfig(config.common, config.native);
 
-            setup.installAdapter('web', function () {
-                setup.startController(true, function(id, obj) {}, function (id, state) {
-                        if (onStateChanged) onStateChanged(id, state);
-                    },
-                    function (_objects, _states) {
+            setup.installAdapter('web', () => {
+                setup.startController(true,
+                    (id, obj) => {},
+                    (id, state) => onStateChanged && onStateChanged(id, state),
+                    (_objects, _states) => {
                         objects = _objects;
                         states  = _states;
                         _done();

@@ -272,7 +272,10 @@ function sendDataToIFTTT(obj) {
     }
 
     if (url) {
-        axios.post(url, data, {})
+        axios.post(url, data, {
+            timeout: 15000,
+            validateStatus: status => status < 400
+        })
             .then(response => adapter.log.debug(`Response from IFTTT: ${JSON.stringify(response.data)}`))
             .catch(error => {
                 if (error.response) {
