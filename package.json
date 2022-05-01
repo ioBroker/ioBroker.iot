@@ -30,7 +30,7 @@
     "jsdom": "^19.0.0",
     "mime": "^3.0.0",
     "moment": "^2.29.3",
-    "axios": "^0.26.1",
+    "axios": "^0.27.2",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
