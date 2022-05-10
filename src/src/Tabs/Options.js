@@ -115,6 +115,11 @@ class Options extends Component {
         />;
     }
 
+    openAmazonReviewUrl() {
+        const win = window.open('https://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/reviews', '_blank');
+        win.focus();
+    }
+
     renderCard() {
         return <Card className={this.props.classes.card}>
             <CardActionArea>
@@ -126,10 +131,7 @@ class Options extends Component {
                 <CardContent>{Utils.renderTextWithA(I18n.t('amazon link'))}</CardContent>
             </CardActionArea>
             <CardActions style={{textAlign: 'center'}} >
-                <Button variant="outlined" size="small" color="primary" style={{textAlign: 'center'}} onClick={() => {
-                    const win = window.open('https://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/reviews', '_blank');
-                    win.focus();
-                }}>{I18n.t('Review')}</Button>
+                <Button variant="outlined" size="small" color="primary" style={{textAlign: 'center'}} onClick={() => { openAmazonReviewUrl() }}>{I18n.t('Review')}</Button>
                 {this.props.native.amazonAlexa ?
                     <Button
                         title="Debug"
