@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "iot",
-    "version": "1.11.4",
+    "version": "1.11.5",
     "news": {
+      "1.11.5": {
+        "en": "Added support for Google Home traits Cook",
+        "de": "Google Home Traits Cook Support hinzugefügt",
+        "ru": "",
+        "pt": "",
+        "nl": "",
+        "fr": "",
+        "it": "",
+        "es": "",
+        "pl": "",
+        "zh-cn": ""
+      },
       "1.11.4": {
         "en": "Fix crash cases reported by Sentry",
         "de": "Von Sentry gemeldete Absturzfälle beheben",

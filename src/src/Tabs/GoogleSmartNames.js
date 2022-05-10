@@ -166,7 +166,7 @@ class GoogleSmartNames extends Component {
                     // 'action.devices.traits.CameraStream': 'CameraStream',
                     'action.devices.traits.ColorSetting_temperature': 'ColorSetting_Temperature',
                     'action.devices.traits.ColorSetting_spectrumRGB': 'ColorSetting_RGB',
-                    'action.devices.trairs.Cook': 'Cook',
+                    'action.devices.traits.Cook': 'Cook',
                     // 'action.devices.traits.Dock':        'Dock',
                     'action.devices.traits.FanSpeed':       'FanSpeed',
                     // 'action.devices.traits.LightEffects': 'LightEffects',
