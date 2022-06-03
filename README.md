@@ -263,6 +263,10 @@ Following types are supported:
 -->
 
 ## Changelog
+
+### __WORK IN PROGRESS__
+* (kirovilya) Alisa: update for binary-sensor "motion" and "contact"
+
 ### 1.11.4 (2022-03-29)
 * (Apollon77) Fix crash cases reported by Sentry
 
