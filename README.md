@@ -263,8 +263,7 @@ Following types are supported:
 -->
 
 ## Changelog
-
-### __WORK IN PROGRESS__
+### 1.11.5 (2022-06-03)
 * (kirovilya) Alisa: update for binary-sensor "motion" and "contact"
 
 ### 1.11.4 (2022-03-29)
