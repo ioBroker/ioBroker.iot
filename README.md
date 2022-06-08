@@ -263,6 +263,9 @@ Following types are supported:
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Tried to correct URL key creation for Google home
+
 ### 1.11.5 (2022-06-03)
 * (kirovilya) Alisa: update for binary-sensor "motion" and "contact"
 
