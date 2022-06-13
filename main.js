@@ -1071,12 +1071,6 @@ async function main() {
     adapter.config.amazonAlexa && alexaSH3 && alexaSH3.setLanguage(lang, translate);
     adapter.config.amazonAlexa && alexaSH3 && alexaSH3.updateDevices();
 
-    adapter.config.googleHome && googleHome && googleHome.setLanguage(lang, translate);
-    adapter.config.googleHome && googleHome && googleHome.updateDevices();
-
-    yandexAlisa && yandexAlisa.setLanguage(lang, translate);
-    yandexAlisa && yandexAlisa.updateDevices();
-
     alexaCustom && alexaCustom.setLanguage(lang, translate);
     alexaCustomBlood && alexaCustomBlood.setSettings(lang, defaultHistory);
 
@@ -1121,6 +1115,11 @@ async function main() {
         yandexAlisa = new YandexAlisa(adapter, key);
     }
 
+    googleHome && googleHome.setLanguage(lang, translate);
+    googleHome && googleHome.updateDevices();
+
+    yandexAlisa && yandexAlisa.setLanguage(lang, translate);
+    yandexAlisa && yandexAlisa.updateDevices();
 }
 
 // If started as allInOne mode => return function to create instance
