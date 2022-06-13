@@ -263,7 +263,7 @@ Following types are supported:
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 1.11.7 (2022-06-13)
 * (bluefox) Tried to correct URL key creation for Google home
 
 ### 1.11.5 (2022-06-03)
