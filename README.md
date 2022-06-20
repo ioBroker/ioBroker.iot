@@ -263,6 +263,12 @@ Following types are supported:
 -->
 
 ## Changelog
+### 1.11.7 (2022-06-13)
+* (bluefox) Tried to correct URL key creation for Google home
+
+### 1.11.5 (2022-06-03)
+* (kirovilya) Alisa: update for binary-sensor "motion" and "contact"
+
 ### 1.11.4 (2022-03-29)
 * (Apollon77) Fix crash cases reported by Sentry
 

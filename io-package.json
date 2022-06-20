@@ -1,8 +1,32 @@
 {
   "common": {
     "name": "iot",
-    "version": "1.11.4",
+    "version": "1.11.7",
     "news": {
+      "1.11.7": {
+        "en": "Tried to correct URL key creation for Google home",
+        "de": "Versuche, die URL-Schlüssel-Erstellung für Google Home zu korrigieren",
+        "ru": "Попробовал исправить создание ключа URL для дома Google",
+        "pt": "Tentei corrigir a criação de chaves URL para o Google home",
+        "nl": "Geprobeerd om de sleutel te corrigeren voor Google thuis",
+        "fr": "Trié pour corriger la création de clé URL pour Google home",
+        "it": "Ho cercato di correggere la creazione di chiave URL per la casa di Google",
+        "es": "Trató de corregir la creación de clave URL para Google home",
+        "pl": "Poprawić kluczową rolę URL w Google home",
+        "zh-cn": "纠正谷歌家的关键创建"
+      },
+      "1.11.5": {
+        "en": "Alisa: update for binary-sensor \"motion\" and \"contact\"",
+        "de": "Alisa: Update für Binärsensor „Bewegung“ und „Kontakt“",
+        "ru": "Алиса: обновление для бинарного датчика \"движения\" и \"контакта\"",
+        "pt": "Alisa: atualização para \"movimento\" e \"contato\" do sensor binário",
+        "nl": "Alisa: update voor binaire sensor \"beweging\" en \"contact\"",
+        "fr": "Alisa : mise à jour pour les capteurs binaires \"mouvement\" et \"contact\"",
+        "it": "Alisa: aggiornamento per sensore binario \"movimento\" e \"contatto\"",
+        "es": "Alisa: actualización para sensor binario \"movimiento\" y \"contacto\"",
+        "pl": "Alisa: aktualizacja czujnika binarnego „ruchu” i „kontaktu”",
+        "zh-cn": "Alisa：二进制传感器“运动”和“接触”的更新"
+      },
       "1.11.4": {
         "en": "Fix crash cases reported by Sentry",
         "de": "Von Sentry gemeldete Absturzfälle beheben",
@@ -62,30 +86,6 @@
         "es": "También es compatible con \"almacenado\" cuando se activa o desactiva un estado rgb\nFijar el valor porcentual de control para respetar min/max correctamente\nSoporte de mensajes de respuesta de más de 128k (zip)",
         "pl": "Obsługuje również „przechowywane”, gdy stan rgb jest włączony/wyłączony\nNapraw wartość procentową kontroli, aby poprawnie przestrzegać min/maks.\nObsługa wiadomości odpowiedzi dłuższych niż 128k (zip)",
         "zh-cn": "还支持打开/关闭 rgb 状态时的“存储”\n修复控制百分比值以正确尊重最小值/最大值\n支持超过 128k (zip) 的响应消息"
-      },
-      "1.10.0": {
-        "en": "Respect min/max when calculating the value for byOn with % values",
-        "de": "Beachten Sie Min/Max bei der Berechnung des Werts für byOn mit %-Werten",
-        "ru": "Соблюдайте минимальные/максимальные значения при расчете значения для byOn с процентными значениями.",
-        "pt": "Respeite min/max ao calcular o valor de byOn com valores %",
-        "nl": "Respecteer min/max bij het berekenen van de waarde voor byOn met % waarden",
-        "fr": "Respecter min/max lors du calcul de la valeur pour byOn avec des valeurs en %",
-        "it": "Rispettare min/max quando si calcola il valore per byOn con valori %.",
-        "es": "Respete min/max al calcular el valor de byOn con valores de %",
-        "pl": "Przestrzegaj min/max podczas obliczania wartości dla byOn z wartościami %",
-        "zh-cn": "使用 % 值计算 byOn 的值时尊重最小值/最大值"
-      },
-      "1.9.7": {
-        "en": "Fix crash case reported by Sentry (IOBROKER-IOT-3C)",
-        "de": "Von Sentry gemeldeter Absturzfall behoben (IOBROKER-IOT-3C)",
-        "ru": "Исправить случай сбоя, о котором сообщил Sentry (IOBROKER-IOT-3C)",
-        "pt": "Corrigir caso de falha relatado pelo Sentry (IOBROKER-IOT-3C)",
-        "nl": "Herstel crashgeval gemeld door Sentry (IOBROKER-IOT-3C)",
-        "fr": "Correction d'un cas de plantage signalé par Sentry (IOBROKER-IOT-3C)",
-        "it": "Risolto il caso di crash segnalato da Sentry (IOBROKER-IOT-3C)",
-        "es": "Solucionar caso de bloqueo informado por Sentry (IOBROKER-IOT-3C)",
-        "pl": "Napraw przypadek awarii zgłoszony przez Sentry (IOBROKER-IOT-3C)",
-        "zh-cn": "修复 Sentry 报告的崩溃案例 (IOBROKER-IOT-3C)"
       }
     },
     "title": "IoT Assistants",

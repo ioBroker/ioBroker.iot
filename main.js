@@ -1020,31 +1020,6 @@ async function main() {
         .map(s => s.trim())
         .filter(s => s);
 
-    // read URL keys from server
-    let key;
-    try {
-        key = await readUrlKey();
-    } catch (error) {
-        if (adapter.config.googleHome ||
-            adapter.config.yandexAlisa ||
-            adapter.config.allowedServices.length ||
-            adapter.config.iftttKey
-        ) {
-            try {
-                key = await createUrlKey(adapter.config.login, adapter.config.pass);
-            } catch (err) {
-                return adapter.log.error(`Cannot read URL key: ${typeof err === 'object' ? JSON.stringify(err) : err}`);
-            }
-        }
-    }
-
-    if (adapter.config.googleHome) {
-        googleHome = new GoogleHome(adapter, key);
-    }// no else
-    if (adapter.config.yandexAlisa) {
-        yandexAlisa = new YandexAlisa(adapter, key);
-    }
-
     adapter.setState('info.connection', false, true);
     adapter.config.cloudUrl = adapter.config.cloudUrl || 'a18wym7vjdl22g.iot.eu-west-1.amazonaws.com';
 
@@ -1096,12 +1071,6 @@ async function main() {
     adapter.config.amazonAlexa && alexaSH3 && alexaSH3.setLanguage(lang, translate);
     adapter.config.amazonAlexa && alexaSH3 && alexaSH3.updateDevices();
 
-    adapter.config.googleHome && googleHome && googleHome.setLanguage(lang, translate);
-    adapter.config.googleHome && googleHome && googleHome.updateDevices();
-
-    yandexAlisa && yandexAlisa.setLanguage(lang, translate);
-    yandexAlisa && yandexAlisa.updateDevices();
-
     alexaCustom && alexaCustom.setLanguage(lang, translate);
     alexaCustomBlood && alexaCustomBlood.setSettings(lang, defaultHistory);
 
@@ -1117,7 +1086,40 @@ async function main() {
 
     await updateNightscoutSecret();
 
+    // user will be created here
     await startDevice(adapter.config.login.replace(/[^-_:a-zA-Z1-9]/g, '_'), adapter.config.login, adapter.config.pass);
+
+    // after the user created we can try to generate URL key
+    // read URL keys from server
+    let key;
+    try {
+        key = await readUrlKey();
+    } catch (error) {
+        if (adapter.config.googleHome ||
+            adapter.config.yandexAlisa ||
+            adapter.config.allowedServices.length ||
+            adapter.config.iftttKey
+        ) {
+            try {
+                key = await createUrlKey(adapter.config.login, adapter.config.pass);
+            } catch (err) {
+                return adapter.log.error(`Cannot read URL key: ${typeof err === 'object' ? JSON.stringify(err) : err}`);
+            }
+        }
+    }
+
+    if (adapter.config.googleHome) {
+        googleHome = new GoogleHome(adapter, key);
+    }// no else
+    if (adapter.config.yandexAlisa) {
+        yandexAlisa = new YandexAlisa(adapter, key);
+    }
+
+    googleHome && googleHome.setLanguage(lang, translate);
+    googleHome && googleHome.updateDevices();
+
+    yandexAlisa && yandexAlisa.setLanguage(lang, translate);
+    yandexAlisa && yandexAlisa.updateDevices();
 }
 
 // If started as allInOne mode => return function to create instance
