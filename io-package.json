@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "iot",
-    "version": "1.11.7",
+    "version": "1.11.8",
     "news": {
+      "1.11.8": {
+        "en": "Update dependencies to allow better automatic rebuild",
+        "de": "Aktualisieren Sie Abhängigkeiten, um eine bessere automatische Wiederherstellung zu ermöglichen",
+        "ru": "Обновить зависимости, чтобы лучше автоматическое восстановление",
+        "pt": "Atualizar dependências para permitir uma melhor reconstrução automática",
+        "nl": "Update afhankelijkheid om betere automatische reconstructie toe te staan",
+        "fr": "Mettre à jour les dépendances pour permettre une meilleure reconstruction automatique",
+        "it": "Aggiornare le dipendenze per consentire una migliore ricostruzione automatica",
+        "es": "Actualizar las dependencias para permitir una mejor reconstrucción automática",
+        "pl": "Odpowiadanie zależności pozwala na lepszą automatyczną przebudowę",
+        "zh-cn": "B. 改善自动重建的新的依赖"
+      },
       "1.11.7": {
         "en": "Tried to correct URL key creation for Google home",
         "de": "Versuche, die URL-Schlüssel-Erstellung für Google Home zu korrigieren",
@@ -74,18 +86,6 @@
         "es": "Optimice el registro cuando se utilizan muchos dispositivos",
         "pl": "Zoptymalizuj rejestrowanie, gdy używanych jest wiele urządzeń",
         "zh-cn": "使用多个设备时优化日志记录"
-      },
-      "1.11.0": {
-        "en": "Also support \"stored\" when a rgb state is turned on/off\nFix control percent value to respect min/max correctly\nSupport of response messages longer than 128k (zip)",
-        "de": "Unterstützt auch „gespeichert“, wenn ein RGB-Status ein-/ausgeschaltet ist\nKorrigieren Sie den Kontrollprozentwert, um Min/Max korrekt einzuhalten\nUnterstützung von Antwortnachrichten, die länger als 128 KB (zip) sind",
-        "ru": "Также поддерживает «хранится», когда состояние rgb включено/выключено.\nИсправьте контрольное процентное значение, чтобы правильно соблюдать минимальное / максимальное значение.\nПоддержка ответных сообщений длиннее 128k (zip)",
-        "pt": "Também suporta \"armazenado\" quando um estado rgb é ativado/desativado\nCorrija o valor percentual de controle para respeitar o mínimo/máximo corretamente\nSuporte de mensagens de resposta com mais de 128k (zip)",
-        "nl": "Ondersteun ook \"opgeslagen\" wanneer een rgb-status is in-/uitgeschakeld\nCorrigeer de controlepercentagewaarde om min/max correct te respecteren\nOndersteuning van antwoordberichten langer dan 128k (zip)",
-        "fr": "Prend également en charge \"stocké\" lorsqu'un état RVB est activé/désactivé\nCorrection de la valeur du pourcentage de contrôle pour respecter correctement les min/max\nPrise en charge des messages de réponse de plus de 128k (zip)",
-        "it": "Supporta anche \"memorizzato\" quando uno stato rgb è attivato/disattivato\nFissare il valore percentuale di controllo per rispettare correttamente min/max\nSupporto di messaggi di risposta più lunghi di 128k (zip)",
-        "es": "También es compatible con \"almacenado\" cuando se activa o desactiva un estado rgb\nFijar el valor porcentual de control para respetar min/max correctamente\nSoporte de mensajes de respuesta de más de 128k (zip)",
-        "pl": "Obsługuje również „przechowywane”, gdy stan rgb jest włączony/wyłączony\nNapraw wartość procentową kontroli, aby poprawnie przestrzegać min/maks.\nObsługa wiadomości odpowiedzi dłuższych niż 128k (zip)",
-        "zh-cn": "还支持打开/关闭 rgb 状态时的“存储”\n修复控制百分比值以正确尊重最小值/最大值\n支持超过 128k (zip) 的响应消息"
       }
     },
     "title": "IoT Assistants",

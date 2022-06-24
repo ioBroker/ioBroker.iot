@@ -263,8 +263,7 @@ Following types are supported:
 -->
 
 ## Changelog
-
-### __WORK IN PROGRESS__
+### 1.11.8 (2022-06-24)
 * (Apollon77) Update dependencies to allow better automatic rebuild
 
 ### 1.11.7 (2022-06-13)
