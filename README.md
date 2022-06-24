@@ -263,6 +263,10 @@ Following types are supported:
 -->
 
 ## Changelog
+
+### __WORK IN PROGRESS__
+* (Apollon77) Update dependencies to allow better automatic rebuild
+
 ### 1.11.7 (2022-06-13)
 * (bluefox) Tried to correct URL key creation for Google home
 
