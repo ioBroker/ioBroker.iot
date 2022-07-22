@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "iot",
-    "version": "1.11.8",
+    "version": "1.11.9",
     "news": {
+      "1.11.9": {
+        "en": "Fix temperature controlling for thermostats via alexa",
+        "de": "Temperaturregelung für Thermostate über alexa festsetzen",
+        "ru": "Исправление температуры управления для термостатов через alexa",
+        "pt": "Fix controle de temperatura para termostatos via alexa",
+        "nl": "Fix temperatuur controlerend op thermostaat via Alexa",
+        "fr": "Contrôle de température fixe pour les thermostats via alexa",
+        "it": "Fissare il controllo della temperatura per termostati tramite alexa",
+        "es": "Control de temperatura fijo para termostatos vía alexa",
+        "pl": "Temperatura Fix kontroluje termosty poprzez alexa",
+        "zh-cn": "B. 通过单一法控制动荡局势的固定温度"
+      },
       "1.11.8": {
         "en": "Update dependencies to allow better automatic rebuild",
         "de": "Aktualisieren Sie Abhängigkeiten, um eine bessere automatische Wiederherstellung zu ermöglichen",
@@ -74,18 +86,6 @@
         "es": "Solucionar caso de bloqueo informado por Sentry (IOBROKER-IOT-3P)",
         "pl": "Napraw przypadek awarii zgłoszony przez Sentry (IOBROKER-IOT-3P)",
         "zh-cn": "修复 Sentry 报告的崩溃案例 (IOBROKER-IOT-3P)"
-      },
-      "1.11.1": {
-        "en": "Optimize logging when many devices are used",
-        "de": "Optimieren Sie die Protokollierung, wenn viele Geräte verwendet werden",
-        "ru": "Оптимизируйте ведение журнала, когда используется много устройств",
-        "pt": "Otimize o registro quando muitos dispositivos são usados",
-        "nl": "Logboekregistratie optimaliseren wanneer veel apparaten worden gebruikt",
-        "fr": "Optimiser la journalisation lorsque de nombreux appareils sont utilisés",
-        "it": "Ottimizza la registrazione quando vengono utilizzati molti dispositivi",
-        "es": "Optimice el registro cuando se utilizan muchos dispositivos",
-        "pl": "Zoptymalizuj rejestrowanie, gdy używanych jest wiele urządzeń",
-        "zh-cn": "使用多个设备时优化日志记录"
       }
     },
     "title": "IoT Assistants",
