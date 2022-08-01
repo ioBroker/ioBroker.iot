@@ -32,7 +32,7 @@
     "iobroker.type-detector": "^1.1.0",
     "jsdom": "^19.0.0",
     "mime": "^3.0.0",
-    "moment": "^2.29.3",
+    "moment": "^2.29.4",
     "axios": "^0.27.2",
     "uuid": "^8.3.2"
   },
