@@ -21,7 +21,7 @@ function getActions(obj) {
                  obj.common.role !== 'level.color.temperature') {
                 actions = ['setTargetTemperature', 'incrementTargetTemperature', 'decrementTargetTemperature', 'getTargetTemperature'];
                 type = '';
-            } else if (obj.common.role === 'level.color.hue') {
+            } else if (obj.common.role === 'level.color.hue' || obj.common.role === 'level.color.saturation') {
                 actions = ['setColor', 'turnOn', 'turnOff'];
             } else if (obj.common.role === 'level.color.temperature') {
                 actions = ['incrementColorTemperature', 'decrementColorTemperature', 'setColorTemperature'];
