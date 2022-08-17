@@ -192,7 +192,11 @@
     "debug": false,
     "remote": false,
     "remoteAdminInstance": "",
-    "remoteWebInstance": ""
+    "remoteWebInstance": "",
+    "customKnownAlexaUsers": [],
+    "addCustomKnownAlexaUserNameToText": false,
+    "customKnownAlexaDevices": [],
+    "addCustomKnownAlexaDeviceRoomToText": false
   },
   "objects": [],
   "instanceObjects": [

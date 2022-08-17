@@ -185,10 +185,14 @@ The adapter will provide the details in two states with different detail level
 * **smart.lastCommand** contains the received text including an info on type of query (intent). Example: "askDevice Status Rasenmäher"
 * **smart.lastCommandObj*** contains an JSON string that can be parsed to an object containing the following information
   * **words** contains the received words in an array
-  * **intent** contains the type of query. Possible values currently are "askDevice", "controlDevice", "actionStart", "actionEnd", "askWhen", "askWhere", "askWho"
+  * **intent** contains the type of query. Possible values currently are:
+    * v1 Skill: "askDevice", "controlDevice", "actionStart", "actionEnd", "askWhen", "askWhere", "askWho"
+    * v2 Skill: "queryIntent" when full said text was captured, "controlDevice" for fallback with only partial text
   * **deviceId** contains a deviceId identifying the device the request was sent to, delivered by Amazon, will be empty string if not provided
+  * **deviceRoom** contains a mapped room identifier you can configure in iot admin UI for collected deviceIds
   * **sessionId** contains a sessionId of the Skill session, should be the same if multiple commands were spoken, delivered by Amazon, will be empty string if not provided
   * **userId** contains a userId from the device owner (or maybe later the user that was interacting with the skill), delivered by Amazon, will be empty string if not provided
+  * **userName** contains a mapped username you can configure in iot admin UI for collected userIds
 
  More details on how the words are detected and what type of queries the Alexa Custom Skill differentiates please check https://forum.iobroker.net/viewtopic.php?f=37&t=17452 .
 
@@ -199,10 +203,11 @@ If it is a text string then this text will be sent as response to the skill.
 if the text is a JSON object then the following keys can be used:
 * **responseText** needs to contain the text to return to Amazon
 * **shouldEndSession** is a boolean and controls if the session will be closed after the response was spoken or stays open to accept another voice input.
+* **sessionId** needs to contain the sessionId the response is meaned for. Ideally provide it to allow concurrent sessions. If not provided the first session that expects a response is assumed.
 
 **Return result via the message to iot instance**
 
-The iot instance also accepts a message with the name "alexaCustomResponse" containing the key "response" with an object that can contain the keys **responseText** and **shouldEndSession** as described above.
+The iot instance also accepts a message with the name "alexaCustomResponse" containing the key "response" with an object that can contain the keys **responseText** and **shouldEndSession** and **sessionId** as described above.
 There will be no response from the iot instance to the message!
 
 **Example of a script that uses texts**
@@ -222,14 +227,15 @@ on({id: 'iot.0.smart.lastCommandObj', ack: true, change: 'any'}, obj => {
     const request = JSON.parse(obj.state.val);
     const response = {
         'responseText': 'Received phrase is: ' + request.words.join(' ') + '. Bye',
-        'shouldEndSession': true
+        'shouldEndSession': true,
+        'sessionId': request.sessionId
     };
 
     // Return response via state
     setState('iot.0.smart.lastResponse', JSON.stringify(response)); // important, that ack=false (default)
 
     // or alternatively return as message
-    sendTo('iot.0', response);
+    sendTo('iot.0', 'alexaCustomResponse', response);
 });
 ```
 
