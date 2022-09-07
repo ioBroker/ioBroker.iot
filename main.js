@@ -188,6 +188,36 @@ function startAdapter(options) {
                         }
                         break;
 
+                    case 'alexaCustomKnownDevices':
+                        // Admin UI can request the known/discoveredAlexa devices used via Custom skill
+                        // Allow to set the rooms of the devices and store in adapter config
+                        // Restart adapter after change - or we also add a set message to the config
+                        if (obj.callback) {
+                            adapter.log.info('Request Alexa Custom known devices');
+                            if (alexaCustom) {
+                                const devices = alexaCustom.getKnownDevices();
+                                adapter.sendTo(obj.from, obj.command, devices, obj.callback);
+                            } else {
+                                adapter.sendTo(obj.from, obj.command, {error: 'not activated'}, obj.callback);
+                            }
+                        }
+                        break;
+
+                    case 'alexaCustomKnownUsers':
+                        // Admin UI can request the known/discoveredAlexa users used via Custom skill
+                        // Allow to set the names of the users and store in adapter config
+                        // Restart adapter after change - or we also add a set message to the config
+                        if (obj.callback) {
+                            adapter.log.info('Request Alexa Custom known users');
+                            if (alexaCustom) {
+                                const users = alexaCustom.getKnownUsers();
+                                adapter.sendTo(obj.from, obj.command, users, obj.callback);
+                            } else {
+                                adapter.sendTo(obj.from, obj.command, {error: 'not activated'}, obj.callback);
+                            }
+                        }
+                        break;
+
                     case 'private':
                         if (typeof obj.message !== 'object') {
                             try {
