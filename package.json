@@ -22,7 +22,7 @@
     "node": ">=12.13.0"
   },
   "optionalDependencies": {
-    "sharp": "0.30.7",
+    "sharp": "0.31.0",
     "canvas": "^2.10.1"
   },
   "dependencies": {
