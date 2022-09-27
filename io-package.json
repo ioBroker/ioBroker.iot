@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "iot",
-    "version": "1.12.0",
+    "version": "1.12.1",
     "news": {
+      "1.12.1": {
+        "en": "Corrected error in GUI with empty password",
+        "de": "Fehler behoben in GUI mit leerem Passwort",
+        "ru": "Исправлена ошибка в GUI с пустым паролем",
+        "pt": "Erro corrigido em GUI com senha vazia",
+        "nl": "Verkeerde fout in GUI met lege wachtwoord",
+        "fr": "Erreur corrigée dans GUI avec mot de passe vide",
+        "it": "Errore corretto in GUI con password vuota",
+        "es": "Error corregido en GUI con contraseña vacía",
+        "pl": "Nieprawidłowy błąd w GUI z pustym hasłem",
+        "zh-cn": "古伊的错误与空言"
+      },
       "1.12.0": {
         "en": "Do not control saturation with a percentage request via alexa\nMigrated GUI to v5",
         "de": "Kontrollieren Sie keine Sättigung mit einer prozentualen Anfrage über alexa\nMigrated GUI to v5",
@@ -74,18 +86,6 @@
         "es": "Solucionar casos de fallas informados por Sentry",
         "pl": "Napraw przypadki awarii zgłoszone przez Sentry",
         "zh-cn": "修复 Sentry 报告的崩溃案例"
-      },
-      "1.11.3": {
-        "en": "Added the generation of URL key for services",
-        "de": "Generierung von URL-Schlüsseln für Dienste hinzugefügt",
-        "ru": "Добавлена генерация URL-ключа для сервисов",
-        "pt": "Adicionada a geração de chave de URL para serviços",
-        "nl": "Het genereren van de URL-sleutel voor services toegevoegd",
-        "fr": "Ajout de la génération de clé URL pour les services",
-        "it": "Aggiunta la generazione della chiave URL per i servizi",
-        "es": "Se agregó la generación de clave de URL para servicios.",
-        "pl": "Dodano generowanie klucza URL dla usług",
-        "zh-cn": "为服务添加了 URL 密钥的生成"
       }
     },
     "title": "IoT Assistants",

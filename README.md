@@ -269,7 +269,7 @@ Following types are supported:
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 1.12.1 (2022-09-27)
 * (bluefox) Corrected error in GUI with empty password
 
 ### 1.12.0 (2022-09-27)
