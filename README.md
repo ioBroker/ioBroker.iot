@@ -269,7 +269,7 @@ Following types are supported:
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 1.12.0 (2022-09-27)
 * (Apollon77) Do not control saturation with a percentage request via alexa
 * (bluefox) Migrated GUI to v5
 

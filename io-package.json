@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "iot",
-    "version": "1.11.9",
+    "version": "1.12.0",
     "news": {
+      "1.12.0": {
+        "en": "Do not control saturation with a percentage request via alexa\nMigrated GUI to v5",
+        "de": "Kontrollieren Sie keine Sättigung mit einer prozentualen Anfrage über alexa\nMigrated GUI to v5",
+        "ru": "Не контролируйте насыщение с процентным запросом через alexa\nMigrated GUI для v5",
+        "pt": "Não controle a saturação com um pedido percentual via alexa\nGUI migrado para v5",
+        "nl": "Controleer geen saturatie met een percentage verzoek via Alexa\nGemigreerde GUI",
+        "fr": "Ne contrôlez pas la saturation avec une demande de pourcentage via alexa\nMigrated GUI to v5",
+        "it": "Non controllare la saturazione con una richiesta percentuale via alexa\nGUI emigrata a v5",
+        "es": "No controle la saturación con una solicitud porcentual vía alexa\nGUI migrado al v5",
+        "pl": "Nie kontroluje nasycenia z odsetkiem żądanym przez alexa\nMigrated GUI (ang.)",
+        "zh-cn": "未通过法警控制饱和百分比要求\n第5条"
+      },
       "1.11.9": {
         "en": "Fix temperature controlling for thermostats via alexa",
         "de": "Temperaturregelung für Thermostate über alexa festsetzen",
@@ -74,18 +86,6 @@
         "es": "Se agregó la generación de clave de URL para servicios.",
         "pl": "Dodano generowanie klucza URL dla usług",
         "zh-cn": "为服务添加了 URL 密钥的生成"
-      },
-      "1.11.2": {
-        "en": "Fix crash case reported by Sentry (IOBROKER-IOT-3P)",
-        "de": "Von Sentry gemeldeter Absturzfall behoben (IOBROKER-IOT-3P)",
-        "ru": "Исправить случай сбоя, о котором сообщил Sentry (IOBROKER-IOT-3P)",
-        "pt": "Corrigir caso de falha relatado pelo Sentry (IOBROKER-IOT-3P)",
-        "nl": "Herstel crashgeval gemeld door Sentry (IOBROKER-IOT-3P)",
-        "fr": "Correction d'un cas de plantage signalé par Sentry (IOBROKER-IOT-3P)",
-        "it": "Risolto il caso di crash segnalato da Sentry (IOBROKER-IOT-3P)",
-        "es": "Solucionar caso de bloqueo informado por Sentry (IOBROKER-IOT-3P)",
-        "pl": "Napraw przypadek awarii zgłoszony przez Sentry (IOBROKER-IOT-3P)",
-        "zh-cn": "修复 Sentry 报告的崩溃案例 (IOBROKER-IOT-3P)"
       }
     },
     "title": "IoT Assistants",
