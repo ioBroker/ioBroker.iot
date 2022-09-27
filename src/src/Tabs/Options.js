@@ -1,26 +1,26 @@
 import React, {Component} from 'react';
-import {withStyles} from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Card from '@material-ui/core/Card';
-import CardActionArea from '@material-ui/core/CardActionArea';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
-import Snackbar from '@material-ui/core/Snackbar';
-import IconButton from '@material-ui/core/IconButton';
-import Utils from '@iobroker/adapter-react/Components/Utils'
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import Card from '@mui/material/Card';
+import CardActionArea from '@mui/material/CardActionArea';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Snackbar from '@mui/material/Snackbar';
+import IconButton from '@mui/material/IconButton';
+import Utils from '@iobroker/adapter-react-v5/Components/Utils'
 
 import {MdRefresh as IconReload} from 'react-icons/md';
 import {MdClose as IconClose} from 'react-icons/md';
 
-import I18n from '@iobroker/adapter-react/i18n';
-import Logo from '@iobroker/adapter-react/Components/Logo';
+import I18n from '@iobroker/adapter-react-v5/i18n';
+import Logo from '@iobroker/adapter-react-v5/Components/Logo';
 
 const styles = theme => ({
     tab: {
@@ -104,6 +104,7 @@ class Options extends Component {
     renderInput(title, attr, type) {
         const error = attr === 'pass' && this.checkPassword(this.props.native[attr]);
         return <TextField
+            variant="standard"
             label={ I18n.t(title) }
             error={ !!error  }
             className={ this.props.classes.input }
@@ -125,13 +126,19 @@ class Options extends Component {
                 />
                 <CardContent>{Utils.renderTextWithA(I18n.t('amazon link'))}</CardContent>
             </CardActionArea>
-            <CardActions style={{textAlign: 'center'}} >
-                <Button variant="outlined" size="small" color="primary" style={{textAlign: 'center'}} onClick={() => {
-                    const win = window.open('https://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/reviews', '_blank');
-                    win.focus();
-                }}>{I18n.t('Review')}</Button>
+            <CardActions style={{ textAlign: 'center' }} >
+                <Button
+                    variant="outlined"
+                    size="small"
+                    color="primary"
+                    style={{  textAlign: 'center' }}
+                    onClick={() => {
+                        const win = window.open('https://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/reviews', '_blank');
+                        win.focus();
+                    }}>{I18n.t('Review')}</Button>
                 {this.props.native.amazonAlexa ?
                     <Button
+                        color="grey"
                         title="Debug"
                         onClick={() => this.onDebug()}
                         style={{opacity: this.state.debugVisible ? 1 : 0}}
@@ -272,12 +279,14 @@ class Options extends Component {
 
                 <p>{I18n.t('new_certs_tip')}</p>
                 {this.props.changed ? <div className={this.props.classes.hintUnsaved}>{I18n.t('Save settings before pressing this button')}</div> : null}
-                <Button variant="outlined"
-                        className={ this.props.classes.button }
-                        disabled={ this.props.changed || this.state.inAction || !this.state.isInstanceAlive }
-                        title={ !this.state.isInstanceAlive ? I18n.t('Instance must be enabled') : '' }
-                        onClick={ () => this.resetCerts() }
-                        startIcon={<IconReload />}
+                <Button
+                    variant="outlined"
+                    className={ this.props.classes.button }
+                    disabled={ this.props.changed || this.state.inAction || !this.state.isInstanceAlive }
+                    title={ !this.state.isInstanceAlive ? I18n.t('Instance must be enabled') : '' }
+                    onClick={ () => this.resetCerts() }
+                    startIcon={<IconReload />}
+                    color="grey"
                 >
                     { I18n.t('Get new connection certificates') }
                 </Button>
@@ -285,12 +294,14 @@ class Options extends Component {
                 <p>{I18n.t('new_credentials_tip')}</p>
                 {this.props.changed ?
                     <div className={this.props.classes.hintUnsaved}>{I18n.t('Save settings before pressing this button')}</div> : null}
-                <Button variant="outlined"
-                        className={ this.props.classes.button }
-                        disabled={ this.props.changed || this.state.inAction || !this.state.isInstanceAlive }
-                        title={ !this.state.isInstanceAlive ? I18n.t('Instance must be enabled') : '' }
-                        onClick={ () => this.resetCerts(true) }
-                        startIcon={<IconReload />}
+                <Button
+                    variant="outlined"
+                    color="grey"
+                    className={ this.props.classes.button }
+                    disabled={ this.props.changed || this.state.inAction || !this.state.isInstanceAlive }
+                    title={ !this.state.isInstanceAlive ? I18n.t('Instance must be enabled') : '' }
+                    onClick={ () => this.resetCerts(true) }
+                    startIcon={<IconReload />}
                 >
                     { I18n.t('Create IoT credentials anew') }
                 </Button>

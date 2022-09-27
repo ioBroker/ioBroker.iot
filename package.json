@@ -23,25 +23,25 @@
   },
   "optionalDependencies": {
     "sharp": "0.30.7",
-    "canvas": "^2.9.3"
+    "canvas": "^2.10.1"
   },
   "dependencies": {
-    "@iobroker/adapter-core": "^2.6.0",
+    "@iobroker/adapter-core": "^2.6.6",
     "aws-iot-device-sdk": "^2.2.12",
     "echarts": "^4.9.0",
     "iobroker.type-detector": "^1.1.0",
-    "jsdom": "^19.0.0",
+    "jsdom": "^20.0.0",
     "mime": "^3.0.0",
     "moment": "^2.29.4",
     "axios": "^0.27.2",
-    "uuid": "^8.3.2"
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@alcalzone/release-script": "^3.5.9",
     "@alcalzone/release-script-plugin-iobroker": "^3.5.9",
     "@alcalzone/release-script-plugin-license": "^3.5.9",
     "@types/iobroker": "^4.0.4",
-    "@types/node": "^18.7.14",
+    "@types/node": "^18.7.23",
     "chai": "^4.3.6",
     "del": "^6.1.1",
     "gulp": "^4.0.2",

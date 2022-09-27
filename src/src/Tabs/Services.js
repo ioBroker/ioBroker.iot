@@ -1,30 +1,30 @@
 import React, {Component} from 'react';
-import {withStyles} from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 
-import TextField from '@material-ui/core/TextField';
-import Input from '@material-ui/core/Input';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import Fab from '@material-ui/core/Fab';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import Snackbar from '@material-ui/core/Snackbar';
-import Chip from '@material-ui/core/Chip';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
+import TextField from '@mui/material/TextField';
+import Input from '@mui/material/Input';
+import FormHelperText from '@mui/material/FormHelperText';
+import Fab from '@mui/material/Fab';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import Snackbar from '@mui/material/Snackbar';
+import Chip from '@mui/material/Chip';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
 
 import {MdRefresh as IconRefresh} from 'react-icons/md';
 import {MdClose as IconClose} from 'react-icons/md';
 import {MdAdd as IconAdd} from 'react-icons/md';
 
-import IconCopy from '@iobroker/adapter-react/icons/IconCopy';
-import I18n from '@iobroker/adapter-react/i18n';
-import Utils from '@iobroker/adapter-react/Components/Utils';
-import DialogSelectID from '@iobroker/adapter-react/Dialogs/SelectID';
+import IconCopy from '@iobroker/adapter-react-v5/icons/IconCopy';
+import I18n from '@iobroker/adapter-react-v5/i18n';
+import Utils from '@iobroker/adapter-react-v5/Components/Utils';
+import DialogSelectID from '@iobroker/adapter-react-v5/Dialogs/SelectID';
 
 const styles = theme => ({
     tab: {
@@ -125,6 +125,7 @@ class Services extends Component {
 
     renderInput(title, attr, type) {
         return <TextField
+            variant="standard"
             label={I18n.t(title)}
             className={clsx(this.props.classes.input, this.props.classes.controlElement)}
             value={this.props.native[attr]}
@@ -228,6 +229,7 @@ class Services extends Component {
         return <div className={this.props.classes.chipsDiv}>
             <FormHelperText>{Utils.renderTextWithA(I18n.t(label))}</FormHelperText>
             <TextField
+                variant="standard"
                 label={I18n.t('Add service')}
                 style={{width: 150}}
                 type={'text'}
@@ -268,12 +270,13 @@ class Services extends Component {
             {this.renderInput('IFTTT key', 'iftttKey')}<br/>
 
             <TextField
+                variant="standard"
                 style={{marginTop: 10}}
                 label={I18n.t('Use following link for IFTTT')}
                 className={clsx(this.props.classes.input, this.props.classes.controlElement, this.props.classes.fullSize)}
                 value={`https://service.iobroker.in/v1/iotService?service=ifttt&key=${this.state.key}&user=${encodeURIComponent(this.props.native.login)}`}
                 type="text"
-                readOnly={true}
+                InputProps={{ readOnly: true }}
                 margin="normal"
             />
             <Fab size="small" style={{marginTop: 10, marginLeft: 5}} onClick={() => Utils.copyToClipboard(`https://service.iobroker.in/v1/iotService?service=ifttt&key=${this.state.key}&user=${encodeURIComponent(this.props.native.login)}`)} ><IconCopy /></Fab><br/>
@@ -282,18 +285,20 @@ class Services extends Component {
             {this.renderChips('White list for services', 'allowedServices')}<br/>
 
             <TextField
-                style={{marginTop: 10}}
+                variant="standard"
+                style={{ marginTop: 10 }}
                 label={I18n.t('Use following link for custom service')}
                 className={clsx(this.props.classes.input, this.props.classes.controlElement, this.props.classes.fullSize)}
                 value={`https://service.iobroker.in/v1/iotService?service=custom_<SERVICE_NAME>&key=${this.state.key}&user=${encodeURIComponent(this.props.native.login)}&data=<SOME_TEXT>`}
                 type="text"
-                readOnly={true}
+                InputProps={{ readOnly: true }}
                 margin="normal"
             />
             <Fab size="small" style={{marginTop: 10, marginLeft: 5}} onClick={() => Utils.copyToClipboard(`https://service.iobroker.in/v1/iotService?service=custom_<SERVICE_NAME>&key=${this.state.key}&user=${encodeURIComponent(this.props.native.login)}&data=<SOME_TEXT>`)}><IconCopy /></Fab><br/>
 
-            <FormControl className={clsx(this.props.classes.input, this.props.classes.controlElement)} style={{paddingTop: 20}}>
+            <FormControl className={clsx(this.props.classes.input, this.props.classes.controlElement)} style={{ paddingTop: 20 }} variant="standard">
                 <Select
+                    variant="standard"
                     value={this.props.native.text2command || '_'}
                     onChange={e => this.props.onChange('text2command', e.target.value === '_' ? '' : e.target.value)}
                     input={<Input name="text2command" id="text2command-helper" />}
@@ -304,8 +309,9 @@ class Services extends Component {
                 <FormHelperText>{I18n.t('Use text2command instance')}</FormHelperText>
             </FormControl>
             <br/>
-            <FormControl className={clsx(this.props.classes.input, this.props.classes.controlElement)} style={{paddingTop: 20}}>
+            <FormControl className={clsx(this.props.classes.input, this.props.classes.controlElement)} style={{ paddingTop: 20 }} variant="standard">
                 <Select
+                    variant="standard"
                     value={this.props.native.nightscout || '_'}
                     onChange={e => this.props.onChange('nightscout', e.target.value === '_' ? '' : e.target.value)}
                     input={<Input name="nightscout" id="nightscout-helper" />}
@@ -316,6 +322,7 @@ class Services extends Component {
                 <FormHelperText>{I18n.t('Use Nightscout instance')}</FormHelperText>
             </FormControl>
             {this.props.native.nightscout ? <TextField
+                variant="standard"
                 style={{marginTop: 3.5}}
                 label={I18n.t('Nightscout password')}
                 onChange={e => this.props.onChange('nightscoutPass', e.target.value.replace(/[^\w\d-_]/g, '_'))}
@@ -325,18 +332,20 @@ class Services extends Component {
                 margin="normal"
             /> : null}
             {this.props.native.nightscout ? <TextField
+                variant="standard"
                 style={{marginTop: 3.5}}
                 label={I18n.t('Nightscout api-secret')}
                 className={clsx(this.props.classes.input, this.props.classes.controlElement, this.props.classes.normalSize)}
                 value={this.calcNightscoutSecret()}
                 type="text"
-                readOnly={true}
+                InputProps={{ readOnly: true }}
                 margin="normal"
             /> : null}
             <br/>
             <br/>
             <div className={this.props.classes.controlElement}>
                 <TextField
+                    variant="standard"
                     label={I18n.t('Read blood sugar from')}
                     className={clsx(this.props.classes.input, this.props.classes.controlElement)}
                     value={this.props.native.amazonAlexaBlood || ''}

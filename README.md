@@ -269,9 +269,9 @@ Following types are supported:
 -->
 
 ## Changelog
-
-### __WORK IN PROGRESS__
+### **WORK IN PROGRESS**
 * (Apollon77) Do not control saturation with a percentage request via alexa
+* (bluefox) Migrated GUI to v5
 
 ### 1.11.9 (2022-07-22)
 * (Apollon77) Fix temperature controlling for thermostats via alexa

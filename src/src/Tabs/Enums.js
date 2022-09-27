@@ -1,22 +1,22 @@
 import React, {Component} from 'react';
-import {withStyles} from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import Switch from '@material-ui/core/Switch';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import Switch from '@mui/material/Switch';
 import {MdEdit as IconEdit} from 'react-icons/md';
 
-import Utils from '@iobroker/adapter-react/Components/Utils';
-import I18n from '@iobroker/adapter-react/i18n';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogActions from '@material-ui/core/DialogActions';
-import Dialog from '@material-ui/core/Dialog';
-import MessageDialog from '@iobroker/adapter-react/Dialogs/Message';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import IconClose from "@material-ui/icons/Close";
-import IconCheck from "@material-ui/icons/Check";
+import Utils from '@iobroker/adapter-react-v5/Components/Utils';
+import I18n from '@iobroker/adapter-react-v5/i18n';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import Dialog from '@mui/material/Dialog';
+import MessageDialog from '@iobroker/adapter-react-v5/Dialogs/Message';
+import CircularProgress from '@mui/material/CircularProgress';
+import IconClose from "@mui/icons-material/Close";
+import IconCheck from "@mui/icons-material/Check";
 
 const CHANGED_COLOR = '#e7000040';
 
@@ -284,6 +284,7 @@ class Enums extends Component {
                 <DialogTitle id="message-dialog-title">{this.props.title || I18n.t('Smart name for %s', Utils.getObjectNameFromObj(obj, null, {language: I18n.getLanguage()}))}</DialogTitle>
                 <DialogContent>
                     <TextField
+                        variant="standard"
                         autoFocus
                         style={{width: '100%'}}
                         label={I18n.t('Smart name')}
@@ -301,6 +302,7 @@ class Enums extends Component {
                         startIcon={<IconCheck/>}
                     >{I18n.t('Ok')}</Button>
                     <Button
+                        color="grey"
                         variant="contained"
                         onClick={() => this.setState({editId: ''})}
                         startIcon={<IconClose/>}

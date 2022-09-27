@@ -1,32 +1,32 @@
 import React, {Component} from 'react';
-import {withStyles} from '@material-ui/core/styles';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { withStyles } from '@mui/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import PropTypes from 'prop-types';
 import copy from 'copy-to-clipboard';
 
-import Fab from '@material-ui/core/Fab';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import FormControl from '@material-ui/core/FormControl';
-import Toolbar from '@material-ui/core/Toolbar';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import IconButton from '@material-ui/core/IconButton';
+import Fab from '@mui/material/Fab';
+import CircularProgress from '@mui/material/CircularProgress';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import FormHelperText from '@mui/material/FormHelperText';
+import FormControl from '@mui/material/FormControl';
+import Toolbar from '@mui/material/Toolbar';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import IconButton from '@mui/material/IconButton';
 
-import IconCopy from '@material-ui/icons/FileCopy';
-import IconClose from '@material-ui/icons/Close';
+import IconCopy from '@mui/icons-material/FileCopy';
+import IconClose from '@mui/icons-material/Close';
 
-import I18n from '@iobroker/adapter-react/i18n';
-import MessageDialog from '@iobroker/adapter-react/Dialogs/Message';
-import DialogSelectID from '@iobroker/adapter-react/Dialogs/SelectID';
-import Utils from '@iobroker/adapter-react/Components/Utils'
-import ExpertIcon from '@iobroker/adapter-react/icons/IconExpert';
+import I18n from '@iobroker/adapter-react-v5/i18n';
+import MessageDialog from '@iobroker/adapter-react-v5/Dialogs/Message';
+import DialogSelectID from '@iobroker/adapter-react-v5/Dialogs/SelectID';
+import Utils from '@iobroker/adapter-react-v5/Components/Utils'
+import ExpertIcon from '@iobroker/adapter-react-v5/icons/IconExpert';
 
 import TreeTable from '../Components/TreeTable';
 
@@ -417,8 +417,8 @@ class GoogleSmartNames extends Component {
             for (let i = 5; i <= 100; i += 5) {
                 items.push(<MenuItem  key={i.toString()} value={i.toString()}>{i}%</MenuItem>);
             }
-            return <FormControl className={this.props.classes.devSubLineByOn}>
-                <Select className={this.props.classes.devSubLineByOnSelect} value={(type || '').toString()} onChange={e => this.onParamsChange(id, e.target.value)}>{items}</Select>
+            return <FormControl className={this.props.classes.devSubLineByOn} variant="standard">
+                <Select variant="standard" className={this.props.classes.devSubLineByOnSelect} value={(type || '').toString()} onChange={e => this.onParamsChange(id, e.target.value)}>{items}</Select>
                 <FormHelperText className={this.props.classes.devSubLineTypeTitle}>{I18n.t('by ON')}</FormHelperText>
             </FormControl>;
         } else {
@@ -620,12 +620,23 @@ class GoogleSmartNames extends Component {
                 </div>
             </DialogContent>
             <DialogActions>
-                <Button variant="outlined" onClick={() => {
-                    this.setState({showListOfDevices: false});
-                    const lines = this.state.devices.map(item => item.name.nicknames.join(', ') + '\t' + item.displayTraits + '\t' + item.roomHint);
-                    copy(lines.join('\n'));
-                }} color="primary" startIcon={<IconCopy/>}>{I18n.t('Copy to clipboard')}</Button>
-                <Button startIcon={<IconClose/>} variant="contained" onClick={() => this.setState({showListOfDevices: false})} autoFocus>{I18n.t('Close')}</Button>
+                <Button
+                    variant="outlined"
+                    onClick={() => {
+                        this.setState({showListOfDevices: false});
+                        const lines = this.state.devices.map(item => item.name.nicknames.join(', ') + '\t' + item.displayTraits + '\t' + item.roomHint);
+                        copy(lines.join('\n'));
+                    }}
+                    color="primary"
+                    startIcon={<IconCopy/>}
+                >{I18n.t('Copy to clipboard')}</Button>
+                <Button
+                    color="grey"
+                    startIcon={<IconClose/>}
+                    variant="contained"
+                    onClick={() => this.setState({ showListOfDevices: false })}
+                    autoFocus
+                >{I18n.t('Close')}</Button>
             </DialogActions>
         </Dialog>;
     }
@@ -682,6 +693,7 @@ class GoogleSmartNames extends Component {
                  size="small" aria-label="List of devices" className={this.props.classes.button}
                  onClick={() => this.setState({showListOfDevices: true})} disabled={this.state.browse}><IconList/></Fab>
             {!this.props.smallDisplay ? <TextField
+                variant="standard"
                 className={this.props.classes.searchText}
                 label={I18n.t('Filter')}
                 value={this.state.searchText} onChange={e => this.setState({searchText: e.target.value})}

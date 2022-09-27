@@ -1,23 +1,23 @@
 import React, {Component} from 'react';
-import {withStyles} from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 
-import TextField from '@material-ui/core/TextField';
-import Input from '@material-ui/core/Input';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import Fab from '@material-ui/core/Fab';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
+import TextField from '@mui/material/TextField';
+import Input from '@mui/material/Input';
+import FormHelperText from '@mui/material/FormHelperText';
+import Fab from '@mui/material/Fab';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
 
 import {MdAdd as IconAdd} from 'react-icons/md';
 
-import I18n from '@iobroker/adapter-react/i18n';
-import DialogSelectID from '@iobroker/adapter-react/Dialogs/SelectID';
-import Utils from '@iobroker/adapter-react/Components/Utils'
+import I18n from '@iobroker/adapter-react-v5/i18n';
+import DialogSelectID from '@iobroker/adapter-react-v5/Dialogs/SelectID';
+import Utils from '@iobroker/adapter-react-v5/Components/Utils'
 
 const styles = theme => ({
     tab: {
@@ -92,6 +92,7 @@ class ExtendedOptions extends Component {
 
     renderInput(title, attr, type) {
         return <TextField
+            variant="standard"
             label={I18n.t(title)}
             className={clsx(this.props.classes.input, this.props.classes.controlElement)}
             value={this.props.native[attr]}
@@ -102,8 +103,13 @@ class ExtendedOptions extends Component {
     }
 
     renderSelect(title, attr, options, style) {
-        return <FormControl className={clsx(this.props.classes.input, this.props.classes.controlElement)} style={Object.assign({paddingTop: 5, paddingRight: 8}, style)}>
+        return <FormControl
+            className={clsx(this.props.classes.input, this.props.classes.controlElement)}
+            style={Object.assign({ paddingTop: 5, paddingRight: 8 }, style)}
+            variant="standard"
+        >
             <Select
+                variant="standard"
                 value={this.props.native[attr] || '_'}
                 onChange={e => this.props.onChange(attr, e.target.value === '_' ? '' : e.target.value)}
                 input={<Input name={attr} id={attr + '-helper'} />}

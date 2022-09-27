@@ -1,26 +1,26 @@
 import React from 'react';
 
 import PropTypes from 'prop-types';
-import {withStyles} from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import clsx from 'clsx';
 
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import TableSortLabel from '@material-ui/core/TableSortLabel';
-import IconButton from '@material-ui/core/IconButton';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import TextField from '@material-ui/core/TextField';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import TableSortLabel from '@mui/material/TableSortLabel';
+import IconButton from '@mui/material/IconButton';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
 
-import IconEdit from '@material-ui/icons/Edit';
-import IconDelete from '@material-ui/icons/Delete';
-import IconExpand from '@material-ui/icons/NavigateNext';
-import IconCollapse from '@material-ui/icons/ExpandMore';
-import IconCheck from '@material-ui/icons/Check';
-import IconClose from '@material-ui/icons/Close';
+import IconEdit from '@mui/icons-material/Edit';
+import IconDelete from '@mui/icons-material/Delete';
+import IconExpand from '@mui/icons-material/NavigateNext';
+import IconCollapse from '@mui/icons-material/ExpandMore';
+import IconCheck from '@mui/icons-material/Check';
+import IconClose from '@mui/icons-material/Close';
 
 function getAttr(obj, attr, lookup) {
     if (typeof attr === 'string') {
@@ -93,8 +93,8 @@ const styles = theme => ({
     },
     cellHeader: {
         fontWeight: 'bold',
-        background: theme.palette.type === 'dark' ? '#888' : '#888',
-        color: theme.palette.type === 'dark' ? '#EEE' : '#111',
+        background: theme.palette.mode === 'dark' ? '#888' : '#888',
+        color: theme.palette.mode === 'dark' ? '#EEE' : '#111',
         height: 48,
         wordBreak: 'break-word',
         whiteSpace: 'pre',
@@ -205,6 +205,7 @@ class TreeTable extends React.Component {
                 component="th" >{
                     col.lookup ?
                         <Select
+                            variant="standard"
                             onChange={e => {
                                 const editData = this.state.editData ? {...this.state.editData} : {};
                                 if (e.target.value === val) {
@@ -220,6 +221,7 @@ class TreeTable extends React.Component {
                         </Select>
                         :
                         <TextField
+                            variant="standard"
                             value={this.state.editData && this.state.editData[col.field] !== undefined ? this.state.editData[col.field] : val}
                             onChange={e => {
                                 const editData = this.state.editData ? {...this.state.editData} : {};

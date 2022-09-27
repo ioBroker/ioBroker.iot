@@ -1,18 +1,18 @@
 import React, {Component} from 'react';
-import {withStyles} from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import Fab from '@material-ui/core/Fab';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Badge from '@material-ui/core/Badge';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import FormControl from '@material-ui/core/FormControl';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import Fab from '@mui/material/Fab';
+import CircularProgress from '@mui/material/CircularProgress';
+import Badge from '@mui/material/Badge';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import FormHelperText from '@mui/material/FormHelperText';
+import FormControl from '@mui/material/FormControl';
 
 import {MdEdit as IconEdit} from 'react-icons/md';
 import {MdAdd as IconAdd} from 'react-icons/md';
@@ -31,18 +31,18 @@ import {FaPalette as IconColor} from 'react-icons/fa';
 import {FaLightbulb as IconBulb} from 'react-icons/fa';
 import {FaLockOpen as IconLock} from 'react-icons/fa';
 import {FaThermometer as IconThermometer} from 'react-icons/fa';
-import IconCopy from '@material-ui/icons/FileCopy';
-import IconClose from '@material-ui/icons/Close';
-import IconCheck from '@material-ui/icons/Check';
+import IconCopy from '@mui/icons-material/FileCopy';
+import IconClose from '@mui/icons-material/Close';
+import IconCheck from '@mui/icons-material/Check';
 
-import Utils from '@iobroker/adapter-react/Components/Utils'
-import I18n from '@iobroker/adapter-react/i18n';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogActions from '@material-ui/core/DialogActions';
-import Dialog from '@material-ui/core/Dialog';
-import MessageDialog from '@iobroker/adapter-react/Dialogs/Message';
-import DialogSelectID from '@iobroker/adapter-react/Dialogs/SelectID';
+import Utils from '@iobroker/adapter-react-v5/Components/Utils'
+import I18n from '@iobroker/adapter-react-v5/i18n';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import Dialog from '@mui/material/Dialog';
+import MessageDialog from '@iobroker/adapter-react-v5/Dialogs/Message';
+import DialogSelectID from '@iobroker/adapter-react-v5/Dialogs/SelectID';
 import copy from "copy-to-clipboard";
 
 const colorOn = '#aba613';
@@ -487,8 +487,13 @@ class AlexaSmartNames extends Component {
             for (let i = 5; i <= 100; i += 5) {
                 items.push(<MenuItem  key={i.toString()} value={i.toString()}>{i}%</MenuItem>);
             }
-            return <FormControl className={this.props.classes.devSubLineByOn}>
-                <Select className={this.props.classes.devSubLineByOnSelect} value={(type || '').toString()} onChange={e => this.onParamsChange(id, e.target.value)}>{items}</Select>
+            return <FormControl className={this.props.classes.devSubLineByOn} variant="standard">
+                <Select
+                    variant="standard"
+                    className={this.props.classes.devSubLineByOnSelect}
+                    value={(type || '').toString()}
+                    onChange={e => this.onParamsChange(id, e.target.value)}
+                >{items}</Select>
                 <FormHelperText className={this.props.classes.devSubLineTypeTitle}>{I18n.t('by ON')}</FormHelperText>
             </FormControl>;
         } else {
@@ -527,8 +532,8 @@ class AlexaSmartNames extends Component {
             for (let i = 0; i < SMARTTYPES.length; i++) {
                 items.push(<MenuItem  key={SMARTTYPES[i]} value={SMARTTYPES[i]}><em>{I18n.t(SMARTTYPES[i])}</em></MenuItem>);
             }
-            return <FormControl>
-                <Select value={type || '_'} onChange={e => onChange(e.target.value === '_' ? '' : e.target.value)}>{items}</Select>
+            return <FormControl variant="standard">
+                <Select variant="standard" value={type || '_'} onChange={e => onChange(e.target.value === '_' ? '' : e.target.value)}>{items}</Select>
                 <FormHelperText className={this.props.classes.devSubLineTypeTitle}>{I18n.t('Types')}</FormHelperText>
             </FormControl>;
         } else {
@@ -713,6 +718,7 @@ class AlexaSmartNames extends Component {
                 <DialogContent>
                     <p><span>ID:</span> <span className={this.props.classes.editedId}>{this.state.editId}</span></p>
                     <TextField
+                        variant="standard"
                         style={{width: '100%'}}
                         label={I18n.t('Smart name')}
                         autoFocus
@@ -733,11 +739,14 @@ class AlexaSmartNames extends Component {
                         startIcon={<IconCheck/>}
                     >{I18n.t('Ok')}
                     </Button>
-                    <Button variant="contained" onClick={() => {
-                        this.editedSmartName = null;
-                        this.setState({editId: '', editedSmartName: ''});
-                    }}
-                    startIcon={<IconClose/>}
+                    <Button
+                        variant="contained"
+                        onClick={() => {
+                            this.editedSmartName = null;
+                            this.setState({editId: '', editedSmartName: ''});
+                        }}
+                        startIcon={<IconClose/>}
+                        color="grey"
                     >{I18n.t('Cancel')}</Button>
                 </DialogActions>
             </Dialog>;
@@ -769,6 +778,7 @@ class AlexaSmartNames extends Component {
                         startIcon={<IconDelete/>}
                     >{I18n.t('Delete')}</Button>
                     <Button
+                        color="grey"
                         variant="contained"
                         startIcon={<IconClose/>}
                         onClick={() => this.setState({showConfirmation: ''})}>{I18n.t('Cancel')}</Button>
@@ -859,16 +869,22 @@ class AlexaSmartNames extends Component {
                 </div>
             </DialogContent>
             <DialogActions>
-                <Button variant="outlined" onClick={() => {
-                    this.setState({showListOfDevices: false});
-                    const lines = this.state.devices.map(item => item.friendlyName);
-                    copy(lines.join('\n'));
-                }} color="primary"
-                startIcon={<IconCopy/>}
+                <Button
+                    variant="outlined"
+                        onClick={() => {
+                        this.setState({showListOfDevices: false});
+                        const lines = this.state.devices.map(item => item.friendlyName);
+                        copy(lines.join('\n'));
+                    }}
+                    color="primary"
+                    startIcon={<IconCopy/>}
                 >{I18n.t('Copy to clipboard')}</Button>
-                <Button variant="contained"
-                        startIcon={<IconClose/>}
-                        onClick={() => this.setState({showListOfDevices: false})} autoFocus>{I18n.t('Close')}</Button>
+                <Button
+                    variant="contained"
+                    startIcon={<IconClose/>}
+                    onClick={() => this.setState({showListOfDevices: false})} autoFocus
+                    color="grey"
+                >{I18n.t('Close')}</Button>
             </DialogActions>
         </Dialog>;
     }
@@ -887,6 +903,7 @@ class AlexaSmartNames extends Component {
                  size="small" aria-label="List of devices" className={this.props.classes.button}
                  onClick={() => this.setState({showListOfDevices: true})} disabled={this.state.browse}><IconList/></Fab>
             <TextField
+                variant="standard"
                 placeholder={I18n.t('Filter')}
                 className={this.state.filter}
                 value={this.state.filter}

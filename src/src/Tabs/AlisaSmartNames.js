@@ -1,49 +1,49 @@
 import React, {Component} from 'react';
-import {withStyles} from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import Fab from '@material-ui/core/Fab';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Badge from '@material-ui/core/Badge';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import FormControl from '@material-ui/core/FormControl';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import Fab from '@mui/material/Fab';
+import CircularProgress from '@mui/material/CircularProgress';
+import Badge from '@mui/material/Badge';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import FormHelperText from '@mui/material/FormHelperText';
+import FormControl from '@mui/material/FormControl';
 
-import {MdEdit as IconEdit} from 'react-icons/md';
-import {MdAdd as IconAdd} from 'react-icons/md';
-import {MdRefresh as IconRefresh} from 'react-icons/md';
-import {MdClear as IconClear} from 'react-icons/md';
-import {MdDelete as IconDelete} from 'react-icons/md';
-import {MdFormatAlignJustify as IconExpand} from 'react-icons/md';
-import {MdDragHandle as IconCollapse} from 'react-icons/md';
-import {MdList as IconList} from 'react-icons/md';
-import {FaPowerOff as IconOn} from 'react-icons/fa';
-import {FaThermometerHalf as IconTemperature} from 'react-icons/fa';
-import {FaLongArrowAltUp as IconUp} from 'react-icons/fa';
-import {FaLongArrowAltDown as IconDown} from 'react-icons/fa';
-import {FaPalette as IconColor} from 'react-icons/fa';
-import {FaLightbulb as IconBulb} from 'react-icons/fa';
-import {FaLockOpen as IconLock} from 'react-icons/fa';
-import {FaThermometer as IconThermometer} from 'react-icons/fa';
-import {FaTint as IconHumidity} from 'react-icons/fa';
-import {FaMale as IconMotion} from 'react-icons/fa';
-import {FaLink as IconContact} from 'react-icons/fa';
-import IconCopy from '@material-ui/icons/FileCopy';
-import IconClose from '@material-ui/icons/Close';
+import { MdEdit as IconEdit } from 'react-icons/md';
+import { MdAdd as IconAdd } from 'react-icons/md';
+import { MdRefresh as IconRefresh } from 'react-icons/md';
+import { MdClear as IconClear } from 'react-icons/md';
+import { MdDelete as IconDelete } from 'react-icons/md';
+import { MdFormatAlignJustify as IconExpand } from 'react-icons/md';
+import { MdDragHandle as IconCollapse } from 'react-icons/md';
+import { MdList as IconList } from 'react-icons/md';
+import { FaPowerOff as IconOn } from 'react-icons/fa';
+import { FaThermometerHalf as IconTemperature } from 'react-icons/fa';
+import { FaLongArrowAltUp as IconUp } from 'react-icons/fa';
+import { FaLongArrowAltDown as IconDown } from 'react-icons/fa';
+import { FaPalette as IconColor } from 'react-icons/fa';
+import { FaLightbulb as IconBulb } from 'react-icons/fa';
+import { FaLockOpen as IconLock } from 'react-icons/fa';
+import { FaThermometer as IconThermometer } from 'react-icons/fa';
+import { FaTint as IconHumidity } from 'react-icons/fa';
+import { FaMale as IconMotion } from 'react-icons/fa';
+import { FaLink as IconContact } from 'react-icons/fa';
+import IconCopy from '@mui/icons-material/FileCopy';
+import IconClose from '@mui/icons-material/Close';
 
-import Utils from '@iobroker/adapter-react/Components/Utils'
-import I18n from '@iobroker/adapter-react/i18n';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogActions from '@material-ui/core/DialogActions';
-import Dialog from '@material-ui/core/Dialog';
-import MessageDialog from '@iobroker/adapter-react/Dialogs/Message';
-import DialogSelectID from '@iobroker/adapter-react/Dialogs/SelectID';
+import Utils from '@iobroker/adapter-react-v5/Components/Utils'
+import I18n from '@iobroker/adapter-react-v5/i18n';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import Dialog from '@mui/material/Dialog';
+import MessageDialog from '@iobroker/adapter-react-v5/Dialogs/Message';
+import DialogSelectID from '@iobroker/adapter-react-v5/Dialogs/SelectID';
 import copy from "copy-to-clipboard";
-import IconCheck from "@material-ui/icons/Check";
+import IconCheck from "@mui/icons-material/Check";
 
 const colorOn = '#aba613';
 const colorOff = '#444';
@@ -514,8 +514,8 @@ class AlisaDevices extends Component {
             for (let i = 0; i < SMARTTYPES.length; i++) {
                 items.push(<MenuItem  key={SMARTTYPES[i]} value={SMARTTYPES[i]}><em>{I18n.t(SMARTTYPES[i])}</em></MenuItem>);
             }
-            return <FormControl>
-                <Select value={type || '_'} onChange={e => this.onParamsChange(id, undefined, e.target.value)}>{items}</Select>
+            return <FormControl variant="standard">
+                <Select variant="standard" value={type || '_'} onChange={e => this.onParamsChange(id, undefined, e.target.value)}>{items}</Select>
                 <FormHelperText className={this.props.classes.devSubLineTypeTitle}>{I18n.t('Types')}</FormHelperText>
             </FormControl>;
         } else {
@@ -668,6 +668,7 @@ class AlisaDevices extends Component {
                 <DialogContent>
                     <p><span>ID:</span> <span className={this.props.classes.editedId}>{this.state.editId}</span></p>
                     <TextField
+                        variant="standard"
                         style={{width: '100%'}}
                         label={I18n.t('Smart name')}
                         autoFocus
@@ -689,10 +690,12 @@ class AlisaDevices extends Component {
                     <Button
                         variant="contained"
                         startIcon={<IconClose/>}
+                        color="grey"
                         onClick={() => {
-                        this.editedSmartName = null;
-                        this.setState({editId: '', editedSmartName: ''});
-                    }}>{I18n.t('Cancel')}</Button>
+                            this.editedSmartName = null;
+                            this.setState({ editId: '', editedSmartName: '' });
+                        }}
+                    >{I18n.t('Cancel')}</Button>
                 </DialogActions>
             </Dialog>;
         } else {
@@ -723,8 +726,9 @@ class AlisaDevices extends Component {
                         startIcon={<IconDelete/>}
                     >{I18n.t('Delete')}</Button>
                     <Button
+                        color="grey"
                         variant="contained"
-                        onClick={() => this.setState({showConfirmation: ''})}
+                        onClick={() => this.setState({ showConfirmation: '' })}
                         startIcon={<IconClose/>}
                     >{I18n.t('Cancel')}</Button>
                 </DialogActions>
@@ -816,15 +820,18 @@ class AlisaDevices extends Component {
                 </div>
             </DialogContent>
             <DialogActions>
-                <Button variant="outlined" onClick={() => {
-                    this.setState({showListOfDevices: false});
-                    const lines = this.state.devices.map(item => item.name);
-                    copy(lines.join('\n'));
-                }}
-                        color="primary"
-                        startIcon={<IconCopy/>}
+                <Button
+                    variant="outlined"
+                        onClick={() => {
+                        this.setState({showListOfDevices: false});
+                        const lines = this.state.devices.map(item => item.name);
+                        copy(lines.join('\n'));
+                    }}
+                    color="primary"
+                    startIcon={<IconCopy/>}
                 >{I18n.t('Copy to clipboard')}</Button>
                 <Button
+                    color="grey"
                     variant="contained"
                     startIcon={<IconClose/>}
                     onClick={() => this.setState({showListOfDevices: false})} autoFocus>{I18n.t('Close')}</Button>
@@ -846,6 +853,7 @@ class AlisaDevices extends Component {
                  size="small" aria-label="List of devices" className={this.props.classes.button}
                  onClick={() => this.setState({showListOfDevices: true})} disabled={this.state.browse}><IconList/></Fab>
             <TextField
+                variant="standard"
                 placeholder={I18n.t('Filter')}
                 className={this.state.filter}
                 value={this.state.filter}

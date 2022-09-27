@@ -1,20 +1,20 @@
 import React from 'react';
-import {withStyles} from '@material-ui/core/styles';
-import { MuiThemeProvider } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
+import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 
-import AppBar from '@material-ui/core/AppBar';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import GenericApp from '@iobroker/adapter-react/GenericApp';
-import Loader from '@iobroker/adapter-react/Components/Loader'
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Button from '@material-ui/core/Button';
+import AppBar from '@mui/material/AppBar';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import GenericApp from '@iobroker/adapter-react-v5/GenericApp';
+import Loader from '@iobroker/adapter-react-v5/Components/Loader'
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Button from '@mui/material/Button';
 
-import I18n from '@iobroker/adapter-react/i18n';
+import I18n from '@iobroker/adapter-react-v5/i18n';
 import TabOptions from './Tabs/Options';
 import TabExtended from './Tabs/Extended';
 import TabServices from './Tabs/Services';
@@ -117,6 +117,7 @@ class App extends GenericApp {
                 </DialogContent>
                 <DialogActions>
                     <Button
+                        color="grey"
                         variant="contained"
                         onClick={() => this.setState({showAckTempPasswordDialog: false}, () => setTimeout(() => this.setState({showAckTempPasswordDialog: true}), 1000))} autoFocus>
                         {I18n.t('Not understood')}
@@ -135,104 +136,108 @@ class App extends GenericApp {
 
     render() {
         if (!this.state.loaded) {
-            return <MuiThemeProvider theme={this.state.theme}>
-                <Loader theme={this.state.themeType} />
-            </MuiThemeProvider>;
+            return <StyledEngineProvider injectFirst>
+                <ThemeProvider theme={this.state.theme}>
+                    <Loader theme={this.state.themeType} />
+                </ThemeProvider>
+            </StyledEngineProvider>;
         }
 
-        return <MuiThemeProvider theme={this.state.theme}>
-            <div className="App" style={{background: this.state.theme.palette.background.default, color: this.state.theme.palette.text.primary}}>
-                <AppBar position="static">
-                    <Tabs value={this.getSelectedTab()} onChange={(e, index) => this.selectTab(e.target.parentNode.dataset.name, index)} scrollButtons="auto">
-                        <Tab label={I18n.t('Options')} data-name="options" />
-                        <Tab label={I18n.t('Smart enums')} data-name="enums" />
-                        {this.state.native.amazonAlexa && <Tab selected={this.state.selectedTab === 'alexa'} label={I18n.t('Alexa devices')} data-name="alexa" />}
-                        {this.state.native.googleHome && <Tab selected={this.state.selectedTab === 'google'} label={I18n.t('Google devices')} data-name="google" />}
-                        {this.state.native.yandexAlisa && <Tab selected={this.state.selectedTab === 'alisa'} label={I18n.t('Alisa devices')} data-name="alisa" />}
-                        <Tab label={I18n.t('Extended options')} data-name="extended" />
-                        <Tab label={I18n.t('Services and IFTTT')} data-name="services" />
-                    </Tabs>
-                </AppBar>
+        return <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={this.state.theme}>
+                <div className="App" style={{background: this.state.theme.palette.background.default, color: this.state.theme.palette.text.primary}}>
+                    <AppBar position="static">
+                        <Tabs value={this.getSelectedTab()} onChange={(e, index) => this.selectTab(e.target.dataset.name, index)} scrollButtons="auto">
+                            <Tab label={I18n.t('Options')} data-name="options" />
+                            <Tab label={I18n.t('Smart enums')} data-name="enums" />
+                            {this.state.native.amazonAlexa && <Tab selected={this.state.selectedTab === 'alexa'} label={I18n.t('Alexa devices')} data-name="alexa" />}
+                            {this.state.native.googleHome && <Tab selected={this.state.selectedTab === 'google'} label={I18n.t('Google devices')} data-name="google" />}
+                            {this.state.native.yandexAlisa && <Tab selected={this.state.selectedTab === 'alisa'} label={I18n.t('Alisa devices')} data-name="alisa" />}
+                            <Tab label={I18n.t('Extended options')} data-name="extended" />
+                            <Tab label={I18n.t('Services and IFTTT')} data-name="services" />
+                        </Tabs>
+                    </AppBar>
 
-                <div className={this.isIFrame ? this.props.classes.tabContentIFrame : this.props.classes.tabContent}>
-                    {(this.state.selectedTab === 'options' || !this.state.selectedTab) && <TabOptions
-                        key="options"
-                        common={this.common}
-                        socket={this.socket}
-                        native={this.state.native}
-                        onError={text => this.setState({errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text})}
-                        onLoad={native => this.onLoadConfig(native)}
-                        instance={this.instance}
-                        adapterName={this.adapterName}
-                        changed={this.state.changed}
-                        onChange={(attr, value, cb) => this.updateNativeValue(attr, value, cb)}
-                    />}
-                    {this.state.selectedTab === 'enums' && <TabEnums
-                        key="enums"
-                        common={this.common}
-                        socket={this.socket}
-                        native={this.state.native}
-                        onError={text => this.setState({errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text})}
-                        instance={this.instance}
-                        adapterName={this.adapterName}
-                    />}
-                    {this.state.selectedTab === 'alexa' && <TabAlexaSmartNames
-                        key="alexa"
-                        themeType={this.state.themeType}
-                        common={this.common}
-                        socket={this.socket}
-                        native={this.state.native}
-                        onError={text => this.setState({errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text})}
-                        adapterName={this.adapterName}
-                        instance={this.instance}
-                    />}
-                        {this.state.selectedTab === 'google' && <TabGoogleSmartNames
-                        key="google"
-                        themeType={this.state.themeType}
-                        common={this.common}
-                        socket={this.socket}
-                        native={this.state.native}
-                        onError={text => this.setState({errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text})}
-                        adapterName={this.adapterName}
-                        instance={this.instance}
-                    />}
-                    {this.state.selectedTab === 'alisa' && <TabAlisaSmartNames
-                        key="alisa"
-                        themeType={this.state.themeType}
-                        common={this.common}
-                        socket={this.socket}
-                        native={this.state.native}
-                        onError={text => this.setState({errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text})}
-                        adapterName={this.adapterName}
-                        instance={this.instance}
-                    />}
-                    {this.state.selectedTab === 'extended' && <TabExtended
-                        key="extended"
-                        common={this.common}
-                        socket={this.socket}
-                        native={this.state.native}
-                        onError={text => this.setState({errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text})}
-                        instance={this.instance}
-                        adapterName={this.adapterName}
-                        onChange={(attr, value) => this.updateNativeValue(attr, value)}
-                    />}
-                    {this.state.selectedTab === 'services' && <TabServices
-                        key="services"
-                        common={this.common}
-                        socket={this.socket}
-                        native={this.state.native}
-                        onError={text => this.setState({errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text})}
-                        instance={this.instance}
-                        adapterName={this.adapterName}
-                        onShowError={error => this.showError(error)}
-                        onChange={(attr, value) => this.updateNativeValue(attr, value)}
-                    />}
+                    <div className={this.isIFrame ? this.props.classes.tabContentIFrame : this.props.classes.tabContent}>
+                        {(this.state.selectedTab === 'options' || !this.state.selectedTab) && <TabOptions
+                            key="options"
+                            common={this.common}
+                            socket={this.socket}
+                            native={this.state.native}
+                            onError={text => this.setState({errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text})}
+                            onLoad={native => this.onLoadConfig(native)}
+                            instance={this.instance}
+                            adapterName={this.adapterName}
+                            changed={this.state.changed}
+                            onChange={(attr, value, cb) => this.updateNativeValue(attr, value, cb)}
+                        />}
+                        {this.state.selectedTab === 'enums' && <TabEnums
+                            key="enums"
+                            common={this.common}
+                            socket={this.socket}
+                            native={this.state.native}
+                            onError={text => this.setState({errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text})}
+                            instance={this.instance}
+                            adapterName={this.adapterName}
+                        />}
+                        {this.state.selectedTab === 'alexa' && <TabAlexaSmartNames
+                            key="alexa"
+                            themeType={this.state.themeType}
+                            common={this.common}
+                            socket={this.socket}
+                            native={this.state.native}
+                            onError={text => this.setState({errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text})}
+                            adapterName={this.adapterName}
+                            instance={this.instance}
+                        />}
+                            {this.state.selectedTab === 'google' && <TabGoogleSmartNames
+                            key="google"
+                            themeType={this.state.themeType}
+                            common={this.common}
+                            socket={this.socket}
+                            native={this.state.native}
+                            onError={text => this.setState({errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text})}
+                            adapterName={this.adapterName}
+                            instance={this.instance}
+                        />}
+                        {this.state.selectedTab === 'alisa' && <TabAlisaSmartNames
+                            key="alisa"
+                            themeType={this.state.themeType}
+                            common={this.common}
+                            socket={this.socket}
+                            native={this.state.native}
+                            onError={text => this.setState({errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text})}
+                            adapterName={this.adapterName}
+                            instance={this.instance}
+                        />}
+                        {this.state.selectedTab === 'extended' && <TabExtended
+                            key="extended"
+                            common={this.common}
+                            socket={this.socket}
+                            native={this.state.native}
+                            onError={text => this.setState({errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text})}
+                            instance={this.instance}
+                            adapterName={this.adapterName}
+                            onChange={(attr, value) => this.updateNativeValue(attr, value)}
+                        />}
+                        {this.state.selectedTab === 'services' && <TabServices
+                            key="services"
+                            common={this.common}
+                            socket={this.socket}
+                            native={this.state.native}
+                            onError={text => this.setState({errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text})}
+                            instance={this.instance}
+                            adapterName={this.adapterName}
+                            onShowError={error => this.showError(error)}
+                            onChange={(attr, value) => this.updateNativeValue(attr, value)}
+                        />}
+                    </div>
+                    {this.renderError()}
+                    {this.renderSaveCloseButtons()}
+                    {this.renderAckTempPasswordDialog()}
                 </div>
-                {this.renderError()}
-                {this.renderSaveCloseButtons()}
-                {this.renderAckTempPasswordDialog()}
-            </div>
-        </MuiThemeProvider>;
+            </ThemeProvider>
+        </StyledEngineProvider>;
     }
 }
 
