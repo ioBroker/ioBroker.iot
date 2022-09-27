@@ -94,6 +94,7 @@ class Options extends Component {
     };
 
     checkPassword(pass) {
+        pass = (pass || '').toString();
         if (pass.length < 8 || !pass.match(/[a-z]/) || !pass.match(/[A-Z]/) || !pass.match(/\d/)) {
             return I18n.t('invalid_password_warning');
         } else {
