@@ -269,6 +269,10 @@ Following types are supported:
 -->
 
 ## Changelog
+
+### __WORK IN PROGRESS__
+* (Apollon77) Fix crash case
+
 ### 1.12.1 (2022-09-27)
 * (bluefox) Corrected error in GUI with empty password
 
