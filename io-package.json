@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "iot",
-    "version": "1.12.1",
+    "version": "1.12.2",
     "news": {
+      "1.12.2": {
+        "en": "Fix crash case",
+        "de": "Fehlerbehebung",
+        "ru": "Fix случай аварии",
+        "pt": "Corrigir caso de acidente",
+        "nl": "Vertaling:",
+        "fr": "Trouble de l ' accident",
+        "it": "Caso di arresto fisso",
+        "es": "Caso de accidente fijo",
+        "pl": "Sprawa katastrofy",
+        "zh-cn": "九. 事故"
+      },
       "1.12.1": {
         "en": "Corrected error in GUI with empty password",
         "de": "Fehler behoben in GUI mit leerem Passwort",
@@ -74,18 +86,6 @@
         "es": "Alisa: actualización para sensor binario \"movimiento\" y \"contacto\"",
         "pl": "Alisa: aktualizacja czujnika binarnego „ruchu” i „kontaktu”",
         "zh-cn": "Alisa：二进制传感器“运动”和“接触”的更新"
-      },
-      "1.11.4": {
-        "en": "Fix crash cases reported by Sentry",
-        "de": "Von Sentry gemeldete Absturzfälle beheben",
-        "ru": "Исправить случаи сбоев, о которых сообщил Sentry",
-        "pt": "Corrigir casos de travamento relatados pelo Sentinela",
-        "nl": "Herstel crashgevallen gemeld door Sentry",
-        "fr": "Correction des cas de plantage signalés par Sentry",
-        "it": "Risolvi i casi di crash segnalati da Sentry",
-        "es": "Solucionar casos de fallas informados por Sentry",
-        "pl": "Napraw przypadki awarii zgłoszone przez Sentry",
-        "zh-cn": "修复 Sentry 报告的崩溃案例"
       }
     },
     "title": "IoT Assistants",
