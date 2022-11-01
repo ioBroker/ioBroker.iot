@@ -23,7 +23,7 @@
   },
   "optionalDependencies": {
     "sharp": "0.30.7",
-    "canvas": "^2.10.1"
+    "canvas": "^2.10.2"
   },
   "dependencies": {
     "@iobroker/adapter-core": "^2.6.7",
