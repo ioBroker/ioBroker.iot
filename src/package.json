@@ -10,7 +10,7 @@
         "clsx": "^1.2.1",
         "babel-eslint": "^10.1.0",
         "@sentry/browser": "^7.14.0",
-        "@sentry/integrations": "^7.14.0",
+        "@sentry/integrations": "^7.17.3",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-icons": "^4.4.0",
