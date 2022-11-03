@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "1.12.2",
+    "version": "1.12.3",
     "news": {
+      "1.12.3": {
+        "en": "Added ukrainian language\nCorrected blockly for unknown languages",
+        "de": "Ukrainische Sprache hinzugefügt\nBlockiert für unbekannte Sprachen",
+        "ru": "Добавлен украинский язык\nИсправлена блокировка для неизвестных языков",
+        "pt": "Adicionado idioma ukrainian\nBloqueio correto para línguas desconhecidas",
+        "nl": "Toegevoegd Oekraïense taal\nQuality over Quantity (QoQ) Releases Vertaling:",
+        "fr": "Ajout de la langue ukrainienne\nCorrection bloquée pour les langues inconnues",
+        "it": "Aggiunto lingua ucraino\nCorretto in blocco per le lingue sconosciute",
+        "es": "Añadido el idioma ucraniano\nCorregido de forma bloqueada para idiomas desconocidos",
+        "pl": "Język ukrainowski\nZaklęty blok dla nieznanych języków",
+        "uk": "Додано українську мову\nВиправлено блокування для невідомих мов",
+        "zh-cn": "增 编\n对不明语文的更正"
+      },
       "1.12.2": {
         "en": "Fix crash case",
         "de": "Fehlerbehebung",
@@ -74,18 +87,6 @@
         "es": "Trató de corregir la creación de clave URL para Google home",
         "pl": "Poprawić kluczową rolę URL w Google home",
         "zh-cn": "纠正谷歌家的关键创建"
-      },
-      "1.11.5": {
-        "en": "Alisa: update for binary-sensor \"motion\" and \"contact\"",
-        "de": "Alisa: Update für Binärsensor „Bewegung“ und „Kontakt“",
-        "ru": "Алиса: обновление для бинарного датчика \"движения\" и \"контакта\"",
-        "pt": "Alisa: atualização para \"movimento\" e \"contato\" do sensor binário",
-        "nl": "Alisa: update voor binaire sensor \"beweging\" en \"contact\"",
-        "fr": "Alisa : mise à jour pour les capteurs binaires \"mouvement\" et \"contact\"",
-        "it": "Alisa: aggiornamento per sensore binario \"movimento\" e \"contatto\"",
-        "es": "Alisa: actualización para sensor binario \"movimiento\" y \"contacto\"",
-        "pl": "Alisa: aktualizacja czujnika binarnego „ruchu” i „kontaktu”",
-        "zh-cn": "Alisa：二进制传感器“运动”和“接触”的更新"
       }
     },
     "title": "IoT Assistants",

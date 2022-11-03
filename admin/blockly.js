@@ -75,32 +75,32 @@ Blockly.Blocks['ifttt_iot'] = {
         }
 
         this.appendDummyInput('INSTANCE')
-            .appendField(Blockly.Translate('ifttt_iot')
+            .appendField(Blockly.Words['ifttt_iot'][systemLang])
             .appendField(new Blockly.FieldDropdown(options), 'INSTANCE');
 
         this.appendValueInput('EVENT')
-            .appendField(Blockly.Translate('ifttt_event'));
+            .appendField(Blockly.Words['ifttt_event'][systemLang]);
 
         var input = this.appendValueInput('VALUE1')
-            .appendField(Blockly.Translate('ifttt_value1'));
+            .appendField(Blockly.Words['ifttt_value1'][systemLang]);
         if (input.connection) input.connection._optional = true;
 
         input = this.appendValueInput('VALUE2')
-            .appendField(Blockly.Translate('ifttt_value2'));
+            .appendField(Blockly.Words['ifttt_value2'][systemLang]);
         if (input.connection) input.connection._optional = true;
 
         input = this.appendValueInput('VALUE3')
-            .appendField(Blockly.Translate('ifttt_value3'));
+            .appendField(Blockly.Words['ifttt_value3'][systemLang]);
         if (input.connection) input.connection._optional = true;
 
         this.appendDummyInput('LOG')
-            .appendField(Blockly.Translate('ifttt_log'))
+            .appendField(Blockly.Words['ifttt_log'][systemLang])
             .appendField(new Blockly.FieldDropdown([
-                [Blockly.Translate('ifttt_log_none'),  ''],
-                [Blockly.Translate('ifttt_log_info'),  'log'],
-                [Blockly.Translate('ifttt_log_debug'), 'debug'],
-                [Blockly.Translate('ifttt_log_warn'),  'warn'],
-                [Blockly.Translate('ifttt_log_error'), 'error']
+                [Blockly.Words['ifttt_log_none'][systemLang],  ''],
+                [Blockly.Words['ifttt_log_info'][systemLang],  'log'],
+                [Blockly.Words['ifttt_log_debug'][systemLang], 'debug'],
+                [Blockly.Words['ifttt_log_warn'][systemLang],  'warn'],
+                [Blockly.Words['ifttt_log_error'][systemLang], 'error']
             ]), 'LOG');
 
         this.setInputsInline(false);
@@ -108,8 +108,8 @@ Blockly.Blocks['ifttt_iot'] = {
         this.setNextStatement(true, null);
 
         this.setColour(Blockly.Sendto.HUE);
-        this.setTooltip(Blockly.Translate('ifttt_tooltip'));
-        this.setHelpUrl(Blockly.Translate('ifttt_help'));
+        this.setTooltip(Blockly.Words['ifttt_tooltip'][systemLang]);
+        this.setHelpUrl(Blockly.Words['ifttt_help'][systemLang]);
     }
 };
 
