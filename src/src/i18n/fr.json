@@ -182,5 +182,7 @@
   "Too many devices (%s) configured. Max number is 300": "Trop de périphériques (%s) configurés. Le nombre maximum est 300 !",
   "Allow remote access": "Autoriser l'accès à distance",
   "Admin instance": "Instance d'administration",
-  "Web instance": "Instance Web"
+  "Web instance": "Instance Web",
+  "Device %s will be disabled.": "Le périphérique %s sera désactivé.",
+  "Delete": "Effacer"
 }

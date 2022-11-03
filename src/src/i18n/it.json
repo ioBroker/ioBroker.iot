@@ -182,5 +182,7 @@
   "Too many devices (%s) configured. Max number is 300": "Troppi dispositivi (%s) configurati. Il numero massimo è 300!",
   "Allow remote access": "Consenti accesso remoto",
   "Admin instance": "Istanza amministratore",
-  "Web instance": "Istanza web"
+  "Web instance": "Istanza web",
+  "Device %s will be disabled.": "Il dispositivo %s sarà disabilitato.",
+  "Delete": "Elimina"
 }

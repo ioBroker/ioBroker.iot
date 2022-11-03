@@ -182,5 +182,7 @@
   "Too many devices (%s) configured. Max number is 300": "Настроено слишком много устройств (%s). Максимальное количество - 300!",
   "Allow remote access": "Разрешить удаленный доступ",
   "Admin instance": "Экземпляр администратора",
-  "Web instance": "Веб-экземпляр"
+  "Web instance": "Веб-экземпляр",
+  "Device %s will be disabled.": "Устройство %s будет отключено.",
+  "Delete": "Удалить"
 }
