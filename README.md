@@ -269,7 +269,7 @@ Following types are supported:
 -->
 
 ## Changelog
-### 1.12.3 (2022-11-03)
+### **WORK IN PROGRESS**
 * (bluefox) Added ukrainian language
 * (bluefox) Corrected blockly for unknown languages
 
