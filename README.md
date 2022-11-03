@@ -269,6 +269,10 @@ Following types are supported:
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Added ukrainian language
+* (bluefox) Corrected blockly for unknown languages
+
 ### 1.12.2 (2022-10-01)
 * (Apollon77) Fix crash case
 

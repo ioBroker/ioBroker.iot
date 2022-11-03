@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
@@ -16,8 +16,8 @@ import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 import Utils from '@iobroker/adapter-react-v5/Components/Utils'
 
-import {MdRefresh as IconReload} from 'react-icons/md';
-import {MdClose as IconClose} from 'react-icons/md';
+import { MdRefresh as IconReload } from 'react-icons/md';
+import { MdClose as IconClose } from 'react-icons/md';
 
 import I18n from '@iobroker/adapter-react-v5/i18n';
 import Logo from '@iobroker/adapter-react-v5/Components/Logo';
@@ -75,8 +75,8 @@ class Options extends Component {
             errorWithPercent: false,
         };
 
-        this.props.socket.getState(`system.adapter.${this.props.adapterName}.${this.props.instance}.alive`).then(state =>
-            this.setState({isInstanceAlive: state && state.val}));
+        this.props.socket.getState(`system.adapter.${this.props.adapterName}.${this.props.instance}.alive`)
+            .then(state => this.setState({ isInstanceAlive: state && state.val }));
     }
 
     componentDidMount() {
@@ -89,7 +89,7 @@ class Options extends Component {
 
     onAliveChanged = (id, state) => {
         if (id === `system.adapter.${this.props.adapterName}.${this.props.instance}.alive`) {
-            this.setState({isInstanceAlive: state && state.val});
+            this.setState({ isInstanceAlive: state && state.val });
         }
     };
 
@@ -102,17 +102,18 @@ class Options extends Component {
         }
     }
 
-    renderInput(title, attr, type) {
+    renderInput(title, attr, type, autoComplete) {
         const error = attr === 'pass' && this.checkPassword(this.props.native[attr]);
         return <TextField
             variant="standard"
-            label={ I18n.t(title) }
-            error={ !!error  }
-            className={ this.props.classes.input }
-            value={ this.props.native[attr] }
-            type={ type || 'text' }
-            helperText={ error || '' }
-            onChange={ e => this.props.onChange(attr, e.target.value) }
+            label={I18n.t(title)}
+            error={!!error}
+            autoComplete={autoComplete || ''}
+            className={this.props.classes.input}
+            value={this.props.native[attr]}
+            type={type || 'text'}
+            helperText={error || ''}
+            onChange={e => this.props.onChange(attr, e.target.value)}
             margin="normal"
         />;
     }
@@ -142,9 +143,9 @@ class Options extends Component {
                         color="grey"
                         title="Debug"
                         onClick={() => this.onDebug()}
-                        style={{opacity: this.state.debugVisible ? 1 : 0}}
-                        onMouseEnter={() => this.setState({debugVisible: true})}
-                        onMouseLeave={() => this.setState({debugVisible: false})}
+                        style={{ opacity: this.state.debugVisible ? 1 : 0 }}
+                        onMouseEnter={() => this.setState({ debugVisible: true })}
+                        onMouseLeave={() => this.setState({ debugVisible: false })}
                     >Debug</Button> : null}
             </CardActions>
         </Card>;
@@ -175,13 +176,13 @@ class Options extends Component {
     resetCerts(forceUserCreate) {
         this.setState({ inAction: true });
 
-        this.props.socket.setState('iot.' + this.props.instance + '.certs.private', {val: '', ack: true})
-            .then(() => this.props.socket.setState('iot.' + this.props.instance + '.certs.id', {val: '', ack: true}))
-            .then(() => this.props.socket.setState('iot.' + this.props.instance + '.certs.public', {val: '', ack: true}))
-            .then(() => this.props.socket.setState('iot.' + this.props.instance + '.certs.certificate', {val: '', ack: true}))
+        this.props.socket.setState(`iot.${this.props.instance}.certs.private`, { val: '', ack: true })
+            .then(() => this.props.socket.setState(`iot.${this.props.instance}.certs.id`, { val: '', ack: true }))
+            .then(() => this.props.socket.setState(`iot.${this.props.instance}.certs.public`, { val: '', ack: true }))
+            .then(() => this.props.socket.setState(`iot.${this.props.instance}.certs.certificate`, { val: '', ack: true }))
             .then(() => {
                 if (forceUserCreate) {
-                    return this.props.socket.setState('iot.' + this.props.instance + '.certs.forceUserCreate', {val: true, ack: true});
+                    return this.props.socket.setState(`iot.${this.props.instance}.certs.forceUserCreate`, { val: true, ack: true });
                 } else {
                     return Promise.resolve();
                 }
@@ -197,9 +198,9 @@ class Options extends Component {
                     return this.props.socket.setObject('system.adapter.iot.' + this.props.instance, obj);
                 }
             })
-            .then(() => this.setState({toast: I18n.t('Certificates will be updated after start')}))
+            .then(() => this.setState({ toast: I18n.t('Certificates will be updated after start') }))
             .catch(err => this.props.onError(err))
-            .then(() => this.setState({inAction: false}));
+            .then(() => this.setState({ inAction: false }));
     }
 
     renderToast() {
@@ -213,10 +214,8 @@ class Options extends Component {
             }}
             open={true}
             autoHideDuration={6000}
-            onClose={() => this.setState({toast: ''})}
-            ContentProps={{
-                'aria-describedby': 'message-id',
-            }}
+            onClose={() => this.setState({ toast: '' })}
+            ContentProps={{'aria-describedby': 'message-id'}}
             message={<span id="message-id">{this.state.toast}</span>}
             action={[
                 <IconButton
@@ -224,7 +223,7 @@ class Options extends Component {
                     aria-label="Close"
                     color="inherit"
                     className={this.props.classes.close}
-                    onClick={() => this.setState({toast: ''})}
+                    onClick={() => this.setState({ toast: '' })}
                 >
                     <IconClose />
                 </IconButton>,
@@ -233,7 +232,7 @@ class Options extends Component {
     }
 
     renderCheckbox(title, attr, style) {
-        return <FormControlLabel key={attr} style={Object.assign({paddingTop: 5}, style)} className={this.props.classes.controlElement}
+        return <FormControlLabel key={attr} style={Object.assign({ paddingTop: 5 }, style)} className={this.props.classes.controlElement}
               control={
                   <Checkbox
                       checked={this.props.native[attr]}
@@ -249,23 +248,25 @@ class Options extends Component {
         return <form className={ this.props.classes.tab }>
             <Logo
                 classes={{}}
-                instance={ this.props.instance }
-                common={ this.props.common }
-                native={ this.props.native }
-                onError={ text => this.setState({errorText: text}) }
-                onLoad={ this.props.onLoad }
+                instance={this.props.instance}
+                common={this.props.common}
+                native={this.props.native}
+                onError={text => this.setState({ errorText: text })}
+                onLoad={this.props.onLoad}
             />
-            <div className={clsx(this.props.classes.column, this.props.classes.columnSettings) }>
-                { this.renderInput('ioBroker.pro Login', 'login') }<br/>
-                { this.renderInput('ioBroker.pro Password', 'pass', 'password') }<br/>
-                { this.renderCheckbox('Amazon Alexa', 'amazonAlexa') }
-                <FormControlLabel key="googleHome" className={ this.props.classes.controlElement }
-                                  style={{ marginTop: 5 }}
+            <div className={clsx(this.props.classes.column, this.props.classes.columnSettings)}>
+                {this.renderInput('ioBroker.pro Login', 'login', null, 'username')}<br/>
+                {this.renderInput('ioBroker.pro Password', 'pass', 'password', 'current-password')}<br/>
+                {this.renderCheckbox('Amazon Alexa', 'amazonAlexa')}
+                <FormControlLabel
+                    key="googleHome"
+                    className={this.props.classes.controlElement}
+                    style={{ marginTop: 5 }}
                     control={
                       <Checkbox
                           checked={this.props.native.googleHome}
                           onChange={() => {
-                              // activate alexa if google home is on (temporary)
+                              // activate alexa if Google home is on (temporary)
                               const newVal = !this.props.native.googleHome;
                               this.props.onChange('googleHome', newVal, () =>
                                   newVal && this.props.onChange('amazonAlexa', true));
@@ -282,14 +283,14 @@ class Options extends Component {
                 {this.props.changed ? <div className={this.props.classes.hintUnsaved}>{I18n.t('Save settings before pressing this button')}</div> : null}
                 <Button
                     variant="outlined"
-                    className={ this.props.classes.button }
-                    disabled={ this.props.changed || this.state.inAction || !this.state.isInstanceAlive }
-                    title={ !this.state.isInstanceAlive ? I18n.t('Instance must be enabled') : '' }
-                    onClick={ () => this.resetCerts() }
+                    className={this.props.classes.button}
+                    disabled={this.props.changed || this.state.inAction || !this.state.isInstanceAlive}
+                    title={!this.state.isInstanceAlive ? I18n.t('Instance must be enabled') : ''}
+                    onClick={() => this.resetCerts()}
                     startIcon={<IconReload />}
                     color="grey"
                 >
-                    { I18n.t('Get new connection certificates') }
+                    {I18n.t('Get new connection certificates')}
                 </Button>
 
                 <p>{I18n.t('new_credentials_tip')}</p>
@@ -298,22 +299,22 @@ class Options extends Component {
                 <Button
                     variant="outlined"
                     color="grey"
-                    className={ this.props.classes.button }
-                    disabled={ this.props.changed || this.state.inAction || !this.state.isInstanceAlive }
-                    title={ !this.state.isInstanceAlive ? I18n.t('Instance must be enabled') : '' }
-                    onClick={ () => this.resetCerts(true) }
+                    className={this.props.classes.button}
+                    disabled={this.props.changed || this.state.inAction || !this.state.isInstanceAlive}
+                    title={!this.state.isInstanceAlive ? I18n.t('Instance must be enabled') : ''}
+                    onClick={() => this.resetCerts(true)}
                     startIcon={<IconReload />}
                 >
-                    { I18n.t('Create IoT credentials anew') }
+                    {I18n.t('Create IoT credentials anew')}
                 </Button>
                 <p>{ Utils.renderTextWithA(I18n.t('forum_tip')) }</p>
-                <p style={{ fontWeight: 'bold' }}>{ Utils.renderTextWithA(I18n.t('help_tip')) }</p>
-                <p style={{ fontWeight: 'bold', paddingTop: 20}}>{ Utils.renderTextWithA(I18n.t('help_link_tip1')) }</p>
-                <p style={{ fontWeight: 'bold' }}>{ Utils.renderTextWithA(I18n.t('help_link_tip2')) }</p>
-                <p style={{ fontWeight: 'bold', color: 'red'}}>{ Utils.renderTextWithA(I18n.t('help_link_tip3')) }</p>
+                <p style={{ fontWeight: 'bold' }}>{Utils.renderTextWithA(I18n.t('help_tip')) }</p>
+                <p style={{ fontWeight: 'bold', paddingTop: 20 }}>{Utils.renderTextWithA(I18n.t('help_link_tip1'))}</p>
+                <p style={{ fontWeight: 'bold' }}>{Utils.renderTextWithA(I18n.t('help_link_tip2'))}</p>
+                <p style={{ fontWeight: 'bold', color: 'red' }}>{Utils.renderTextWithA(I18n.t('help_link_tip3'))}</p>
             </div>
-            <div className={clsx(this.props.classes.column, this.props.classes.columnLogo)}>{this.renderCard() }</div>
-            { this.renderToast() }
+            <div className={clsx(this.props.classes.column, this.props.classes.columnLogo)}>{this.renderCard()}</div>
+            {this.renderToast()}
         </form>;
     }
 }
