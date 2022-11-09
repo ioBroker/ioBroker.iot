@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "1.12.4",
+    "version": "1.12.5",
     "news": {
+      "1.12.5": {
+        "en": "Small changes on configuration GUI",
+        "de": "Kleine Änderungen an der Konfiguration GUI",
+        "ru": "Небольшие изменения на конфигурации GUI",
+        "pt": "Pequenas mudanças na interface gráfica de configuração",
+        "nl": "Kleine veranderingen op vertrouwelijke GUI",
+        "fr": "Petits changements sur la configuration GUI",
+        "it": "Piccoli cambiamenti nella configurazione GUI",
+        "es": "Pequeños cambios en la configuración GUI",
+        "pl": "Małe zmiany w konfiguracji GUI",
+        "uk": "Невеликі зміни конфігурації GUI",
+        "zh-cn": "A. 对组合的小变化"
+      },
       "1.12.4": {
         "en": "Added ukrainian language\nCorrected blockly for unknown languages",
         "de": "Ukrainische Sprache hinzugefügt\nBlockiert für unbekannte Sprachen",
@@ -75,18 +88,6 @@
         "es": "Actualizar las dependencias para permitir una mejor reconstrucción automática",
         "pl": "Odpowiadanie zależności pozwala na lepszą automatyczną przebudowę",
         "zh-cn": "B. 改善自动重建的新的依赖"
-      },
-      "1.11.7": {
-        "en": "Tried to correct URL key creation for Google home",
-        "de": "Versuche, die URL-Schlüssel-Erstellung für Google Home zu korrigieren",
-        "ru": "Попробовал исправить создание ключа URL для дома Google",
-        "pt": "Tentei corrigir a criação de chaves URL para o Google home",
-        "nl": "Geprobeerd om de sleutel te corrigeren voor Google thuis",
-        "fr": "Trié pour corriger la création de clé URL pour Google home",
-        "it": "Ho cercato di correggere la creazione di chiave URL per la casa di Google",
-        "es": "Trató de corregir la creación de clave URL para Google home",
-        "pl": "Poprawić kluczową rolę URL w Google home",
-        "zh-cn": "纠正谷歌家的关键创建"
       }
     },
     "title": "IoT Assistants",

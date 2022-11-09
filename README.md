@@ -269,7 +269,7 @@ Following types are supported:
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 1.12.5 (2022-11-09)
 * (bluefox) Small changes on configuration GUI
 
 ### 1.12.4 (2022-11-03)
