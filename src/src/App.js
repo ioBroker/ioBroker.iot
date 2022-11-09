@@ -28,12 +28,18 @@ const styles = theme => ({
     tabContent: {
         padding: 10,
         height: 'calc(100% - 64px - 48px - 20px)',
-        overflow: 'auto'
+        overflow: 'auto',
     },
     tabContentIFrame: {
         padding: 10,
         height: 'calc(100% - 64px - 48px - 20px - 38px)',
-        overflow: 'auto'
+        overflow: 'auto',
+    },
+    selected: {
+        color: theme.palette.mode === 'dark' ? undefined : '#FFF !important',
+    },
+    indicator: {
+        backgroundColor: theme.palette.mode === 'dark' ? theme.palette.secondary.main : '#FFF',
     }
 });
 
@@ -148,14 +154,19 @@ class App extends GenericApp {
             <ThemeProvider theme={this.state.theme}>
                 <div className="App" style={{background: this.state.theme.palette.background.default, color: this.state.theme.palette.text.primary}}>
                     <AppBar position="static">
-                        <Tabs value={this.getSelectedTab()} onChange={(e, index) => this.selectTab(e.target.dataset.name, index)} scrollButtons="auto">
-                            <Tab label={I18n.t('Options')} data-name="options" />
-                            <Tab label={I18n.t('Smart enums')} data-name="enums" />
-                            {this.state.native.amazonAlexa && <Tab selected={this.state.selectedTab === 'alexa'} label={I18n.t('Alexa devices')} data-name="alexa" />}
-                            {this.state.native.googleHome && <Tab selected={this.state.selectedTab === 'google'} label={I18n.t('Google devices')} data-name="google" />}
-                            {this.state.native.yandexAlisa && <Tab selected={this.state.selectedTab === 'alisa'} label={I18n.t('Alisa devices')} data-name="alisa" />}
-                            <Tab label={I18n.t('Extended options')} data-name="extended" />
-                            <Tab label={I18n.t('Services and IFTTT')} data-name="services" />
+                        <Tabs
+                            value={this.getSelectedTab()}
+                            onChange={(e, index) => this.selectTab(e.target.dataset.name, index)}
+                            scrollButtons="auto"
+                            classes={{ indicator: this.props.classes.indicator }}
+                        >
+                            <Tab classes={{ selected: this.props.classes.selected }} label={I18n.t('Options')} data-name="options" />
+                            <Tab classes={{ selected: this.props.classes.selected }} label={I18n.t('Smart enums')} data-name="enums" />
+                            {this.state.native.amazonAlexa && <Tab classes={{ selected: this.props.classes.selected }} selected={this.state.selectedTab === 'alexa'} label={I18n.t('Alexa devices')} data-name="alexa" />}
+                            {this.state.native.googleHome && <Tab classes={{ selected: this.props.classes.selected }} selected={this.state.selectedTab === 'google'} label={I18n.t('Google devices')} data-name="google" />}
+                            {this.state.native.yandexAlisa && <Tab classes={{ selected: this.props.classes.selected }} selected={this.state.selectedTab === 'alisa'} label={I18n.t('Alisa devices')} data-name="alisa" />}
+                            <Tab classes={{ selected: this.props.classes.selected }} label={I18n.t('Extended options')} data-name="extended" />
+                            <Tab classes={{ selected: this.props.classes.selected }} label={I18n.t('Services and IFTTT')} data-name="services" />
                         </Tabs>
                     </AppBar>
 

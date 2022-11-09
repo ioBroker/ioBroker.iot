@@ -269,6 +269,9 @@ Following types are supported:
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Small changes on configuration GUI
+
 ### 1.12.4 (2022-11-03)
 * (bluefox) Added ukrainian language
 * (bluefox) Corrected blockly for unknown languages
