@@ -29,7 +29,7 @@
     "@iobroker/adapter-core": "^2.6.7",
     "aws-iot-device-sdk": "^2.2.12",
     "echarts": "^4.9.0",
-    "iobroker.type-detector": "^1.1.0",
+    "iobroker.type-detector": "^1.1.1",
     "jsdom": "^20.0.3",
     "mime": "^3.0.0",
     "moment": "^2.29.4",
