@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "1.12.5",
+    "version": "1.13.0",
     "news": {
+      "1.13.0": {
+        "en": "Add support vor Custom Skill v2",
+        "de": "Unterstützung vor Custom Skill v2 hinzufügen",
+        "ru": "Добавить поддержку vor Custom Skill v2",
+        "pt": "Adicionar suporte vor Habilidade personalizada v2",
+        "nl": "Voeg steun aan de vor Custom Skill v2",
+        "fr": "Ajouter le support vor Custom Skill v2",
+        "it": "Aggiungi supporto vor Custom Skill v2",
+        "es": "Añadir soporte vor Habilidad personalizada v2",
+        "pl": "Wspiera celne Skill v2",
+        "uk": "Додати підтримку vor Спеціальна навички v2",
+        "zh-cn": "A. 增加支持家庭技能 v2"
+      },
       "1.12.5": {
         "en": "Small changes on configuration GUI",
         "de": "Kleine Änderungen an der Konfiguration GUI",
@@ -76,18 +89,6 @@
         "es": "Control de temperatura fijo para termostatos vía alexa",
         "pl": "Temperatura Fix kontroluje termosty poprzez alexa",
         "zh-cn": "B. 通过单一法控制动荡局势的固定温度"
-      },
-      "1.11.8": {
-        "en": "Update dependencies to allow better automatic rebuild",
-        "de": "Aktualisieren Sie Abhängigkeiten, um eine bessere automatische Wiederherstellung zu ermöglichen",
-        "ru": "Обновить зависимости, чтобы лучше автоматическое восстановление",
-        "pt": "Atualizar dependências para permitir uma melhor reconstrução automática",
-        "nl": "Update afhankelijkheid om betere automatische reconstructie toe te staan",
-        "fr": "Mettre à jour les dépendances pour permettre une meilleure reconstruction automatique",
-        "it": "Aggiornare le dipendenze per consentire una migliore ricostruzione automatica",
-        "es": "Actualizar las dependencias para permitir una mejor reconstrucción automática",
-        "pl": "Odpowiadanie zależności pozwala na lepszą automatyczną przebudowę",
-        "zh-cn": "B. 改善自动重建的新的依赖"
       }
     },
     "title": "IoT Assistants",
