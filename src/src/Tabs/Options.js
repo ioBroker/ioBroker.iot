@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
-import clsx from 'clsx';
 
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -14,13 +13,11 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
-import Utils from '@iobroker/adapter-react-v5/Components/Utils'
 
 import { MdRefresh as IconReload } from 'react-icons/md';
 import { MdClose as IconClose } from 'react-icons/md';
 
-import I18n from '@iobroker/adapter-react-v5/i18n';
-import Logo from '@iobroker/adapter-react-v5/Components/Logo';
+import { I18n, Utils, Logo } from '@iobroker/adapter-react-v5';
 
 const styles = theme => ({
     tab: {
@@ -254,7 +251,7 @@ class Options extends Component {
                 onError={text => this.setState({ errorText: text })}
                 onLoad={this.props.onLoad}
             />
-            <div className={clsx(this.props.classes.column, this.props.classes.columnSettings)}>
+            <div className={Utils.clsx(this.props.classes.column, this.props.classes.columnSettings)}>
                 {this.renderInput('ioBroker.pro Login', 'login', null, 'username')}<br/>
                 {this.renderInput('ioBroker.pro Password', 'pass', 'password', 'current-password')}<br/>
                 {this.renderCheckbox('Amazon Alexa', 'amazonAlexa')}
@@ -313,7 +310,7 @@ class Options extends Component {
                 <p style={{ fontWeight: 'bold' }}>{Utils.renderTextWithA(I18n.t('help_link_tip2'))}</p>
                 <p style={{ fontWeight: 'bold', color: 'red' }}>{Utils.renderTextWithA(I18n.t('help_link_tip3'))}</p>
             </div>
-            <div className={clsx(this.props.classes.column, this.props.classes.columnLogo)}>{this.renderCard()}</div>
+            <div className={Utils.clsx(this.props.classes.column, this.props.classes.columnLogo)}>{this.renderCard()}</div>
             {this.renderToast()}
         </form>;
     }

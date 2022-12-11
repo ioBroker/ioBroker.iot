@@ -159,8 +159,19 @@ IFTTT service is allowed only if IFTTT key is set.
 
 Reserved names are `ifttt`, `text2command`, `simpleApi`, `swagger`. These must be used without the `custom_` prefix.
 
+You can ask by message the valid URL for service too:
+```
+sendTo('iot.0', 'getServiceEndpoint', {serviceName: 'custom_myService'}, result => 
+  console.log(JSON.stringify(result)));
+  // Output: {"result":
+  //  {"url": "https://service.iobroker.in/v1/iotService?key=xxx&user=uuu&service=custom_myService",
+  //   "stateID":"iot.0.services.myService",
+  //   "warning":"Service name is not in white list"
+  //  }}
+```
+
 ### `text2command`
-You may write "text2command" in white list, you can send POST request to `https://service.iobroker.in/v1/iotService?service=text2command&key=<user-app-key>&user=<USER_EMAIL>` to write data into *text2command.X.text* variable.
+You may write `text2command` in white list, you can send POST request to `https://service.iobroker.in/v1/iotService?service=text2command&key=<user-app-key>&user=<USER_EMAIL>` to write data into *text2command.X.text* variable.
 
 You can use GET method too `https://service.iobroker.in/v1/iotService?service=text2command&key=<user-app-key>&user=<USER_EMAIL>&data=<MY COMMAND>`
 
@@ -177,14 +188,14 @@ if `text2command` instance is defined in the configuration dialog, so the questi
 `text2command` must be configured that the expected phrase will be parsed and the answer will be given back.
 
 ### `Javascript`
-There is a possibility to process the question directly with script. It is activated by default if no *text2command* instance is selected.
+There is a possibility to process the question directly with script. It is activated by default if no `text2command` instance is selected.
 
 If `text2command` instance is defined, so this instance must provide the answer and the answer from *script* will be ignored.
 
 The adapter will provide the details in two states with different detail level
 * **smart.lastCommand** contains the received text including an info on type of query (intent). Example: "askDevice Status Rasenmäher"
 * **smart.lastCommandObj*** contains an JSON string that can be parsed to an object containing the following information
-  * **words** contains the received words in an array
+  * **words** contain the received words in an array
   * **intent** contains the type of query. Possible values currently are:
     * v1 Skill: "askDevice", "controlDevice", "actionStart", "actionEnd", "askWhen", "askWhere", "askWho"
     * v2 Skill: "queryIntent" when full said text was captured, "controlDevice" for fallback with only partial text
@@ -203,7 +214,7 @@ If it is a text string then this text will be sent as response to the skill.
 if the text is a JSON object then the following keys can be used:
 * **responseText** needs to contain the text to return to Amazon
 * **shouldEndSession** is a boolean and controls if the session will be closed after the response was spoken or stays open to accept another voice input.
-* **sessionId** needs to contain the sessionId the response is meaned for. Ideally provide it to allow concurrent sessions. If not provided the first session that expects a response is assumed.
+* **sessionId** needs to contain the sessionId the response is meant for. Ideally provide it to allow concurrent sessions. If not provided the first session that expects a response is assumed.
 
 **Return result via the message to iot instance**
 
@@ -269,8 +280,11 @@ Following types are supported:
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Added netatmo support
+
 ### 1.13.0 (2022-12-08)
-* (Apollon77) Add support vor Custom Skill v2
+* (Apollon77) Added support vor Custom Skill v2
 
 ### 1.12.5 (2022-11-09)
 * (bluefox) Small changes on configuration GUI

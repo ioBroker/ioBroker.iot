@@ -40,7 +40,7 @@ const styles = theme => ({
     },
     indicator: {
         backgroundColor: theme.palette.mode === 'dark' ? theme.palette.secondary.main : '#FFF',
-    }
+    },
 });
 
 class App extends GenericApp {

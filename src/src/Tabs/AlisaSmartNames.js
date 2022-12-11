@@ -33,17 +33,15 @@ import { FaMale as IconMotion } from 'react-icons/fa';
 import { FaLink as IconContact } from 'react-icons/fa';
 import IconCopy from '@mui/icons-material/FileCopy';
 import IconClose from '@mui/icons-material/Close';
+import IconCheck from '@mui/icons-material/Check';
 
-import Utils from '@iobroker/adapter-react-v5/Components/Utils'
-import I18n from '@iobroker/adapter-react-v5/i18n';
+import { Utils, I18n } from '@iobroker/adapter-react-v5'
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Dialog from '@mui/material/Dialog';
 import MessageDialog from '@iobroker/adapter-react-v5/Dialogs/Message';
 import DialogSelectID from '@iobroker/adapter-react-v5/Dialogs/SelectID';
-import copy from "copy-to-clipboard";
-import IconCheck from "@mui/icons-material/Check";
 
 const colorOn = '#aba613';
 const colorOff = '#444';
@@ -809,12 +807,12 @@ class AlisaDevices extends Component {
         >
             <DialogTitle id="alert-dialog-title">{I18n.t('List of devices to print out, e.g. to give all device names to your partner.')} <span role="img" aria-label="smile">😄</span></DialogTitle>
             <DialogContent>
-                <div className={ classes.headerRow } >
-                    <div className={ classes.headerCell }>{ I18n.t('Name') }</div>
+                <div className={classes.headerRow}>
+                    <div className={ classes.headerCell }>{I18n.t('Name')}</div>
                 </div>
                 <div className={ this.props.classes.tableDiv } >
                     { this.state.devices.map((item, i) => <div key={i}>
-                        <div className={ classes.tableCell }>{ item.name }</div>
+                        <div className={ classes.tableCell }>{item.name}</div>
                     </div>)
                     }
                 </div>
@@ -825,15 +823,15 @@ class AlisaDevices extends Component {
                         onClick={() => {
                         this.setState({showListOfDevices: false});
                         const lines = this.state.devices.map(item => item.name);
-                        copy(lines.join('\n'));
+                        Utils.copyToClipboard(lines.join('\n'));
                     }}
                     color="primary"
-                    startIcon={<IconCopy/>}
+                    startIcon={<IconCopy />}
                 >{I18n.t('Copy to clipboard')}</Button>
                 <Button
                     color="grey"
                     variant="contained"
-                    startIcon={<IconClose/>}
+                    startIcon={<IconClose />}
                     onClick={() => this.setState({showListOfDevices: false})} autoFocus>{I18n.t('Close')}</Button>
             </DialogActions>
         </Dialog>;

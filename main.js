@@ -32,6 +32,7 @@ let yandexAlisa    = null;
 let remote         = null;
 let device         = null;
 let defaultHistory = null;
+let urlKey         = '';
 
 let connected      = false;
 let uuid           = null;
@@ -41,6 +42,8 @@ let connectStarted;
 
 const NONE = '___none___';
 const MAX_IOT_MESSAGE_LENGTH = 127 * 1024;
+const SPECIAL_ADAPTERS = ['netatmo'];
+const ALLOWED_SERVICES = SPECIAL_ADAPTERS.concat(['text2command']);
 
 function startAdapter(options) {
     options = options || {};
@@ -64,6 +67,19 @@ function startAdapter(options) {
                 googleHome       && googleHome.setLanguage(lang);
                 remote.setLanguage(lang);
             }
+            // if it is an instance
+            if (id.startsWith('system.adapter.')) {
+                // try to find it in special adapters
+                const adpr = SPECIAL_ADAPTERS.find(a => id.startsWith(`system.adapter.${a}.`));
+                // if found and it is really instance
+                if (adpr && id.match(/\.\d+$/)) {
+                    // update state
+                    setTimeout(async () => await createStateForAdapter(adpr), 1000);
+                }
+
+                return;
+            }
+
             id && remote.updateObject(id, obj);
         },
         stateChange: (id, state) => {
@@ -72,7 +88,7 @@ function startAdapter(options) {
             state && adapter.config.yandexAlisa && yandexAlisa && yandexAlisa.updateState && yandexAlisa.updateState(id, state);
             id && remote.updateState(id, state);
 
-            if (id === adapter.namespace + '.smart.lastResponse' && state && !state.ack) {
+            if (id === `${adapter.namespace}.smart.lastResponse` && state && !state.ack) {
                 alexaCustom && alexaCustom.setResponse(state.val);
             }
         },
@@ -246,15 +262,38 @@ function startAdapter(options) {
                             adapter.sendTo(obj.from, obj.command, data, obj.callback));
                         break;
 
+                    case 'getServiceEndpoint': {
+                        const result = {url: `https://service.iobroker.in/v1/iotService?key=${urlKey.key}&user=${encodeURIComponent(adapter.config.login)}`};
+                        let serviceName = typeof obj.message === 'string' ? obj.message : obj.message && obj.message.serviceName;
+                        if (serviceName) {
+                            result.url += `&service=${encodeURIComponent(serviceName)}`;
+                            result.stateID = `${adapter.namespace}.services.${serviceName}`
+                        }
+                        if (obj.message && obj.message.data) {
+                            result.data += `&data=${typeof obj.message.data === 'object' ? JSON.stringify(obj.message.data) : obj.message.data}`;
+                        }
+                        // check if service name is in white list
+                        if (serviceName &&
+                            adapter.config.allowedServices[0] !== '*' &&
+                            !adapter.config.allowedServices.includes(serviceName.replace(/^custom_/, '')) &&
+                            !ALLOWED_SERVICES.includes(serviceName)
+                        ) {
+                            result.warning = 'Service name is not in white list';
+                            adapter.log.warn(`Service "${serviceName}" is not in allowed services list`);
+                        }
+
+                        obj.callback && adapter.sendTo(obj.from, obj.command, {result}, obj.callback);
+                    }
+                        break;
                     default:
-                        adapter.log.warn('Unknown command: ' + obj.command);
+                        adapter.log.warn(`Unknown command: ${obj.command}`);
                         break;
                 }
             }
         },
         ready: () => main()
             .then(() => {})
-            .catch(error => adapter.log.error('Error in main: ' + error.toString())),
+            .catch(error => adapter.log.error(`Error in main: ${error.toString()}`)),
     });
 
     adapter = new utils.Adapter(options);
@@ -613,7 +652,7 @@ function processMessage(type, request, callback) {
         request = request.toString();
     }
 
-    adapter.log.debug('Data: ' + JSON.stringify(request));
+    adapter.log.debug(`Data: ${JSON.stringify(request)}`);
 
     if (!request || !type) {
         return callback && callback({error: 'invalid request'});
@@ -624,19 +663,19 @@ function processMessage(type, request, callback) {
         return remote.process(request, type)
             .then(response => {
                 if (response !== NONE) {
-                    adapter.log.debug(`[REMOTE] Response in: ${Date.now() - start}ms (Length: ${Array.isArray(response) ? 'A ' + response.length : JSON.stringify(response).length}) for ${request}`);
+                    adapter.log.debug(`[REMOTE] Response in: ${Date.now() - start}ms (Length: ${Array.isArray(response) ? `A ${response.length}` : JSON.stringify(response).length}) for ${request}`);
                 }
                 callback(response);
             })
             .catch(err =>
-                adapter.log.error('Error in processing of remote request: ' + err.toString()));
+                adapter.log.error(`Error in processing of remote request: ${err.toString()}`));
     } else
     if (type.startsWith('nightscout')) {
         if (adapter.config.nightscout) {
             adapter.getForeignStateAsync(`system.adapter.nightscout.${adapter.config.nightscout}.alive`)
                 .then(state => {
                     if (state && state.val) {
-                        adapter.sendTo('nightscout.' + adapter.config.nightscout, 'send', request, response => {
+                        adapter.sendTo(`nightscout.${adapter.config.nightscout}`, 'send', request, response => {
                             adapter.log.debug(`Response from nightscout.${adapter.config.nightscout}: ${JSON.stringify(response)}`);
                             // try to parse JSON
                             if (typeof response === 'string' && (response[0] === '{' || response[0] === '[')) {
@@ -661,7 +700,7 @@ function processMessage(type, request, callback) {
             try {
                 request = JSON.parse(request);
             } catch (e) {
-                adapter.log.error('Cannot parse request: ' + request);
+                adapter.log.error(`Cannot parse request: ${request}`);
                 return callback && callback({error: 'Cannot parse request'});
             }
         }
@@ -704,7 +743,7 @@ function processMessage(type, request, callback) {
                 request = request.toString();
             }
         } catch (e) {
-            adapter.log.error('Cannot parse request: ' + request);
+            adapter.log.error(`Cannot parse request: ${request}`);
             return callback && callback({error: 'Cannot parse request'});
         }
 
@@ -714,7 +753,7 @@ function processMessage(type, request, callback) {
             try {
                 request = JSON.parse(request);
             } catch (e) {
-                adapter.log.error('Cannot parse request: ' + request);
+                adapter.log.error(`Cannot parse request: ${request}`);
                 return callback && callback({error: 'Cannot parse request'});
             }
         }
@@ -729,7 +768,7 @@ function processMessage(type, request, callback) {
             try {
                 request = JSON.parse(request);
             } catch (e) {
-                adapter.log.error('Cannot parse request: ' + request);
+                adapter.log.error(`Cannot parse request: ${request}`);
                 return callback && callback({error: 'Cannot parse request'});
             }
         }
@@ -748,7 +787,7 @@ function processMessage(type, request, callback) {
             isCustom = true;
         }
 
-        if (adapter.config.allowedServices[0] === '*' || adapter.config.allowedServices.includes(_type)) {
+        if (adapter.config.allowedServices[0] === '*' || (adapter.config.allowedServices.includes(_type) || ALLOWED_SERVICES.includes(_type))) {
             if (typeof request === 'object') {
                 request = JSON.stringify(request);
             } else {
@@ -766,13 +805,13 @@ function processMessage(type, request, callback) {
             } else if (type.startsWith('simpleApi')) {
                 callback({result: 'not implemented'});
             } else if (isCustom) {
-                adapter.getObject('services.custom_' + _type, (err, obj) => {
+                adapter.getObject(`services.custom_${_type}`, (err, obj) => {
                     if (!obj) {
-                        adapter.setObjectNotExists('services.custom_' + _type, {
+                        adapter.setObjectNotExists(`services.custom_${_type}`, {
                             _id: `${adapter.namespace}.services.custom_${_type}`,
                             type: 'state',
                             common: {
-                                name: 'Service for ' + _type,
+                                name: `Service for ${_type}`,
                                 write: false,
                                 read: true,
                                 type: 'mixed',
@@ -781,15 +820,15 @@ function processMessage(type, request, callback) {
                             native: {}
                         }, err => {
                             if (!err) {
-                                adapter.setState('services.custom_' + _type, request, true, err =>
+                                adapter.setState(`services.custom_${_type}`, request, true, err =>
                                     callback({result: err || 'Ok'}));
                             } else {
-                                adapter.log.error(`Cannot control ${'.services.custom_' + _type}: ${JSON.stringify(err)}`);
+                                adapter.log.error(`Cannot control .services.custom_${_type}: ${JSON.stringify(err)}`);
                                 callback({error: err});
                             }
                         });
                     } else {
-                        adapter.setState('services.custom_' + _type, request, true, err =>
+                        adapter.setState(`services.custom_${_type}`, request, true, err =>
                             callback({result: err || 'Ok'}));
                     }
                 });
@@ -852,7 +891,7 @@ async function startDevice(clientId, login, password, retry) {
         device = new DeviceModule({
             privateKey: Buffer.from(certs.private),
             clientCert: Buffer.from(certs.certificate),
-            caCert:     fs.readFileSync(__dirname + '/keys/root-CA.crt'),
+            caCert:     fs.readFileSync(`${__dirname}/keys/root-CA.crt`),
             clientId,
             username:   'ioBroker',
             host:       adapter.config.cloudUrl,
@@ -886,7 +925,7 @@ async function startDevice(clientId, login, password, retry) {
 
                 processMessage(type, request, async response => {
                     if (adapter.common.loglevel === 'debug' && !type.startsWith('remote')) {
-                        adapter.log.debug('Response: ' + JSON.stringify(response));
+                        adapter.log.debug(`Response: ${JSON.stringify(response)}`);
                     }
                     if (device && response !== NONE) {
                         if (Array.isArray(response)) {
@@ -963,15 +1002,55 @@ async function updateNightscoutSecret() {
             }
         );
         if (response.data.error) {
-            adapter.log.error('Api-Secret cannot be updated: ' + response.data.error);
+            adapter.log.error(`Api-Secret cannot be updated: ${response.data.error}`);
         } else {
-            adapter.log.debug('Api-Secret updated: ' + JSON.stringify(response.data));
+            adapter.log.debug(`Api-Secret updated: ${JSON.stringify(response.data)}`);
         }
     } catch (error) {
         if (error.response) {
             adapter.log.warn(`Cannot update api-secret: ${error.response.data ? JSON.stringify(error.response.data) : error.response.status}`);
         } else {
             adapter.log.warn(`Cannot update api-secret: ${error.code}`);
+        }
+    }
+}
+
+async function createStateForAdapter(adapterName) {
+    // find any instance of this adapter
+    const instances = await adapter.getObjectViewAsync('system', 'instance', {startkey: `system.adapter.${adapterName}.`, endkey: `system.adapter.${adapterName}.\u9999`});
+    if (instances && instances.rows && instances.rows.length) {
+        let obj;
+        try {
+            obj = await adapter.getObjectAsync(`service.${adapterName}`);
+        } catch (e) {
+            // ignore
+        }
+        if (!obj) {
+            try {
+                await adapter.setForeignObjectAsync(`${adapter.namespace}.services.${adapterName}`, {
+                    type: 'state',
+                    common: {
+                        name: `Service for ${adapterName}`,
+                        write: false,
+                        read: true,
+                        type: 'mixed',
+                        role: 'value'
+                    },
+                    native: {}
+                });
+            } catch (e) {
+                // ignore
+            }
+        }
+    } else {
+        try {
+            // delete if object exists
+            const obj = await adapter.getObjectAsync(`service.${adapterName}`);
+            if (obj) {
+                await adapter.delObjectAsync(`service.${adapterName}`);
+            }
+        } catch (e) {
+            // ignore
         }
     }
 }
@@ -1012,6 +1091,11 @@ async function main() {
         systemConfig = {common: {}};
     }
 
+    // create service state for netatmo if any instance exists
+    for (let a = 0; a < SPECIAL_ADAPTERS.length; a++) {
+        await createStateForAdapter(SPECIAL_ADAPTERS[a]);
+    }
+
     const oUuid = await adapter.getForeignObjectAsync('system.meta.uuid');
 
     secret = (systemConfig && systemConfig.native && systemConfig.native.secret) || 'Zgfr56gFe87jJOM';
@@ -1029,7 +1113,7 @@ async function main() {
         for (let r = 0; r < adapter.config.replaces.length; r++) {
             text.push(`"${adapter.config.replaces}"`);
         }
-        adapter.log.debug('Following strings will be replaced in names: ' + text.join(', '));
+        adapter.log.debug(`Following strings will be replaced in names: ${text.join(', ')}`);
     }
     if (adapter.config.amazonAlexa) {
         alexaSH2    = new AlexaSH2(adapter);
@@ -1063,7 +1147,7 @@ async function main() {
         const iftttObj = await adapter.getObjectAsync('.services.ifttt');
         if (!iftttObj) {
             await adapter.setObjectNotExistsAsync('services.ifttt', {
-                _id: adapter.namespace + '.services.ifttt',
+                _id: `${adapter.namespace}.services.ifttt`,
                 type: 'state',
                 common: {
                     name: 'IFTTT value',
@@ -1078,9 +1162,12 @@ async function main() {
         }
     }
 
+    // detect netatmo creation
+    await adapter.subscribeForeignObjectsAsync('system.adapter.*');
+
     await adapter.subscribeStatesAsync('smart.*');
 
-    adapter.log.info('Connecting with ' + adapter.config.cloudUrl);
+    adapter.log.info(`Connecting with ${adapter.config.cloudUrl}`);
 
     if (adapter.config.language) {
         translate = true;
@@ -1121,9 +1208,8 @@ async function main() {
 
     // after the user created we can try to generate URL key
     // read URL keys from server
-    let key;
     try {
-        key = await readUrlKey();
+        urlKey = await readUrlKey();
     } catch (error) {
         if (adapter.config.googleHome ||
             adapter.config.yandexAlisa ||
@@ -1131,7 +1217,7 @@ async function main() {
             adapter.config.iftttKey
         ) {
             try {
-                key = await createUrlKey(adapter.config.login, adapter.config.pass);
+                urlKey = await createUrlKey(adapter.config.login, adapter.config.pass);
             } catch (err) {
                 return adapter.log.error(`Cannot read URL key: ${typeof err === 'object' ? JSON.stringify(err) : err}`);
             }
@@ -1139,10 +1225,10 @@ async function main() {
     }
 
     if (adapter.config.googleHome) {
-        googleHome = new GoogleHome(adapter, key);
+        googleHome = new GoogleHome(adapter, urlKey);
     }// no else
     if (adapter.config.yandexAlisa) {
-        yandexAlisa = new YandexAlisa(adapter, key);
+        yandexAlisa = new YandexAlisa(adapter, urlKey);
     }
 
     googleHome && googleHome.setLanguage(lang, translate);
