@@ -794,6 +794,10 @@ function processMessage(type, request, callback) {
                 request = request.toString();
             }
 
+            if (SPECIAL_ADAPTERS.includes(_type)) {
+                adapter.setState(`services.${_type}`, request, true, err =>
+                    callback({result: err || 'Ok'}));
+            } else
             if (type.startsWith('text2command')) {
                 if (adapter.config.text2command !== undefined && adapter.config.text2command !== '') {
                     adapter.setForeignState(`text2command.${adapter.config.text2command}.text`, request,
@@ -946,7 +950,7 @@ async function startDevice(clientId, login, password, retry) {
                                     ));
                                 }
                             } catch (err) {
-                                adapter.log.error('[REMOTE] Cannot send packet: ' + err);
+                                adapter.log.error(`[REMOTE] Cannot send packet: ${err}`);
                             }
                         } else {
                             adapter.log.debug(`[REMOTE] Send command to 'response/${clientId}/${type}: ${JSON.stringify(response)}`);
