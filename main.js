@@ -282,7 +282,7 @@ function startAdapter(options) {
                             adapter.log.warn(`Service "${serviceName}" is not in allowed services list`);
                         }
 
-                        obj.callback && adapter.sendTo(obj.from, obj.command, {result}, obj.callback);
+                        obj.callback && adapter.sendTo(obj.from, obj.command, result, obj.callback);
                     }
                         break;
                     default:
