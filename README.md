@@ -280,7 +280,7 @@ Following types are supported:
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 1.14.0 (2022-12-13)
 * (bluefox) Added netatmo support
 
 ### 1.13.0 (2022-12-08)
