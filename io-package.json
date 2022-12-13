@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "1.13.0",
+    "version": "1.13.1",
     "news": {
+      "1.13.1": {
+        "en": "Added netatmo support",
+        "de": "Netatmo-Unterstützung",
+        "ru": "Добавлена поддержка netatmo",
+        "pt": "Adicionado suporte netatmo",
+        "nl": "Voeg netatmo steun toe",
+        "fr": "Ajout du soutien netatmo",
+        "it": "Aggiunto netatmo supporto",
+        "es": "Apoyo neto adicional",
+        "pl": "Added netatmo support",
+        "uk": "Додано підтримку Netatmo",
+        "zh-cn": "增加净支助"
+      },
       "1.13.0": {
         "en": "Add support vor Custom Skill v2",
         "de": "Unterstützung vor Custom Skill v2 hinzufügen",
@@ -77,18 +90,6 @@
         "es": "No controle la saturación con una solicitud porcentual vía alexa\nGUI migrado al v5",
         "pl": "Nie kontroluje nasycenia z odsetkiem żądanym przez alexa\nMigrated GUI (ang.)",
         "zh-cn": "未通过法警控制饱和百分比要求\n第5条"
-      },
-      "1.11.9": {
-        "en": "Fix temperature controlling for thermostats via alexa",
-        "de": "Temperaturregelung für Thermostate über alexa festsetzen",
-        "ru": "Исправление температуры управления для термостатов через alexa",
-        "pt": "Fix controle de temperatura para termostatos via alexa",
-        "nl": "Fix temperatuur controlerend op thermostaat via Alexa",
-        "fr": "Contrôle de température fixe pour les thermostats via alexa",
-        "it": "Fissare il controllo della temperatura per termostati tramite alexa",
-        "es": "Control de temperatura fijo para termostatos vía alexa",
-        "pl": "Temperatura Fix kontroluje termosty poprzez alexa",
-        "zh-cn": "B. 通过单一法控制动荡局势的固定温度"
       }
     },
     "title": "IoT Assistants",
