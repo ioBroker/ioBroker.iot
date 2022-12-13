@@ -3,19 +3,6 @@
     "name": "iot",
     "version": "1.13.1",
     "news": {
-      "1.13.1": {
-        "en": "Added netatmo support",
-        "de": "Netatmo-Unterstützung",
-        "ru": "Добавлена поддержка netatmo",
-        "pt": "Adicionado suporte netatmo",
-        "nl": "Voeg netatmo steun toe",
-        "fr": "Ajout du soutien netatmo",
-        "it": "Aggiunto netatmo supporto",
-        "es": "Apoyo neto adicional",
-        "pl": "Added netatmo support",
-        "uk": "Додано підтримку Netatmo",
-        "zh-cn": "增加净支助"
-      },
       "1.13.0": {
         "en": "Add support vor Custom Skill v2",
         "de": "Unterstützung vor Custom Skill v2 hinzufügen",

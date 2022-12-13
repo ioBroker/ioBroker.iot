@@ -108,7 +108,7 @@ function startAdapter(options) {
                 callback();
             }
         },
-        message: obj => {
+        message: async obj => {
             if (obj) {
                 switch (obj.command) {
                     case 'update':
@@ -262,29 +262,43 @@ function startAdapter(options) {
                             adapter.sendTo(obj.from, obj.command, data, obj.callback));
                         break;
 
-                    case 'getServiceEndpoint': {
-                        const result = {url: `https://service.iobroker.in/v1/iotService?key=${urlKey.key}&user=${encodeURIComponent(adapter.config.login)}`};
-                        let serviceName = typeof obj.message === 'string' ? obj.message : obj.message && obj.message.serviceName;
-                        if (serviceName) {
-                            result.url += `&service=${encodeURIComponent(serviceName)}`;
-                            result.stateID = `${adapter.namespace}.services.${serviceName}`
-                        }
-                        if (obj.message && obj.message.data) {
-                            result.data += `&data=${typeof obj.message.data === 'object' ? JSON.stringify(obj.message.data) : obj.message.data}`;
-                        }
-                        // check if service name is in white list
-                        if (serviceName &&
-                            adapter.config.allowedServices[0] !== '*' &&
-                            !adapter.config.allowedServices.includes(serviceName.replace(/^custom_/, '')) &&
-                            !ALLOWED_SERVICES.includes(serviceName)
-                        ) {
-                            result.warning = 'Service name is not in white list';
-                            adapter.log.warn(`Service "${serviceName}" is not in allowed services list`);
-                        }
+                    case 'getServiceEndpoint':
+                        if (obj.callback) {
+                            if (!urlKey) {
+                                try {
+                                    urlKey = await readUrlKey();
+                                } catch (error) {
+                                    try {
+                                        urlKey = await createUrlKey(adapter.config.login, adapter.config.pass);
+                                    } catch (err) {
+                                        return obj.callback && adapter.sendTo(obj.from, obj.command, {error: `Cannot get urlKey: ${err.toString()}`}, obj.callback);
+                                    }
+                                }
+                            }
 
-                        obj.callback && adapter.sendTo(obj.from, obj.command, result, obj.callback);
-                    }
+                            const result = {url: `https://service.iobroker.in/v1/iotService?key=${urlKey.key}&user=${encodeURIComponent(adapter.config.login)}`};
+                            let serviceName = typeof obj.message === 'string' ? obj.message : obj.message && obj.message.serviceName;
+                            if (serviceName) {
+                                result.url += `&service=${encodeURIComponent(serviceName)}`;
+                                result.stateID = `${adapter.namespace}.services.${serviceName}`
+                            }
+                            if (obj.message && obj.message.data) {
+                                result.data += `&data=${typeof obj.message.data === 'object' ? JSON.stringify(obj.message.data) : obj.message.data}`;
+                            }
+                            // check if service name is in white list
+                            if (serviceName &&
+                                adapter.config.allowedServices[0] !== '*' &&
+                                !adapter.config.allowedServices.includes(serviceName.replace(/^custom_/, '')) &&
+                                !ALLOWED_SERVICES.includes(serviceName)
+                            ) {
+                                result.warning = 'Service name is not in white list';
+                                adapter.log.warn(`Service "${serviceName}" is not in allowed services list`);
+                            }
+
+                            obj.callback && adapter.sendTo(obj.from, obj.command, result, obj.callback);
+                        }
                         break;
+
                     default:
                         adapter.log.warn(`Unknown command: ${obj.command}`);
                         break;
