@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "1.14.0",
+    "version": "1.14.1",
     "news": {
+      "1.14.1": {
+        "en": "Downgraded axios version to 0.27.2",
+        "de": "Abwärtsgradierte Axios-Version auf 0,27.2",
+        "ru": "Улучшенная версия axios до 0.27.2",
+        "pt": "Versão de axios degradado para 0,27.2",
+        "nl": "Quality over Quantity (QoQ) Releases Vertaling:",
+        "fr": "Version axios rétrogradée à 0,27.2",
+        "it": "Versione di assio degradato a 0.27.2",
+        "es": "Versión axios degradados a 0.27.2",
+        "pl": "Downgrad axios wersja 0.27.2",
+        "uk": "Зниження версії axios до 0.27.2",
+        "zh-cn": "Down等级 axios版本 to 0.27.2"
+      },
       "1.14.0": {
         "en": "Added netatmo support",
         "de": "Netatmo-Unterstützung",
@@ -78,18 +91,6 @@
         "es": "Error corregido en GUI con contraseña vacía",
         "pl": "Nieprawidłowy błąd w GUI z pustym hasłem",
         "zh-cn": "古伊的错误与空言"
-      },
-      "1.12.0": {
-        "en": "Do not control saturation with a percentage request via alexa\nMigrated GUI to v5",
-        "de": "Kontrollieren Sie keine Sättigung mit einer prozentualen Anfrage über alexa\nMigrated GUI to v5",
-        "ru": "Не контролируйте насыщение с процентным запросом через alexa\nMigrated GUI для v5",
-        "pt": "Não controle a saturação com um pedido percentual via alexa\nGUI migrado para v5",
-        "nl": "Controleer geen saturatie met een percentage verzoek via Alexa\nGemigreerde GUI",
-        "fr": "Ne contrôlez pas la saturation avec une demande de pourcentage via alexa\nMigrated GUI to v5",
-        "it": "Non controllare la saturazione con una richiesta percentuale via alexa\nGUI emigrata a v5",
-        "es": "No controle la saturación con una solicitud porcentual vía alexa\nGUI migrado al v5",
-        "pl": "Nie kontroluje nasycenia z odsetkiem żądanym przez alexa\nMigrated GUI (ang.)",
-        "zh-cn": "未通过法警控制饱和百分比要求\n第5条"
       }
     },
     "title": "IoT Assistants",
