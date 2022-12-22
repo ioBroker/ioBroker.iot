@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
-import clsx from 'clsx';
 
 import TextField from '@mui/material/TextField';
 import Input from '@mui/material/Input';
@@ -13,11 +12,11 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 
-import {MdAdd as IconAdd} from 'react-icons/md';
+import { MdAdd as IconAdd } from 'react-icons/md';
 
-import I18n from '@iobroker/adapter-react-v5/i18n';
-import DialogSelectID from '@iobroker/adapter-react-v5/Dialogs/SelectID';
-import Utils from '@iobroker/adapter-react-v5/Components/Utils'
+import {
+    Utils, I18n, SelectID as DialogSelectID,
+} from '@iobroker/adapter-react-v5';
 
 const styles = theme => ({
     tab: {
@@ -94,7 +93,7 @@ class ExtendedOptions extends Component {
         return <TextField
             variant="standard"
             label={I18n.t(title)}
-            className={clsx(this.props.classes.input, this.props.classes.controlElement)}
+            className={Utils.clsx(this.props.classes.input, this.props.classes.controlElement)}
             value={this.props.native[attr]}
             type={type || 'text'}
             onChange={e => this.props.onChange(attr, e.target.value)}
@@ -104,7 +103,7 @@ class ExtendedOptions extends Component {
 
     renderSelect(title, attr, options, style) {
         return <FormControl
-            className={clsx(this.props.classes.input, this.props.classes.controlElement)}
+            className={Utils.clsx(this.props.classes.input, this.props.classes.controlElement)}
             style={Object.assign({ paddingTop: 5, paddingRight: 8 }, style)}
             variant="standard"
         >
@@ -112,7 +111,7 @@ class ExtendedOptions extends Component {
                 variant="standard"
                 value={this.props.native[attr] || '_'}
                 onChange={e => this.props.onChange(attr, e.target.value === '_' ? '' : e.target.value)}
-                input={<Input name={attr} id={attr + '-helper'} />}
+                input={<Input name={attr} id={`${attr}-helper`} />}
             >
                 {options.map(item => <MenuItem key={'key-' + item.value} value={item.value || '_'}>{item.noTranslation ? item.title : I18n.t(item.title)}</MenuItem>)}
             </Select>

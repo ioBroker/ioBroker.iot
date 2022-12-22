@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
-import clsx from 'clsx';
 
 import TextField from '@mui/material/TextField';
 import Input from '@mui/material/Input';
@@ -17,14 +16,13 @@ import Chip from '@mui/material/Chip';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 
-import {MdRefresh as IconRefresh} from 'react-icons/md';
-import {MdClose as IconClose} from 'react-icons/md';
-import {MdAdd as IconAdd} from 'react-icons/md';
+import { MdRefresh as IconRefresh } from 'react-icons/md';
+import { MdClose as IconClose } from 'react-icons/md';
+import { MdAdd as IconAdd } from 'react-icons/md';
 
-import IconCopy from '@iobroker/adapter-react-v5/icons/IconCopy';
-import I18n from '@iobroker/adapter-react-v5/i18n';
-import Utils from '@iobroker/adapter-react-v5/Components/Utils';
-import DialogSelectID from '@iobroker/adapter-react-v5/Dialogs/SelectID';
+import {
+    Utils, I18n, SelectID as DialogSelectID, IconCopy,
+} from '@iobroker/adapter-react-v5';
 
 const styles = theme => ({
     tab: {
@@ -127,7 +125,7 @@ class Services extends Component {
         return <TextField
             variant="standard"
             label={I18n.t(title)}
-            className={clsx(this.props.classes.input, this.props.classes.controlElement)}
+            className={Utils.clsx(this.props.classes.input, this.props.classes.controlElement)}
             value={this.props.native[attr]}
             type={type || 'text'}
             onChange={e => this.props.onChange(attr, e.target.value)}
@@ -273,7 +271,7 @@ class Services extends Component {
                 variant="standard"
                 style={{marginTop: 10}}
                 label={I18n.t('Use following link for IFTTT')}
-                className={clsx(this.props.classes.input, this.props.classes.controlElement, this.props.classes.fullSize)}
+                className={Utils.clsx(this.props.classes.input, this.props.classes.controlElement, this.props.classes.fullSize)}
                 value={`https://service.iobroker.in/v1/iotService?service=ifttt&key=${this.state.key}&user=${encodeURIComponent(this.props.native.login)}`}
                 type="text"
                 InputProps={{ readOnly: true }}
@@ -288,7 +286,7 @@ class Services extends Component {
                 variant="standard"
                 style={{ marginTop: 10 }}
                 label={I18n.t('Use following link for custom service')}
-                className={clsx(this.props.classes.input, this.props.classes.controlElement, this.props.classes.fullSize)}
+                className={Utils.clsx(this.props.classes.input, this.props.classes.controlElement, this.props.classes.fullSize)}
                 value={`https://service.iobroker.in/v1/iotService?service=custom_<SERVICE_NAME>&key=${this.state.key}&user=${encodeURIComponent(this.props.native.login)}&data=<SOME_TEXT>`}
                 type="text"
                 InputProps={{ readOnly: true }}
@@ -296,7 +294,7 @@ class Services extends Component {
             />
             <Fab size="small" style={{marginTop: 10, marginLeft: 5}} onClick={() => Utils.copyToClipboard(`https://service.iobroker.in/v1/iotService?service=custom_<SERVICE_NAME>&key=${this.state.key}&user=${encodeURIComponent(this.props.native.login)}&data=<SOME_TEXT>`)}><IconCopy /></Fab><br/>
 
-            <FormControl className={clsx(this.props.classes.input, this.props.classes.controlElement)} style={{ paddingTop: 20 }} variant="standard">
+            <FormControl className={Utils.clsx(this.props.classes.input, this.props.classes.controlElement)} style={{ paddingTop: 20 }} variant="standard">
                 <Select
                     variant="standard"
                     value={this.props.native.text2command || '_'}
@@ -309,7 +307,7 @@ class Services extends Component {
                 <FormHelperText>{I18n.t('Use text2command instance')}</FormHelperText>
             </FormControl>
             <br/>
-            <FormControl className={clsx(this.props.classes.input, this.props.classes.controlElement)} style={{ paddingTop: 20 }} variant="standard">
+            <FormControl className={Utils.clsx(this.props.classes.input, this.props.classes.controlElement)} style={{ paddingTop: 20 }} variant="standard">
                 <Select
                     variant="standard"
                     value={this.props.native.nightscout || '_'}
@@ -326,7 +324,7 @@ class Services extends Component {
                 style={{marginTop: 3.5}}
                 label={I18n.t('Nightscout password')}
                 onChange={e => this.props.onChange('nightscoutPass', e.target.value.replace(/[^\w\d-_]/g, '_'))}
-                className={clsx(this.props.classes.input, this.props.classes.controlElement, this.props.classes.normalSize)}
+                className={Utils.clsx(this.props.classes.input, this.props.classes.controlElement, this.props.classes.normalSize)}
                 value={this.props.native.nightscoutPass}
                 type="text"
                 margin="normal"
@@ -335,7 +333,7 @@ class Services extends Component {
                 variant="standard"
                 style={{marginTop: 3.5}}
                 label={I18n.t('Nightscout api-secret')}
-                className={clsx(this.props.classes.input, this.props.classes.controlElement, this.props.classes.normalSize)}
+                className={Utils.clsx(this.props.classes.input, this.props.classes.controlElement, this.props.classes.normalSize)}
                 value={this.calcNightscoutSecret()}
                 type="text"
                 InputProps={{ readOnly: true }}
@@ -347,7 +345,7 @@ class Services extends Component {
                 <TextField
                     variant="standard"
                     label={I18n.t('Read blood sugar from')}
-                    className={clsx(this.props.classes.input, this.props.classes.controlElement)}
+                    className={Utils.clsx(this.props.classes.input, this.props.classes.controlElement)}
                     value={this.props.native.amazonAlexaBlood || ''}
                     type="text"
                     onChange={e => this.props.onChange('amazonAlexaBlood', e.target.value)}

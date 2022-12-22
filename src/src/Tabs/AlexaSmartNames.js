@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
-import clsx from 'clsx';
 
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -13,37 +12,35 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import FormHelperText from '@mui/material/FormHelperText';
 import FormControl from '@mui/material/FormControl';
-
-import {MdEdit as IconEdit} from 'react-icons/md';
-import {MdAdd as IconAdd} from 'react-icons/md';
-import {MdRefresh as IconRefresh} from 'react-icons/md';
-import {MdClear as IconClear} from 'react-icons/md';
-import {MdDelete as IconDelete} from 'react-icons/md';
-import {MdFormatAlignJustify as IconExpand} from 'react-icons/md';
-import {MdDragHandle as IconCollapse} from 'react-icons/md';
-import {MdList as IconList} from 'react-icons/md';
-import {FaPowerOff as IconOn} from 'react-icons/fa';
-import {FaThermometerHalf as IconTemperature} from 'react-icons/fa';
-import {FaLongArrowAltUp as IconUp} from 'react-icons/fa';
-import {FaLongArrowAltDown as IconDown} from 'react-icons/fa';
-import {FaPercentage as IconPercentage} from 'react-icons/fa';
-import {FaPalette as IconColor} from 'react-icons/fa';
-import {FaLightbulb as IconBulb} from 'react-icons/fa';
-import {FaLockOpen as IconLock} from 'react-icons/fa';
-import {FaThermometer as IconThermometer} from 'react-icons/fa';
-import IconCopy from '@mui/icons-material/FileCopy';
-import IconClose from '@mui/icons-material/Close';
-import IconCheck from '@mui/icons-material/Check';
-
-import Utils from '@iobroker/adapter-react-v5/Components/Utils'
-import I18n from '@iobroker/adapter-react-v5/i18n';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Dialog from '@mui/material/Dialog';
-import MessageDialog from '@iobroker/adapter-react-v5/Dialogs/Message';
-import DialogSelectID from '@iobroker/adapter-react-v5/Dialogs/SelectID';
-import copy from "copy-to-clipboard";
+
+import { MdEdit as IconEdit } from 'react-icons/md';
+import { MdAdd as IconAdd } from 'react-icons/md';
+import { MdRefresh as IconRefresh } from 'react-icons/md';
+import { MdClear as IconClear } from 'react-icons/md';
+import { MdDelete as IconDelete } from 'react-icons/md';
+import { MdFormatAlignJustify as IconExpand } from 'react-icons/md';
+import { MdDragHandle as IconCollapse } from 'react-icons/md';
+import { MdList as IconList } from 'react-icons/md';
+import { FaPowerOff as IconOn } from 'react-icons/fa';
+import { FaThermometerHalf as IconTemperature } from 'react-icons/fa';
+import { FaLongArrowAltUp as IconUp } from 'react-icons/fa';
+import { FaLongArrowAltDown as IconDown } from 'react-icons/fa';
+import { FaPercentage as IconPercentage } from 'react-icons/fa';
+import { FaPalette as IconColor } from 'react-icons/fa';
+import { FaLightbulb as IconBulb } from 'react-icons/fa';
+import { FaLockOpen as IconLock } from 'react-icons/fa';
+import { FaThermometer as IconThermometer } from 'react-icons/fa';
+import IconCopy from '@mui/icons-material/FileCopy';
+import IconClose from '@mui/icons-material/Close';
+import IconCheck from '@mui/icons-material/Check';
+
+import {
+    Utils, I18n, Message as MessageDialog, SelectID as DialogSelectID,
+} from '@iobroker/adapter-react-v5';
 
 const colorOn = '#aba613';
 const colorOff = '#444';
@@ -565,7 +562,7 @@ class AlexaSmartNames extends Component {
                             background = this.props.themeType === 'dark' ? LAST_CHANGED_COLOR_DARK : LAST_CHANGED_COLOR_LIGHT;
                         }
                         result.push(<div key={'sub' + id} className={classes.devSubLine} style={(c % 2) ? {} : {background}}>
-                            <div className={clsx(this.props.classes.devLineActions, this.props.classes.channelLineActions)}>{this.renderActions(channels[chan][i])}</div>
+                            <div className={Utils.clsx(this.props.classes.devLineActions, this.props.classes.channelLineActions)}>{this.renderActions(channels[chan][i])}</div>
                             <div className={classes.devSubLineName} title={id}>{(names[id] || id)}
                                 {id !== names[id] ? <span className={classes.devSubSubLineName}>{id}</span> : null}
                             </div>
@@ -585,7 +582,7 @@ class AlexaSmartNames extends Component {
                 background = this.props.themeType === 'dark' ? LAST_CHANGED_COLOR_DARK : LAST_CHANGED_COLOR_LIGHT;
             }
             result.push(<div key={'sub' + id} className={classes.devSubLine} style={{background}}>
-                <div className={clsx(this.props.classes.devLineActions, this.props.classes.channelLineActions)} style={{width: 80}}>{this.renderActions(dev)}</div>
+                <div className={Utils.clsx(this.props.classes.devLineActions, this.props.classes.channelLineActions)} style={{width: 80}}>{this.renderActions(dev)}</div>
                 <div className={classes.devSubLineName} title={(id || '')}>{name}</div>
                 {this.renderSelectType(dev, lineNum, id, dev.additionalApplianceDetails.smartType)}
                 {this.renderSelectByOn(dev, lineNum, id, dev.additionalApplianceDetails.byON)}
@@ -874,7 +871,7 @@ class AlexaSmartNames extends Component {
                         onClick={() => {
                         this.setState({showListOfDevices: false});
                         const lines = this.state.devices.map(item => item.friendlyName);
-                        copy(lines.join('\n'));
+                        Utils.copyToClipboard(lines.join('\n'));
                     }}
                     color="primary"
                     startIcon={<IconCopy/>}

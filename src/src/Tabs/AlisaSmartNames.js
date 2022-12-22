@@ -565,7 +565,7 @@ class AlisaDevices extends Component {
                             background = LAST_CHANGED_COLOR;
                         }
                         result.push(<div key={'sub' + id} className={classes.devSubLine} style={(c % 2) ? {} : {background}}>
-                            <div className={clsx(this.props.classes.devLineActions,this.props.classes.channelLineActions)}>{this.renderActions(channels[chan][i])}</div>
+                            <div className={Utils.clsx(this.props.classes.devLineActions,this.props.classes.channelLineActions)}>{this.renderActions(channels[chan][i])}</div>
                             <div className={classes.devSubLineName} title={id}>{(names[id] || id)}
                                 {id !== names[id] ? <span className={classes.devSubSubLineName}>{id}</span> : null}
                             </div>

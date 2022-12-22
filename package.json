@@ -33,19 +33,20 @@
     "jsdom": "^20.0.3",
     "mime": "^3.0.0",
     "moment": "^2.29.4",
-    "axios": "^1.2.1",
+    "axios": "^0.27.2",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@alcalzone/release-script": "^3.5.9",
     "@alcalzone/release-script-plugin-iobroker": "^3.5.9",
     "@alcalzone/release-script-plugin-license": "^3.5.9",
+    "@iobroker/legacy-testing": "^0.1.1",
     "@types/iobroker": "^4.0.5",
-    "@types/node": "^18.11.11",
+    "@types/node": "^18.11.17",
     "chai": "^4.3.7",
     "del": "^6.1.1",
     "gulp": "^4.0.2",
-    "mocha": "^10.1.0"
+    "mocha": "^10.2.0"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.iot/issues"
