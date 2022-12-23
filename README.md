@@ -280,7 +280,7 @@ Following types are supported:
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 1.14.2 (2022-12-23)
 * (bluefox) Updated GUI packages
 
 ### 1.14.1 (2022-12-22)

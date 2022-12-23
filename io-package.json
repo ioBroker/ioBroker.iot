@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "1.14.1",
+    "version": "1.14.2",
     "news": {
+      "1.14.2": {
+        "en": "Updated GUI packages",
+        "de": "Aktualisierte GUI-Pakete",
+        "ru": "Обновленные пакеты GUI",
+        "pt": "Pacotes de GUI atualizados",
+        "nl": "Update GUI pakketten",
+        "fr": "Paquets GUI mis à jour",
+        "it": "Pacchetti GUI aggiornati",
+        "es": "Paquetes GUI actualizados",
+        "pl": "Pakiet GUI",
+        "uk": "Оновлені пакети GUI",
+        "zh-cn": "A. 最新古伊一揽子计划"
+      },
       "1.14.1": {
         "en": "Downgraded axios version to 0.27.2",
         "de": "Abwärtsgradierte Axios-Version auf 0,27.2",
@@ -79,18 +92,6 @@
         "es": "Caso de accidente fijo",
         "pl": "Sprawa katastrofy",
         "zh-cn": "九. 事故"
-      },
-      "1.12.1": {
-        "en": "Corrected error in GUI with empty password",
-        "de": "Fehler behoben in GUI mit leerem Passwort",
-        "ru": "Исправлена ошибка в GUI с пустым паролем",
-        "pt": "Erro corrigido em GUI com senha vazia",
-        "nl": "Verkeerde fout in GUI met lege wachtwoord",
-        "fr": "Erreur corrigée dans GUI avec mot de passe vide",
-        "it": "Errore corretto in GUI con password vuota",
-        "es": "Error corregido en GUI con contraseña vacía",
-        "pl": "Nieprawidłowy błąd w GUI z pustym hasłem",
-        "zh-cn": "古伊的错误与空言"
       }
     },
     "title": "IoT Assistants",
