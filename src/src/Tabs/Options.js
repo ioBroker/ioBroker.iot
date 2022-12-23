@@ -149,7 +149,7 @@ class Options extends Component {
     }
 
     onDebug() {
-        this.props.socket.sendTo(this.props.adapterName + '.' + this.props.instance, 'debug', null)
+        this.props.socket.sendTo(`${this.props.adapterName}.${this.props.instance}`, 'debug', null)
             .then(data => {
                 const file = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
                 if (window.navigator.msSaveOrOpenBlob) // IE10+
@@ -185,14 +185,14 @@ class Options extends Component {
                 }
             })
             // read actual instance object
-            .then(() => this.props.socket.getObject('system.adapter.iot.' + this.props.instance))
+            .then(() => this.props.socket.getObject(`system.adapter.iot.${this.props.instance}`))
             .then(obj => {
                 if (!obj || !obj.common || !obj.common.enabled) {
                     // adapter is disabled, do not restart it
                     return Promise.resolve();
                 } else {
                     // restart adapter
-                    return this.props.socket.setObject('system.adapter.iot.' + this.props.instance, obj);
+                    return this.props.socket.setObject(`system.adapter.iot.${this.props.instance}`, obj);
                 }
             })
             .then(() => this.setState({ toast: I18n.t('Certificates will be updated after start') }))

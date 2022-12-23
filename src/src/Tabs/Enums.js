@@ -119,12 +119,12 @@ class Enums extends Component {
     }
 
     informInstance(id) {
-        this.props.socket.sendTo(this.props.adapterName + '.' + this.props.instance, 'update', id);
+        this.props.socket.sendTo(`${this.props.adapterName}.${this.props.instance}`, 'update', id);
     }
 
     addChanged(id) {
         const changed = JSON.parse(JSON.stringify(this.state.changed));
-        if (changed.indexOf(id) === -1) {
+        if (!changed.includes(id)) {
             changed.push(id);
             this.setState({changed});
         }
@@ -151,7 +151,7 @@ class Enums extends Component {
                     } else {
                         funcs.splice(i, 1);
                     }
-                    this.setState({funcs});
+                    this.setState({ funcs });
                     break;
                 }
             }

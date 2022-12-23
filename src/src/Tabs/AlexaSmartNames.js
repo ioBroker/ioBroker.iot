@@ -294,7 +294,7 @@ class AlexaSmartNames extends Component {
             }
         }, 10000);
 
-        this.props.socket.sendTo(this.props.adapterName + '.' + this.props.instance, 'browse', null)
+        this.props.socket.sendTo(`${this.props.adapterName}.${this.props.instance}`, 'browse', null)
             .then(list => {
                 this.browseTimer && clearTimeout(this.browseTimer);
                 this.browseTimerCount = 0;
@@ -355,7 +355,7 @@ class AlexaSmartNames extends Component {
     }
 
     informInstance(id) {
-        this.props.socket.sendTo(this.props.adapterName + '.' + this.props.instance, 'update', id);
+        this.props.socket.sendTo(`${this.props.adapterName}.${this.props.instance}`, 'update', id);
     }
 
     addChanged(id, cb) {

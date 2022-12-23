@@ -13,7 +13,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 
 import GenericApp from '@iobroker/adapter-react-v5/GenericApp';
-import { I18n, Loader } from '@iobroker/adapter-react-v5';
+import { I18n, Loader, AdminConnection } from '@iobroker/adapter-react-v5';
 
 import TabOptions from './Tabs/Options';
 import TabExtended from './Tabs/Extended';
@@ -47,6 +47,7 @@ class App extends GenericApp {
     constructor(props) {
         const extendedProps = {...props};
         extendedProps.encryptedFields = ['pass'];
+        extendedProps.Connection = AdminConnection;
         extendedProps.translations = {
             en: require('./i18n/en'),
             de: require('./i18n/de'),
@@ -152,7 +153,7 @@ class App extends GenericApp {
 
         return <StyledEngineProvider injectFirst>
             <ThemeProvider theme={this.state.theme}>
-                <div className="App" style={{background: this.state.theme.palette.background.default, color: this.state.theme.palette.text.primary}}>
+                <div className="App" style={{ background: this.state.theme.palette.background.default, color: this.state.theme.palette.text.primary }}>
                     <AppBar position="static">
                         <Tabs
                             value={this.getSelectedTab()}

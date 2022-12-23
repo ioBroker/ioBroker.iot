@@ -311,7 +311,7 @@ class AlisaDevices extends Component {
             }
         }, 10000);
 
-        this.props.socket.sendTo(this.props.adapterName + '.' + this.props.instance, 'browseAlisa', null)
+        this.props.socket.sendTo(`${this.props.adapterName}.${this.props.instance}`, 'browseAlisa', null)
             .then(list => {
                 this.browseTimer && clearTimeout(this.browseTimer);
                 this.browseTimerCount = 0;
@@ -361,7 +361,7 @@ class AlisaDevices extends Component {
     }
 
     informInstance(id) {
-        this.props.socket.sendTo(this.props.adapterName + '.' + this.props.instance, 'update', id);
+        this.props.socket.sendTo(`${this.props.adapterName}.${this.props.instance}`, 'update', id);
     }
 
     addChanged(id, cb) {

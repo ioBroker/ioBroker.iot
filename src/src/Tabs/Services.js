@@ -114,11 +114,11 @@ class Services extends Component {
     }
 
     componentWillUnmount() {
-        this.props.socket.unsubscribeState('iot.' + this.props.instance + '.certs.urlKey', this.onKeyChangedBound);
+        this.props.socket.unsubscribeState(`iot.${this.props.instance}.certs.urlKey`, this.onKeyChangedBound);
     }
 
     onKeyChanged(id, state) {
-        state && this.setState({key: state.val});
+        state && this.setState({ key: state.val });
     }
 
     renderInput(title, attr, type) {
@@ -134,50 +134,51 @@ class Services extends Component {
     }
 
     reissueUrlKey() {
-        this.setState({running: true});
-        return this.props.socket.setState('iot.' + this.props.instance + '.certs.urlKey', {val: '', ack: true})
-            .then(() => this.props.socket.getObject('system.adapter.iot.' + this.props.instance))
+        this.setState({ running: true });
+        return this.props.socket.setState(`iot.${this.props.instance}.certs.urlKey`, { val: '', ack: true })
+            .then(() => this.props.socket.getObject(`system.adapter.iot.${this.props.instance}`))
             .then(obj => {
                 if (!obj || !obj.common || !obj.common.enabled) {
-                    this.setState({running: false, toast: I18n.t('Key will be updated after start')});
+                    this.setState({ running: false, toast: I18n.t('Key will be updated after start') });
                 } else {
-                    return this.props.socket.setObject('system.adapter.iot.' + this.props.instance, obj);
+                    return this.props.socket.setObject(`system.adapter.iot.${this.props.instance}`, obj);
                 }
             })
-            .then(() => this.setState({running: false, toast: I18n.t('Certificates will be updated after initiated restart')}))
+            .then(() => this.setState({ running: false, toast: I18n.t('Certificates will be updated after initiated restart') }))
             .catch(err => {
-                this.setState({running: false});
+                this.setState({ running: false });
                 this.props.showError(err);
             });
     }
 
     renderToast() {
-        if (!this.state.toast) return null;
-        return (
-            <Snackbar
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                }}
-                open={true}
-                autoHideDuration={6000}
-                onClose={() => this.setState({toast: ''})}
-                ContentProps={{
-                    'aria-describedby': 'message-id',
-                }}
-                message={<span id="message-id">{this.state.toast}</span>}
-                action={[
-                    <IconButton
-                        key="close"
-                        aria-label="Close"
-                        color="inherit"
-                        className={this.props.classes.close}
-                        onClick={() => this.setState({toast: ''})}
-                    >
-                        <IconClose />
-                    </IconButton>,
-                ]}
-            />);
+        if (!this.state.toast) {
+            return null;
+        }
+        return <Snackbar
+            anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+            }}
+            open={!0}
+            autoHideDuration={6000}
+            onClose={() => this.setState({ toast: '' })}
+            ContentProps={{
+                'aria-describedby': 'message-id',
+            }}
+            message={<span id="message-id">{this.state.toast}</span>}
+            action={[
+                <IconButton
+                    key="close"
+                    aria-label="Close"
+                    color="inherit"
+                    className={this.props.classes.close}
+                    onClick={() => this.setState({ toast: '' })}
+                >
+                    <IconClose />
+                </IconButton>,
+            ]}
+        />;
     }
 
     onChipsDelete(attr, value) {
@@ -201,7 +202,7 @@ class Services extends Component {
     calcNightscoutSecret() {
         const email = this.props.native.login.replace(/[^\w\d-_]/g, '_');
         const secret = this.props.native.nightscoutPass;
-        return email + (secret ? '-' + secret : '');
+        return email + (secret ? `-${secret}` : '');
     }
 
     getSelectIdDialog(attr) {
@@ -212,9 +213,9 @@ class Services extends Component {
                 socket={this.props.socket}
                 selected={this.props.native[attr]}
                 types={['state']}
-                onClose={() => this.setState({showSelectId: false})}
+                onClose={() => this.setState({ showSelectId: false })}
                 onOk={selected => {
-                    this.setState({showSelectId: false});
+                    this.setState({ showSelectId: false });
                     this.props.onChange(attr, selected);
                 }}
             />;
@@ -229,8 +230,8 @@ class Services extends Component {
             <TextField
                 variant="standard"
                 label={I18n.t('Add service')}
-                style={{width: 150}}
-                type={'text'}
+                style={{ width: 150 }}
+                type="text"
                 value={this.state.addValue}
                 onKeyUp={e => e.keyCode === 13 && this.onChipsAdd(attr)}
                 onChange={e => this.setState({addValue: e.target.value.trim()})}
@@ -242,12 +243,12 @@ class Services extends Component {
             <div className={this.props.classes.chips}>
                 {(this.props.native[attr] || '').split(/[,;\s]/).filter(a => !!a)
                 .map(word => <Chip
-                        key={word}
-                        size="small"
-                        label={word}
-                        onDelete={() => this.onChipsDelete(attr, word)}
-                        className={this.props.classes.chip}
-                    />)}
+                    key={word}
+                    size="small"
+                    label={word}
+                    onDelete={() => this.onChipsDelete(attr, word)}
+                    className={this.props.classes.chip}
+                />)}
             </div>
         </div>;
     }
@@ -269,7 +270,7 @@ class Services extends Component {
 
             <TextField
                 variant="standard"
-                style={{marginTop: 10}}
+                style={{ marginTop: 10 }}
                 label={I18n.t('Use following link for IFTTT')}
                 className={Utils.clsx(this.props.classes.input, this.props.classes.controlElement, this.props.classes.fullSize)}
                 value={`https://service.iobroker.in/v1/iotService?service=ifttt&key=${this.state.key}&user=${encodeURIComponent(this.props.native.login)}`}
@@ -277,7 +278,7 @@ class Services extends Component {
                 InputProps={{ readOnly: true }}
                 margin="normal"
             />
-            <Fab size="small" style={{marginTop: 10, marginLeft: 5}} onClick={() => Utils.copyToClipboard(`https://service.iobroker.in/v1/iotService?service=ifttt&key=${this.state.key}&user=${encodeURIComponent(this.props.native.login)}`)} ><IconCopy /></Fab><br/>
+            <Fab size="small" style={{ marginTop: 10, marginLeft: 5 }} onClick={() => Utils.copyToClipboard(`https://service.iobroker.in/v1/iotService?service=ifttt&key=${this.state.key}&user=${encodeURIComponent(this.props.native.login)}`)} ><IconCopy /></Fab><br/>
             <br/>
 
             {this.renderChips('White list for services', 'allowedServices')}<br/>
@@ -292,7 +293,7 @@ class Services extends Component {
                 InputProps={{ readOnly: true }}
                 margin="normal"
             />
-            <Fab size="small" style={{marginTop: 10, marginLeft: 5}} onClick={() => Utils.copyToClipboard(`https://service.iobroker.in/v1/iotService?service=custom_<SERVICE_NAME>&key=${this.state.key}&user=${encodeURIComponent(this.props.native.login)}&data=<SOME_TEXT>`)}><IconCopy /></Fab><br/>
+            <Fab size="small" style={{ marginTop: 10, marginLeft: 5 }} onClick={() => Utils.copyToClipboard(`https://service.iobroker.in/v1/iotService?service=custom_<SERVICE_NAME>&key=${this.state.key}&user=${encodeURIComponent(this.props.native.login)}&data=<SOME_TEXT>`)}><IconCopy /></Fab><br/>
 
             <FormControl className={Utils.clsx(this.props.classes.input, this.props.classes.controlElement)} style={{ paddingTop: 20 }} variant="standard">
                 <Select
