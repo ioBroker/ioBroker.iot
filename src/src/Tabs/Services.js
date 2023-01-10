@@ -106,11 +106,12 @@ class Services extends Component {
     }
 
     componentDidMount() {
-        this.props.socket.subscribeState('iot.' + this.props.instance + '.certs.urlKey', this.onKeyChangedBound);
+        this.props.socket.subscribeState(`iot.${this.props.instance}.certs.urlKey`, this.onKeyChangedBound);
 
-        this.props.socket.getObject(`system.adapter.${this.props.adapterName}.${this.props.instance}`).then(obj =>
-            this.props.socket.getState(`system.adapter.${this.props.adapterName}.${this.props.instance}.alive`).then(state =>
-                this.setState({isInstanceAlive: obj && obj.common && state && state.val})));
+        this.props.socket.getObject(`system.adapter.${this.props.adapterName}.${this.props.instance}`)
+            .then(obj =>
+                this.props.socket.getState(`system.adapter.${this.props.adapterName}.${this.props.instance}.alive`)
+                    .then(state => this.setState({ isInstanceAlive: obj && obj.common && state && state.val })));
     }
 
     componentWillUnmount() {
@@ -195,7 +196,7 @@ class Services extends Component {
         const pos = chips.indexOf(this.state.addValue);
         if (pos === -1) {
             chips.push(this.state.addValue);
-            this.setState({addValue: ''}, () => this.props.onChange(attr, chips.join(' ')));
+            this.setState({ addValue: '' }, () => this.props.onChange(attr, chips.join(' ')));
         }
     }
 
@@ -234,11 +235,11 @@ class Services extends Component {
                 type="text"
                 value={this.state.addValue}
                 onKeyUp={e => e.keyCode === 13 && this.onChipsAdd(attr)}
-                onChange={e => this.setState({addValue: e.target.value.trim()})}
+                onChange={e => this.setState({ addValue: e.target.value.trim() })}
                 margin="normal"
             />
 
-            <Fab size="small" color="secondary" disabled={!this.state.addValue} onClick={() => this.onChipsAdd(attr)} style={{marginLeft: 5, marginTop: -15}}><IconAdd /></Fab>
+            <Fab size="small" color="secondary" disabled={!this.state.addValue} onClick={() => this.onChipsAdd(attr)} style={{ marginLeft: 5, marginTop: -15 }}><IconAdd /></Fab>
 
             <div className={this.props.classes.chips}>
                 {(this.props.native[attr] || '').split(/[,;\s]/).filter(a => !!a)
@@ -264,7 +265,8 @@ class Services extends Component {
                 startIcon={<IconRefresh />}
             >
                 {I18n.t('Get new service URL key')}
-            </Button><br/>
+            </Button>
+            <br />
 
             {this.renderInput('IFTTT key', 'iftttKey')}<br/>
 
@@ -279,7 +281,7 @@ class Services extends Component {
                 margin="normal"
             />
             <Fab size="small" style={{ marginTop: 10, marginLeft: 5 }} onClick={() => Utils.copyToClipboard(`https://service.iobroker.in/v1/iotService?service=ifttt&key=${this.state.key}&user=${encodeURIComponent(this.props.native.login)}`)} ><IconCopy /></Fab><br/>
-            <br/>
+            <br />
 
             {this.renderChips('White list for services', 'allowedServices')}<br/>
 
@@ -303,11 +305,11 @@ class Services extends Component {
                     input={<Input name="text2command" id="text2command-helper" />}
                 >
                     <MenuItem key="key-default" value={'_'}>{I18n.t('disabled')}</MenuItem>
-                    {this.state.text2commandList.map(item => <MenuItem key={'key-' + item} value={item}>text2command.{item}</MenuItem>)}
+                    {this.state.text2commandList.map(item => <MenuItem key={`key-${item}`} value={item}>text2command.{item}</MenuItem>)}
                 </Select>
                 <FormHelperText>{I18n.t('Use text2command instance')}</FormHelperText>
             </FormControl>
-            <br/>
+            <br />
             <FormControl className={Utils.clsx(this.props.classes.input, this.props.classes.controlElement)} style={{ paddingTop: 20 }} variant="standard">
                 <Select
                     variant="standard"
@@ -322,7 +324,7 @@ class Services extends Component {
             </FormControl>
             {this.props.native.nightscout ? <TextField
                 variant="standard"
-                style={{marginTop: 3.5}}
+                style={{ marginTop: 3.5 }}
                 label={I18n.t('Nightscout password')}
                 onChange={e => this.props.onChange('nightscoutPass', e.target.value.replace(/[^\w\d-_]/g, '_'))}
                 className={Utils.clsx(this.props.classes.input, this.props.classes.controlElement, this.props.classes.normalSize)}
@@ -332,7 +334,7 @@ class Services extends Component {
             /> : null}
             {this.props.native.nightscout ? <TextField
                 variant="standard"
-                style={{marginTop: 3.5}}
+                style={{ marginTop: 3.5 }}
                 label={I18n.t('Nightscout api-secret')}
                 className={Utils.clsx(this.props.classes.input, this.props.classes.controlElement, this.props.classes.normalSize)}
                 value={this.calcNightscoutSecret()}
@@ -340,8 +342,8 @@ class Services extends Component {
                 InputProps={{ readOnly: true }}
                 margin="normal"
             /> : null}
-            <br/>
-            <br/>
+            <br />
+            <br />
             <div className={this.props.classes.controlElement}>
                 <TextField
                     variant="standard"
@@ -352,11 +354,11 @@ class Services extends Component {
                     onChange={e => this.props.onChange('amazonAlexaBlood', e.target.value)}
                     margin="normal"
                 />
-                <Fab size="small" color="secondary" onClick={() => this.setState({showSelectId: true})} aria-label="Add" style={{marginLeft: 5, marginTop: 10}}><IconAdd /></Fab>
-                <FormControlLabel  className={this.props.classes.controlElement}
+                <Fab size="small" color="secondary" onClick={() => this.setState({ showSelectId: true })} aria-label="Add" style={{ marginLeft: 5, marginTop: 10 }}><IconAdd /></Fab>
+                <FormControlLabel className={this.props.classes.controlElement}
                     control={
                         <Checkbox
-                            style={{paddingLeft: 30}}
+                            style={{ paddingLeft: 30 }}
                             checked={this.props.native.amazonAlexaBloodShortAnswer || false}
                             onChange={e => this.props.onChange('amazonAlexaBloodShortAnswer', e.target.checked)}
                             color="primary"
@@ -365,7 +367,7 @@ class Services extends Component {
                     label={I18n.t('Short answer for blood sugar')}
                 />
             </div>
-            <br/>
+            <br />
             {this.renderToast()}
             {this.getSelectIdDialog('amazonAlexaBlood')}
         </form>;

@@ -280,6 +280,9 @@ Following types are supported:
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (kirovilya) Fixed processing for lights with CT and RGB in Alisa
+
 ### 1.14.2 (2022-12-23)
 * (bluefox) Updated GUI packages
 
@@ -407,28 +410,28 @@ Following types are supported:
 * (bluefox) Updated configuration GUI to the latest state
 
 ### 1.8.8 (2020-12-14)
-* (bluefox) Corrected the "google home" error
+* (bluefox) Corrected the "Google home" error
 
 ### 1.8.6 (2020-12-13)
 * (bluefox) Try to fix google home error
 
 ### 1.8.5 (2020-11-23)
-* (bluefox) Corrected the configuration table for google home
+* (bluefox) Corrected the configuration table for Google home
 
 ### 1.8.4 (2020-11-18)
-* (bluefox) Corrected the configuration table for google home
+* (bluefox) Corrected the configuration table for Google home
 
 ### 1.8.3 (2020-11-16)
-* (bluefox) Trying to fix the set to false at start for google home
+* (bluefox) Trying to fix the set to false at start for Google home
 
 ### 1.8.2 (2020-11-15)
-* (bluefox) Added the debug outputs for google home
+* (bluefox) Added the debug outputs for Google home
 
 ### 1.8.1 (2020-11-13)
 * (bluefox) The deletion of google home devices was corrected
 
 ### 1.8.0 (2020-11-12)
-* (bluefox) The google home table was rewritten
+* (bluefox) The Google home table was rewritten
 
 ### 1.7.15 (2020-11-05)
 * (Morluktom) Corrected the request for temperature
@@ -612,7 +615,7 @@ Following types are supported:
 ## License
 The MIT License (MIT)
 
-Copyright (c) 2018-2022 bluefox <dogafox@gmail.com>
+Copyright (c) 2018-2023 bluefox <dogafox@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
