@@ -280,7 +280,7 @@ Following types are supported:
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 1.14.3 (2023-01-10)
 * (kirovilya) Fixed processing for lights with CT and RGB in Alisa
 
 ### 1.14.2 (2022-12-23)
