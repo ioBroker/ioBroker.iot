@@ -1,6 +1,6 @@
 /*!
  * ioBroker gulpfile
- * Date: 2019-01-28
+ * Date: 2023-02-22
  */
 'use strict';
 
@@ -8,7 +8,6 @@ const gulp      = require('gulp');
 const fs        = require('fs');
 const fileName  = 'words.js';
 const EMPTY     = '';
-const translate = require('./lib/tools.js').translateText;
 const cp        = require('child_process');
 
 const languages = {
@@ -22,7 +21,7 @@ const languages = {
     es: {},
     pl: {},
     uk: {},
-    'zh-cn': {}
+    'zh-cn': {},
 };
 
 function deleteFoldersRecursive(path, exceptions) {
@@ -354,23 +353,6 @@ function languages2words(src) {
     writeWordJs(bigOne, src);
 }
 
-async function translateNotExisting(obj, baseText, yandex) {
-    let t = obj['en'];
-    if (!t) {
-        t = baseText;
-    }
-
-    if (t) {
-        for (let l in languages) {
-            if (!obj[l]) {
-                const time = new Date().getTime();
-                obj[l] = await translate(t, l, yandex);
-                console.log('en -> ' + l + ' ' + (new Date().getTime() - time) + ' ms');
-            }
-        }
-    }
-}
-
 //TASKS
 
 gulp.task('adminWords2languages', done => {
@@ -392,8 +374,6 @@ gulp.task('adminLanguages2words', done => {
     languages2words('./admin/');
     done();
 });
-
-gulp.task('translateAndUpdateWordsJS', gulp.series('translate', 'adminLanguages2words', 'adminWords2languages'));
 
 gulp.task('clean', done => {
     deleteFoldersRecursive(`${__dirname}/admin`, ['actions.js', 'alexalogo.png', 'blockly.js', 'iot.png']);
