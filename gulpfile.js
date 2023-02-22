@@ -6,13 +6,9 @@
 
 const gulp      = require('gulp');
 const fs        = require('fs');
-const pkg       = require('./package.json');
-const iopackage = require('./io-package.json');
-const version   = (pkg && pkg.version) ? pkg.version : iopackage.common.version;
 const fileName  = 'words.js';
 const EMPTY     = '';
 const translate = require('./lib/tools.js').translateText;
-const del       = require('del');
 const cp        = require('child_process');
 
 const languages = {
@@ -25,8 +21,29 @@ const languages = {
     it: {},
     es: {},
     pl: {},
+    uk: {},
     'zh-cn': {}
 };
+
+function deleteFoldersRecursive(path, exceptions) {
+    if (fs.existsSync(path)) {
+        const files = fs.readdirSync(path);
+        for (const file of files) {
+            const curPath = `${path}/${file}`;
+            if (exceptions && exceptions.find(e => curPath.endsWith(e))) {
+                continue;
+            }
+
+            const stat = fs.statSync(curPath);
+            if (stat.isDirectory()) {
+                deleteFoldersRecursive(curPath);
+                fs.rmdirSync(curPath);
+            } else {
+                fs.unlinkSync(curPath);
+            }
+        }
+    }
+}
 
 function lang2data(lang, isFlat) {
     let str = isFlat ? '' : '{\n';
@@ -376,115 +393,19 @@ gulp.task('adminLanguages2words', done => {
     done();
 });
 
-gulp.task('updatePackages', done => {
-    iopackage.common.version = pkg.version;
-    iopackage.common.news = iopackage.common.news || {};
-    if (!iopackage.common.news[pkg.version]) {
-        const news = iopackage.common.news;
-        const newNews = {};
-
-        newNews[pkg.version] = {
-            en: 'news',
-            de: 'neues',
-            ru: 'новое',
-            pt: 'novidades',
-            nl: 'nieuws',
-            fr: 'nouvelles',
-            it: 'notizie',
-            es: 'noticias',
-            pl: 'nowości',
-            'zh-cn': '新'
-        };
-        iopackage.common.news = Object.assign(newNews, news);
-    }
-    fs.writeFileSync('io-package.json', JSON.stringify(iopackage, null, 4));
-    done();
-});
-
-gulp.task('updateReadme', done => {
-    const readme = fs.readFileSync('README.md').toString();
-    const pos = readme.indexOf('## Changelog\n');
-    if (pos !== -1) {
-        const readmeStart = readme.substring(0, pos + '## Changelog\n'.length);
-        const readmeEnd = readme.substring(pos + '## Changelog\n'.length);
-
-        if (readme.indexOf(version) === -1) {
-            const timestamp = new Date();
-            const date = timestamp.getFullYear() + '-' +
-                    ('0' + (timestamp.getMonth() + 1).toString(10)).slice(-2) + '-' +
-                    ('0' + (timestamp.getDate()).toString(10)).slice(-2);
-
-            let news = '';
-            if (iopackage.common.news && iopackage.common.news[pkg.version]) {
-                news += '* ' + iopackage.common.news[pkg.version].en;
-            }
-
-            fs.writeFileSync('README.md', readmeStart + '### ' + version + ' (' + date + ')\n' + (news ? news + '\n\n' : '\n') + readmeEnd);
-        }
-    }
-    done();
-});
-
-gulp.task('translate', async function () {
-    let yandex;
-    const i = process.argv.indexOf('--yandex');
-    if (i > -1) {
-        yandex = process.argv[i + 1];
-    }
-
-    if (iopackage && iopackage.common) {
-        if (iopackage.common.news) {
-            console.log('Translate News');
-            for (let k in iopackage.common.news) {
-                console.log('News: ' + k);
-                let nw = iopackage.common.news[k];
-                await translateNotExisting(nw, null, yandex);
-            }
-        }
-        if (iopackage.common.titleLang) {
-            console.log('Translate Title');
-            await translateNotExisting(iopackage.common.titleLang, iopackage.common.title, yandex);
-        }
-        if (iopackage.common.desc) {
-            console.log('Translate Description');
-            await translateNotExisting(iopackage.common.desc, null, yandex);
-        }
-
-        if (fs.existsSync('./admin/i18n/en/translations.json')) {
-            let enTranslations = require('./admin/i18n/en/translations.json');
-            for (let l in languages) {
-                console.log('Translate Text: ' + l);
-                let existing = {};
-                if (fs.existsSync('./admin/i18n/' + l + '/translations.json')) {
-                    existing = require('./admin/i18n/' + l + '/translations.json');
-                }
-                for (let t in enTranslations) {
-                    if (!existing[t]) {
-                        existing[t] = await translate(enTranslations[t], l, yandex);
-                    }
-                }
-                if (!fs.existsSync('./admin/i18n/' + l + '/')) {
-                    fs.mkdirSync('./admin/i18n/' + l + '/');
-                }
-                fs.writeFileSync('./admin/i18n/' + l + '/translations.json', JSON.stringify(existing, null, 4));
-            }
-        }
-
-    }
-    fs.writeFileSync('io-package.json', JSON.stringify(iopackage, null, 4));
-});
-
 gulp.task('translateAndUpdateWordsJS', gulp.series('translate', 'adminLanguages2words', 'adminWords2languages'));
 
-gulp.task('clean', () =>
-    del(['admin/*/**', 'admin/*', '!admin/actions.js', '!admin/alexalogo.png', '!admin/blockly.js', '!admin/iot.png']));
+gulp.task('clean', done => {
+    deleteFoldersRecursive(`${__dirname}/admin`, ['actions.js', 'alexalogo.png', 'blockly.js', 'iot.png']);
+    done();
+});
 
 function npmInstall() {
     return new Promise((resolve, reject) => {
         // Install node modules
         const cwd = __dirname.replace(/\\/g, '/') + '/src/';
 
-        const cmd = `npm install`;
+        const cmd = `npm install -f`;
         console.log(`"${cmd} in ${cwd}`);
 
         // System call used for update of js-controller itself,
@@ -498,7 +419,7 @@ function npmInstall() {
         child.on('exit', (code /* , signal */) => {
             // code 1 is strange error that cannot be explained. Everything is installed but error :(
             if (code && code !== 1) {
-                reject('Cannot install: ' + code);
+                reject(`Cannot install: ${code}`);
             } else {
                 console.log(`"${cmd} in ${cwd} finished.`);
                 // command succeeded
@@ -509,7 +430,7 @@ function npmInstall() {
 }
 
 gulp.task('2-npm', () => {
-    if (fs.existsSync(__dirname + '/src/node_modules')) {
+    if (fs.existsSync(`${__dirname}/src/node_modules`)) {
         return Promise.resolve();
     } else {
         return npmInstall();
@@ -522,7 +443,7 @@ function build() {
     return new Promise((resolve, reject) => {
         const options = {
             stdio: 'pipe',
-            cwd:   __dirname + '/src/'
+            cwd:   `${__dirname}/src/`
         };
 
         const version = JSON.parse(fs.readFileSync(__dirname + '/package.json').toString('utf8')).version;
@@ -532,9 +453,9 @@ function build() {
 
         console.log(options.cwd);
 
-        let script = __dirname + '/src/node_modules/react-scripts/scripts/build.js';
+        let script = `${__dirname}/src/node_modules/react-scripts/scripts/build.js`;
         if (!fs.existsSync(script)) {
-            script = __dirname + '/node_modules/react-scripts/scripts/build.js';
+            script = `${__dirname}/node_modules/react-scripts/scripts/build.js`;
         }
         if (!fs.existsSync(script)) {
             console.error('Cannot find execution file: ' + script);
@@ -545,7 +466,7 @@ function build() {
             child.stderr.on('data', data => console.log(data.toString()));
             child.on('close', code => {
                 console.log(`child process exited with code ${code}`);
-                code ? reject('Exit code: ' + code) : resolve();
+                code ? reject(`Exit code: ${code}`) : resolve();
             });
         }
     });
@@ -562,20 +483,20 @@ gulp.task('5-copy', () =>
 gulp.task('5-copy-dep', gulp.series('3-build-dep', '5-copy'));
 
 gulp.task('6-patch', () => new Promise(resolve => {
-    if (fs.existsSync(__dirname + '/admin/index.html')) {
-        let code = fs.readFileSync(__dirname + '/admin/index.html').toString('utf8');
+    if (fs.existsSync(`${__dirname}/admin/index.html`)) {
+        let code = fs.readFileSync(`${__dirname}/admin/index.html`).toString('utf8');
         code = code.replace(/<script>var script=document\.createElement\("script"\)[^<]+<\/script>/,
             `<script type="text/javascript" src="./../../lib/js/socket.io.js"></script>`);
 
-        fs.unlinkSync(__dirname + '/admin/index.html');
-        fs.writeFileSync(__dirname + '/admin/index_m.html', code);
+        fs.unlinkSync(`${__dirname}/admin/index.html`);
+        fs.writeFileSync(`${__dirname}/admin/index_m.html`, code);
     }
-    if (fs.existsSync(__dirname + '/src/build/index.html')) {
-        let code = fs.readFileSync(__dirname + '/src/build/index.html').toString('utf8');
+    if (fs.existsSync(`${__dirname}/src/build/index.html`)) {
+        let code = fs.readFileSync(`${__dirname}/src/build/index.html`).toString('utf8');
         code = code.replace(/<script>var script=document\.createElement\("script"\)[^<]+<\/script>/,
             `<script type="text/javascript" src="./../../lib/js/socket.io.js"></script>`);
 
-        fs.writeFileSync(__dirname + '/src/build/index.html', code);
+        fs.writeFileSync(`${__dirname}/src/build/index.html`, code);
     }
     resolve();
 }));
