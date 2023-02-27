@@ -45,15 +45,6 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Cache node modules and web
-        uses: actions/cache/save@v3
-        with:
-          path: |
-            node_modules/**/*
-            src/node_modules/**/*
-            admin/**/*
-          key: build
-
       #      - name: Perform a type check
 #        run: npm run check:ts
 #        env:
@@ -84,13 +75,6 @@ jobs:
 
       - name: Install Dependencies
         run: npm install
-
-      - name: Restore web files
-        uses: actions/cache/restore@v3
-        with:
-          path: |
-            admin/**/*
-          key: build
 
       - name: Run local tests
         #         npm downgrade to 6 (mainly for node.js 16) is needed because else testing fails
@@ -143,15 +127,6 @@ jobs:
           BODY="${BODY//$'\n'/'%0A'}"
           BODY="${BODY//$'\r'/'%0D'}"
           echo "::set-output name=BODY::$BODY"
-
-      - name: Restore web files
-        uses: actions/cache/restore@v3
-        with:
-          path: |
-            node_modules/**/*
-            src/node_modules/**/*
-            admin/**/*
-          key: build
 
 #      - name: Create a clean build
 #        run: npm run build
