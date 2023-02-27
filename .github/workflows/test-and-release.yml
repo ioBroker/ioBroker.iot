@@ -30,7 +30,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.x]
+        node-version: [16.x]
 
     steps:
       - uses: actions/checkout@v3
@@ -44,6 +44,15 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Cache node modules and web
+        uses: actions/cache/save@v3
+        with:
+          key: build
+          path: |
+            node_modules/**/*
+            src/node_modules/**/*
+            admin/**/*
 
       #      - name: Perform a type check
 #        run: npm run check:ts
@@ -63,7 +72,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node-version: [12.x, 14.x, 16.x, 18.x]
+        node-version: [14.x, 16.x, 18.x]
         os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
@@ -75,6 +84,13 @@ jobs:
 
       - name: Install Dependencies
         run: npm install
+
+      - name: Restore web files
+        uses: actions/cache/restore@v3
+        with:
+          key: build
+          path: |
+            admin/**/*
 
       - name: Run local tests
         #         npm downgrade to 6 (mainly for node.js 16) is needed because else testing fails
@@ -103,7 +119,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [14.x]
+        node-version: [16.x]
 
     steps:
       - name: Checkout code
@@ -128,11 +144,14 @@ jobs:
           BODY="${BODY//$'\r'/'%0D'}"
           echo "::set-output name=BODY::$BODY"
 
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Build
-        run: npm run build
+      - name: Restore web files
+        uses: actions/cache/restore@v3
+        with:
+          key: build
+          path: |
+            node_modules/**/*
+            src/node_modules/**/*
+            admin/**/*
 
 #      - name: Create a clean build
 #        run: npm run build
