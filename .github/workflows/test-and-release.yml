@@ -48,11 +48,11 @@ jobs:
       - name: Cache node modules and web
         uses: actions/cache/save@v3
         with:
-          key: build
           path: |
             node_modules/**/*
             src/node_modules/**/*
             admin/**/*
+          key: build
 
       #      - name: Perform a type check
 #        run: npm run check:ts
@@ -88,9 +88,9 @@ jobs:
       - name: Restore web files
         uses: actions/cache/restore@v3
         with:
-          key: build
           path: |
             admin/**/*
+          key: build
 
       - name: Run local tests
         #         npm downgrade to 6 (mainly for node.js 16) is needed because else testing fails
@@ -147,11 +147,11 @@ jobs:
       - name: Restore web files
         uses: actions/cache/restore@v3
         with:
-          key: build
           path: |
             node_modules/**/*
             src/node_modules/**/*
             admin/**/*
+          key: build
 
 #      - name: Create a clean build
 #        run: npm run build
