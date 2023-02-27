@@ -1,29 +1,28 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Switch from '@mui/material/Switch';
-import {MdEdit as IconEdit} from 'react-icons/md';
-
-import Utils from '@iobroker/adapter-react-v5/Components/Utils';
-import I18n from '@iobroker/adapter-react-v5/i18n';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Dialog from '@mui/material/Dialog';
-import MessageDialog from '@iobroker/adapter-react-v5/Dialogs/Message';
 import CircularProgress from '@mui/material/CircularProgress';
-import IconClose from "@mui/icons-material/Close";
-import IconCheck from "@mui/icons-material/Check";
+
+import { MdEdit as IconEdit } from 'react-icons/md';
+import IconClose from '@mui/icons-material/Close';
+import IconCheck from '@mui/icons-material/Check';
+
+import { Utils, I18n, Message as MessageDialog } from '@iobroker/adapter-react-v5';
 
 const CHANGED_COLOR = '#e7000040';
 
 const styles = theme => ({
     tab: {
         width: '100%',
-        height: '100%'
+        height: '100%',
     },
     column: {
         display: 'inline-block',
@@ -33,12 +32,12 @@ const styles = theme => ({
         overflow: 'hidden',
         width: 'calc(50% - 20px)',
         minWidth: 300,
-        maxWidth: 450
+        maxWidth: 450,
     },
     columnDiv: {
         height: 'calc(100% - 60px)',
         overflow: 'auto',
-        minWidth: 300
+        minWidth: 300,
     },
     enumLineEnabled: {
         position: 'absolute',
@@ -46,10 +45,10 @@ const styles = theme => ({
         top: 0,
     },
     enumLineEdit: {
-        //float: 'right'
+        // float: 'right'
         position: 'absolute',
         top: 5,
-        right: 50
+        right: 50,
     },
     enumLineName: {
 
@@ -60,18 +59,18 @@ const styles = theme => ({
     enumLine: {
         height: 48,
         width: '100%',
-        position: 'relative'
+        position: 'relative',
     },
     enumLineId: {
         display: 'block',
         fontStyle: 'italic',
-        fontSize: 12
+        fontSize: 12,
     },
     columnHeader: {
         background: theme.palette.primary.light,
         padding: 10,
-        color: theme.palette.primary.contrastText
-    }
+        color: theme.palette.primary.contrastText,
+    },
 });
 
 class Enums extends Component {
@@ -104,7 +103,7 @@ class Enums extends Component {
                     }
                 });
 
-                this.setState({funcs, rooms, loading: false});
+                this.setState({ funcs, rooms, loading: false });
                 return this.props.socket.subscribeObject('enum.*', this.onEnumUpdateBound);
             });
     }
@@ -126,7 +125,7 @@ class Enums extends Component {
         const changed = JSON.parse(JSON.stringify(this.state.changed));
         if (!changed.includes(id)) {
             changed.push(id);
-            this.setState({changed});
+            this.setState({ changed });
         }
     }
 
@@ -136,14 +135,14 @@ class Enums extends Component {
 
         if (pos !== -1) {
             changed.splice(pos, 1);
-            this.setState({changed});
+            this.setState({ changed });
         }
     }
 
     updateObjInState(id, obj) {
         // update obj
         if (id.match(/^enum\.functions\./)) {
-            for (let i = this.state.funcs.length - 1; i >= 0 ; i--) {
+            for (let i = this.state.funcs.length - 1; i >= 0; i--) {
                 if (this.state.funcs[i]._id === id) {
                     const funcs = JSON.parse(JSON.stringify(this.state.funcs));
                     if (obj) {
@@ -165,7 +164,7 @@ class Enums extends Component {
                     } else {
                         rooms.splice(i, 1);
                     }
-                    this.setState({rooms});
+                    this.setState({ rooms });
                     break;
                 }
             }
@@ -175,12 +174,12 @@ class Enums extends Component {
     onToggleEnum(id) {
         let obj = this.state.funcs.find(e => e._id === id) || this.state.rooms.find(e => e._id === id);
 
-        let smartName = Utils.getSmartNameFromObj(obj, this.props.adapterName + '.' + this.props.instance, this.props.native.noCommon);
+        const smartName = Utils.getSmartNameFromObj(obj, `${this.props.adapterName}.${this.props.instance}`, this.props.native.noCommon);
         obj = JSON.parse(JSON.stringify(obj));
         if (smartName !== false) {
-            Utils.disableSmartName(obj, this.props.adapterName + '.' + this.props.instance, this.props.native.noCommon);
+            Utils.disableSmartName(obj, `${this.props.adapterName}.${this.props.instance}`, this.props.native.noCommon);
         } else {
-            Utils.removeSmartName(obj, this.props.adapterName + '.' + this.props.instance, this.props.native.noCommon);
+            Utils.removeSmartName(obj, `${this.props.adapterName}.${this.props.instance}`, this.props.native.noCommon);
         }
 
         this.addChanged(id);
@@ -197,25 +196,35 @@ class Enums extends Component {
 
     onEdit(id) {
         const obj = this.state.funcs.find(e => e._id === id) || this.state.rooms.find(e => e._id === id);
-        let smartName = Utils.getSmartNameFromObj(obj, this.props.adapterName + '.' + this.props.instance, this.props.native.noCommon);
+        let smartName = Utils.getSmartNameFromObj(obj, `${this.props.adapterName}.${this.props.instance}`, this.props.native.noCommon);
         if (typeof smartName === 'object' && smartName) {
             smartName = smartName[I18n.getLanguage()] || smartName.en;
         }
-        smartName = smartName || Utils.getObjectNameFromObj(obj, null, {language: I18n.getLanguage()});
-        this.setState({editId: id, editedSmartName: smartName});
+        smartName = smartName || Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() });
+        this.setState({ editId: id, editedSmartName: smartName });
     }
 
     renderEnum(obj) {
-        let smartName = Utils.getSmartNameFromObj(obj, this.props.adapterName + '.' + this.props.instance, this.props.native.noCommon);
+        let smartName = Utils.getSmartNameFromObj(obj, `${this.props.adapterName}.${this.props.instance}`, this.props.native.noCommon);
         // convert old format
         if (smartName && typeof smartName === 'object') {
             smartName = smartName[I18n.getLanguage()] || smartName.en || '';
         }
-        let name = Utils.getObjectNameFromObj(obj);
+        const name = Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() });
 
-        return <div key={obj._id} className={this.props.classes.enumLine} style={{background: this.state.changed.indexOf(obj._id) !== -1 ? CHANGED_COLOR : 'inherit'}}>
-            <span className={this.props.classes.enumLineName} style={{opacity: smartName === false ? 0.5: 1}}>{smartName || null}{smartName ? <span className={this.props.classes.enumLineSubName}> ({name})</span> : name}</span>
-            <span className={this.props.classes.enumLineId} style={{opacity: smartName === false ? 0.5: 1}}>{obj._id}</span>
+        return <div key={obj._id} className={this.props.classes.enumLine} style={{ background: this.state.changed.indexOf(obj._id) !== -1 ? CHANGED_COLOR : 'inherit' }}>
+            <span className={this.props.classes.enumLineName} style={{ opacity: smartName === false ? 0.5 : 1 }}>
+                {smartName || null}
+                {smartName ? <span className={this.props.classes.enumLineSubName}>
+                    {' '}
+(
+                    {name}
+)
+                </span> : name}
+            </span>
+            <span className={this.props.classes.enumLineId} style={{ opacity: smartName === false ? 0.5 : 1 }}>
+                {obj._id}
+            </span>
             <Switch
                 className={this.props.classes.enumLineEnabled}
                 checked={smartName !== false}
@@ -224,7 +233,6 @@ class Enums extends Component {
             <IconButton aria-label="Edit" className={this.props.classes.enumLineEdit} onClick={() => this.onEdit(obj._id)}>
                 <IconEdit fontSize="small" />
             </IconButton>
-
         </div>;
     }
 
@@ -234,29 +242,28 @@ class Enums extends Component {
 
     renderMessage() {
         if (this.state.message) {
-            return <MessageDialog text={this.state.message} onClose={() => this.setState({message: ''})}/>;
-        } else {
-            return null;
+            return <MessageDialog text={this.state.message} onClose={() => this.setState({ message: '' })} />;
         }
+        return null;
     }
 
     changeSmartName() {
         // Check if the name is duplicate
-        let enums = this.state.editId.startsWith('enum.functions.') ? this.state.funcs : this.state.rooms;
+        const enums = this.state.editId.startsWith('enum.functions.') ? this.state.funcs : this.state.rooms;
         if (enums.find(obj =>
             this.state.editId !== obj._id && (
-            this.state.editedSmartName === Utils.getObjectNameFromObj(obj, null, {language: I18n.getLanguage()}) ||
-            this.state.editedSmartName === Utils.getSmartNameFromObj(obj, this.props.adapterName + '.' + this.props.instance, this.props.native.noCommon)))) {
-            this.setState({message: I18n.t('Duplicate name')});
+                this.state.editedSmartName === Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() }) ||
+            this.state.editedSmartName === Utils.getSmartNameFromObj(obj, `${this.props.adapterName}.${this.props.instance}`, this.props.native.noCommon)))) {
+            this.setState({ message: I18n.t('Duplicate name') });
         } else {
             this.addChanged(this.state.editId);
             setTimeout(() => this.removeChanged(this.state.editId), 500);
             const id = this.state.editId;
-            this.setState({editId: ''});
+            this.setState({ editId: '' });
             let newObj;
             this.props.socket.getObject(id)
                 .then(obj => {
-                    Utils.updateSmartName(obj, this.state.editedSmartName, undefined, undefined, this.props.adapterName + '.' + this.props.instance, this.props.native.noCommon);
+                    Utils.updateSmartName(obj, this.state.editedSmartName, undefined, undefined, `${this.props.adapterName}.${this.props.instance}`, this.props.native.noCommon);
                     newObj = obj;
                     return this.props.socket.setObject(id, obj);
                 })
@@ -274,21 +281,23 @@ class Enums extends Component {
             const obj = this.state.funcs.find(e => e._id === this.state.editId) || this.state.rooms.find(e => e._id === this.state.editId);
 
             return <Dialog
-                open={true}
+                open
                 maxWidth="sm"
-                fullWidth={true}
-                onClose={() => this.setState({editId: ''})}
+                fullWidth
+                onClose={() => this.setState({ editId: '' })}
                 aria-labelledby="message-dialog-title"
                 aria-describedby="message-dialog-description"
             >
-                <DialogTitle id="message-dialog-title">{this.props.title || I18n.t('Smart name for %s', Utils.getObjectNameFromObj(obj, null, {language: I18n.getLanguage()}))}</DialogTitle>
+                <DialogTitle id="message-dialog-title">
+                    {this.props.title || I18n.t('Smart name for %s', Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() }))}
+                </DialogTitle>
                 <DialogContent>
                     <TextField
                         variant="standard"
                         autoFocus
-                        style={{width: '100%'}}
+                        style={{ width: '100%' }}
                         label={I18n.t('Smart name')}
-                        onChange={e => this.setState({editedSmartName: e.target.value})}
+                        onChange={e => this.setState({ editedSmartName: e.target.value })}
                         value={this.state.editedSmartName}
                         helperText={I18n.t('You can enter several names divided by comma')}
                         margin="normal"
@@ -299,19 +308,22 @@ class Enums extends Component {
                         variant="contained"
                         onClick={() => this.changeSmartName()}
                         color="primary"
-                        startIcon={<IconCheck/>}
-                    >{I18n.t('Ok')}</Button>
+                        startIcon={<IconCheck />}
+                    >
+                        {I18n.t('Ok')}
+                    </Button>
                     <Button
                         color="grey"
                         variant="contained"
-                        onClick={() => this.setState({editId: ''})}
-                        startIcon={<IconClose/>}
-                    >{I18n.t('Cancel')}</Button>
+                        onClick={() => this.setState({ editId: '' })}
+                        startIcon={<IconClose />}
+                    >
+                        {I18n.t('Cancel')}
+                    </Button>
                 </DialogActions>
             </Dialog>;
-        } else {
-            return null;
         }
+        return null;
     }
 
     render() {
@@ -336,13 +348,13 @@ class Enums extends Component {
 }
 
 Enums.propTypes = {
-    common: PropTypes.object.isRequired,
+//    common: PropTypes.object.isRequired,
     native: PropTypes.object.isRequired,
     instance: PropTypes.number.isRequired,
     adapterName: PropTypes.string.isRequired,
     onError: PropTypes.func,
-    onLoad: PropTypes.func,
-    onChange: PropTypes.func,
+    //    onLoad: PropTypes.func,
+    //    onChange: PropTypes.func,
     socket: PropTypes.object.isRequired,
 };
 
