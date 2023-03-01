@@ -280,7 +280,7 @@ Following types are supported:
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 1.14.5 (2023-03-01)
 * (bluefox) Corrected names of enums in GUI
 
 ### 1.14.3 (2023-01-10)

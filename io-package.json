@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "1.14.4",
+    "version": "1.14.5",
     "news": {
+      "1.14.5": {
+        "en": "Corrected names of enums in GUI",
+        "de": "Korrigierte Namen von enums in GUI",
+        "ru": "Исправлены имена enums в GUI",
+        "pt": "Nomes corrigidos de enums em GUI",
+        "nl": "Vertaling:",
+        "fr": "Noms corrigés des enums dans GUI",
+        "it": "Nomi corretti di enum in GUI",
+        "es": "Nombres corregidos de enums en GUI",
+        "pl": "Poprawne nazwy enum w GUI",
+        "uk": "Виправлені імена енму в графічному інтерфейсі",
+        "zh-cn": "古伊人名单更正"
+      },
       "1.14.3": {
         "en": "Fixed processing for lights with CT and RGB in Alisa",
         "de": "Feste Verarbeitung für Lichter mit CT und RGB in Alisa",
