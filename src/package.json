@@ -6,7 +6,7 @@
         "@iobroker/adapter-react-v5": "^4.0.13",
         "@mui/material": "^5.11.10",
         "@mui/icons-material": "^5.11.9",
-        "@mui/styles": "^5.11.9",
+        "@mui/styles": "^5.11.11",
         "babel-eslint": "^10.1.0",
         "@sentry/browser": "^7.38.0",
         "@sentry/integrations": "^7.38.0",
