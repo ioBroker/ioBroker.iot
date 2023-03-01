@@ -585,7 +585,7 @@ class AlexaSmartNames extends Component {
             const smarttypes = dev.additionalApplianceDetails.smartTypes;
 
             let c = 0;
-            Object.keys(channels).forEach(chan => {
+            channels && Object.keys(channels).forEach(chan => {
                 for (let i = 0; i < channels[chan].length; i++) {
                     const id = channels[chan][i].id;
                     let background = this.state.changed.includes(id) ? CHANGED_COLOR : this.props.themeType === 'dark' ? DEFAULT_CHANNEL_COLOR_DARK : DEFAULT_CHANNEL_COLOR_LIGHT;
@@ -634,11 +634,13 @@ class AlexaSmartNames extends Component {
         }
 
         let devCount = 0;
-        Object.keys(dev.additionalApplianceDetails.channels).forEach(ch => devCount += dev.additionalApplianceDetails.channels[ch].length);
+        if (dev.additionalApplianceDetails.channels) {
+            Object.keys(dev.additionalApplianceDetails.channels).forEach(ch => devCount += dev.additionalApplianceDetails.channels[ch].length);
+        }
 
         devCount = devCount || 1;
         const expanded = this.state.expanded.includes(friendlyName);
-        const id = dev.additionalApplianceDetails.id;
+        const id = dev.additionalApplianceDetails?.id;
 
         let background = (lineNum % 2) ? (this.props.themeType === 'dark' ? '#272727' : '#f1f1f1') : 'inherit';
         const changed = this.state.changed.includes(id);
@@ -745,7 +747,7 @@ class AlexaSmartNames extends Component {
     renderEditDialog() {
         if (this.state.editId) {
             return <Dialog
-                open
+                open={!0}
                 maxWidth="sm"
                 fullWidth
                 onClose={() => {
@@ -805,7 +807,7 @@ class AlexaSmartNames extends Component {
     renderConfirmDialog() {
         if (this.state.showConfirmation) {
             return <Dialog
-                open
+                open={!0}
                 maxWidth="sm"
                 fullWidth
                 onClose={() => this.setState({ showConfirmation: '' })}
