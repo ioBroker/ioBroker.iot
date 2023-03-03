@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "1.14.3",
+    "version": "1.14.5",
     "news": {
+      "1.14.5": {
+        "en": "Corrected names of enums in GUI",
+        "de": "Korrigierte Namen von enums in GUI",
+        "ru": "Исправлены имена enums в GUI",
+        "pt": "Nomes corrigidos de enums em GUI",
+        "nl": "Vertaling:",
+        "fr": "Noms corrigés des enums dans GUI",
+        "it": "Nomi corretti di enum in GUI",
+        "es": "Nombres corregidos de enums en GUI",
+        "pl": "Poprawne nazwy enum w GUI",
+        "uk": "Виправлені імена енму в графічному інтерфейсі",
+        "zh-cn": "古伊人名单更正"
+      },
       "1.14.3": {
         "en": "Fixed processing for lights with CT and RGB in Alisa",
         "de": "Feste Verarbeitung für Lichter mit CT und RGB in Alisa",
@@ -80,19 +93,6 @@
         "pl": "Małe zmiany w konfiguracji GUI",
         "uk": "Невеликі зміни конфігурації GUI",
         "zh-cn": "A. 对组合的小变化"
-      },
-      "1.12.4": {
-        "en": "Added ukrainian language\nCorrected blockly for unknown languages",
-        "de": "Ukrainische Sprache hinzugefügt\nBlockiert für unbekannte Sprachen",
-        "ru": "Добавлен украинский язык\nИсправлена блокировка для неизвестных языков",
-        "pt": "Adicionado idioma ukrainian\nBloqueio correto para línguas desconhecidas",
-        "nl": "Toegevoegd Oekraïense taal\nQuality over Quantity (QoQ) Releases Vertaling:",
-        "fr": "Ajout de la langue ukrainienne\nCorrection bloquée pour les langues inconnues",
-        "it": "Aggiunto lingua ucraino\nCorretto in blocco per le lingue sconosciute",
-        "es": "Añadido el idioma ucraniano\nCorregido de forma bloqueada para idiomas desconocidos",
-        "pl": "Język ukrainowski\nZaklęty blok dla nieznanych języków",
-        "uk": "Додано українську мову\nВиправлено блокування для невідомих мов",
-        "zh-cn": "增 编\n对不明语文的更正"
       }
     },
     "title": "IoT Assistants",

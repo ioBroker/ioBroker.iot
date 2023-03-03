@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 
@@ -17,23 +17,14 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Dialog from '@mui/material/Dialog';
 
-import { MdEdit as IconEdit } from 'react-icons/md';
-import { MdAdd as IconAdd } from 'react-icons/md';
-import { MdRefresh as IconRefresh } from 'react-icons/md';
-import { MdClear as IconClear } from 'react-icons/md';
-import { MdDelete as IconDelete } from 'react-icons/md';
-import { MdFormatAlignJustify as IconExpand } from 'react-icons/md';
-import { MdDragHandle as IconCollapse } from 'react-icons/md';
-import { MdList as IconList } from 'react-icons/md';
-import { FaPowerOff as IconOn } from 'react-icons/fa';
-import { FaThermometerHalf as IconTemperature } from 'react-icons/fa';
-import { FaLongArrowAltUp as IconUp } from 'react-icons/fa';
-import { FaLongArrowAltDown as IconDown } from 'react-icons/fa';
-import { FaPercentage as IconPercentage } from 'react-icons/fa';
-import { FaPalette as IconColor } from 'react-icons/fa';
-import { FaLightbulb as IconBulb } from 'react-icons/fa';
-import { FaLockOpen as IconLock } from 'react-icons/fa';
-import { FaThermometer as IconThermometer } from 'react-icons/fa';
+import {
+    MdEdit as IconEdit, MdAdd as IconAdd, MdRefresh as IconRefresh, MdClear as IconClear, MdDelete as IconDelete, MdFormatAlignJustify as IconExpand, MdDragHandle as IconCollapse, MdList as IconList,
+} from 'react-icons/md';
+
+import {
+    FaPowerOff as IconOn, FaThermometerHalf as IconTemperature, FaLongArrowAltUp as IconUp, FaLongArrowAltDown as IconDown, FaPercentage as IconPercentage, FaPalette as IconColor, FaLightbulb as IconBulb, FaLockOpen as IconLock, FaThermometer as IconThermometer,
+} from 'react-icons/fa';
+
 import IconCopy from '@mui/icons-material/FileCopy';
 import IconClose from '@mui/icons-material/Close';
 import IconCheck from '@mui/icons-material/Check';
@@ -52,28 +43,60 @@ const DEFAULT_CHANNEL_COLOR_LIGHT = '#e9e9e9';
 const LAST_CHANGED_COLOR_DARK = '#5c8f65';
 const LAST_CHANGED_COLOR_LIGHT = '#b4ffbe';
 const actionsMapping = {
-    turnOn: {color: colorOn, icon: IconOn, desc: 'Turn on'},
-    turnOff: {color: colorOff, icon: IconOn, desc: 'Turn off'},
+    turnOn: {
+        color: colorOn, icon: IconOn, desc: 'Turn on', v2: true,
+    },
+    turnOff: {
+        color: colorOff, icon: IconOn, desc: 'Turn off', v2: true,
+    },
 
-    setTargetTemperature: {color: colorSet, icon: IconTemperature, desc: 'Set target temperature'},
-    incrementTargetTemperature: {color: colorOn, icon: IconUp, desc: 'Increment target temperature'},
-    decrementTargetTemperature: {color: colorOff, icon: IconDown, desc: 'Decrement target temperature'},
+    setTargetTemperature: {
+        color: colorSet, icon: IconTemperature, desc: 'Set target temperature', v2: true,
+    },
+    incrementTargetTemperature: {
+        color: colorOn, icon: IconUp, desc: 'Increment target temperature', v2: true,
+    },
+    decrementTargetTemperature: {
+        color: colorOff, icon: IconDown, desc: 'Decrement target temperature', v2: true,
+    },
 
-    setPercentage: {color: colorSet, icon: IconPercentage, desc: 'Set percentage'},
-    incrementPercentage: {color: colorOn, icon: IconUp, desc: 'Increment percentage'},
-    decrementPercentage: {color: colorOff, icon: IconDown, desc: 'Decrement percentage'},
+    setPercentage: {
+        color: colorSet, icon: IconPercentage, desc: 'Set percentage', v2: true,
+    },
+    incrementPercentage: {
+        color: colorOn, icon: IconUp, desc: 'Increment percentage', v2: true,
+    },
+    decrementPercentage: {
+        color: colorOff, icon: IconDown, desc: 'Decrement percentage', v2: true,
+    },
 
-    setColor: {color: colorSet, icon: IconColor, desc: 'Set color'},
+    setColor: {
+        color: colorSet, icon: IconColor, desc: 'Set color', v2: true,
+    },
 
-    setColorTemperature: {color: colorSet, icon: IconBulb, desc: 'Set color temperature'},
-    incrementColorTemperature: {color: colorOn, icon: IconUp, desc: 'Increment color temperature'},
-    decrementColorTemperature: {color: colorOff, icon: IconDown, desc: 'Decrement color temperature'},
+    setColorTemperature: {
+        color: colorSet, icon: IconBulb, desc: 'Set color temperature', v2: true,
+    },
+    incrementColorTemperature: {
+        color: colorOn, icon: IconUp, desc: 'Increment color temperature', v2: true,
+    },
+    decrementColorTemperature: {
+        color: colorOff, icon: IconDown, desc: 'Decrement color temperature', v2: true,
+    },
 
-    getTargetTemperature: {color: colorRead, icon: IconThermometer, desc: 'Get target temperature'},
-    getTemperatureReading: {color: colorRead, icon: IconThermometer, desc: 'Get actual temperature'},
+    getTargetTemperature: {
+        color: colorRead, icon: IconThermometer, desc: 'Get target temperature', v2: true,
+    },
+    getTemperatureReading: {
+        color: colorRead, icon: IconThermometer, desc: 'Get actual temperature', v2: true,
+    },
 
-    setLockState: {color: colorSet, icon: IconLock, desc: 'Set lock state'},
-    getLockState: {color: colorRead, icon: IconLock, desc: 'Read lock state'},
+    setLockState: {
+        color: colorSet, icon: IconLock, desc: 'Set lock state', v2: true,
+    },
+    getLockState: {
+        color: colorRead, icon: IconLock, desc: 'Read lock state', v2: true,
+    },
 };
 
 const SMARTTYPES = ['LIGHT', 'SWITCH', 'THERMOSTAT', 'ACTIVITY_TRIGGER', 'SCENE_TRIGGER', 'SMARTPLUG', 'SMARTLOCK', 'CAMERA'];
@@ -81,25 +104,25 @@ const SMARTTYPES = ['LIGHT', 'SWITCH', 'THERMOSTAT', 'ACTIVITY_TRIGGER', 'SCENE_
 const styles = theme => ({
     tab: {
         width: '100%',
-        height: '100%'
+        height: '100%',
     },
     column: {
         display: 'inline-block',
         verticalAlign: 'top',
         marginRight: 20,
         height: '100%',
-        overflow: 'hidden'
+        overflow: 'hidden',
     },
     columnDiv: {
         height: 'calc(100% - 40px)',
         overflow: 'auto',
-        minWidth: 300
+        minWidth: 300,
     },
     filter: {
-        margin: 0
+        margin: 0,
     },
     button: {
-        marginRight: 20
+        marginRight: 20,
     },
     devLineExpand: {
         marginRight: 10,
@@ -112,12 +135,12 @@ const styles = theme => ({
     devLineEdit: {
         position: 'absolute',
         top: 5,
-        right: 50
+        right: 50,
     },
     devLineDelete: {
         position: 'absolute',
         top: 5,
-        right: 0
+        right: 0,
     },
     devLineName: {
 
@@ -128,7 +151,7 @@ const styles = theme => ({
         width: 15,
     },
     editedId: {
-        fontStyle: 'italic'
+        fontStyle: 'italic',
     },
     enumLineSubName:{
         fontStyle: 'italic',
@@ -136,12 +159,12 @@ const styles = theme => ({
     devLine: {
         height: 48,
         width: '100%',
-        position: 'relative'
+        position: 'relative',
     },
     devLineDescription: {
         display: 'block',
         fontStyle: 'italic',
-        fontSize: 12
+        fontSize: 12,
     },
     devLineActions: {
         fontStyle: 'italic',
@@ -155,57 +178,56 @@ const styles = theme => ({
         left: 0,
     },
     channelLineActions: {
-        width: 80
+        width: 80,
     },
     devLineNameBlock: {
         display: 'inline-block',
-        width: 'calc(100% - 350px)'
+        width: 'calc(100% - 350px)',
     },
     columnHeader: {
         background: theme.palette.primary.light,
         padding: 10,
-        color: theme.palette.primary.contrastText
+        color: theme.palette.primary.contrastText,
     },
     devModified: {
-        fontStyle: 'italic'
+        fontStyle: 'italic',
     },
     actionIcon: {
-        width: 16
+        width: 16,
     },
-
     devSubLine: {
         position: 'relative',
-        height: 48
+        height: 48,
     },
     devSubLineName: {
         marginLeft: 5,
         marginTop: 14,
         display: 'inline-block',
         fontSize: 13,
-        width: 'calc(100% - 400px)'
+        width: 'calc(100% - 400px)',
     },
     devSubSubLineName:  {
         fontSize: 8,
         fontStyle: 'italic',
-        display: 'block'
+        display: 'block',
     },
     devSubLineByOn: {
-        marginLeft: 5
+        marginLeft: 5,
     },
     devSubLineDelete: {
         position: 'absolute',
         top: 12,
         right: 12,
-        padding: 0
+        padding: 0,
     },
     devSubLineEdit: {
         position: 'absolute',
         top: 12,
         right: 62,
-        padding: 0
+        padding: 0,
     },
     devSubLineTypeTitle: {
-        marginTop: 0
+        marginTop: 0,
     },
     headerRow: {
         paddingLeft: theme.spacing(1),
@@ -214,12 +236,12 @@ const styles = theme => ({
     headerCell: {
         display: 'inline-block',
         verticalAlign: 'top',
-        width: '100%'
+        width: '100%',
     },
     tableCell: {
         display: 'inline-block',
         verticalAlign: 'top',
-        width: '100%'
+        width: '100%',
     },
 });
 
@@ -249,7 +271,7 @@ class AlexaSmartNames extends Component {
             loading: true,
             browse: false,
             expanded: [],
-            lastChanged: ''
+            lastChanged: '',
         };
 
         this.timerChanged = null;
@@ -261,15 +283,16 @@ class AlexaSmartNames extends Component {
         this.onReadyUpdateBound = this.onReadyUpdate.bind(this);
         this.onResultUpdateBound = this.onResultUpdate.bind(this);
 
-        this.props.socket.getObject(`system.adapter.${this.props.adapterName}.${this.props.instance}`).then(obj => {
-            this.props.socket.getState(`system.adapter.${this.props.adapterName}.${this.props.instance}.alive`).then(state => {
-                if (!obj || !obj.common || (!obj.common.enabled && (!state || !state.val))) {
-                    this.setState({ message: I18n.t('Instance must be enabled'), loading: false, devices: [] });
-                } else {
-                    this.browse();
-                }
-            });
-        });
+        this.props.socket.getObject(`system.adapter.${this.props.adapterName}.${this.props.instance}`)
+            .then(obj =>
+                this.props.socket.getState(`system.adapter.${this.props.adapterName}.${this.props.instance}.alive`)
+                    .then(state => {
+                        if (!obj || !obj.common || (!obj.common.enabled && (!state || !state.val))) {
+                            this.setState({ message: I18n.t('Instance must be enabled'), loading: false, devices: [] });
+                        } else {
+                            this.browse();
+                        }
+                    }));
     }
 
     browse(isIndicate) {
@@ -360,7 +383,7 @@ class AlexaSmartNames extends Component {
 
     addChanged(id, cb) {
         const changed = JSON.parse(JSON.stringify(this.state.changed));
-        if (changed.indexOf(id) === -1) {
+        if (!changed.includes(id)) {
             changed.push(id);
             this.setState({ changed }, () => cb && cb());
         } else {
@@ -368,6 +391,7 @@ class AlexaSmartNames extends Component {
         }
     }
 
+    /*
     removeChanged(id) {
         const changed = JSON.parse(JSON.stringify(this.state.changed));
         const pos = changed.indexOf(id);
@@ -377,6 +401,7 @@ class AlexaSmartNames extends Component {
             this.setState({ changed });
         }
     }
+    */
 
     onEdit(id, devices) {
         devices = devices || this.state.devices;
@@ -398,13 +423,12 @@ class AlexaSmartNames extends Component {
                         editId: id,
                         editedSmartType,
                         editedSmartName: smartName,
-                        editObjectName: Utils.getObjectNameFromObj(obj, null, {language: I18n.getLanguage()}),
+                        editObjectName: Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() }),
                     });
                 });
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     onAskDelete(deleteId) {
@@ -412,7 +436,7 @@ class AlexaSmartNames extends Component {
     }
 
     onDelete() {
-        let id = this.state.deleteId;
+        const id = this.state.deleteId;
         // const device = this.state.devices.find(dev => dev.additionalApplianceDetails.id === id);
         this.addChanged(id, () => {
             this.props.socket.getObject(id)
@@ -454,7 +478,7 @@ class AlexaSmartNames extends Component {
         });
 
         Object.keys(actionsMapping).forEach(action => {
-            if (dev.actions.indexOf(action) !== -1) {
+            if (dev.actions.includes(action)) {
                 const Icon = actionsMapping[action].icon;
                 actions.push(<span key={action} title={actionsMapping[action].desc}><Icon className={this.props.classes.actionIcon} style={{ color: actionsMapping[action].color }} /></span>);
             }
@@ -484,10 +508,13 @@ class AlexaSmartNames extends Component {
         if (type !== false) {
             const items = [
                 <MenuItem key="_" value=""><em>{I18n.t('Default')}</em></MenuItem>,
-                <MenuItem key="last" value="stored">{I18n.t('last value')}</MenuItem>
+                <MenuItem key="last" value="stored">{I18n.t('last value')}</MenuItem>,
             ];
             for (let i = 5; i <= 100; i += 5) {
-                items.push(<MenuItem  key={i.toString()} value={i.toString()}>{i}%</MenuItem>);
+                items.push(<MenuItem key={i.toString()} value={i.toString()}>
+                    {i}
+%
+                </MenuItem>);
             }
             return <FormControl className={this.props.classes.devSubLineByOn} variant="standard">
                 <Select
@@ -495,19 +522,20 @@ class AlexaSmartNames extends Component {
                     className={this.props.classes.devSubLineByOnSelect}
                     value={(type || '').toString()}
                     onChange={e => this.onParamsChange(id, e.target.value)}
-                >{items}</Select>
+                >
+                    {items}
+                </Select>
                 <FormHelperText className={this.props.classes.devSubLineTypeTitle}>{I18n.t('by ON')}</FormHelperText>
             </FormControl>;
-        } else {
-            return null;
         }
+        return null;
     }
 
     onParamsChange(id, byON, type) {
         this.addChanged(id, () => {
             this.props.socket.getObject(id)
                 .then(obj => {
-                    Utils.updateSmartName(obj, undefined, byON, type, this.props.adapterName + '.' + this.props.instance, this.props.native.noCommon);
+                    Utils.updateSmartName(obj, undefined, byON, type, `${this.props.adapterName}.${this.props.instance}`, this.props.native.noCommon);
 
                     if (this.state.lastChanged !== id) {
                         this.setState({ lastChanged: id });
@@ -532,15 +560,14 @@ class AlexaSmartNames extends Component {
         if (type !== false) {
             const items = [<MenuItem key="_" value="_"><em>{I18n.t('no type')}</em></MenuItem>];
             for (let i = 0; i < SMARTTYPES.length; i++) {
-                items.push(<MenuItem  key={SMARTTYPES[i]} value={SMARTTYPES[i]}><em>{I18n.t(SMARTTYPES[i])}</em></MenuItem>);
+                items.push(<MenuItem key={SMARTTYPES[i]} value={SMARTTYPES[i]}><em>{I18n.t(SMARTTYPES[i])}</em></MenuItem>);
             }
             return <FormControl variant="standard">
                 <Select variant="standard" value={type || '_'} onChange={e => onChange(e.target.value === '_' ? '' : e.target.value)}>{items}</Select>
                 <FormHelperText className={this.props.classes.devSubLineTypeTitle}>{I18n.t('Types')}</FormHelperText>
             </FormControl>;
-        } else {
-            return '';
         }
+        return '';
     }
 
     renderSelectType(dev, lineNum, id, type) {
@@ -558,35 +585,36 @@ class AlexaSmartNames extends Component {
             const smarttypes = dev.additionalApplianceDetails.smartTypes;
 
             let c = 0;
-            for (const chan in channels) {
-                if (channels.hasOwnProperty(chan)) {
-                    for (let i = 0; i < channels[chan].length; i++) {
-                        const id = channels[chan][i].id;
-                        let background = this.state.changed.indexOf(id) !== -1 ? CHANGED_COLOR : this.props.themeType === 'dark' ? DEFAULT_CHANNEL_COLOR_DARK : DEFAULT_CHANNEL_COLOR_LIGHT;
-                        if (this.state.lastChanged === id && (background === DEFAULT_CHANNEL_COLOR_DARK || background === DEFAULT_CHANNEL_COLOR_LIGHT)) {
-                            background = this.props.themeType === 'dark' ? LAST_CHANGED_COLOR_DARK : LAST_CHANGED_COLOR_LIGHT;
-                        }
-                        result.push(<div key={'sub' + id} className={classes.devSubLine} style={(c % 2) ? {} : {background}}>
-                            <div className={Utils.clsx(this.props.classes.devLineActions, this.props.classes.channelLineActions)}>{this.renderActions(channels[chan][i])}</div>
-                            <div className={classes.devSubLineName} title={id}>{(names[id] || id)}
-                                {id !== names[id] ? <span className={classes.devSubSubLineName}>{id}</span> : null}
-                            </div>
-                            {this.renderSelectType(dev, lineNum, id, smarttypes[id])}
-                            {this.renderSelectByOn(dev, lineNum, id, types[id])}
-                            <IconButton aria-label="Delete" className={this.props.classes.devSubLineDelete} onClick={() => this.onAskDelete(id, lineNum)}><IconDelete fontSize="middle" /></IconButton>
-                        </div>);
-                        c++;
+            channels && Object.keys(channels).forEach(chan => {
+                for (let i = 0; i < channels[chan].length; i++) {
+                    const id = channels[chan][i].id;
+                    let background = this.state.changed.includes(id) ? CHANGED_COLOR : this.props.themeType === 'dark' ? DEFAULT_CHANNEL_COLOR_DARK : DEFAULT_CHANNEL_COLOR_LIGHT;
+                    if (this.state.lastChanged === id && (background === DEFAULT_CHANNEL_COLOR_DARK || background === DEFAULT_CHANNEL_COLOR_LIGHT)) {
+                        background = this.props.themeType === 'dark' ? LAST_CHANGED_COLOR_DARK : LAST_CHANGED_COLOR_LIGHT;
                     }
+                    result.push(<div key={`sub${id}`} className={classes.devSubLine} style={(c % 2) ? {} : { background }}>
+                        <div className={Utils.clsx(this.props.classes.devLineActions, this.props.classes.channelLineActions)}>{this.renderActions(channels[chan][i])}</div>
+                        <div className={classes.devSubLineName} title={id}>
+                            {(names[id] || id)}
+                            {id !== names[id] ? <span className={classes.devSubSubLineName}>{id}</span> : null}
+                        </div>
+                        {this.renderSelectType(dev, lineNum, id, smarttypes[id])}
+                        {this.renderSelectByOn(dev, lineNum, id, types[id])}
+                        <IconButton aria-label="Delete" className={this.props.classes.devSubLineDelete} onClick={() => this.onAskDelete(id, lineNum)}>
+                            <IconDelete fontSize="middle" />
+                        </IconButton>
+                    </div>);
+                    c++;
                 }
-            }
+            });
         } else {
             const id = dev.additionalApplianceDetails.id;
             const name = dev.additionalApplianceDetails.name || id;
-            let background = this.state.changed.indexOf(id) !== -1 ? CHANGED_COLOR : this.props.themeType === 'dark' ? DEFAULT_CHANNEL_COLOR_DARK : DEFAULT_CHANNEL_COLOR_LIGHT;
+            let background = this.state.changed.includes(id) ? CHANGED_COLOR : this.props.themeType === 'dark' ? DEFAULT_CHANNEL_COLOR_DARK : DEFAULT_CHANNEL_COLOR_LIGHT;
             if (this.state.lastChanged === id && (background === DEFAULT_CHANNEL_COLOR_DARK || background === DEFAULT_CHANNEL_COLOR_LIGHT)) {
                 background = this.props.themeType === 'dark' ? LAST_CHANGED_COLOR_DARK : LAST_CHANGED_COLOR_LIGHT;
             }
-            result.push(<div key={'sub' + id} className={classes.devSubLine} style={{ background }}>
+            result.push(<div key={`sub${id}`} className={classes.devSubLine} style={{ background }}>
                 <div className={Utils.clsx(this.props.classes.devLineActions, this.props.classes.channelLineActions)} style={{ width: 80 }}>{this.renderActions(dev)}</div>
                 <div className={classes.devSubLineName} title={(id || '')}>{name}</div>
                 {this.renderSelectType(dev, lineNum, id, dev.additionalApplianceDetails.smartType)}
@@ -597,7 +625,7 @@ class AlexaSmartNames extends Component {
     }
 
     renderDevice(dev, lineNum) {
-        let friendlyName = dev.friendlyName;
+        const friendlyName = dev.friendlyName;
         let title;
         if (!dev.additionalApplianceDetails.group && dev.additionalApplianceDetails.nameModified) {
             title = friendlyName;
@@ -606,44 +634,45 @@ class AlexaSmartNames extends Component {
         }
 
         let devCount = 0;
-        for (const ch in dev.additionalApplianceDetails.channels) {
-            if (dev.additionalApplianceDetails.channels.hasOwnProperty(ch)) {
-                devCount += dev.additionalApplianceDetails.channels[ch].length;
-            }
+        if (dev.additionalApplianceDetails.channels) {
+            Object.keys(dev.additionalApplianceDetails.channels).forEach(ch => devCount += dev.additionalApplianceDetails.channels[ch].length);
         }
+
         devCount = devCount || 1;
-        const expanded = this.state.expanded.indexOf(friendlyName) !== -1;
-        const id = dev.additionalApplianceDetails.id;
+        const expanded = this.state.expanded.includes(friendlyName);
+        const id = dev.additionalApplianceDetails?.id;
 
         let background = (lineNum % 2) ? (this.props.themeType === 'dark' ? '#272727' : '#f1f1f1') : 'inherit';
-        const changed = this.state.changed.indexOf(id) !== -1;
+        const changed = this.state.changed.includes(id);
         if (changed) {
             background = CHANGED_COLOR;
         } else if (id === this.state.lastChanged) {
             background = this.props.themeType === 'dark' ? LAST_CHANGED_COLOR_DARK : LAST_CHANGED_COLOR_LIGHT;
         }
 
-        // If some of sub channels in change list or in last changed
+        // If some of the sub-channels in change list or in last changed
         if (dev.additionalApplianceDetails.group && !changed && id !== this.state.lastChanged) {
             const channels = dev.additionalApplianceDetails.channels;
             try {
                 channels && Object.keys(channels).forEach(chan =>
                     chan && channels[chan].forEach(el => {
-                        if (this.state.changed.indexOf(el.id) !== -1) {
+                        if (this.state.changed.includes(el.id)) {
                             background = CHANGED_COLOR;
                         } else if (this.state.lastChanged === el.id) {
                             background = this.props.themeType === 'dark' ? LAST_CHANGED_COLOR_DARK : LAST_CHANGED_COLOR_LIGHT;
                         }
-                    })
-                );
+                    }));
             } catch (error) {
-                console.log(error)
+                console.log(error);
             }
         }
 
         return [
-            <div key={'line' + lineNum} className={this.props.classes.devLine} style={{ background }}>
-                <div className={this.props.classes.devLineNumber}>{lineNum + 1}.</div>
+            <div key={`line${lineNum}`} className={this.props.classes.devLine} style={{ background }}>
+                <div className={this.props.classes.devLineNumber}>
+                    {lineNum + 1}
+.
+                </div>
                 <IconButton className={this.props.classes.devLineExpand} onClick={() => this.onExpand(lineNum)}>
                     {devCount > 1 ?
                         <Badge badgeContent={devCount} color="primary">
@@ -658,20 +687,23 @@ class AlexaSmartNames extends Component {
                 </div>
                 <span className={this.props.classes.devLineActions}>{this.renderActions(dev)}</span>
                 {!dev.additionalApplianceDetails.group ?
-                    <IconButton aria-label="Edit" className={this.props.classes.devLineEdit} onClick={() => this.onEdit(id)}><IconEdit fontSize="middle" /></IconButton> : null}
+                    <IconButton aria-label="Edit" className={this.props.classes.devLineEdit} onClick={() => this.onEdit(id)}>
+                        <IconEdit fontSize="middle" />
+                    </IconButton> : null}
                 {!dev.additionalApplianceDetails.group ?
-                    <IconButton aria-label="Delete" className={this.props.classes.devLineDelete} onClick={() => this.onAskDelete(id)}><IconDelete fontSize="middle" /></IconButton> : null}
+                    <IconButton aria-label="Delete" className={this.props.classes.devLineDelete} onClick={() => this.onAskDelete(id)}>
+                        <IconDelete fontSize="middle" />
+                    </IconButton> : null}
             </div>,
-            expanded ? this.renderChannels(dev, lineNum) : null
+            expanded ? this.renderChannels(dev, lineNum) : null,
         ];
     }
 
     renderMessage() {
         if (this.state.message) {
             return <MessageDialog text={this.state.message} onClose={() => this.setState({ message: '' })} />;
-        } else {
-            return null;
         }
+        return null;
     }
 
     changeSmartName(e) {
@@ -681,7 +713,9 @@ class AlexaSmartNames extends Component {
             const id = this.state.editId;
             const editedSmartType = this.state.editedSmartType;
 
-            this.setState({ editId: '', editObjectName: '', lastChanged: id, editedSmartType: null });
+            this.setState({
+                editId: '', editObjectName: '', lastChanged: id, editedSmartType: null,
+            });
 
             this.timerChanged && clearTimeout(this.timerChanged);
             this.timerChanged = setTimeout(() => {
@@ -691,7 +725,14 @@ class AlexaSmartNames extends Component {
 
             this.props.socket.getObject(id)
                 .then(obj => {
-                    Utils.updateSmartName(obj, this.editedSmartName, undefined, editedSmartType === null ? undefined : editedSmartType, `${this.props.adapterName}.${this.props.instance}`, this.props.native.noCommon);
+                    Utils.updateSmartName(
+                        obj,
+                        this.editedSmartName,
+                        undefined,
+                        editedSmartType === null ? undefined : editedSmartType,
+                        `${this.props.adapterName}.${this.props.instance}`,
+                        this.props.native.noCommon,
+                    );
 
                     return this.props.socket.setObject(id, obj);
                 })
@@ -706,9 +747,9 @@ class AlexaSmartNames extends Component {
     renderEditDialog() {
         if (this.state.editId) {
             return <Dialog
-                open={true}
+                open={!0}
                 maxWidth="sm"
-                fullWidth={true}
+                fullWidth
                 onClose={() => {
                     this.editedSmartName = null;
                     this.setState({ editId: '', editedSmartName: '' });
@@ -718,7 +759,11 @@ class AlexaSmartNames extends Component {
             >
                 <DialogTitle id="message-dialog-title">{this.props.title || I18n.t('Smart name for %s', this.state.editObjectName)}</DialogTitle>
                 <DialogContent>
-                    <p><span>ID:</span> <span className={this.props.classes.editedId}>{this.state.editId}</span></p>
+                    <p>
+                        <span>ID:</span>
+                        {' '}
+                        <span className={this.props.classes.editedId}>{this.state.editId}</span>
+                    </p>
                     <TextField
                         variant="standard"
                         style={{ width: '100%' }}
@@ -739,7 +784,8 @@ class AlexaSmartNames extends Component {
                         onClick={() => this.changeSmartName()}
                         color="primary"
                         startIcon={<IconCheck />}
-                    >{I18n.t('Ok')}
+                    >
+                        {I18n.t('Ok')}
                     </Button>
                     <Button
                         variant="contained"
@@ -749,20 +795,21 @@ class AlexaSmartNames extends Component {
                         }}
                         startIcon={<IconClose />}
                         color="grey"
-                    >{I18n.t('Cancel')}</Button>
+                    >
+                        {I18n.t('Cancel')}
+                    </Button>
                 </DialogActions>
             </Dialog>;
-        } else {
-            return null;
         }
+        return null;
     }
 
     renderConfirmDialog() {
         if (this.state.showConfirmation) {
             return <Dialog
-                open={true}
+                open={!0}
                 maxWidth="sm"
-                fullWidth={true}
+                fullWidth
                 onClose={() => this.setState({ showConfirmation: '' })}
                 aria-labelledby="confirmation-dialog-title"
                 aria-describedby="confirmation-dialog-description"
@@ -778,17 +825,21 @@ class AlexaSmartNames extends Component {
                         color="primary"
                         autoFocus
                         startIcon={<IconDelete />}
-                    >{I18n.t('Delete')}</Button>
+                    >
+                        {I18n.t('Delete')}
+                    </Button>
                     <Button
                         color="grey"
                         variant="contained"
                         startIcon={<IconClose />}
-                        onClick={() => this.setState({ showConfirmation: '' })}>{I18n.t('Cancel')}</Button>
+                        onClick={() => this.setState({ showConfirmation: '' })}
+                    >
+                        {I18n.t('Cancel')}
+                    </Button>
                 </DialogActions>
             </Dialog>;
-        } else {
-            return null;
         }
+        return null;
     }
 
     getSelectIdDialog() {
@@ -797,17 +848,24 @@ class AlexaSmartNames extends Component {
                 key="dialogSelectID1"
                 imagePrefix="../.."
                 socket={this.props.socket}
-                selected={''}
+                selected=""
                 types={['state']}
                 onClose={() => this.setState({ showSelectId: false })}
-                onOk={(selected, name) => {
+                onOk={(selected/* , name */) => {
                     this.setState({ showSelectId: false });
 
                     this.props.socket.getObject(selected)
                         .then(obj => {
                             if (obj) {
-                                const name = Utils.getObjectNameFromObj(obj, null, {language: I18n.getLanguage()});
-                                Utils.updateSmartName(obj, (name || I18n.t('Device name')).replace(/[-_.]+/g, ' '), undefined, undefined, this.props.adapterName + '.' + this.props.instance, this.props.native.noCommon);
+                                const name = Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() });
+                                Utils.updateSmartName(
+                                    obj,
+                                    (name || I18n.t('Device name')).replace(/[-_.]+/g, ' '),
+                                    undefined,
+                                    undefined,
+                                    `${this.props.adapterName}.${this.props.instance}`,
+                                    this.props.native.noCommon,
+                                );
                                 this.addChanged(obj._id);
                                 this.waitForUpdateID = obj._id;
 
@@ -829,16 +887,17 @@ class AlexaSmartNames extends Component {
                         });
                 }}
             />;
-        } else {
-            return null;
         }
+        return null;
     }
 
     renderDevices() {
         const filter = this.state.filter.toLowerCase();
         const result = [];
         for (let i = 0; i < this.state.devices.length; i++) {
-            if (this.state.filter && this.state.devices[i].friendlyName.toLowerCase().indexOf(filter) === -1 ) continue;
+            if (this.state.filter && !this.state.devices[i].friendlyName.toLowerCase().includes(filter)) {
+                continue;
+            }
             result.push(this.renderDevice(this.state.devices[i], i));
         }
         return <div key="listDevices" className={this.props.classes.columnDiv}>{result}</div>;
@@ -851,58 +910,90 @@ class AlexaSmartNames extends Component {
         const classes = this.props.classes;
 
         return <Dialog
-            open={true}
+            open={!0}
             maxWidth="xl"
             fullWidth
             onClose={() => this.setState({ showListOfDevices: false })}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
         >
-            <DialogTitle id="alert-dialog-title">{I18n.t('List of devices to print out, e.g. to give all device names to your partner.')} <span role="img" aria-label="smile">😄</span></DialogTitle>
+            <DialogTitle id="alert-dialog-title">
+                {I18n.t('List of devices to print out, e.g. to give all device names to your partner.')}
+                {' '}
+                <span role="img" aria-label="smile">😄</span>
+            </DialogTitle>
             <DialogContent>
                 <div className={classes.headerRow}>
                     <div className={classes.headerCell}>{I18n.t('Name')}</div>
                 </div>
                 <div className={this.props.classes.tableDiv}>
                     {this.state.devices.map((item, i) => <div key={i}>
-                        <div className={ classes.tableCell }>{item.friendlyName}</div>
+                        <div className={classes.tableCell}>{item.friendlyName}</div>
                     </div>)}
                 </div>
             </DialogContent>
             <DialogActions>
                 <Button
                     variant="outlined"
-                        onClick={() => {
+                    onClick={() => {
                         this.setState({ showListOfDevices: false });
                         const lines = this.state.devices.map(item => item.friendlyName);
                         Utils.copyToClipboard(lines.join('\n'));
                     }}
                     color="primary"
                     startIcon={<IconCopy />}
-                >{I18n.t('Copy to clipboard')}</Button>
+                >
+                    {I18n.t('Copy to clipboard')}
+                </Button>
                 <Button
                     variant="contained"
                     startIcon={<IconClose />}
-                    onClick={() => this.setState({ showListOfDevices: false })} autoFocus
+                    onClick={() => this.setState({ showListOfDevices: false })}
+                    autoFocus
                     color="grey"
-                >{I18n.t('Close')}</Button>
+                >
+                    {I18n.t('Close')}
+                </Button>
             </DialogActions>
         </Dialog>;
     }
 
     render() {
         if (this.state.loading) {
-            return <CircularProgress  key="alexaProgress" />;
+            return <CircularProgress key="alexaProgress" />;
         }
 
         return <form key="alexa" className={this.props.classes.tab}>
-            <Fab size="small" color="secondary" aria-label="Add" className={this.props.classes.button} onClick={() => this.setState({ showSelectId: true })}><IconAdd /></Fab>
-            <Fab size="small" color="primary" aria-label="Refresh" className={this.props.classes.button}
-                  onClick={() => this.browse(true)} disabled={this.state.browse}>{this.state.browse ? <CircularProgress size={20} /> : <IconRefresh />}</Fab>
-            <Fab style={{ marginLeft: '1rem' }}
-                 title={I18n.t('Show all devices for print out')}
-                 size="small" aria-label="List of devices" className={this.props.classes.button}
-                 onClick={() => this.setState({ showListOfDevices: true })} disabled={this.state.browse}><IconList /></Fab>
+            <Fab
+                size="small"
+                color="secondary"
+                aria-label="Add"
+                className={this.props.classes.button}
+                onClick={() => this.setState({ showSelectId: true })}
+            >
+                <IconAdd />
+            </Fab>
+            <Fab
+                size="small"
+                color="primary"
+                aria-label="Refresh"
+                className={this.props.classes.button}
+                onClick={() => this.browse(true)}
+                disabled={this.state.browse}
+            >
+                {this.state.browse ? <CircularProgress size={20} /> : <IconRefresh />}
+            </Fab>
+            <Fab
+                style={{ marginLeft: '1rem' }}
+                title={I18n.t('Show all devices for print out')}
+                size="small"
+                aria-label="List of devices"
+                className={this.props.classes.button}
+                onClick={() => this.setState({ showListOfDevices: true })}
+                disabled={this.state.browse}
+            >
+                <IconList />
+            </Fab>
             <TextField
                 variant="standard"
                 placeholder={I18n.t('Filter')}
@@ -927,13 +1018,13 @@ class AlexaSmartNames extends Component {
 }
 
 AlexaSmartNames.propTypes = {
-    common: PropTypes.object.isRequired,
+    // common: PropTypes.object.isRequired,
     native: PropTypes.object.isRequired,
     instance: PropTypes.number.isRequired,
     adapterName: PropTypes.string.isRequired,
     onError: PropTypes.func,
-    onLoad: PropTypes.func,
-    onChange: PropTypes.func,
+    // onLoad: PropTypes.func,
+    // onChange: PropTypes.func,
     socket: PropTypes.object.isRequired,
     themeType: PropTypes.string,
 };

@@ -14,18 +14,17 @@ import CardMedia from '@mui/material/CardMedia';
 import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 
-import { MdRefresh as IconReload } from 'react-icons/md';
-import { MdClose as IconClose } from 'react-icons/md';
+import { MdRefresh as IconReload, MdClose as IconClose } from 'react-icons/md';
 
 import { I18n, Utils, Logo } from '@iobroker/adapter-react-v5';
 
-const styles = theme => ({
+const styles = () => ({
     tab: {
         width: '100%',
-        minHeight: '100%'
+        minHeight: '100%',
     },
     input: {
-        minWidth: 300
+        minWidth: 300,
     },
     button: {
         marginRight: 20,
@@ -33,7 +32,7 @@ const styles = theme => ({
     },
     card: {
         maxWidth: 345,
-        textAlign: 'center'
+        textAlign: 'center',
     },
     media: {
         height: 180,
@@ -41,11 +40,11 @@ const styles = theme => ({
     column: {
         display: 'inline-block',
         verticalAlign: 'top',
-        marginRight: 20
+        marginRight: 20,
     },
     columnLogo: {
         width: 350,
-        marginRight: 0
+        marginRight: 0,
     },
     columnSettings: {
         width: 'calc(100% - 370px)',
@@ -58,7 +57,7 @@ const styles = theme => ({
         fontSize: 12,
         color: 'red',
         fontStyle: 'italic',
-    }
+    },
 });
 
 class Options extends Component {
@@ -69,7 +68,6 @@ class Options extends Component {
             inAction: false,
             toast: '',
             isInstanceAlive: false,
-            errorWithPercent: false,
         };
 
         this.props.socket.getState(`system.adapter.${this.props.adapterName}.${this.props.instance}.alive`)
@@ -90,17 +88,16 @@ class Options extends Component {
         }
     };
 
-    checkPassword(pass) {
+    static checkPassword(pass) {
         pass = (pass || '').toString();
         if (pass.length < 8 || !pass.match(/[a-z]/) || !pass.match(/[A-Z]/) || !pass.match(/\d/)) {
             return I18n.t('invalid_password_warning');
-        } else {
-            return false;
         }
+        return false;
     }
 
     renderInput(title, attr, type, autoComplete) {
-        const error = attr === 'pass' && this.checkPassword(this.props.native[attr]);
+        const error = attr === 'pass' && Options.checkPassword(this.props.native[attr]);
         return <TextField
             variant="standard"
             label={I18n.t(title)}
@@ -125,7 +122,7 @@ class Options extends Component {
                 />
                 <CardContent>{Utils.renderTextWithA(I18n.t('amazon link'))}</CardContent>
             </CardActionArea>
-            <CardActions style={{ textAlign: 'center' }} >
+            <CardActions style={{ textAlign: 'center' }}>
                 <Button
                     variant="outlined"
                     size="small"
@@ -134,7 +131,10 @@ class Options extends Component {
                     onClick={() => {
                         const win = window.open('https://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/reviews', '_blank');
                         win.focus();
-                    }}>{I18n.t('Review')}</Button>
+                    }}
+                >
+                    {I18n.t('Review')}
+                </Button>
                 {this.props.native.amazonAlexa ?
                     <Button
                         color="grey"
@@ -143,7 +143,9 @@ class Options extends Component {
                         style={{ opacity: this.state.debugVisible ? 1 : 0 }}
                         onMouseEnter={() => this.setState({ debugVisible: true })}
                         onMouseLeave={() => this.setState({ debugVisible: false })}
-                    >Debug</Button> : null}
+                    >
+                        {I18n.t('Debug')}
+                    </Button> : null}
             </CardActions>
         </Card>;
     }
@@ -151,10 +153,10 @@ class Options extends Component {
     onDebug() {
         this.props.socket.sendTo(`${this.props.adapterName}.${this.props.instance}`, 'debug', null)
             .then(data => {
-                const file = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
-                if (window.navigator.msSaveOrOpenBlob) // IE10+
+                const file = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                if (window.navigator.msSaveOrOpenBlob) { // IE10+
                     window.navigator.msSaveOrOpenBlob(file, 'debug.json');
-                else { // Others
+                } else { // Others
                     const a = document.createElement('a');
                     const url = URL.createObjectURL(file);
                     a.href = url;
@@ -180,9 +182,8 @@ class Options extends Component {
             .then(() => {
                 if (forceUserCreate) {
                     return this.props.socket.setState(`iot.${this.props.instance}.certs.forceUserCreate`, { val: true, ack: true });
-                } else {
-                    return Promise.resolve();
                 }
+                return Promise.resolve();
             })
             // read actual instance object
             .then(() => this.props.socket.getObject(`system.adapter.iot.${this.props.instance}`))
@@ -190,10 +191,9 @@ class Options extends Component {
                 if (!obj || !obj.common || !obj.common.enabled) {
                     // adapter is disabled, do not restart it
                     return Promise.resolve();
-                } else {
-                    // restart adapter
-                    return this.props.socket.setObject(`system.adapter.iot.${this.props.instance}`, obj);
                 }
+                // restart adapter
+                return this.props.socket.setObject(`system.adapter.iot.${this.props.instance}`, obj);
             })
             .then(() => this.setState({ toast: I18n.t('Certificates will be updated after start') }))
             .catch(err => this.props.onError(err))
@@ -209,10 +209,10 @@ class Options extends Component {
                 vertical: 'bottom',
                 horizontal: 'left',
             }}
-            open={true}
+            open
             autoHideDuration={6000}
             onClose={() => this.setState({ toast: '' })}
-            ContentProps={{'aria-describedby': 'message-id'}}
+            ContentProps={{ 'aria-describedby': 'message-id' }}
             message={<span id="message-id">{this.state.toast}</span>}
             action={[
                 <IconButton
@@ -229,52 +229,57 @@ class Options extends Component {
     }
 
     renderCheckbox(title, attr, style) {
-        return <FormControlLabel key={attr} style={Object.assign({ paddingTop: 5 }, style)} className={this.props.classes.controlElement}
-              control={
-                  <Checkbox
-                      checked={this.props.native[attr]}
-                      onChange={() => this.props.onChange(attr, !this.props.native[attr])}
-                      color="primary"
-                  />
-              }
-              label={I18n.t(title)}
+        return <FormControlLabel
+            key={attr}
+            style={({ paddingTop: 5, ...style })}
+            className={this.props.classes.controlElement}
+            control={
+                <Checkbox
+                    checked={this.props.native[attr]}
+                    onChange={() => this.props.onChange(attr, !this.props.native[attr])}
+                    color="primary"
+                />
+            }
+            label={I18n.t(title)}
         />;
     }
 
     render() {
-        return <form className={ this.props.classes.tab }>
+        return <form className={this.props.classes.tab}>
             <Logo
                 classes={{}}
                 instance={this.props.instance}
                 common={this.props.common}
                 native={this.props.native}
-                onError={text => this.setState({ errorText: text })}
+                onError={text => window.alert(text)}
                 onLoad={this.props.onLoad}
             />
             <div className={Utils.clsx(this.props.classes.column, this.props.classes.columnSettings)}>
-                {this.renderInput('ioBroker.pro Login', 'login', null, 'username')}<br/>
-                {this.renderInput('ioBroker.pro Password', 'pass', 'password', 'current-password')}<br/>
+                {this.renderInput('ioBroker.pro Login', 'login', null, 'username')}
+                <br />
+                {this.renderInput('ioBroker.pro Password', 'pass', 'password', 'current-password')}
+                <br />
                 {this.renderCheckbox('Amazon Alexa', 'amazonAlexa')}
                 <FormControlLabel
                     key="googleHome"
                     className={this.props.classes.controlElement}
                     style={{ marginTop: 5 }}
                     control={
-                      <Checkbox
-                          checked={this.props.native.googleHome}
-                          onChange={() => {
-                              // activate alexa if Google home is on (temporary)
-                              const newVal = !this.props.native.googleHome;
-                              this.props.onChange('googleHome', newVal, () =>
-                                  newVal && this.props.onChange('amazonAlexa', true));
-                          }}
-                          color="primary"
-                      />
+                        <Checkbox
+                            checked={this.props.native.googleHome}
+                            onChange={() => {
+                                // activate alexa if Google home is on (temporary)
+                                const newVal = !this.props.native.googleHome;
+                                this.props.onChange('googleHome', newVal, () =>
+                                    newVal && this.props.onChange('amazonAlexa', true));
+                            }}
+                            color="primary"
+                        />
                     }
                     label={I18n.t('Google Home')}
                 />
                 {this.renderCheckbox('Yandex Алиса', 'yandexAlisa')}
-                <br/>
+                <br />
 
                 <p>{I18n.t('new_certs_tip')}</p>
                 {this.props.changed ? <div className={this.props.classes.hintUnsaved}>{I18n.t('Save settings before pressing this button')}</div> : null}

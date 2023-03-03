@@ -280,6 +280,9 @@ Following types are supported:
 -->
 
 ## Changelog
+### 1.14.5 (2023-03-01)
+* (bluefox) Corrected names of enums in GUI
+
 ### 1.14.3 (2023-01-10)
 * (kirovilya) Fixed processing for lights with CT and RGB in Alisa
 

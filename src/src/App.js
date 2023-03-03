@@ -45,7 +45,7 @@ const styles = theme => ({
 
 class App extends GenericApp {
     constructor(props) {
-        const extendedProps = {...props};
+        const extendedProps = { ...props };
         extendedProps.encryptedFields = ['pass'];
         extendedProps.Connection = AdminConnection;
         extendedProps.translations = {
@@ -71,7 +71,7 @@ class App extends GenericApp {
         this.socket.getState(`${this.adapterName}.${this.instance}.info.ackTempPassword`)
             .then(state => {
                 if (!state || !state.val) {
-                    this.setState({showAckTempPasswordDialog: true});
+                    this.setState({ showAckTempPasswordDialog: true });
                 }
             });
     }
@@ -80,66 +80,69 @@ class App extends GenericApp {
         const tab = this.state.selectedTab;
         if (!tab || tab === 'options') {
             return 0;
-        } else
-        if (tab === 'enums') {
+        } if (tab === 'enums') {
             return 1;
-        } else
-        if (tab === 'alexa') {
+        } if (tab === 'alexa') {
             return 2;
-        } else
-        if (tab === 'google') {
+        } if (tab === 'google') {
             const offset = (this.state.native.amazonAlexa ? 1 : 0);
             return 2 + offset;
-        } else
-        if (tab === 'alisa') {
+        } if (tab === 'alisa') {
             const offset = (this.state.native.amazonAlexa ? 1 : 0) + (this.state.native.googleHome ? 1 : 0);
             return 2 + offset;
-        } else
-        if (tab === 'extended') {
+        } if (tab === 'extended') {
             const offset = (this.state.native.amazonAlexa ? 1 : 0) + (this.state.native.googleHome ? 1 : 0) + (this.state.native.yandexAlisa ? 1 : 0);
             return 2 + offset;
-        } else
-        if (tab === 'services') {
+        } if (tab === 'services') {
             const offset = (this.state.native.amazonAlexa ? 1 : 0) + (this.state.native.googleHome ? 1 : 0) + (this.state.native.yandexAlisa ? 1 : 0);
             return 3 + offset;
         }
+
+        return 0;
     }
 
     renderAckTempPasswordDialog() {
         if (!this.state.showAckTempPasswordDialog) {
             return null;
-        } else {
-            return <Dialog
-                open={true}
-                onClose={() => this.setState({showAckTempPasswordDialog: false}, () => setTimeout(() => this.setState({showAckTempPasswordDialog: true}), 1000))}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-            >
-                <DialogTitle id="alert-dialog-title">{I18n.t('Information: The skill linking process was changed!')}</DialogTitle>
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                        {I18n.t('The linking process has been changed for a few months.')}
-                        {I18n.t('Now there is no temporary password that will be sent by email.')}<br/><br/>
-                        <b>{I18n.t('The password is equal with ioBroker.pro and with password that was entered here in the settings!')}</b>
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button
-                        color="grey"
-                        variant="contained"
-                        onClick={() => this.setState({showAckTempPasswordDialog: false}, () => setTimeout(() => this.setState({showAckTempPasswordDialog: true}), 1000))} autoFocus>
-                        {I18n.t('Not understood')}
-                    </Button>
-                    <Button variant="contained" onClick={() =>
-                        this.socket.setState(`${this.adapterName}.${this.instance}.info.ackTempPassword`, {val: true, ack: true})
-                            .then(() =>
-                                this.setState({showAckTempPasswordDialog: false}))
-                    } color="primary" autoFocus>
-                        {I18n.t('Roger that')}
-                    </Button>
-                </DialogActions>
-            </Dialog>;
         }
+        return <Dialog
+            open
+            onClose={() => this.setState({ showAckTempPasswordDialog: false }, () => setTimeout(() => this.setState({ showAckTempPasswordDialog: true }), 1000))}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+        >
+            <DialogTitle id="alert-dialog-title">{I18n.t('Information: The skill linking process was changed!')}</DialogTitle>
+            <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                    {I18n.t('The linking process has been changed for a few months.')}
+                    {I18n.t('Now there is no temporary password that will be sent by email.')}
+                    <br />
+                    <br />
+                    <b>{I18n.t('The password is equal with ioBroker.pro and with password that was entered here in the settings!')}</b>
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    color="grey"
+                    variant="contained"
+                    onClick={() => this.setState({ showAckTempPasswordDialog: false }, () => setTimeout(() => this.setState({ showAckTempPasswordDialog: true }), 1000))}
+                    autoFocus
+                >
+                    {I18n.t('Not understood')}
+                </Button>
+                <Button
+                    variant="contained"
+                    onClick={() =>
+                        this.socket.setState(`${this.adapterName}.${this.instance}.info.ackTempPassword`, { val: true, ack: true })
+                            .then(() =>
+                                this.setState({ showAckTempPasswordDialog: false }))}
+                    color="primary"
+                    autoFocus
+                >
+                    {I18n.t('Roger that')}
+                </Button>
+            </DialogActions>
+        </Dialog>;
     }
 
     render() {
@@ -177,7 +180,7 @@ class App extends GenericApp {
                             common={this.common}
                             socket={this.socket}
                             native={this.state.native}
-                            onError={text => this.setState({errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text})}
+                            onError={text => this.setState({ errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text })}
                             onLoad={native => this.onLoadConfig(native)}
                             instance={this.instance}
                             adapterName={this.adapterName}
@@ -189,7 +192,7 @@ class App extends GenericApp {
                             common={this.common}
                             socket={this.socket}
                             native={this.state.native}
-                            onError={text => this.setState({errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text})}
+                            onError={text => this.setState({ errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text })}
                             instance={this.instance}
                             adapterName={this.adapterName}
                         />}
@@ -199,17 +202,17 @@ class App extends GenericApp {
                             common={this.common}
                             socket={this.socket}
                             native={this.state.native}
-                            onError={text => this.setState({errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text})}
+                            onError={text => this.setState({ errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text })}
                             adapterName={this.adapterName}
                             instance={this.instance}
                         />}
-                            {this.state.selectedTab === 'google' && <TabGoogleSmartNames
+                        {this.state.selectedTab === 'google' && <TabGoogleSmartNames
                             key="google"
                             themeType={this.state.themeType}
                             common={this.common}
                             socket={this.socket}
                             native={this.state.native}
-                            onError={text => this.setState({errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text})}
+                            onError={text => this.setState({ errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text })}
                             adapterName={this.adapterName}
                             instance={this.instance}
                         />}
@@ -219,7 +222,7 @@ class App extends GenericApp {
                             common={this.common}
                             socket={this.socket}
                             native={this.state.native}
-                            onError={text => this.setState({errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text})}
+                            onError={text => this.setState({ errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text })}
                             adapterName={this.adapterName}
                             instance={this.instance}
                         />}
@@ -228,7 +231,7 @@ class App extends GenericApp {
                             common={this.common}
                             socket={this.socket}
                             native={this.state.native}
-                            onError={text => this.setState({errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text})}
+                            onError={text => this.setState({ errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text })}
                             instance={this.instance}
                             adapterName={this.adapterName}
                             onChange={(attr, value) => this.updateNativeValue(attr, value)}
@@ -238,7 +241,7 @@ class App extends GenericApp {
                             common={this.common}
                             socket={this.socket}
                             native={this.state.native}
-                            onError={text => this.setState({errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text})}
+                            onError={text => this.setState({ errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text })}
                             instance={this.instance}
                             adapterName={this.adapterName}
                             onShowError={error => this.showError(error)}

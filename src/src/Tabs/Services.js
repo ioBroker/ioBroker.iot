@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 
@@ -16,36 +16,34 @@ import Chip from '@mui/material/Chip';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 
-import { MdRefresh as IconRefresh } from 'react-icons/md';
-import { MdClose as IconClose } from 'react-icons/md';
-import { MdAdd as IconAdd } from 'react-icons/md';
+import { MdRefresh as IconRefresh, MdClose as IconClose, MdAdd as IconAdd } from 'react-icons/md';
 
 import {
     Utils, I18n, SelectID as DialogSelectID, IconCopy,
 } from '@iobroker/adapter-react-v5';
 
-const styles = theme => ({
+const styles = () => ({
     tab: {
         width: '100%',
-        minHeight: '100%'
+        minHeight: '100%',
     },
     input: {
         marginTop: 0,
-        minWidth: 400
+        minWidth: 400,
     },
     fullSize: {
-        width: 'calc(100% - 64px)'
+        width: 'calc(100% - 64px)',
     },
     normalSize: {
         width: 'calc(30% - 64px)',
-        marginLeft: 10
+        marginLeft: 10,
     },
     button: {
         marginRight: 20,
     },
     card: {
         maxWidth: 345,
-        textAlign: 'center'
+        textAlign: 'center',
     },
     media: {
         height: 180,
@@ -53,18 +51,18 @@ const styles = theme => ({
     column: {
         display: 'inline-block',
         verticalAlign: 'top',
-        marginRight: 20
+        marginRight: 20,
     },
     columnLogo: {
         width: 350,
-        marginRight: 0
+        marginRight: 0,
     },
     columnSettings: {
         width: 'calc(100% - 370px)',
     },
     controlElement: {
-        //background: '#d2d2d2',
-        marginBottom: 5
+        // background: '#d2d2d2',
+        marginBottom: 5,
     },
     chips: {
         border: '1px solid #DDD',
@@ -74,11 +72,11 @@ const styles = theme => ({
         padding: 5,
         minHeight: 32,
         marginLeft: 10,
-        marginTop: 20
+        marginTop: 20,
     },
     chip: {
-        marginRight: 5
-    }
+        marginRight: 5,
+    },
 });
 
 class Services extends Component {
@@ -92,7 +90,7 @@ class Services extends Component {
             text2commandList: [],
             nightscoutList: [],
             addValue: '',
-            isInstanceAlive: false
+            isInstanceAlive: false,
         };
         this.onKeyChangedBound = this.onKeyChanged.bind(this);
 
@@ -101,7 +99,7 @@ class Services extends Component {
                 this.props.socket.getAdapterInstances('nightscout')
                     .then(nsList => this.setState({
                         nightscoutList: nsList.map(obj => obj._id.replace('system.adapter.nightscout.', '')),
-                        text2commandList: list.map(obj => obj._id.replace('system.adapter.text2command.', ''))
+                        text2commandList: list.map(obj => obj._id.replace('system.adapter.text2command.', '')),
                     })));
     }
 
@@ -142,7 +140,7 @@ class Services extends Component {
                 if (!obj || !obj.common || !obj.common.enabled) {
                     this.setState({ running: false, toast: I18n.t('Key will be updated after start') });
                 } else {
-                    return this.props.socket.setObject(`system.adapter.iot.${this.props.instance}`, obj);
+                    this.props.socket.setObject(`system.adapter.iot.${this.props.instance}`, obj);
                 }
             })
             .then(() => this.setState({ running: false, toast: I18n.t('Certificates will be updated after initiated restart') }))
@@ -220,9 +218,8 @@ class Services extends Component {
                     this.props.onChange(attr, selected);
                 }}
             />;
-        } else {
-            return null;
         }
+        return null;
     }
 
     renderChips(label, attr) {
@@ -243,13 +240,13 @@ class Services extends Component {
 
             <div className={this.props.classes.chips}>
                 {(this.props.native[attr] || '').split(/[,;\s]/).filter(a => !!a)
-                .map(word => <Chip
-                    key={word}
-                    size="small"
-                    label={word}
-                    onDelete={() => this.onChipsDelete(attr, word)}
-                    className={this.props.classes.chip}
-                />)}
+                    .map(word => <Chip
+                        key={word}
+                        size="small"
+                        label={word}
+                        onDelete={() => this.onChipsDelete(attr, word)}
+                        className={this.props.classes.chip}
+                    />)}
             </div>
         </div>;
     }
@@ -268,7 +265,8 @@ class Services extends Component {
             </Button>
             <br />
 
-            {this.renderInput('IFTTT key', 'iftttKey')}<br/>
+            {this.renderInput('IFTTT key', 'iftttKey')}
+            <br />
 
             <TextField
                 variant="standard"
@@ -280,10 +278,12 @@ class Services extends Component {
                 InputProps={{ readOnly: true }}
                 margin="normal"
             />
-            <Fab size="small" style={{ marginTop: 10, marginLeft: 5 }} onClick={() => Utils.copyToClipboard(`https://service.iobroker.in/v1/iotService?service=ifttt&key=${this.state.key}&user=${encodeURIComponent(this.props.native.login)}`)} ><IconCopy /></Fab><br/>
+            <Fab size="small" style={{ marginTop: 10, marginLeft: 5 }} onClick={() => Utils.copyToClipboard(`https://service.iobroker.in/v1/iotService?service=ifttt&key=${this.state.key}&user=${encodeURIComponent(this.props.native.login)}`)}><IconCopy /></Fab>
+            <br />
             <br />
 
-            {this.renderChips('White list for services', 'allowedServices')}<br/>
+            {this.renderChips('White list for services', 'allowedServices')}
+            <br />
 
             <TextField
                 variant="standard"
@@ -295,7 +295,8 @@ class Services extends Component {
                 InputProps={{ readOnly: true }}
                 margin="normal"
             />
-            <Fab size="small" style={{ marginTop: 10, marginLeft: 5 }} onClick={() => Utils.copyToClipboard(`https://service.iobroker.in/v1/iotService?service=custom_<SERVICE_NAME>&key=${this.state.key}&user=${encodeURIComponent(this.props.native.login)}&data=<SOME_TEXT>`)}><IconCopy /></Fab><br/>
+            <Fab size="small" style={{ marginTop: 10, marginLeft: 5 }} onClick={() => Utils.copyToClipboard(`https://service.iobroker.in/v1/iotService?service=custom_<SERVICE_NAME>&key=${this.state.key}&user=${encodeURIComponent(this.props.native.login)}&data=<SOME_TEXT>`)}><IconCopy /></Fab>
+            <br />
 
             <FormControl className={Utils.clsx(this.props.classes.input, this.props.classes.controlElement)} style={{ paddingTop: 20 }} variant="standard">
                 <Select
@@ -304,8 +305,11 @@ class Services extends Component {
                     onChange={e => this.props.onChange('text2command', e.target.value === '_' ? '' : e.target.value)}
                     input={<Input name="text2command" id="text2command-helper" />}
                 >
-                    <MenuItem key="key-default" value={'_'}>{I18n.t('disabled')}</MenuItem>
-                    {this.state.text2commandList.map(item => <MenuItem key={`key-${item}`} value={item}>text2command.{item}</MenuItem>)}
+                    <MenuItem key="key-default" value="_">{I18n.t('disabled')}</MenuItem>
+                    {this.state.text2commandList.map(item => <MenuItem key={`key-${item}`} value={item}>
+text2command.
+                        {item}
+                    </MenuItem>)}
                 </Select>
                 <FormHelperText>{I18n.t('Use text2command instance')}</FormHelperText>
             </FormControl>
@@ -317,8 +321,11 @@ class Services extends Component {
                     onChange={e => this.props.onChange('nightscout', e.target.value === '_' ? '' : e.target.value)}
                     input={<Input name="nightscout" id="nightscout-helper" />}
                 >
-                    <MenuItem key="key-default" value={'_'}>{I18n.t('disabled')}</MenuItem>
-                    {this.state.nightscoutList.map(item => <MenuItem key={'key-' + item} value={item}>nightscout.{item}</MenuItem>)}
+                    <MenuItem key="key-default" value="_">{I18n.t('disabled')}</MenuItem>
+                    {this.state.nightscoutList.map(item => <MenuItem key={`key-${item}`} value={item}>
+nightscout.
+                        {item}
+                    </MenuItem>)}
                 </Select>
                 <FormHelperText>{I18n.t('Use Nightscout instance')}</FormHelperText>
             </FormControl>
@@ -355,7 +362,8 @@ class Services extends Component {
                     margin="normal"
                 />
                 <Fab size="small" color="secondary" onClick={() => this.setState({ showSelectId: true })} aria-label="Add" style={{ marginLeft: 5, marginTop: 10 }}><IconAdd /></Fab>
-                <FormControlLabel className={this.props.classes.controlElement}
+                <FormControlLabel
+                    className={this.props.classes.controlElement}
                     control={
                         <Checkbox
                             style={{ paddingLeft: 30 }}
@@ -375,15 +383,15 @@ class Services extends Component {
 }
 
 Services.propTypes = {
-    common: PropTypes.object.isRequired,
+//     common: PropTypes.object.isRequired,
     native: PropTypes.object.isRequired,
     instance: PropTypes.number.isRequired,
     adapterName: PropTypes.string.isRequired,
-    onError: PropTypes.func,
-    onLoad: PropTypes.func,
+    //    onError: PropTypes.func,
+    //    onLoad: PropTypes.func,
     onChange: PropTypes.func,
     socket: PropTypes.object.isRequired,
-    onShowError: PropTypes.func,
+//    onShowError: PropTypes.func,
 };
 
 export default withStyles(styles)(Services);
