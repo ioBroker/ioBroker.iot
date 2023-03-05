@@ -63,6 +63,7 @@
   ],
   "scripts": {
     "test": "mocha --exit",
+    "test-alexa-v3": "mocha --grep AlexaSmartHomeV3",
     "prepublishOnly": "gulp",
     "build": "gulp",
     "release": "release-script",
