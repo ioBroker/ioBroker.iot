@@ -38,22 +38,22 @@ describe('AlexaSmartHomeV3 - Directives', function () {
         // device directives
         it('PowerController TurnOff', async function () {
             let event = await helpers.getSample('PowerController/PowerController.TurnOff.request.json')
-            let capability = device.matchDirective(event)
+            let capability = device.matchCapability(event)
             assert.equal(capability instanceof capabilities.PowerController, true)
         })
         it('PowerController TurnOn', async function () {
             let event = await helpers.getSample('PowerController/PowerController.TurnOn.request.json')
-            let capability = device.matchDirective(event)
+            let capability = device.matchCapability(event)
             assert.equal(capability instanceof capabilities.PowerController, true)
         })
         it('BrightnessController AdjustBrightness', async function () {
             let event = await helpers.getSample('BrightnessController/BrightnessController.AdjustBrightness.request.json')
-            let capability = device.matchDirective(event)
+            let capability = device.matchCapability(event)
             assert.equal(capability instanceof capabilities.BrightnessController, true)
         })
         it('BrightnessController SetBrightness', async function () {
             let event = await helpers.getSample('BrightnessController/BrightnessController.SetBrightness.request.json')
-            let capability = device.matchDirective(event)
+            let capability = device.matchCapability(event)
             assert.equal(capability instanceof capabilities.BrightnessController, true)
         })
     })
