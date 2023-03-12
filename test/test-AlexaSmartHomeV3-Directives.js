@@ -5,8 +5,15 @@ const Endpoint = require('../lib/AlexaSmartHomeV3/Endpoint')
 const directives = require('../lib/AlexaSmartHomeV3/Directives')
 const capabilities = require('../lib/AlexaSmartHomeV3/Capabilities')
 
+
+class AdapterMock {
+    async getObjectViewAsync() {
+        return { rows: [] };
+    }
+}
+
 let endpoint;
-let endpointManager = new EndpointManager()
+let endpointManager = new EndpointManager(new AdapterMock())
 const endpointId = 'endpoint-001'
 const friendlyName = 'some-friendly-name'
 
