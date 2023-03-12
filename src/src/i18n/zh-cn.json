@@ -125,6 +125,7 @@
   "info_iftttKey": "您可以在“文档”下找到您的密钥<a href='https://ifttt.com/maker_webhooks' target='_blank'> </a>",
   "ioBroker.pro Login": "ioBroker.pro登录",
   "ioBroker.pro Password": "ioBroker.pro密码",
+  "omit value": "无价值",
   "last value": "最后的价值",
   "modified": "名称已由用户修改",
   "no type": "没有类型",

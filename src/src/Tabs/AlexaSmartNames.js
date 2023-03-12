@@ -509,6 +509,7 @@ class AlexaSmartNames extends Component {
             const items = [
                 <MenuItem key="_" value=""><em>{I18n.t('Default')}</em></MenuItem>,
                 <MenuItem key="last" value="stored">{I18n.t('last value')}</MenuItem>,
+                <MenuItem key="omit" value="omit">{I18n.t('omit value')}</MenuItem>,
             ];
             for (let i = 5; i <= 100; i += 5) {
                 items.push(<MenuItem key={i.toString()} value={i.toString()}>
