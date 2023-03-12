@@ -60,13 +60,13 @@ You can select the behaviour of ON command will come for the number state. The s
 For every command the text response will be generated. You can define here the Object ID , where this text must be written to. E.g. *sayit.0.tts.text*.
 
 ### Colors
-Just now only english alexa supports the color control.
-The channel must have 4 states with following roles:
+The channel needs 3-5 states with following roles:
 
 - level.color.saturation (required for detection of the channel),
 - level.color.hue,
 - level.dimmer,
 - switch (optional)
+- level.color.temperature (optional)
 
 ```
 Alexa, set the "device name" to "color"
