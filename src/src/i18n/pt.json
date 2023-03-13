@@ -125,6 +125,7 @@
   "info_iftttKey": "Você pode encontrar sua chave <a href='https://ifttt.com/maker_webhooks' target='_blank'>aqui</a>, no botão 'Documentation'",
   "ioBroker.pro Login": "ioBroker.pro Login",
   "ioBroker.pro Password": "Senha do ioBroker.pro",
+  "omit value": "sem valor",
   "last value": "último valor",
   "modified": "O nome foi modificado pelo usuário",
   "no type": "nenhum tipo",

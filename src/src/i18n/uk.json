@@ -165,6 +165,7 @@
   "ioBType": "Тип IoB",
   "ioBroker.pro Login": "ioBroker.pro Логін",
   "ioBroker.pro Password": "Пароль ioBroker.pro",
+  "omit value": "не має значення",
   "last value": "останнє значення",
   "manualModeHint": "Виберіть <a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/guides/'>TYPE</a> і <a target='_blank ' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/'>TRAIT</a> після додавання стану. Щоб додати кілька характеристик, додайте інший ідентифікатор і ознаку, але однакові розумне ім’я, тип і кімнату. Розділені комами для кількох розумних імен. Щоб призначити кімнату, скористайтеся ioBroker Enums/Aufzählungen. За допомогою атрибутів ви можете, наприклад, встановити діапазон для колірної температури <a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/colorsetting'>Інформація про Атрибути можна знайти тут.</a> Порожній атрибут: {}",
   "modified": "Ім'я було змінено користувачем",
