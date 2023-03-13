@@ -134,4 +134,154 @@ describe('AlexaSmartHomeV3 - Control Mapping', function () {
         })
 
     })
+
+    describe('Multiple Controls Mapping', async function () {
+        it('Light Switch + Light Dimmer with SET state only', async function () {
+
+            let controls = [
+                {
+                    states: [
+                        {
+                            type: "boolean",
+                            write: true,
+                            name: "SET",
+                            defaultRole: "switch.light",
+                            id: "alias.0.Wohnzimmer.Lampe.SET",
+                            smartName: {
+                                smartType: "LIGHT",
+                            },
+                        },
+                    ],
+                    type: "light",
+                },
+                {
+                    states: [
+                        {
+                            indicator: false,
+                            type: "number",
+                            write: true,
+                            name: "SET",
+                            required: true,
+                            defaultRole: "level.dimmer",
+                            defaultUnit: "%",
+                            id: "alias.0.Wohnzimmer.Dimmer.SET",
+                            smartName: {
+                                smartType: "LIGHT",
+                                byON: "80",
+                            },
+                        }
+                    ],
+                    type: "dimmer"
+                }];
+
+            let capabilityCollection = CapabilityFactory.map(controls);
+            assert.notEqual(capabilityCollection, undefined)
+            assert.equal(Array.isArray(capabilityCollection), true)
+            assert.equal(capabilityCollection.length, 2)
+
+            assert.equal(capabilityCollection[0] instanceof capabilities.PowerController, true)
+            assert.equal(capabilityCollection[1] instanceof capabilities.BrightnessController, true)
+
+            let power = capabilityCollection[0]
+            assert.equal(power.stateProxies.length, 2)
+
+            // PowerControl of the Light Switch
+            assert.equal(power.stateProxies[0].alexaValue(true), capabilities.PowerController.ON)
+            assert.equal(power.stateProxies[0].alexaValue(false), capabilities.PowerController.OFF)
+            assert.equal(power.stateProxies[0].value(capabilities.PowerController.ON), true)
+            assert.equal(power.stateProxies[0].value(capabilities.PowerController.OFF), false)
+
+            // PowerControl of the Light Dimmer
+            assert.equal(power.stateProxies[1].alexaValue(45), capabilities.PowerController.ON)
+            assert.equal(power.stateProxies[1].alexaValue(100), capabilities.PowerController.ON)
+            assert.equal(power.stateProxies[1].alexaValue(0), capabilities.PowerController.OFF)
+            assert.equal(power.stateProxies[1].value(capabilities.PowerController.ON), 80)
+            assert.equal(power.stateProxies[1].value(capabilities.PowerController.OFF), 0)
+
+            // Brightness of the Light Dimmer
+            let brightness = capabilityCollection[1]
+            assert.equal(brightness.stateProxies.length, 1)
+            assert.equal(brightness.stateProxies[0].alexaValue(50), 50)
+            assert.equal(brightness.stateProxies[0].value(75), 75)
+        })
+
+        it('Light Switch + Light Dimmer with SET and ON_SET states', async function () {
+
+            let controls = [
+                {
+                    states: [
+                        {
+                            type: "boolean",
+                            write: true,
+                            name: "SET",
+                            defaultRole: "switch.light",
+                            id: "alias.0.Wohnzimmer.Lampe.SET",
+                            smartName: {
+                                smartType: "LIGHT",
+                            },
+                        },
+                    ],
+                    type: "light",
+                },
+                {
+                    states: [
+                        {
+                            indicator: false,
+                            type: "number",
+                            write: true,
+                            name: "SET",
+                            required: true,
+                            defaultRole: "level.dimmer",
+                            defaultUnit: "%",
+                            id: "alias.0.Wohnzimmer.Dimmer.SET",
+                            smartName: {
+                                smartType: "LIGHT",
+                                byON: "80",
+                            },
+                        },
+                        {
+                            indicator: false,
+                            type: "boolean",
+                            write: true,
+                            name: "ON_SET",
+                            required: false,
+                            defaultRole: "switch.light",
+                            defaultUnit: "",
+                            id: "alias.0.Wohnzimmer.Dimmer.ON_SET",
+                        },
+                    ],
+                    type: "dimmer"
+                }];
+
+            let capabilityCollection = CapabilityFactory.map(controls);
+            assert.notEqual(capabilityCollection, undefined)
+            assert.equal(Array.isArray(capabilityCollection), true)
+            assert.equal(capabilityCollection.length, 2)
+
+            assert.equal(capabilityCollection[0] instanceof capabilities.PowerController, true)
+            assert.equal(capabilityCollection[1] instanceof capabilities.BrightnessController, true)
+
+            let power = capabilityCollection[0]
+            assert.equal(power.stateProxies.length, 2)
+
+            // PowerControl of the Light Switch
+            assert.equal(power.stateProxies[0].alexaValue(true), capabilities.PowerController.ON)
+            assert.equal(power.stateProxies[0].alexaValue(false), capabilities.PowerController.OFF)
+            assert.equal(power.stateProxies[0].value(capabilities.PowerController.ON), true)
+            assert.equal(power.stateProxies[0].value(capabilities.PowerController.OFF), false)
+
+            // PowerControl of the Light Dimmer
+            assert.equal(power.stateProxies[1].alexaValue(45), capabilities.PowerController.ON)
+            assert.equal(power.stateProxies[1].alexaValue(100), capabilities.PowerController.ON)
+            assert.equal(power.stateProxies[1].alexaValue(0), capabilities.PowerController.OFF)
+            assert.equal(power.stateProxies[1].value(capabilities.PowerController.ON), true)
+            assert.equal(power.stateProxies[1].value(capabilities.PowerController.OFF), false)
+
+            // Brightness of the Light Dimmer
+            let brightness = capabilityCollection[1]
+            assert.equal(brightness.stateProxies.length, 1)
+            assert.equal(brightness.stateProxies[0].alexaValue(50), 50)
+            assert.equal(brightness.stateProxies[0].value(75), 75)
+        })
+    })
 })
