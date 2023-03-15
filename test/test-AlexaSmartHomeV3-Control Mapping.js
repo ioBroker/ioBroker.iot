@@ -1,5 +1,5 @@
 const assert = require('assert')
-const capabilities = require('../lib/AlexaSmartHomeV3/Capabilities')
+const capabilities = require('../lib/AlexaSmartHomeV3/Alexa/Capabilities')
 const CapabilityFactory = require('../lib/AlexaSmartHomeV3/CapabilityFactory')
 
 

@@ -1,10 +1,9 @@
 const assert = require('assert');
 const helpers = require('./helpers')
-const EndpointManager = require('../lib/AlexaSmartHomeV3/EndpointManager')
-const Endpoint = require('../lib/AlexaSmartHomeV3/Endpoint')
-const directives = require('../lib/AlexaSmartHomeV3/Directives')
-const capabilities = require('../lib/AlexaSmartHomeV3/Capabilities')
-
+const EndpointManager = require('../lib/AlexaSmartHomeV3/DeviceManager')
+const Endpoint = require('../lib/AlexaSmartHomeV3/Devices/Device')
+const directives = require('../lib/AlexaSmartHomeV3/Alexa/Directives')
+const capabilities = require('../lib/AlexaSmartHomeV3/Alexa/Capabilities')
 
 class AdapterMock {
     async getObjectViewAsync() {
@@ -27,7 +26,7 @@ describe('AlexaSmartHomeV3 - Directives', function () {
             friendlyName: friendlyName,
             displayCategries: ['LIGHT']
         })
-        endpointManager.addEndpoint(endpoint)
+        endpointManager.addDevice(endpoint)
     });
 
     after(function () {
