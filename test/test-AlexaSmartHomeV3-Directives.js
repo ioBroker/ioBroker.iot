@@ -15,7 +15,7 @@ class AdapterMock {
     }
 }
 
-let device;
+let light_dimmer_device;
 let light;
 let dimmer;
 let adapterMock = new AdapterMock()
@@ -118,13 +118,28 @@ describe('AlexaSmartHomeV3 - Directives', function () {
             adapterMock);    
 
         // runs before all tests in this file 
-        device = new Device({
+        light_dimmer_device = new Device({
             id: endpointId,
             friendlyName: friendlyName,
             displayCategries: ['LIGHT'],
             controls: [light, dimmer]
         })
-        deviceManager.addDevice(device)
+
+        light_device = new Device({
+            id: '111',
+            friendlyName: friendlyName,
+            displayCategries: ['LIGHT'],
+            controls: [light]
+        })
+
+        dimmer_device = new Device({
+            id: '222',
+            friendlyName: friendlyName,
+            displayCategries: ['LIGHT'],
+            controls: [dimmer]
+        })
+
+        deviceManager.addDevice(light_dimmer_device)
     });
 
     after(function () {
@@ -142,25 +157,25 @@ describe('AlexaSmartHomeV3 - Directives', function () {
         // device directives
         it('PowerController TurnOff', async function () {
             let event = await helpers.getSample('PowerController/PowerController.TurnOff.request.json')
-            assert.equal(device.supports(event), true)
+            assert.equal(light_dimmer_device.supports(event), true)
             assert.equal(light.supports(event), true)
             assert.equal(dimmer.supports(event), true)
         })
         it('PowerController TurnOn', async function () {
             let event = await helpers.getSample('PowerController/PowerController.TurnOn.request.json')
-            assert.equal(device.supports(event), true)
+            assert.equal(light_dimmer_device.supports(event), true)
             assert.equal(light.supports(event), true)
             assert.equal(dimmer.supports(event), true)
         })
         it('BrightnessController AdjustBrightness', async function () {
             let event = await helpers.getSample('BrightnessController/BrightnessController.AdjustBrightness.request.json')
-            assert.equal(device.supports(event), true)
+            assert.equal(light_dimmer_device.supports(event), true)
             assert.equal(light.canHandle(event), true)
             assert.equal(dimmer.supports(event), true)
         })
         it('BrightnessController SetBrightness', async function () {
             let event = await helpers.getSample('BrightnessController/BrightnessController.SetBrightness.request.json')
-            assert.equal(device.supports(event), true)
+            assert.equal(light_dimmer_device.supports(event), true)
             assert.equal(light.canHandle(event), true)
             assert.equal(dimmer.supports(event), true)
         })
@@ -198,6 +213,19 @@ describe('AlexaSmartHomeV3 - Directives', function () {
             assert.equal(response.event.header.name, "Response", "Namespace!");
             assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, "Correlation Token!");
             assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
+
+            response = await light_device.handle(event);
+            assert.equal(response.context.properties[0].namespace, "Alexa.PowerController", "Properties Namespace!");
+            assert.equal(response.context.properties[0].name, "powerState", "Properties Name!");
+            assert.equal(response.context.properties[0].value, "OFF", "Value!");
+
+            assert.equal(response.event.header.namespace, "Alexa", "Namespace!");
+            assert.equal(response.event.header.name, "Response", "Namespace!");
+            assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, "Correlation Token!");
+            assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
+
+            assert.equal(light_device.controls[0].supported[0].stateProxy.currentValue, false);
+
         })
         it('PowerController TurnOn', async function () {
             let event = await helpers.getSample('PowerController/PowerController.TurnOn.request.json')
