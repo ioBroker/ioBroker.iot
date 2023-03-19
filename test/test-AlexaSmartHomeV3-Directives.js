@@ -13,6 +13,10 @@ class AdapterMock {
     async setStateAsync() {
         return {}
     }
+
+    async setForeignStateAsync() {
+        return {}
+    }
 }
 
 let light_dimmer_device;
