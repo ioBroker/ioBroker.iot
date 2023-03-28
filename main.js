@@ -116,21 +116,22 @@ function startAdapter(options) {
 
                         recalcTimeout = setTimeout(() => {
                             recalcTimeout = null;
-                            alexaSH2 && alexaSH2.updateDevices(obj.message, analyseAddedId =>
-                                adapter.setState('smart.updatesResult', analyseAddedId || '', true, () => {
-                                    adapter.log.debug('Devices updated!');
-                                    adapter.setState('smart.updates', true, true);
-                                }));
+                            alexaSH2 && alexaSH2.updateDevices(obj.message, async analyseAddedId => {
+                                await adapter.setStateAsync('smart.updatesResult', analyseAddedId || '', true);
+                                adapter.log.debug('Devices updated!');
+                                await adapter.setStateAsync('smart.updates', true, true);
+                            });
 
-                            alexaSH3 && alexaSH3.updateDevices(obj.message, analyseAddedId =>
-                                adapter.setState('smart.updatesResult', analyseAddedId || '', true, () =>
-                                    adapter.setState('smart.updates3', true, true)));
+                            alexaSH3 && alexaSH3.updateDevices(obj.message, async analyseAddedId => {
+                                await adapter.setStateAsync('smart.updatesResult', analyseAddedId || '', true);
+                                await adapter.setStateAsync('smart.updates3', true, true);
+                            });
 
-                            googleHome && googleHome.updateDevices(analyseAddedId =>
-                                adapter.setState('smart.updatesResult', analyseAddedId || '', true, () => {
-                                    adapter.log.debug('GH Devices updated!');
-                                    adapter.setState('smart.updatesGH', true, true);
-                                }));
+                            googleHome && googleHome.updateDevices(async analyseAddedId => {
+                                await adapter.setStateAsync('smart.updatesResult', analyseAddedId || '', true);
+                                adapter.log.debug('GH Devices updated!');
+                                await adapter.setStateAsync('smart.updatesGH', true, true);
+                            });
                         }, 1000);
                         break;
 
@@ -239,13 +240,13 @@ function startAdapter(options) {
                             try {
                                 obj.message = JSON.parse(obj.message);
                             } catch (e) {
-                                adapter.log.error('Cannot parse object: ' + e);
+                                adapter.log.error(`Cannot parse object: ${e}`);
                                 obj.callback && adapter.sendTo(obj.from, obj.command, {error: 'Invalid message format: cannot parse object'}, obj.callback);
                                 return;
                             }
                         }
-                        processMessage(obj.message.type, obj.message.request, response =>
-                            obj.callback && adapter.sendTo(obj.from, obj.command, response, obj.callback));
+                        const response = await processMessage(obj.message.type, obj.message.request);
+                        obj.callback && adapter.sendTo(obj.from, obj.command, response, obj.callback);
 
                         break;
 
@@ -332,8 +333,8 @@ function sendDataToIFTTT(obj) {
     if (typeof obj !== 'object') {
         url = `https://maker.ifttt.com/trigger/state/with/key/${adapter.config.iftttKey}`;
         data = {
-            value1:  adapter.namespace + '.services.ifttt',
-            value2: obj
+            value1: `${adapter.namespace}.services.ifttt`,
+            value2: obj,
         };
     } else if (obj.event) {
         const event = obj.event;
@@ -345,12 +346,12 @@ function sendDataToIFTTT(obj) {
     } else if (obj.val === undefined) {
         return adapter.log.warn('No value is defined');
     } else {
-        obj.id = obj.id || (adapter.namespace + '.services.ifttt');
+        obj.id = obj.id || `${adapter.namespace}.services.ifttt`;
         url = `https://maker.ifttt.com/trigger/state/with/key/${adapter.config.iftttKey}`;
         data = {
             value1: obj.id,
             value2: obj.val,
-            value3: obj.ack
+            value3: obj.ack,
         }
     }
 
@@ -372,47 +373,51 @@ function sendDataToIFTTT(obj) {
     }
 }
 
-function controlState(id, data, callback) {
+async function controlState(id, data) {
     id = id || 'services.ifttt';
 
     if (typeof data === 'object') {
         if (data.id) {
-            if (data.id === adapter.namespace + '.services.ifttt') {
+            if (data.id === `${adapter.namespace}.services.ifttt`) {
                 data.ack = true;
             }
             if (data.val === undefined) {
-                callback && callback('No value set');
-                return;
+                throw new Error('No value set');
             }
-            adapter.getForeignObject(data.id, (err, obj) => {
-                if (!obj || !obj.common) {
-                    callback && callback('Unknown ID: ' + data.id);
-                } else {
-                    if (typeof data.val === 'string') data.val = data.val.replace(/^@ifttt\s?/, '');
-                    if (obj.common.type === 'boolean') {
-                        data.val = data.val === true || data.val === 'true' || data.val === 'on' || data.val === 'ON' || data.val === 1 || data.val === '1';
-                    } else if (obj.common.type === 'number') {
-                        data.val = parseFloat(data.val);
-                    }
-
-                    adapter.setForeignState(data.id, data.val, data.ack, callback);
+            const obj = await adapter.getForeignObjectAsync(data.id);
+            if (!obj || !obj.common) {
+                throw new Error(`Unknown ID: ${data.id}`);
+            } else {
+                if (typeof data.val === 'string') data.val = data.val.replace(/^@ifttt\s?/, '');
+                if (obj.common.type === 'boolean') {
+                    data.val = data.val === true || data.val === 'true' || data.val === 'on' || data.val === 'ON' || data.val === 1 || data.val === '1';
+                } else if (obj.common.type === 'number') {
+                    data.val = parseFloat(data.val);
                 }
-            });
+
+                await adapter.setForeignStateAsync(data.id, data.val, data.ack);
+            }
         } else if (data.val !== undefined) {
-            if (typeof data.val === 'string') data.val = data.val.replace(/^@ifttt\s?/, '');
-            adapter.setState(id, data.val, data.ack !== undefined ? data.ack : true, callback);
+            if (typeof data.val === 'string') {
+                data.val = data.val.replace(/^@ifttt\s?/, '');
+            }
+            await adapter.setStateAsync(id, data.val, data.ack !== undefined ? data.ack : true);
         } else {
-            if (typeof data === 'string') data = data.replace(/^@ifttt\s?/, '');
-            adapter.setState(id, JSON.stringify(data), true, callback);
+            if (typeof data === 'string') {
+                data = data.replace(/^@ifttt\s?/, '');
+            }
+            await adapter.setStateAsync(id, JSON.stringify(data), true);
         }
     } else {
-        if (typeof data === 'string') data = data.replace(/^@ifttt\s?/, '');
-        adapter.setState(id, data, true, callback);
+        if (typeof data === 'string') {
+            data = data.replace(/^@ifttt\s?/, '');
+        }
+        await adapter.setStateAsync(id, data, true);
     }
 }
 
-function processIfttt(data, callback) {
-    adapter.log.debug('Received IFTTT object: ' + data);
+async function processIfttt(data) {
+    adapter.log.debug(`Received IFTTT object: ${data}`);
     let id;
     if (typeof data === 'object' && data.id && data.data !== undefined) {
         id = data.id;
@@ -420,7 +425,7 @@ function processIfttt(data, callback) {
             try {
                 data = JSON.parse(data.data);
             } catch (e) {
-                adapter.log.debug('Cannot parse: ' + data.data);
+                adapter.log.debug(`Cannot parse: ${data.data}`);
             }
         } else {
             data = data.data;
@@ -436,46 +441,38 @@ function processIfttt(data, callback) {
                         data = data.data;
                     }
                 }
-
             } catch (e) {
-                adapter.log.debug('Cannot parse: ' + data);
+                adapter.log.debug(`Cannot parse: ${data}`);
             }
         }
     }
 
     if (id) {
-        adapter.getForeignObject(id, (err, obj) => {
-            if (obj) {
-                controlState(id, data, callback);
-            } else {
-                const newId = `${adapter.namespace}.services.${id}`;
-                adapter.getForeignObject(newId, (err, obj) => {
-                    if (!obj) {
-                        // create state
-                        adapter.setObjectNotExists('services.' + id,
-                            {
-                                type: 'state',
-                                common: {
-                                    name: 'IFTTT value',
-                                    write: false,
-                                    role: 'state',
-                                    read: true,
-                                    type: 'mixed',
-                                    desc: 'Custom state'
-                                },
-                                native: {}
-                            },
-                            () => controlState(newId, data, callback)
-                        );
-                    } else {
-                        controlState(obj._id, data, callback);
-                    }
-                });
+        let obj = await adapter.getForeignObjectAsync(id);
+        if (!obj) {
+            const newId = `${adapter.namespace}.services.${id}`;
+            obj = await adapter.getForeignObjectAsync(newId)
+            if (!obj) {
+                // create state
+                await adapter.setObjectNotExistsAsync(`services.${id}`,
+                    {
+                        type: 'state',
+                        common: {
+                            name: 'IFTTT value',
+                            write: false,
+                            role: 'state',
+                            read: true,
+                            type: 'mixed',
+                            desc: 'Custom state'
+                        },
+                        native: {}
+                    });
+                id = newId;
             }
-        });
-    } else {
-        controlState(null, data, callback);
+        }
     }
+
+    return controlState(id || null, data);
 }
 
 function onDisconnect(event) {
@@ -661,6 +658,21 @@ async function fetchCertificates(login, pass, _forceUserCreation) {
     }
 }
 
+function sendToAsync(instance, command, request) {
+    return new Promise(resolve => adapter.sendTo(instance, command, request, response => {
+        adapter.log.debug(`Response from ${instance}: ${JSON.stringify(response)}`);
+        // try to parse JSON
+        if (typeof response === 'string' && (response[0] === '{' || response[0] === '[')) {
+            try {
+                response = JSON.parse(response);
+            } catch (e) {
+
+            }
+        }
+        resolve(response);
+    }));
+}
+
 async function processMessage(type, request) {
     if (request instanceof Buffer) {
         request = request.toString();
@@ -674,36 +686,21 @@ async function processMessage(type, request) {
 
     if (type.startsWith('remote')) {
         const start = Date.now();
-        return await new Promise((resolve) => {
-            remote.process(request, type)
-                .then(response => {
-                    if (response !== NONE) {
-                        adapter.log.debug(`[REMOTE] Response in: ${Date.now() - start}ms (Length: ${Array.isArray(response) ? `A ${response.length}` : JSON.stringify(response).length}) for ${request}`);
-                    }
-                    resolve(response);
-                })
-                .catch(err => {
-                    adapter.log.error(`Error in processing of remote request: ${err.toString()}`);
-                })
-        });
+        return remote.process(request, type)
+            .then(response => {
+                if (response !== NONE) {
+                    adapter.log.debug(`[REMOTE] Response in: ${Date.now() - start}ms (Length: ${Array.isArray(response) ? `A ${response.length}` : JSON.stringify(response).length}) for ${request}`);
+                }
+                return response;
+            })
+            .catch(err => adapter.log.error(`Error in processing of remote request: ${err.toString()}`));
     } else if (type.startsWith('nightscout')) {
         if (adapter.config.nightscout) {
             let state = await adapter.getForeignStateAsync(`system.adapter.nightscout.${adapter.config.nightscout}.alive`);
             if (state && state.val) {
-                return await new Promise(resolve => adapter.sendTo(`nightscout.${adapter.config.nightscout}`, 'send', request, response => {
-                    adapter.log.debug(`Response from nightscout.${adapter.config.nightscout}: ${JSON.stringify(response)}`);
-                    // try to parse JSON
-                    if (typeof response === 'string' && (response[0] === '{' || response[0] === '[')) {
-                        try {
-                            response = JSON.parse(response);
-                        } catch (e) {
-
-                        }
-                    }
-                    resolve(response);
-                }));
+                return sendToAsync(`nightscout.${adapter.config.nightscout}`, 'send', request);
             } else {
-                return ({ error: `nightscout.${adapter.config.nightscout} is offline` });
+                return { error: `nightscout.${adapter.config.nightscout} is offline` };
             }
         } else {
             return { error: 'Service is disabled' };
@@ -722,7 +719,7 @@ async function processMessage(type, request) {
 
         if (request && request.directive) {
             if (alexaSH3) {
-                return await alexaSH3.process(request)
+                return await alexaSH3.process(request);
             } else {
                 return { error: 'Service is disabled' };
             }
@@ -730,24 +727,22 @@ async function processMessage(type, request) {
         if (request && !request.header) {
             if (request && request.session && request.session.application && alexaCustomBlood && request.session.application.applicationId === alexaCustomBlood.getAppId()) {
                 if (alexaCustomBlood) {
-                    return await new Promise(resolve => {
-                        alexaCustomBlood.process(request, adapter.config.amazonAlexaBlood, response => resolve(response));
-                    })
+                    return alexaCustomBlood.process(request, adapter.config.amazonAlexaBlood);
                 } else {
                     return { error: 'Service is disabled' };
                 }
             } else {
                 if (alexaCustom) {
-                    return await new Promise(resolve => {
-                        alexaCustom.process(request, adapter.config.amazonAlexa, response => resolve(response))
-                    })
+                    return new Promise(resolve =>
+                        alexaCustom.process(request, adapter.config.amazonAlexa, response => resolve(response)));
                 } else {
                     return { error: 'Service is disabled' };
                 }
             }
         } else {
             if (alexaSH2) {
-                return await new Promise(resolve => alexaSH2.process(request, adapter.config.amazonAlexa, response => resolve(response)));
+                return new Promise(resolve =>
+                    alexaSH2.process(request, adapter.config.amazonAlexa, response => resolve(response)));
             } else {
                 return { error: 'Service is disabled' };
             }
@@ -764,7 +759,7 @@ async function processMessage(type, request) {
             return { error: 'Cannot parse request' };
         }
 
-        return await new Promise(resolve => processIfttt(request, response => resolve(response)));
+        return processIfttt(request);
     } else if (type.startsWith('ghome')) {
         if (typeof request === 'string') {
             try {
@@ -776,7 +771,8 @@ async function processMessage(type, request) {
         }
 
         if (googleHome) {
-            return await new Promise(resolve => googleHome.process(request, adapter.config.googleHome, response => resolve(response)));
+            return new Promise(resolve =>
+                googleHome.process(request, adapter.config.googleHome, response => resolve(response)));
         } else {
             return { error: 'Service is disabled' };
         }
@@ -792,7 +788,7 @@ async function processMessage(type, request) {
 
         adapter.log.debug(`${Date.now()} ALISA: ${JSON.stringify(request)}`);
         if (yandexAlisa) {
-            return await new Promise(resolve => yandexAlisa.process(request, adapter.config.yandexAlisa, response => resolve(response)));
+            return yandexAlisa.process(request, adapter.config.yandexAlisa);
         } else {
             return { error: 'Service is disabled' };
         }
@@ -812,12 +808,21 @@ async function processMessage(type, request) {
             }
 
             if (SPECIAL_ADAPTERS.includes(_type)) {
-                return await new Promise(resolve => adapter.setState(`services.${_type}`, request, true, err =>
-                    resolve({ result: err || 'Ok' })));
+                try {
+                    await adapter.setStateAsync(`services.${_type}`, request, true);
+                } catch (err) {
+                    return { result: err };
+                }
+
+                return { result: 'Ok' };
             } else if (type.startsWith('text2command')) {
                 if (adapter.config.text2command !== undefined && adapter.config.text2command !== '') {
-                    return await new Promise(resolve => adapter.setForeignState(`text2command.${adapter.config.text2command}.text`, request,
-                        err => resolve({ result: err || 'Ok' })));
+                    try {
+                        await adapter.setForeignStateAsync(`text2command.${adapter.config.text2command}.text`, request);
+                    } catch (err) {
+                        return { result: err };
+                    }
+                    return { result: 'Ok' };
                 } else {
                     adapter.log.warn('Received service text2command, but instance is not defined');
                     return { result: 'but instance is not defined' };
@@ -825,9 +830,16 @@ async function processMessage(type, request) {
             } else if (type.startsWith('simpleApi')) {
                 return { result: 'not implemented' };
             } else if (isCustom) {
-                adapter.getObject(`services.custom_${_type}`, async (err, obj) => {
-                    if (!obj) {
-                        adapter.setObjectNotExists(`services.custom_${_type}`, {
+                let obj;
+                try {
+                    obj = await adapter.getObjectAsync(`services.custom_${_type}`);
+                } catch (e) {
+                    adapter.log.error(`Cannot get object services.custom_${_type}: ${e}`);
+                }
+
+                if (!obj) {
+                    try {
+                        await adapter.setObjectNotExistsAsync(`services.custom_${_type}`, {
                             _id: `${adapter.namespace}.services.custom_${_type}`,
                             type: 'state',
                             common: {
@@ -837,21 +849,17 @@ async function processMessage(type, request) {
                                 type: 'mixed',
                                 role: 'value'
                             },
-                            native: {}
-                        }, async err => {
-                            if (!err) {
-                                return await new Promise(resolve => adapter.setState(`services.custom_${_type}`, request, true, err =>
-                                    resolve({ result: err || 'Ok' })));
-                            } else {
-                                adapter.log.error(`Cannot control .services.custom_${_type}: ${JSON.stringify(err)}`);
-                                return { error: err };
-                            }
+                            native: {},
                         });
-                    } else {
-                        return await new Promise(resolve => adapter.setState(`services.custom_${_type}`, request, true, err =>
-                            resolve({ result: err || 'Ok' })));
+                        await adapter.setStateAsync(`services.custom_${_type}`, request, true);
+                    } catch (err) {
+                        adapter.log.error(`Cannot control .services.custom_${_type}: ${JSON.stringify(err)}`);
+                        return { error: err };
                     }
-                });
+                } else {
+                    await adapter.setStateAsync(`services.custom_${_type}`, request, true);
+                    return { result: 'Ok' };
+                }
             } else {
                 adapter.log.warn(`Received service "${type}", but it is not allowed`);
                 return { error: 'not allowed' };
@@ -945,7 +953,7 @@ async function startDevice(clientId, login, password, retry) {
                 let type = topic.substring(clientId.length + 9);
 
                 try {
-                    const response = await processMessage(type, request);   
+                    const response = await processMessage(type, request);
 
                     if (adapter.common.loglevel === 'debug' && !type.startsWith('remote')) {
                         adapter.log.debug(`Response: ${JSON.stringify(response)}`);
@@ -988,12 +996,12 @@ async function startDevice(clientId, login, password, retry) {
                                 device.publish(`response/${clientId}/${type}`, msg);
                             }
                         }
-                    }                    
+                    }
 
                 } catch (error) {
                     adapter.log.debug(`Error processing request ${topic}`);
                     adapter.log.debug(`${error}`);
-                }                              
+                }
             }
         });
     } catch (error) {
