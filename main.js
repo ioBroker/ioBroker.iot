@@ -661,7 +661,7 @@ async function fetchCertificates(login, pass, _forceUserCreation) {
     }
 }
 
-function processMessage(type, request, callback) {
+async function processMessage(type, request) {
     if (request instanceof Buffer) {
         request = request.toString();
     }
@@ -669,45 +669,44 @@ function processMessage(type, request, callback) {
     adapter.log.debug(`Data: ${JSON.stringify(request)}`);
 
     if (!request || !type) {
-        return callback && callback({error: 'invalid request'});
+        return { error: 'invalid request' };
     }
 
     if (type.startsWith('remote')) {
         const start = Date.now();
-        return remote.process(request, type)
-            .then(response => {
-                if (response !== NONE) {
-                    adapter.log.debug(`[REMOTE] Response in: ${Date.now() - start}ms (Length: ${Array.isArray(response) ? `A ${response.length}` : JSON.stringify(response).length}) for ${request}`);
-                }
-                callback(response);
-            })
-            .catch(err =>
-                adapter.log.error(`Error in processing of remote request: ${err.toString()}`));
-    } else
-    if (type.startsWith('nightscout')) {
-        if (adapter.config.nightscout) {
-            adapter.getForeignStateAsync(`system.adapter.nightscout.${adapter.config.nightscout}.alive`)
-                .then(state => {
-                    if (state && state.val) {
-                        adapter.sendTo(`nightscout.${adapter.config.nightscout}`, 'send', request, response => {
-                            adapter.log.debug(`Response from nightscout.${adapter.config.nightscout}: ${JSON.stringify(response)}`);
-                            // try to parse JSON
-                            if (typeof response === 'string' && (response[0] === '{' || response[0] === '[')) {
-                                try {
-                                    response = JSON.parse(response);
-                                } catch (e) {
-
-                                }
-                            }
-
-                            callback && callback(response);
-                        });
-                    } else {
-                        callback && callback({error: `nightscout.${adapter.config.nightscout} is offline`});
+        return await new Promise((resolve) => {
+            remote.process(request, type)
+                .then(response => {
+                    if (response !== NONE) {
+                        adapter.log.debug(`[REMOTE] Response in: ${Date.now() - start}ms (Length: ${Array.isArray(response) ? `A ${response.length}` : JSON.stringify(response).length}) for ${request}`);
                     }
-                });
+                    resolve(response);
+                })
+                .catch(err => {
+                    adapter.log.error(`Error in processing of remote request: ${err.toString()}`);
+                })
+        });
+    } else if (type.startsWith('nightscout')) {
+        if (adapter.config.nightscout) {
+            let state = await adapter.getForeignStateAsync(`system.adapter.nightscout.${adapter.config.nightscout}.alive`);
+            if (state && state.val) {
+                return await new Promise(resolve => adapter.sendTo(`nightscout.${adapter.config.nightscout}`, 'send', request, response => {
+                    adapter.log.debug(`Response from nightscout.${adapter.config.nightscout}: ${JSON.stringify(response)}`);
+                    // try to parse JSON
+                    if (typeof response === 'string' && (response[0] === '{' || response[0] === '[')) {
+                        try {
+                            response = JSON.parse(response);
+                        } catch (e) {
+
+                        }
+                    }
+                    resolve(response);
+                }));
+            } else {
+                return ({ error: `nightscout.${adapter.config.nightscout} is offline` });
+            }
         } else {
-            callback({error: 'Service is disabled'});
+            return { error: 'Service is disabled' };
         }
     } else if (type.startsWith('alexa')) {
         if (typeof request === 'string') {
@@ -715,7 +714,7 @@ function processMessage(type, request, callback) {
                 request = JSON.parse(request);
             } catch (e) {
                 adapter.log.error(`Cannot parse request: ${request}`);
-                return callback && callback({error: 'Cannot parse request'});
+                return { error: 'Cannot parse request' };
             }
         }
 
@@ -723,30 +722,34 @@ function processMessage(type, request, callback) {
 
         if (request && request.directive) {
             if (alexaSH3) {
-                alexaSH3.process(request, adapter.config.amazonAlexa, response => callback(response));
+                return await alexaSH3.process(request)
             } else {
-                callback({error: 'Service is disabled'});
+                return { error: 'Service is disabled' };
             }
         } else
         if (request && !request.header) {
             if (request && request.session && request.session.application && alexaCustomBlood && request.session.application.applicationId === alexaCustomBlood.getAppId()) {
                 if (alexaCustomBlood) {
-                    alexaCustomBlood.process(request, adapter.config.amazonAlexaBlood, response => callback(response));
+                    return await new Promise(resolve => {
+                        alexaCustomBlood.process(request, adapter.config.amazonAlexaBlood, response => resolve(response));
+                    })
                 } else {
-                    callback({error: 'Service is disabled'});
+                    return { error: 'Service is disabled' };
                 }
             } else {
                 if (alexaCustom) {
-                    alexaCustom.process(request, adapter.config.amazonAlexa, response => callback(response));
+                    return await new Promise(resolve => {
+                        alexaCustom.process(request, adapter.config.amazonAlexa, response => resolve(response))
+                    })
                 } else {
-                    callback({error: 'Service is disabled'});
+                    return { error: 'Service is disabled' };
                 }
             }
         } else {
             if (alexaSH2) {
-                alexaSH2.process(request, adapter.config.amazonAlexa, response => callback(response));
+                return await new Promise(resolve => alexaSH2.process(request, adapter.config.amazonAlexa, response => resolve(response)));
             } else {
-                callback({error: 'Service is disabled'});
+                return { error: 'Service is disabled' };
             }
         }
     } else if (type.startsWith('ifttt')) {
@@ -758,24 +761,24 @@ function processMessage(type, request, callback) {
             }
         } catch (e) {
             adapter.log.error(`Cannot parse request: ${request}`);
-            return callback && callback({error: 'Cannot parse request'});
+            return { error: 'Cannot parse request' };
         }
 
-        processIfttt(request, response => callback(response));
+        return await new Promise(resolve => processIfttt(request, response => resolve(response)));
     } else if (type.startsWith('ghome')) {
         if (typeof request === 'string') {
             try {
                 request = JSON.parse(request);
             } catch (e) {
                 adapter.log.error(`Cannot parse request: ${request}`);
-                return callback && callback({error: 'Cannot parse request'});
+                return { error: 'Cannot parse request' };
             }
         }
 
         if (googleHome) {
-            googleHome.process(request, adapter.config.googleHome, response => callback(response));
+            return await new Promise(resolve => googleHome.process(request, adapter.config.googleHome, response => resolve(response)));
         } else {
-            callback({error: 'Service is disabled'});
+            return { error: 'Service is disabled' };
         }
     } else if (type.startsWith('alisa')) {
         if (typeof request === 'string') {
@@ -783,15 +786,15 @@ function processMessage(type, request, callback) {
                 request = JSON.parse(request);
             } catch (e) {
                 adapter.log.error(`Cannot parse request: ${request}`);
-                return callback && callback({error: 'Cannot parse request'});
+                return { error: 'Cannot parse request' };
             }
         }
 
         adapter.log.debug(`${Date.now()} ALISA: ${JSON.stringify(request)}`);
         if (yandexAlisa) {
-            yandexAlisa.process(request, adapter.config.yandexAlisa, response => callback(response));
+            return await new Promise(resolve => yandexAlisa.process(request, adapter.config.yandexAlisa, response => resolve(response)));
         } else {
-            callback({error: 'Service is disabled'});
+            return { error: 'Service is disabled' };
         }
     } else {
         let isCustom = false;
@@ -809,21 +812,20 @@ function processMessage(type, request, callback) {
             }
 
             if (SPECIAL_ADAPTERS.includes(_type)) {
-                adapter.setState(`services.${_type}`, request, true, err =>
-                    callback({result: err || 'Ok'}));
-            } else
-            if (type.startsWith('text2command')) {
+                return await new Promise(resolve => adapter.setState(`services.${_type}`, request, true, err =>
+                    resolve({ result: err || 'Ok' })));
+            } else if (type.startsWith('text2command')) {
                 if (adapter.config.text2command !== undefined && adapter.config.text2command !== '') {
-                    adapter.setForeignState(`text2command.${adapter.config.text2command}.text`, request,
-                        err => callback({result: err || 'Ok'}));
+                    return await new Promise(resolve => adapter.setForeignState(`text2command.${adapter.config.text2command}.text`, request,
+                        err => resolve({ result: err || 'Ok' })));
                 } else {
                     adapter.log.warn('Received service text2command, but instance is not defined');
-                    callback({result: 'but instance is not defined'});
+                    return { result: 'but instance is not defined' };
                 }
             } else if (type.startsWith('simpleApi')) {
-                callback({result: 'not implemented'});
+                return { result: 'not implemented' };
             } else if (isCustom) {
-                adapter.getObject(`services.custom_${_type}`, (err, obj) => {
+                adapter.getObject(`services.custom_${_type}`, async (err, obj) => {
                     if (!obj) {
                         adapter.setObjectNotExists(`services.custom_${_type}`, {
                             _id: `${adapter.namespace}.services.custom_${_type}`,
@@ -836,27 +838,27 @@ function processMessage(type, request, callback) {
                                 role: 'value'
                             },
                             native: {}
-                        }, err => {
+                        }, async err => {
                             if (!err) {
-                                adapter.setState(`services.custom_${_type}`, request, true, err =>
-                                    callback({result: err || 'Ok'}));
+                                return await new Promise(resolve => adapter.setState(`services.custom_${_type}`, request, true, err =>
+                                    resolve({ result: err || 'Ok' })));
                             } else {
                                 adapter.log.error(`Cannot control .services.custom_${_type}: ${JSON.stringify(err)}`);
-                                callback({error: err});
+                                return { error: err };
                             }
                         });
                     } else {
-                        adapter.setState(`services.custom_${_type}`, request, true, err =>
-                            callback({result: err || 'Ok'}));
+                        return await new Promise(resolve => adapter.setState(`services.custom_${_type}`, request, true, err =>
+                            resolve({ result: err || 'Ok' })));
                     }
                 });
             } else {
                 adapter.log.warn(`Received service "${type}", but it is not allowed`);
-                callback({error: 'not allowed'});
+                return { error: 'not allowed' };
             }
         } else {
             adapter.log.warn(`Received service "${type}", but it is not found in whitelist`);
-            callback({error: 'Unknown service'});
+            return { error: 'Unknown service' };
         }
     }
 }
@@ -936,15 +938,19 @@ async function startDevice(clientId, login, password, retry) {
             }
         });
 
-        device.on('message', (topic, request) => {
+
+        device.on('message', async (topic, request) => {
             adapter.log.debug(`Request ${topic}`);
             if (topic.startsWith(`command/${clientId}/`)) {
                 let type = topic.substring(clientId.length + 9);
 
-                processMessage(type, request, async response => {
+                try {
+                    const response = await processMessage(type, request);   
+
                     if (adapter.common.loglevel === 'debug' && !type.startsWith('remote')) {
                         adapter.log.debug(`Response: ${JSON.stringify(response)}`);
                     }
+
                     if (device && response !== NONE) {
                         if (Array.isArray(response)) {
                             try {
@@ -982,8 +988,12 @@ async function startDevice(clientId, login, password, retry) {
                                 device.publish(`response/${clientId}/${type}`, msg);
                             }
                         }
-                    }
-                });
+                    }                    
+
+                } catch (error) {
+                    adapter.log.debug(`Error processing request ${topic}`);
+                    adapter.log.debug(`${error}`);
+                }                              
             }
         });
     } catch (error) {
