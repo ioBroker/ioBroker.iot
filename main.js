@@ -556,8 +556,8 @@ async function createUrlKey(login, pass) {
             `https://generate-key.iobroker.in/v1/generateUrlKey?user=${encodeURIComponent(login)}&pass=${encodeURIComponent(pass)}&version=${version}`,
             {
                 timeout: 15000,
-                validateStatus: status => status < 400
-            }
+                validateStatus: status => status < 400,
+            },
         );
     } catch (error) {
         if (error.response) {
