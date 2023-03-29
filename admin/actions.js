@@ -41,7 +41,8 @@ function getActions(obj) {
             type = '';
         }
     }
-    return {type: type, actions: actions};
+
+    return { type: type, actions: actions };
 }
 
 if (typeof module !== 'undefined' && module.parent) {

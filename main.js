@@ -733,16 +733,14 @@ async function processMessage(type, request) {
                 }
             } else {
                 if (alexaCustom) {
-                    return new Promise(resolve =>
-                        alexaCustom.process(request, adapter.config.amazonAlexa, response => resolve(response)));
+                    return alexaCustom.process(request, adapter.config.amazonAlexa);
                 } else {
                     return { error: 'Service is disabled' };
                 }
             }
         } else {
             if (alexaSH2) {
-                return new Promise(resolve =>
-                    alexaSH2.process(request, adapter.config.amazonAlexa, response => resolve(response)));
+                return alexaSH2.process(request, adapter.config.amazonAlexa);
             } else {
                 return { error: 'Service is disabled' };
             }
@@ -771,8 +769,7 @@ async function processMessage(type, request) {
         }
 
         if (googleHome) {
-            return new Promise(resolve =>
-                googleHome.process(request, adapter.config.googleHome, response => resolve(response)));
+            return googleHome.process(request, adapter.config.googleHome);
         } else {
             return { error: 'Service is disabled' };
         }
@@ -847,7 +844,7 @@ async function processMessage(type, request) {
                                 write: false,
                                 read: true,
                                 type: 'mixed',
-                                role: 'value'
+                                role: 'value',
                             },
                             native: {},
                         });
