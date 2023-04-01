@@ -3,10 +3,24 @@ const helpers = require('./helpers')
 const DeviceManager = require('../lib/AlexaSmartHomeV3/DeviceManager')
 const Device = require('../lib/AlexaSmartHomeV3/Device')
 const Directives = require('../lib/AlexaSmartHomeV3/Alexa/Directives')
-const Light = require('../lib/AlexaSmartHomeV3/Controls/Light');
-const Dimmer = require('../lib/AlexaSmartHomeV3/Controls/Dimmer');
+const Light = require('../lib/AlexaSmartHomeV3/Controls/Light')
+const Dimmer = require('../lib/AlexaSmartHomeV3/Controls/Dimmer')
+const Adapter = require('../lib/AlexaSmartHomeV3/Adapter');
 
 class AdapterMock {
+    constructor() {
+        this.log = {
+            silly: this.nop,
+            debug: this.nop,
+            info: this.nop,
+            warn: this.nop,
+            error: this.nop
+        }
+    }
+
+    nop() {
+    }
+
     async getObjectViewAsync() {
         return { rows: [] };
     }
@@ -27,7 +41,7 @@ const endpointId = 'endpoint-001'
 const friendlyName = 'some-friendly-name'
 
 describe('AlexaSmartHomeV3 - Directives', function () {
-
+    Adapter.init(adapterMock);
     before(function () {
         light = new Light(
             {
@@ -78,8 +92,7 @@ describe('AlexaSmartHomeV3 - Directives', function () {
                         ]
                     }
                 }
-            },
-            adapterMock);
+            });
         dimmer = new Dimmer(
             {
                 states: [
@@ -117,8 +130,7 @@ describe('AlexaSmartHomeV3 - Directives', function () {
                     },
                 },
                 functionality: undefined,
-            },
-            adapterMock);    
+            });    
 
         light_device = new Device({
             id: '111',
