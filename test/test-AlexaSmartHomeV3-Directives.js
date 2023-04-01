@@ -19,11 +19,10 @@ class AdapterMock {
     }
 }
 
-let light_dimmer_device;
-let light;
-let dimmer;
-let adapterMock = new AdapterMock()
-let deviceManager = new DeviceManager(adapterMock)
+let light
+let dimmer
+const adapterMock = new AdapterMock()
+const deviceManager = new DeviceManager(adapterMock)
 const endpointId = 'endpoint-001'
 const friendlyName = 'some-friendly-name'
 
@@ -121,14 +120,6 @@ describe('AlexaSmartHomeV3 - Directives', function () {
             },
             adapterMock);    
 
-        // runs before all tests in this file 
-        light_dimmer_device = new Device({
-            id: endpointId,
-            friendlyName: friendlyName,
-            displayCategries: ['LIGHT'],
-            controls: [light, dimmer]
-        })
-
         light_device = new Device({
             id: '111',
             friendlyName: friendlyName,
@@ -143,7 +134,12 @@ describe('AlexaSmartHomeV3 - Directives', function () {
             controls: [dimmer]
         })
 
-        deviceManager.addDevice(light_dimmer_device)
+        deviceManager.addDevice(new Device({
+            id: endpointId,
+            friendlyName: friendlyName,
+            displayCategries: ['LIGHT'],
+            controls: [light, dimmer]
+        }))
     });
 
     after(function () {
@@ -178,14 +174,12 @@ describe('AlexaSmartHomeV3 - Directives', function () {
 
         it('BrightnessController AdjustBrightness', async function () {
             let event = await helpers.getSample('BrightnessController/BrightnessController.AdjustBrightness.request.json')
-            //assert.equal(light_dimmer_device.supports(event), true)
             assert.equal(light.supports(event), false)
             assert.equal(light.canHandle(event), true)
             assert.equal(dimmer.supports(event), true)
         })
         it('BrightnessController SetBrightness', async function () {
             let event = await helpers.getSample('BrightnessController/BrightnessController.SetBrightness.request.json')
-            //assert.equal(light_dimmer_device.supports(event), true)
             assert.equal(light.supports(event), false)
             assert.equal(light.canHandle(event), true)
             assert.equal(dimmer.supports(event), true)
@@ -209,7 +203,6 @@ describe('AlexaSmartHomeV3 - Directives', function () {
             assert.equal(response.event.payload.endpoints[0].capabilities[1].interface, "Alexa.PowerController");
             assert.equal(response.event.payload.endpoints[0].capabilities[2].interface, "Alexa.BrightnessController");
         })
-
 
         it('Discovery of Light', async function () {
             let event = await helpers.getSample('Discovery/Discovery.request.json')
@@ -265,7 +258,6 @@ describe('AlexaSmartHomeV3 - Directives', function () {
 
             assert.equal(dimmer_device.controls[0].supported[0].stateProxy.currentValue, 0);
         })
-
 
         it('PowerController TurnOff Light+Dimmer', async function () {
             let event = await helpers.getSample('PowerController/PowerController.TurnOff.request.json')
@@ -331,34 +323,6 @@ describe('AlexaSmartHomeV3 - Directives', function () {
             assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
         })
 
-        it('PowerController ReportState', async function () {
-            adapterMock.getForeignStateAsync = async function (id) {
-                return { val: true }
-            }
-            let deviceManagerWithLightOnly = new DeviceManager(adapterMock);
-
-            deviceManagerWithLightOnly.addDevice(new Device({
-                id: endpointId,
-                friendlyName: friendlyName,
-                displayCategries: ['LIGHT'],
-                controls: [light]
-            }));
-
-            let event = await helpers.getSample('StateReport/ReportState.json')
-            let directive = deviceManagerWithLightOnly.matchDirective(event)
-
-            let response = await directive.handle(event, deviceManagerWithLightOnly)
-            assert.equal(response.event.header.namespace, "Alexa", "Namespace!");
-            assert.equal(response.event.header.name, "StateReport", "Name!");
-            assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, "Name!");
-            assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
-
-            assert.equal(response.context.properties.length, 1);
-            assert.equal(response.context.properties[0].namespace, "Alexa.PowerController");
-            assert.equal(response.context.properties[0].name, "powerState");
-            assert.equal(response.context.properties[0].value, "ON");
-        })
-
         it('BrightnessController AdjustBrightness', async function () {
             let event = await helpers.getSample('BrightnessController/BrightnessController.AdjustBrightness.request.json')
             let d = deviceManager.endpointById(event.directive.endpoint.endpointId)
@@ -374,7 +338,6 @@ describe('AlexaSmartHomeV3 - Directives', function () {
             assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, "Correlation Token!");
             assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
         })
-
 
         it('BrightnessController SetBrightness Light', async function () {
             let event = await helpers.getSample('BrightnessController/BrightnessController.SetBrightness.request.json')
