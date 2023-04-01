@@ -97,4 +97,18 @@ describe('AlexaSmartHomeV3 - Helpers', function () {
             assert.equal(denormalized, 150)
         })
     })
+
+    describe('Distinct by property name', async function () {
+        it('All items taken on distinct property values', async function () {
+            const list = [{ id: 1, name: 'one' }, { id: 2, name: 'two' }, { id: 3, name: 'three' }]
+            const distinct = alexaHelpers.distinctByPropertyName(list, 'name')
+            assert.equal(JSON.stringify(distinct), JSON.stringify(list));
+        })
+
+        it('Last item returned for the same property values', async function () {
+            const list = [{ id: 1, name: 'one' }, { id: 2, name: 'one' }, { id: 3, name: 'one' }]
+            const distinct = alexaHelpers.distinctByPropertyName(list, 'name')
+            assert.equal(JSON.stringify(distinct), JSON.stringify([{ id: 3, name: 'one' }]));
+        })
+    })
 })

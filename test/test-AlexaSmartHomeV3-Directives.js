@@ -2,7 +2,7 @@ const assert = require('assert');
 const helpers = require('./helpers')
 const DeviceManager = require('../lib/AlexaSmartHomeV3/DeviceManager')
 const Device = require('../lib/AlexaSmartHomeV3/Device')
-const directives = require('../lib/AlexaSmartHomeV3/Alexa/Directives')
+const Directives = require('../lib/AlexaSmartHomeV3/Alexa/Directives')
 const Light = require('../lib/AlexaSmartHomeV3/Controls/Light');
 const Dimmer = require('../lib/AlexaSmartHomeV3/Controls/Dimmer');
 
@@ -155,7 +155,13 @@ describe('AlexaSmartHomeV3 - Directives', function () {
         it('Discovery', async function () {
             let event = await helpers.getSample('Discovery/Discovery.request.json')
             let directive = deviceManager.matchDirective(event)
-            assert.equal(directive instanceof directives.Discovery, true)
+            assert.equal(directive instanceof Directives.Discovery, true)
+        })
+
+        it('ReportState', async function () {
+            let event = await helpers.getSample('StateReport/ReportState.json')
+            let directive = deviceManager.matchDirective(event)
+            assert.equal(directive instanceof Directives.ReportState, true)
         })
 
         // device directives
@@ -191,7 +197,7 @@ describe('AlexaSmartHomeV3 - Directives', function () {
         // device manager directives
         it('Discovery of dimmable Light', async function () {
             let event = await helpers.getSample('Discovery/Discovery.request.json')
-            let directive = new directives.Discovery()
+            let directive = new Directives.Discovery()
             let response = await directive.handle(event, deviceManager)
             assert.equal(response.event.header.namespace, "Alexa.Discovery", "Namespace!");
             assert.equal(response.event.header.name, "Discover.Response", "Name!");
@@ -208,7 +214,7 @@ describe('AlexaSmartHomeV3 - Directives', function () {
 
         it('Discovery of Light', async function () {
             let event = await helpers.getSample('Discovery/Discovery.request.json')
-            let directive = new directives.Discovery()
+            let directive = new Directives.Discovery()
             let deviceManagerWithLightOnly = new DeviceManager(adapterMock);
 
             deviceManagerWithLightOnly.addDevice(new Device({
