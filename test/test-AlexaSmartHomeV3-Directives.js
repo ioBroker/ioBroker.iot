@@ -5,7 +5,7 @@ const Device = require('../lib/AlexaSmartHomeV3/Device')
 const Directives = require('../lib/AlexaSmartHomeV3/Alexa/Directives')
 const Light = require('../lib/AlexaSmartHomeV3/Controls/Light')
 const Dimmer = require('../lib/AlexaSmartHomeV3/Controls/Dimmer')
-const Adapter = require('../lib/AlexaSmartHomeV3/Adapter');
+const AdapterProvider = require('../lib/AlexaSmartHomeV3/AdapterProvider');
 
 class AdapterMock {
     constructor() {
@@ -36,13 +36,13 @@ class AdapterMock {
 let light
 let dimmer
 const adapterMock = new AdapterMock()
-const deviceManager = new DeviceManager(adapterMock)
+const deviceManager = new DeviceManager()
 const endpointId = 'endpoint-001'
 const friendlyName = 'some-friendly-name'
 
 describe('AlexaSmartHomeV3 - Directives', function () {
-    Adapter.init(adapterMock);
     before(function () {
+        AdapterProvider.init(adapterMock);
         light = new Light(
             {
                 states: [
@@ -219,7 +219,7 @@ describe('AlexaSmartHomeV3 - Directives', function () {
         it('Discovery of Light', async function () {
             let event = await helpers.getSample('Discovery/Discovery.request.json')
             let directive = new Directives.Discovery()
-            let deviceManagerWithLightOnly = new DeviceManager(adapterMock);
+            let deviceManagerWithLightOnly = new DeviceManager();
 
             deviceManagerWithLightOnly.addDevice(new Device({
                 id: endpointId,

@@ -11,3 +11,4 @@ nbproject
 package-lock.json
 
 .dev-server
+.vscode
