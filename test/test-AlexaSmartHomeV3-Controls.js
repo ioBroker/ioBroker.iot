@@ -154,7 +154,7 @@ describe('AlexaSmartHomeV3 - Controls', function () {
 
     describe('Light', async function () {
         it('Light reports state', async function () {
-            let deviceManager = new DeviceManager(adapterMock);
+            let deviceManager = new DeviceManager();
 
             deviceManager.addDevice(new Device({
                 id: endpointId,
@@ -182,7 +182,7 @@ describe('AlexaSmartHomeV3 - Controls', function () {
     describe('Dimmer', async function () {
         it('Dimmer respects values range on setting brightness', async function () {
 
-            let deviceManager = new DeviceManager(adapterMock);
+            let deviceManager = new DeviceManager();
             deviceManager.addDevice(new Device({
                 id: endpointId,
                 friendlyName: friendlyName,
@@ -210,7 +210,7 @@ describe('AlexaSmartHomeV3 - Controls', function () {
         })
 
         it('Dimmer reports state', async function () {
-            let deviceManagerWithDimmer = new DeviceManager(adapterMock);
+            let deviceManagerWithDimmer = new DeviceManager();
             deviceManagerWithDimmer.addDevice(new Device({
                 id: endpointId,
                 friendlyName: friendlyName,

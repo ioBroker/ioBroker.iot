@@ -194,19 +194,19 @@ describe('AlexaSmartHomeV3 - Friendly Names', function () {
             }];
 
             let name = Helpers.endpointName(controls)
-            assert.equal(name, 'Living RoomLight');
+            assert.equal(name, 'Living Room Light');
 
             name = Helpers.endpointName(controls, 'en', true)
-            assert.equal(name, 'LightLiving Room');
+            assert.equal(name, 'Light Living Room');
 
             name = Helpers.endpointName(controls, 'de')
-            assert.equal(name, 'WohnzimmerLicht');
+            assert.equal(name, 'Wohnzimmer Licht');
 
             name = Helpers.endpointName(controls, 'de', true)
-            assert.equal(name, 'LichtWohnzimmer');
-
-            name = Helpers.endpointName(controls, 'de', true, ' ')
             assert.equal(name, 'Licht Wohnzimmer');
+
+            name = Helpers.endpointName(controls, 'de', true, 'x')
+            assert.equal(name, 'Licht x Wohnzimmer');
         })
 
         it('With No SmartName/Name/With Room/With No Functionality', async function () {
@@ -253,7 +253,7 @@ describe('AlexaSmartHomeV3 - Friendly Names', function () {
             name = Helpers.endpointName(controls, 'de', true)
             assert.equal(name, 'Wohnzimmer');
 
-            name = Helpers.endpointName(controls, 'de', true, ' ')
+            name = Helpers.endpointName(controls, 'de', true, 'x')
             assert.equal(name, 'Wohnzimmer');
         })
     })
