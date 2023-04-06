@@ -503,11 +503,16 @@ function onDisconnect(event) {
     }
 }
 
-function onConnect() {
+function onConnect(clientId) {
     if (!connected) {
-        adapter.log.info('Connection changed: connect');
+        adapter.log.info(`Connection changed: connect "${clientId}"`);
         connected = true;
         adapter.setState('info.connection', connected, true);
+        // setTimeout(() => {
+        //     device.publish(`response/${clientId}/stateChange`, JSON.stringify({alive: true}), {qos: 0}, (error, result) => {
+        //         console.log(`Published alive: ${result}, ${error}`);
+        //     });
+        // }, 2000);
     } else {
         adapter.log.info('Connection not changed: was connected');
     }
@@ -927,7 +932,7 @@ async function startDevice(clientId, login, password, retry) {
         remote.registerDevice(device);
 
         device.subscribe(`command/${clientId}/#`);
-        device.on('connect', onConnect);
+        device.on('connect', () => onConnect(clientId));
         device.on('close', onDisconnect);
         device.on('reconnect', () => adapter.log.debug('reconnect'));
         device.on('offline', () => adapter.log.debug('offline'));
@@ -942,7 +947,6 @@ async function startDevice(clientId, login, password, retry) {
                     startDevice(clientId, login, password), 10000);
             }
         });
-
 
         device.on('message', async (topic, request) => {
             adapter.log.debug(`Request ${topic}`);
