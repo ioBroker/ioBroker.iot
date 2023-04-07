@@ -523,7 +523,7 @@ function encrypt(key, value) {
     for(let i = 0; i < value.length; i++) {
         result += String.fromCharCode(key[i % key.length].charCodeAt(0) ^ value.charCodeAt(i));
     }
-    return 'base64:' + Buffer.from(result).toString('base64');
+    return `base64:${Buffer.from(result).toString('base64')}`;
 }
 
 function decrypt(key, value) {
@@ -728,6 +728,9 @@ async function processMessage(type, request) {
             } else {
                 return { error: 'Service is disabled' };
             }
+        } else if (request && request.error) {
+            // answer from alexa3 events cloud actually just show it in log
+            adapter.log.error(`Error from Alexa events cloud: ${request.error}`);
         } else
         if (request && !request.header) {
             if (request && request.session && request.session.application && alexaCustomBlood && request.session.application.applicationId === alexaCustomBlood.getAppId()) {
@@ -1026,7 +1029,7 @@ async function updateNightscoutSecret() {
 
     const email = adapter.config.login.replace(/[^\w\d-_]/g, '_');
     const secret = adapter.config.nightscoutPass;
-    const apiSecret = email + (secret ? '-' + secret : '');
+    const apiSecret = email + (secret ? `-${secret}` : '');
     const URL = `https://generate-key.iobroker.in/v1/generateUrlKey?user=${encodeURIComponent(adapter.config.login)}&pass=${encodeURIComponent(adapter.config.pass)}&apisecret=${encodeURIComponent(apiSecret)}`;
     let response;
 
@@ -1071,9 +1074,9 @@ async function createStateForAdapter(adapterName) {
                         write: false,
                         read: true,
                         type: 'mixed',
-                        role: 'value'
+                        role: 'value',
                     },
-                    native: {}
+                    native: {},
                 });
             } catch (e) {
                 // ignore
