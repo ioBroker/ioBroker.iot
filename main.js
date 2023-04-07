@@ -84,7 +84,7 @@ function startAdapter(options) {
         },
         stateChange: (id, state) => {
             state && adapter.config.googleHome  && googleHome && googleHome.updateState(id, state);
-            state && adapter.config.amazonAlexa && alexaSH3 && alexaSH3.updateState && alexaSH3.updateState(id, state);
+            state && adapter.config.amazonAlexa && alexaSH3 && alexaSH3.handleStateUpdate(id, state);
             state && adapter.config.yandexAlisa && yandexAlisa && yandexAlisa.updateState && yandexAlisa.updateState(id, state);
             id && remote.updateState(id, state);
 
@@ -114,7 +114,7 @@ function startAdapter(options) {
                     case 'update':
                         recalcTimeout && clearTimeout(recalcTimeout);
 
-                        recalcTimeout = setTimeout(() => {
+                        recalcTimeout = setTimeout(async () => {
                             recalcTimeout = null;
                             alexaSH2 && alexaSH2.updateDevices(obj.message, async analyseAddedId => {
                                 await adapter.setStateAsync('smart.updatesResult', analyseAddedId || '', true);
@@ -122,10 +122,14 @@ function startAdapter(options) {
                                 await adapter.setStateAsync('smart.updates', true, true);
                             });
 
-                            alexaSH3 && alexaSH3.updateDevices(obj.message, async analyseAddedId => {
-                                await adapter.setStateAsync('smart.updatesResult', analyseAddedId || '', true);
+                            // alexaSH3 && alexaSH3.updateDevices(obj.message, async analyseAddedId => {
+                            //     await adapter.setStateAsync('smart.updatesResult', analyseAddedId || '', true);
+                            //     await adapter.setStateAsync('smart.updates3', true, true);
+                            // });
+                            if (alexaSH3) {
+                                await alexaSH3.updateDevices();
                                 await adapter.setStateAsync('smart.updates3', true, true);
-                            });
+                            }                                                         
 
                             googleHome && googleHome.updateDevices(async analyseAddedId => {
                                 await adapter.setStateAsync('smart.updatesResult', analyseAddedId || '', true);
@@ -153,10 +157,12 @@ function startAdapter(options) {
                         if (obj.callback) {
                             adapter.log.info('Request V3 devices');
                             if (alexaSH3) {
-                                alexaSH3.updateDevices(() => {
-                                    adapter.sendTo(obj.from, obj.command, alexaSH3.getDevices(), obj.callback);
-                                    adapter.setState('smart.updates3', false, true);
-                                });
+                                // alexaSH3.updateDevices(() => {
+                                //     adapter.sendTo(obj.from, obj.command, alexaSH3.getDevices(), obj.callback);
+                                //     adapter.setState('smart.updates3', false, true);
+                                // });
+                                await alexaSH3.updateDevices();
+                                await adapter.setStateAsync('smart.updates3', false, true);
                             } else {
                                 adapter.sendTo(obj.from, obj.command, {error: 'not activated'}, obj.callback);
                             }
@@ -1157,7 +1163,7 @@ async function main() {
     }
     if (adapter.config.amazonAlexa) {
         alexaSH2    = new AlexaSH2(adapter);
-        alexaSH3    = new AlexaSH3(adapter);
+        // alexaSH3    = new AlexaSH3(adapter);
         alexaCustom = new AlexaCustom(adapter);
     }
     if (adapter.config.amazonAlexaBlood) {
@@ -1225,8 +1231,8 @@ async function main() {
     adapter.config.amazonAlexa && alexaSH2 && alexaSH2.setLanguage(lang, translate);
     adapter.config.amazonAlexa && alexaSH2 && alexaSH2.updateDevices();
 
-    adapter.config.amazonAlexa && alexaSH3 && alexaSH3.setLanguage(lang, translate);
-    adapter.config.amazonAlexa && alexaSH3 && alexaSH3.updateDevices();
+    // adapter.config.amazonAlexa && alexaSH3 && alexaSH3.setLanguage(lang, translate);
+    // adapter.config.amazonAlexa && alexaSH3 && alexaSH3.updateDevices();
 
     alexaCustom && alexaCustom.setLanguage(lang, translate);
     alexaCustomBlood && alexaCustomBlood.setSettings(lang, defaultHistory);
@@ -1243,8 +1249,9 @@ async function main() {
 
     await updateNightscoutSecret();
 
+    const iotClientId = adapter.config.login.replace(/[^-_:a-zA-Z1-9]/g, '_');
     // user will be created here
-    await startDevice(adapter.config.login.replace(/[^-_:a-zA-Z1-9]/g, '_'), adapter.config.login, adapter.config.pass);
+    await startDevice(iotClientId, adapter.config.login, adapter.config.pass);
 
     // after the user created we can try to generate URL key
     // read URL keys from server
@@ -1263,6 +1270,17 @@ async function main() {
             }
         }
     }
+
+    if (adapter.config.amazonAlexa) {
+        alexaSH3 = new AlexaSH3({
+            adapter: adapter,
+            iotClientId: iotClientId,
+            iotDevice: device
+        });
+        alexaSH3.setLanguage(lang);
+        await alexaSH3.updateDevices();
+    }
+
 
     if (adapter.config.googleHome) {
         googleHome = new GoogleHome(adapter, urlKey);
