@@ -67,4 +67,25 @@ describe('AlexaSmartHomeV3 - DeviceManager', function () {
             assert.equal(stateChange.event.payload.change.cause.type, 'PHYSICAL_INTERACTION');
         })
     })
+
+    describe('does not send ChangeReport...', async function () {
+        it('on unacknowledged state change', async function () {
+            // mock publishing            
+            const deviceManager = new DeviceManager()
+            const dimmer = helpers.dimmerControl();
+
+            deviceManager.addDevice(new Device({
+                id: endpointId,
+                friendlyName: friendlyName,
+                displayCategries: ['LIGHT'],
+                controls: [dimmer]
+            }))
+
+            stateChange = null;
+
+            await deviceManager.handleStateUpdate(dimmer.supported[0].stateProxy.getId, { val: false, ack: false })
+
+            assert.equal(stateChange, null);
+        })
+    })
 })
