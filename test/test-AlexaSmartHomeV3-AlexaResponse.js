@@ -4,11 +4,9 @@ const AlexaResponse = require('../lib/AlexaSmartHomeV3/Alexa/AlexaResponse')
 describe('AlexaSmartHomeV3 - AlexaResponse', function () {
 
     before(function () {
-
     });
 
     after(function () {
-        // runs after all tests in this file
     });
 
     describe('Error response', async function () {

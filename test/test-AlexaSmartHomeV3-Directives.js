@@ -3,135 +3,21 @@ const helpers = require('./helpers')
 const DeviceManager = require('../lib/AlexaSmartHomeV3/DeviceManager')
 const Device = require('../lib/AlexaSmartHomeV3/Device')
 const Directives = require('../lib/AlexaSmartHomeV3/Alexa/Directives')
-const Light = require('../lib/AlexaSmartHomeV3/Controls/Light')
-const Dimmer = require('../lib/AlexaSmartHomeV3/Controls/Dimmer')
+const Capabilities = require('../lib/AlexaSmartHomeV3/Alexa/Capabilities')
 const AdapterProvider = require('../lib/AlexaSmartHomeV3/Helpers/AdapterProvider');
 
-class AdapterMock {
-    constructor() {
-        this.log = {
-            silly: this.nop,
-            debug: this.nop,
-            info: this.nop,
-            warn: this.nop,
-            error: this.nop
-        }
-    }
+AdapterProvider.init(helpers.adapterMock());
 
-    nop() {
-    }
 
-    async getObjectViewAsync() {
-        return { rows: [] };
-    }
-    async setStateAsync() {
-        return {}
-    }
+const light = helpers.lightControl()
+const dimmer = helpers.dimmerControl()
 
-    async setForeignStateAsync() {
-        return {}
-    }
-}
-
-let light
-let dimmer
-const adapterMock = new AdapterMock()
 const deviceManager = new DeviceManager()
 const endpointId = 'endpoint-001'
 const friendlyName = 'some-friendly-name'
 
 describe('AlexaSmartHomeV3 - Directives', function () {
     before(function () {
-        AdapterProvider.init(adapterMock);
-        light = new Light(
-            {
-                states: [
-                    {
-                        name: "SET",
-                        defaultRole: "switch.light",
-                        id: "alias.0.Wohnzimmer.Lampe.SET",
-                        smartName: {
-                            smartType: "LIGHT",
-                        },
-                    },
-                ],
-                type: "light",
-                object: {
-                    id: "alias.0.Wohnzimmer.Lampe",
-                    common: {
-                        name: {
-                            de: "Lampe",
-                        },
-                        role: "light",
-                        smartName: {
-                            de: "Meine Lampe",
-                        },
-                    },
-                },
-                room: {
-                    id: "enum.rooms.living_room",
-                    common: {
-                        name: {
-                            en: "Living Room",
-                        },
-                        members: [
-                            "alias.0.Wohnzimmer.Dimmer",
-                            "alias.0.Wohnzimmer.Lampe",
-                        ],
-                    },
-                },
-                functionality: {
-                    id: "enum.functions.light",
-                    common: {
-                        name: {
-                            en: "Light",
-                        },
-                        members: [
-                            "alias.0.Wohnzimmer.Lampe",
-                            "0_userdata.0.Blinds",
-                        ]
-                    }
-                }
-            });
-        dimmer = new Dimmer(
-            {
-                states: [
-                    {
-                        name: "SET",
-                        defaultRole: "level.dimmer",
-                        defaultUnit: "%",
-                        id: "alias.0.Wohnzimmer.Dimmer.SET",
-                        smartName: {
-                            smartType: "LIGHT",
-                            byON: "80",
-                        },
-                    },
-                ],
-                type: "dimmer",
-                object: {
-                    id: "alias.0.Wohnzimmer.Dimmer",
-                    common: {
-                        name: {
-                            de: "Dimmer",
-                        },
-                        role: "dimmer",
-                    },
-                },
-                room: {
-                    id: "enum.rooms.living_room",
-                    common: {
-                        name: {
-                            en: "Living Room",
-                        },
-                        members: [
-                            "alias.0.Wohnzimmer.Dimmer",
-                            "alias.0.Wohnzimmer.Lampe",
-                        ],
-                    },
-                },
-                functionality: undefined,
-            });    
-
         light_device = new Device({
             id: '111',
             friendlyName: friendlyName,
@@ -155,7 +41,6 @@ describe('AlexaSmartHomeV3 - Directives', function () {
     });
 
     after(function () {
-        // runs after all tests in this file
     });
 
     describe('Matching', async function () {
@@ -170,6 +55,12 @@ describe('AlexaSmartHomeV3 - Directives', function () {
             let event = await helpers.getSample('StateReport/ReportState.json')
             let directive = deviceManager.matchDirective(event)
             assert.equal(directive instanceof Directives.ReportState, true)
+        })
+
+        it('ChangeReport', async function () {
+            let event = Directives.ChangeReport.get(endpointId, Capabilities.PowerController.propertyName, true)
+            let directive = deviceManager.matchDirective(event)
+            assert.equal(directive instanceof Directives.ChangeReport, true)
         })
 
         // device directives
@@ -239,6 +130,46 @@ describe('AlexaSmartHomeV3 - Directives', function () {
             assert.equal(response.event.payload.endpoints[0].capabilities[0].interface, "Alexa");
             assert.equal(response.event.payload.endpoints[0].capabilities[1].interface, "Alexa.PowerController");
         })
+
+        it('ChangeReport of Dimmer', async function () {
+            let event = Directives.ChangeReport.get(endpointId, Capabilities.PowerController.propertyName, true)
+            let directive = deviceManager.matchDirective(event)
+
+            let deviceManagerWithDimmerOnly = new DeviceManager();
+
+            deviceManagerWithDimmerOnly.addDevice(new Device({
+                id: endpointId,
+                friendlyName: friendlyName,
+                displayCategries: ['LIGHT'],
+                controls: [dimmer]
+            }));
+
+            let response = await directive.handle(event, deviceManagerWithDimmerOnly)
+            assert.equal(response.event.header.namespace, "Alexa", "Namespace!");
+            assert.equal(response.event.header.name, "ChangeReport", "Name!");
+            assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
+
+            // changed properties
+            assert.equal(response.event.payload.change.cause.type, "PHYSICAL_INTERACTION");
+            assert.equal(response.event.payload.change.properties.length, 1);
+            assert.equal(response.event.payload.change.properties[0].namespace, "Alexa.PowerController");
+            assert.equal(response.event.payload.change.properties[0].name, "powerState");
+            assert.equal(response.event.payload.change.properties[0].value, "ON");
+            assert.equal(response.event.payload.change.properties[0].uncertaintyInMilliseconds, 0);
+
+
+            // unchanged properties
+            assert.equal(response.context.properties.length, 1);
+            assert.equal(response.context.properties[0].namespace, "Alexa.BrightnessController");
+            assert.equal(response.context.properties[0].name, "brightness");
+            assert.equal(response.context.properties[0].value, 75);
+            assert.equal(response.context.properties[0].uncertaintyInMilliseconds, 0);
+
+            // timestamp is the same for changed and unchanged proerties
+            assert.equal(response.context.properties[0].timeOfSample, response.event.payload.change.properties[0].timeOfSample);
+
+        })
+
 
         // device directives
         it('PowerController TurnOff Light', async function () {
