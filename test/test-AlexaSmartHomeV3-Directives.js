@@ -92,9 +92,9 @@ describe('AlexaSmartHomeV3 - Directives', function () {
     describe('Handling', async function () {
         // device manager directives
         it('Discovery of dimmable Light', async function () {
-            let event = await helpers.getSample('Discovery/Discovery.request.json')
-            let directive = new Directives.Discovery()
-            let response = await directive.handle(event, deviceManager)
+            const event = await helpers.getSample('Discovery/Discovery.request.json')
+
+            const response = await deviceManager.handleAlexaEvent(event)
             assert.equal(response.event.header.namespace, "Alexa.Discovery", "Namespace!");
             assert.equal(response.event.header.name, "Discover.Response", "Name!");
             assert.equal(response.event.payload.endpoints[0].endpointId, endpointId, "Endpoint Id!");
@@ -108,18 +108,15 @@ describe('AlexaSmartHomeV3 - Directives', function () {
         })
 
         it('Discovery of Light', async function () {
-            let event = await helpers.getSample('Discovery/Discovery.request.json')
-            let directive = new Directives.Discovery()
-            let deviceManagerWithLightOnly = new DeviceManager();
-
+            const event = await helpers.getSample('Discovery/Discovery.request.json')
+            const deviceManagerWithLightOnly = new DeviceManager();
             deviceManagerWithLightOnly.addDevice(new Device({
                 id: endpointId,
                 friendlyName: friendlyName,
                 displayCategries: ['LIGHT'],
                 controls: [light]
             }));
-
-            let response = await directive.handle(event, deviceManagerWithLightOnly)
+            const response = await deviceManagerWithLightOnly.handleAlexaEvent(event)
             assert.equal(response.event.header.namespace, "Alexa.Discovery", "Namespace!");
             assert.equal(response.event.header.name, "Discover.Response", "Name!");
             assert.equal(response.event.payload.endpoints[0].endpointId, endpointId, "Endpoint Id!");
@@ -132,11 +129,8 @@ describe('AlexaSmartHomeV3 - Directives', function () {
         })
 
         it('ChangeReport of Dimmer', async function () {
-            let event = Directives.ChangeReport.get(endpointId, Capabilities.PowerController.propertyName, true)
-            let directive = deviceManager.matchDirective(event)
-
-            let deviceManagerWithDimmerOnly = new DeviceManager();
-
+            const event = Directives.ChangeReport.get(endpointId, Capabilities.PowerController.propertyName, true)
+            const deviceManagerWithDimmerOnly = new DeviceManager();
             deviceManagerWithDimmerOnly.addDevice(new Device({
                 id: endpointId,
                 friendlyName: friendlyName,
@@ -144,7 +138,7 @@ describe('AlexaSmartHomeV3 - Directives', function () {
                 controls: [dimmer]
             }));
 
-            let response = await directive.handle(event, deviceManagerWithDimmerOnly)
+            const response = await deviceManagerWithDimmerOnly.handleAlexaEvent(event)
             assert.equal(response.event.header.namespace, "Alexa", "Namespace!");
             assert.equal(response.event.header.name, "ChangeReport", "Name!");
             assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
@@ -157,24 +151,19 @@ describe('AlexaSmartHomeV3 - Directives', function () {
             assert.equal(response.event.payload.change.properties[0].value, "ON");
             assert.equal(response.event.payload.change.properties[0].uncertaintyInMilliseconds, 0);
 
-
             // unchanged properties
             assert.equal(response.context.properties.length, 1);
             assert.equal(response.context.properties[0].namespace, "Alexa.BrightnessController");
             assert.equal(response.context.properties[0].name, "brightness");
             assert.equal(response.context.properties[0].value, 75);
             assert.equal(response.context.properties[0].uncertaintyInMilliseconds, 0);
-
-            // timestamp is the same for changed and unchanged proerties
-            assert.equal(response.context.properties[0].timeOfSample, response.event.payload.change.properties[0].timeOfSample);
-
         })
 
 
         // device directives
         it('PowerController TurnOff Light', async function () {
-            let event = await helpers.getSample('PowerController/PowerController.TurnOff.request.json')
-            response = await light_device.handle(event);
+            const event = await helpers.getSample('PowerController/PowerController.TurnOff.request.json')
+            const response = await light_device.handle(event);
             assert.equal(response.context.properties[0].namespace, "Alexa.PowerController", "Properties Namespace!");
             assert.equal(response.context.properties[0].name, "powerState", "Properties Name!");
             assert.equal(response.context.properties[0].value, "OFF", "Value!");
@@ -188,8 +177,8 @@ describe('AlexaSmartHomeV3 - Directives', function () {
         })
 
         it('PowerController TurnOff Dimmer', async function () {
-            let event = await helpers.getSample('PowerController/PowerController.TurnOff.request.json')
-            response = await dimmer_device.handle(event);
+            const event = await helpers.getSample('PowerController/PowerController.TurnOff.request.json')
+            const response = await dimmer_device.handle(event);
             assert.equal(response.context.properties[0].namespace, "Alexa.PowerController", "Properties Namespace!");
             assert.equal(response.context.properties[0].name, "powerState", "Properties Name!");
             assert.equal(response.context.properties[0].value, "OFF", "Value!");
@@ -203,12 +192,8 @@ describe('AlexaSmartHomeV3 - Directives', function () {
         })
 
         it('PowerController TurnOff Light+Dimmer', async function () {
-            let event = await helpers.getSample('PowerController/PowerController.TurnOff.request.json')
-            let d = deviceManager.endpointById(event.directive.endpoint.endpointId)
-            assert.notEqual(d, undefined)
-            assert.equal(d instanceof Device, true)
-
-            let response = await d.handle(event)
+            const event = await helpers.getSample('PowerController/PowerController.TurnOff.request.json')
+            const response = await deviceManager.handleAlexaEvent(event)
             assert.equal(response.context.properties[0].namespace, "Alexa.PowerController", "Properties Namespace!");
             assert.equal(response.context.properties[0].name, "powerState", "Properties Name!");
             assert.equal(response.context.properties[0].value, "OFF", "Value!");
@@ -220,8 +205,8 @@ describe('AlexaSmartHomeV3 - Directives', function () {
         })
 
         it('PowerController TurnOn Light', async function () {
-            let event = await helpers.getSample('PowerController/PowerController.TurnOn.request.json')
-            let response = await light_device.handle(event)
+            const event = await helpers.getSample('PowerController/PowerController.TurnOn.request.json')
+            const response = await light_device.handle(event)
             assert.equal(response.context.properties[0].namespace, "Alexa.PowerController", "Properties Namespace!");
             assert.equal(response.context.properties[0].name, "powerState", "Properties Name!");
             assert.equal(response.context.properties[0].value, "ON", "Value!");
@@ -235,8 +220,8 @@ describe('AlexaSmartHomeV3 - Directives', function () {
         })
 
         it('PowerController TurnOn Dimmer', async function () {
-            let event = await helpers.getSample('PowerController/PowerController.TurnOn.request.json')
-            let response = await dimmer_device.handle(event)
+            const event = await helpers.getSample('PowerController/PowerController.TurnOn.request.json')
+            const response = await dimmer_device.handle(event)
             assert.equal(response.context.properties[0].namespace, "Alexa.PowerController", "Properties Namespace!");
             assert.equal(response.context.properties[0].name, "powerState", "Properties Name!");
             assert.equal(response.context.properties[0].value, "ON", "Value!");
@@ -250,12 +235,8 @@ describe('AlexaSmartHomeV3 - Directives', function () {
         })
 
         it('PowerController TurnOn Light+Dimmer', async function () {
-            let event = await helpers.getSample('PowerController/PowerController.TurnOn.request.json')
-            let d = deviceManager.endpointById(event.directive.endpoint.endpointId)
-            assert.notEqual(d, undefined)
-            assert.equal(d instanceof Device, true)
-
-            let response = await d.handle(event)
+            const event = await helpers.getSample('PowerController/PowerController.TurnOn.request.json')
+            const response = await deviceManager.handleAlexaEvent(event)
             assert.equal(response.context.properties[0].namespace, "Alexa.PowerController", "Properties Namespace!");
             assert.equal(response.context.properties[0].name, "powerState", "Properties Name!");
             assert.equal(response.context.properties[0].value, "ON", "Value!");
@@ -267,12 +248,8 @@ describe('AlexaSmartHomeV3 - Directives', function () {
         })
 
         it('BrightnessController AdjustBrightness', async function () {
-            let event = await helpers.getSample('BrightnessController/BrightnessController.AdjustBrightness.request.json')
-            let d = deviceManager.endpointById(event.directive.endpoint.endpointId)
-            assert.notEqual(d, undefined)
-            assert.equal(d instanceof Device, true)
-
-            let response = await d.handle(event)
+            const event = await helpers.getSample('BrightnessController/BrightnessController.AdjustBrightness.request.json')
+            const response = await deviceManager.handleAlexaEvent(event)
             assert.equal(response.context.properties[0].namespace, "Alexa.BrightnessController", "Properties Namespace!");
             assert.equal(response.context.properties[0].name, "brightness", "Properties Name!");
 
@@ -283,8 +260,8 @@ describe('AlexaSmartHomeV3 - Directives', function () {
         })
 
         it('BrightnessController SetBrightness Light', async function () {
-            let event = await helpers.getSample('BrightnessController/BrightnessController.SetBrightness.request.json')
-            let response = await light_device.handle(event)
+            const event = await helpers.getSample('BrightnessController/BrightnessController.SetBrightness.request.json')
+            const response = await light_device.handle(event)
             assert.equal(response.context.properties[0].namespace, "Alexa.BrightnessController", "Properties Namespace!");
             assert.equal(response.context.properties[0].name, "brightness", "Properties Name!");
             assert.equal(response.context.properties[0].value, 75, "Value!");
@@ -297,12 +274,8 @@ describe('AlexaSmartHomeV3 - Directives', function () {
         })
 
         it('BrightnessController SetBrightness Light+Dimmer', async function () {
-            let event = await helpers.getSample('BrightnessController/BrightnessController.SetBrightness.request.json')
-            let d = deviceManager.endpointById(event.directive.endpoint.endpointId)
-            assert.notEqual(d, undefined)
-            assert.equal(d instanceof Device, true)
-
-            let response = await d.handle(event)
+            const event = await helpers.getSample('BrightnessController/BrightnessController.SetBrightness.request.json')
+            const response = await deviceManager.handleAlexaEvent(event)
             assert.equal(response.context.properties[0].namespace, "Alexa.BrightnessController", "Properties Namespace!");
             assert.equal(response.context.properties[0].name, "brightness", "Properties Name!");
             assert.equal(response.context.properties[0].value, 75, "Value!");

@@ -6,11 +6,9 @@ describe('AlexaSmartHomeV3 - Helpers', function () {
 
 
     before(function () {
-
     });
 
     after(function () {
-        // runs after all tests in this file
     });
 
     describe('Normalizing from min..max to 0..100', async function () {

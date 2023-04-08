@@ -37,7 +37,6 @@ class AdapterMock {
             return { val: 875 }
         }
     }
-
 }
 
 module.exports = {
