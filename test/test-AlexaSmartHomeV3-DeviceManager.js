@@ -1,13 +1,12 @@
 const assert = require('assert');
 const helpers = require('./helpers')
-const Utils = require('../lib/AlexaSmartHomeV3/Helpers/Utils')
 const IotProxy = require('../lib/AlexaSmartHomeV3/Helpers/IotProxy')
 const DeviceManager = require('../lib/AlexaSmartHomeV3/DeviceManager')
 const Device = require('../lib/AlexaSmartHomeV3/Device')
 
 const endpointId = 'endpoint-001'
 const friendlyName = 'some-friendly-name'
-let stateChange = null;
+let stateChange = null
 
 describe('AlexaSmartHomeV3 - DeviceManager', function () {
 
