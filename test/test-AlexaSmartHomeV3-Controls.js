@@ -4,7 +4,7 @@ const Device = require('../lib/AlexaSmartHomeV3/Device')
 const DeviceManager = require('../lib/AlexaSmartHomeV3/DeviceManager')
 const Light = require('../lib/AlexaSmartHomeV3/Controls/Light')
 const Dimmer = require('../lib/AlexaSmartHomeV3/Controls/Dimmer')
-const AdapterProvider = require('../lib/AlexaSmartHomeV3/AdapterProvider')
+const AdapterProvider = require('../lib/AlexaSmartHomeV3/Helpers/AdapterProvider')
 
 class AdapterMock {
     constructor() {
