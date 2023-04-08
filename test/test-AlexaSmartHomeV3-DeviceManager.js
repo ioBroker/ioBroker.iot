@@ -4,14 +4,25 @@ const IotProxy = require('../lib/AlexaSmartHomeV3/Helpers/IotProxy')
 const DeviceManager = require('../lib/AlexaSmartHomeV3/DeviceManager')
 const Device = require('../lib/AlexaSmartHomeV3/Device')
 
-const endpointId = 'endpoint-001'
-const friendlyName = 'some-friendly-name'
-let stateChange = null
 
 describe('AlexaSmartHomeV3 - DeviceManager', function () {
 
     before(function () {
         IotProxy.publishStateChange = event => stateChange = event;
+
+        endpointId = 'endpoint-001'
+        friendlyName = 'some-friendly-name'
+        stateChange = null
+
+        deviceManager = new DeviceManager()
+        dimmer = helpers.dimmerControl();
+
+        deviceManager.addDevice(new Device({
+            id: endpointId,
+            friendlyName: friendlyName,
+            displayCategries: ['LIGHT'],
+            controls: [dimmer]
+        }))
     });
 
     after(function () {
@@ -19,15 +30,6 @@ describe('AlexaSmartHomeV3 - DeviceManager', function () {
 
     describe('sends ChangeReport...', async function () {
         it('on voice interaction', async function () {
-            // mock publishing            
-            const deviceManager = new DeviceManager()
-            deviceManager.addDevice(new Device({
-                id: endpointId,
-                friendlyName: friendlyName,
-                displayCategries: ['LIGHT'],
-                controls: [helpers.dimmerControl()]
-            }))
-
             const event = await helpers.getSample('PowerController/PowerController.TurnOff.request.json');
 
             stateChange = null;
@@ -43,16 +45,6 @@ describe('AlexaSmartHomeV3 - DeviceManager', function () {
         })
 
         it('on physical interaction', async function () {
-            // mock publishing            
-            const deviceManager = new DeviceManager()
-            const dimmer = helpers.dimmerControl();
-
-            deviceManager.addDevice(new Device({
-                id: endpointId,
-                friendlyName: friendlyName,
-                displayCategries: ['LIGHT'],
-                controls: [dimmer]
-            }))
 
             stateChange = null;
 
@@ -69,20 +61,27 @@ describe('AlexaSmartHomeV3 - DeviceManager', function () {
 
     describe('does not send ChangeReport...', async function () {
         it('on unacknowledged state change', async function () {
-            // mock publishing            
-            const deviceManager = new DeviceManager()
-            const dimmer = helpers.dimmerControl();
-
-            deviceManager.addDevice(new Device({
-                id: endpointId,
-                friendlyName: friendlyName,
-                displayCategries: ['LIGHT'],
-                controls: [dimmer]
-            }))
 
             stateChange = null;
 
             await deviceManager.handleStateUpdate(dimmer.supported[0].stateProxy.getId, { val: false, ack: false })
+
+            assert.equal(stateChange, null);
+        })
+        it('on non existing state id', async function () {
+
+            stateChange = null;
+
+            await deviceManager.handleStateUpdate('non-existing', { val: false, ack: true })
+
+            assert.equal(stateChange, null);
+        })
+
+        it('on state id not belonging to any device', async function () {
+
+            stateChange = null;
+
+            await deviceManager.handleStateUpdate('system.adapter.admin.0.alive', { val: false, ack: true })
 
             assert.equal(stateChange, null);
         })

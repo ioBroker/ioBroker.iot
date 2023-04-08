@@ -14,33 +14,33 @@ describe('AlexaSmartHomeV3 - Helpers', function () {
     describe('Normalizing from min..max to 0..100', async function () {
 
         it('Min normilized to 0', async function () {
-            let normalized = Utils.normalize_0_100(0, 0, 200);
+            const normalized = Utils.normalize_0_100(0, 0, 200);
             assert.equal(normalized, 0)
         })
 
         it('Max normilized to 100', async function () {
-            let normalized = Utils.normalize_0_100(200, 0, 200);
+            const normalized = Utils.normalize_0_100(200, 0, 200);
             assert.equal(normalized, 100)
         })
 
         it('Undefined on min > max', async function () {
-            let normalized = Utils.normalize_0_100(200, 200, 0);
+            const normalized = Utils.normalize_0_100(200, 200, 0);
             assert.equal(normalized, undefined)
         })
 
         it('Undefined on min == max', async function () {
-            let normalized = Utils.normalize_0_100(200, 200, 200);
+            const normalized = Utils.normalize_0_100(200, 200, 200);
             assert.equal(normalized, undefined)
         })
 
         it('Undefined on value < min', async function () {
-            let normalized = Utils.normalize_0_100(1, 100, 200);
+            const normalized = Utils.normalize_0_100(1, 100, 200);
             assert.equal(normalized, undefined)
         })
 
 
         it('Undefined on value > max', async function () {
-            let normalized = Utils.normalize_0_100(201, 100, 200);
+            const normalized = Utils.normalize_0_100(201, 100, 200);
             assert.equal(normalized, undefined)
         })
 
@@ -57,27 +57,27 @@ describe('AlexaSmartHomeV3 - Helpers', function () {
     describe('Denormalizing from 0..100 to min..max', async function () {
 
         it('0 denormalized to min', async function () {
-            let denormalized = Utils.denormalize_0_100(0, 0, 200);
+            const denormalized = Utils.denormalize_0_100(0, 0, 200);
             assert.equal(denormalized, 0)
         })
 
         it('100 denormalized to max', async function () {
-            let denormalized = Utils.denormalize_0_100(100, 0, 200);
+            const denormalized = Utils.denormalize_0_100(100, 0, 200);
             assert.equal(denormalized, 200)
         })
 
         it('Undefined on min > max', async function () {
-            let denormalized = Utils.denormalize_0_100(0, 200, 0);
+            const denormalized = Utils.denormalize_0_100(0, 200, 0);
             assert.equal(denormalized, undefined)
         })
 
         it('Undefined on min == max', async function () {
-            let denormalized = Utils.denormalize_0_100(0, 200, 200);
+            const denormalized = Utils.denormalize_0_100(0, 200, 200);
             assert.equal(denormalized, undefined)
         })
 
         it('Undefined on normilized < 0', async function () {
-            let denormalized = Utils.denormalize_0_100(-1, 0, 200);
+            const denormalized = Utils.denormalize_0_100(-1, 0, 200);
             assert.equal(denormalized, undefined)
         })
 

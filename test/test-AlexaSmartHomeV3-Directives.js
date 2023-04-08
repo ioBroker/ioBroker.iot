@@ -6,38 +6,54 @@ const Directives = require('../lib/AlexaSmartHomeV3/Alexa/Directives')
 const Capabilities = require('../lib/AlexaSmartHomeV3/Alexa/Capabilities')
 const AdapterProvider = require('../lib/AlexaSmartHomeV3/Helpers/AdapterProvider');
 
-AdapterProvider.init(helpers.adapterMock());
-
-
-const light = helpers.lightControl()
-const dimmer = helpers.dimmerControl()
-
-const deviceManager = new DeviceManager()
-const endpointId = 'endpoint-001'
-const friendlyName = 'some-friendly-name'
 
 describe('AlexaSmartHomeV3 - Directives', function () {
     before(function () {
+        endpointId = 'endpoint-001'
+        friendlyName = 'some-friendly-name'
+
+        AdapterProvider.init(helpers.adapterMock());
+
+        light = helpers.lightControl()
+        dimmer = helpers.dimmerControl()
+
         light_device = new Device({
-            id: '111',
+            id: 'endpoint-002',
             friendlyName: friendlyName,
             displayCategries: ['LIGHT'],
             controls: [light]
         })
 
         dimmer_device = new Device({
-            id: '222',
+            id: 'endpoint-003',
             friendlyName: friendlyName,
             displayCategries: ['LIGHT'],
             controls: [dimmer]
         })
 
+        deviceManager = new DeviceManager()
         deviceManager.addDevice(new Device({
             id: endpointId,
             friendlyName: friendlyName,
             displayCategries: ['LIGHT'],
             controls: [light, dimmer]
         }))
+
+        lightDeviceManager = new DeviceManager();
+        lightDeviceManager.addDevice(new Device({
+            id: endpointId,
+            friendlyName: friendlyName,
+            displayCategries: ['LIGHT'],
+            controls: [light]
+        }));
+
+        dimmerDeviceManager = new DeviceManager();
+        dimmerDeviceManager.addDevice(new Device({
+            id: endpointId,
+            friendlyName: friendlyName,
+            displayCategries: ['LIGHT'],
+            controls: [dimmer]
+        }));
     });
 
     after(function () {
@@ -46,43 +62,43 @@ describe('AlexaSmartHomeV3 - Directives', function () {
     describe('Matching', async function () {
         // device manager directives
         it('Discovery', async function () {
-            let event = await helpers.getSample('Discovery/Discovery.request.json')
-            let directive = deviceManager.matchDirective(event)
+            const event = await helpers.getSample('Discovery/Discovery.request.json')
+            const directive = deviceManager.matchDirective(event)
             assert.equal(directive instanceof Directives.Discovery, true)
         })
 
         it('ReportState', async function () {
-            let event = await helpers.getSample('StateReport/ReportState.json')
-            let directive = deviceManager.matchDirective(event)
+            const event = await helpers.getSample('StateReport/ReportState.json')
+            const directive = deviceManager.matchDirective(event)
             assert.equal(directive instanceof Directives.ReportState, true)
         })
 
         it('ChangeReport', async function () {
-            let event = Directives.ChangeReport.get(endpointId, Capabilities.PowerController.propertyName, true)
-            let directive = deviceManager.matchDirective(event)
+            const event = Directives.ChangeReport.get(endpointId, Capabilities.PowerController.propertyName, true)
+            const directive = deviceManager.matchDirective(event)
             assert.equal(directive instanceof Directives.ChangeReport, true)
         })
 
         // device directives
         it('PowerController TurnOff', async function () {
-            let event = await helpers.getSample('PowerController/PowerController.TurnOff.request.json')
+            const event = await helpers.getSample('PowerController/PowerController.TurnOff.request.json')
             assert.equal(light.supports(event), true)
             assert.equal(dimmer.supports(event), true)
         })
         it('PowerController TurnOn', async function () {
-            let event = await helpers.getSample('PowerController/PowerController.TurnOn.request.json')
+            const event = await helpers.getSample('PowerController/PowerController.TurnOn.request.json')
             assert.equal(light.supports(event), true)
             assert.equal(dimmer.supports(event), true)
         })
 
         it('BrightnessController AdjustBrightness', async function () {
-            let event = await helpers.getSample('BrightnessController/BrightnessController.AdjustBrightness.request.json')
+            const event = await helpers.getSample('BrightnessController/BrightnessController.AdjustBrightness.request.json')
             assert.equal(light.supports(event), false)
             assert.equal(light.canHandle(event), true)
             assert.equal(dimmer.supports(event), true)
         })
         it('BrightnessController SetBrightness', async function () {
-            let event = await helpers.getSample('BrightnessController/BrightnessController.SetBrightness.request.json')
+            const event = await helpers.getSample('BrightnessController/BrightnessController.SetBrightness.request.json')
             assert.equal(light.supports(event), false)
             assert.equal(light.canHandle(event), true)
             assert.equal(dimmer.supports(event), true)
@@ -93,7 +109,6 @@ describe('AlexaSmartHomeV3 - Directives', function () {
         // device manager directives
         it('Discovery of dimmable Light', async function () {
             const event = await helpers.getSample('Discovery/Discovery.request.json')
-
             const response = await deviceManager.handleAlexaEvent(event)
             assert.equal(response.event.header.namespace, "Alexa.Discovery", "Namespace!");
             assert.equal(response.event.header.name, "Discover.Response", "Name!");
@@ -109,14 +124,7 @@ describe('AlexaSmartHomeV3 - Directives', function () {
 
         it('Discovery of Light', async function () {
             const event = await helpers.getSample('Discovery/Discovery.request.json')
-            const deviceManagerWithLightOnly = new DeviceManager();
-            deviceManagerWithLightOnly.addDevice(new Device({
-                id: endpointId,
-                friendlyName: friendlyName,
-                displayCategries: ['LIGHT'],
-                controls: [light]
-            }));
-            const response = await deviceManagerWithLightOnly.handleAlexaEvent(event)
+            const response = await lightDeviceManager.handleAlexaEvent(event)
             assert.equal(response.event.header.namespace, "Alexa.Discovery", "Namespace!");
             assert.equal(response.event.header.name, "Discover.Response", "Name!");
             assert.equal(response.event.payload.endpoints[0].endpointId, endpointId, "Endpoint Id!");
@@ -130,15 +138,7 @@ describe('AlexaSmartHomeV3 - Directives', function () {
 
         it('ChangeReport of Dimmer', async function () {
             const event = Directives.ChangeReport.get(endpointId, Capabilities.PowerController.propertyName, true)
-            const deviceManagerWithDimmerOnly = new DeviceManager();
-            deviceManagerWithDimmerOnly.addDevice(new Device({
-                id: endpointId,
-                friendlyName: friendlyName,
-                displayCategries: ['LIGHT'],
-                controls: [dimmer]
-            }));
-
-            const response = await deviceManagerWithDimmerOnly.handleAlexaEvent(event)
+            const response = await dimmerDeviceManager.handleAlexaEvent(event)
             assert.equal(response.event.header.namespace, "Alexa", "Namespace!");
             assert.equal(response.event.header.name, "ChangeReport", "Name!");
             assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");

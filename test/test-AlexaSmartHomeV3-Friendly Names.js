@@ -13,7 +13,7 @@ describe('AlexaSmartHomeV3 - Friendly Names', function () {
 
     describe('Single Control', async function () {
         it('With No SmartName/Name/No Room/No Functionality', async function () {
-            let controls = [{
+            const controls = [{
                 states: [
                     {
                         type: "boolean",
@@ -48,7 +48,7 @@ describe('AlexaSmartHomeV3 - Friendly Names', function () {
 
         })
         it('With SmartName/Name/No Room/No Functionality', async function () {
-            let controls = [{
+            const controls = [{
                 states: [
                     {
                         indicator: false,
@@ -90,7 +90,7 @@ describe('AlexaSmartHomeV3 - Friendly Names', function () {
         })
 
         it('With SmartName/Name/With Room/With Functionality', async function () {
-            let controls = [{
+            const controls = [{
                 states: [
                     {
                         indicator: false,
@@ -149,7 +149,7 @@ describe('AlexaSmartHomeV3 - Friendly Names', function () {
         })
 
         it('With No SmartName/Name/With Room/With Functionality', async function () {
-            let controls = [{
+            const controls = [{
                 states: [
                     {
                         indicator: false,
@@ -210,7 +210,7 @@ describe('AlexaSmartHomeV3 - Friendly Names', function () {
         })
 
         it('With No SmartName/Name/With Room/With No Functionality', async function () {
-            let controls = [{
+            const controls = [{
                 states: [
                     {
                         indicator: false,

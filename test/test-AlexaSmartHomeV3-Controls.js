@@ -13,6 +13,22 @@ const friendlyName = 'some-friendly-name'
 describe('AlexaSmartHomeV3 - Controls', function () {
 
     before(function () {
+        lightDeviceManager = new DeviceManager();
+        lightDeviceManager.addDevice(new Device({
+            id: endpointId,
+            friendlyName: friendlyName,
+            displayCategries: ['LIGHT'],
+            controls: [light]
+        }));
+
+        dimmerDeviceManager = new DeviceManager();
+        dimmerDeviceManager.addDevice(new Device({
+            id: endpointId,
+            friendlyName: friendlyName,
+            displayCategries: ['LIGHT'],
+            controls: [dimmer]
+        }));
+
     });
 
     after(function () {
@@ -20,17 +36,9 @@ describe('AlexaSmartHomeV3 - Controls', function () {
 
     describe('Light', async function () {
         it('Light reports state', async function () {
-            const deviceManager = new DeviceManager();
-
-            deviceManager.addDevice(new Device({
-                id: endpointId,
-                friendlyName: friendlyName,
-                displayCategries: ['LIGHT'],
-                controls: [light]
-            }));
 
             const event = await helpers.getSample('StateReport/ReportState.json')
-            const response = await deviceManager.handleAlexaEvent(event);
+            const response = await lightDeviceManager.handleAlexaEvent(event);
             assert.equal(response.event.header.namespace, "Alexa", "Namespace!");
             assert.equal(response.event.header.name, "StateReport", "Name!");
             assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, "Name!");
@@ -46,16 +54,8 @@ describe('AlexaSmartHomeV3 - Controls', function () {
     describe('Dimmer', async function () {
         it('Dimmer respects values range on setting brightness', async function () {
 
-            const deviceManager = new DeviceManager();
-            deviceManager.addDevice(new Device({
-                id: endpointId,
-                friendlyName: friendlyName,
-                displayCategries: ['LIGHT'],
-                controls: [dimmer]
-            }));
-
             const event = await helpers.getSample('BrightnessController/BrightnessController.SetBrightness.request.json')
-            const d = deviceManager.endpointById(event.directive.endpoint.endpointId)
+            const d = dimmerDeviceManager.endpointById(event.directive.endpoint.endpointId)
             assert.notEqual(d, undefined)
             assert.equal(d instanceof Device, true)
             const response = await d.handle(event)
@@ -73,16 +73,9 @@ describe('AlexaSmartHomeV3 - Controls', function () {
         })
 
         it('Dimmer reports state', async function () {
-            const deviceManagerWithDimmer = new DeviceManager();
-            deviceManagerWithDimmer.addDevice(new Device({
-                id: endpointId,
-                friendlyName: friendlyName,
-                displayCategries: ['LIGHT'],
-                controls: [dimmer]
-            }));
 
             const event = await helpers.getSample('StateReport/ReportState.json')
-            const response = await deviceManagerWithDimmer.handleAlexaEvent(event)
+            const response = await dimmerDeviceManager.handleAlexaEvent(event)
             assert.equal(response.event.header.namespace, "Alexa", "Namespace!");
             assert.equal(response.event.header.name, "StateReport", "Name!");
             assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, "Name!");
