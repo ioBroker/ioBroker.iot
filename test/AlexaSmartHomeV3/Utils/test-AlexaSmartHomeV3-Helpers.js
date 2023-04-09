@@ -1,9 +1,7 @@
 const assert = require('assert');
-const helpers = require('../helpers')
 const Utils = require('../../../lib/AlexaSmartHomeV3/Helpers/Utils')
 
 describe('AlexaSmartHomeV3 - Helpers', function () {
-
 
     before(function () {
     });
@@ -38,12 +36,10 @@ describe('AlexaSmartHomeV3 - Helpers', function () {
             assert.equal(normalized, undefined)
         })
 
-
         it('Undefined on value > max', async function () {
             const normalized = Utils.normalize_0_100(201, 100, 200);
             assert.equal(normalized, undefined)
         })
-
 
         it('In the range 0..100', async function () {
             let normalized = Utils.normalize_0_100(100, 0, 200);
@@ -86,7 +82,6 @@ describe('AlexaSmartHomeV3 - Helpers', function () {
             assert.equal(denormalized, undefined)
         })
 
-
         it('In the range min..max', async function () {
             let denormalized = Utils.denormalize_0_100(50, 0, 200);
             assert.equal(denormalized, 100)
@@ -108,5 +103,23 @@ describe('AlexaSmartHomeV3 - Helpers', function () {
             const distinct = Utils.distinctByPropertyName(list, 'name')
             assert.equal(JSON.stringify(distinct), JSON.stringify([{ id: 3, name: 'one' }]));
         })
+    })
+
+    describe('Range ensurance', async function () {
+        it('ensureValueInRange0..100 returns 0 for a negative value', async function () {
+            const valueInRange = Utils.ensureValueInRange_0_100(-2);
+            assert.equal(valueInRange, 0);
+        })
+
+        it('ensureValueInRange0..100 returns 100 for a value > 100', async function () {
+            const valueInRange = Utils.ensureValueInRange_0_100(102);
+            assert.equal(valueInRange, 100);
+        })
+
+        it('ensureValueInRange0..100 does not change a value if it is in the range', async function () {
+            const valueInRange = Utils.ensureValueInRange_0_100(75);
+            assert.equal(valueInRange, 75);
+        })
+
     })
 })

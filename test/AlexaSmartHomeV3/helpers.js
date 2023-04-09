@@ -33,6 +33,7 @@ class AdapterMock {
             return { val: true }
         }
 
+        // 875 of 500..1000 range corresponds to 75 of 0..100 range
         if (id.includes('Dimmer')) {
             return { val: 875 }
         }
@@ -40,6 +41,17 @@ class AdapterMock {
 }
 
 module.exports = {
+    resetCurrentValues: function (deviceManager) {
+        deviceManager
+            .endpoints
+            .flatMap(e => e.controls)
+            .flatMap(c =>
+                c.supported.
+                    concat(c.enforced))
+            .flatMap(c => c.stateProxy.currentValue)
+            .forEach(v => v = undefined);
+    },
+
     adapterMock: function () {
         return new AdapterMock()
     },

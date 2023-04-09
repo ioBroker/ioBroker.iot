@@ -43,11 +43,16 @@ describe('AlexaSmartHomeV3 - Directives', function () {
 
     describe('Handling', async function () {
 
+        beforeEach(function () {
+            helpers.resetCurrentValues(deviceManager);
+        });
+
         it('BrightnessController AdjustBrightness', async function () {
             const event = await helpers.getSample('BrightnessController/BrightnessController.AdjustBrightness.request.json')
             const response = await deviceManager.handleAlexaEvent(event)
             assert.equal(response.context.properties[0].namespace, "Alexa.BrightnessController", "Properties Namespace!");
             assert.equal(response.context.properties[0].name, "brightness", "Properties Name!");
+            assert.equal(response.context.properties[0].value, 50, "Value!");
 
             assert.equal(response.event.header.namespace, "Alexa", "Namespace!");
             assert.equal(response.event.header.name, "Response", "Namespace!");

@@ -4,15 +4,15 @@ const Device = require('../../../lib/AlexaSmartHomeV3/Device')
 const DeviceManager = require('../../../lib/AlexaSmartHomeV3/DeviceManager')
 const AdapterProvider = require('../../../lib/AlexaSmartHomeV3/Helpers/AdapterProvider')
 
-AdapterProvider.init(helpers.adapterMock());
-const dimmer = helpers.dimmerControl()
-const light = helpers.lightControl()
-const endpointId = 'endpoint-001'
-const friendlyName = 'some-friendly-name'
-
 describe('AlexaSmartHomeV3 - Controls', function () {
 
     before(function () {
+        AdapterProvider.init(helpers.adapterMock());
+        dimmer = helpers.dimmerControl()
+        light = helpers.lightControl()
+        endpointId = 'endpoint-001'
+        friendlyName = 'some-friendly-name'
+
         lightDeviceManager = new DeviceManager();
         lightDeviceManager.addDevice(new Device({
             id: endpointId,
@@ -28,7 +28,6 @@ describe('AlexaSmartHomeV3 - Controls', function () {
             displayCategries: ['LIGHT'],
             controls: [dimmer]
         }));
-
     });
 
     after(function () {
