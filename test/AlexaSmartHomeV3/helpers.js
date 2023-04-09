@@ -1,6 +1,6 @@
 const https = require('https');
-const Light = require('../lib/AlexaSmartHomeV3/Controls/Light');
-const Dimmer = require('../lib/AlexaSmartHomeV3/Controls/Dimmer');
+const Light = require('../../lib/AlexaSmartHomeV3/Controls/Light');
+const Dimmer = require('../../lib/AlexaSmartHomeV3/Controls/Dimmer');
 
 class AdapterMock {
     constructor() {

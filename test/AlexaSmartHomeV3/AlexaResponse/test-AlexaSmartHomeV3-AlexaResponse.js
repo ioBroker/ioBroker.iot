@@ -1,5 +1,5 @@
 const assert = require('assert');
-const AlexaResponse = require('../lib/AlexaSmartHomeV3/Alexa/AlexaResponse')
+const AlexaResponse = require('../../../lib/AlexaSmartHomeV3/Alexa/AlexaResponse')
 
 describe('AlexaSmartHomeV3 - AlexaResponse', function () {
 

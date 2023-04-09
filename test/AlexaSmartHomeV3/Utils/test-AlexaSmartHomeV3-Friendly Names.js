@@ -1,5 +1,5 @@
 const assert = require('assert')
-const Utils = require('../lib/AlexaSmartHomeV3/Helpers/Utils')
+const Utils = require('../../../lib/AlexaSmartHomeV3/Helpers/Utils')
 
 describe('AlexaSmartHomeV3 - Friendly Names', function () {
 

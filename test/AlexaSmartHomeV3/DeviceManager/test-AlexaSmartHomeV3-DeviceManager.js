@@ -1,8 +1,8 @@
 const assert = require('assert');
-const helpers = require('./helpers')
-const IotProxy = require('../lib/AlexaSmartHomeV3/Helpers/IotProxy')
-const DeviceManager = require('../lib/AlexaSmartHomeV3/DeviceManager')
-const Device = require('../lib/AlexaSmartHomeV3/Device')
+const helpers = require('../helpers')
+const IotProxy = require('../../../lib/AlexaSmartHomeV3/Helpers/IotProxy')
+const DeviceManager = require('../../../lib/AlexaSmartHomeV3/DeviceManager')
+const Device = require('../../../lib/AlexaSmartHomeV3/Device')
 
 
 describe('AlexaSmartHomeV3 - DeviceManager', function () {

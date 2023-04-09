@@ -1,8 +1,8 @@
 const assert = require('assert')
-const helpers = require('./helpers')
-const Device = require('../lib/AlexaSmartHomeV3/Device')
-const DeviceManager = require('../lib/AlexaSmartHomeV3/DeviceManager')
-const AdapterProvider = require('../lib/AlexaSmartHomeV3/Helpers/AdapterProvider')
+const helpers = require('../helpers')
+const Device = require('../../../lib/AlexaSmartHomeV3/Device')
+const DeviceManager = require('../../../lib/AlexaSmartHomeV3/DeviceManager')
+const AdapterProvider = require('../../../lib/AlexaSmartHomeV3/Helpers/AdapterProvider')
 
 AdapterProvider.init(helpers.adapterMock());
 const dimmer = helpers.dimmerControl()
