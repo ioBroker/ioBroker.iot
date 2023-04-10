@@ -55,6 +55,7 @@ describe('AlexaSmartHomeV3 - DeviceManager', function () {
             assert.equal(stateChange.context.properties[0].name, 'brightness');
 
             assert.equal(stateChange.event.payload.change.properties[0].name, 'powerState');
+            assert.equal(stateChange.event.payload.change.properties[0].value, 'OFF');
             assert.equal(stateChange.event.payload.change.cause.type, 'PHYSICAL_INTERACTION');
         })
     })

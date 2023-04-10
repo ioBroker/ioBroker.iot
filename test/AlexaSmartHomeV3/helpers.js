@@ -1,6 +1,5 @@
 const https = require('https');
-const Light = require('../../lib/AlexaSmartHomeV3/Controls/Light');
-const Dimmer = require('../../lib/AlexaSmartHomeV3/Controls/Dimmer');
+const Controls = require('../../lib/AlexaSmartHomeV3/Controls');
 
 class AdapterMock {
     constructor() {
@@ -37,6 +36,10 @@ class AdapterMock {
         if (id.includes('Dimmer')) {
             return { val: 875 }
         }
+
+        if (id.includes('Temperature')) {
+            return { val: 21.5 }
+        }
     }
 }
 
@@ -56,100 +59,16 @@ module.exports = {
         return new AdapterMock()
     },
 
+    temperatureControl: function () {
+        return new Controls.Temperature(require('./Resources/temperature.json'));
+    },
+
     dimmerControl: function () {
-        return new Dimmer(
-            {
-                states: [
-                    {
-                        name: "SET",
-                        defaultRole: "level.dimmer",
-                        defaultUnit: "%",
-                        id: "alias.0.Wohnzimmer.Dimmer.SET",
-                        smartName: {
-                            smartType: "LIGHT",
-                            byON: "80",
-                        },
-                    },
-                ],
-                type: "dimmer",
-                object: {
-                    id: "alias.0.Wohnzimmer.Dimmer",
-                    common: {
-                        name: {
-                            de: "Dimmer",
-                        },
-                        role: "dimmer",
-                        max: 1000,
-                        min: 500
-                    },
-                },
-                room: {
-                    id: "enum.rooms.living_room",
-                    common: {
-                        name: {
-                            en: "Living Room",
-                        },
-                        members: [
-                            "alias.0.Wohnzimmer.Dimmer",
-                            "alias.0.Wohnzimmer.Lampe",
-                        ],
-                    },
-                },
-                functionality: undefined,
-            });
+        return new Controls.Dimmer(require('./Resources/dimmer.json'));
     },
 
     lightControl: function () {
-        return new Light(
-            {
-                states: [
-                    {
-                        name: "SET",
-                        defaultRole: "switch.light",
-                        id: "alias.0.Wohnzimmer.Lampe.SET",
-                        smartName: {
-                            smartType: "LIGHT",
-                        },
-                    },
-                ],
-                type: "light",
-                object: {
-                    id: "alias.0.Wohnzimmer.Lampe",
-                    common: {
-                        name: {
-                            de: "Lampe",
-                        },
-                        role: "light",
-                        smartName: {
-                            de: "Meine Lampe",
-                        },
-                    },
-                },
-                room: {
-                    id: "enum.rooms.living_room",
-                    common: {
-                        name: {
-                            en: "Living Room",
-                        },
-                        members: [
-                            "alias.0.Wohnzimmer.Dimmer",
-                            "alias.0.Wohnzimmer.Lampe",
-                        ],
-                    },
-                },
-                functionality: {
-                    id: "enum.functions.light",
-                    common: {
-                        name: {
-                            en: "Light",
-                        },
-                        members: [
-                            "alias.0.Wohnzimmer.Lampe",
-                            "0_userdata.0.Blinds",
-                        ]
-                    }
-                }
-            });
+        return new Controls.Light(require('./Resources/light.json'));
     },
 
     getSample: async function (sample_json_name) {

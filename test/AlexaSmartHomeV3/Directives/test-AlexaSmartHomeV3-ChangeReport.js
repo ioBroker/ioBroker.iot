@@ -13,14 +13,13 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
         friendlyName = 'some-friendly-name'
 
         AdapterProvider.init(helpers.adapterMock());
-        dimmer = helpers.dimmerControl()
 
         deviceManager = new DeviceManager()
         deviceManager.addDevice(new Device({
             id: endpointId,
             friendlyName: friendlyName,
             displayCategries: ['LIGHT'],
-            controls: [dimmer]
+            controls: [helpers.dimmerControl(), helpers.temperatureControl()]
         }))
     });
 
@@ -52,11 +51,45 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
             assert.equal(response.event.payload.change.properties[0].uncertaintyInMilliseconds, 0);
 
             // unchanged properties
-            assert.equal(response.context.properties.length, 1);
+            assert.equal(response.context.properties.length, 2);
             assert.equal(response.context.properties[0].namespace, "Alexa.BrightnessController");
             assert.equal(response.context.properties[0].name, "brightness");
             assert.equal(response.context.properties[0].value, 75);
             assert.equal(response.context.properties[0].uncertaintyInMilliseconds, 0);
+
+            assert.equal(response.context.properties[1].namespace, "Alexa.TemperatureSensor");
+            assert.equal(response.context.properties[1].name, "temperature");
+            assert.equal(response.context.properties[1].value.value, 21.5);
+            assert.equal(response.context.properties[1].uncertaintyInMilliseconds, 0);
+        })
+
+        it('ChangeReport for a temperature sensor', async function () {
+            const event = Directives.ChangeReport.get(endpointId, Capabilities.TemperatureSensor.propertyName, true)
+            const response = await deviceManager.handleAlexaEvent(event)
+            assert.equal(response.event.header.namespace, "Alexa", "Namespace!");
+            assert.equal(response.event.header.name, "ChangeReport", "Name!");
+            assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
+
+            // changed properties
+            assert.equal(response.event.payload.change.cause.type, "PHYSICAL_INTERACTION");
+            assert.equal(response.event.payload.change.properties.length, 1);
+            assert.equal(response.event.payload.change.properties[0].namespace, "Alexa.TemperatureSensor");
+            assert.equal(response.event.payload.change.properties[0].name, "temperature");
+            assert.equal(response.event.payload.change.properties[0].value.value, 21.5);
+            assert.equal(response.event.payload.change.properties[0].value.scale, "CELSIUS");
+            assert.equal(response.event.payload.change.properties[0].uncertaintyInMilliseconds, 0);
+
+            // unchanged properties
+            assert.equal(response.context.properties.length, 2);
+            assert.equal(response.context.properties[0].namespace, "Alexa.PowerController");
+            assert.equal(response.context.properties[0].name, "powerState");
+            assert.equal(response.context.properties[0].value, "ON");
+            assert.equal(response.context.properties[0].uncertaintyInMilliseconds, 0);
+
+            assert.equal(response.context.properties[1].namespace, "Alexa.BrightnessController");
+            assert.equal(response.context.properties[1].name, "brightness");
+            assert.equal(response.context.properties[1].value, 75);
+            assert.equal(response.context.properties[1].uncertaintyInMilliseconds, 0);
         })
     })
 })

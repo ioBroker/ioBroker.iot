@@ -1,0 +1,49 @@
+{
+    "states": [
+        {
+            "name": "SET",
+            "defaultRole": "switch.light",
+            "id": "alias.0.Wohnzimmer.Lampe.SET",
+            "smartName": {
+                "smartType": "LIGHT"
+            }
+        }
+    ],
+    "type": "light",
+    "object": {
+        "id": "alias.0.Wohnzimmer.Lampe",
+        "common": {
+            "name": {
+                "de": "Lampe"
+            },
+            "role": "light",
+            "smartName": {
+                "de": "Meine Lampe"
+            }
+        }
+    },
+    "room": {
+        "id": "enum.rooms.living_room",
+        "common": {
+            "name": {
+                "en": "Living Room"
+            },
+            "members": [
+                "alias.0.Wohnzimmer.Dimmer",
+                "alias.0.Wohnzimmer.Lampe"
+            ]
+        }
+    },
+    "functionality": {
+        "id": "enum.functions.light",
+        "common": {
+            "name": {
+                "en": "Light"
+            },
+            "members": [
+                "alias.0.Wohnzimmer.Lampe",
+                "0_userdata.0.Blinds"
+            ]
+        }
+    }
+}
