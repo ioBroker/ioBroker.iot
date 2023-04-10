@@ -71,7 +71,7 @@ describe('AlexaSmartHomeV3 - Directives', function () {
             assert.equal(response.event.header.name, "Response", "Namespace!");
             assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, "Correlation Token!");
             assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
-            assert.equal(deviceManager.endpointById(endpointId).controls[0].enforced[0].stateProxy.currentValue, true);
+            assert.equal(deviceManager.endpointById(endpointId).controls[0].enforced[0].properties[0].stateProxy.currentValue, true);
         })
 
         it('BrightnessController SetBrightness for a light+dimmer', async function () {

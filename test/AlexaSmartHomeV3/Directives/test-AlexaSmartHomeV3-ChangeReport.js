@@ -4,6 +4,7 @@ const DeviceManager = require('../../../lib/AlexaSmartHomeV3/DeviceManager')
 const Device = require('../../../lib/AlexaSmartHomeV3/Device')
 const Directives = require('../../../lib/AlexaSmartHomeV3/Alexa/Directives')
 const Capabilities = require('../../../lib/AlexaSmartHomeV3/Alexa/Capabilities')
+const Properties = require('../../../lib/AlexaSmartHomeV3/Alexa/Properties')
 const AdapterProvider = require('../../../lib/AlexaSmartHomeV3/Helpers/AdapterProvider');
 
 
@@ -28,7 +29,7 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
 
     describe('Matching', async function () {
         it('ChangeReport', async function () {
-            const event = Directives.ChangeReport.get(endpointId, Capabilities.PowerController.propertyName, true)
+            const event = Directives.ChangeReport.get(endpointId, Properties.PowerState.propertyName, true)
             const directive = deviceManager.matchDirective(event)
             assert.equal(directive instanceof Directives.ChangeReport, true)
         })
@@ -36,7 +37,7 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
 
     describe('Handling', async function () {
         it('ChangeReport for a dimmer', async function () {
-            const event = Directives.ChangeReport.get(endpointId, Capabilities.PowerController.propertyName, true)
+            const event = Directives.ChangeReport.get(endpointId, Properties.PowerState.propertyName, true)
             const response = await deviceManager.handleAlexaEvent(event)
             assert.equal(response.event.header.namespace, "Alexa", "Namespace!");
             assert.equal(response.event.header.name, "ChangeReport", "Name!");
@@ -64,7 +65,7 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
         })
 
         it('ChangeReport for a temperature sensor', async function () {
-            const event = Directives.ChangeReport.get(endpointId, Capabilities.TemperatureSensor.propertyName, true)
+            const event = Directives.ChangeReport.get(endpointId, Properties.Temperature.propertyName, true)
             const response = await deviceManager.handleAlexaEvent(event)
             assert.equal(response.event.header.namespace, "Alexa", "Namespace!");
             assert.equal(response.event.header.name, "ChangeReport", "Name!");

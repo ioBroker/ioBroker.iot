@@ -48,10 +48,9 @@ module.exports = {
         deviceManager
             .endpoints
             .flatMap(e => e.controls)
-            .flatMap(c =>
-                c.supported.
-                    concat(c.enforced))
-            .flatMap(c => c.stateProxy.currentValue)
+            .flatMap(c => c.allCapabilities)
+            .flatMap(c => c.properties)
+            .map(p => p.stateProxy.currentValue)
             .forEach(v => v = undefined);
     },
 

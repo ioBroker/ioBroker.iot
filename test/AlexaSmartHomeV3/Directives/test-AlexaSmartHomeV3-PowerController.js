@@ -68,7 +68,7 @@ describe('AlexaSmartHomeV3 - PowerController', function () {
             assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, "Correlation Token!");
             assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
 
-            assert.equal(light_device.controls[0].supported[0].stateProxy.currentValue, false);
+            assert.equal(light_device.controls[0].supported[0].properties[0].stateProxy.currentValue, false);
         })
 
         it('PowerController TurnOff for a dimmer', async function () {
@@ -83,7 +83,7 @@ describe('AlexaSmartHomeV3 - PowerController', function () {
             assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, "Correlation Token!");
             assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
 
-            assert.equal(dimmer_device.controls[0].supported[0].stateProxy.currentValue, 0);
+            assert.equal(dimmer_device.controls[0].supported[0].properties[0].stateProxy.currentValue, 0);
         })
 
         it('PowerController TurnOff for a light+dimmer', async function () {
@@ -110,7 +110,7 @@ describe('AlexaSmartHomeV3 - PowerController', function () {
             assert.equal(response.event.header.name, "Response", "Namespace!");
             assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, "Correlation Token!");
             assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
-            assert.equal(light_device.controls[0].supported[0].stateProxy.currentValue, true);
+            assert.equal(light_device.controls[0].supported[0].properties[0].stateProxy.currentValue, true);
 
         })
 
@@ -125,7 +125,7 @@ describe('AlexaSmartHomeV3 - PowerController', function () {
             assert.equal(response.event.header.name, "Response", "Namespace!");
             assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, "Correlation Token!");
             assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
-            assert.equal(dimmer_device.controls[0].supported[0].stateProxy.currentValue, 80);
+            assert.equal(dimmer_device.controls[0].supported[0].properties[0].stateProxy.currentValue, 80);
 
         })
 

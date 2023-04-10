@@ -48,7 +48,7 @@ describe('AlexaSmartHomeV3 - DeviceManager', function () {
 
             stateChange = null;
 
-            await deviceManager.handleStateUpdate(dimmer.supported[0].stateProxy.getId, { val: false, ack: true })
+            await deviceManager.handleStateUpdate(dimmer.supported[0].properties[0].stateProxy.getId, { val: false, ack: true })
 
             assert.notEqual(stateChange, null);
             assert.equal(stateChange.context.properties.length, 1);
@@ -65,7 +65,7 @@ describe('AlexaSmartHomeV3 - DeviceManager', function () {
 
             stateChange = null;
 
-            await deviceManager.handleStateUpdate(dimmer.supported[0].stateProxy.getId, { val: false, ack: false })
+            await deviceManager.handleStateUpdate(dimmer.supported[0].properties[0].stateProxy.getId, { val: false, ack: false })
 
             assert.equal(stateChange, null);
         })

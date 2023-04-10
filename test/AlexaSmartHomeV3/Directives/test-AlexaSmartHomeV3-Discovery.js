@@ -19,6 +19,7 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
         // device manager directives
         it('Discovery', async function () {
             const event = await helpers.getSample('Discovery/Discovery.request.json')
+            const deviceManager = new DeviceManager()
             const directive = deviceManager.matchDirective(event)
             assert.equal(directive instanceof Directives.Discovery, true)
         })
