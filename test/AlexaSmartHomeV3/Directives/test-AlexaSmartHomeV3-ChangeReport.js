@@ -3,7 +3,6 @@ const helpers = require('../helpers')
 const DeviceManager = require('../../../lib/AlexaSmartHomeV3/DeviceManager')
 const Device = require('../../../lib/AlexaSmartHomeV3/Device')
 const Directives = require('../../../lib/AlexaSmartHomeV3/Alexa/Directives')
-const Capabilities = require('../../../lib/AlexaSmartHomeV3/Alexa/Capabilities')
 const Properties = require('../../../lib/AlexaSmartHomeV3/Alexa/Properties')
 const AdapterProvider = require('../../../lib/AlexaSmartHomeV3/Helpers/AdapterProvider');
 
@@ -91,6 +90,46 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
             assert.equal(response.context.properties[1].name, "brightness");
             assert.equal(response.context.properties[1].value, 75);
             assert.equal(response.context.properties[1].uncertaintyInMilliseconds, 0);
+        })
+
+        it('ChangeReport for a thermostat', async function () {
+            const event = Directives.ChangeReport.get(endpointId, Properties.TargetSetpoint.propertyName, true)
+
+            deviceManager = new DeviceManager()
+            deviceManager.addDevice(new Device({
+                id: endpointId,
+                friendlyName: friendlyName,
+                displayCategries: ['THERMOSTAT'],
+                controls: [helpers.thermostatControl()]
+            }))
+            const response = await deviceManager.handleAlexaEvent(event)
+
+            assert.equal(response.event.header.namespace, "Alexa", "Namespace!");
+            assert.equal(response.event.header.name, "ChangeReport", "Name!");
+            assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
+
+            // changed properties
+            assert.equal(response.event.payload.change.cause.type, "PHYSICAL_INTERACTION");
+            assert.equal(response.event.payload.change.properties.length, 1);
+            assert.equal(response.event.payload.change.properties[0].namespace, "Alexa.ThermostatController");
+            assert.equal(response.event.payload.change.properties[0].name, "targetSetpoint");
+            assert.equal(response.event.payload.change.properties[0].value.value, 23.5);
+            assert.equal(response.event.payload.change.properties[0].value.scale, "CELSIUS");
+            assert.equal(response.event.payload.change.properties[0].uncertaintyInMilliseconds, 0);
+
+            // unchanged properties
+            assert.equal(response.context.properties.length, 2);
+            assert.equal(response.context.properties[0].namespace, "Alexa.TemperatureSensor");
+            assert.equal(response.context.properties[0].name, "temperature");
+            assert.equal(response.context.properties[0].value.value, 23.5);
+            assert.equal(response.context.properties[0].value.scale, "CELSIUS");
+            assert.equal(response.context.properties[0].uncertaintyInMilliseconds, 0);
+
+            assert.equal(response.context.properties[1].namespace, "Alexa.ThermostatController");
+            assert.equal(response.context.properties[1].name, "thermostatMode");
+            assert.equal(response.context.properties[1].value, "AUTO");
+            assert.equal(response.context.properties[1].uncertaintyInMilliseconds, 0);
+
         })
     })
 })

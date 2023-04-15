@@ -22,7 +22,7 @@ describe('AlexaSmartHomeV3 - AlexaResponse', function () {
         })
 
         it('Directive not supported error recognized as error response', async function () {
-            let errorResponse = AlexaResponse.directiveNotSupported()
+            let errorResponse = AlexaResponse.directiveNotSupportedByControl()
             assert.equal(AlexaResponse.isErrorResponse(errorResponse), true)
         })
 

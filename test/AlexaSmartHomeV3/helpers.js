@@ -86,6 +86,18 @@ module.exports = {
         return new Controls.Light(require('./Resources/light.json'));
     },
 
+    thermostatControllerAdjustTargetTemperatureRequest: function () {
+        return require('./Resources/ThermostatController.AdjustTargetTemperature.request.json');
+    },
+
+    thermostatControllerSetTargetTemperatureRequest: function () {
+        return require('./Resources/ThermostatController.SetTargetTemperature.request.json');
+    },
+
+    thermostatControllerSetThermostatModeRequest: function () {
+        return require('./Resources/ThermostatController.SetThermostatMode.request.json');
+    },
+
     getSample: async function (sample_json_name) {
         let options = {
             hostname: 'raw.githubusercontent.com',

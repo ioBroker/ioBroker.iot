@@ -1,0 +1,25 @@
+{
+    "directive": {
+        "header": {
+            "namespace": "Alexa.ThermostatController",
+            "name": "SetTargetTemperature",
+            "messageId": "Unique version 4 UUID",
+            "correlationToken": "Opaque correlation token",
+            "payloadVersion": "3.2"
+        },
+        "endpoint": {
+            "scope": {
+                "type": "BearerToken",
+                "token": "OAuth2 bearer token"
+            },
+            "endpointId": "endpoint-001",
+            "cookie": {}
+        },
+        "payload": {
+            "targetSetpoint": {
+                "value": 20.0,
+                "scale": "CELSIUS"
+            }
+        }
+    }
+}
