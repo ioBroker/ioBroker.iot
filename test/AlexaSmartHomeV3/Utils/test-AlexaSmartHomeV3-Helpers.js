@@ -121,5 +121,21 @@ describe('AlexaSmartHomeV3 - Helpers', function () {
             assert.equal(valueInRange, 75);
         })
 
+        it('ensureValueInRange returns min for a value smaller than min', async function () {
+            const valueInRange = Utils.ensureValueInRange(-2, 1, 3);
+            assert.equal(valueInRange, 1);
+        })
+
+        it('ensureValueInRange returns max for a value greater than max', async function () {
+            const valueInRange = Utils.ensureValueInRange(102, 1, 3);
+            assert.equal(valueInRange, 3);
+        })
+
+        it('ensureValueInRange does not change a value if it is in the range', async function () {
+            const valueInRange = Utils.ensureValueInRange_0_100(2, 1, 3);
+            assert.equal(valueInRange, 2);
+        })
+
+
     })
 })

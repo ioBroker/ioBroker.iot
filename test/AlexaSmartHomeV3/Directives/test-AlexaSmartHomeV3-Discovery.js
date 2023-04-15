@@ -96,5 +96,28 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             assert.equal(response.event.payload.endpoints[0].capabilities[0].interface, "Alexa");
             assert.equal(response.event.payload.endpoints[0].capabilities[1].interface, "Alexa.TemperatureSensor");
         })
+
+        it('Discovery of a thermostat', async function () {
+            const event = await helpers.getSample('Discovery/Discovery.request.json')
+
+            const deviceManager = new DeviceManager();
+            deviceManager.addDevice(new Device({
+                id: endpointId,
+                friendlyName: friendlyName,
+                displayCategries: ['TEMPERATURE_SENSOR', 'THERMOSTAT'],
+                controls: [helpers.thermostatControl()]
+            }));
+
+            const response = await deviceManager.handleAlexaEvent(event)
+            assert.equal(response.event.header.namespace, "Alexa.Discovery", "Namespace!");
+            assert.equal(response.event.header.name, "Discover.Response", "Name!");
+            assert.equal(response.event.payload.endpoints[0].endpointId, endpointId, "Endpoint Id!");
+            assert.equal(response.event.payload.endpoints[0].friendlyName, friendlyName, "Friendly Name!");
+
+            assert.equal(response.event.payload.endpoints[0].capabilities.length, 3);
+            assert.equal(response.event.payload.endpoints[0].capabilities[0].type, "AlexaInterface");
+            assert.equal(response.event.payload.endpoints[0].capabilities[0].interface, "Alexa");
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].interface, "Alexa.TemperatureSensor");
+        })
     })
 })

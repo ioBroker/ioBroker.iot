@@ -1,0 +1,23 @@
+{
+    "states": [
+        {
+            "name": "SET",
+            "defaultRole": "level.temperature",
+            "defaultUnit": "°C",
+            "id": "alias.0.Wohnzimmer.Thermostat.SET",
+            "smartName": {
+                "smartType": "Thermostat"
+            }
+        }
+    ],
+    "type": "thermostat",
+    "object": {
+        "id": "alias.0.Wohnzimmer.Thermostat",
+        "common": {
+            "name": {
+                "de": "Thermostat"
+            },
+            "role": "level.temperature"
+        }
+    }
+}

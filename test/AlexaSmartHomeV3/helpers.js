@@ -70,6 +70,10 @@ module.exports = {
         return new Controls.Temperature(require('./Resources/temperature.json'));
     },
 
+    thermostatControl: function () {
+        return new Controls.Thermostat(require('./Resources/thermostat.json'));
+    },
+
     dimmerControl: function () {
         return new Controls.Dimmer(require('./Resources/dimmer.json'));
     },
