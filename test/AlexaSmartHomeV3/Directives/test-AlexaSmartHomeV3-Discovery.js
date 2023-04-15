@@ -118,6 +118,14 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             assert.equal(response.event.payload.endpoints[0].capabilities[0].type, "AlexaInterface");
             assert.equal(response.event.payload.endpoints[0].capabilities[0].interface, "Alexa");
             assert.equal(response.event.payload.endpoints[0].capabilities[1].interface, "Alexa.TemperatureSensor");
+
+            assert.equal(response.event.payload.endpoints[0].capabilities[2].interface, "Alexa.ThermostatController");
+            assert.equal(response.event.payload.endpoints[0].capabilities[2].version, "3.2");
+            assert.equal(response.event.payload.endpoints[0].capabilities[2].properties.supported.length, 2);
+            assert.equal(response.event.payload.endpoints[0].capabilities[2].properties.supported[0].name, "targetSetpoint");
+            assert.equal(response.event.payload.endpoints[0].capabilities[2].properties.supported[1].name, "thermostatMode");
+            assert.equal(response.event.payload.endpoints[0].capabilities[2].configuration.supportedModes.length, 1);
+            assert.equal(response.event.payload.endpoints[0].capabilities[2].configuration.supportedModes[0], "AUTO");
         })
     })
 })
