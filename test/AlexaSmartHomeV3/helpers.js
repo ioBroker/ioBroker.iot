@@ -41,6 +41,14 @@ class AdapterMock {
             return { val: 21.5 }
         }
     }
+
+    async subscribeForeignStatesAsync(id) {
+        return;
+    }
+
+    async unsubscribeForeignStatesAsync(id) {
+        return;
+    }
 }
 
 module.exports = {
