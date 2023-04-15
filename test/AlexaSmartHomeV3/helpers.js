@@ -40,6 +40,10 @@ class AdapterMock {
         if (id.includes('Temperature')) {
             return { val: 21.5 }
         }
+
+        if (id.includes('Thermostat')) {
+            return { val: 23.5 }
+        }
     }
 
     async subscribeForeignStatesAsync(id) {

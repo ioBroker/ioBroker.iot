@@ -4,7 +4,7 @@ const DeviceManager = require('../../../lib/AlexaSmartHomeV3/DeviceManager')
 const Device = require('../../../lib/AlexaSmartHomeV3/Device')
 const AdapterProvider = require('../../../lib/AlexaSmartHomeV3/Helpers/AdapterProvider');
 
-describe('AlexaSmartHomeV3 - Directives', function () {
+describe('AlexaSmartHomeV3 - BrightnessController', function () {
     before(function () {
         endpointId = 'endpoint-001'
         friendlyName = 'some-friendly-name'
