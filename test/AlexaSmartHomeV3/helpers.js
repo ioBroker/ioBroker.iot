@@ -49,6 +49,10 @@ class AdapterMock {
             return { val: true }
         }
 
+        if (id.includes('Door')) {
+            return { val: true }
+        }
+
         if (id.includes('Lock')) {
             return { val: false }
         }
@@ -96,6 +100,10 @@ module.exports = {
 
     motionControl: function () {
         return new Controls.Motion(require('./Resources/motion.json'));
+    },
+
+    doorControl: function () {
+        return new Controls.Door(require('./Resources/door.json'));
     },
 
     lockControl: function () {

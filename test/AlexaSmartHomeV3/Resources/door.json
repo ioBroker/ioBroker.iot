@@ -1,0 +1,22 @@
+{
+    "states": [
+        {
+            "name": "ACTUAL",
+            "defaultRole": "sensor.door",
+            "id": "alias.0.Wohnzimmer.Door.ACTUAL",
+            "smartName": {
+                "smartType": "Door Sensor"
+            }
+        }
+    ],
+    "type": "door",
+    "object": {
+        "id": "alias.0.Wohnzimmer.Door",
+        "common": {
+            "name": {
+                "de": "Tür Kontactsensor"
+            },
+            "role": "sensor.door"
+        }
+    }
+}
