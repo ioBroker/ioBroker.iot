@@ -115,5 +115,28 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
             assert.equal(response.context.properties[0].value, "DETECTED");
             assert.equal(response.context.properties[0].uncertaintyInMilliseconds, 0);
         })
+
+        it('Report state for a smart lock', async function () {
+            const event = await helpers.getSample('StateReport/ReportState.json')
+
+            const deviceManager = new DeviceManager()
+            deviceManager.addDevice(new Device({
+                id: endpointId,
+                friendlyName: friendlyName,
+                displayCategries: ['SMARTLOCK'],
+                controls: [helpers.lockControl()]
+            }))
+
+            const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(response.event.header.namespace, "Alexa", "Namespace!");
+            assert.equal(response.event.header.name, "StateReport", "Name!");
+            assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
+
+            assert.equal(response.context.properties.length, 1);
+            assert.equal(response.context.properties[0].namespace, "Alexa.LockController");
+            assert.equal(response.context.properties[0].name, "lockState");
+            assert.equal(response.context.properties[0].value, "UNLOCKED");
+            assert.equal(response.context.properties[0].uncertaintyInMilliseconds, 0);
+        })
     })
 })

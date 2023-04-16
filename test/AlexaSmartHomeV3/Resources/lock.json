@@ -1,0 +1,22 @@
+{
+    "states": [
+        {
+            "name": "SET",
+            "defaultRole": "switch.lock",
+            "id": "alias.0.Wohnzimmer.Lock.SET",
+            "smartName": {
+                "smartType": "Lock"
+            }
+        }
+    ],
+    "type": "lock",
+    "object": {
+        "id": "alias.0.Wohnzimmer.Lock",
+        "common": {
+            "name": {
+                "de": "Schloss"
+            },
+            "role": "switch.lock"
+        }
+    }
+}

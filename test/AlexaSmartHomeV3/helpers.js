@@ -48,6 +48,10 @@ class AdapterMock {
         if (id.includes('Motion')) {
             return { val: true }
         }
+
+        if (id.includes('Lock')) {
+            return { val: false }
+        }
     }
 
     async subscribeForeignStatesAsync(id) {
@@ -92,6 +96,10 @@ module.exports = {
 
     motionControl: function () {
         return new Controls.Motion(require('./Resources/motion.json'));
+    },
+
+    lockControl: function () {
+        return new Controls.Lock(require('./Resources/lock.json'));
     },
 
     thermostatControllerAdjustTargetTemperatureRequest: function () {
