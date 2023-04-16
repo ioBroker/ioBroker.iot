@@ -92,5 +92,28 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
             assert.equal(response.context.properties[2].uncertaintyInMilliseconds, 0);
 
         })
+
+        it('Report state for a motion sensor', async function () {
+            const event = await helpers.getSample('StateReport/ReportState.json')
+
+            const deviceManager = new DeviceManager()
+            deviceManager.addDevice(new Device({
+                id: endpointId,
+                friendlyName: friendlyName,
+                displayCategries: ['MOTION_SENSOR'],
+                controls: [helpers.motionControl()]
+            }))
+
+            const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(response.event.header.namespace, "Alexa", "Namespace!");
+            assert.equal(response.event.header.name, "StateReport", "Name!");
+            assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
+
+            assert.equal(response.context.properties.length, 1);
+            assert.equal(response.context.properties[0].namespace, "Alexa.MotionSensor");
+            assert.equal(response.context.properties[0].name, "detectionState");
+            assert.equal(response.context.properties[0].value, "DETECTED");
+            assert.equal(response.context.properties[0].uncertaintyInMilliseconds, 0);
+        })
     })
 })

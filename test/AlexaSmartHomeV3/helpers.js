@@ -44,6 +44,10 @@ class AdapterMock {
         if (id.includes('Thermostat')) {
             return { val: 23.5 }
         }
+
+        if (id.includes('Motion')) {
+            return { val: true }
+        }
     }
 
     async subscribeForeignStatesAsync(id) {
@@ -84,6 +88,10 @@ module.exports = {
 
     lightControl: function () {
         return new Controls.Light(require('./Resources/light.json'));
+    },
+
+    motionControl: function () {
+        return new Controls.Motion(require('./Resources/motion.json'));
     },
 
     thermostatControllerAdjustTargetTemperatureRequest: function () {

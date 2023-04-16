@@ -1,0 +1,22 @@
+{
+    "states": [
+        {
+            "name": "ACTUAL",
+            "defaultRole": "sensor.motion",
+            "id": "alias.0.Wohnzimmer.Motion.ACTUAL",
+            "smartName": {
+                "smartType": "Motion Sensor"
+            }
+        }
+    ],
+    "type": "motion",
+    "object": {
+        "id": "alias.0.Wohnzimmer.Motion",
+        "common": {
+            "name": {
+                "de": "Bewegungsmelder"
+            },
+            "role": "sensor.motion"
+        }
+    }
+}
