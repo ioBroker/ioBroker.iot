@@ -129,7 +129,7 @@ function startAdapter(options) {
                             if (alexaSH3) {
                                 await alexaSH3.updateDevices();
                                 await adapter.setStateAsync('smart.updates3', true, true);
-                            }                                                         
+                            }
 
                             googleHome && googleHome.updateDevices(async analyseAddedId => {
                                 await adapter.setStateAsync('smart.updatesResult', analyseAddedId || '', true);
@@ -364,7 +364,7 @@ function sendDataToIFTTT(obj) {
     if (url) {
         axios.post(url, data, {
             timeout: 15000,
-            validateStatus: status => status < 400
+            validateStatus: status => status < 400,
         })
             .then(response => adapter.log.debug(`Response from IFTTT: ${JSON.stringify(response.data)}`))
             .catch(error => {
@@ -457,7 +457,7 @@ async function processIfttt(data) {
         let obj = await adapter.getForeignObjectAsync(id);
         if (!obj) {
             const newId = `${adapter.namespace}.services.${id}`;
-            obj = await adapter.getForeignObjectAsync(newId)
+            obj = await adapter.getForeignObjectAsync(newId);
             if (!obj) {
                 // create state
                 await adapter.setObjectNotExistsAsync(`services.${id}`,
@@ -469,9 +469,9 @@ async function processIfttt(data) {
                             role: 'state',
                             read: true,
                             type: 'mixed',
-                            desc: 'Custom state'
+                            desc: 'Custom state',
                         },
-                        native: {}
+                        native: {},
                     });
                 id = newId;
             }
@@ -535,7 +535,7 @@ function encrypt(key, value) {
 function decrypt(key, value) {
     if (value.startsWith('base64:')) {
         try {
-            value = Buffer.from(value.substring(7), 'base64').toString('ascii')
+            value = Buffer.from(value.substring(7), 'base64').toString('ascii');
         } catch (e) {
             adapter.log.error(`Cannot decrypt key: ${e}`);
         }
