@@ -172,32 +172,30 @@ class Options extends Component {
             });
     }
 
-    resetCerts(forceUserCreate) {
+    async resetCerts(forceUserCreate) {
         this.setState({ inAction: true });
-
-        this.props.socket.setState(`iot.${this.props.instance}.certs.private`, { val: '', ack: true })
-            .then(() => this.props.socket.setState(`iot.${this.props.instance}.certs.id`, { val: '', ack: true }))
-            .then(() => this.props.socket.setState(`iot.${this.props.instance}.certs.public`, { val: '', ack: true }))
-            .then(() => this.props.socket.setState(`iot.${this.props.instance}.certs.certificate`, { val: '', ack: true }))
-            .then(() => {
-                if (forceUserCreate) {
-                    return this.props.socket.setState(`iot.${this.props.instance}.certs.forceUserCreate`, { val: true, ack: true });
-                }
-                return Promise.resolve();
-            })
+        const newState = { inAction: false };
+        try {
+            const prefix = `iot.${this.props.instance}.certs.`;
+            await this.props.socket.setState(`${prefix}private`, { val: '', ack: true });
+            await this.props.socket.setState(`${prefix}id`, { val: '', ack: true });
+            await this.props.socket.setState(`${prefix}public`, { val: '', ack: true });
+            await this.props.socket.setState(`${prefix}certificate`, { val: '', ack: true });
+            if (forceUserCreate) {
+                await this.props.socket.setState(`${prefix}forceUserCreate`, { val: true, ack: true });
+            }
             // read actual instance object
-            .then(() => this.props.socket.getObject(`system.adapter.iot.${this.props.instance}`))
-            .then(obj => {
-                if (!obj || !obj.common || !obj.common.enabled) {
-                    // adapter is disabled, do not restart it
-                    return Promise.resolve();
-                }
+            const obj = await this.props.socket.getObject(`system.adapter.iot.${this.props.instance}`);
+            if (obj && obj.common && obj.common.enabled) {
                 // restart adapter
-                return this.props.socket.setObject(`system.adapter.iot.${this.props.instance}`, obj);
-            })
-            .then(() => this.setState({ toast: I18n.t('Certificates will be updated after start') }))
-            .catch(err => this.props.onError(err))
-            .then(() => this.setState({ inAction: false }));
+                await this.props.socket.setObject(obj._id, obj);
+            }
+            newState.toast = I18n.t('Certificates will be updated after start');
+        } catch (err) {
+            this.props.onError(err);
+        }
+
+        this.setState(newState);
     }
 
     renderToast() {

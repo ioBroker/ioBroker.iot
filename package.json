@@ -22,8 +22,8 @@
     "node": ">=12.13.0"
   },
   "optionalDependencies": {
-    "sharp": "0.31.3",
-    "canvas": "^2.11.0"
+    "sharp": "0.32.0",
+    "canvas": "^2.11.2"
   },
   "dependencies": {
     "@iobroker/adapter-core": "^2.6.8",
@@ -33,7 +33,7 @@
     "jsdom": "^21.1.1",
     "mime": "^3.0.0",
     "moment": "^2.29.4",
-    "axios": "^1.3.4",
+    "axios": "^1.3.5",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
@@ -70,7 +70,8 @@
     "release-patch": "release-script patch --yes",
     "release-minor": "release-script minor --yes",
     "release-major": "release-script major --yes",
-    "translate": "translate-adapter"
+    "translate": "translate-adapter",
+    "update-packages": "ncu --upgrade && cd src && ncu --upgrade && cd .."
   },
   "license": "MIT",
   "readmeFilename": "README.md"
