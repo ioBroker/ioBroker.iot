@@ -4,7 +4,7 @@
             "name": "ACTUAL",
             "defaultRole": "value.temperature",
             "defaultUnit": "°C",
-            "id": "alias.0.Wohnzimmer.Temperature.ACTAUL",
+            "id": "alias.0.Wohnzimmer.Temperature.ACTUAL",
             "smartName": {
                 "smartType": "Temperature"
             }

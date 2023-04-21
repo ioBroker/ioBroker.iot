@@ -8,6 +8,10 @@
             "smartName": {
                 "smartType": "LIGHT",
                 "byON": "80"
+            },
+            "common": {
+                "max": 1000,
+                "min": 500
             }
         }
     ],
@@ -18,9 +22,7 @@
             "name": {
                 "de": "Dimmer"
             },
-            "role": "dimmer",
-            "max": 1000,
-            "min": 500
+            "role": "dimmer"
         }
     },
     "room": {
