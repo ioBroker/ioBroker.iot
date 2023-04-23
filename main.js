@@ -79,6 +79,7 @@ function startAdapter(options) {
 
                 return;
             }
+            alexaSH3.handleObjectChange(id, obj);
 
             id && remote.updateObject(id, obj);
         },
