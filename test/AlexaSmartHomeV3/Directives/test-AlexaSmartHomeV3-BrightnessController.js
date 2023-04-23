@@ -2,7 +2,7 @@ const assert = require('assert');
 const helpers = require('../helpers')
 const DeviceManager = require('../../../lib/AlexaSmartHomeV3/DeviceManager')
 const Device = require('../../../lib/AlexaSmartHomeV3/Device')
-const AdapterProvider = require('../../../lib/AlexaSmartHomeV3/Helpers/AdapterProvider');
+const AdapterProvider = require('../../../lib/AlexaSmartHomeV3/Helpers/AdapterProvider')
 
 describe('AlexaSmartHomeV3 - BrightnessController', function () {
     before(function () {

@@ -10,11 +10,17 @@ class AdapterMock {
             warn: this.nop,
             error: this.nop
         }
+        this.config = {
+            functionFirst: false,
+            concatWord: ''
+        }
     }
 
     nop() {
         // left blank intentionally
     }
+
+
 
     async getObjectViewAsync() {
         return { rows: [] };
