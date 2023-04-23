@@ -315,7 +315,9 @@ function startAdapter(options) {
         },
         ready: () => main()
             .then(() => {})
-            .catch(error => adapter.log.error(`Error in main: ${error.toString()}`)),
+            .catch(error => {
+                adapter.log.error(`Error in main: ${error.toString()}`);
+            }),
     });
 
     adapter = new utils.Adapter(options);
