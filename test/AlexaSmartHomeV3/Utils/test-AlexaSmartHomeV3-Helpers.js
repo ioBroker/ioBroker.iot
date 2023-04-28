@@ -136,6 +136,32 @@ describe('AlexaSmartHomeV3 - Helpers', function () {
             assert.equal(valueInRange, 2);
         })
 
+    })
+
+    describe('Endpoint Id', async function () {
+        it('Limited to 256 chars', async function () {
+            const input = ''.padEnd(300, 'x');
+            const id = Utils.endpointId(input);
+            assert.equal(id.length, 256);
+        })
+
+        it('Allowed chars are not cut off', async function () {
+            let alpha = Array.from(Array(26)).map((e, i) => i + 65);
+            const capitals = alpha.map((x) => String.fromCharCode(x));
+            alpha = Array.from(Array(26)).map((e, i) => i + 97);
+            const smalls = alpha.map((x) => String.fromCharCode(x));
+            const input = `${capitals.join('')}${smalls.join('')}0123456789-_`;
+            const id = Utils.endpointId(input);
+            assert.equal(id, input);
+        })
+
+        it('Invalid chars prepended with hash and replaced', async function () {
+            const input = `+++-+++`;
+            const id = Utils.endpointId(input);
+            assert.equal(id.includes('#'), true);
+            assert.equal(id.substring(id.indexOf('#') + 1, id.indexOf('#') + 4), '---');
+        })
 
     })
+
 })
