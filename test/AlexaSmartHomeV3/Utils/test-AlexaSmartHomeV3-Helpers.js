@@ -3,11 +3,17 @@ const Utils = require('../../../lib/AlexaSmartHomeV3/Helpers/Utils')
 const RateLimiter = require('../../../lib/AlexaSmartHomeV3/Helpers/RateLimiter')
 const HourlyDeviceRateLimitExceeded = require('../../../lib/AlexaSmartHomeV3/Exceptions/HourlyDeviceRateLimitExceeded')
 const OverallDailyRateLimitExceeded = require('../../../lib/AlexaSmartHomeV3/Exceptions/OverallDailyRateLimitExceeded')
+const AdapterProvider = require('../../../lib/AlexaSmartHomeV3/Helpers/AdapterProvider')
+const helpers = require('../helpers')
 
 describe('AlexaSmartHomeV3 - Helpers', function () {
 
     beforeEach(function () {
         RateLimiter.usage = new Map();
+    });
+
+    before(function () {
+        AdapterProvider.init(helpers.adapterMock());
     });
 
     after(function () {
@@ -237,6 +243,25 @@ describe('AlexaSmartHomeV3 - Helpers', function () {
 
             // change #1001
             assert.throws(() => RateLimiter.incrementAndGet('endpoint-0017'), OverallDailyRateLimitExceeded)
+        })
+
+        it('can store usage in a file', async function () {
+
+            RateLimiter.usage = new Map();
+            RateLimiter.usage.set('key-001', 'value-001');
+            RateLimiter.usage.set('key-002', 'value-002');
+
+            await RateLimiter.store();
+
+            RateLimiter.usage = undefined;
+
+            await RateLimiter.init();
+
+            assert.equal(RateLimiter.usage instanceof Map, true)
+
+            assert.equal(RateLimiter.usage.size, 2)
+            assert.equal(true, RateLimiter.usage.has('key-001'));
+            assert.equal('value-001', RateLimiter.usage.get('key-001'));
         })
     })
 

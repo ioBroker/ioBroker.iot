@@ -20,7 +20,9 @@ class AdapterMock {
         // left blank intentionally
     }
 
-
+    get namespace() {
+        return "iot.0";
+    }
 
     async getObjectViewAsync() {
         return { rows: [] };
