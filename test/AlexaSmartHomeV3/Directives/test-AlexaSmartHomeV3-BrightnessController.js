@@ -3,13 +3,20 @@ const helpers = require('../helpers')
 const DeviceManager = require('../../../lib/AlexaSmartHomeV3/DeviceManager')
 const Device = require('../../../lib/AlexaSmartHomeV3/Device')
 const AdapterProvider = require('../../../lib/AlexaSmartHomeV3/Helpers/AdapterProvider')
+const IotProxy = require('../../../lib/AlexaSmartHomeV3/Helpers/IotProxy');
+const RateLimiter = require('../../../lib/AlexaSmartHomeV3/Helpers/RateLimiter');
 
 describe('AlexaSmartHomeV3 - BrightnessController', function () {
+    beforeEach(function () {
+        RateLimiter.usage = new Map();
+    })
+
     before(function () {
         endpointId = 'endpoint-001'
         friendlyName = 'some-friendly-name'
 
         AdapterProvider.init(helpers.adapterMock());
+        IotProxy.publishStateChange = event => stateChange = event;
 
         light = helpers.lightControl()
         dimmer = helpers.dimmerControl()

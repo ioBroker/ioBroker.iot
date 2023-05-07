@@ -1,6 +1,8 @@
 const assert = require('assert');
 const helpers = require('../helpers')
 const IotProxy = require('../../../lib/AlexaSmartHomeV3/Helpers/IotProxy')
+const RateLimiter = require('../../../lib/AlexaSmartHomeV3/Helpers/RateLimiter')
+const AdapterProvider = require('../../../lib/AlexaSmartHomeV3/Helpers/AdapterProvider')
 const DeviceManager = require('../../../lib/AlexaSmartHomeV3/DeviceManager')
 const Device = require('../../../lib/AlexaSmartHomeV3/Device')
 
@@ -8,6 +10,7 @@ const Device = require('../../../lib/AlexaSmartHomeV3/Device')
 describe('AlexaSmartHomeV3 - DeviceManager', function () {
 
     before(function () {
+        AdapterProvider.init(helpers.adapterMock());
         IotProxy.publishStateChange = event => stateChange = event;
 
         endpointId = 'endpoint-001'
@@ -57,6 +60,26 @@ describe('AlexaSmartHomeV3 - DeviceManager', function () {
             assert.equal(stateChange.event.payload.change.properties[0].name, 'powerState');
             assert.equal(stateChange.event.payload.change.properties[0].value, 'OFF');
             assert.equal(stateChange.event.payload.change.cause.type, 'PHYSICAL_INTERACTION');
+        })
+    })
+
+    describe('respects Rate Limits...', async function () {
+
+        it('on physical interaction', async function () {
+            RateLimiter.usage = new Map();
+
+            let value = false;
+            for (let i = 0; i < RateLimiter.MAX_DEVICE_STATE_CHANGES_PER_HOUR; i++) {
+                value = !value;
+                stateChange = null;
+                await deviceManager.handleStateUpdate(dimmer.supported[0].properties[0].stateProxy.getId, { val: value, ack: true })
+                assert.notEqual(stateChange, null);
+            }
+
+            stateChange = null;
+            value = !value;
+            await deviceManager.handleStateUpdate(dimmer.supported[0].properties[0].stateProxy.getId, { val: value, ack: true });
+            assert.equal(stateChange, null);
         })
     })
 
