@@ -15,18 +15,18 @@ It is not for remote access to your ioBroker instance. Use ioBroker.cloud adapte
 **This adapter uses Sentry libraries to automatically report exceptions and code errors to the developers.** For more details and for information how to disable the error reporting see [Sentry-Plugin Documentation](https://github.com/ioBroker/plugin-sentry#plugin-sentry)! Sentry reporting is used starting with js-controller 3.0.
 
 ## Settings
-To use cloud adapter you should first to register on the ioBroker cloud [https://iobroker.pro](https://iobroker.pro).
+To use the iot adapter, you should first register on the ioBroker cloud [https://iobroker.pro](https://iobroker.pro).
 
 [Reference to google API type settings](https://developers.google.com/actions/smarthome/guides/)
 
 ![Intro](img/intro.png)
 
 ### Language
-If you select "default" language the smart names of devices and of enumerations will not be translated. If some language specified all known names will be translated into this language.
+If you select "default" language, the smart names of devices and of enumerations will not be translated. If some language specified all known names will be translated into this language.
 It is done to switch fast between many languages for demonstration purposes.
 
 ### Place function in names first
-Change the order of function and roles in self generated names:
+Change the order of function and roles in self-generated names:
 
 - if false: "Room function", e.g. "Living room dimmer"
 - if true: "Function room", e.g. "Dimmer living room"
@@ -34,14 +34,14 @@ Change the order of function and roles in self generated names:
 ### Concatenate words with
 You can define the word which will be placed between function and room. E.g. "in" and from "Dimmer living room" will be "Dimmer in living room".
 
-But is not suggested doing so, because recognition engine must analyse one more word and it can lead to misunderstandings.
+But it is not suggested doing so, because recognition engine must analyze one more word, and it can lead to misunderstandings.
 
 ### OFF level for switches
 Some groups consist of mixed devices: dimmers and switches. It is allowed to control them with "ON" and "OFF" commands and with percents.
 If command is `Set to 30%` and the `OFF level is 30%` so the switches will be turned on. By command "Set to 25%" all switches will be turned OFF.
 
 Additionally, if the command is "OFF", so the adapter will remember the current dimmer level if the actual value is over or equal to the "30%".
-Later when the new "ON" command will come the adapter will switch the dimmer not to 100% but to the level in memory.
+Later when the new "ON" command will come, the adapter will switch the dimmer not to 100% but to the level in memory.
 
 Example:
 
@@ -54,19 +54,19 @@ Example:
 - Command: "turn on the light". *dimmer* => 40%, *switch* => ON.
 
 ### by ON
-You can select the behaviour of ON command will come for the number state. The specific value can be selected or last non zero value will be used.
+You can select the behavior of ON command will come for the number state. The specific value can be selected, or the last non-zero value will be used.
 
 ### Write response to
-For every command the text response will be generated. You can define here the Object ID , where this text must be written to. E.g. *sayit.0.tts.text*.
+For every command, the text response will be generated. You can define here the Object ID, where this text must be written to. E.g. *sayit.0.tts.text*.
 
 ### Colors
-The channel needs 3-5 states with following roles:
+The channel needs 3-5 states with the following roles:
 
-- level.color.saturation (required for detection of the channel),
-- level.color.hue,
-- level.dimmer,
-- switch (optional)
-- level.color.temperature (optional)
+- `level.color.saturation` - required for detection of the channel,
+- `level.color.hue`,
+- `level.dimmer`,
+- `switch` - optional,
+- `level.color.temperature` (optional)
 
 ```
 Alexa, set the "device name" to "color"
@@ -76,7 +76,8 @@ Alexa, change the kitchen to the color chocolate
 ```
 
 ### Lock
-To have the possibility to lock the locks, the state must have the role "switch.lock" and have "native.LOCK_VALUE" to determine the lock state. If you need a seperate Value to control the Lock you can use "native.CONTROL VALUE".
+To have the possibility to lock the locks, the state must have the role "switch.lock" and have "native.LOCK_VALUE" to determine the lock state.
+If you need a separate Value to control the Lock, you can use "native.CONTROL VALUE".
 
 ```
 Alexa, is "lock name" locked/unlocked
@@ -84,17 +85,17 @@ Alexa, lock the "lock name"
 ```
 
 ## How names will be generated
-The adapter tries to generate virtual devices for smart home control (e.g. Amazon Alexa or Google Home).
+The adapter tries to generate virtual devices for smart home control (e.g., Amazon Alexa or Google Home).
 
 There are two important enumerations for that: rooms and functions.
 
 Rooms are like: living room, bathroom, sleeping room.
 Functions are like: light, blind, heating.
 
-Following conditions must be met to get the state in the automatically generated list:
+The following conditions must be met to get the state in the automatically generated list:
 
 - the state must be in some "function" enumeration.
-- the state must have role ("state", "switch" or "level.*", e.g. level.dimmer) if not directly included into "functions".
+- the state must have role ("state", "switch" or "level.*", e.g. level.dimmer) if not directly included in "functions".
 It can be that the channel is in the "functions", but state itself not.
 - the state must be writable: `common.write` = true
 - the state dimmer must have `common.type` as 'number'
@@ -104,37 +105,37 @@ If the state is only in "functions" and not in any "room", the name of state wil
 
 The state names will be generated from function and room. E.g. all *lights* in the *living room* will be collected in the virtual device *living room light*.
 The user cannot change this name, because it is generated automatically.
-But if the enumeration name changes, this name will be changed too. (e.g. function "light" changed to "lights", so the *living room light* will be changed to *living room lights*)
+But if the enumeration name changes, this name will be changed too. (e.g., function "light" changed to "lights", so the *living room light* will be changed to *living room lights*)
 
-All the rules will be ignored if the state has common.smartName. In this case just the smart name will be used.
+All the rules will be ignored if the state has common.smartName. In this case, just the smart name will be used.
 
-if *common.smartName* is **false**, the state or enumeration will not be included into the list generation.
+if `common.smartName` is `false`, the state or enumeration will not be included in the list generation.
 
 The configuration dialog lets the comfortable remove and add the single states to virtual groups or as single device.
 ![Configuration](img/configuration.png)
 
-If the group has only one state it can be renamed, as for this the state's smartName will be used.
+If the group has only one state, it can be renamed, as for this the state's smartName will be used.
 If the group has more than one state, the group must be renamed via the enumeration's names.
 
-To create own groups the user can install "scenes" adapter or create "script" in Javascript adapter.
+To create own groups, the user can install "scenes" adapter or create "script" in Javascript adapter.
 
 ### Replaces
-You can specify strings, that could be automatically replaced in the devices names. E.g. if you set replaces to:
-`.STATE,.LEVEL`, so all ".STATE" and ".LEVEL" will be deleted from names. Be careful with spaces.
-If you set `.STATE, .LEVEL`, so ".STATE" and " .LEVEL" will be replaced and not ".LEVEL".
+You can specify strings that could be automatically replaced in the device names. E.g., if you set replaces to:
+`.STATE,.LEVEL`, so all `.STATE` and `.LEVEL` will be deleted from names. Be careful with spaces.
+If you set `.STATE, .LEVEL`, so `.STATE` and `.LEVEL` will be replaced and not `.LEVEL`.
 
 ## Helper states
-- **smart.lastObjectID**: This state will be set if only one device was controlled by home skill (alexa, google home).
-- **smart.lastFunction**: Function name (if exists) for which last command was executed.
-- **smart.lastRoom**:     Room name (if exists) for which last command was executed.
-- **smart.lastCommand**:  Last executed command. Command can be: true(ON), false(OFF), number(%), -X(decrease at x), +X(increase at X)
-- **smart.lastResponse**: Textual response on command. It can be sent to some text2speech (sayit) engine.
+- `smart.lastObjectID`: This state will be set if only one device was controlled by home skill (alexa, google home).
+- `smart.lastFunction`: Function name (if exists) for which last command was executed.
+- `smart.lastRoom`: Room name (if exists) for which last command was executed.
+- `smart.lastCommand`: Last executed command. Command can be: `true(ON)`, `false(OFF)`, `number(%)`, `-X(decrease at x)`, `+X(increase at X)`
+- `smart.lastResponse`: Textual response on command. It can be sent to some `text2speech` (`sayit`) engine.
 
 ## IFTTT
 [instructions](doc/ifttt.md)
 
 ## Google Home
-If you see following error message in the log: `[GHOME] Invalid URL Pro key. Status auto-update is disabled you can set states but receive states only manually`.
+If you see the following error message in the log: `[GHOME] Invalid URL Pro key. Status auto-update is disabled you can set states but receive states only manually`.
 So you must generate the URL-Key anew:
 
 ![Url key](img/url_key.png)
@@ -149,13 +150,13 @@ or
 
 `[GET]https://service.iobroker.in/v1/iotService?service=custom_<NAME>&key=<XXX>&user=<USER_EMAIL>&data=myString`
 
-If you set in the settings the field "White list for services" the name *custom_test*, and call with "custom_test" as the service name, the state **cloud.0.services.custom_test** will be set to *myString*.
+If you set in the settings the field teh "White list for services" the name `custom_test`, and call with "custom_test" as the service name, the state **cloud.0.services.custom_test** will be set to *myString*.
 
-You may write "*" in white list and all services will be allowed.
+You may write "*" in the white list and all services will be allowed.
 
-Here you can find instructions how to use it with [tasker](doc/tasker.md).
+Here you can find instructions on how to use it with [tasker](doc/tasker.md).
 
-IFTTT service is allowed only if IFTTT key is set.
+IFTTT service is allowed only if an IFTTT key is set.
 
 Reserved names are `ifttt`, `text2command`, `simpleApi`, `swagger`. These must be used without the `custom_` prefix.
 
@@ -188,37 +189,37 @@ if `text2command` instance is defined in the configuration dialog, so the questi
 `text2command` must be configured that the expected phrase will be parsed and the answer will be given back.
 
 ### `Javascript`
-There is a possibility to process the question directly with script. It is activated by default if no `text2command` instance is selected.
+There is a possibility to process the question directly with the script. It is activated by default if no `text2command` instance is selected.
 
 If `text2command` instance is defined, so this instance must provide the answer and the answer from *script* will be ignored.
 
 The adapter will provide the details in two states with different detail level
-* **smart.lastCommand** contains the received text including an info on type of query (intent). Example: "askDevice Status Rasenmäher"
-* **smart.lastCommandObj*** contains an JSON string that can be parsed to an object containing the following information
-  * **words** contain the received words in an array
-  * **intent** contains the type of query. Possible values currently are:
-    * v1 Skill: "askDevice", "controlDevice", "actionStart", "actionEnd", "askWhen", "askWhere", "askWho"
-    * v2 Skill: "queryIntent" when full said text was captured, "controlDevice" for fallback with only partial text
-  * **deviceId** contains a deviceId identifying the device the request was sent to, delivered by Amazon, will be empty string if not provided
-  * **deviceRoom** contains a mapped room identifier you can configure in iot admin UI for collected deviceIds
-  * **sessionId** contains a sessionId of the Skill session, should be the same if multiple commands were spoken, delivered by Amazon, will be empty string if not provided
-  * **userId** contains a userId from the device owner (or maybe later the user that was interacting with the skill), delivered by Amazon, will be empty string if not provided
-  * **userName** contains a mapped username you can configure in iot admin UI for collected userIds
+* `smart.lastCommand` contains the received text including info about the type of query (intent). Example: `askDevice Status Rasenmäher`
+* `smart.lastCommandObj` contains an JSON string that can be parsed to an object containing the following information
+  * `words` contain the received words in an array
+  * `intent` contains the type of query. Possible values currently are:
+    * v1 Skill: `askDevice`, `controlDevice`, `actionStart`, `actionEnd`, `askWhen`, `askWhere`, `askWho`
+    * v2 Skill: `queryIntent` when the full said text was captured, `controlDevice` for fallback with only partial text
+  * `deviceId` contains a deviceId identifying the device the request was sent to, delivered by Amazon, will be empty string if not provided
+  * `deviceRoom` contains a mapped room identifier you can configure in iot admin UI for collected deviceIds
+  * `sessionId` contains a sessionId of the Skill session, should be the same if multiple commands were spoken, delivered by Amazon, will be empty string if not provided
+  * `userId` contains a userId from the device owner (or maybe later the user that was interacting with the skill), delivered by Amazon, will be empty string if not provided
+  * `userName` contains a mapped username you can configure in iot admin UI for collected userIds
 
- More details on how the words are detected and what type of queries the Alexa Custom Skill differentiates please check https://forum.iobroker.net/viewtopic.php?f=37&t=17452 .
+ More details on how the words are detected and what type of queries the Alexa Custom Skill differentiates, please check https://forum.iobroker.net/viewtopic.php?f=37&t=17452 .
 
 **Return result via smart.lastResponse state**
 
-The response needs to be sent within 200ms in the state "smart.lastResponse" and can be a simple text string or a JSON object.
-If it is a text string then this text will be sent as response to the skill.
-if the text is a JSON object then the following keys can be used:
-* **responseText** needs to contain the text to return to Amazon
-* **shouldEndSession** is a boolean and controls if the session will be closed after the response was spoken or stays open to accept another voice input.
-* **sessionId** needs to contain the sessionId the response is meant for. Ideally provide it to allow concurrent sessions. If not provided the first session that expects a response is assumed.
+The response needs to be sent within 200ms in the state `smart.lastResponse`, and can be a simple text string or a JSON object.
+If it is a text string, then this text will be sent as a response to the skill.
+If the text is a JSON object, then the following keys can be used:
+* `responseText` needs to contain the text to return to Amazon
+* `shouldEndSession` is a boolean and controls if the session is closed after the response was spoken or stays open to accept another voice input.
+* `sessionId` needs to contain the sessionId the response is meant for. Ideally, provide it to allow concurrent sessions. If not provided, the first session that expects a response is assumed.
 
 **Return result via the message to iot instance**
 
-The iot instance also accepts a message with the name "alexaCustomResponse" containing the key "response" with an object that can contain the keys **responseText** and **shouldEndSession** and **sessionId** as described above.
+The iot instance also accepts a message with the name "alexaCustomResponse" containing the key "response" with an object that can contain the keys `responseText` and `shouldEndSession` and `sessionId` as described above.
 There will be no response from the iot instance to the message!
 
 **Example of a script that uses texts**
@@ -265,7 +266,7 @@ sendTo('iot.0', 'private', {type: 'alisa', request: OBJECT_FROM_ALISA_SERVICE}, 
 });
 ```
 
-Following types are supported:
+The following types are supported:
 - `alexa` - acting with Amazon Alexa or Amazon Custom Skill
 - `ghome` - acting with Google Actions via Google Home
 - `alisa` - acting with Yandex Алиса
@@ -280,6 +281,9 @@ Following types are supported:
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Corrected translations
+
 ### 1.14.5 (2023-03-01)
 * (bluefox) Corrected names of enums in GUI
 

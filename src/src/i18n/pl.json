@@ -144,7 +144,7 @@
   "cannot_use_password": "Nie możesz użyć% w haśle. Pracujemy nad poprawką.",
   "invalid_password_warning": "Hasło musi mieć co najmniej 8 znaków i musi zawierać cyfry, wielkie i małe litery. Zmień to w profilu ioBroker.pro\n",
   "new_certs_tip": "Jeśli wykonałeś przywracanie z kopii zapasowej, przeniosłeś instancję z jednego urządzenia na drugie lub usunąłeś instancję IoT i dodałeś ją ponownie, musisz załadować certyfikaty bezpieczeństwa połączenia za pomocą tego przycisku",
-  "new_credentials_tip": "Jeśli przywróciłeś hasło ioBroker.pro, możesz zsynchronizować swoje hasło z Alexa/Google/Alisa za pomocą tego przycisku.",
+  "new_credentials_tip": "Jeśli logowanie do Alexa Skill/Google Action/Alisa za pomocą danych logowania ioBroker.pro nie powiedzie się, naciśnij poniższy przycisk.",
   "Create IoT credentials anew": "Utwórz ponownie poświadczenia IoT",
   "forum_tip": "Wszelkie pytania w dowolnym języku prosimy zadawać tutaj na forum: <a href=\"https://forum.iobroker.net/post/435797\" target=\"_blank\"> link </a>",
   "Save settings before pressing this button": "Zapisz ustawienia przed naciśnięciem tego przycisku",

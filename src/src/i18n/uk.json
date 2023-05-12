@@ -170,7 +170,7 @@
   "manualModeHint": "Виберіть <a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/guides/'>TYPE</a> і <a target='_blank ' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/'>TRAIT</a> після додавання стану. Щоб додати кілька характеристик, додайте інший ідентифікатор і ознаку, але однакові розумне ім’я, тип і кімнату. Розділені комами для кількох розумних імен. Щоб призначити кімнату, скористайтеся ioBroker Enums/Aufzählungen. За допомогою атрибутів ви можете, наприклад, встановити діапазон для колірної температури <a target='_blank' rel='noopener noreferrer' href='https://developers.google.com/actions/smarthome/traits/colorsetting'>Інформація про Атрибути можна знайти тут.</a> Порожній атрибут: {}",
   "modified": "Ім'я було змінено користувачем",
   "new_certs_tip": "Якщо ви відновили з резервної копії або перемістили екземпляр з одного пристрою на інший, або видалили екземпляр IoT і додали його знову, ви повинні завантажити сертифікати безпеки підключення за допомогою цієї кнопки",
-  "new_credentials_tip": "Якщо ви відновили свій пароль ioBroker.pro, ви можете синхронізувати свій пароль з Alexa/Google/Alisa за допомогою цієї кнопки.",
+  "new_credentials_tip": "Якщо вхід до Alexa Skill/Google Action/Alisa за допомогою даних для входу ioBroker.pro не вдається, натисніть кнопку нижче.",
   "no type": "немає типу",
   "not activated": "не активовано",
   "tooltip_allowSelfSignedCertificate": "Якщо ви використовуєте власну хмару, ви можете дозволити використання самопідписаних сертифікатів для хмари.",

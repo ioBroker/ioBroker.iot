@@ -144,7 +144,7 @@
   "cannot_use_password": "No puede usar% en la contraseña. Estamos trabajando en la solución.",
   "invalid_password_warning": "La contraseña debe tener al menos 8 caracteres y debe tener números, letras mayúsculas y minúsculas. Por favor cámbielo en el perfil ioBroker.pro\n",
   "new_certs_tip": "Si realizó una restauración desde la copia de seguridad, o movió su instancia de un dispositivo a otro o eliminó la instancia de IoT y la agregó nuevamente, debe cargar los certificados de seguridad de conexión con este botón",
-  "new_credentials_tip": "Si restauró su contraseña de ioBroker.pro, puede sincronizar su contraseña con Alexa/Google/Alisa con este botón.",
+  "new_credentials_tip": "Si falla el inicio de sesión en Alexa Skill/Google Action/Alisa con los datos de inicio de sesión de ioBroker.pro, presione el botón a continuación.",
   "Create IoT credentials anew": "Crear nuevas credenciales de IoT",
   "forum_tip": "Cualquier pregunta en cualquier idioma, por favor pregunte aquí en el foro: <a href=\"https://forum.iobroker.net/post/435797\" target=\"_blank\"> enlace </a>",
   "Save settings before pressing this button": "Guarde la configuración antes de presionar este botón",

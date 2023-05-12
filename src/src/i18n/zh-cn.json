@@ -144,7 +144,7 @@
   "cannot_use_password": "您不能在密码中使用％。我们正在努力解决。",
   "invalid_password_warning": "密码长度必须至少为8个字符，并且必须包含数字，大小写字母。请在ioBroker.pro配置文件中进行更改\n",
   "new_certs_tip": "如果您从备份还原，或将实例从一台设备移至另一台设备，或删除了IoT实例并再次添加，则必须使用此按钮加载连接安全证书",
-  "new_credentials_tip": "如果您恢复了ioBroker.pro密码，则可以通过此按钮将密码与Alexa/Google/Alisa同步。",
+  "new_credentials_tip": "如果使用 ioBroker.pro 登录数据登录 Alexa Skill/Google Action/Alisa 失败，请按以下按钮。",
   "Create IoT credentials anew": "重新创建IoT凭据",
   "forum_tip": "任何语言的任何疑问，请在论坛上提问：<a href=\"https://forum.iobroker.net/post/435797\" target=\"_blank\">链接</a>",
   "Save settings before pressing this button": "按此按钮之前保存设置",
