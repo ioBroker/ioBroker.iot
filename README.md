@@ -281,7 +281,7 @@ The following types are supported:
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 1.14.6 (2023-05-12)
 * (bluefox) Corrected translations
 
 ### 1.14.5 (2023-03-01)
