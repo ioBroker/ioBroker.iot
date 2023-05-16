@@ -214,7 +214,7 @@ function startAdapter(options) {
 
                     case 'alexaCustomKnownDevices':
                         // Admin UI can request the known/discoveredAlexa devices used via Custom skill
-                        // Allow to set the rooms of the devices and store in adapter config
+                        // Allow setting the rooms of the devices and store in adapter config
                         // Restart adapter after change - or we also add a set message to the config
                         if (obj.callback) {
                             adapter.log.info('Request Alexa Custom known devices');
@@ -229,7 +229,7 @@ function startAdapter(options) {
 
                     case 'alexaCustomKnownUsers':
                         // Admin UI can request the known/discoveredAlexa users used via Custom skill
-                        // Allow to set the names of the users and store in adapter config
+                        // Allow setting the names of the users and store in adapter config
                         // Restart adapter after change - or we also add a set message to the config
                         if (obj.callback) {
                             adapter.log.info('Request Alexa Custom known users');
@@ -293,7 +293,7 @@ function startAdapter(options) {
                             if (obj.message && obj.message.data) {
                                 result.data += `&data=${typeof obj.message.data === 'object' ? JSON.stringify(obj.message.data) : obj.message.data}`;
                             }
-                            // check if service name is in white list
+                            // check if the service name is in the white list
                             if (serviceName &&
                                 adapter.config.allowedServices[0] !== '*' &&
                                 !adapter.config.allowedServices.includes(serviceName.replace(/^custom_/, '')) &&
@@ -1256,7 +1256,7 @@ async function main() {
     // user will be created here
     await startDevice(iotClientId, adapter.config.login, adapter.config.pass);
 
-    // after the user created we can try to generate URL key
+    // after the user created, we can try to generate URL key
     // read URL keys from server
     try {
         urlKey = await readUrlKey();
