@@ -739,6 +739,10 @@ async function processMessage(type, request) {
             }
         } else if (request && request.error) {
             // answer from alexa3 events cloud actually just show it in log
+            if (request.error.includes('You have no iobroker.iot license')) {
+                // pause for 30 minutes send of the events
+                alexaSH3 && alexaSH3.pauseEvents();
+            }
             adapter.log.error(`Error from Alexa events cloud: ${request.error}`);
         } else
         if (request && !request.header) {
