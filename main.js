@@ -939,7 +939,7 @@ async function startDevice(clientId, login, password, retry) {
             host:       adapter.config.cloudUrl,
             debug:      !!adapter.config.debug,
             baseReconnectTimeMs: 5000,
-            keepalive:  60
+            keepalive:  60,
         });
         remote.registerDevice(device);
 
@@ -952,7 +952,7 @@ async function startDevice(clientId, login, password, retry) {
             const errorTxt = (error && error.message && JSON.stringify(error.message)) || JSON.stringify(error);
             adapter.log.error(`Error by device connection: ${errorTxt}`);
 
-            // restart iot device if DNS cannot be resolved
+            // restart the iot device if DNS cannot be resolved
             if (errorTxt.includes('EAI_AGAIN')) {
                 adapter.log.error(`DNS name of ${adapter.config.cloudUrl} cannot be resolved: connection will be retried in 10 seconds.`);
                 setTimeout(() =>
@@ -994,7 +994,7 @@ async function startDevice(clientId, login, password, retry) {
                                 adapter.log.error(`[REMOTE] Cannot send packet: ${err}`);
                             }
                         } else {
-                            adapter.log.debug(`[REMOTE] Send command to 'response/${clientId}/${type}: ${JSON.stringify(response)}`);
+                            adapter.log.debug(`[REMOTE] Send response to 'response/${clientId}/${type}: ${JSON.stringify(response)}`);
 
                             const msg = JSON.stringify(response);
                             if (msg && msg.length > MAX_IOT_MESSAGE_LENGTH) {
@@ -1010,7 +1010,6 @@ async function startDevice(clientId, login, password, retry) {
                             }
                         }
                     }
-
                 } catch (error) {
                     adapter.log.debug(`Error processing request ${topic}`);
                     adapter.log.debug(`${error}`);
@@ -1278,12 +1277,11 @@ async function main() {
         alexaSH3 = new AlexaSH3({
             adapter: adapter,
             iotClientId: iotClientId,
-            iotDevice: device
+            iotDevice: device,
         });
         alexaSH3.setLanguage(lang);
         await alexaSH3.updateDevices();
     }
-
 
     if (adapter.config.googleHome) {
         googleHome = new GoogleHome(adapter, urlKey);
