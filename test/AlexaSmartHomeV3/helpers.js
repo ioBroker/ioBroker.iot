@@ -82,7 +82,7 @@ module.exports = {
             .flatMap(e => e.controls)
             .flatMap(c => c.allCapabilities)
             .flatMap(c => c.properties)
-            .map(p => p.stateProxy.currentValue)
+            .map(p => p.currentValue)
             .forEach(v => v = undefined);
     },
 

@@ -59,7 +59,7 @@ describe('AlexaSmartHomeV3 - LockController', function () {
             assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, "Correlation Token!");
             assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
 
-            assert.equal(deviceManager.devices[0].controls[0].supported[0].properties[0].stateProxy.currentValue, true);
+            assert.equal(deviceManager.devices[0].controls[0].supported[0].properties[0].currentValue, true);
         })
 
         it('LockController Unlock', async function () {
@@ -74,7 +74,7 @@ describe('AlexaSmartHomeV3 - LockController', function () {
             assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, "Correlation Token!");
             assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
 
-            assert.equal(deviceManager.devices[0].controls[0].supported[0].properties[0].stateProxy.currentValue, false);
+            assert.equal(deviceManager.devices[0].controls[0].supported[0].properties[0].currentValue, false);
         })
 
     })

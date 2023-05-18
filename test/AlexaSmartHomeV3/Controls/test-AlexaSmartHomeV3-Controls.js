@@ -63,7 +63,7 @@ describe('AlexaSmartHomeV3 - Controls', function () {
             assert.equal(response.context.properties[0].value, 75, "Value!");
 
             // (1000 - 500) * 0,75 + 500 = 875
-            assert.equal(d.controls[0].supported[1].properties[0].stateProxy.currentValue, 875);
+            assert.equal(d.controls[0].supported[1].properties[0].currentValue, 875);
 
             assert.equal(response.event.header.namespace, "Alexa", "Namespace!");
             assert.equal(response.event.header.name, "Response", "Namespace!");
