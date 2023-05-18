@@ -110,6 +110,10 @@ module.exports = {
         return new Controls.Blinds(require('./Resources/blinds.json'));
     },
 
+    vacuumCleanerControl: function () {
+        return new Controls.VacuumCleaner(require('./Resources/vacuumCleaner.json'));
+    },
+
     lightControl: function () {
         return new Controls.Light(require('./Resources/light.json'));
     },

@@ -1,0 +1,27 @@
+{
+    "states": [
+        {
+            "name": "POWER",
+            "defaultRole": "switch.power",
+            "defaultUnit": "%",
+            "id": "alias.0.Wohnzimmer.VacuumCleaner.POWER",
+            "smartName": {
+                "smartType": "VACUUM_CLEANER"
+            },
+            "common": {
+                "max": 100,
+                "min": 0
+            }
+        }
+    ],
+    "type": "vacuumCleaner",
+    "object": {
+        "id": "alias.0.Wohnzimmer.VacuumCleaner",
+        "common": {
+            "name": {
+                "de": "Staubsauger"
+            },
+            "role": "switch.power"
+        }
+    }
+}
