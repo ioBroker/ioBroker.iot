@@ -45,6 +45,10 @@ class AdapterMock {
             return { val: 875 }
         }
 
+        if (id.includes('Blinds')) {
+            return { val: 25 }
+        }
+
         if (id.includes('Temperature')) {
             return { val: 21.5 }
         }
@@ -100,6 +104,10 @@ module.exports = {
 
     dimmerControl: function () {
         return new Controls.Dimmer(require('./Resources/dimmer.json'));
+    },
+
+    blindsControl: function () {
+        return new Controls.Blinds(require('./Resources/blinds.json'));
     },
 
     lightControl: function () {
