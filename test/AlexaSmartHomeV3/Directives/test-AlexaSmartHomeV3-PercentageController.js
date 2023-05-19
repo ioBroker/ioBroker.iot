@@ -49,7 +49,7 @@ describe('AlexaSmartHomeV3 - PercentageController', function () {
             helpers.resetCurrentValues(deviceManager);
         });
 
-        it('PercentageController AdjustPercentage', async function () {
+        it('PercentageController AdjustPercentage for blinds', async function () {
             const event = await helpers.getSample('PercentageController/PercentageController.AdjustPercentage.request.json')
             const response = await deviceManager.handleAlexaEvent(event)
             assert.equal(response.context.properties[0].namespace, "Alexa.PercentageController", "Properties Namespace!");

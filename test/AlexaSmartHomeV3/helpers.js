@@ -114,6 +114,10 @@ module.exports = {
         return new Controls.VacuumCleaner(require('./Resources/vacuumCleaner.json'));
     },
 
+    volumeControl: function () {
+        return new Controls.Volume(require('./Resources/volume.json'));
+    },
+
     lightControl: function () {
         return new Controls.Light(require('./Resources/light.json'));
     },
