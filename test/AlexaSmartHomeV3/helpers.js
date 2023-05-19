@@ -118,6 +118,10 @@ module.exports = {
         return new Controls.Volume(require('./Resources/volume.json'));
     },
 
+    volumeGroupControl: function () {
+        return new Controls.VolumeGroup(require('./Resources/volumeGroup.json'));
+    },
+
     lightControl: function () {
         return new Controls.Light(require('./Resources/light.json'));
     },
