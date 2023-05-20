@@ -1,0 +1,22 @@
+{
+    "states": [
+        {
+            "name": "SET",
+            "defaultRole": "switch.gate",
+            "id": "alias.0.Wohnzimmer.Gate.SET",
+            "smartName": {
+                "smartType": "Door"
+            }
+        }
+    ],
+    "type": "gate",
+    "object": {
+        "id": "alias.0.Wohnzimmer.Door",
+        "common": {
+            "name": {
+                "de": "Tür"
+            },
+            "role": "switch.gate"
+        }
+    }
+}

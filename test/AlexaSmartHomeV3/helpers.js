@@ -134,6 +134,10 @@ module.exports = {
         return new Controls.Door(require('./Resources/door.json'));
     },
 
+    gateControl: function () {
+        return new Controls.Gate(require('./Resources/gate.json'));
+    },
+
     lockControl: function () {
         return new Controls.Lock(require('./Resources/lock.json'));
     },
