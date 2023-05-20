@@ -32,8 +32,8 @@ describe('AlexaSmartHomeV3 - ModeController', function () {
     });
 
     describe('Matching', async function () {
-        it('ModeController SetBrightness', async function () {
-            const event = await helpers.getSample('BrightnessController/BrightnessController.SetBrightness.request.json')
+        it('ModeController SetMode', async function () {
+            const event = helpers.modeControllerSetGatePositionRequest();
             assert.equal(gate.supports(event), true)
         })
     })
