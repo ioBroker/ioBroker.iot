@@ -154,6 +154,10 @@ module.exports = {
         return require('./Resources/ThermostatController.SetThermostatMode.request.json');
     },
 
+    modeControllerSetGatePositionRequest: function () {
+        return require('./Resources/ModeController.SetGatePosition.request.json');
+    },
+
     getSample: async function (sample_json_name) {
         let options = {
             hostname: 'raw.githubusercontent.com',
