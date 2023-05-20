@@ -208,6 +208,32 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
             assert.equal(response.event.payload.change.properties[0].value, "DETECTED");
             assert.equal(response.event.payload.change.properties[0].uncertaintyInMilliseconds, 0);
 
-        })        
+        })
+
+        it('ChangeReport for a gate', async function () {
+            const event = Directives.ChangeReport.get(endpointId, Properties.Mode.propertyName, true)
+
+            deviceManager = new DeviceManager()
+            deviceManager.addDevice(new Device({
+                id: endpointId,
+                friendlyName: friendlyName,
+                controls: [helpers.gateControl()]
+            }))
+            const response = await deviceManager.handleAlexaEvent(event)
+
+            assert.equal(response.event.header.namespace, "Alexa", "Namespace!");
+            assert.equal(response.event.header.name, "ChangeReport", "Name!");
+            assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
+
+            // changed properties
+            assert.equal(response.event.payload.change.cause.type, "PHYSICAL_INTERACTION");
+            assert.equal(response.event.payload.change.properties.length, 1);
+            assert.equal(response.event.payload.change.properties[0].namespace, "Alexa.ModeController");
+            assert.equal(response.event.payload.change.properties[0].instance, "Gate.Position");
+            assert.equal(response.event.payload.change.properties[0].name, "mode");
+            assert.equal(response.event.payload.change.properties[0].value, "Gate.Position.Closed");
+            assert.equal(response.event.payload.change.properties[0].uncertaintyInMilliseconds, 0);
+
+        })   
     })
 })

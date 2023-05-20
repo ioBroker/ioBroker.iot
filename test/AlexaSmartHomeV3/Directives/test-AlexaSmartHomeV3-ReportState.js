@@ -50,6 +50,7 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
             assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
 
             assert.equal(response.context.properties.length, 1);
+            assert.equal(response.context.properties[0].hasOwnProperty('instance'), false);
             assert.equal(response.context.properties[0].namespace, "Alexa.TemperatureSensor");
             assert.equal(response.context.properties[0].name, "temperature");
             assert.equal(response.context.properties[0].value.value, 21.5);
@@ -74,6 +75,10 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
             assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
 
             assert.equal(response.context.properties.length, 3);
+            assert.equal(response.context.properties[0].hasOwnProperty('instance'), false);
+            assert.equal(response.context.properties[1].hasOwnProperty('instance'), false);
+            assert.equal(response.context.properties[2].hasOwnProperty('instance'), false);
+
             assert.equal(response.context.properties[0].namespace, "Alexa.TemperatureSensor");
             assert.equal(response.context.properties[0].name, "temperature");
             assert.equal(response.context.properties[0].value.value, 23.5);
@@ -110,6 +115,7 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
             assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
 
             assert.equal(response.context.properties.length, 1);
+            assert.equal(response.context.properties[0].hasOwnProperty('instance'), false);
             assert.equal(response.context.properties[0].namespace, "Alexa.MotionSensor");
             assert.equal(response.context.properties[0].name, "detectionState");
             assert.equal(response.context.properties[0].value, "DETECTED");
@@ -133,6 +139,7 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
             assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
 
             assert.equal(response.context.properties.length, 1);
+            assert.equal(response.context.properties[0].hasOwnProperty('instance'), false);
             assert.equal(response.context.properties[0].namespace, "Alexa.LockController");
             assert.equal(response.context.properties[0].name, "lockState");
             assert.equal(response.context.properties[0].value, "UNLOCKED");
@@ -156,9 +163,33 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
             assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
 
             assert.equal(response.context.properties.length, 1);
+            assert.equal(response.context.properties[0].hasOwnProperty('instance'), false);
             assert.equal(response.context.properties[0].namespace, "Alexa.ContactSensor");
             assert.equal(response.context.properties[0].name, "detectionState");
             assert.equal(response.context.properties[0].value, "DETECTED");
+            assert.equal(response.context.properties[0].uncertaintyInMilliseconds, 0);
+        })
+
+        it('Report state for a gate', async function () {
+            const event = await helpers.getSample('StateReport/ReportState.json')
+
+            const deviceManager = new DeviceManager()
+            deviceManager.addDevice(new Device({
+                id: endpointId,
+                friendlyName: friendlyName,
+                controls: [helpers.gateControl()]
+            }))
+
+            const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(response.event.header.namespace, "Alexa", "Namespace!");
+            assert.equal(response.event.header.name, "StateReport", "Name!");
+            assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
+
+            assert.equal(response.context.properties.length, 1);
+            assert.equal(response.context.properties[0].namespace, "Alexa.ModeController");
+            assert.equal(response.context.properties[0].instance, "Gate.Position");
+            assert.equal(response.context.properties[0].name, "mode");
+            assert.equal(response.context.properties[0].value, "Gate.Position.Closed");
             assert.equal(response.context.properties[0].uncertaintyInMilliseconds, 0);
         })
     })
