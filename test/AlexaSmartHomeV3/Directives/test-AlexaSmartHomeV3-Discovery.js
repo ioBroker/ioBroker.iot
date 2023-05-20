@@ -34,7 +34,6 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             deviceManager.addDevice(new Device({
                 id: endpointId,
                 friendlyName: friendlyName,
-                displayCategries: ['LIGHT'],
                 controls: [helpers.lightControl(), helpers.dimmerControl()]
             }))
 
@@ -58,7 +57,6 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             deviceManager.addDevice(new Device({
                 id: endpointId,
                 friendlyName: friendlyName,
-                displayCategries: ['LIGHT'],
                 controls: [helpers.lightControl()]
             }));
 
@@ -81,7 +79,6 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             deviceManager.addDevice(new Device({
                 id: endpointId,
                 friendlyName: friendlyName,
-                displayCategries: ['TEMPERATURE_SENSOR'],
                 controls: [helpers.temperatureControl()]
             }));
 
@@ -105,7 +102,6 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             deviceManager.addDevice(new Device({
                 id: endpointId,
                 friendlyName: friendlyName,
-                displayCategries: ['TEMPERATURE_SENSOR', 'THERMOSTAT'],
                 controls: [helpers.thermostatControl()]
             }));
 
@@ -136,7 +132,6 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             deviceManager.addDevice(new Device({
                 id: endpointId,
                 friendlyName: friendlyName,
-                displayCategries: ['MOTION_SENSOR'],
                 controls: [helpers.motionControl()]
             }));
 
@@ -160,7 +155,6 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             deviceManager.addDevice(new Device({
                 id: endpointId,
                 friendlyName: friendlyName,
-                displayCategries: ['SMARTLOCK'],
                 controls: [helpers.lockControl()]
             }));
 
@@ -184,7 +178,6 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             deviceManager.addDevice(new Device({
                 id: endpointId,
                 friendlyName: friendlyName,
-                displayCategries: ['CONTACT_SENSOR'],
                 controls: [helpers.doorControl()]
             }));
 
@@ -208,7 +201,6 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             deviceManager.addDevice(new Device({
                 id: endpointId,
                 friendlyName: friendlyName,
-                displayCategries: ['INTERIOR_BLIND'],
                 controls: [helpers.blindsControl()]
             }));
 
@@ -232,7 +224,6 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             deviceManager.addDevice(new Device({
                 id: endpointId,
                 friendlyName: friendlyName,
-                displayCategries: ['VACUUM_CLEANER'],
                 controls: [helpers.vacuumCleanerControl()]
             }));
 
@@ -255,7 +246,6 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             deviceManager.addDevice(new Device({
                 id: endpointId,
                 friendlyName: friendlyName,
-                displayCategries: ['SPEAKER'],
                 controls: [helpers.volumeControl()]
             }));
 
@@ -278,7 +268,6 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             deviceManager.addDevice(new Device({
                 id: endpointId,
                 friendlyName: friendlyName,
-                displayCategries: ['SPEAKER'],
                 controls: [helpers.volumeGroupControl()]
             }));
 
@@ -301,7 +290,6 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             deviceManager.addDevice(new Device({
                 id: endpointId,
                 friendlyName: friendlyName,
-                displayCategries: ['DOOR'],
                 controls: [helpers.gateControl()]
             }));
 
@@ -310,21 +298,50 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             assert.equal(response.event.header.name, "Discover.Response", "Name!");
             assert.equal(response.event.payload.endpoints[0].endpointId, endpointId, "Endpoint Id!");
             assert.equal(response.event.payload.endpoints[0].friendlyName, friendlyName, "Friendly Name!");
+            assert.equal(response.event.payload.endpoints[0].displayCategories.includes('GARAGE_DOOR'), true);
+            assert.equal(response.event.payload.endpoints[0].displayCategories.length, 1);
 
             assert.equal(response.event.payload.endpoints[0].capabilities.length, 2);
             assert.equal(response.event.payload.endpoints[0].capabilities[0].type, "AlexaInterface");
             assert.equal(response.event.payload.endpoints[0].capabilities[0].interface, "Alexa");
             assert.equal(response.event.payload.endpoints[0].capabilities[1].interface, "Alexa.ModeController");
-            assert.equal(response.event.payload.endpoints[0].capabilities[1].instance, "GateState");
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].instance, "Gate.Position");
+
             assert.equal(response.event.payload.endpoints[0].capabilities[1].properties.supported.length, 1);
             assert.equal(response.event.payload.endpoints[0].capabilities[1].properties.supported[0].name, "mode");
             assert.equal(response.event.payload.endpoints[0].capabilities[1].properties.nonControllable, false);
+
             assert.equal(response.event.payload.endpoints[0].capabilities[1].configuration.supportedModes.length, 2);
-            assert.equal(response.event.payload.endpoints[0].capabilities[1].configuration.supportedModes[0].value, "GateState.Open");
-            assert.equal(response.event.payload.endpoints[0].capabilities[1].configuration.supportedModes[0].modeResources.friendlyNames.length, 2);
-            assert.equal(response.event.payload.endpoints[0].capabilities[1].configuration.supportedModes[0].modeResources.friendlyNames[0].value.text, "Open");
-            assert.equal(response.event.payload.endpoints[0].capabilities[1].configuration.supportedModes[0].modeResources.friendlyNames[0].value.locale, "en-US");
-            assert.equal(response.event.payload.endpoints[0].capabilities[1].configuration.supportedModes[1].value, "GateState.Closed");
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].configuration.supportedModes[0].value, "Gate.Position.Open");
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].configuration.supportedModes[0].modeResources.friendlyNames.length, 3);
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].configuration.supportedModes[0].modeResources.friendlyNames[0].value.assetId, "Alexa.Value.Open");
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].configuration.supportedModes[0].modeResources.friendlyNames[1].value.text, "Open");
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].configuration.supportedModes[0].modeResources.friendlyNames[1].value.locale, "en-US");
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].configuration.supportedModes[1].value, "Gate.Position.Closed");
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].configuration.supportedModes[1].modeResources.friendlyNames.length, 3);
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].configuration.supportedModes[1].modeResources.friendlyNames[0].value.assetId, "Alexa.Value.Close");
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].configuration.supportedModes[1].modeResources.friendlyNames[1].value.text, "Closed");
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].configuration.supportedModes[1].modeResources.friendlyNames[1].value.locale, "en-US");
+
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].semantics.actionMappings.length, 2);
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].semantics.actionMappings[0].actions.length, 1);
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].semantics.actionMappings[0].actions[0], 'Alexa.Actions.Open');
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].semantics.actionMappings[0].directive.name, 'SetMode');
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].semantics.actionMappings[0].directive.payload.mode, 'Gate.Position.Open');
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].semantics.actionMappings[1].actions.length, 1);
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].semantics.actionMappings[1].actions[0], 'Alexa.Actions.Close');
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].semantics.actionMappings[1].directive.name, 'SetMode');
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].semantics.actionMappings[1].directive.payload.mode, 'Gate.Position.Closed');
+
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].semantics.stateMappings.length, 2);
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].semantics.stateMappings[0].states.length, 1);
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].semantics.stateMappings[0].states[0], 'Alexa.States.Open');
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].semantics.stateMappings[0].value, 'Gate.Position.Open');
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].semantics.stateMappings[1].states.length, 1);
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].semantics.stateMappings[1].states[0], 'Alexa.States.Closed');
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].semantics.stateMappings[1].value, 'Gate.Position.Closed');
+
+
         })
     })
 })

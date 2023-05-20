@@ -59,7 +59,7 @@ describe('AlexaSmartHomeV3 - AlexaResponse', function () {
 
             assert.equal(response.event.header.namespace, "Alexa.Discovery", "Namespace!");
             assert.equal(response.event.header.name, "Discover.Response", "Name!");
-            assert.equal(response.event.payload.endpoints[0].friendlyName, "Dummy Endpoint", "Friendly Name!");
+            assert.equal(response.event.payload.endpoints[0].friendlyName, "ioBroker Stub Endpoint", "Friendly Name!");
             assert.equal(response.event.payload.endpoints[1].capabilities[0].type, "AlexaInterface");
             assert.equal(response.event.payload.endpoints[1].capabilities[0].interface, "Alexa");
             assert.equal(response.event.payload.endpoints[1].capabilities[1].interface, "Alexa.PowerController");
