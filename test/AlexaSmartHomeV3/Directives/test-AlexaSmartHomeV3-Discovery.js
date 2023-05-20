@@ -340,8 +340,6 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             assert.equal(response.event.payload.endpoints[0].capabilities[1].semantics.stateMappings[1].states.length, 1);
             assert.equal(response.event.payload.endpoints[0].capabilities[1].semantics.stateMappings[1].states[0], 'Alexa.States.Closed');
             assert.equal(response.event.payload.endpoints[0].capabilities[1].semantics.stateMappings[1].value, 'Gate.Position.Closed');
-
-
         })
     })
 })
