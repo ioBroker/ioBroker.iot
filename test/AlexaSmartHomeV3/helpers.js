@@ -111,7 +111,7 @@ module.exports = {
     },
 
     blindsControl: function () {
-        return new Controls.Blinds(require('./Resources/blinds.json'));
+        return new Controls.Blind(require('./Resources/blinds.json'));
     },
 
     vacuumCleanerControl: function () {
