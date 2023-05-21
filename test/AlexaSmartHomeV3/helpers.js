@@ -66,7 +66,7 @@ class AdapterMock {
         }
 
         if (id.includes('Gate')) {
-            return { val: true }
+            return { val: false }
         }
 
         if (id.includes('Lock')) {

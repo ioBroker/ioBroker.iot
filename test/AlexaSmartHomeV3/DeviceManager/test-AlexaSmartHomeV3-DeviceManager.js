@@ -32,7 +32,12 @@ describe('AlexaSmartHomeV3 - DeviceManager', function () {
     });
 
     describe('sends ChangeReport...', async function () {
+
         it('on voice interaction', async function () {
+
+            // set dimmer power to ON
+            deviceManager.endpoints[0].controls[0].allCapabilities[0].properties[0].currentValue = true;
+
             const event = await helpers.getSample('PowerController/PowerController.TurnOff.request.json');
 
             stateChange = null;
@@ -51,14 +56,17 @@ describe('AlexaSmartHomeV3 - DeviceManager', function () {
 
             stateChange = null;
 
-            await deviceManager.handleStateUpdate(dimmer.supported[0].properties[0].getId, { val: false, ack: true })
+            // set dimmer power to OFF
+            deviceManager.endpoints[0].controls[0].allCapabilities[0].properties[0].currentValue = false;
+
+            await deviceManager.handleStateUpdate(dimmer.supported[0].properties[0].getId, { val: true, ack: true })
 
             assert.notEqual(stateChange, null);
             assert.equal(stateChange.context.properties.length, 1);
             assert.equal(stateChange.context.properties[0].name, 'brightness');
 
             assert.equal(stateChange.event.payload.change.properties[0].name, 'powerState');
-            assert.equal(stateChange.event.payload.change.properties[0].value, 'OFF');
+            assert.equal(stateChange.event.payload.change.properties[0].value, 'ON');
             assert.equal(stateChange.event.payload.change.cause.type, 'PHYSICAL_INTERACTION');
         })
     })
@@ -69,6 +77,9 @@ describe('AlexaSmartHomeV3 - DeviceManager', function () {
             RateLimiter.usage = new Map();
 
             let value = false;
+            // set dimmer power to value
+            deviceManager.endpoints[0].controls[0].allCapabilities[0].properties[0].currentValue = value;
+
             for (let i = 0; i < RateLimiter.MAX_DEVICE_STATE_CHANGES_PER_HOUR; i++) {
                 value = !value;
                 stateChange = null;

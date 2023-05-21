@@ -133,7 +133,8 @@ describe('AlexaSmartHomeV3 - PowerController', function () {
             assert.equal(response.event.header.name, "Response", "Namespace!");
             assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, "Correlation Token!");
             assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
-            assert.equal(dimmer_device.controls[0].supported[0].properties[0].currentValue, 80);
+            assert.equal(dimmer_device.controls[0].supported[0].properties[0].currentValue, true);
+            assert.equal(dimmer_device.controls[0].supported[1].properties[0].currentValue, 80);
 
         })
 
