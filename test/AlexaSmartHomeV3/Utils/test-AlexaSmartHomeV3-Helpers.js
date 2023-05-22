@@ -214,7 +214,7 @@ describe('AlexaSmartHomeV3 - Helpers', function () {
         })
 
         it('incrementAndGet', async function () {
-            const item = RateLimiter.incrementAndGet('endpoint-001');
+            const item = await RateLimiter.incrementAndGet('endpoint-001');
             assert.equal(Utils.isToday(item.timestamp), true)
             assert.equal(Utils.isCurrentHour(item.timestamp), true)
             assert.equal(item.changeCounter, 1)
@@ -222,10 +222,10 @@ describe('AlexaSmartHomeV3 - Helpers', function () {
 
         it('incrementAndGet throws exception on exceeding hourly limit', async function () {
             for (let i = 0; i < RateLimiter.MAX_DEVICE_STATE_CHANGES_PER_HOUR; i++) {
-                RateLimiter.incrementAndGet('endpoint-001')
+                await RateLimiter.incrementAndGet('endpoint-001')
             }
 
-            assert.throws(() => RateLimiter.incrementAndGet('endpoint-001'), HourlyDeviceRateLimitExceeded)
+            assert.throws(async () => await RateLimiter.incrementAndGet('endpoint-001'), HourlyDeviceRateLimitExceeded)
         })
 
         it('incrementAndGet throws exception on exceeding daily limit', async function () {
@@ -233,27 +233,30 @@ describe('AlexaSmartHomeV3 - Helpers', function () {
             // 16 * 60 = 960 state changes
             for (let endpoint = 1; endpoint <= 16; endpoint++) {
                 for (let i = 0; i < RateLimiter.MAX_DEVICE_STATE_CHANGES_PER_HOUR; i++) {
-                    RateLimiter.incrementAndGet('endpoint-00' + endpoint);
+                    await RateLimiter.incrementAndGet('endpoint-00' + endpoint);
                 }
             }
             // plus 40 changes
             for (let i = 0; i < 40; i++) {
-                RateLimiter.incrementAndGet('endpoint-0017');
+                await RateLimiter.incrementAndGet('endpoint-0017');
             }
 
             // change #1001
-            assert.throws(() => RateLimiter.incrementAndGet('endpoint-0017'), OverallDailyRateLimitExceeded)
+            assert.throws(async () => await RateLimiter.incrementAndGet('endpoint-0017'), OverallDailyRateLimitExceeded)
         })
 
         it('can store usage in a file', async function () {
+            RateLimiter.usage.clear();
 
-            RateLimiter.usage = new Map();
-            RateLimiter.usage.set('key-001', 'value-001');
-            RateLimiter.usage.set('key-002', 'value-002');
+            assert.equal(RateLimiter.usage.size, 0);
+            let value1 = Utils.currentHour().toISOString();
+            let value2 = Utils.currentHour().toISOString();
+            RateLimiter.usage.set('key-001', value1);
+            RateLimiter.usage.set('key-002', value2);
 
             await RateLimiter.store();
 
-            RateLimiter.usage = undefined;
+            RateLimiter.usage.clear();
 
             await RateLimiter.init();
 
@@ -261,7 +264,9 @@ describe('AlexaSmartHomeV3 - Helpers', function () {
 
             assert.equal(RateLimiter.usage.size, 2)
             assert.equal(true, RateLimiter.usage.has('key-001'));
-            assert.equal('value-001', RateLimiter.usage.get('key-001'));
+            assert.equal(value1, RateLimiter.usage.get('key-001'));
+            assert.equal(true, RateLimiter.usage.has('key-002'));
+            assert.equal(value2, RateLimiter.usage.get('key-002'));
         })
     })
 

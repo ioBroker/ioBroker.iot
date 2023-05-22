@@ -258,7 +258,7 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             assert.equal(response.event.payload.endpoints[0].capabilities.length, 2);
             assert.equal(response.event.payload.endpoints[0].capabilities[0].type, "AlexaInterface");
             assert.equal(response.event.payload.endpoints[0].capabilities[0].interface, "Alexa");
-            assert.equal(response.event.payload.endpoints[0].capabilities[1].interface, "Alexa.PercentageController");
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].interface, "Alexa.Speaker");
         })
 
         it('Discovery of a volume group', async function () {
@@ -280,7 +280,7 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             assert.equal(response.event.payload.endpoints[0].capabilities.length, 2);
             assert.equal(response.event.payload.endpoints[0].capabilities[0].type, "AlexaInterface");
             assert.equal(response.event.payload.endpoints[0].capabilities[0].interface, "Alexa");
-            assert.equal(response.event.payload.endpoints[0].capabilities[1].interface, "Alexa.PercentageController");
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].interface, "Alexa.Speaker");
         })
 
         it('Discovery of a gate', async function () {
