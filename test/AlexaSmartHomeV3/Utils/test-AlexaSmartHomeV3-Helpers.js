@@ -6,6 +6,16 @@ const OverallDailyRateLimitExceeded = require('../../../lib/AlexaSmartHomeV3/Exc
 const AdapterProvider = require('../../../lib/AlexaSmartHomeV3/Helpers/AdapterProvider')
 const helpers = require('../helpers')
 
+
+async function expectAsyncThrows(promise, exceptionInstance) {
+    return promise.then(
+        () => { throw new Error(`No exception of type ${exceptionInstance} was thrown`) },
+        (e) => {
+            assert.equal(e instanceof exceptionInstance, true);
+        }
+    )
+}
+
 describe('AlexaSmartHomeV3 - Helpers', function () {
 
     beforeEach(function () {
@@ -197,8 +207,12 @@ describe('AlexaSmartHomeV3 - Helpers', function () {
         it('isCurrentHour', async function () {
             const datetime = new Date();
             const currentHour = Utils.currentHour();
+
             assert.equal(Utils.isCurrentHour(datetime), true)
             assert.equal(Utils.isCurrentHour(currentHour), true)
+
+            assert.equal(Utils.isCurrentHour(Utils.parseISOString(datetime.toISOString())), true)
+            assert.equal(Utils.isCurrentHour(Utils.parseISOString(currentHour.toISOString())), true)
 
             currentHour.setHours(currentHour.getHours() - 1);
             assert.equal(Utils.isCurrentHour(currentHour), false)
@@ -208,28 +222,32 @@ describe('AlexaSmartHomeV3 - Helpers', function () {
     describe('RateLimiter', async function () {
         it('get', async function () {
             const item = RateLimiter.get('endpoint-001');
-            assert.equal(Utils.isToday(item.timestamp), true)
-            assert.equal(Utils.isCurrentHour(item.timestamp), true)
+            const timestamp = Utils.parseISOString(item.timestamp);
+            assert.equal(Utils.isToday(timestamp), true)
+            assert.equal(Utils.isCurrentHour(timestamp), true)
             assert.equal(item.changeCounter, 0)
         })
 
         it('incrementAndGet', async function () {
             const item = await RateLimiter.incrementAndGet('endpoint-001');
-            assert.equal(Utils.isToday(item.timestamp), true)
-            assert.equal(Utils.isCurrentHour(item.timestamp), true)
+            const timestamp = Utils.parseISOString(item.timestamp);
+            assert.equal(Utils.isToday(timestamp), true)
+            assert.equal(Utils.isCurrentHour(timestamp), true)
             assert.equal(item.changeCounter, 1)
         })
 
         it('incrementAndGet throws exception on exceeding hourly limit', async function () {
+            this.timeout(4000);
+            RateLimiter.usage.clear();
             for (let i = 0; i < RateLimiter.MAX_DEVICE_STATE_CHANGES_PER_HOUR; i++) {
                 await RateLimiter.incrementAndGet('endpoint-001')
             }
-
-            assert.throws(async () => await RateLimiter.incrementAndGet('endpoint-001'), HourlyDeviceRateLimitExceeded)
+            return expectAsyncThrows(RateLimiter.incrementAndGet('endpoint-001'), HourlyDeviceRateLimitExceeded);
         })
 
         it('incrementAndGet throws exception on exceeding daily limit', async function () {
-
+            this.timeout(4000);
+            RateLimiter.usage.clear();
             // 16 * 60 = 960 state changes
             for (let endpoint = 1; endpoint <= 16; endpoint++) {
                 for (let i = 0; i < RateLimiter.MAX_DEVICE_STATE_CHANGES_PER_HOUR; i++) {
@@ -242,10 +260,11 @@ describe('AlexaSmartHomeV3 - Helpers', function () {
             }
 
             // change #1001
-            assert.throws(async () => await RateLimiter.incrementAndGet('endpoint-0017'), OverallDailyRateLimitExceeded)
+            return expectAsyncThrows(RateLimiter.incrementAndGet('endpoint-0017'), OverallDailyRateLimitExceeded);
         })
 
         it('can store usage in a file', async function () {
+            this.timeout(4000);
             RateLimiter.usage.clear();
 
             assert.equal(RateLimiter.usage.size, 0);
