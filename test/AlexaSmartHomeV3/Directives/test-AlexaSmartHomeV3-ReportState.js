@@ -192,5 +192,34 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
             assert.equal(response.context.properties[0].value, "Gate.Position.Closed");
             assert.equal(response.context.properties[0].uncertaintyInMilliseconds, 0);
         })
+
+        it('Report state for a volume', async function () {
+            const event = await helpers.getSample('StateReport/ReportState.json')
+
+            const deviceManager = new DeviceManager()
+            deviceManager.addDevice(new Device({
+                id: endpointId,
+                friendlyName: friendlyName,
+                controls: [helpers.volumeControl()]
+            }))
+
+            const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(response.event.header.namespace, "Alexa", "Namespace!");
+            assert.equal(response.event.header.name, "StateReport", "Name!");
+            assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
+
+            assert.equal(response.context.properties.length, 2);
+
+            assert.equal(response.context.properties[0].namespace, "Alexa.Speaker");
+            assert.equal(response.context.properties[0].name, "volume");
+            assert.equal(response.context.properties[0].value, 35);
+            assert.equal(response.context.properties[0].uncertaintyInMilliseconds, 0);
+
+            assert.equal(response.context.properties[1].namespace, "Alexa.Speaker");
+            assert.equal(response.context.properties[1].name, "muted");
+            assert.equal(response.context.properties[1].value, false);
+            assert.equal(response.context.properties[1].uncertaintyInMilliseconds, 0);
+
+        })
     })
 })

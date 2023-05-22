@@ -53,6 +53,10 @@ class AdapterMock {
             return { val: 21.5 }
         }
 
+        if (id.includes('Volume')) {
+            return { val: 35 }
+        }
+
         if (id.includes('Thermostat')) {
             return { val: 23.5 }
         }

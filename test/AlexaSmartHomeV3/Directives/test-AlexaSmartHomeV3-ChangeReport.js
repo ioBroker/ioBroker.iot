@@ -234,6 +234,55 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
             assert.equal(response.event.payload.change.properties[0].value, "Gate.Position.Closed");
             assert.equal(response.event.payload.change.properties[0].uncertaintyInMilliseconds, 0);
 
-        })   
+        })
+
+
+        it('ChangeReport for a volume', async function () {
+            const event = Directives.ChangeReport.get(endpointId, Properties.Volume.propertyName, true)
+
+            deviceManager = new DeviceManager()
+            deviceManager.addDevice(new Device({
+                id: endpointId,
+                friendlyName: friendlyName,
+                controls: [helpers.volumeControl()]
+            }))
+            const response = await deviceManager.handleAlexaEvent(event)
+
+            assert.equal(response.event.header.namespace, "Alexa", "Namespace!");
+            assert.equal(response.event.header.name, "ChangeReport", "Name!");
+            assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
+
+            // changed properties
+            assert.equal(response.event.payload.change.cause.type, "PHYSICAL_INTERACTION");
+            assert.equal(response.event.payload.change.properties.length, 1);
+            assert.equal(response.event.payload.change.properties[0].namespace, "Alexa.Speaker");
+            assert.equal(response.event.payload.change.properties[0].name, "volume");
+            assert.equal(response.event.payload.change.properties[0].value, 35);
+            assert.equal(response.event.payload.change.properties[0].uncertaintyInMilliseconds, 0);
+        })
+
+        it('ChangeReport for a muted', async function () {
+            const event = Directives.ChangeReport.get(endpointId, Properties.Muted.propertyName, true)
+
+            deviceManager = new DeviceManager()
+            deviceManager.addDevice(new Device({
+                id: endpointId,
+                friendlyName: friendlyName,
+                controls: [helpers.volumeControl()]
+            }))
+            const response = await deviceManager.handleAlexaEvent(event)
+
+            assert.equal(response.event.header.namespace, "Alexa", "Namespace!");
+            assert.equal(response.event.header.name, "ChangeReport", "Name!");
+            assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
+
+            // changed properties
+            assert.equal(response.event.payload.change.cause.type, "PHYSICAL_INTERACTION");
+            assert.equal(response.event.payload.change.properties.length, 1);
+            assert.equal(response.event.payload.change.properties[0].namespace, "Alexa.Speaker");
+            assert.equal(response.event.payload.change.properties[0].name, "muted");
+            assert.equal(response.event.payload.change.properties[0].value, false);
+            assert.equal(response.event.payload.change.properties[0].uncertaintyInMilliseconds, 0);
+        })
     })
 })
