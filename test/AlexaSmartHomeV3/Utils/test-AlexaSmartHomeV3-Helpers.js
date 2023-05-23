@@ -298,4 +298,18 @@ describe('AlexaSmartHomeV3 - Helpers', function () {
         })
     })
 
+    describe('Enumeration', async function () {
+        it('Converts strings to numbers and vice versa', async function () {
+
+            const e = Utils.asEnum(['AUTO', 'ECO', 'OFF']);
+
+            assert.equal(e['AUTO'], 0);
+            assert.equal(e['ECO'], 1);
+            assert.equal(e['OFF'], 2);
+            assert.equal(e[0], 'AUTO');
+            assert.equal(e[1], 'ECO');
+            assert.equal(e[2], 'OFF');
+        })
+    })
+
 })
