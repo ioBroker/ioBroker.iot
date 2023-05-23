@@ -289,4 +289,13 @@ describe('AlexaSmartHomeV3 - Helpers', function () {
         })
     })
 
+    describe('Closest', async function () {
+        it('Returns closest to a trarget value from a list', async function () {
+            assert.equal(Utils.closestFromList(5, [4, 9, 15, 6, 2]), 4);
+            assert.equal(Utils.closestFromList(1000, [2200, 2700, 4000, 5500, 7000]), 2200);
+            assert.equal(Utils.closestFromList(4500, [2200, 2700, 4000, 5500, 7000]), 4000);
+            assert.equal(Utils.closestFromList(7000, [2200, 2700, 4000, 5500, 7000]), 7000);
+        })
+    })
+
 })
