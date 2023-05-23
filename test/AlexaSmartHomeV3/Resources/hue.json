@@ -1,0 +1,21 @@
+{
+    "states": [
+        {
+            "name": "HUE",
+            "defaultRole": "level.color.hue",
+            "id": "alias.0.Wohnzimmer.Lamp.HUE"
+        },
+        {
+            "name": "BRIGHTNESS",
+            "defaultRole": "state",
+            "id": "alias.0.Wohnzimmer.Lamp.BRIGHTNESS"
+        },
+        {
+            "name": "TEMPERATURE",
+            "defaultRole": "level.color.temperature",
+            "defaultUnit": "°K",
+            "id": "alias.0.Wohnzimmer.Lamp.TEMPERATURE"
+        }
+    ],
+    "type": "hue"
+}

@@ -164,4 +164,39 @@ describe('AlexaSmartHomeV3 - Controls', function () {
         })
 
     })
+
+    describe('Hue', async function () {
+
+        before(function () {
+
+            endpointId = 'endpoint-001'
+            friendlyName = 'some-friendly-name'
+
+            deviceManager = new DeviceManager();
+            deviceManager.addDevice(new Device({
+                id: endpointId,
+                friendlyName: friendlyName,
+                controls: [helpers.hueControl()]
+            }));
+        })
+
+        it('Hue allows to color', async function () {
+
+            const event = await helpers.getSample('ColorController/ColorController.SetColor.request.json')
+            const d = deviceManager.endpointById(event.directive.endpoint.endpointId)
+            assert.notEqual(d, undefined)
+            assert.equal(d instanceof Device, true)
+            let response = await d.handle(event)
+            assert.equal(response.context.properties[0].namespace, "Alexa.ColorController", "Properties Namespace!");
+            assert.equal(response.context.properties[0].name, "color", "Properties Name!");
+            assert.equal(response.context.properties[0].value.hue, 350.5);
+            assert.equal(response.context.properties[0].value.saturation, 0.7138);
+            assert.equal(response.context.properties[0].value.brightness, 0.6524);
+
+            assert.equal(response.event.header.namespace, "Alexa", "Namespace!");
+            assert.equal(response.event.header.name, "Response", "Namespace!");
+            assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, "Correlation Token!");
+            assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
+        })
+    })
 })

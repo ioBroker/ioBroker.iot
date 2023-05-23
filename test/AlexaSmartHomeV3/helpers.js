@@ -65,6 +65,18 @@ class AdapterMock {
             return { val: 23.5 }
         }
 
+        if (id.includes('Lamp.HUE')) {
+            return { val: 330.5 }
+        }
+
+        if (id.includes('Lamp.TEMPERATURE')) {
+            return { val: 2200 }
+        }
+
+        if (id.includes('Lamp.BRIGHTNESS')) {
+            return { val: 22 }
+        }
+
         if (id.includes('AirCondition.MODE')) {
             // OFF
             return { val: 4 }
@@ -122,6 +134,11 @@ module.exports = {
     airConditionControl: function () {
         return new Controls.AirCondition(require('./Resources/airCondition.json'));
     },
+
+    hueControl: function () {
+        return new Controls.Hue(require('./Resources/hue.json'));
+    },
+
 
     dimmerControl: function () {
         return new Controls.Dimmer(require('./Resources/dimmer.json'));
