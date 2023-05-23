@@ -1,0 +1,20 @@
+{
+    "states": [
+        {
+            "name": "SET",
+            "defaultRole": "level.temperature",
+            "defaultUnit": "°C",
+            "id": "alias.0.Wohnzimmer.AirCondition.SET",
+            "smartName": {
+                "smartType": "Thermostat"
+            }
+        },
+        {
+            "name": "MODE",
+            "defaultRole": "level.mode.AirCondition",
+            "defaultUnit": "°C",
+            "id": "alias.0.Wohnzimmer.AirCondition.MODE"
+        }
+    ],
+    "type": "airCondition"
+}

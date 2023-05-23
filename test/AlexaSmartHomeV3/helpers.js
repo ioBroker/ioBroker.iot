@@ -61,6 +61,15 @@ class AdapterMock {
             return { val: 23.5 }
         }
 
+        if (id.includes('AirCondition.SET')) {
+            return { val: 23.5 }
+        }
+
+        if (id.includes('AirCondition.MODE')) {
+            // OFF
+            return { val: 4 }
+        }
+
         if (id.includes('Motion')) {
             return { val: true }
         }
@@ -108,6 +117,10 @@ module.exports = {
 
     thermostatControl: function () {
         return new Controls.Thermostat(require('./Resources/thermostat.json'));
+    },
+
+    airConditionControl: function () {
+        return new Controls.AirCondition(require('./Resources/airCondition.json'));
     },
 
     dimmerControl: function () {

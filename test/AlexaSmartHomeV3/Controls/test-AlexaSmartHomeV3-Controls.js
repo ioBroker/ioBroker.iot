@@ -8,32 +8,35 @@ describe('AlexaSmartHomeV3 - Controls', function () {
 
     before(function () {
         AdapterProvider.init(helpers.adapterMock());
-        dimmer = helpers.dimmerControl()
-        light = helpers.lightControl()
-        endpointId = 'endpoint-001'
-        friendlyName = 'some-friendly-name'
-
-        lightDeviceManager = new DeviceManager();
-        lightDeviceManager.addDevice(new Device({
-            id: endpointId,
-            friendlyName: friendlyName,
-            displayCategries: ['LIGHT'],
-            controls: [light]
-        }));
-
-        dimmerDeviceManager = new DeviceManager();
-        dimmerDeviceManager.addDevice(new Device({
-            id: endpointId,
-            friendlyName: friendlyName,
-            displayCategries: ['LIGHT'],
-            controls: [dimmer]
-        }));
     });
 
     after(function () {
     });
 
     describe('Light', async function () {
+        before(function () {
+            dimmer = helpers.dimmerControl()
+            light = helpers.lightControl()
+            endpointId = 'endpoint-001'
+            friendlyName = 'some-friendly-name'
+
+            lightDeviceManager = new DeviceManager();
+            lightDeviceManager.addDevice(new Device({
+                id: endpointId,
+                friendlyName: friendlyName,
+                displayCategries: ['LIGHT'],
+                controls: [light]
+            }));
+
+            dimmerDeviceManager = new DeviceManager();
+            dimmerDeviceManager.addDevice(new Device({
+                id: endpointId,
+                friendlyName: friendlyName,
+                displayCategries: ['LIGHT'],
+                controls: [dimmer]
+            }));
+        });
+
         it('Light reports state', async function () {
 
             const event = await helpers.getSample('StateReport/ReportState.json')
@@ -89,5 +92,76 @@ describe('AlexaSmartHomeV3 - Controls', function () {
             assert.equal(response.context.properties[1].name, "brightness");
             assert.equal(response.context.properties[1].value, 75);
         })
+    })
+
+    describe('AirConditioner', async function () {
+
+        before(function () {
+
+            endpointId = 'endpoint-001'
+            friendlyName = 'some-friendly-name'
+
+            deviceManager = new DeviceManager();
+            deviceManager.addDevice(new Device({
+                id: endpointId,
+                friendlyName: friendlyName,
+                controls: [helpers.airConditionControl()]
+            }));
+        })
+
+        it('AirConditioner allows to set mode', async function () {
+
+            const event = helpers.thermostatControllerSetThermostatModeRequest();
+
+            for (const mode of ['AUTO', 'HEAT', 'ECO', 'OFF']) {
+                event.directive.payload.thermostatMode.value = mode;
+                const d = deviceManager.endpointById(event.directive.endpoint.endpointId)
+                assert.notEqual(d, undefined)
+                assert.equal(d instanceof Device, true)
+                let response = await d.handle(event)
+                assert.equal(response.context.properties[0].namespace, "Alexa.ThermostatController", "Properties Namespace!");
+                assert.equal(response.context.properties[0].name, "thermostatMode", "Properties Name!");
+                assert.equal(response.context.properties[0].value, mode, "Value!");
+
+                // check the powerState 
+                assert.equal(d.controls[0].supported[2].properties[0].currentValue, mode !== 'OFF');
+
+                assert.equal(response.event.header.namespace, "Alexa", "Namespace!");
+                assert.equal(response.event.header.name, "Response", "Namespace!");
+                assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, "Correlation Token!");
+                assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
+            }
+        })
+
+        it('AirCondition reports state', async function () {
+
+            const event = await helpers.getSample('StateReport/ReportState.json')
+            const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(response.event.header.namespace, "Alexa", "Namespace!");
+            assert.equal(response.event.header.name, "StateReport", "Name!");
+            assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, "Name!");
+            assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
+
+            assert.equal(response.context.properties.length, 4);
+
+            assert.equal(response.context.properties[0].namespace, "Alexa.TemperatureSensor");
+            assert.equal(response.context.properties[0].name, "temperature");
+            assert.equal(response.context.properties[0].value.value, 23.5);
+            assert.equal(response.context.properties[0].value.scale, "CELSIUS");
+
+            assert.equal(response.context.properties[1].namespace, "Alexa.ThermostatController");
+            assert.equal(response.context.properties[1].name, "targetSetpoint");
+            assert.equal(response.context.properties[1].value.value, 23.5);
+            assert.equal(response.context.properties[1].value.scale, "CELSIUS");
+
+            assert.equal(response.context.properties[2].namespace, "Alexa.ThermostatController");
+            assert.equal(response.context.properties[2].name, "thermostatMode");
+            assert.equal(response.context.properties[3].value, "OFF");
+
+            assert.equal(response.context.properties[3].namespace, "Alexa.PowerController");
+            assert.equal(response.context.properties[3].name, "powerState");
+            assert.equal(response.context.properties[3].value, "OFF");
+        })
+
     })
 })
