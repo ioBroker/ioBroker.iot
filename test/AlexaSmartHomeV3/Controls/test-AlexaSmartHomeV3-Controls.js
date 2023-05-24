@@ -180,7 +180,7 @@ describe('AlexaSmartHomeV3 - Controls', function () {
             }));
         })
 
-        it('Hue allows to color', async function () {
+        it('Hue allows to change color', async function () {
 
             const event = await helpers.getSample('ColorController/ColorController.SetColor.request.json')
             const d = deviceManager.endpointById(event.directive.endpoint.endpointId)
@@ -198,5 +198,65 @@ describe('AlexaSmartHomeV3 - Controls', function () {
             assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, "Correlation Token!");
             assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
         })
+
+        it('Hue allows to set color temperature', async function () {
+
+            const event = await helpers.getSample('ColorTemperatureController/ColorTemperatureController.SetColorTemperature.request.json')
+            const d = deviceManager.endpointById(event.directive.endpoint.endpointId)
+            assert.notEqual(d, undefined)
+            assert.equal(d instanceof Device, true)
+            let response = await d.handle(event)
+            assert.equal(response.context.properties[0].namespace, "Alexa.ColorTemperatureController", "Properties Namespace!");
+            assert.equal(response.context.properties[0].name, "colorTemperatureInKelvin", "Properties Name!");
+            assert.equal(response.context.properties[0].value, 5000);
+
+            assert.equal(response.event.header.namespace, "Alexa", "Namespace!");
+            assert.equal(response.event.header.name, "Response", "Namespace!");
+            assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, "Correlation Token!");
+            assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
+        })
+
+        it('Hue allows to increase color temperature', async function () {
+
+            const event = await helpers.getSample('ColorTemperatureController/ColorTemperatureController.IncreaseColorTemperature.request.json')
+            const d = deviceManager.endpointById(event.directive.endpoint.endpointId)
+            assert.notEqual(d, undefined)
+            assert.equal(d instanceof Device, true)
+
+            // set current temp to 2200
+            d.controls[0].supported[2].properties[0].currentValue = 2200;
+
+            let response = await d.handle(event)
+            assert.equal(response.context.properties[0].namespace, "Alexa.ColorTemperatureController", "Properties Namespace!");
+            assert.equal(response.context.properties[0].name, "colorTemperatureInKelvin", "Properties Name!");
+            assert.equal(response.context.properties[0].value, 2700);
+
+            assert.equal(response.event.header.namespace, "Alexa", "Namespace!");
+            assert.equal(response.event.header.name, "Response", "Namespace!");
+            assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, "Correlation Token!");
+            assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
+        })
+
+        it('Hue allows to decrease color temperature', async function () {
+
+            const event = await helpers.getSample('ColorTemperatureController/ColorTemperatureController.DecreaseColorTemperature.request.json')
+            const d = deviceManager.endpointById(event.directive.endpoint.endpointId)
+            assert.notEqual(d, undefined)
+            assert.equal(d instanceof Device, true)
+
+            // set current temp to 2200
+            d.controls[0].supported[2].properties[0].currentValue = 2200;
+
+            let response = await d.handle(event)
+            assert.equal(response.context.properties[0].namespace, "Alexa.ColorTemperatureController", "Properties Namespace!");
+            assert.equal(response.context.properties[0].name, "colorTemperatureInKelvin", "Properties Name!");
+            assert.equal(response.context.properties[0].value, 2200);
+
+            assert.equal(response.event.header.namespace, "Alexa", "Namespace!");
+            assert.equal(response.event.header.name, "Response", "Namespace!");
+            assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, "Correlation Token!");
+            assert.equal(response.event.endpoint.endpointId, endpointId, "Endpoint Id!");
+        })
+
     })
 })
