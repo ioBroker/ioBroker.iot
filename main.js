@@ -158,11 +158,8 @@ function startAdapter(options) {
                         if (obj.callback) {
                             adapter.log.info('Request V3 devices');
                             if (alexaSH3) {
-                                // alexaSH3.updateDevices(() => {
-                                //     adapter.sendTo(obj.from, obj.command, alexaSH3.getDevices(), obj.callback);
-                                //     adapter.setState('smart.updates3', false, true);
-                                // });
-                                await alexaSH3.updateDevices();
+                                adapter.sendTo(obj.from, obj.command, alexaSH3.getDevices(), obj.callback);
+                                adapter.setState('smart.updates3', false, true);
                                 await adapter.setStateAsync('smart.updates3', false, true);
                             } else {
                                 adapter.sendTo(obj.from, obj.command, {error: 'not activated'}, obj.callback);
