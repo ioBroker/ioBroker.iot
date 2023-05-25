@@ -169,6 +169,11 @@
       "sentry": {
         "dsn": "https://20987eaf91ef49de821771499fdb4e1a@sentry.iobroker.net/40"
       }
+    },
+    "javascriptRules": {
+      "i18n": true,
+      "url": "rules/customRuleBlocks.js",
+      "name": "ActionVisu"
     }
   },
   "protectedNative": [
@@ -477,6 +482,72 @@
         "def": false,
         "type": "boolean",
         "read": true,
+        "write": true
+      },
+      "native": {}
+    },
+    {
+      "_id": "app",
+      "type": "channel",
+      "common": {
+        "expert": true,
+        "name": "Certificates"
+      },
+      "native": {}
+    },
+    {
+      "_id": "app.message",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "Send message to app",
+        "desc": "Could be just message or JSON object {message: 'text', title: 'title', expire: 60, priority: 1}",
+        "type": "string",
+        "read": true,
+        "write": true
+      },
+      "native": {}
+    },
+    {
+      "_id": "app.title",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "Title of message",
+        "type": "string",
+        "read": true,
+        "write": true
+      },
+      "native": {}
+    },
+    {
+      "_id": "app.expire",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "Expire time in seconds",
+        "type": "number",
+        "unit": "seconds",
+        "read": true,
+        "max": 86400,
+        "min": 5,
+        "write": true
+      },
+      "native": {}
+    },
+    {
+      "_id": "app.priority",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "Expire time in seconds",
+        "type": "string",
+        "read": true,
+        "states": {
+          "0": "Normal",
+          "1": "High"
+        },
+        "def": "normal",
         "write": true
       },
       "native": {}

@@ -275,6 +275,25 @@ The following types are supported:
 ## Yandex Алиса
 [instructions](doc/alisa.md)
 
+## Send messages to app
+From version 1.15.x you can send messages to `ioBroker.visu` application (Android and iOS).
+For that, you need to write the following states:
+```
+setState('iot.0.app.expire', 60); // optional. Time in seconds
+setState('iot.0.app.priority', 'high'); // optional. Priority: 'high' or 'normal'
+setState('iot.0.app.title', 'ioBroker'); // optional. Default "ioBroker"
+setState('iot.0.app.message', 'Message text'); // important, that ack=false (default)
+
+// or just one state
+// only is message is mandatory. All other are optional
+setState('iot.0.app.message', JSON.stringify({ 
+  message: 'Message text',
+  title: 'ioBroker',
+  expire: 60,
+  priority: 'high'
+})); // important, that ack=false (default)
+```
+
 <!--
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**

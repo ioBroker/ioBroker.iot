@@ -84,6 +84,11 @@ function startAdapter(options) {
             id && remote.updateObject(id, obj);
         },
         stateChange: (id, state) => {
+            if (id === `${adapter.namespace}.app.message` && state && !state.ack) {
+                sendMessageToApp(state.val)
+                    .catch(e => adapter.log.error(`Cannot send message to app: ${e}`));
+            }
+
             state && adapter.config.googleHome  && googleHome && googleHome.updateState(id, state);
             state && adapter.config.amazonAlexa && alexaSH3 && alexaSH3.handleStateUpdate(id, state);
             state && adapter.config.yandexAlisa && yandexAlisa && yandexAlisa.updateState && yandexAlisa.updateState(id, state);
@@ -357,7 +362,7 @@ function sendDataToIFTTT(obj) {
             value1: obj.id,
             value2: obj.val,
             value3: obj.ack,
-        }
+        };
     }
 
     if (url) {
@@ -376,6 +381,67 @@ function sendDataToIFTTT(obj) {
     } else {
         adapter.log.warn(`Invalid request to IFTTT: ${JSON.stringify(obj)}`);
     }
+}
+
+async function sendMessageToApp(message) {
+    if (!message) {
+        throw new Error('Empty message');
+    }
+    let json = message.toString().trim();
+    if (json.startsWith('{') && json.endsWith('}')) {
+        try {
+            json = JSON.parse(json);
+        } catch (e) {
+            adapter.log.warn(`Cannot parse message: ${json}`);
+            json = null;
+        }
+    }
+
+    if (!json) {
+        // take expires
+        const ttlSecondsState = await adapter.getStateAsync(`${adapter.namespace}.app.expire`);
+        const priorityState = await adapter.getStateAsync(`${adapter.namespace}.app.priority`);
+        const titleState = await adapter.getStateAsync(`${adapter.namespace}.app.title`);
+        let priority = priorityState?.val;
+        if (priority === '1' || priority === 'high' || priority === true) {
+            priority = 'high';
+        } else {
+            priority = undefined;
+        }
+        json = {
+            message: message.toString(),
+            priority,
+            ttlSeconds: parseInt(ttlSecondsState?.val, 0) || undefined,
+            title: titleState?.title || 'ioBroker',
+        };
+    } else {
+        if (json.expire) {
+            json.ttlSeconds = json.expire;
+            delete json.expire;
+        }
+    }
+
+    json.ttlSeconds = parseInt(json.ttlSeconds, 0) || undefined;
+
+    if (json.ttlSeconds && json.ttlSeconds > 3600 * 48) {
+        json.ttlSeconds = 3600 * 48;
+    }
+
+
+    if (!json.message) {
+        throw new Error('Empty message');
+    }
+
+    const response = await axios.post('https://app-message.iobroker.in/', json, {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${Buffer.from(`${adapter.config.login}:${adapter.config.pass}`).toString('base64')}`
+        },
+        timeout: 5000,
+        validateStatus: status => status < 400,
+    });
+    await adapter.setState('app.message', message, true);
+    adapter.log.debug(`Message sent: ${JSON.stringify(response.data)}`);
 }
 
 async function controlState(id, data) {
@@ -1295,6 +1361,8 @@ async function main() {
 
     yandexAlisa && yandexAlisa.setLanguage(lang, translate);
     yandexAlisa && yandexAlisa.updateDevices();
+
+    await adapter.subscribeStatesAsync('app.message');
 }
 
 // If started as allInOne mode => return function to create instance

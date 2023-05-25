@@ -1,0 +1,56 @@
+{
+    "name": "iobroker.telegram.rules",
+    "private": true,
+    "version": "1.14.6",
+    "scripts": {
+        "start": "set PORT=4173 && craco start",
+        "old-start": "set PORT=4173 && react-scripts start",
+        "lint": "eslint --fix --ext .js,.jsx src",
+        "webpack-build": "craco build",
+        "test": "react-scripts test",
+        "eject": "react-scripts eject",
+        "build": "gulp",
+        "prepublishOnly": "echo Run publish in build && exit 1",
+        "release": "release-script",
+        "release-patch": "release-script patch --yes",
+        "release-minor": "release-script minor --yes",
+        "release-major": "release-script major --yes"
+    },
+    "dependencies": {
+        "react-ace": "^10.1.0",
+        "ace-builds": "^1.22.0",
+        "@iobroker/adapter-react-v5": "^4.1.0",
+        "@mui/material": "^5.13.2",
+        "@mui/styles": "^5.13.2",
+        "prop-types": "^15.8.1",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "react-scripts": "^5.0.1",
+        "@types/react": "^18.2.7",
+        "@types/react-dom": "^18.2.4",
+        "@originjs/vite-plugin-federation": "^1.2.3",
+        "@rollup/plugin-babel": "^6.0.3",
+        "@rollup/plugin-commonjs": "^25.0.0",
+        "@rollup/plugin-node-resolve": "^15.0.2",
+        "@rollup/plugin-replace": "^5.0.2",
+        "@craco/craco": "^7.1.0",
+        "craco-esbuild": "^0.5.2",
+        "craco-module-federation": "^1.1.0"
+    },
+    "eslintConfig": {
+        "extends": "react-app"
+    },
+    "devDependencies": {},
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    }
+}

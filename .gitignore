@@ -9,6 +9,9 @@ nbproject
 /src/package-lock.json
 /src/src/Components/cp-react-tree-table/package-lock.json
 package-lock.json
+/src-rules/package-lock.json
+/src-rules/node_modules
+/src-rules/build
 
 .dev-server
 .vscode

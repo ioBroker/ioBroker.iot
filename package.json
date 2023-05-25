@@ -28,7 +28,7 @@
   "dependencies": {
     "@iobroker/adapter-core": "^2.6.8",
     "aws-iot-device-sdk": "^2.2.12",
-    "echarts": "^4.9.0",
+    "echarts": "^5.4.2",
     "iobroker.type-detector": "^1.1.1",
     "jsdom": "^22.0.0",
     "mime": "^3.0.0",
@@ -71,7 +71,7 @@
     "release-minor": "release-script minor --yes",
     "release-major": "release-script major --yes",
     "translate": "translate-adapter",
-    "update-packages": "ncu --upgrade && cd src && ncu --upgrade && cd .."
+    "update-packages": "ncu --upgrade && cd src && ncu --upgrade && cd .. && cd src-rules && ncu --upgrade && cd .."
   },
   "license": "MIT",
   "readmeFilename": "README.md"
