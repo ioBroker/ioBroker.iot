@@ -280,7 +280,7 @@ From version 1.15.x you can send messages to `ioBroker.visu` application (Androi
 For that, you need to write the following states:
 ```
 setState('iot.0.app.expire', 60); // optional. Time in seconds
-setState('iot.0.app.priority', 'high'); // optional. Priority: 'high' or 'normal'
+setState('iot.0.app.priority', 'normal'); // optional. Priority: 'high' or 'normal'
 setState('iot.0.app.title', 'ioBroker'); // optional. Default "ioBroker"
 setState('iot.0.app.message', 'Message text'); // important, that ack=false (default)
 
@@ -290,7 +290,7 @@ setState('iot.0.app.message', JSON.stringify({
   message: 'Message text',
   title: 'ioBroker',
   expire: 60,
-  priority: 'high'
+  priority: 'normal'
 })); // important, that ack=false (default)
 ```
 
@@ -313,7 +313,7 @@ setState('iot.0.app.message', JSON.stringify({
 * (bluefox) Updated GUI packages
 
 ### 1.14.1 (2022-12-22)
-* (bluefox) Downgraded axios version to 0.27.2
+* (bluefox) Downgraded the axios version to 0.27.2
 
 ### 1.14.0 (2022-12-13)
 * (bluefox) Added netatmo support
@@ -329,7 +329,7 @@ setState('iot.0.app.message', JSON.stringify({
 * (bluefox) Corrected blockly for unknown languages
 
 ### 1.12.2 (2022-10-01)
-* (Apollon77) Fix crash case
+* (Apollon77) Fixed crash case
 
 ### 1.12.1 (2022-09-27)
 * (bluefox) Corrected error in GUI with empty password
@@ -364,8 +364,8 @@ setState('iot.0.app.message', JSON.stringify({
 
 ### 1.11.0 (2022-03-17)
 * (Apollon77) Also support "stored" when a rgb state is turned on/off
-* (Apollon77) Fix control percent value to respect min/max correctly
-* (bluefox) Support of response messages longer than 128k (zip)
+* (Apollon77) Fixed control percent value to respect min/max correctly
+* (bluefox) Support for response messages longer than 128k (zip)
 
 ### 1.10.0 (2022-03-09)
 * (Apollon77) Respect min/max when calculating the value for byOn with % values
@@ -406,7 +406,7 @@ setState('iot.0.app.message', JSON.stringify({
 * (bluefox) Fixed the encryption of the password. Warning: if you see the message in the log, that password is invalid, please enter the password in configuration dialog one more time and save.
 
 ### 1.8.20 (2021-05-16)
-* (foxriver76) we now write data received from custom services with acknowledge flag
+* (foxriver76) we now write data received from custom services with the acknowledge flag
 
 ### 1.8.19 (2021-05-14)
 * (bluefox) Only added one debug output
@@ -501,7 +501,7 @@ setState('iot.0.app.message', JSON.stringify({
 
 ### 1.5.2 (2020-05-21)
 * (bluefox) Changed requirements for password
-* (bluefox) Do not try load the "sharp" if blood sugar not enabled
+* (bluefox) Do not try to load the "sharp" if the blood sugar not enabled
 
 ### 1.4.18 (2020-05-11)
 * (Apollon77) Make sure that invalid configured states or values without a timestamp do not crash adapter (Sentry IOBROKER-IOT-8)
@@ -523,8 +523,8 @@ setState('iot.0.app.message', JSON.stringify({
 * (bluefox) Fixed crashes reported by sentry
 
 ### 1.4.7 (2020-04-23)
-* fix iot crash when timeouts in communications to Google happens (Sentry IOBROKER-IOT-2)
-* fix iot crash when google answers without customData (Sentry IOBROKER-IOT-1)
+* fixed iot crash when timeouts in communications to Google happens (Sentry IOBROKER-IOT-2)
+* fixed iot crash when google answers without customData (Sentry IOBROKER-IOT-1)
 
 ### 1.4.6 (2020-04-18)
 * (Apollon77) Add the Sentry error reporting to `React Frontend`

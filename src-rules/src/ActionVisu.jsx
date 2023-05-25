@@ -16,8 +16,8 @@ _sendToFrontEnd(${config._id}, {message: 'No message defined'});`;
         } else {
             return `// ioBroker.visu ${(message || '').replace(/\n/g, ' ').replace(/\r/g, ' ')}
 \t\tconst subActionVar${config._id} = "${(message || '').replace(/"/g, '\\"')}"${GenericBlock.getReplacesInText(context)};
-\t\t_sendToFrontEnd(${config._id}, {text: subActionVar${config._id}});
-\t\tsetState("${config.instance}.app.message", JSON.stringify({message: subActionVar${config._id}, title: "${(config.title || '').replace(/"/g, '\\"')}", priority: ${config.priority ? '"high"': '"normal"'}, expire: ${parseInt((config.expire || '').toString().replace(/"/g, '\\"'), 10) || 3600}));`;
+\t\t_sendToFrontEnd(${config._id}, {message: subActionVar${config._id}});
+\t\tsetState("${config.instance}.app.message", JSON.stringify({message: subActionVar${config._id}, title: "${(config.title || '').replace(/"/g, '\\"')}", priority: ${config.priority ? '"high"': '"normal"'}, expire: ${parseInt((config.expire || '').toString().replace(/"/g, '\\"'), 10) || 3600}}));`;
         }
     }
 
