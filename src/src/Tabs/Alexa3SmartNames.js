@@ -236,6 +236,7 @@ const styles = theme => ({
     },
     devSubLineByOn: {
         marginLeft: 5,
+        width: 130,
     },
     devSubLineDelete: {
         position: 'absolute',
@@ -271,7 +272,7 @@ const styles = theme => ({
         width: '100%',
     },
     selectType: {
-        width: 100,
+        width: 130,
     },
 });
 
@@ -310,6 +311,7 @@ class Alexa3SmartNames extends Component {
         this.editedSmartName = '';
 
         this.waitForUpdateID = null;
+        this.alive = false;
 
         this.props.socket.getObject(`system.adapter.${this.props.adapterName}.${this.props.instance}`)
             .then(obj =>
@@ -318,9 +320,18 @@ class Alexa3SmartNames extends Component {
                         if (!obj || !obj.common || (!obj.common.enabled && (!state || !state.val))) {
                             this.setState({ message: I18n.t('Instance must be enabled'), loading: false, devices: [] });
                         } else {
+                            this.alive = true;
                             this.browse();
                         }
                     }));
+
+    }
+
+    onAliveChanged = (id, state) => {
+        if (state && (!!state.val) !== this.alive) {
+            this.alive = !!state.val;
+            this.alive && setTimeout(() => this.browse(), 1000);
+        }
     }
 
     browse(isIndicate) {
@@ -394,11 +405,13 @@ class Alexa3SmartNames extends Component {
     componentDidMount() {
         this.props.socket.subscribeState(`${this.props.adapterName}.${this.props.instance}.smart.updates3`, this.onReadyUpdate);
         this.props.socket.subscribeState(`${this.props.adapterName}.${this.props.instance}.smart.updatesResult`, this.onResultUpdate);
+        this.props.socket.subscribeState(`system.adapter.${this.props.adapterName}.${this.props.instance}.alive`, this.onAliveChanged);
     }
 
     componentWillUnmount() {
         this.props.socket.unsubscribeState(`${this.props.adapterName}.${this.props.instance}.smart.updates3`, this.onReadyUpdate);
         this.props.socket.unsubscribeState(`${this.props.adapterName}.${this.props.instance}.smart.updatesResult`, this.onResultUpdate);
+        this.props.socket.unsubscribeState(`system.adapter.${this.props.adapterName}.${this.props.instance}.alive`, this.onAliveChanged);
         if (this.timerChanged) {
             clearTimeout(this.timerChanged);
             this.timerChanged = null;
@@ -523,7 +536,7 @@ class Alexa3SmartNames extends Component {
 
     renderSelectByOn(dev) {
         if (dev.autoDetected) {
-            return null;
+            return <div className={this.props.classes.devSubLineByOn} />;
         }
         const state = Object.values(dev.controls[0].states)[0];
         // get first id

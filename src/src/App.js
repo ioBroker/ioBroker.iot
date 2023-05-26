@@ -20,6 +20,7 @@ import TabExtended from './Tabs/Extended';
 import TabServices from './Tabs/Services';
 import TabEnums from './Tabs/Enums';
 import TabAlexaSmartNames from './Tabs/AlexaSmartNames';
+import TabAlexa3SmartNames from './Tabs/Alexa3SmartNames';
 import TabAlisaSmartNames from './Tabs/AlisaSmartNames';
 import TabGoogleSmartNames from './Tabs/GoogleSmartNames';
 
@@ -80,22 +81,31 @@ class App extends GenericApp {
         const tab = this.state.selectedTab;
         if (!tab || tab === 'options') {
             return 0;
-        } if (tab === 'enums') {
+        }
+        if (tab === 'enums') {
             return 1;
-        } if (tab === 'alexa') {
+        }
+        if (tab === 'alexa') {
             return 2;
-        } if (tab === 'google') {
+        }
+        if (tab === 'alexa3') {
+            return 3;
+        }
+        if (tab === 'google') {
             const offset = (this.state.native.amazonAlexa ? 1 : 0);
-            return 2 + offset;
-        } if (tab === 'alisa') {
+            return 3 + offset;
+        }
+        if (tab === 'alisa') {
             const offset = (this.state.native.amazonAlexa ? 1 : 0) + (this.state.native.googleHome ? 1 : 0);
-            return 2 + offset;
-        } if (tab === 'extended') {
-            const offset = (this.state.native.amazonAlexa ? 1 : 0) + (this.state.native.googleHome ? 1 : 0) + (this.state.native.yandexAlisa ? 1 : 0);
-            return 2 + offset;
-        } if (tab === 'services') {
+            return 3 + offset;
+        }
+        if (tab === 'extended') {
             const offset = (this.state.native.amazonAlexa ? 1 : 0) + (this.state.native.googleHome ? 1 : 0) + (this.state.native.yandexAlisa ? 1 : 0);
             return 3 + offset;
+        }
+        if (tab === 'services') {
+            const offset = (this.state.native.amazonAlexa ? 1 : 0) + (this.state.native.googleHome ? 1 : 0) + (this.state.native.yandexAlisa ? 1 : 0);
+            return 4 + offset;
         }
 
         return 0;
@@ -167,6 +177,7 @@ class App extends GenericApp {
                             <Tab classes={{ selected: this.props.classes.selected }} label={I18n.t('Options')} data-name="options" />
                             <Tab classes={{ selected: this.props.classes.selected }} label={I18n.t('Smart enums')} data-name="enums" />
                             {this.state.native.amazonAlexa && <Tab classes={{ selected: this.props.classes.selected }} selected={this.state.selectedTab === 'alexa'} label={I18n.t('Alexa devices')} data-name="alexa" />}
+                            {false && this.state.native.amazonAlexa && <Tab classes={{ selected: this.props.classes.selected }} selected={this.state.selectedTab === 'alexa3'} label={`${I18n.t('Alexa devices')} v3`} data-name="alexa3" />}
                             {this.state.native.googleHome && <Tab classes={{ selected: this.props.classes.selected }} selected={this.state.selectedTab === 'google'} label={I18n.t('Google devices')} data-name="google" />}
                             {this.state.native.yandexAlisa && <Tab classes={{ selected: this.props.classes.selected }} selected={this.state.selectedTab === 'alisa'} label={I18n.t('Alisa devices')} data-name="alisa" />}
                             <Tab classes={{ selected: this.props.classes.selected }} label={I18n.t('Extended options')} data-name="extended" />
@@ -198,6 +209,16 @@ class App extends GenericApp {
                         />}
                         {this.state.selectedTab === 'alexa' && <TabAlexaSmartNames
                             key="alexa"
+                            themeType={this.state.themeType}
+                            common={this.common}
+                            socket={this.socket}
+                            native={this.state.native}
+                            onError={text => this.setState({ errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text })}
+                            adapterName={this.adapterName}
+                            instance={this.instance}
+                        />}
+                        {this.state.selectedTab === 'alexa3' && <TabAlexa3SmartNames
+                            key="alexa3"
                             themeType={this.state.themeType}
                             common={this.common}
                             socket={this.socket}
