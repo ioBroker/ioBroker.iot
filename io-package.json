@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "1.14.6",
+    "version": "2.0.0",
     "news": {
+      "2.0.0": {
+        "en": "Added support for amazon alexa v3\nRemoved support for sugar blood indication",
+        "de": "Unterstützung für amazon alexa v3\nEntfernte Unterstützung für Zuckerblutanzeige",
+        "ru": "Добавлена поддержка amazon alexa v3\nУдаленная поддержка для индикации сахарной крови",
+        "pt": "Adicionado suporte para amazon alexa v3\nSuporte removido para indicação de sangue de açúcar",
+        "nl": "Amazon Alexa v3\nVerwijdering voor suikerbloedindicatie",
+        "fr": "Ajout du support pour amazon alexa v3\nSoutien enlevé pour l'indication de sang de sucre",
+        "it": "Aggiunto il supporto per amazon alexa v3\nSupporto rimosso per l'indicazione del sangue dello zucchero",
+        "es": "Apoyo añadido para amazon alexa v3\nApoyo eliminado para la indicación de sangre de azúcar",
+        "pl": "Wsparcie dla amazonki niebieskoskrzydłej v3\nPrzewiduje wsparcie dla cukru krwi",
+        "uk": "Додано підтримку amazon alexa v3\nВидалення підтримки цукрової крові",
+        "zh-cn": "增加对马纳区的支持a诉3\n消除对甘蔗表示的支持"
+      },
       "1.14.6": {
         "en": "Corrected translations",
         "de": "Korrigierte Übersetzungen",
@@ -80,19 +93,6 @@
         "pl": "Added netatmo support",
         "uk": "Додано підтримку Netatmo",
         "zh-cn": "增加净支助"
-      },
-      "1.13.0": {
-        "en": "Add support vor Custom Skill v2",
-        "de": "Unterstützung vor Custom Skill v2 hinzufügen",
-        "ru": "Добавить поддержку vor Custom Skill v2",
-        "pt": "Adicionar suporte vor Habilidade personalizada v2",
-        "nl": "Voeg steun aan de vor Custom Skill v2",
-        "fr": "Ajouter le support vor Custom Skill v2",
-        "it": "Aggiungi supporto vor Custom Skill v2",
-        "es": "Añadir soporte vor Habilidad personalizada v2",
-        "pl": "Wspiera celne Skill v2",
-        "uk": "Додати підтримку vor Спеціальна навички v2",
-        "zh-cn": "A. 增加支持家庭技能 v2"
       }
     },
     "title": "IoT Assistants",
