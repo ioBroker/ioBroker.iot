@@ -225,5 +225,11 @@
   "Socket": "Gniazdo elektryczne",
   "VacuumCleaner": "Odkurzacz",
   "VolumeGroup": "Grupa woluminów",
-  "Window": "Okno"
+  "Window": "Okno",
+  "Color HUE": "Barwa koloru",
+  "Door sensor": "Czujnik drzwi",
+  "Sensor": "Czujnik",
+  "Vacuum cleaner": "Odkurzacz",
+  "Volume group": "Grupa woluminów",
+  "Window sensor": "Czujnik okna"
 }

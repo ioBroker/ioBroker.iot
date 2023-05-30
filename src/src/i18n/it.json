@@ -225,5 +225,11 @@
   "Socket": "PRESA",
   "VacuumCleaner": "Aspirapolvere",
   "VolumeGroup": "Gruppo di volumi",
-  "Window": "Finestra"
+  "Window": "Finestra",
+  "Color HUE": "Colore TONALITÀ",
+  "Door sensor": "Sensore porta",
+  "Sensor": "Sensore",
+  "Vacuum cleaner": "Aspirapolvere",
+  "Volume group": "Gruppo di volumi",
+  "Window sensor": "Sensore finestra"
 }

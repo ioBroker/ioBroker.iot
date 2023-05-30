@@ -225,5 +225,11 @@
   "Socket": "Розетка",
   "VacuumCleaner": "Пилосос",
   "VolumeGroup": "Група томів",
-  "Window": "Вікно"
+  "Window": "Вікно",
+  "Color HUE": "Колір HUE",
+  "Door sensor": "Датчик дверей",
+  "Sensor": "датчик",
+  "Vacuum cleaner": "Пилосос",
+  "Volume group": "Група томів",
+  "Window sensor": "Датчик вікна"
 }

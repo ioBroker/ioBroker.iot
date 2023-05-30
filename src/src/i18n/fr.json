@@ -225,5 +225,11 @@
   "Socket": "Prise",
   "VacuumCleaner": "aspirateur",
   "VolumeGroup": "Groupe de volumes",
-  "Window": "Fenêtre"
+  "Window": "Fenêtre",
+  "Color HUE": "Teinte de couleur",
+  "Door sensor": "Capteur de porte",
+  "Sensor": "Capteur",
+  "Vacuum cleaner": "aspirateur",
+  "Volume group": "Groupe de volumes",
+  "Window sensor": "Capteur de fenêtre"
 }

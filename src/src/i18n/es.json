@@ -225,5 +225,11 @@
   "Socket": "Enchufe",
   "VacuumCleaner": "aspiradora",
   "VolumeGroup": "grupo de volumen",
-  "Window": "Ventana"
+  "Window": "Ventana",
+  "Color HUE": "Color TONO",
+  "Door sensor": "sensor de puerta",
+  "Sensor": "Sensor",
+  "Vacuum cleaner": "aspiradora",
+  "Volume group": "grupo de volumen",
+  "Window sensor": "sensor de ventana"
 }

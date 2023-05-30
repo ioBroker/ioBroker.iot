@@ -225,5 +225,11 @@
   "Socket": "Разъем",
   "VacuumCleaner": "Пылесос",
   "VolumeGroup": "Группа томов",
-  "Window": "Окно"
+  "Window": "Окно",
+  "Color HUE": "Цвет ОТТЕНОК",
+  "Door sensor": "Датчик двери",
+  "Sensor": "Датчик",
+  "Vacuum cleaner": "Пылесос",
+  "Volume group": "Группа томов",
+  "Window sensor": "Датчик окна"
 }

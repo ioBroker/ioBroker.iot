@@ -225,5 +225,11 @@
   "Socket": "插座",
   "VacuumCleaner": "吸尘器",
   "VolumeGroup": "卷组",
-  "Window": "窗户"
+  "Window": "窗户",
+  "Color HUE": "颜色色调",
+  "Door sensor": "门磁",
+  "Sensor": "传感器",
+  "Vacuum cleaner": "吸尘器",
+  "Volume group": "卷组",
+  "Window sensor": "窗口传感器"
 }

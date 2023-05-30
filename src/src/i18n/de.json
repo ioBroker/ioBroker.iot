@@ -225,5 +225,11 @@
   "Socket": "Steckdose",
   "VacuumCleaner": "Staubsauger",
   "VolumeGroup": "Volumengruppe",
-  "Window": "Fenster"
+  "Window": "Fenster",
+  "Color HUE": "Farbe Farbton",
+  "Door sensor": "Türsensor",
+  "Sensor": "Sensor",
+  "Vacuum cleaner": "Staubsauger",
+  "Volume group": "Volumengruppe",
+  "Window sensor": "Fenstersensor"
 }

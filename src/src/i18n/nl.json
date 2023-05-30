@@ -225,5 +225,11 @@
   "Socket": "Stopcontact",
   "VacuumCleaner": "Stofzuiger",
   "VolumeGroup": "Volumegroep",
-  "Window": "Raam"
+  "Window": "Raam",
+  "Color HUE": "Kleur TINT",
+  "Door sensor": "Deur sensor",
+  "Sensor": "Sensor",
+  "Vacuum cleaner": "Stofzuiger",
+  "Volume group": "Volumegroep",
+  "Window sensor": "Raam sensor"
 }

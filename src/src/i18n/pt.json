@@ -225,5 +225,11 @@
   "Socket": "soquete",
   "VacuumCleaner": "Aspirador de pó",
   "VolumeGroup": "Grupo de volumes",
-  "Window": "Janela"
+  "Window": "Janela",
+  "Color HUE": "Cor MATIZ",
+  "Door sensor": "Sensor de porta",
+  "Sensor": "Sensor",
+  "Vacuum cleaner": "Aspirador de pó",
+  "Volume group": "Grupo de volumes",
+  "Window sensor": "Sensor de janela"
 }
