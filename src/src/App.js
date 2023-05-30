@@ -66,6 +66,8 @@ class App extends GenericApp {
         extendedProps.sentryDSN = window.sentryDSN;
 
         super(props, extendedProps);
+
+        this.state.selectedTab = window.localStorage.getItem(`${this.adapterName}.${this.instance}.selectedTab`) || 'options';
     }
 
     onConnectionReady() {
@@ -75,40 +77,6 @@ class App extends GenericApp {
                     this.setState({ showAckTempPasswordDialog: true });
                 }
             });
-    }
-
-    getSelectedTab() {
-        const tab = this.state.selectedTab;
-        if (!tab || tab === 'options') {
-            return 0;
-        }
-        if (tab === 'enums') {
-            return 1;
-        }
-        if (tab === 'alexa') {
-            return 2;
-        }
-        if (tab === 'alexa3') {
-            return 3;
-        }
-        if (tab === 'google') {
-            const offset = (this.state.native.amazonAlexa ? 1 : 0);
-            return 3 + offset;
-        }
-        if (tab === 'alisa') {
-            const offset = (this.state.native.amazonAlexa ? 1 : 0) + (this.state.native.googleHome ? 1 : 0);
-            return 3 + offset;
-        }
-        if (tab === 'extended') {
-            const offset = (this.state.native.amazonAlexa ? 1 : 0) + (this.state.native.googleHome ? 1 : 0) + (this.state.native.yandexAlisa ? 1 : 0);
-            return 3 + offset;
-        }
-        if (tab === 'services') {
-            const offset = (this.state.native.amazonAlexa ? 1 : 0) + (this.state.native.googleHome ? 1 : 0) + (this.state.native.yandexAlisa ? 1 : 0);
-            return 4 + offset;
-        }
-
-        return 0;
     }
 
     renderAckTempPasswordDialog() {
@@ -169,19 +137,22 @@ class App extends GenericApp {
                 <div className="App" style={{ background: this.state.theme.palette.background.default, color: this.state.theme.palette.text.primary }}>
                     <AppBar position="static">
                         <Tabs
-                            value={this.getSelectedTab()}
-                            onChange={(e, index) => this.selectTab(e.target.dataset.name, index)}
+                            value={this.state.selectedTab || 'options'}
+                            onChange={(e, value) => {
+                                this.setState({ selectedTab: value });
+                                window.localStorage.setItem(`${this.adapterName}.${this.instance}.selectedTab`, value);
+                            }}
                             scrollButtons="auto"
                             classes={{ indicator: this.props.classes.indicator }}
                         >
-                            <Tab classes={{ selected: this.props.classes.selected }} label={I18n.t('Options')} data-name="options" />
-                            <Tab classes={{ selected: this.props.classes.selected }} label={I18n.t('Smart enums')} data-name="enums" />
-                            {this.state.native.amazonAlexa && <Tab classes={{ selected: this.props.classes.selected }} selected={this.state.selectedTab === 'alexa'} label={I18n.t('Alexa devices')} data-name="alexa" />}
-                            {false && this.state.native.amazonAlexa && <Tab classes={{ selected: this.props.classes.selected }} selected={this.state.selectedTab === 'alexa3'} label={`${I18n.t('Alexa devices')} v3`} data-name="alexa3" />}
-                            {this.state.native.googleHome && <Tab classes={{ selected: this.props.classes.selected }} selected={this.state.selectedTab === 'google'} label={I18n.t('Google devices')} data-name="google" />}
-                            {this.state.native.yandexAlisa && <Tab classes={{ selected: this.props.classes.selected }} selected={this.state.selectedTab === 'alisa'} label={I18n.t('Alisa devices')} data-name="alisa" />}
-                            <Tab classes={{ selected: this.props.classes.selected }} label={I18n.t('Extended options')} data-name="extended" />
-                            <Tab classes={{ selected: this.props.classes.selected }} label={I18n.t('Services and IFTTT')} data-name="services" />
+                            <Tab value="options" classes={{ selected: this.props.classes.selected }} label={I18n.t('Options')} data-name="options" />
+                            <Tab value="enums" classes={{ selected: this.props.classes.selected }} label={I18n.t('Smart enums')} data-name="enums" />
+                            {this.state.native.amazonAlexa && <Tab value="alexa" classes={{ selected: this.props.classes.selected }} selected={this.state.selectedTab === 'alexa'} label={I18n.t('Alexa devices')} data-name="alexa" />}
+                            {this.state.native.amazonAlexa && this.state.native.amazonAlexaV3 && <Tab value="alexa3" classes={{ selected: this.props.classes.selected }} selected={this.state.selectedTab === 'alexa3'} label={`${I18n.t('Alexa devices')} v3`} data-name="alexa3" />}
+                            {this.state.native.googleHome && <Tab value="google" classes={{ selected: this.props.classes.selected }} selected={this.state.selectedTab === 'google'} label={I18n.t('Google devices')} data-name="google" />}
+                            {this.state.native.yandexAlisa && <Tab value="alisa" classes={{ selected: this.props.classes.selected }} selected={this.state.selectedTab === 'alisa'} label={I18n.t('Alisa devices')} data-name="alisa" />}
+                            <Tab value="extended" classes={{ selected: this.props.classes.selected }} label={I18n.t('Extended options')} data-name="extended" />
+                            <Tab value="services" classes={{ selected: this.props.classes.selected }} label={I18n.t('Services and IFTTT')} data-name="services" />
                         </Tabs>
                     </AppBar>
 

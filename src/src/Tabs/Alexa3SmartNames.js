@@ -18,25 +18,58 @@ import DialogActions from '@mui/material/DialogActions';
 import Dialog from '@mui/material/Dialog';
 
 import {
-    MdEdit as IconEdit, MdAdd as IconAdd, MdRefresh as IconRefresh, MdClear as IconClear, MdDelete as IconDelete, MdFormatAlignJustify as IconExpand, MdDragHandle as IconCollapse, MdList as IconList,
+    MdEdit as IconEdit,
+    MdAdd as IconAdd,
+    MdRefresh as IconRefresh,
+    MdClear as IconClear,
+    MdDelete as IconDelete,
+    MdFormatAlignJustify as IconExpand,
+    MdDragHandle as IconCollapse,
+    MdList as IconList,
+    MdBlinds,
+    MdOutlineSensors, MdOutlineThermostat,
 } from 'react-icons/md';
 
 import {
-    FaPowerOff as IconOn, FaThermometerHalf as IconTemperature, FaLongArrowAltUp as IconUp, FaLongArrowAltDown as IconDown, FaPercentage as IconPercentage, FaPalette as IconColor, FaLightbulb as IconBulb, FaLockOpen as IconLock, FaThermometer as IconThermometer,
+    FaLightbulb,
+    FaPercentage as Percent,
+    FaSnowflake,
+    FaTemperatureLow,
 } from 'react-icons/fa';
 
-import IconCopy from '@mui/icons-material/FileCopy';
-import IconClose from '@mui/icons-material/Close';
-import IconCheck from '@mui/icons-material/Check';
+import { AiFillUnlock } from 'react-icons/ai';
+import { BsFillDoorOpenFill, BsFillVolumeUpFill } from 'react-icons/bs';
+import { GiElectricalSocket, GiGate, GiWindow } from 'react-icons/gi';
+import { HiLightBulb } from 'react-icons/hi';
+import { IoIosColorFilter } from 'react-icons/io';
+import { CgMenuMotion } from 'react-icons/cg';
+import { RxSlider } from 'react-icons/rx';
+import { TbVacuumCleaner } from 'react-icons/tb';
 
 import {
-    Utils, I18n, Message as MessageDialog, SelectID as DialogSelectID,
-} from '@iobroker/adapter-react-v5';
+    FileCopy as IconCopy,
+    Close as IconClose,
+    Check as IconCheck,
+    Brightness5,
+    ToggleOn,
+    Palette,
+    Gradient,
+    Notifications,
+    Lock,
+    ModeStandby,
+    VolumeOff,
+    Thermostat,
+    ThermostatAuto,
+    VolumeUp,
+    DeviceThermostat,
+} from '@mui/icons-material';
 
-const colorOn = '#aba613';
-const colorOff = '#444';
-const colorSet = '#00c6ff';
-const colorRead = '#00bc00';
+import {
+    Utils,
+    I18n,
+    Message as MessageDialog,
+    SelectID as DialogSelectID,
+} from '@iobroker/adapter-react-v5';
 
 const CHANGED_COLOR = '#e7000040';
 const DEFAULT_CHANNEL_COLOR_DARK = '#4f4f4f';
@@ -46,63 +79,6 @@ const LAST_CHANGED_COLOR_LIGHT = '#b4ffbe';
 
 const DEFAULT_STATE_COLOR_DARK = '#6e6e6e';
 const DEFAULT_STATE_COLOR_LIGHT = '#d0d0d0';
-
-const actionsMapping = {
-    turnOn: {
-        color: colorOn, icon: IconOn, desc: 'Turn on', v2: true,
-    },
-    turnOff: {
-        color: colorOff, icon: IconOn, desc: 'Turn off', v2: true,
-    },
-
-    setTargetTemperature: {
-        color: colorSet, icon: IconTemperature, desc: 'Set target temperature', v2: true,
-    },
-    incrementTargetTemperature: {
-        color: colorOn, icon: IconUp, desc: 'Increment target temperature', v2: true,
-    },
-    decrementTargetTemperature: {
-        color: colorOff, icon: IconDown, desc: 'Decrement target temperature', v2: true,
-    },
-
-    setPercentage: {
-        color: colorSet, icon: IconPercentage, desc: 'Set percentage', v2: true,
-    },
-    incrementPercentage: {
-        color: colorOn, icon: IconUp, desc: 'Increment percentage', v2: true,
-    },
-    decrementPercentage: {
-        color: colorOff, icon: IconDown, desc: 'Decrement percentage', v2: true,
-    },
-
-    setColor: {
-        color: colorSet, icon: IconColor, desc: 'Set color', v2: true,
-    },
-
-    setColorTemperature: {
-        color: colorSet, icon: IconBulb, desc: 'Set color temperature', v2: true,
-    },
-    incrementColorTemperature: {
-        color: colorOn, icon: IconUp, desc: 'Increment color temperature', v2: true,
-    },
-    decrementColorTemperature: {
-        color: colorOff, icon: IconDown, desc: 'Decrement color temperature', v2: true,
-    },
-
-    getTargetTemperature: {
-        color: colorRead, icon: IconThermometer, desc: 'Get target temperature', v2: true,
-    },
-    getTemperatureReading: {
-        color: colorRead, icon: IconThermometer, desc: 'Get actual temperature', v2: true,
-    },
-
-    setLockState: {
-        color: colorSet, icon: IconLock, desc: 'Set lock state', v2: true,
-    },
-    getLockState: {
-        color: colorRead, icon: IconLock, desc: 'Read lock state', v2: true,
-    },
-};
 
 const SMART_TYPES = [
     'socket',
@@ -119,17 +95,47 @@ const SMART_TYPES = [
     'window',
 ];
 
+const CAPABILITIES = {
+    brightness: { label: 'Brightness', icon: Brightness5, color: '#c9b803' },
+    powerState: { label: 'Power', icon: ToggleOn, color: '#70bd00' },
+    colorTemperatureInKelvin: { label: 'Color temperature', icon: Gradient, color: '#019bb6' },
+    color: { label: 'Color', icon: Palette, color: '#a20030' },
+    detectionState: { label: 'Detection', icon: Notifications, color: '#913c01' },
+    lockState: { label: 'Lock', icon: Lock, color: '#00519b' },
+    mode: { label: 'Mode', icon: ModeStandby, color: '#112233' },
+    muted: { label: 'Muted', icon: VolumeOff, color: '#9701af' },
+    percentage: { label: 'Percentage', icon: Percent, color: '#009870' },
+    targetSetpoint: { label: 'Set point', icon: Thermostat, color: '#813600' },
+    temperature: { label: 'Temperature', icon: DeviceThermostat, color: '#9f1300' },
+    thermostatMode: { label: 'Thermostat mode', icon: ThermostatAuto, color: '#800048' },
+    volume: { label: 'Volume', icon: VolumeUp, color: '#006702' },
+};
+
+const DEVICES = {
+    Light: { label: 'Light', icon: FaLightbulb, color: '#c9b803' },
+    AirCondition: { label: 'AirCondition', icon: FaSnowflake, color: '#001fb9' },
+    Blind: { label: 'Blinds', icon: MdBlinds, color: '#00a28f' },
+    ContactSensor: { label: 'Sensor', icon: MdOutlineSensors, color: '#c9b803' },
+    Dimmer: { label: 'Dimmer', icon: HiLightBulb, color: '#cb8500' },
+    Door: { label: 'Door sensor', icon: BsFillDoorOpenFill, color: '#ad002a' },
+    Gate: { label: 'Gate', icon: GiGate, color: '#9d02af' },
+    Hue: { label: 'Color HUE', icon: IoIosColorFilter, color: '#007a96' },
+    Lock: { label: 'Lock', icon: AiFillUnlock, color: '#c9030a' },
+    Motion: { label: 'Motion', icon: CgMenuMotion, color: '#149100' },
+    Slider: { label: 'Slider', icon: RxSlider, color: '#029a7f' },
+    Socket: { label: 'Socket', icon: GiElectricalSocket, color: '#834303' },
+    Temperature: { label: 'Temperature', icon: FaTemperatureLow, color: '#8ca102' },
+    Thermostat: { label: 'Thermostat', icon: MdOutlineThermostat, color: '#8c4800' },
+    VacuumCleaner: { label: 'Vacuum cleaner', icon: TbVacuumCleaner, color: '#9e03c9' },
+    Volume: { label: 'Volume', icon: BsFillVolumeUpFill, color: '#c903c6' },
+    VolumeGroup: { label: 'Volume group', icon: BsFillVolumeUpFill, color: '#c903c6' },
+    Window: { label: 'Window sensor', icon: GiWindow, color: '#27c903' },
+};
+
 const styles = theme => ({
     tab: {
         width: '100%',
         height: '100%',
-    },
-    column: {
-        display: 'inline-block',
-        verticalAlign: 'top',
-        marginRight: 20,
-        height: '100%',
-        overflow: 'hidden',
     },
     columnDiv: {
         height: 'calc(100% - 40px)',
@@ -145,11 +151,6 @@ const styles = theme => ({
     devLineExpand: {
         width: 40,
     },
-    devLineEnabled: {
-        position: 'absolute',
-        right: 0,
-        top: 0,
-    },
     devLineEdit: {
         width: 40,
         marginLeft: 5,
@@ -161,14 +162,9 @@ const styles = theme => ({
 
     },
     devLineNumber:{
-        /*display: 'inline-block',
-        verticalAlign: 'middle',*/
         width: 15,
     },
     editedId: {
-        fontStyle: 'italic',
-    },
-    enumLineSubName:{
         fontStyle: 'italic',
     },
     devLine: {
@@ -193,50 +189,47 @@ const styles = theme => ({
         top: 0,
         left: 0,
     },
-    channelLineActions: {
-        width: 80,
-    },
     devLineNameBlock: {
         flexGrow: 1,
-    },
-    columnHeader: {
-        background: theme.palette.primary.light,
-        padding: 10,
-        color: theme.palette.primary.contrastText,
     },
     devModified: {
         fontStyle: 'italic',
     },
+    actionSpan: {
+        marginRight: 5,
+    },
     actionIcon: {
         width: 16,
     },
+    deviceIcon: {
+        width: 24,
+        height: 24,
+    },
+    deviceSmallIcon: {
+        width: 20,
+        height: 20,
+    },
     devSubLine: {
         position: 'relative',
-        height: 32,
+        display: 'flex',
+        width: 'calc(100% - 55px)',
+        paddingLeft: 55,
+        alignItems: 'center',
     },
     devSubLineName: {
-        marginLeft: 5,
-        marginTop: 6,
-        display: 'inline-block',
+        flexGrow: 1,
         fontSize: 13,
-        width: 'calc(100% - 400px)',
     },
     devSubSubLineName:  {
-        fontSize: 10,
+        fontSize: 11,
         fontStyle: 'italic',
-        display: 'block',
         paddingLeft: 70,
-        paddingTop: 4,
     },
     devSubSubLineStateName: {
 
     },
     devSubSubLineStateId: {
         marginLeft: 5,
-    },
-    devSubLineByOn: {
-        marginLeft: 5,
-        width: 130,
     },
     devSubLineDelete: {
         position: 'absolute',
@@ -255,7 +248,10 @@ const styles = theme => ({
     },
     devSubSubLine: {
         position: 'relative',
-        height: 20,
+        display: 'flex',
+        alignItems: 'center',
+        paddingTop: 2,
+        paddingBottom: 2,
     },
     headerRow: {
         paddingLeft: theme.spacing(1),
@@ -280,9 +276,14 @@ class Alexa3SmartNames extends Component {
     constructor(props) {
         super(props);
 
-        if (!actionsMapping.translated) {
-            Object.keys(actionsMapping).forEach(a => actionsMapping[a].desc = I18n.t(actionsMapping[a].desc));
-            actionsMapping.translated = true;
+        if (!CAPABILITIES.translated) {
+            Object.keys(CAPABILITIES).forEach(a => CAPABILITIES[a].label = I18n.t(CAPABILITIES[a].label));
+            CAPABILITIES.translated = true;
+        }
+
+        if (!DEVICES.translated) {
+            Object.keys(DEVICES).forEach(a => DEVICES[a].label = I18n.t(DEVICES[a].label));
+            DEVICES.translated = true;
         }
 
         this.state = {
@@ -324,7 +325,6 @@ class Alexa3SmartNames extends Component {
                             this.browse();
                         }
                     }));
-
     }
 
     onAliveChanged = (id, state) => {
@@ -332,7 +332,7 @@ class Alexa3SmartNames extends Component {
             this.alive = !!state.val;
             this.alive && setTimeout(() => this.browse(), 1000);
         }
-    }
+    };
 
     browse(isIndicate) {
         if (Date.now() - this.lastBrowse < 500) {
@@ -384,7 +384,7 @@ class Alexa3SmartNames extends Component {
                     }
                 }
             })
-            .catch(e => this.setState({ message: I18n.t('Error %s', e) }));
+            .catch(e => this.setState({ message: I18n.t('Error %s', e), browse: false }));
     }
 
     onReadyUpdate = (id, state) => {
@@ -434,23 +434,18 @@ class Alexa3SmartNames extends Component {
 
     onEdit(id, devices) {
         devices = devices || this.state.devices;
-        const device = devices.find(dev => dev.additionalApplianceDetails.id === id);
+        const device = devices.find(dev => dev.controls.find(control => Object.values(control.states).find(item => item.id === id)));
         if (device) {
             this.props.socket.getObject(id)
                 .then(obj => {
-                    let smartName = device.additionalApplianceDetails.friendlyNames ? device.additionalApplianceDetails.friendlyNames : device.friendlyName;
+                    let smartName = device.friendlyName;
                     if (typeof smartName === 'object' && smartName) {
                         smartName = smartName[I18n.getLanguage()] || smartName.en;
                     }
                     this.editedSmartName = smartName;
-                    let editedSmartType = null;
-                    if (!device.additionalApplianceDetails.group) {
-                        editedSmartType = device.additionalApplianceDetails.smartType;
-                    }
 
                     this.setState({
                         editId: id,
-                        editedSmartType,
                         editedSmartName: smartName,
                         editObjectName: Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() }),
                     });
@@ -489,38 +484,76 @@ class Alexa3SmartNames extends Component {
         });
     }
 
-    renderActions(dev) {
+    renderActions(control) {
         // Type
         const actions = [];
+
+        Object.keys(CAPABILITIES).forEach(action => {
+            if (action === 'translated') {
+                return;
+            }
+            if (control.supported.includes(action)) {
+                const Icon = CAPABILITIES[action].icon;
+                actions.push(<span key={action} title={CAPABILITIES[action].label} className={this.props.classes.actionSpan}>
+                    <Icon className={this.props.classes.actionIcon} style={{ color: CAPABILITIES[action].color }} />
+                </span>);
+            } else if (control.enforced.includes(action)) {
+                const Icon = CAPABILITIES[action].icon;
+                actions.push(<span key={action} title={CAPABILITIES[action].label} className={this.props.classes.actionSpan} style={{ opacity: 0.7 }}>
+                    <Icon className={this.props.classes.actionIcon} style={{ color: CAPABILITIES[action].color }} />
+                </span>);
+            }
+        });
+        // add unknown actions
+        control.supported.forEach(action => {
+            if (!CAPABILITIES[action]) {
+                actions.push(<span
+                    key={action}
+                    title={action}
+                    className={this.props.classes.actionSpan}
+                >
+                    {action}
+                </span>);
+            }
+        });
+        control.enforced.forEach(action => {
+            if (!CAPABILITIES[action]) {
+                actions.push(<span
+                    key={action}
+                    title={action}
+                    className={this.props.classes.actionSpan}
+                    style={{ opacity: 0.7 }}
+                >
+                    {action}
+                </span>);
+            }
+        });
+
+        return actions;
+    }
+
+    renderDevTypes(dev) {
+        // Type
+        const devices = [];
         if (!dev.controls) {
             console.log('Something went wrong');
             return null;
         }
 
-        Object.keys(actionsMapping).forEach(action => {
-            if (dev.controls.find(item => item.supported.includes(action))) {
-                const Icon = actionsMapping[action].icon;
-                actions.push(<span key={action} title={actionsMapping[action].desc}><Icon className={this.props.classes.actionIcon} style={{ color: actionsMapping[action].color }} /></span>);
-            } else if (dev.controls.find(item => item.enforced.includes(action))) {
-                const Icon = actionsMapping[action].icon;
-                actions.push(<span key={action} title={actionsMapping[action].desc}><Icon className={this.props.classes.actionIcon} style={{ color: actionsMapping[action].color }} /></span>);
+        dev.controls.forEach((control, i) => {
+            if (DEVICES[control.type]) {
+                const Icon = DEVICES[control.type].icon;
+                devices.push(<span
+                    key={`${control.type}_${i}`}
+                    title={DEVICES[control.type].label}
+                    className={this.props.classes.actionSpan}
+                >
+                    <Icon className={this.props.classes.deviceIcon} style={{ color: DEVICES[control.type].color }} />
+                </span>);
             }
         });
-        // add unknown actions
-        dev.controls.forEach(control => {
-            control.supported.forEach(action => {
-                if (!actionsMapping[action]) {
-                    actions.push(<span key={action} title={action}>{action}</span>);
-                }
-            });
-            control.enforced.forEach(action => {
-                if (!actionsMapping[action]) {
-                    actions.push(<span key={action} title={action}>{action}</span>);
-                }
-            });
-        });
 
-        return actions;
+        return devices;
     }
 
     onExpand(lineNum) {
@@ -534,36 +567,41 @@ class Alexa3SmartNames extends Component {
         this.setState({ expanded });
     }
 
-    renderSelectByOn(dev) {
-        if (dev.autoDetected) {
-            return <div className={this.props.classes.devSubLineByOn} />;
+    renderSelectByOn(control) {
+        // check if brightness and powerState or percentage and powerState exists
+        const allCapabilities = control.supported.concat(control.enforced);
+        if ((allCapabilities.includes('brightness') && allCapabilities.includes('powerState')) ||
+            (allCapabilities.includes('percentage') && allCapabilities.includes('powerState'))
+        ) {
+            const state = Object.values(control.states)[0];
+            // get first id
+            const byON = state.smartName?.byON || undefined;
+            // type = '-', 'stored', false or number [5-100]
+            const items = [
+                <MenuItem key="_" value=""><em>{I18n.t('Default')}</em></MenuItem>,
+                <MenuItem key="last" value="stored">{I18n.t('last value')}</MenuItem>,
+                <MenuItem key="omit" value="omit">{I18n.t('omit value')}</MenuItem>,
+            ];
+            for (let i = 5; i <= 100; i += 5) {
+                items.push(<MenuItem key={i.toString()} value={i.toString()}>
+                    {i}
+                    %
+                </MenuItem>);
+            }
+            return <FormControl className={this.props.classes.selectType} variant="standard">
+                <Select
+                    variant="standard"
+                    className={this.props.classes.devSubLineByOnSelect}
+                    value={(byON || '').toString()}
+                    onChange={e => this.onParamsChange(state.id, e.target.value)}
+                >
+                    {items}
+                </Select>
+                <FormHelperText className={this.props.classes.devSubLineTypeTitle}>{I18n.t('by ON')}</FormHelperText>
+            </FormControl>;
         }
-        const state = Object.values(dev.controls[0].states)[0];
-        // get first id
-        const byON = state.smartName?.byON || undefined;
-        // type = '-', 'stored', false or number [5-100]
-        const items = [
-            <MenuItem key="_" value=""><em>{I18n.t('Default')}</em></MenuItem>,
-            <MenuItem key="last" value="stored">{I18n.t('last value')}</MenuItem>,
-            <MenuItem key="omit" value="omit">{I18n.t('omit value')}</MenuItem>,
-        ];
-        for (let i = 5; i <= 100; i += 5) {
-            items.push(<MenuItem key={i.toString()} value={i.toString()}>
-                {i}
-%
-            </MenuItem>);
-        }
-        return <FormControl className={this.props.classes.devSubLineByOn} variant="standard">
-            <Select
-                variant="standard"
-                className={this.props.classes.devSubLineByOnSelect}
-                value={(byON || '').toString()}
-                onChange={e => this.onParamsChange(state.id, e.target.value)}
-            >
-                {items}
-            </Select>
-            <FormHelperText className={this.props.classes.devSubLineTypeTitle}>{I18n.t('by ON')}</FormHelperText>
-        </FormControl>;
+
+        return <div className={this.props.classes.selectType} />;
     }
 
     onParamsChange(id, byON, type) {
@@ -642,13 +680,18 @@ class Alexa3SmartNames extends Component {
                 background = this.props.themeType === 'dark' ? LAST_CHANGED_COLOR_DARK : LAST_CHANGED_COLOR_LIGHT;
             }
 
+            const Icon = DEVICES[control.type]?.icon || null;
+
             return [
                 <div key={c} className={classes.devSubLine} style={(c % 2) ? {} : { background }}>
-                    <div className={Utils.clsx(this.props.classes.devLineActions, this.props.classes.channelLineActions)}>{this.renderActions({ controls: [control] })}</div>
-                    <div className={classes.devSubLineName}>{control.type}</div>
+                    {Icon ? <Icon className={classes.deviceSmallIcon} style={{ color: DEVICES[control.type].color }} /> : null}
+                    <div className={classes.devSubLineName}>{I18n.t(control.type)}</div>
+                    <div className={this.props.classes.devLineActions}>{this.renderActions(control)}</div>
+                    {this.renderSelectByOn(control, dev)}
+                    <div className={this.props.classes.devLineEdit} />
                     {dev.autoDetected && dev.controls.length > 1 ? <IconButton aria-label="Delete" className={this.props.classes.devSubLineDelete} onClick={() => this.onAskDelete(id, lineNum)}>
                         <IconDelete fontSize="middle" />
-                    </IconButton> : null}
+                    </IconButton> : <div className={this.props.classes.devLineDelete} />}
                 </div>,
                 this.renderStates(control, classes),
             ];
@@ -689,13 +732,13 @@ class Alexa3SmartNames extends Component {
                         (expanded ? <IconCollapse /> : <IconExpand />)}
                 </IconButton>
                 <div className={this.props.classes.devLineNameBlock}>
-                    <span className={this.props.classes.devLineName}>{title}</span>
-                    <span className={this.props.classes.devLineDescription}>{dev.type}</span>
+                    {title}
+                    {/* <span className={this.props.classes.devLineName}>{title}</span>
+                    <span className={this.props.classes.devLineDescription}>{dev.type}</span> */}
                     {changed ? <CircularProgress className={this.props.classes.devLineProgress} size={20} /> : null}
                 </div>
-                <span className={this.props.classes.devLineActions}>{this.renderActions(dev)}</span>
+                <span className={this.props.classes.devLineActions}>{this.renderDevTypes(dev)}</span>
                 {this.renderSelectType(dev)}
-                {this.renderSelectByOn(dev)}
                 {!dev.autoDetected ?
                     <IconButton aria-label="Edit" className={this.props.classes.devLineEdit} onClick={() => this.onEdit(id)}>
                         <IconEdit fontSize="middle" />
@@ -979,10 +1022,11 @@ class Alexa3SmartNames extends Component {
                 size="small"
                 color="secondary"
                 aria-label="Add"
+                disabled={this.state.lastChanged && this.waitForUpdateID}
                 className={this.props.classes.button}
                 onClick={() => this.setState({ showSelectId: true })}
             >
-                <IconAdd />
+                {this.state.lastChanged && this.waitForUpdateID ? <CircularProgress /> : <IconAdd />}
             </Fab>
             <Fab
                 size="small"

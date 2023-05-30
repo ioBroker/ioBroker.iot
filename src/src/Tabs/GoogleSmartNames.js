@@ -336,13 +336,14 @@ class GoogleSmartNames extends Component {
                     }
 
                     this.setState({
-                        devices: list, loading: false, changed: [], browse: false,
+                        devices: list,
+                        loading: false,
+                        changed: [],
+                        browse: false,
                     });
                 }
             })
-            .catch(error => {
-                this.setState({ message: I18n.t(error) });
-            });
+            .catch(error => this.setState({ message: I18n.t(error), browse: false }));
     }
 
     onReadyUpdate(id, state) {

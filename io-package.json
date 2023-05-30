@@ -192,6 +192,7 @@
     "iftttKey": "",
     "replaces": "",
     "amazonAlexa": true,
+    "amazonAlexaV3": false,
     "amazonAlexaBlood": "",
     "amazonAlexaBloodShortAnswer": false,
     "googleHome": false,

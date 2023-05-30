@@ -345,7 +345,7 @@ class AlexaSmartNames extends Component {
                     }
                 }
             })
-            .catch(e => this.setState({ message: I18n.t('Error %s', e) }));
+            .catch(e => this.setState({ message: I18n.t('Error %s', e), browse: false }));
     }
 
     onReadyUpdate(id, state) {

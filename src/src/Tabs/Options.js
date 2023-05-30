@@ -258,6 +258,7 @@ class Options extends Component {
                 {this.renderInput('ioBroker.pro Password', 'pass', 'password', 'current-password')}
                 <br />
                 {this.renderCheckbox('Amazon Alexa', 'amazonAlexa')}
+                {this.renderCheckbox('Amazon AlexaV3 (Beta)', 'amazonAlexaV3')}
                 <FormControlLabel
                     key="googleHome"
                     className={this.props.classes.controlElement}

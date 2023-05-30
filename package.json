@@ -30,7 +30,7 @@
     "aws-iot-device-sdk": "^2.2.12",
     "echarts": "^5.4.2",
     "iobroker.type-detector": "^1.1.1",
-    "jsdom": "^22.0.0",
+    "jsdom": "^22.1.0",
     "mime": "^3.0.0",
     "moment": "^2.29.4",
     "axios": "^1.4.0",
@@ -42,7 +42,7 @@
     "@alcalzone/release-script-plugin-license": "^3.5.9",
     "@iobroker/legacy-testing": "^0.3.6",
     "@types/iobroker": "^4.0.5",
-    "@types/node": "^20.2.3",
+    "@types/node": "^20.2.5",
     "chai": "^4.3.7",
     "gulp": "^4.0.2",
     "mocha": "^10.2.0"
