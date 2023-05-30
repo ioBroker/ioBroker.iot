@@ -8,7 +8,6 @@ const utils        = require('@iobroker/adapter-core'); // Get common adapter ut
 const AlexaSH2     = require('./lib/alexaSmartHomeV2');
 const AlexaSH3     = require('./lib/alexaSmartHomeV3');
 const AlexaCustom  = require('./lib/alexaCustom');
-const AlexaCustomBlood = require('./lib/alexaCustomBlood');
 const GoogleHome   = require('./lib/googleHome');
 const YandexAlisa  = require('./lib/alisa');
 const Remote       = require('./lib/remote');
@@ -27,7 +26,6 @@ let alexaSH2       = null;
 let alexaSH3       = null;
 let googleHome     = null;
 let alexaCustom    = null;
-let alexaCustomBlood = null;
 let yandexAlisa    = null;
 let remote         = null;
 let device         = null;
@@ -63,7 +61,6 @@ function startAdapter(options) {
                 alexaSH3         && alexaSH3.setLanguage(lang);
                 yandexAlisa      && yandexAlisa.setLanguage(lang);
                 alexaCustom      && alexaCustom.setLanguage(lang);
-                alexaCustomBlood && alexaCustomBlood.setLanguage(lang, defaultHistory);
                 googleHome       && googleHome.setLanguage(lang);
                 remote.setLanguage(lang);
             }
@@ -808,18 +805,10 @@ async function processMessage(type, request) {
             adapter.log.error(`Error from Alexa events cloud: ${request.error}`);
         } else
         if (request && !request.header) {
-            if (request && request.session && request.session.application && alexaCustomBlood && request.session.application.applicationId === alexaCustomBlood.getAppId()) {
-                if (alexaCustomBlood) {
-                    return alexaCustomBlood.process(request, adapter.config.amazonAlexaBlood);
-                } else {
-                    return { error: 'Service is disabled' };
-                }
+            if (alexaCustom) {
+                return alexaCustom.process(request, adapter.config.amazonAlexa);
             } else {
-                if (alexaCustom) {
-                    return alexaCustom.process(request, adapter.config.amazonAlexa);
-                } else {
-                    return { error: 'Service is disabled' };
-                }
+                return { error: 'Service is disabled' };
             }
         } else {
             if (alexaSH2) {
@@ -1234,9 +1223,6 @@ async function main() {
         // alexaSH3    = new AlexaSH3(adapter);
         alexaCustom = new AlexaCustom(adapter);
     }
-    if (adapter.config.amazonAlexaBlood) {
-        alexaCustomBlood = new AlexaCustomBlood(adapter);
-    }
     if (adapter.config.yandexAlisa) {
         yandexAlisa = new YandexAlisa(adapter);
     }
@@ -1303,7 +1289,6 @@ async function main() {
     // adapter.config.amazonAlexa && alexaSH3 && alexaSH3.updateDevices();
 
     alexaCustom && alexaCustom.setLanguage(lang, translate);
-    alexaCustomBlood && alexaCustomBlood.setSettings(lang, defaultHistory);
 
     remote.setLanguage(lang);
     // check password

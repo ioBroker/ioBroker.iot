@@ -179,7 +179,7 @@ You can use GET method too `https://service.iobroker.in/v1/iotService?service=te
 `X` can be defined in settings by the "Use text2command instance" option.
 
 ## Custom skill
-The answers for custom skill can be processed in two ways:
+The answers for the custom skill can be processed in two ways:
 - `text2command`
 - `javascript`
 
@@ -302,6 +302,7 @@ setState('iot.0.app.message', JSON.stringify({
 ## Changelog
 ### **WORK IN PROGRESS**
 * (bluefox) Added support for amazon alexa v3
+* (bluefox) Removed support for sugar blood indication
 
 ### 1.14.6 (2023-05-12)
 * (bluefox) Corrected translations
