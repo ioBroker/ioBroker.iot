@@ -1,9 +1,9 @@
 {
   "common": {
     "name": "iot",
-    "version": "2.0.1",
+    "version": "2.0.2",
     "news": {
-      "2.0.1": {
+      "2.0.2": {
         "en": "Added support for amazon alexa v3\nRemoved support for sugar blood indication",
         "de": "Unterstützung für amazon alexa v3\nEntfernte Unterstützung für Zuckerblutanzeige",
         "ru": "Добавлена поддержка amazon alexa v3\nУдаленная поддержка для индикации сахарной крови",
