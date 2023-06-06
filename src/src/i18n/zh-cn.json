@@ -203,7 +203,7 @@
   "light": "光",
   "dimmer": "调光器",
   "thermostat": "恒温器",
-  "blind": "瞎的",
+  "blind": "百叶窗",
   "gate": "门",
   "lock": "锁",
   "hue": "色调",
@@ -214,7 +214,7 @@
   "Thermostat": "温控器",
   "Light": "光",
   "AirCondition": "空调",
-  "Blind": "瞎的",
+  "Blind": "百叶窗",
   "ContactSensor": "接触式传感器",
   "Control": "控制",
   "Door": "门",
@@ -231,5 +231,6 @@
   "Sensor": "传感器",
   "Vacuum cleaner": "吸尘器",
   "Volume group": "卷组",
-  "Window sensor": "窗口传感器"
+  "Window sensor": "窗口传感器",
+  "Blinds": "百叶窗"
 }

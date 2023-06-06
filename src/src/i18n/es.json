@@ -203,7 +203,7 @@
   "light": "luz",
   "dimmer": "regulador de intensidad",
   "thermostat": "termostato",
-  "blind": "ciego",
+  "blind": "Persianas",
   "gate": "puerta",
   "lock": "cerrar",
   "hue": "matiz",
@@ -214,7 +214,7 @@
   "Thermostat": "Termostato",
   "Light": "Luz",
   "AirCondition": "Aire acondicionado",
-  "Blind": "Ciego",
+  "Blind": "Persianas",
   "ContactSensor": "sensor de contacto",
   "Control": "Control",
   "Door": "Puerta",
@@ -231,5 +231,6 @@
   "Sensor": "Sensor",
   "Vacuum cleaner": "aspiradora",
   "Volume group": "grupo de volumen",
-  "Window sensor": "sensor de ventana"
+  "Window sensor": "sensor de ventana",
+  "Blinds": "Persianas"
 }

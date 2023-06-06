@@ -76,7 +76,7 @@ function startAdapter(options) {
 
                 return;
             }
-            alexaSH3.handleObjectChange(id, obj);
+            alexaSH3 && alexaSH3.handleObjectChange(id, obj);
 
             id && remote.updateObject(id, obj);
         },
@@ -1220,7 +1220,6 @@ async function main() {
     }
     if (adapter.config.amazonAlexa) {
         alexaSH2    = new AlexaSH2(adapter);
-        // alexaSH3    = new AlexaSH3(adapter);
         alexaCustom = new AlexaCustom(adapter);
     }
     if (adapter.config.yandexAlisa) {
@@ -1285,9 +1284,6 @@ async function main() {
     adapter.config.amazonAlexa && alexaSH2 && alexaSH2.setLanguage(lang, translate);
     adapter.config.amazonAlexa && alexaSH2 && alexaSH2.updateDevices();
 
-    // adapter.config.amazonAlexa && alexaSH3 && alexaSH3.setLanguage(lang, translate);
-    // adapter.config.amazonAlexa && alexaSH3 && alexaSH3.updateDevices();
-
     alexaCustom && alexaCustom.setLanguage(lang, translate);
 
     remote.setLanguage(lang);
@@ -1324,7 +1320,7 @@ async function main() {
         }
     }
 
-    if (adapter.config.amazonAlexa) {
+    if (adapter.config.amazonAlexaV3) {
         alexaSH3 = new AlexaSH3({
             adapter: adapter,
             iotClientId: iotClientId,

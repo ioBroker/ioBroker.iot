@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
+import SVG from 'react-inlinesvg';
 
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -62,6 +63,7 @@ import {
     ThermostatAuto,
     VolumeUp,
     DeviceThermostat,
+    ChevronRight,
 } from '@mui/icons-material';
 
 import {
@@ -69,11 +71,14 @@ import {
     I18n,
     Message as MessageDialog,
     SelectID as DialogSelectID,
+    Icon as ARIcon
 } from '@iobroker/adapter-react-v5';
 
 const CHANGED_COLOR = '#e7000040';
 const DEFAULT_CHANNEL_COLOR_DARK = '#4f4f4f';
+const DEFAULT_CHANNEL_COLOR_DARK2 = '#313131';
 const DEFAULT_CHANNEL_COLOR_LIGHT = '#e9e9e9';
+const DEFAULT_CHANNEL_COLOR_LIGHT2 = '#bbbbbb';
 const LAST_CHANGED_COLOR_DARK = '#5c8f65';
 const LAST_CHANGED_COLOR_LIGHT = '#b4ffbe';
 
@@ -94,6 +99,15 @@ const SMART_TYPES = [
     'temperature',
     'window',
 ];
+
+const SMART_TYPES_V2 = {
+    'LIGHT': 'light',
+    'SWITCH': 'socket',
+    'THERMOSTAT': 'thermostat',
+    'SMARTPLUG': 'socket',
+    'SMARTLOCK': 'lock',
+    'CAMERA': 'camera',
+};
 
 const CAPABILITIES = {
     brightness: { label: 'Brightness', icon: Brightness5, color: '#c9b803' },
@@ -212,39 +226,63 @@ const styles = theme => ({
     devSubLine: {
         position: 'relative',
         display: 'flex',
-        width: 'calc(100% - 55px)',
-        paddingLeft: 55,
+        width: '100%',
         alignItems: 'center',
+    },
+    devSubLineExpand: {
+        marginLeft: 15,
+    },
+    devSubLineExpanded: {
+        transition: 'transform 0.3s',
+        transform: 'rotate(90deg)',
     },
     devSubLineName: {
         flexGrow: 1,
         fontSize: 13,
+        fontWeight: 'bold',
+        marginLeft: 5,
+    },
+    devSubLineName1: {
+        minWidth: 100,
+        marginRight: 5,
+        display: 'inline-block',
+    },
+    devSubLineName2: {
+        fontWeight: 'normal',
+        display: 'inline-block',
+    },
+    devSubLineName2Div: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: 5,
     },
     devSubSubLineName:  {
         fontSize: 11,
         fontStyle: 'italic',
-        paddingLeft: 70,
+        paddingLeft: 10,
     },
     devSubSubLineStateName: {
-
+        minWidth: 121,
+        display: 'inline-block',
+        fontWeight: 'bold',
     },
     devSubSubLineStateId: {
         marginLeft: 5,
     },
     devSubLineDelete: {
-        position: 'absolute',
-        top: 6,
-        right: 12,
-        padding: 0,
+        // padding: 0,
     },
     devSubLineEdit: {
-        position: 'absolute',
-        top: 12,
-        right: 62,
-        padding: 0,
+        // padding: 0,
     },
     devSubLineTypeTitle: {
         marginTop: 0,
+    },
+    statesLine: {
+        position: 'relative',
+        width: 'calc(100% - 50px)',
+        paddingLeft: 50,
+        paddingBottom: 5,
     },
     devSubSubLine: {
         position: 'relative',
@@ -272,6 +310,48 @@ const styles = theme => ({
     },
 });
 
+function getObjectIcon(obj, id, imagePrefix) {
+    imagePrefix = imagePrefix || '.'; // http://localhost:8081';
+    let src = '';
+    const common = obj && obj.common;
+
+    if (common) {
+        const cIcon = common.icon;
+        if (cIcon) {
+            if (!cIcon.startsWith('data:image/')) {
+                if (cIcon.includes('.')) {
+                    let instance;
+                    if (obj.type === 'instance' || obj.type === 'adapter') {
+                        src = `${imagePrefix}/adapter/${common.name}/${cIcon}`;
+                    } else if (id && id.startsWith('system.adapter.')) {
+                        instance = id.split('.', 3);
+                        if (cIcon[0] === '/') {
+                            instance[2] += cIcon;
+                        } else {
+                            instance[2] += `/${cIcon}`;
+                        }
+                        src = `${imagePrefix}/adapter/${instance[2]}`;
+                    } else {
+                        instance = id.split('.', 2);
+                        if (cIcon[0] === '/') {
+                            instance[0] += cIcon;
+                        } else {
+                            instance[0] += `/${cIcon}`;
+                        }
+                        src = `${imagePrefix}/adapter/${instance[0]}`;
+                    }
+                } else {
+                    return null;
+                }
+            } else {
+                src = cIcon;
+            }
+        }
+    }
+
+    return src || null;
+}
+
 class Alexa3SmartNames extends Component {
     constructor(props) {
         super(props);
@@ -284,6 +364,13 @@ class Alexa3SmartNames extends Component {
         if (!DEVICES.translated) {
             Object.keys(DEVICES).forEach(a => DEVICES[a].label = I18n.t(DEVICES[a].label));
             DEVICES.translated = true;
+        }
+
+        let expanded = window.localStorage.getItem('v3.expanded') || '[]';
+        try {
+            expanded = JSON.parse(expanded);
+        } catch (e) {
+            expanded = [];
         }
 
         this.state = {
@@ -302,10 +389,12 @@ class Alexa3SmartNames extends Component {
             filter: '',
             loading: true,
             browse: false,
-            expanded: [],
+            expanded,
             lastChanged: '',
+            objects: {},
         };
 
+        this.requesting = {};
         this.timerChanged = null;
         this.browseTimer = null;
         this.browseTimerCount = 0;
@@ -371,6 +460,15 @@ class Alexa3SmartNames extends Component {
                         this.waitForUpdateID = null;
                     }
                     console.log('BROWSE received.');
+                    list.sort((a, b) => {
+                        if (a.friendlyName > b.friendlyName) {
+                            return 1;
+                        }
+                        if (a.friendlyName < b.friendlyName) {
+                            return -1;
+                        }
+                        return 0;
+                    });
 
                     this.setState({
                         devices: list,
@@ -484,7 +582,7 @@ class Alexa3SmartNames extends Component {
         });
     }
 
-    renderActions(control) {
+    renderChannelActions(control) {
         // Type
         const actions = [];
 
@@ -540,30 +638,50 @@ class Alexa3SmartNames extends Component {
             return null;
         }
 
+        const usedTypes = [];
         dev.controls.forEach((control, i) => {
+            if (!usedTypes.includes(control.type)) {
+                usedTypes.push(control.type);
+            } else {
+                return;
+            }
             if (DEVICES[control.type]) {
                 const Icon = DEVICES[control.type].icon;
-                devices.push(<span
+                const currentType = <span
                     key={`${control.type}_${i}`}
                     title={DEVICES[control.type].label}
                     className={this.props.classes.actionSpan}
                 >
                     <Icon className={this.props.classes.deviceIcon} style={{ color: DEVICES[control.type].color }} />
-                </span>);
+                </span>;
+
+                if (control.type !== 'Blind' && control.type !== 'Light' && control.type !== 'Socket') {
+                    devices.unshift(currentType);
+                } else {
+                    // try to place light, blind and socket at the end
+                    devices.push(currentType);
+                }
             }
         });
 
         return devices;
     }
 
-    onExpand(lineNum) {
-        const expanded = JSON.parse(JSON.stringify(this.state.expanded));
-        const pos = expanded.indexOf(this.state.devices[lineNum].friendlyName);
+    getControlId(lineNum, controlNum) {
+        return controlNum === undefined ? this.state.devices[lineNum].friendlyName : `${this.state.devices[lineNum].friendlyName}_${controlNum}`;
+    }
+
+    onExpand(lineNum, controlNum) {
+        const expanded = [...this.state.expanded];
+        const id = this.getControlId(lineNum, controlNum);
+        const pos = expanded.indexOf(id);
         if (pos === -1) {
-            expanded.push(this.state.devices[lineNum].friendlyName);
+            expanded.push(id);
         } else {
             expanded.splice(pos, 1);
         }
+        window.localStorage.setItem('v3.expanded', JSON.stringify(expanded));
+
         this.setState({ expanded });
     }
 
@@ -631,8 +749,24 @@ class Alexa3SmartNames extends Component {
             for (let i = 0; i < SMART_TYPES.length; i++) {
                 items.push(<MenuItem key={SMART_TYPES[i]} value={SMART_TYPES[i]}><em>{I18n.t(SMART_TYPES[i])}</em></MenuItem>);
             }
+            // convert from AlexaV2 to AlexaV3
+            if (type && !SMART_TYPES[type]) {
+                if (SMART_TYPES[type.toLowerCase()]) {
+                    type = type.toLowerCase();
+                } else
+                if (SMART_TYPES_V2[type]) {
+                    type = SMART_TYPES_V2[type];
+                }
+            }
+
             return <FormControl variant="standard" className={this.props.classes.selectType}>
-                <Select variant="standard" value={type || '_'} onChange={e => onChange(e.target.value === '_' ? '' : e.target.value)}>{items}</Select>
+                <Select
+                    variant="standard"
+                    value={type || '_'}
+                    onChange={e => onChange(e.target.value === '_' ? '' : e.target.value)}
+                >
+                    {items}
+                </Select>
                 <FormHelperText className={this.props.classes.devSubLineTypeTitle}>{I18n.t('Types')}</FormHelperText>
             </FormControl>;
         }
@@ -651,22 +785,90 @@ class Alexa3SmartNames extends Component {
         return this.renderSelectTypeSelector(type, value => this.onParamsChange(state.id, undefined, value));
     }
 
-    renderStates(control, classes) {
-        return Object.keys(control.states).map((name, c) =>
-            <div
-                key={name}
-                className={classes.devSubSubLine}
-                style={(c % 2) ?
-                    { background: this.props.themeType === 'dark' ? `${DEFAULT_STATE_COLOR_DARK}80` : `${DEFAULT_STATE_COLOR_LIGHT}80` }
-                    :
-                    { background: this.props.themeType === 'dark' ? DEFAULT_STATE_COLOR_DARK : DEFAULT_STATE_COLOR_LIGHT }}
-            >
-                <div className={classes.devSubSubLineName}>
-                    <span className={classes.devSubSubLineStateName}>{name}</span>
-                    :
-                    <span className={classes.devSubSubLineStateId}>{control.states[name].id}</span>
-                </div>
-            </div>);
+    renderStates(control, classes, background) {
+        return <div key="states" className={classes.statesLine} style={{ background }}>
+            {Object.keys(control.states).map((name, c) =>
+                <div
+                    key={name}
+                    className={classes.devSubSubLine}
+                    style={(c % 2) ?
+                        { background: this.props.themeType === 'dark' ? `${DEFAULT_STATE_COLOR_DARK}80` : `${DEFAULT_STATE_COLOR_LIGHT}80` }
+                        :
+                        { background: this.props.themeType === 'dark' ? DEFAULT_STATE_COLOR_DARK : DEFAULT_STATE_COLOR_LIGHT }}
+                >
+                    <div className={classes.devSubSubLineName}>
+                        <div className={classes.devSubSubLineStateName}>{name}:</div>
+                        <span className={classes.devSubSubLineStateId}>{control.states[name].id}</span>
+                    </div>
+                </div>)}
+        </div>;
+    }
+
+    static getParentId(id) {
+        const parts = id.split('.');
+        parts.pop();
+        return parts.join('.');
+    }
+
+    async findDeviceForState(stateId) {
+        // read channel
+        const channelId = Alexa3SmartNames.getParentId(stateId);
+        const channelObj = await this.props.socket.getObject(channelId);
+        if (channelObj?.type === 'device') {
+            return channelObj;
+        }
+
+        if (channelObj && (channelObj.type === 'channel' || channelObj.type === 'folder')) {
+            let deviceId = Alexa3SmartNames.getParentId(channelId);
+            let deviceObj = await this.props.socket.getObject(deviceId);
+
+            if (deviceObj?.type === 'device') {
+                return deviceObj;
+            }
+
+            if (deviceObj?.type === 'folder') {
+                deviceId = Alexa3SmartNames.getParentId(channelId);
+                deviceObj = await this.props.socket.getObject(deviceId);
+                if (deviceObj?.type === 'device') {
+                    return deviceObj;
+                }
+            }
+
+            return channelObj;
+        }
+
+        return this.props.socket.getObject(stateId);
+    }
+
+    getControlProps(control) {
+        // get first state
+        const stateId = Object.values(control.states)[0].id;
+        if (this.state.objects[stateId] === undefined && !this.requesting[stateId]) {
+            this.requesting[stateId] = true;
+            // try to find the device
+            setTimeout(() => {
+                this.findDeviceForState(stateId)
+                    .then(obj => {
+                        delete this.requesting[stateId];
+                        const objects = JSON.parse(JSON.stringify(this.state.objects));
+                        if (obj && obj.common) {
+                            objects[stateId] = { name: obj.common?.name || null, icon: getObjectIcon(obj, stateId, '../..') };
+                            if (objects[stateId].name && typeof objects[stateId].name === 'object') {
+                                objects[stateId] = objects[stateId].name[I18n.getLanguage()] || objects[stateId].name.en;
+                            }
+                        } else {
+                            objects[stateId] = { name: stateId };
+                        }
+                        this.setState({ objects });
+                    });
+            }, 50);
+        }
+
+        if (this.state.objects[stateId]) {
+            return this.state.objects[stateId];
+        } else {
+            return { name: stateId };
+        }
     }
 
     renderChannels(dev, lineNum) {
@@ -675,38 +877,66 @@ class Alexa3SmartNames extends Component {
         return dev.controls.map((control, c) => {
             const id = Object.values(control.states)[0].id;
 
-            let background = this.state.changed.includes(id) ? CHANGED_COLOR : this.props.themeType === 'dark' ? DEFAULT_CHANNEL_COLOR_DARK : DEFAULT_CHANNEL_COLOR_LIGHT;
+            let background = this.state.changed.includes(id) ?
+                CHANGED_COLOR :
+                this.props.themeType === 'dark' ?
+                    ((c % 2) ? DEFAULT_CHANNEL_COLOR_DARK : DEFAULT_CHANNEL_COLOR_DARK2) :
+                    ((c % 2) ? DEFAULT_CHANNEL_COLOR_LIGHT : DEFAULT_CHANNEL_COLOR_LIGHT2);
+
             if (this.state.lastChanged === id && (background === DEFAULT_CHANNEL_COLOR_DARK || background === DEFAULT_CHANNEL_COLOR_LIGHT)) {
                 background = this.props.themeType === 'dark' ? LAST_CHANGED_COLOR_DARK : LAST_CHANGED_COLOR_LIGHT;
             }
 
             const Icon = DEVICES[control.type]?.icon || null;
+            const expanded = this.state.expanded.includes(this.getControlId(lineNum, c));
+
+            const controlProps = this.getControlProps(control);
 
             return [
-                <div key={c} className={classes.devSubLine} style={(c % 2) ? {} : { background }}>
+                <div key={c} className={classes.devSubLine} style={{ background }}>
+                    <IconButton className={classes.devSubLineExpand} onClick={() => this.onExpand(lineNum, c)}>
+                        <ChevronRight
+                            className={expanded ? classes.devSubLineExpanded : undefined}
+                        />
+                    </IconButton>
                     {Icon ? <Icon className={classes.deviceSmallIcon} style={{ color: DEVICES[control.type].color }} /> : null}
-                    <div className={classes.devSubLineName}>{I18n.t(control.type)}</div>
-                    <div className={this.props.classes.devLineActions}>{this.renderActions(control)}</div>
+                    <div className={classes.devSubLineName}>
+                        <div className={classes.devSubLineName1}>{I18n.t(control.type)}</div>
+                        <div className={classes.devSubLineName2}>
+                            <div className={classes.devSubLineName2Div}>
+                                {controlProps.icon ?
+                                    (controlProps.icon.startsWith('data:image/svg') ?
+                                        <SVG className={classes.devSubLineName2Icon} src={controlProps.icon} width={20} height={20} /> :
+                                        <ARIcon src={controlProps.icon} className={classes.devSubLineName2Icon} style={{ width: 20, height: 20 }}/> : null)
+                                    : null}
+                                {controlProps.name}
+                            </div>
+                        </div>
+                    </div>
+                    <div className={this.props.classes.devLineActions}>{this.renderChannelActions(control)}</div>
                     {this.renderSelectByOn(control, dev)}
                     <div className={this.props.classes.devLineEdit} />
-                    {dev.autoDetected && dev.controls.length > 1 ? <IconButton aria-label="Delete" className={this.props.classes.devSubLineDelete} onClick={() => this.onAskDelete(id, lineNum)}>
+                    {dev.autoDetected && dev.controls.length > 1 ? <IconButton
+                        aria-label="Delete"
+                        className={this.props.classes.devSubLineDelete}
+                        onClick={() => this.onAskDelete(id, lineNum)}
+                    >
                         <IconDelete fontSize="middle" />
                     </IconButton> : <div className={this.props.classes.devLineDelete} />}
                 </div>,
-                this.renderStates(control, classes),
+                expanded ? this.renderStates(control, classes, background) : null,
             ];
         });
     }
 
     renderDevice(dev, lineNum) {
-        const friendlyName = dev.friendlyName;
         // if (!dev.additionalApplianceDetails.group && dev.additionalApplianceDetails.nameModified) {
-        const title = friendlyName;
+        const title = dev.friendlyName;
         // } else {
         //    title = <span className={this.props.classes.devModified} title={I18n.t('modified')}>{friendlyName}</span>;
         // }
 
-        const expanded = this.state.expanded.includes(friendlyName);
+        const expanded = this.state.expanded.includes(title);
         // take the very first ID
         const id = Object.values(dev.controls[0].states)[0].id;
 
@@ -1022,7 +1252,7 @@ class Alexa3SmartNames extends Component {
                 size="small"
                 color="secondary"
                 aria-label="Add"
-                disabled={this.state.lastChanged && this.waitForUpdateID}
+                disabled={!!this.state.lastChanged && !!this.waitForUpdateID}
                 className={this.props.classes.button}
                 onClick={() => this.setState({ showSelectId: true })}
             >

@@ -203,7 +203,7 @@
   "light": "свет",
   "dimmer": "диммер",
   "thermostat": "термостат",
-  "blind": "слепой",
+  "blind": "жалюзи",
   "gate": "ворота",
   "lock": "замок",
   "hue": "оттенок",
@@ -214,7 +214,7 @@
   "Thermostat": "Термостат",
   "Light": "Свет",
   "AirCondition": "Кондиционер",
-  "Blind": "Слепой",
+  "Blind": "Жалюзи",
   "ContactSensor": "Контактный датчик",
   "Control": "Контроль",
   "Door": "Дверь",
@@ -231,5 +231,6 @@
   "Sensor": "Датчик",
   "Vacuum cleaner": "Пылесос",
   "Volume group": "Группа томов",
-  "Window sensor": "Датчик окна"
+  "Window sensor": "Датчик окна",
+  "Blinds": "Жалюзи"
 }

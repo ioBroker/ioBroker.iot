@@ -203,7 +203,7 @@
   "light": "світло",
   "dimmer": "диммер",
   "thermostat": "термостат",
-  "blind": "сліпий",
+  "blind": "віконні жалюзі",
   "gate": "ворота",
   "lock": "замок",
   "hue": "відтінок",
@@ -214,7 +214,7 @@
   "Thermostat": "Термостат",
   "Light": "світло",
   "AirCondition": "Кондиціонер",
-  "Blind": "Сліпий",
+  "Blind": "Віконні жалюзі",
   "ContactSensor": "Контактний датчик",
   "Control": "КОНТРОЛЬ",
   "Door": "двері",
@@ -231,5 +231,6 @@
   "Sensor": "датчик",
   "Vacuum cleaner": "Пилосос",
   "Volume group": "Група томів",
-  "Window sensor": "Датчик вікна"
+  "Window sensor": "Датчик вікна",
+  "Blinds": "Віконні жалюзі"
 }

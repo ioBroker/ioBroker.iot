@@ -203,7 +203,7 @@
   "light": "leggero",
   "dimmer": "dimmer",
   "thermostat": "termostato",
-  "blind": "cieco",
+  "blind": "tapparelle",
   "gate": "cancello",
   "lock": "serratura",
   "hue": "tinta",
@@ -214,7 +214,7 @@
   "Thermostat": "Termostato",
   "Light": "Leggero",
   "AirCondition": "Aria condizionata",
-  "Blind": "Cieco",
+  "Blind": "Tapparelle",
   "ContactSensor": "Sensore di contatto",
   "Control": "Controllo",
   "Door": "Porta",
@@ -231,5 +231,6 @@
   "Sensor": "Sensore",
   "Vacuum cleaner": "Aspirapolvere",
   "Volume group": "Gruppo di volumi",
-  "Window sensor": "Sensore finestra"
+  "Window sensor": "Sensore finestra",
+  "Blinds": "Tapparelle"
 }

@@ -203,7 +203,7 @@
   "light": "licht",
   "dimmer": "dimmer",
   "thermostat": "thermostaat",
-  "blind": "Blind",
+  "blind": "jaloezieën",
   "gate": "hek",
   "lock": "slot",
   "hue": "tint",
@@ -214,7 +214,7 @@
   "Thermostat": "Thermostaat",
   "Light": "Licht",
   "AirCondition": "Airco",
-  "Blind": "Blind",
+  "Blind": "Jaloezieën",
   "ContactSensor": "Contactsensor",
   "Control": "Controle",
   "Door": "Deur",
@@ -231,5 +231,6 @@
   "Sensor": "Sensor",
   "Vacuum cleaner": "Stofzuiger",
   "Volume group": "Volumegroep",
-  "Window sensor": "Raam sensor"
+  "Window sensor": "Raam sensor",
+  "Blinds": "Jaloezieën"
 }

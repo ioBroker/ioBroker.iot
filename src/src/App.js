@@ -64,6 +64,11 @@ class App extends GenericApp {
         };
 
         extendedProps.sentryDSN = window.sentryDSN;
+        // extendedProps.socket = {
+        //     protocol: 'http:',
+        //     host: '192.168.178.45',
+        //     port: 8081,
+        // };
 
         super(props, extendedProps);
 

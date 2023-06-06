@@ -203,7 +203,7 @@
   "light": "światło",
   "dimmer": "opornik",
   "thermostat": "termostat",
-  "blind": "ślepy",
+  "blind": "rolety okienne",
   "gate": "brama",
   "lock": "zamek",
   "hue": "odcień",
@@ -214,7 +214,7 @@
   "Thermostat": "Termostat",
   "Light": "Światło",
   "AirCondition": "Klimatyzacja",
-  "Blind": "Ślepy",
+  "Blind": "Rolety okienne",
   "ContactSensor": "Czujnik kontaktowy",
   "Control": "Kontrola",
   "Door": "Drzwi",
@@ -231,5 +231,6 @@
   "Sensor": "Czujnik",
   "Vacuum cleaner": "Odkurzacz",
   "Volume group": "Grupa woluminów",
-  "Window sensor": "Czujnik okna"
+  "Window sensor": "Czujnik okna",
+  "Blinds": "Rolety okienne"
 }

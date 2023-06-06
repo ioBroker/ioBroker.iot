@@ -300,6 +300,9 @@ setState('iot.0.app.message', JSON.stringify({
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Working on support for amazon alexa v3
+
 ### 2.0.2 (2023-06-05)
 * (bluefox) Added support for amazon alexa v3
 * (bluefox) Removed support for sugar blood indication

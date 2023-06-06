@@ -203,7 +203,7 @@
   "light": "lumière",
   "dimmer": "variateur",
   "thermostat": "thermostat",
-  "blind": "aveugle",
+  "blind": "stores de fenêtre",
   "gate": "portail",
   "lock": "serrure",
   "hue": "teinte",
@@ -214,7 +214,7 @@
   "Thermostat": "Thermostat",
   "Light": "Lumière",
   "AirCondition": "Air conditionné",
-  "Blind": "Aveugle",
+  "Blind": "Stores de fenêtre",
   "ContactSensor": "Contacter le capteur",
   "Control": "Contrôle",
   "Door": "Porte",
@@ -231,5 +231,6 @@
   "Sensor": "Capteur",
   "Vacuum cleaner": "aspirateur",
   "Volume group": "Groupe de volumes",
-  "Window sensor": "Capteur de fenêtre"
+  "Window sensor": "Capteur de fenêtre",
+  "Blinds": "Stores de fenêtre"
 }

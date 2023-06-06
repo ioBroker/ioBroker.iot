@@ -203,7 +203,7 @@
   "light": "light",
   "dimmer": "dimmer",
   "thermostat": "thermostat",
-  "blind": "blind",
+  "blind": "window blinds",
   "gate": "gate",
   "lock": "lock",
   "hue": "hue",
@@ -214,7 +214,7 @@
   "Thermostat": "Thermostat",
   "Light": "Light",
   "AirCondition": "Air condition",
-  "Blind": "Blind",
+  "Blind": "Window blinds",
   "ContactSensor": "Contact sensor",
   "Control": "Control",
   "Door": "Door",
@@ -231,5 +231,6 @@
   "Vacuum cleaner": "Vacuum cleaner",
   "Sensor": "Sensor",
   "Door sensor": "Door sensor",
-  "Color HUE": "Color HUE"
+  "Color HUE": "Color HUE",
+  "Blinds": "Window blinds"
 }

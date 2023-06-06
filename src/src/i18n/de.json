@@ -203,7 +203,7 @@
   "light": "Licht",
   "dimmer": "Dimmer",
   "thermostat": "Thermostat",
-  "blind": "blind",
+  "blind": "Fensterrollos",
   "gate": "Tor",
   "lock": "sperren",
   "hue": "Farbton",
@@ -214,7 +214,7 @@
   "Thermostat": "Thermostat",
   "Light": "Licht",
   "AirCondition": "Klimaanlage",
-  "Blind": "Blind",
+  "Blind": "Fensterrollos",
   "ContactSensor": "Kontaktsensor",
   "Control": "Kontrolle",
   "Door": "Tür",
@@ -231,5 +231,6 @@
   "Sensor": "Sensor",
   "Vacuum cleaner": "Staubsauger",
   "Volume group": "Volumengruppe",
-  "Window sensor": "Fenstersensor"
+  "Window sensor": "Fenstersensor",
+  "Blinds": "Fensterrollos"
 }
