@@ -196,20 +196,6 @@ function startAdapter(options) {
                         }
                         break;
 
-                    case 'enums':
-                        if (obj.callback) {
-                            adapter.log.info('Request enums');
-                            if (alexaSH2) {
-                                alexaSH2.updateDevices(() => {
-                                    adapter.sendTo(obj.from, obj.command, alexaSH2.getEnums(), obj.callback);
-                                    adapter.setState('smart.updates', false, true);
-                                });
-                            } else {
-                                adapter.sendTo(obj.from, obj.command, {error: 'not activated'}, obj.callback);
-                            }
-                        }
-                        break;
-
                     case 'alexaCustomKnownDevices':
                         // Admin UI can request the known/discoveredAlexa devices used via Custom skill
                         // Allow setting the rooms of the devices and store in adapter config
