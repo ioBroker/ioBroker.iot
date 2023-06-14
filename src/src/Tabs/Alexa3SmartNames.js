@@ -419,7 +419,7 @@ class Alexa3SmartNames extends Component {
     onAliveChanged = (id, state) => {
         if (state && (!!state.val) !== this.alive) {
             this.alive = !!state.val;
-            this.alive && setTimeout(() => this.browse(), 1000);
+            this.alive && setTimeout(() => this.browse(), 10000);
         }
     };
 
