@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "2.0.3",
+    "version": "2.0.4",
     "news": {
+      "2.0.4": {
+        "en": "Working on support for amazon alexa v3",
+        "de": "Arbeiten zur Unterstützung von amazon alexa v3",
+        "ru": "Работа над поддержкой amazon alexa v3",
+        "pt": "Trabalhando em suporte para amazon alexa v3",
+        "nl": "Werken aan steun voor Amazone Alexa v3",
+        "fr": "Travailler sur le support amazon alexa v3",
+        "it": "Lavorare sul supporto per amazon alexa v3",
+        "es": "Trabajando en soporte para amazon alexa v3",
+        "pl": "Działania na rzecz alexa v3",
+        "uk": "Робота на підтримку amazon alexa v3",
+        "zh-cn": "支持马纳区的工作a诉3"
+      },
       "2.0.3": {
         "en": "Working on support for amazon alexa v3",
         "de": "Arbeiten zur Unterstützung von amazon alexa v3",
@@ -80,19 +93,6 @@
         "pl": "Pakiet GUI",
         "uk": "Оновлені пакети GUI",
         "zh-cn": "A. 最新古伊一揽子计划"
-      },
-      "1.14.1": {
-        "en": "Downgraded axios version to 0.27.2",
-        "de": "Abwärtsgradierte Axios-Version auf 0,27.2",
-        "ru": "Улучшенная версия axios до 0.27.2",
-        "pt": "Versão de axios degradado para 0,27.2",
-        "nl": "Quality over Quantity (QoQ) Releases Vertaling:",
-        "fr": "Version axios rétrogradée à 0,27.2",
-        "it": "Versione di assio degradato a 0.27.2",
-        "es": "Versión axios degradados a 0.27.2",
-        "pl": "Downgrad axios wersja 0.27.2",
-        "uk": "Зниження версії axios до 0.27.2",
-        "zh-cn": "Down等级 axios版本 to 0.27.2"
       }
     },
     "title": "IoT Assistants",
