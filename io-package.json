@@ -3,19 +3,6 @@
     "name": "iot",
     "version": "2.0.4",
     "news": {
-      "2.0.4": {
-        "en": "Working on support for amazon alexa v3",
-        "de": "Arbeiten zur Unterstützung von amazon alexa v3",
-        "ru": "Работа над поддержкой amazon alexa v3",
-        "pt": "Trabalhando em suporte para amazon alexa v3",
-        "nl": "Werken aan steun voor Amazone Alexa v3",
-        "fr": "Travailler sur le support amazon alexa v3",
-        "it": "Lavorare sul supporto per amazon alexa v3",
-        "es": "Trabajando en soporte para amazon alexa v3",
-        "pl": "Działania na rzecz alexa v3",
-        "uk": "Робота на підтримку amazon alexa v3",
-        "zh-cn": "支持马纳区的工作a诉3"
-      },
       "2.0.3": {
         "en": "Working on support for amazon alexa v3",
         "de": "Arbeiten zur Unterstützung von amazon alexa v3",

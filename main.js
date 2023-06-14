@@ -1322,8 +1322,8 @@ async function main() {
 
     if (adapter.config.amazonAlexaV3) {
         alexaSH3 = new AlexaSH3({
-            adapter: adapter,
-            iotClientId: iotClientId,
+            adapter,
+            iotClientId,
             iotDevice: device,
         });
         alexaSH3.setLanguage(lang);

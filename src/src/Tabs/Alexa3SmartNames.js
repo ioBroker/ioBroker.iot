@@ -71,7 +71,7 @@ import {
     I18n,
     Message as MessageDialog,
     SelectID as DialogSelectID,
-    Icon as ARIcon
+    Icon as ARIcon,
 } from '@iobroker/adapter-react-v5';
 
 const CHANGED_COLOR = '#e7000040';
@@ -101,12 +101,12 @@ const SMART_TYPES = [
 ];
 
 const SMART_TYPES_V2 = {
-    'LIGHT': 'light',
-    'SWITCH': 'socket',
-    'THERMOSTAT': 'thermostat',
-    'SMARTPLUG': 'socket',
-    'SMARTLOCK': 'lock',
-    'CAMERA': 'camera',
+    LIGHT: 'light',
+    SWITCH: 'socket',
+    THERMOSTAT: 'thermostat',
+    SMARTPLUG: 'socket',
+    SMARTLOCK: 'lock',
+    CAMERA: 'camera',
 };
 
 const CAPABILITIES = {
@@ -797,7 +797,10 @@ class Alexa3SmartNames extends Component {
                         { background: this.props.themeType === 'dark' ? DEFAULT_STATE_COLOR_DARK : DEFAULT_STATE_COLOR_LIGHT }}
                 >
                     <div className={classes.devSubSubLineName}>
-                        <div className={classes.devSubSubLineStateName}>{name}:</div>
+                        <div className={classes.devSubSubLineStateName}>
+                            {name}
+                            :
+                        </div>
                         <span className={classes.devSubSubLineStateId}>{control.states[name].id}</span>
                     </div>
                 </div>)}
@@ -866,9 +869,9 @@ class Alexa3SmartNames extends Component {
 
         if (this.state.objects[stateId]) {
             return this.state.objects[stateId];
-        } else {
-            return { name: stateId };
         }
+
+        return { name: stateId };
     }
 
     renderChannels(dev, lineNum) {
@@ -907,7 +910,7 @@ class Alexa3SmartNames extends Component {
                                 {controlProps.icon ?
                                     (controlProps.icon.startsWith('data:image/svg') ?
                                         <SVG className={classes.devSubLineName2Icon} src={controlProps.icon} width={20} height={20} /> :
-                                        <ARIcon src={controlProps.icon} className={classes.devSubLineName2Icon} style={{ width: 20, height: 20 }}/> : null)
+                                        <ARIcon src={controlProps.icon} className={classes.devSubLineName2Icon} style={{ width: 20, height: 20 }} />)
                                     : null}
                                 {controlProps.name}
                             </div>
