@@ -21,52 +21,52 @@ describe('AlexaSmartHomeV3 - Friendly Names', function () {
                 de: "Licht",
             };
 
-            let name = Utils.stringify(smartName)
+            let name = Utils.stringify(smartName);
             assert.equal(name, 'Light');
 
-            name = Utils.stringify(smartName, 'de')
+            name = Utils.stringify(smartName, 'de');
             assert.equal(name, 'Licht');
 
-        })
+        });
 
         it('SmartName as String', async function () {
             const smartName = 'Light';
 
-            let name = Utils.stringify(smartName)
+            let name = Utils.stringify(smartName);
             assert.equal(name, 'Light');
 
-            name = Utils.stringify(smartName, 'de')
+            name = Utils.stringify(smartName, 'de');
             assert.equal(name, 'Light');
-        })
-    })
+        });
+    });
 
     describe('By Room and Function', async function () {
         it('With Room and Function', async function () {
             const control = {
                 room: {
-                    id: "enum.rooms.living_room",
+                    id: 'enum.rooms.living_room',
                     common: {
                         name: {
-                            en: "Living Room"
+                            en: 'Living Room'
                         },
                     }
                 },
                 functionality: {
-                    id: "enum.functions.light",
+                    id: 'enum.functions.light',
                     common: {
                         name: {
-                            en: "Light",
+                            en: 'Light',
                         },
                     }
                 },
             };
 
-            let name = Utils.friendlyNameByRoomAndFunctionName(control, 'de')
+            let name = Utils.friendlyNameByRoomAndFunctionName(control, 'de');
             assert.equal(name, 'Wohnzimmer Licht');
 
-            name = Utils.friendlyNameByRoomAndFunctionName(control)
+            name = Utils.friendlyNameByRoomAndFunctionName(control);
             assert.equal(name, 'Living Room Light');
 
-        })
-    })
-})
+        });
+    });
+});

@@ -186,8 +186,8 @@
   "Web instance": "Webinstanz",
   "Device %s will be disabled.": "Gerät %s wird deaktiviert.",
   "Delete": "Löschen",
-  "Brightness": "Helligkeit",
-  "Power": "Leistung",
+  "Brightness": "Dimmer",
+  "Power": "An/Aus",
   "Color temperature": "Farbtemperatur",
   "Color": "Farbe",
   "Detection": "Erkennung",
@@ -232,5 +232,6 @@
   "Vacuum cleaner": "Staubsauger",
   "Volume group": "Volumengruppe",
   "Window sensor": "Fenstersensor",
-  "Blinds": "Fensterrollos"
+  "Blinds": "Fensterrollos",
+  "Grouped from %s and %s": "Gruppiert aus %s und %s"
 }

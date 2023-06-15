@@ -95,7 +95,7 @@ function startAdapter(options) {
                 alexaCustom && alexaCustom.setResponse(state.val);
             }
         },
-        unload: callback => {
+        unload: async callback => {
             try {
                 if (device) {
                     device.end();
@@ -106,10 +106,12 @@ function startAdapter(options) {
                     remote = null;
                 }
 
-                callback();
+                alexaSH3 && (await alexaSH3.destroy());
+
             } catch (e) {
-                callback();
+                // ignore
             }
+            callback();
         },
         message: async obj => {
             if (obj) {
@@ -962,7 +964,7 @@ async function startDevice(clientId, login, password, retry) {
         }
     }
 
-    // destroy old device
+    // destroy the old device
     await closeDevice();
 
     if (!certs) {

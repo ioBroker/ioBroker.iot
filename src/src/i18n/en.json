@@ -186,8 +186,8 @@
   "Web instance": "Web instance",
   "Device %s will be disabled.": "Device %s will be disabled.",
   "Delete": "Delete",
-  "Brightness": "Brightness",
-  "Power": "Power",
+  "Brightness": "Dimmer",
+  "Power": "On/Off",
   "Color temperature": "Color temperature",
   "Color": "Color",
   "Detection": "Detection",
@@ -232,5 +232,6 @@
   "Sensor": "Sensor",
   "Door sensor": "Door sensor",
   "Color HUE": "Color HUE",
-  "Blinds": "Window blinds"
+  "Blinds": "Window blinds",
+  "Grouped from %s and %s": "Grouped from %s and %s"
 }

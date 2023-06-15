@@ -307,6 +307,7 @@ const styles = theme => ({
     },
     selectType: {
         width: 130,
+        marginLeft: 8,
     },
 });
 
@@ -350,6 +351,13 @@ function getObjectIcon(obj, id, imagePrefix) {
     }
 
     return src || null;
+}
+
+function getName(name, lang) {
+    if (name && typeof name === 'object') {
+        return name[lang] || name.en;
+    }
+    return name;
 }
 
 class Alexa3SmartNames extends Component {
@@ -402,6 +410,7 @@ class Alexa3SmartNames extends Component {
 
         this.waitForUpdateID = null;
         this.alive = false;
+        this.language = I18n.getLanguage();
 
         this.props.socket.getObject(`system.adapter.${this.props.adapterName}.${this.props.instance}`)
             .then(obj =>
@@ -536,7 +545,7 @@ class Alexa3SmartNames extends Component {
         if (device) {
             this.props.socket.getObject(id)
                 .then(obj => {
-                    let smartName = device.friendlyName;
+                    let smartName = Utils.getSmartNameFromObj(obj, `${this.props.adapterName}.${this.props.instance}`, this.props.native.noCommon);
                     if (typeof smartName === 'object' && smartName) {
                         smartName = smartName[I18n.getLanguage()] || smartName.en;
                     }
@@ -550,6 +559,7 @@ class Alexa3SmartNames extends Component {
                 });
             return true;
         }
+
         return false;
     }
 
@@ -774,12 +784,12 @@ class Alexa3SmartNames extends Component {
         return null;
     }
 
-    renderSelectType(dev) {
+    renderSelectType(control, dev) {
         if (dev.autoDetected) {
             return <div className={this.props.classes.selectType} />;
         }
         // get first id
-        const state = Object.values(dev.controls[0].states)[0];
+        const state = Object.values(control.states)[0];
         const type = state.smartName?.smartType;
 
         return this.renderSelectTypeSelector(type, value => this.onParamsChange(state.id, undefined, value));
@@ -856,9 +866,7 @@ class Alexa3SmartNames extends Component {
                         const objects = JSON.parse(JSON.stringify(this.state.objects));
                         if (obj && obj.common) {
                             objects[stateId] = { name: obj.common?.name || null, icon: getObjectIcon(obj, stateId, '../..') };
-                            if (objects[stateId].name && typeof objects[stateId].name === 'object') {
-                                objects[stateId] = objects[stateId].name[I18n.getLanguage()] || objects[stateId].name.en;
-                            }
+                            objects[stateId].name = getName(objects[stateId].name, this.language);
                         } else {
                             objects[stateId] = { name: stateId };
                         }
@@ -918,14 +926,24 @@ class Alexa3SmartNames extends Component {
                     </div>
                     <div className={this.props.classes.devLineActions}>{this.renderChannelActions(control)}</div>
                     {this.renderSelectByOn(control, dev)}
-                    <div className={this.props.classes.devLineEdit} />
-                    {dev.autoDetected && dev.controls.length > 1 ? <IconButton
-                        aria-label="Delete"
-                        className={this.props.classes.devSubLineDelete}
-                        onClick={() => this.onAskDelete(id, lineNum)}
-                    >
-                        <IconDelete fontSize="middle" />
-                    </IconButton> : <div className={this.props.classes.devLineDelete} />}
+                    {this.renderSelectType(control, dev)}
+                    {!dev.autoDetected ?
+                        <IconButton aria-label="Edit" className={this.props.classes.devLineEdit} onClick={() => this.onEdit(id)}>
+                            <IconEdit fontSize="middle" />
+                        </IconButton> : <div className={this.props.classes.devLineEdit} />}
+                    {!dev.autoDetected ?
+                        <IconButton aria-label="Delete" className={this.props.classes.devLineDelete} onClick={() => this.onAskDelete(id)}>
+                            <IconDelete fontSize="middle" />
+                        </IconButton> :
+                        (dev.controls.length > 1 ?
+                            <IconButton
+                                aria-label="Delete"
+                                className={this.props.classes.devSubLineDelete}
+                                onClick={() => this.onAskDelete(id)}
+                            >
+                                <IconDelete fontSize="middle" />
+                            </IconButton> :
+                            <div className={this.props.classes.devLineDelete} />)}
                 </div>,
                 expanded ? this.renderStates(control, classes, background) : null,
             ];
@@ -965,21 +983,15 @@ class Alexa3SmartNames extends Component {
                         (expanded ? <IconCollapse /> : <IconExpand />)}
                 </IconButton>
                 <div className={this.props.classes.devLineNameBlock}>
-                    {title}
-                    {/* <span className={this.props.classes.devLineName}>{title}</span>
-                    <span className={this.props.classes.devLineDescription}>{dev.type}</span> */}
+                    {dev.autoDetected ? <>
+                        <span className={this.props.classes.devLineName}>{title}</span>
+                        <span className={this.props.classes.devLineDescription}>
+                            {I18n.t('Grouped from %s and %s', getName(dev.roomName, this.language), getName(dev.funcName, this.language))}
+                        </span>
+                    </> : title}
                     {changed ? <CircularProgress className={this.props.classes.devLineProgress} size={20} /> : null}
                 </div>
                 <span className={this.props.classes.devLineActions}>{this.renderDevTypes(dev)}</span>
-                {this.renderSelectType(dev)}
-                {!dev.autoDetected ?
-                    <IconButton aria-label="Edit" className={this.props.classes.devLineEdit} onClick={() => this.onEdit(id)}>
-                        <IconEdit fontSize="middle" />
-                    </IconButton> : <div className={this.props.classes.devLineEdit} />}
-                {!dev.autoDetected ?
-                    <IconButton aria-label="Delete" className={this.props.classes.devLineDelete} onClick={() => this.onAskDelete(id)}>
-                        <IconDelete fontSize="middle" />
-                    </IconButton> : <div className={this.props.classes.devLineDelete} />}
             </div>,
             expanded ? this.renderChannels(dev, lineNum) : null,
         ];
@@ -1010,7 +1022,7 @@ class Alexa3SmartNames extends Component {
             this.timerChanged = setTimeout(() => {
                 this.setState({ lastChanged: '' });
                 this.timerChanged = null;
-            }, 30000);
+            }, 30000); // show for 30 seconds the green background for changes
 
             this.props.socket.getObject(id)
                 .then(obj => {
@@ -1143,7 +1155,7 @@ class Alexa3SmartNames extends Component {
                     this.props.socket.getObject(selected)
                         .then(obj => {
                             if (obj) {
-                                const name = Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() });
+                                const name = Utils.getObjectNameFromObj(obj, null, { language: this.language });
                                 Utils.updateSmartName(
                                     obj,
                                     (name || I18n.t('Device name')).replace(/[-_.]+/g, ' '),

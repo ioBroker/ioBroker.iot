@@ -186,8 +186,8 @@
   "Web instance": "Webinstantie",
   "Device %s will be disabled.": "Apparaat %s wordt uitgeschakeld.",
   "Delete": "Verwijderen",
-  "Brightness": "Helderheid",
-  "Power": "Stroom",
+  "Brightness": "Dimmer",
+  "Power": "Aan/Uit",
   "Color temperature": "Kleurtemperatuur",
   "Color": "Kleur",
   "Detection": "Detectie",
@@ -232,5 +232,6 @@
   "Vacuum cleaner": "Stofzuiger",
   "Volume group": "Volumegroep",
   "Window sensor": "Raam sensor",
-  "Blinds": "Jaloezieën"
+  "Blinds": "Jaloezieën",
+  "Grouped from %s and %s": "Gegroepeerd van %s en %s"
 }

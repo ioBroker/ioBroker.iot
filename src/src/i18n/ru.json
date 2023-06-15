@@ -186,8 +186,8 @@
   "Web instance": "Веб-экземпляр",
   "Device %s will be disabled.": "Устройство %s будет отключено.",
   "Delete": "Удалить",
-  "Brightness": "Яркость",
-  "Power": "Власть",
+  "Brightness": "Диммер",
+  "Power": "Вкл/Выкл",
   "Color temperature": "Цветовая температура",
   "Color": "Цвет",
   "Detection": "Обнаружение",
@@ -232,5 +232,6 @@
   "Vacuum cleaner": "Пылесос",
   "Volume group": "Группа томов",
   "Window sensor": "Датчик окна",
-  "Blinds": "Жалюзи"
+  "Blinds": "Жалюзи",
+  "Grouped from %s and %s": "Сгруппировано из %s и %s"
 }

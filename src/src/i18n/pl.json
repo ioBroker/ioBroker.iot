@@ -186,8 +186,8 @@
   "Web instance": "Instancja internetowa",
   "Device %s will be disabled.": "Urządzenie %s zostanie wyłączone.",
   "Delete": "Usuwać",
-  "Brightness": "Jasność",
-  "Power": "Moc",
+  "Brightness": "Opornik",
+  "Power": "Wł./Wył",
   "Color temperature": "Temperatura koloru",
   "Color": "Kolor",
   "Detection": "Wykrycie",
@@ -232,5 +232,6 @@
   "Vacuum cleaner": "Odkurzacz",
   "Volume group": "Grupa woluminów",
   "Window sensor": "Czujnik okna",
-  "Blinds": "Rolety okienne"
+  "Blinds": "Rolety okienne",
+  "Grouped from %s and %s": "Pogrupowane z %s i %s"
 }

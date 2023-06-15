@@ -186,8 +186,8 @@
   "Web instance": "网页实例",
   "Device %s will be disabled.": "设备 %s 将被禁用。",
   "Delete": "删除",
-  "Brightness": "亮度",
-  "Power": "力量",
+  "Brightness": "调光器",
+  "Power": "开关",
   "Color temperature": "色温",
   "Color": "颜色",
   "Detection": "检测",
@@ -232,5 +232,6 @@
   "Vacuum cleaner": "吸尘器",
   "Volume group": "卷组",
   "Window sensor": "窗口传感器",
-  "Blinds": "百叶窗"
+  "Blinds": "百叶窗",
+  "Grouped from %s and %s": "从 %s 和 %s 分组"
 }

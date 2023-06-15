@@ -186,8 +186,8 @@
   "Web instance": "Instância da web",
   "Device %s will be disabled.": "O dispositivo %s será desabilitado.",
   "Delete": "Excluir",
-  "Brightness": "Brilho",
-  "Power": "Poder",
+  "Brightness": "Obscuro",
+  "Power": "Ligado/Desligado",
   "Color temperature": "Temperatura de cor",
   "Color": "Cor",
   "Detection": "Detecção",
@@ -232,5 +232,6 @@
   "Vacuum cleaner": "Aspirador de pó",
   "Volume group": "Grupo de volumes",
   "Window sensor": "Sensor de janela",
-  "Blinds": "Persianas"
+  "Blinds": "Persianas",
+  "Grouped from %s and %s": "Agrupados de %s e %s"
 }

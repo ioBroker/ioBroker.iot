@@ -186,8 +186,8 @@
   "Web instance": "Instance Web",
   "Device %s will be disabled.": "Le périphérique %s sera désactivé.",
   "Delete": "Effacer",
-  "Brightness": "Luminosité",
-  "Power": "Pouvoir",
+  "Brightness": "Variateur",
+  "Power": "Allumé/éteint",
   "Color temperature": "Température de couleur",
   "Color": "Couleur",
   "Detection": "Détection",
@@ -232,5 +232,6 @@
   "Vacuum cleaner": "aspirateur",
   "Volume group": "Groupe de volumes",
   "Window sensor": "Capteur de fenêtre",
-  "Blinds": "Stores de fenêtre"
+  "Blinds": "Stores de fenêtre",
+  "Grouped from %s and %s": "Groupé de %s et %s"
 }
