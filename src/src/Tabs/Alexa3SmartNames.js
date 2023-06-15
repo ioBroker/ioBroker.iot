@@ -90,12 +90,13 @@ const SMART_TYPES = [
     'light',
     'dimmer',
     'thermostat',
-    'blind',
+    'blinds',
     'gate',
     'lock',
     'hue',
+    'ct',
     'motion',
-    'slider',
+    'levelSlider',
     'temperature',
     'window',
 ];
@@ -134,6 +135,7 @@ const DEVICES = {
     Door: { label: 'Door sensor', icon: BsFillDoorOpenFill, color: '#ad002a' },
     Gate: { label: 'Gate', icon: GiGate, color: '#9d02af' },
     Hue: { label: 'Color HUE', icon: IoIosColorFilter, color: '#007a96' },
+    Ct: { label: 'Color temperature', icon: IoIosColorFilter, color: '#5a9600' },
     Lock: { label: 'Lock', icon: AiFillUnlock, color: '#c9030a' },
     Motion: { label: 'Motion', icon: CgMenuMotion, color: '#149100' },
     Slider: { label: 'Slider', icon: RxSlider, color: '#029a7f' },
@@ -400,6 +402,7 @@ class Alexa3SmartNames extends Component {
             expanded,
             lastChanged: '',
             objects: {},
+            alive: false,
         };
 
         this.requesting = {};
@@ -409,26 +412,13 @@ class Alexa3SmartNames extends Component {
         this.editedSmartName = '';
 
         this.waitForUpdateID = null;
-        this.alive = false;
         this.language = I18n.getLanguage();
-
-        this.props.socket.getObject(`system.adapter.${this.props.adapterName}.${this.props.instance}`)
-            .then(obj =>
-                this.props.socket.getState(`system.adapter.${this.props.adapterName}.${this.props.instance}.alive`)
-                    .then(state => {
-                        if (!obj || !obj.common || (!obj.common.enabled && (!state || !state.val))) {
-                            this.setState({ message: I18n.t('Instance must be enabled'), loading: false, devices: [] });
-                        } else {
-                            this.alive = true;
-                            this.browse();
-                        }
-                    }));
     }
 
     onAliveChanged = (id, state) => {
-        if (state && (!!state.val) !== this.alive) {
-            this.alive = !!state.val;
-            this.alive && setTimeout(() => this.browse(), 10000);
+        if ((!!state?.val) !== this.state.alive) {
+            this.setState({ alive: !!state?.val }, () =>
+                this.state.alive && setTimeout(() => this.browse(), 10000));
         }
     };
 
@@ -510,6 +500,17 @@ class Alexa3SmartNames extends Component {
     };
 
     componentDidMount() {
+        this.props.socket.getObject(`system.adapter.${this.props.adapterName}.${this.props.instance}`)
+            .then(obj =>
+                this.props.socket.getState(`system.adapter.${this.props.adapterName}.${this.props.instance}.alive`)
+                    .then(state => {
+                        if (!obj || !obj.common || (!obj.common.enabled && (!state || !state.val))) {
+                            this.setState({ message: I18n.t('Instance must be enabled'), loading: false, devices: [], alive: false });
+                        } else {
+                            this.setState({ alive: true }, () => this.browse());
+                        }
+                    }));
+
         this.props.socket.subscribeState(`${this.props.adapterName}.${this.props.instance}.smart.updates3`, this.onReadyUpdate);
         this.props.socket.subscribeState(`${this.props.adapterName}.${this.props.instance}.smart.updatesResult`, this.onResultUpdate);
         this.props.socket.subscribeState(`system.adapter.${this.props.adapterName}.${this.props.instance}.alive`, this.onAliveChanged);
@@ -1267,7 +1268,7 @@ class Alexa3SmartNames extends Component {
                 size="small"
                 color="secondary"
                 aria-label="Add"
-                disabled={!!this.state.lastChanged && !!this.waitForUpdateID}
+                disabled={(!!this.state.lastChanged && !!this.waitForUpdateID) || !this.state.alive}
                 className={this.props.classes.button}
                 onClick={() => this.setState({ showSelectId: true })}
             >
@@ -1277,6 +1278,7 @@ class Alexa3SmartNames extends Component {
                 size="small"
                 color="primary"
                 aria-label="Refresh"
+                disable={!this.state.alive}
                 className={this.props.classes.button}
                 onClick={() => this.browse(true)}
                 disabled={this.state.browse}
@@ -1290,7 +1292,7 @@ class Alexa3SmartNames extends Component {
                 aria-label="List of devices"
                 className={this.props.classes.button}
                 onClick={() => this.setState({ showListOfDevices: true })}
-                disabled={this.state.browse}
+                disabled={this.state.browse || !this.state.alive}
             >
                 <IconList />
             </Fab>
