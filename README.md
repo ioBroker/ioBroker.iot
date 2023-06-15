@@ -303,7 +303,7 @@ setState('iot.0.app.message', JSON.stringify({
 -->
 
 ## Changelog
-### 2.0.6 (2023-06-14)
+### **WORK IN PROGRESS**
 * (bluefox) Working on support for amazon alexa v3
 
 ### 2.0.2 (2023-06-05)
