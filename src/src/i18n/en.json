@@ -233,5 +233,8 @@
   "Door sensor": "Door sensor",
   "Color HUE": "Color HUE",
   "Blinds": "Window blinds",
-  "Grouped from %s and %s": "Grouped from %s and %s"
+  "Grouped from %s and %s": "Grouped from %s and %s",
+  "Default toggle behaviour (Only alexa v3)": "Default toggle behaviour (Only alexa v3)",
+  "Do not toggle": "Do not toggle",
+  "Toggle": "Toggle"
 }

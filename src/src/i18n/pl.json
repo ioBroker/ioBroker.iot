@@ -60,7 +60,7 @@
   "Load configuration from file": "Załaduj konfigurację z pliku",
   "Message": "Wiadomość",
   "OFF level for switches": "Poziom OFF dla przełączników",
-  "OFF level for switches in %": "Poziom wyłączenia dla przełączników w%",
+  "OFF level for switches in %": "Poziom wyłączenia dla przełączników w %",
   "Off": "poza",
   "Ok": "Ok",
   "On": "na",
@@ -233,5 +233,8 @@
   "Volume group": "Grupa woluminów",
   "Window sensor": "Czujnik okna",
   "Blinds": "Rolety okienne",
-  "Grouped from %s and %s": "Pogrupowane z %s i %s"
+  "Grouped from %s and %s": "Pogrupowane z %s i %s",
+  "Default toggle behaviour (Only alexa v3)": "Domyślne zachowanie przełączania (tylko Alexa v3)",
+  "Do not toggle": "Nie przełączaj",
+  "Toggle": "Przełącznik"
 }

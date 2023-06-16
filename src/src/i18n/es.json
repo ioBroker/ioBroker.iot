@@ -60,7 +60,7 @@
   "Load configuration from file": "Cargar configuración desde archivo",
   "Message": "Mensaje",
   "OFF level for switches": "Nivel de apagado para interruptores",
-  "OFF level for switches in %": "Nivel OFF para interruptores en%",
+  "OFF level for switches in %": "Nivel OFF para interruptores en %",
   "Off": "apagado",
   "Ok": "De acuerdo",
   "On": "en",
@@ -233,5 +233,8 @@
   "Volume group": "grupo de volumen",
   "Window sensor": "sensor de ventana",
   "Blinds": "Persianas",
-  "Grouped from %s and %s": "Agrupados de %s y %s"
+  "Grouped from %s and %s": "Agrupados de %s y %s",
+  "Default toggle behaviour (Only alexa v3)": "Comportamiento de alternancia predeterminado (solo alexa v3)",
+  "Do not toggle": "no alternar",
+  "Toggle": "Palanca"
 }

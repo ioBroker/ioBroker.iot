@@ -60,7 +60,7 @@
   "Load configuration from file": "Konfiguration aus Datei laden",
   "Message": "Nachricht",
   "OFF level for switches": "OFF level for switches",
-  "OFF level for switches in %": "AUS-Pegel für Schalter in%",
+  "OFF level for switches in %": "AUS-Pegel für Schalter in %",
   "Off": "aus",
   "Ok": "Ok",
   "On": "an",
@@ -233,5 +233,8 @@
   "Volume group": "Volumengruppe",
   "Window sensor": "Fenstersensor",
   "Blinds": "Fensterrollos",
-  "Grouped from %s and %s": "Gruppiert aus %s und %s"
+  "Grouped from %s and %s": "Gruppiert aus %s und %s",
+  "Default toggle behaviour (Only alexa v3)": "Standardmäßiges Umschaltverhalten (nur Alexa v3)",
+  "Do not toggle": "Nicht umschalten",
+  "Toggle": "Umschalten"
 }

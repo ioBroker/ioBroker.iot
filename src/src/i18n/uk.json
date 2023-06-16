@@ -233,5 +233,8 @@
   "Volume group": "Група томів",
   "Window sensor": "Датчик вікна",
   "Blinds": "Віконні жалюзі",
-  "Grouped from %s and %s": "Згруповано з %s і %s"
+  "Grouped from %s and %s": "Згруповано з %s і %s",
+  "Default toggle behaviour (Only alexa v3)": "Поведінка перемикання за замовчуванням (тільки Alexa v3)",
+  "Do not toggle": "Не перемикайте",
+  "Toggle": "Перемикач"
 }

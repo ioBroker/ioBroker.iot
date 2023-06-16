@@ -131,6 +131,10 @@ If you set `.STATE, .LEVEL`, so `.STATE` and `.LEVEL` will be replaced and not `
 - `smart.lastCommand`: Last executed command. Command can be: `true(ON)`, `false(OFF)`, `number(%)`, `-X(decrease at x)`, `+X(increase at X)`
 - `smart.lastResponse`: Textual response on command. It can be sent to some `text2speech` (`sayit`) engine.
 
+## Toggle mode
+Alexa v3 supports toggle mode.
+It means that if you say "Alexa, turn on the light" and the light is already on, it will be turned off.
+
 ## IFTTT
 [instructions](doc/ifttt.md)
 
@@ -303,6 +307,9 @@ setState('iot.0.app.message', JSON.stringify({
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Done small improvements for alexa v3
+
 ### 2.0.9 (2023-06-15)
 * (bluefox) Working on support for amazon alexa v3
 

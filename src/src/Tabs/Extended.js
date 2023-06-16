@@ -20,12 +20,14 @@ import {
 
 const styles = () => ({
     tab: {
-        width: '100%',
-        minHeight: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 8,
     },
     input: {
         marginTop: 0,
-        minWidth: 400,
+        minWidth: 300,
+        maxWidth: 500,
     },
     button: {
         marginRight: 20,
@@ -89,13 +91,15 @@ class ExtendedOptions extends Component {
             });
     }
 
-    renderInput(title, attr, type) {
+    renderInput(title, attr, type, disabled, helperText) {
         return <TextField
             variant="standard"
             label={I18n.t(title)}
+            disabled={disabled}
             className={Utils.clsx(this.props.classes.input, this.props.classes.controlElement)}
             value={this.props.native[attr]}
             type={type || 'text'}
+            helperText={helperText ? I18n.t(helperText) : ''}
             onChange={e => this.props.onChange(attr, e.target.value)}
             margin="normal"
         />;
@@ -154,46 +158,57 @@ class ExtendedOptions extends Component {
     }
 
     render() {
-        return (
-            <form className={this.props.classes.tab}>
-                {this.renderInput('Cloud URL', 'cloudUrl')}
-                <br />
-                {this.renderSelect('Language', 'language', [
-                    { title: 'default', value: '' },
-                    { title: 'english', value: 'en', noTranslation: true },
-                    { title: 'Deutsch', value: 'de', noTranslation: true },
-                    { title: 'русский', value: 'ru', noTranslation: true },
-                ], { marginTop: 10 })}
-                <br />
-                {this.renderCheckbox('Place function in names first', 'functionFirst', { marginTop: 10 })}
-                <br />
-                {this.renderInput('Concatenate words with', 'concatWord')}
-                <br />
-                {this.renderInput('Replace in names', 'replaces')}
-                <br />
-                <div className={this.props.classes.controlElement} style={{ marginTop: 15 }}>
-                    {this.renderInput('OFF level for switches in %', 'deviceOffLevel')}
-                    <FormHelperText>{I18n.t('(Set to 0 if behavior not desired)')}</FormHelperText>
-                </div>
-                <div className={this.props.classes.controlElement}>
-                    {this.renderInput('Write response to', 'responseOID')}
-                    <Fab size="small" color="secondary" onClick={() => this.setState({ showSelectId: true })} aria-label="Add" style={{ marginLeft: 5, marginTop: 10 }}><IconAdd /></Fab>
-                    <br />
-                </div>
-                <div className={this.props.classes.controlElement}>
-                    {this.renderCheckbox('Personal settings (only pro)', 'noCommon')}
-                    <FormHelperText>{Utils.renderTextWithA(I18n.t('help_tip'))}</FormHelperText>
-                    <br />
-                </div>
-                {this.renderCheckbox('Debug outputs', 'debug')}
-                {this.getSelectIdDialog('responseOID')}
-                <div className={this.props.classes.controlElement}>
-                    {this.renderCheckbox('Allow remote access', 'remote')}
-                    {this.props.native.remote ? this.renderSelect('Admin instance', 'remoteAdminInstance', this.state.adminInstances, { width: 120, minWidth: 120 }) : null}
-                    {this.props.native.remote ? this.renderSelect('Web instance', 'remoteWebInstance', this.state.webInstances, { width: 120, minWidth: 120 }) : null}
-                </div>
-            </form>
-        );
+        return <form className={this.props.classes.tab}>
+            {
+                /* this.renderInput('Cloud URL', 'cloudUrl', null, true) */
+            }
+            {this.renderSelect('Language', 'language', [
+                { title: 'default', value: '' },
+                { title: 'english', value: 'en', noTranslation: true },
+                { title: 'Deutsch', value: 'de', noTranslation: true },
+                { title: 'русский', value: 'ru', noTranslation: true },
+            ])}
+            {this.renderCheckbox('Place function in names first', 'functionFirst')}
+            {this.renderInput('Concatenate words with', 'concatWord')}
+            {
+                /* this.renderInput('Replace in names', 'replaces') */
+            }
+            {this.props.native.amazonAlexaV3 ?
+                <FormControl
+                    className={Utils.clsx(this.props.classes.input, this.props.classes.controlElement)}
+                    style={({ paddingTop: 5, paddingRight: 8 })}
+                    variant="standard"
+                >
+                    <Select
+                        variant="standard"
+                        value={this.props.native.defaultToggle || false}
+                        onChange={e => this.props.onChange('defaultToggle', e.target.value)}
+                    >
+                        <MenuItem value={!1}>{I18n.t('Do not toggle')}</MenuItem>
+                        <MenuItem value={!0}>{I18n.t('Toggle')}</MenuItem>
+                    </Select>
+                    <FormHelperText>{I18n.t('Default toggle behaviour (Only alexa v3)')}</FormHelperText>
+                </FormControl> : null}
+            {this.renderInput('OFF level for switches in %', 'deviceOffLevel', null, false, '(Set to 0 if behavior not desired)')}
+            <div className={this.props.classes.controlElement}>
+                {this.renderInput('Write response to', 'responseOID')}
+                <Fab size="small" color="secondary" onClick={() => this.setState({ showSelectId: true })} aria-label="Add" style={{ marginLeft: 5, marginTop: 10 }}>
+                    <IconAdd />
+                </Fab>
+            </div>
+            <div className={this.props.classes.controlElement}>
+                {this.renderCheckbox('Personal settings (only pro)', 'noCommon')}
+                <FormHelperText>{Utils.renderTextWithA(I18n.t('help_tip'))}</FormHelperText>
+            </div>
+            {this.renderCheckbox('Debug outputs', 'debug')}
+            <div className={this.props.classes.controlElement}>
+                {this.renderCheckbox('Allow remote access', 'remote')}
+                {this.props.native.remote ? this.renderSelect('Admin instance', 'remoteAdminInstance', this.state.adminInstances, { width: 120, minWidth: 120 }) : null}
+                {this.props.native.remote ? this.renderSelect('Web instance', 'remoteWebInstance', this.state.webInstances, { width: 120, minWidth: 120 }) : null}
+            </div>
+
+            {this.getSelectIdDialog('responseOID')}
+        </form>;
     }
 }
 

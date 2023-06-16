@@ -60,7 +60,7 @@
   "Load configuration from file": "Laad configuratie vanuit bestand",
   "Message": "Bericht",
   "OFF level for switches": "UIT-niveau voor schakelaars",
-  "OFF level for switches in %": "UIT-niveau voor schakelaars in%",
+  "OFF level for switches in %": "UIT-niveau voor schakelaars in %",
   "Off": "uit",
   "Ok": "OK",
   "On": "op",
@@ -233,5 +233,8 @@
   "Volume group": "Volumegroep",
   "Window sensor": "Raam sensor",
   "Blinds": "Jaloezieën",
-  "Grouped from %s and %s": "Gegroepeerd van %s en %s"
+  "Grouped from %s and %s": "Gegroepeerd van %s en %s",
+  "Default toggle behaviour (Only alexa v3)": "Standaard schakelgedrag (alleen alexa v3)",
+  "Do not toggle": "Wissel niet",
+  "Toggle": "Schakelaar"
 }

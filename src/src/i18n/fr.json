@@ -60,7 +60,7 @@
   "Load configuration from file": "Charger la configuration du fichier",
   "Message": "Message",
   "OFF level for switches": "Niveau OFF pour les commutateurs",
-  "OFF level for switches in %": "Niveau OFF pour les commutateurs en%",
+  "OFF level for switches in %": "Niveau OFF pour les commutateurs en %",
   "Off": "de",
   "Ok": "D'accord",
   "On": "sur",
@@ -233,5 +233,8 @@
   "Volume group": "Groupe de volumes",
   "Window sensor": "Capteur de fenêtre",
   "Blinds": "Stores de fenêtre",
-  "Grouped from %s and %s": "Groupé de %s et %s"
+  "Grouped from %s and %s": "Groupé de %s et %s",
+  "Default toggle behaviour (Only alexa v3)": "Comportement de basculement par défaut (uniquement alexa v3)",
+  "Do not toggle": "Ne pas basculer",
+  "Toggle": "Basculer"
 }

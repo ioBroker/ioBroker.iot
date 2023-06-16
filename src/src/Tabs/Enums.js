@@ -330,20 +330,18 @@ class Enums extends Component {
         if (this.state.loading) {
             return <CircularProgress />;
         }
-        return (
-            <form className={this.props.classes.tab}>
-                <div className={this.props.classes.column}>
-                    <h5 className={this.props.classes.columnHeader}>{I18n.t('Rooms')}</h5>
-                    <div className={this.props.classes.columnDiv}>{this.renderEnums('rooms')}</div>
-                </div>
-                <div className={this.props.classes.column}>
-                    <h5 className={this.props.classes.columnHeader}>{I18n.t('Functions')}</h5>
-                    <div className={this.props.classes.columnDiv}>{this.renderEnums('funcs')}</div>
-                </div>
-                {this.renderMessage()}
-                {this.renderEditDialog()}
-            </form>
-        );
+        return <form className={this.props.classes.tab}>
+            <div className={this.props.classes.column}>
+                <h5 className={this.props.classes.columnHeader}>{I18n.t('Rooms')}</h5>
+                <div className={this.props.classes.columnDiv}>{this.renderEnums('rooms')}</div>
+            </div>
+            <div className={this.props.classes.column}>
+                <h5 className={this.props.classes.columnHeader}>{I18n.t('Functions')}</h5>
+                <div className={this.props.classes.columnDiv}>{this.renderEnums('funcs')}</div>
+            </div>
+            {this.renderMessage()}
+            {this.renderEditDialog()}
+        </form>;
     }
 }
 

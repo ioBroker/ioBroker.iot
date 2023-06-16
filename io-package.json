@@ -191,6 +191,7 @@
     "noCommon": false,
     "debug": false,
     "remote": false,
+    "defaultToggle": true,
     "remoteAdminInstance": "",
     "remoteWebInstance": "",
     "customKnownAlexaUsers": [],

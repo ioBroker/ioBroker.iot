@@ -60,7 +60,7 @@
   "Load configuration from file": "Загрузить конфигурацию из файла",
   "Message": "Сообщение",
   "OFF level for switches": "Уровень выключения для выключателей",
-  "OFF level for switches in %": "Уровень выключения для переключателей в%",
+  "OFF level for switches in %": "Уровень выключения для переключателей в %",
   "Off": "выкл",
   "Ok": "Ok",
   "On": "вкл",
@@ -233,5 +233,8 @@
   "Volume group": "Группа томов",
   "Window sensor": "Датчик окна",
   "Blinds": "Жалюзи",
-  "Grouped from %s and %s": "Сгруппировано из %s и %s"
+  "Grouped from %s and %s": "Сгруппировано из %s и %s",
+  "Default toggle behaviour (Only alexa v3)": "Поведение переключения по умолчанию (только Alexa v3)",
+  "Do not toggle": "Не переключать",
+  "Toggle": "Переключать"
 }
