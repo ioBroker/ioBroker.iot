@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "2.0.9",
+    "version": "2.0.10",
     "news": {
+      "2.0.10": {
+        "en": "Done small improvements for alexa v3",
+        "de": "Fertige kleine Verbesserungen für alexa v3",
+        "ru": "Сделайте небольшие улучшения для alexa v3",
+        "pt": "Feito pequenas melhorias para alexa v3",
+        "nl": "Kleine verbetering voor Alexa v3",
+        "fr": "Fait de petites améliorations pour alexa v3",
+        "it": "Fatto piccoli miglioramenti per alexa v3",
+        "es": "Hecho pequeñas mejoras para alexa v3",
+        "pl": "Do niewielkiej poprawy alexa v3",
+        "uk": "Дон невеликі поліпшення для alexa v3",
+        "zh-cn": "法拉诉3的小改进"
+      },
       "2.0.2": {
         "en": "Added support for amazon alexa v3\nRemoved support for sugar blood indication",
         "de": "Unterstützung für amazon alexa v3\nEntfernte Unterstützung für Zuckerblutanzeige",
