@@ -17,25 +17,25 @@
         "release-major": "release-script major --yes"
     },
     "dependencies": {
-        "react-ace": "^10.1.0",
-        "ace-builds": "^1.22.1",
+        "@craco/craco": "^7.1.0",
         "@iobroker/adapter-react-v5": "^4.1.0",
         "@mui/material": "^5.13.5",
         "@mui/styles": "^5.13.2",
-        "prop-types": "^15.8.1",
-        "react": "^18.2.0",
-        "react-dom": "^18.2.0",
-        "react-scripts": "^5.0.1",
-        "@types/react": "^18.2.12",
-        "@types/react-dom": "^18.2.5",
         "@originjs/vite-plugin-federation": "^1.2.3",
         "@rollup/plugin-babel": "^6.0.3",
         "@rollup/plugin-commonjs": "^25.0.1",
         "@rollup/plugin-node-resolve": "^15.1.0",
         "@rollup/plugin-replace": "^5.0.2",
-        "@craco/craco": "^7.1.0",
+        "@types/react": "^18.2.12",
+        "@types/react-dom": "^18.2.5",
+        "ace-builds": "^1.22.1",
         "craco-esbuild": "^0.5.2",
-        "craco-module-federation": "^1.1.0"
+        "craco-module-federation": "^1.1.0",
+        "prop-types": "^15.8.1",
+        "react": "^18.2.0",
+        "react-ace": "^10.1.0",
+        "react-dom": "^18.2.0",
+        "react-scripts": "^5.0.1"
     },
     "eslintConfig": {
         "extends": "react-app"
