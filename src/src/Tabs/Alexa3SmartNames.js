@@ -505,7 +505,12 @@ class Alexa3SmartNames extends Component {
                 this.props.socket.getState(`system.adapter.${this.props.adapterName}.${this.props.instance}.alive`)
                     .then(state => {
                         if (!obj || !obj.common || (!obj.common.enabled && (!state || !state.val))) {
-                            this.setState({ message: I18n.t('Instance must be enabled'), loading: false, devices: [], alive: false });
+                            this.setState({
+                                message: I18n.t('Instance must be enabled'),
+                                loading: false,
+                                devices: [],
+                                alive: false,
+                            });
                         } else {
                             this.setState({ alive: true }, () => this.browse());
                         }
