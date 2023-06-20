@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "2.0.10",
+    "version": "2.0.11",
     "news": {
+      "2.0.11": {
+        "en": "Added support for the state toggling (alexa 3)\nDone small improvements for alexa 3",
+        "de": "Unterstützung für den Zustands-Toggling (alexa 3)\nFertige kleine Verbesserungen für alexa 3",
+        "ru": "Добавлена поддержка государственного торга (alexa 3)\nСделайте небольшие улучшения для alexa 2 3 4 5",
+        "pt": "Adicionado suporte para o estado alternando (alexa 3)\nFeito pequenas melhorias para alexa 3",
+        "nl": "Vermeld ondersteuning voor de staat die gloeit\nKleine verbetering voor Alexa 3",
+        "fr": "Ajout de l'appui à l'État toggling (alexa 3)\nFait de petites améliorations pour alexa 3",
+        "it": "Aggiunto il supporto per il toggling dello stato (alexa 3)\nFatto piccoli miglioramenti per alexa 3",
+        "es": "Agregado soporte para el regateo del estado (alexa 3)\nHecho pequeñas mejoras para alexa 3",
+        "pl": "Wsparcie dla państwa (alexa 3)\nDo niewielkiej poprawy aleksji 3",
+        "uk": "Додана підтримка державного торгування (alexa 3)\nДо одного невеликого поліпшення для Олександра 3 хв",
+        "zh-cn": "进一步支持国家乞讨(alexa 3)\n法拉的小改进 3"
+      },
       "2.0.10": {
         "en": "Done small improvements for alexa v3",
         "de": "Fertige kleine Verbesserungen für alexa v3",
