@@ -199,6 +199,7 @@ const styles = theme => ({
         fontStyle: 'italic',
         fontSize: 12,
         paddingRight: 5,
+        display: 'flex',
     },
     devLineProgress: {
         position: 'absolute',
@@ -213,6 +214,11 @@ const styles = theme => ({
     },
     actionSpan: {
         marginRight: 5,
+        display: 'flex',
+        alignItems: 'center',
+    },
+    deviceOff: {
+        filter: 'grayscale(0.9)',
     },
     actionIcon: {
         width: 16,
@@ -607,9 +613,38 @@ class Alexa3SmartNames extends Component {
                 return;
             }
             if (control.supported.includes(action)) {
+                let state;
                 const Icon = CAPABILITIES[action].icon;
-                actions.push(<span key={action} title={CAPABILITIES[action].label} className={this.props.classes.actionSpan}>
-                    <Icon className={this.props.classes.actionIcon} style={{ color: CAPABILITIES[action].color }} />
+                const className = [this.props.classes.actionIcon];
+                let valuePercent = null;
+                let valueBrightness = null;
+                let valueColor = null;
+                if (control.state) {
+                    state = control.state.find(st => action === st.name);
+                    if (state?.name === 'powerState') {
+                        state?.value === 'OFF' && className.push(this.props.classes.deviceOff);
+                    } else if (state?.name === 'detectionState') {
+                        state?.value === 'NOT_DETECTED' && className.push(this.props.classes.deviceOff);
+                    } else
+                    if (state?.name === 'percentage') {
+                        valuePercent = `${state.value}%`;
+                    } else
+                    if (state?.name === 'brightness') {
+                        valueBrightness = state.value;
+                    } else
+                    if (state?.name === 'color') {
+                        valueColor = `hsl(${state.value}, 50%, 50%)`;
+                    }
+                }
+
+                actions.push(<span
+                    key={action}
+                    title={CAPABILITIES[action].label + (state ? ` - ${state.value}` : '')}
+                    className={this.props.classes.actionSpan}
+                >
+                    <Icon className={className.join(' ')} style={{ color: CAPABILITIES[action].color, backgroundColor: valueColor }} />
+                    {valuePercent !== null ? <span style={{ color: DEVICES[control.type].color }}>{valuePercent}</span> : null}
+                    {valueBrightness !== null ? <span style={{ color: DEVICES[control.type].color }}>{valueBrightness}</span> : null}
                 </span>);
             } else if (control.enforced.includes(action)) {
                 const Icon = CAPABILITIES[action].icon;
@@ -658,24 +693,48 @@ class Alexa3SmartNames extends Component {
         dev.controls.forEach((control, i) => {
             if (!usedTypes.includes(control.type)) {
                 usedTypes.push(control.type);
-            } else {
-                return;
-            }
-            if (DEVICES[control.type]) {
-                const Icon = DEVICES[control.type].icon;
-                const currentType = <span
-                    key={`${control.type}_${i}`}
-                    title={DEVICES[control.type].label}
-                    className={this.props.classes.actionSpan}
-                >
-                    <Icon className={this.props.classes.deviceIcon} style={{ color: DEVICES[control.type].color }} />
-                </span>;
 
-                if (control.type !== 'Blind' && control.type !== 'Light' && control.type !== 'Socket') {
-                    devices.unshift(currentType);
-                } else {
-                    // try to place light, blind and socket at the end
-                    devices.push(currentType);
+                if (DEVICES[control.type]) {
+                    const Icon = DEVICES[control.type].icon;
+                    const className = [this.props.classes.actionSpan];
+                    let valuePercent = null;
+                    let valueBrightness = null;
+                    let valueColor = null;
+                    let state;
+                    if (dev.state) {
+                        state = dev.state.find(st => control.supported.includes(st.name));
+                        if (state?.name === 'powerState') {
+                            state?.value === 'OFF' && className.push(this.props.classes.deviceOff);
+                        } else if (state?.name === 'detectionState') {
+                            state?.value === 'NOT_DETECTED' && className.push(this.props.classes.deviceOff);
+                        } else
+                        if (state?.name === 'percentage') {
+                            valuePercent = `${state.value}%`;
+                        } else
+                        if (state?.name === 'brightness') {
+                            valueBrightness = state.value;
+                        } else
+                        if (state?.name === 'color') {
+                            valueColor = `hsl(${state.value}, 100%, 50%)`;
+                        }
+                    }
+
+                    const currentType = <span
+                        key={`${control.type}_${i}`}
+                        title={DEVICES[control.type].label + (state ? ` - ${state.value}` : '')}
+                        className={className.join(' ')}
+                    >
+                        <Icon className={this.props.classes.deviceIcon} style={{ color: DEVICES[control.type].color, backgroundColor: valueColor }} />
+                        {valuePercent !== null ? <span style={{ color: DEVICES[control.type].color }}>{valuePercent}</span> : null}
+                        {valueBrightness !== null ? <span style={{ color: DEVICES[control.type].color }}>{valueBrightness}</span> : null}
+                    </span>;
+
+                    if (control.type !== 'Blind' && control.type !== 'Light' && control.type !== 'Socket') {
+                        devices.unshift(currentType);
+                    } else {
+                        // try to place light, blind and socket at the end
+                        devices.push(currentType);
+                    }
                 }
             }
         });

@@ -307,8 +307,9 @@ setState('iot.0.app.message', JSON.stringify({
 -->
 
 ## Changelog
-### 2.0.10 (2023-06-19)
-* (bluefox) Done small improvements for alexa v3
+### **WORK IN PROGRESS**
+* (bluefox) Added support for the state toggling (alexa 3)
+* (bluefox) Done small improvements for alexa 3
 
 ### 2.0.9 (2023-06-15)
 * (bluefox) Working on support for amazon alexa v3
