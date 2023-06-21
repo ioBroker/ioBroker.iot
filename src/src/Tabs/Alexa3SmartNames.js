@@ -127,14 +127,14 @@ const CAPABILITIES = {
 };
 
 const DEVICES = {
-    Light: { label: 'Light', icon: FaLightbulb, color: '#c9b803' },
-    AirCondition: { label: 'AirCondition', icon: FaSnowflake, color: '#001fb9' },
-    Blind: { label: 'Blinds', icon: MdBlinds, color: '#00a28f' },
-    ContactSensor: { label: 'Sensor', icon: MdOutlineSensors, color: '#c9b803' },
-    Dimmer: { label: 'Dimmer', icon: HiLightBulb, color: '#cb8500' },
-    Door: { label: 'Door sensor', icon: BsFillDoorOpenFill, color: '#ad002a' },
-    Gate: { label: 'Gate', icon: GiGate, color: '#9d02af' },
-    Hue: { label: 'Color HUE', icon: IoIosColorFilter, color: '#007a96' },
+    Light: { label: 'Light', icon: FaLightbulb, color: '#c9b803', control: 'switch', controllable: true },
+    AirCondition: { label: 'AirCondition', icon: FaSnowflake, color: '#001fb9', control: 'switch', controllable: true },
+    Blind: { label: 'Blinds', icon: MdBlinds, color: '#00a28f', control: 'blinds', controllable: true },
+    ContactSensor: { label: 'Sensor', icon: MdOutlineSensors, color: '#c9b803', control: 'sensor', controllable: false },
+    Dimmer: { label: 'Dimmer', icon: HiLightBulb, color: '#cb8500', control: 'slider', controllable: true },
+    Door: { label: 'Door sensor', icon: BsFillDoorOpenFill, color: '#ad002a', control: 'doorSensor', controllable: false },
+    Gate: { label: 'Gate', icon: GiGate, color: '#9d02af', control: 'gate' },
+    Hue: { label: 'Color HUE', icon: IoIosColorFilter, color: '#007a96', control: 'color' },
     Ct: { label: 'Color temperature', icon: IoIosColorFilter, color: '#5a9600' },
     Lock: { label: 'Lock', icon: AiFillUnlock, color: '#c9030a' },
     Motion: { label: 'Motion', icon: CgMenuMotion, color: '#149100' },
