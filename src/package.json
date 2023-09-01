@@ -14,7 +14,7 @@
         "react-dom": "^18.2.0",
         "react-icons": "^4.9.0",
         "react-scripts": "^5.0.1",
-        "react-inlinesvg": "^3.0.2",
+        "react-inlinesvg": "^4.0.3",
         "eslint": "^8.42.0",
         "eslint-config-airbnb": "^19.0.4",
         "eslint-plugin-import": "^2.27.5",
