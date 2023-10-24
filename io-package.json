@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "2.0.11",
+    "version": "3.0.0",
     "news": {
+      "3.0.0": {
+        "en": "Updated packages\nThe minimal supported node.js version is 16",
+        "de": "Aktualisierte Pakete\nDie minimal unterstützte node.js Version ist 16",
+        "ru": "Обновленные пакеты\nМинимальная поддерживаемая версия node.js 16",
+        "pt": "Pacotes atualizados\nA versão node.js suportada mínima é 16",
+        "nl": "Verouderde pakketten\nDe minimale gesteunde node",
+        "fr": "Forfaits mis à jour\nLa version minimale supportée node.js est 16",
+        "it": "Pacchetti aggiornati\nLa versione minimal node.js supportata è 16",
+        "es": "Paquetes actualizados\nLa versión mínima soportada node.js es 16",
+        "pl": "Pakiet upoważniony\nMinimalna wersja węzła jest 16",
+        "uk": "Оновлені пакети\nВерсія Mini підтримується node.js 16",
+        "zh-cn": "最新一揽子计划\n最低支持的字样为16。"
+      },
       "2.0.11": {
         "en": "Added support for the state toggling (alexa 3)\nDone small improvements for alexa 3",
         "de": "Unterstützung für den Zustands-Toggling (alexa 3)\nFertige kleine Verbesserungen für alexa 3",
@@ -80,19 +93,6 @@
         "pl": "Zawarte przetwarzanie światła w CT i RGB w Alisie",
         "uk": "Фіксована обробка світильників з КТ та RGB в Алісі",
         "zh-cn": "阿尔萨与爱滋病和爱滋病患者混合处理"
-      },
-      "1.14.2": {
-        "en": "Updated GUI packages",
-        "de": "Aktualisierte GUI-Pakete",
-        "ru": "Обновленные пакеты GUI",
-        "pt": "Pacotes de GUI atualizados",
-        "nl": "Update GUI pakketten",
-        "fr": "Paquets GUI mis à jour",
-        "it": "Pacchetti GUI aggiornati",
-        "es": "Paquetes GUI actualizados",
-        "pl": "Pakiet GUI",
-        "uk": "Оновлені пакети GUI",
-        "zh-cn": "A. 最新古伊一揽子计划"
       }
     },
     "title": "IoT Assistants",

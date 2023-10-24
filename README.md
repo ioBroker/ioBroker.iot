@@ -307,7 +307,7 @@ setState('iot.0.app.message', JSON.stringify({
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 3.0.0 (2023-10-24)
 * (bluefox) Updated packages
 * (bluefox) The minimal supported node.js version is 16
 
