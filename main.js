@@ -57,12 +57,12 @@ function startAdapter(options) {
                 }
                 defaultHistory= obj.common.defaultHistory;
 
-                alexaSH2         && alexaSH2.setLanguage(lang);
-                alexaSH3         && alexaSH3.setLanguage(lang);
-                yandexAlisa      && yandexAlisa.setLanguage(lang);
-                alexaCustom      && alexaCustom.setLanguage(lang);
-                googleHome       && googleHome.setLanguage(lang);
-                remote.setLanguage(lang);
+                alexaSH2    && alexaSH2.setLanguage(lang);
+                alexaSH3    && alexaSH3.setLanguage(lang);
+                yandexAlisa && yandexAlisa.setLanguage(lang);
+                alexaCustom && alexaCustom.setLanguage(lang);
+                googleHome  && googleHome.setLanguage(lang);
+                remote      && remote.setLanguage(lang);
             }
             // if it is an instance
             if (id.startsWith('system.adapter.')) {
@@ -1275,7 +1275,7 @@ async function main() {
 
     alexaCustom && alexaCustom.setLanguage(lang, translate);
 
-    remote.setLanguage(lang);
+    remote && remote.setLanguage(lang);
     // check password
     if (adapter.config.pass.length < 8 || !adapter.config.pass.match(/[a-z]/) || !adapter.config.pass.match(/[A-Z]/) || !adapter.config.pass.match(/\d/)) {
         return adapter.log.error('The password must be at least 8 characters long and have numbers, upper and lower case letters. Please change the password in the profile https://iobroker.pro/accountProfile.');
