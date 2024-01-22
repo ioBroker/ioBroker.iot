@@ -13,7 +13,7 @@
     "Are you sure?": "Jesteś pewny?",
     "Attributes has not correct JSON format.": "Atrybuty mają niepoprawny format JSON",
     "Authentication must be disabled. You can create second instance extra for cloud.": "Uwierzytelnianie musi być wyłączone. Możesz utworzyć dodatkową instancję dodatkową dla chmury.",
-    "Cancel": "Pomiń",
+    "Cancel": "Odwołaj",
     "Cannot add this object": "Nie można dodać tego obiektu, ponieważ nie jest obsługiwany.",
     "Cannot read devices!": "Nie można odczytać urządzeń!",
     "Certificates will be updated after initiated restart": "Certyfikaty będą aktualizowane po ponownym uruchomieniu",
