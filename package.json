@@ -35,7 +35,7 @@
     "@alcalzone/release-script-plugin-license": "^3.7.0",
     "@iobroker/legacy-testing": "^1.0.3",
     "@types/iobroker": "^4.0.5",
-    "@types/node": "^20.10.3",
+    "@types/node": "^20.11.14",
     "chai": "^4.3.10",
     "gulp": "^4.0.2",
     "mocha": "^10.2.0"
