@@ -298,7 +298,7 @@ setState('iot.0.app.message', JSON.stringify({
 })); // important, that ack=false (default)
 ```
 ## Todo
-- Smartnames must have higher priority as groups
+- Smart names must have higher priority as groups
 - Devices should be grouped by smart name
 
 <!--
@@ -309,6 +309,7 @@ setState('iot.0.app.message', JSON.stringify({
 ## Changelog
 ### **WORK IN PROGRESS**
 * (bluefox) Updated packages
+* (bluefox) Disabled the state change report for alexa v3
 
 ### 3.0.0 (2023-10-24)
 * (bluefox) Updated packages
