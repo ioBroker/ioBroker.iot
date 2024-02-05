@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "3.0.0",
+    "version": "3.1.0",
     "news": {
+      "3.1.0": {
+        "en": "Updated packages\nDisabled the state change report for alexa v3",
+        "de": "Aktualisierte Pakete\nDeaktiviert den Zustandsänderungsbericht für alexa v3",
+        "ru": "Обновленные пакеты\nОтклонить отчет об изменении состояния для alexa v3",
+        "pt": "Pacotes atualizados\nDesativado o relatório de mudança do estado para alexa v3",
+        "nl": "Bijgewerkte pakketten\nHet veranderingsrapport voor Alexa v3 uitgeschakeld",
+        "fr": "Paquets mis à jour\nDésactive le rapport de changement d'état pour alexa v3",
+        "it": "Pacchetti aggiornati\nDisabilitato il rapporto di cambiamento di stato per alexa v3",
+        "es": "Paquetes actualizados\nDiscapacitado el informe de cambio de estado para alexa v3",
+        "pl": "Aktualizacja pakietów\nWyłączył raport zmiany stanu dla alexa v3",
+        "uk": "Оновлені пакети\nВимкнено звіт про зміну стану для alexa v3",
+        "zh-cn": "更新软件包\n禁用Alexa v3 的状态变化报告"
+      },
       "3.0.0": {
         "en": "Updated packages\nThe minimal supported node.js version is 16",
         "de": "Aktualisierte Pakete\nDie minimal unterstützte node.js Version ist 16",
@@ -80,19 +93,6 @@
         "pl": "Poprawne nazwy enum w GUI",
         "uk": "Виправлені імена енму в графічному інтерфейсі",
         "zh-cn": "古伊人名单更正"
-      },
-      "1.14.3": {
-        "en": "Fixed processing for lights with CT and RGB in Alisa",
-        "de": "Feste Verarbeitung für Lichter mit CT und RGB in Alisa",
-        "ru": "Исправлена обработка светильников с CT и RGB в Алисе",
-        "pt": "Processamento fixo para luzes com CT e RGB em Alisa",
-        "nl": "Verwerking voor lichten met CT en RGB in Alisa",
-        "fr": "Traitement fixe pour les lumières avec CT et RGB à Alisa",
-        "it": "Lavorazione fissa per luci con CT e RGB in Alisa",
-        "es": "Tratamiento fijo para luces con TC y RGB en Alisa",
-        "pl": "Zawarte przetwarzanie światła w CT i RGB w Alisie",
-        "uk": "Фіксована обробка світильників з КТ та RGB в Алісі",
-        "zh-cn": "阿尔萨与爱滋病和爱滋病患者混合处理"
       }
     },
     "title": "IoT Assistants",

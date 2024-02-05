@@ -307,7 +307,7 @@ setState('iot.0.app.message', JSON.stringify({
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 3.1.0 (2024-02-05)
 * (bluefox) Updated packages
 * (bluefox) Disabled the state change report for alexa v3
 
