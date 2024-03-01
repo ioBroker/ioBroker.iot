@@ -9,7 +9,7 @@
         "@mui/icons-material": "^5.15.7",
         "babel-eslint": "^10.1.0",
         "@sentry/browser": "^7.99.0",
-        "@sentry/integrations": "^7.99.0",
+        "@sentry/integrations": "^7.104.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-icons": "^5.0.1",
