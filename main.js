@@ -78,7 +78,7 @@ function startAdapter(options) {
             }
             alexaSH3 && alexaSH3.handleObjectChange(id, obj);
 
-            id && remote.updateObject(id, obj);
+            id && remote && remote.updateObject(id, obj);
         },
         stateChange: (id, state) => {
             if (id === `${adapter.namespace}.app.message` && state && !state.ack) {
@@ -89,7 +89,7 @@ function startAdapter(options) {
             state && adapter.config.googleHome  && googleHome && googleHome.updateState(id, state);
             state && adapter.config.amazonAlexa && alexaSH3 && alexaSH3.handleStateUpdate(id, state);
             state && adapter.config.yandexAlisa && yandexAlisa && yandexAlisa.updateState && yandexAlisa.updateState(id, state);
-            id && remote.updateState(id, state);
+            id && remote && remote.updateState(id, state);
 
             if (id === `${adapter.namespace}.smart.lastResponse` && state && !state.ack) {
                 alexaCustom && alexaCustom.setResponse(state.val);
@@ -558,6 +558,8 @@ function onDisconnect(event) {
         connected = false;
         adapter.setState('info.connection', false, true);
     }
+
+    remote && remote.onCloudDisconnect(event);
 }
 
 function onConnect(clientId) {
@@ -748,14 +750,18 @@ async function processMessage(type, request) {
 
     if (type.startsWith('remote')) {
         const start = Date.now();
-        return remote.process(request, type)
-            .then(response => {
-                if (response !== NONE) {
-                    adapter.log.debug(`[REMOTE] Response in: ${Date.now() - start}ms (Length: ${Array.isArray(response) ? `A ${response.length}` : JSON.stringify(response).length}) for ${request}`);
-                }
-                return response;
-            })
-            .catch(err => adapter.log.error(`Error in processing of remote request: ${err.toString()}`));
+        if (remote) {
+            return remote.process(request, type)
+                .then(response => {
+                    if (response !== NONE) {
+                        adapter.log.debug(`[REMOTE] Response in: ${Date.now() - start}ms (Length: ${Array.isArray(response) ? `A ${response.length}` : JSON.stringify(response).length}) for ${request}`);
+                    }
+                    return response;
+                })
+                .catch(err => adapter.log.error(`Error in processing of remote request: ${err.toString()}`));
+        } else {
+            adapter.log.error(`Received command, but remote already closed.`);
+        }
     } else if (type.startsWith('nightscout')) {
         if (adapter.config.nightscout) {
             let state = await adapter.getForeignStateAsync(`system.adapter.nightscout.${adapter.config.nightscout}.alive`);
