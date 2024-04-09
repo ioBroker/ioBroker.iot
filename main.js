@@ -885,7 +885,7 @@ async function processMessage(type, request) {
                 });
 
                 for (const [locationName, presenceStatus] of Object.entries(visuData.presence)) {
-                    const id = `app.geofence.${locationName}`;
+                    const id = `app.geofence.${locationName.replace(adapter.FORBIDDEN_CHARS, '_').replace(/\s|ä|ü|ö/g, '_')}`;
 
                     await adapter.setObjectNotExistsAsync(id, {
                         type: 'state',
@@ -900,7 +900,7 @@ async function processMessage(type, request) {
                         native: {}
                     });
 
-                    await adapter.setForeignStateAsync(id, presenceStatus, true);
+                    await adapter.setStateAsync(id, presenceStatus, true);
                 }
             } catch (e) {
                 adapter.log.error(`Could not handle data "${request}" by Visu App: ${e.message}`)
