@@ -863,8 +863,19 @@ async function processMessage(type, request) {
             _type = _type.substring(7);
             isCustom = true;
         }
+        if (_type === 'visu') {
+            adapter.log.debug(`Received visu command: ${JSON.stringify(request)}`);
+            if (typeof request === 'object') {
+                request = JSON.stringify(request);
+            } else {
+                request = request.toString();
+            }
 
-        if (adapter.config.allowedServices[0] === '*' || (adapter.config.allowedServices.includes(_type) || ALLOWED_SERVICES.includes(_type))) {
+            return { result: 'not yet implemented' };
+        } else if (
+            adapter.config.allowedServices[0] === '*' ||
+            (adapter.config.allowedServices.includes(_type) || ALLOWED_SERVICES.includes(_type))
+        ) {
             if (typeof request === 'object') {
                 request = JSON.stringify(request);
             } else {

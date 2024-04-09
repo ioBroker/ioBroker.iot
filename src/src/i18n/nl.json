@@ -236,5 +236,6 @@
   "Grouped from %s and %s": "Gegroepeerd van %s en %s",
   "Default toggle behaviour (Only alexa v3)": "Standaard schakelgedrag (alleen alexa v3)",
   "Do not toggle": "Wissel niet",
-  "Toggle": "Schakelaar"
+  "Toggle": "Schakelaar",
+  "This service is reserved for the ioBroker.visu app. Please use another service name.": "Deze service is gereserveerd voor de ioBroker.visu-app. Gebruik een andere servicenaam."
 }

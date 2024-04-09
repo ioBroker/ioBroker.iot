@@ -236,5 +236,6 @@
   "Grouped from %s and %s": "Raggruppato da %s e %s",
   "Default toggle behaviour (Only alexa v3)": "Comportamento di commutazione predefinito (solo Alexa v3)",
   "Do not toggle": "Non alternare",
-  "Toggle": "Alterna"
+  "Toggle": "Alterna",
+  "This service is reserved for the ioBroker.visu app. Please use another service name.": "Questo servizio è riservato all'app ioBroker.visu. Utilizza un altro nome di servizio."
 }

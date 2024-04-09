@@ -236,5 +236,6 @@
   "Grouped from %s and %s": "Agrupados de %s y %s",
   "Default toggle behaviour (Only alexa v3)": "Comportamiento de alternancia predeterminado (solo alexa v3)",
   "Do not toggle": "no alternar",
-  "Toggle": "Palanca"
+  "Toggle": "Palanca",
+  "This service is reserved for the ioBroker.visu app. Please use another service name.": "Este servicio está reservado para la aplicación ioBroker.visu. Utilice otro nombre de servicio."
 }

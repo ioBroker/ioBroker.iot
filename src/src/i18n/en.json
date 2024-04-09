@@ -236,5 +236,6 @@
   "Grouped from %s and %s": "Grouped from %s and %s",
   "Default toggle behaviour (Only alexa v3)": "Default toggle behaviour (Only alexa v3)",
   "Do not toggle": "Do not toggle",
-  "Toggle": "Toggle"
+  "Toggle": "Toggle",
+  "This service is reserved for the ioBroker.visu app. Please use another service name.": "This service is reserved for the ioBroker.visu app. Please use another service name."
 }

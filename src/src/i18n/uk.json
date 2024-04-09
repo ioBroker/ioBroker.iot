@@ -236,5 +236,6 @@
   "Grouped from %s and %s": "Згруповано з %s і %s",
   "Default toggle behaviour (Only alexa v3)": "Поведінка перемикання за замовчуванням (тільки Alexa v3)",
   "Do not toggle": "Не перемикайте",
-  "Toggle": "Перемикач"
+  "Toggle": "Перемикач",
+  "This service is reserved for the ioBroker.visu app. Please use another service name.": "Ця послуга зарезервована для програми ioBroker.visu. Використовуйте іншу назву служби."
 }

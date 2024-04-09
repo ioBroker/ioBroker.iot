@@ -2,21 +2,27 @@ import React, { Component } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 
-import TextField from '@mui/material/TextField';
-import Input from '@mui/material/Input';
-import FormHelperText from '@mui/material/FormHelperText';
-import Fab from '@mui/material/Fab';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import Snackbar from '@mui/material/Snackbar';
-import Chip from '@mui/material/Chip';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
+import {
+    TextField,
+    Input,
+    FormHelperText,
+    Fab,
+    FormControl,
+    Select,
+    MenuItem,
+    Button,
+    IconButton,
+    Snackbar,
+    Chip,
+    FormControlLabel,
+    Checkbox,
+} from '@mui/material';
 
-import { MdRefresh as IconRefresh, MdClose as IconClose, MdAdd as IconAdd } from 'react-icons/md';
+import {
+    MdRefresh as IconRefresh,
+    MdClose as IconClose,
+    MdAdd as IconAdd,
+} from 'react-icons/md';
 
 import {
     Utils, I18n, SelectID as DialogSelectID, IconCopy,
@@ -191,8 +197,10 @@ class Services extends Component {
 
     onChipsAdd(attr) {
         const chips = (this.props.native[attr] || '').split(/[,;\s]/).filter(a => !!a);
-        const pos = chips.indexOf(this.state.addValue);
-        if (pos === -1) {
+        if (this.state.addValue === 'visu') {
+            this.props.onError(I18n.t('This service is reserved for the ioBroker.visu app. Please use another service name.'));
+            this.setState({ addValue: '' });
+        } else if (!chips.includes(this.state.addValue) && this.state.addValue) {
             chips.push(this.state.addValue);
             this.setState({ addValue: '' }, () => this.props.onChange(attr, chips.join(' ')));
         }
@@ -231,7 +239,7 @@ class Services extends Component {
                 style={{ width: 150 }}
                 type="text"
                 value={this.state.addValue}
-                onKeyUp={e => e.keyCode === 13 && this.onChipsAdd(attr)}
+                onKeyUp={e => e.key === 'Enter' && this.onChipsAdd(attr)}
                 onChange={e => this.setState({ addValue: e.target.value.trim() })}
                 margin="normal"
             />
@@ -387,7 +395,7 @@ Services.propTypes = {
     native: PropTypes.object.isRequired,
     instance: PropTypes.number.isRequired,
     adapterName: PropTypes.string.isRequired,
-    //    onError: PropTypes.func,
+    onError: PropTypes.func,
     //    onLoad: PropTypes.func,
     onChange: PropTypes.func,
     socket: PropTypes.object.isRequired,

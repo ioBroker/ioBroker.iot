@@ -236,5 +236,6 @@
   "Grouped from %s and %s": "从 %s 和 %s 分组",
   "Default toggle behaviour (Only alexa v3)": "默认切换行为（仅限 alexa v3）",
   "Do not toggle": "不要切换",
-  "Toggle": "切换"
+  "Toggle": "切换",
+  "This service is reserved for the ioBroker.visu app. Please use another service name.": "此服务为 ioBroker.visu 应用程序保留。请使用其他服务名称。"
 }
