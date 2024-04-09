@@ -30,10 +30,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js 16.x
+      - name: Use Node.js 18.x
         uses: actions/setup-node@v4
         with:
-          node-version: 16.x
+          node-version: 18.x
 
       - name: Install Dependencies
         run: npm install
@@ -59,7 +59,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [16.x, 18.x, 20.x]
+        node-version: [18.x, 20.x]
 
     steps:
       - uses: actions/checkout@v4
@@ -70,6 +70,9 @@ jobs:
 
       - name: Install Dependencies
         run: npm install
+
+      - name: Build
+        run: npm run build
 
       - name: Run local tests
         #         npm downgrade to 6 (mainly for node.js 16) is needed because else testing fails
@@ -101,10 +104,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Use Node.js 16.x
+      - name: Use Node.js 18.x
         uses: actions/setup-node@v4
         with:
-          node-version: 16.x
+          node-version: 18.x
 
       - name: Extract the version and commit body from the tag
         id: extract_release
