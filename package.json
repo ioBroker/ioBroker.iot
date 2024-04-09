@@ -36,7 +36,7 @@
     "@iobroker/legacy-testing": "^1.0.9",
     "@types/iobroker": "^4.0.5",
     "@types/node": "^20.11.16",
-    "chai": "^5.0.3",
+    "chai": "^4.4.1",
     "gulp": "^4.0.2",
     "mocha": "^10.2.0"
   },
