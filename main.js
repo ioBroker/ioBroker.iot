@@ -871,7 +871,43 @@ async function processMessage(type, request) {
                 request = request.toString();
             }
 
-            return { result: 'not yet implemented' };
+            try {
+                /** @type {{ presence: Record<string, boolean> }} */
+                const visuData = JSON.parse(request);
+
+                await adapter.setObjectNotExistsAsync('app.geofence', {
+                    type: 'folder',
+                    common: {
+                        name: 'Geofence',
+                        desc: 'Collection of all the Geofence-locations managed by ioBroker Visu App'
+                    },
+                    native: {}
+                });
+
+                for (const [locationName, presenceStatus] of Object.entries(visuData.presence)) {
+                    const id = `app.geofence.${locationName.replace(adapter.FORBIDDEN_CHARS, '_').replace(/\s|ä|ü|ö/g, '_')}`;
+
+                    await adapter.setObjectNotExistsAsync(id, {
+                        type: 'state',
+                        common: {
+                            name: locationName,
+                            desc: `Geofence Status of ${locationName}`,
+                            type: 'boolean',
+                            read: true,
+                            write: false,
+                            role: 'indicator'
+                        },
+                        native: {}
+                    });
+
+                    await adapter.setStateAsync(id, presenceStatus, true);
+                }
+            } catch (e) {
+                adapter.log.error(`Could not handle data "${request}" by Visu App: ${e.message}`)
+                return { error: e.message }
+            }
+
+            return { result: 'Ok' };
         } else if (
             adapter.config.allowedServices[0] === '*' ||
             (adapter.config.allowedServices.includes(_type) || ALLOWED_SERVICES.includes(_type))
