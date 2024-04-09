@@ -127,14 +127,60 @@ const CAPABILITIES = {
 };
 
 const DEVICES = {
-    Light: { label: 'Light', icon: FaLightbulb, color: '#c9b803', control: 'switch', controllable: true },
-    AirCondition: { label: 'AirCondition', icon: FaSnowflake, color: '#001fb9', control: 'switch', controllable: true },
-    Blind: { label: 'Blinds', icon: MdBlinds, color: '#00a28f', control: 'blinds', controllable: true },
-    ContactSensor: { label: 'Sensor', icon: MdOutlineSensors, color: '#c9b803', control: 'sensor', controllable: false },
-    Dimmer: { label: 'Dimmer', icon: HiLightBulb, color: '#cb8500', control: 'slider', controllable: true },
-    Door: { label: 'Door sensor', icon: BsFillDoorOpenFill, color: '#ad002a', control: 'doorSensor', controllable: false },
-    Gate: { label: 'Gate', icon: GiGate, color: '#9d02af', control: 'gate' },
-    Hue: { label: 'Color HUE', icon: IoIosColorFilter, color: '#007a96', control: 'color' },
+    Light: {
+        label: 'Light',
+        icon: FaLightbulb,
+        color: '#c9b803',
+        control: 'switch',
+        controllable: true,
+    },
+    AirCondition: {
+        label: 'AirCondition',
+        icon: FaSnowflake,
+        color: '#001fb9',
+        control: 'switch',
+        controllable: true,
+    },
+    Blind: {
+        label: 'Blinds',
+        icon: MdBlinds,
+        color: '#00a28f',
+        control: 'blinds',
+        controllable: true,
+    },
+    ContactSensor: {
+        label: 'Sensor',
+        icon: MdOutlineSensors,
+        color:'#c9b803',
+        control: 'sensor',
+        controllable: false,
+    },
+    Dimmer: {
+        label: 'Dimmer',
+        icon: HiLightBulb,
+        color: '#cb8500',
+        control: 'slider',
+        controllable: true,
+    },
+    Door: {
+        label: 'Door sensor',
+        icon: BsFillDoorOpenFill,
+        color: '#ad002a',
+        control: 'doorSensor',
+        controllable: false,
+    },
+    Gate: {
+        label: 'Gate',
+        icon: GiGate,
+        color: '#9d02af',
+        control: 'gate',
+    },
+    Hue: {
+        label: 'Color HUE',
+        icon: IoIosColorFilter,
+        color: '#007a96',
+        control: 'color',
+    },
     Ct: { label: 'Color temperature', icon: IoIosColorFilter, color: '#5a9600' },
     Lock: { label: 'Lock', icon: AiFillUnlock, color: '#c9030a' },
     Motion: { label: 'Motion', icon: CgMenuMotion, color: '#149100' },
@@ -625,14 +671,11 @@ class Alexa3SmartNames extends Component {
                         state?.value === 'OFF' && className.push(this.props.classes.deviceOff);
                     } else if (state?.name === 'detectionState') {
                         state?.value === 'NOT_DETECTED' && className.push(this.props.classes.deviceOff);
-                    } else
-                    if (state?.name === 'percentage') {
+                    } else if (state?.name === 'percentage') {
                         valuePercent = `${state.value}%`;
-                    } else
-                    if (state?.name === 'brightness') {
+                    } else if (state?.name === 'brightness') {
                         valueBrightness = state.value;
-                    } else
-                    if (state?.name === 'color') {
+                    } else if (state?.name === 'color') {
                         valueColor = `hsl(${state.value}, 50%, 50%)`;
                     }
                 }
@@ -707,14 +750,11 @@ class Alexa3SmartNames extends Component {
                             state?.value === 'OFF' && className.push(this.props.classes.deviceOff);
                         } else if (state?.name === 'detectionState') {
                             state?.value === 'NOT_DETECTED' && className.push(this.props.classes.deviceOff);
-                        } else
-                        if (state?.name === 'percentage') {
+                        } else if (state?.name === 'percentage') {
                             valuePercent = `${state.value}%`;
-                        } else
-                        if (state?.name === 'brightness') {
+                        } else if (state?.name === 'brightness') {
                             valueBrightness = state.value;
-                        } else
-                        if (state?.name === 'color') {
+                        } else if (state?.name === 'color') {
                             valueColor = `hsl(${state.value}, 100%, 50%)`;
                         }
                     }
@@ -828,8 +868,7 @@ class Alexa3SmartNames extends Component {
             if (type && !SMART_TYPES[type]) {
                 if (SMART_TYPES[type.toLowerCase()]) {
                     type = type.toLowerCase();
-                } else
-                if (SMART_TYPES_V2[type]) {
+                } else if (SMART_TYPES_V2[type]) {
                     type = SMART_TYPES_V2[type];
                 }
             }

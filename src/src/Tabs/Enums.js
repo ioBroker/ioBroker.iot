@@ -1,19 +1,23 @@
 import React, { Component } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import Switch from '@mui/material/Switch';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import Dialog from '@mui/material/Dialog';
-import CircularProgress from '@mui/material/CircularProgress';
+import {
+    TextField,
+    Button,
+    IconButton,
+    Switch,
+    Dialog,
+    CircularProgress,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+} from '@mui/material';
 
 import { MdEdit as IconEdit } from 'react-icons/md';
-import IconClose from '@mui/icons-material/Close';
-import IconCheck from '@mui/icons-material/Check';
+import {
+    Close as IconClose,
+    Check as IconCheck,
+} from '@mui/icons-material';
 
 import { Utils, I18n, Message as MessageDialog } from '@iobroker/adapter-react-v5';
 
@@ -94,14 +98,14 @@ class Enums extends Component {
             .then(res => {
                 const funcs = [];
                 const rooms = [];
-                res && Object.keys(res).forEach(id => {
-                    if (id.match(/^enum\.rooms\./)) {
-                        rooms.push(res[id]);
-                    } else
-                    if (id.match(/^enum\.functions\./)) {
-                        funcs.push(res[id]);
-                    }
-                });
+                res && Object.keys(res)
+                    .forEach(id => {
+                        if (id.match(/^enum\.rooms\./)) {
+                            rooms.push(res[id]);
+                        } else if (id.match(/^enum\.functions\./)) {
+                            funcs.push(res[id]);
+                        }
+                    });
 
                 this.setState({ funcs, rooms, loading: false });
                 return this.props.socket.subscribeObject('enum.*', this.onEnumUpdateBound);
@@ -109,7 +113,8 @@ class Enums extends Component {
     }
 
     componentWillUnmount() {
-        this.props.socket.unsubscribeObject('enum.*', this.onEnumUpdateBound).then(() => {});
+        this.props.socket.unsubscribeObject('enum.*', this.onEnumUpdateBound)
+            .then(() => {});
     }
 
     onEnumUpdate(id, obj) {
@@ -154,8 +159,7 @@ class Enums extends Component {
                     break;
                 }
             }
-        } else
-        if (id.match(/^enum\.rooms\./)) {
+        } else if (id.match(/^enum\.rooms\./)) {
             for (let i = this.state.rooms.length - 1; i >= 0; i--) {
                 if (this.state.rooms[i]._id === id) {
                     const rooms = JSON.parse(JSON.stringify(this.state.rooms));
