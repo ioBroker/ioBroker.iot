@@ -1,0 +1,9 @@
+{
+  "You can use %s in the text to display current trigger value or %id to display the triggered object ID": "Puede usar %s en el texto para mostrar el valor de activación actual o %id para mostrar el ID del objeto activado",
+  "Sends to ioBroker.visu": "Envía a ioBroker.visu",
+  "ioBroker.visu": "ioBroker.visu",
+  "Message:": "Mensaje:",
+  "Title:": "Título:",
+  "Expire(sec):": "Caducar (seg):",
+  "Priority": "Prioridad"
+}
