@@ -307,7 +307,7 @@ setState('iot.0.app.message', JSON.stringify({
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 3.2.0 (2024-04-10)
 * (foxriver76) implemented geofence with ioBroker Visu app
 
 ### 3.1.0 (2024-02-05)
