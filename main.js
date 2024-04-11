@@ -381,6 +381,8 @@ async function sendMessageToApp(message) {
             adapter.log.warn(`Cannot parse message: ${json}`);
             json = null;
         }
+    } else {
+        json = null;
     }
 
     if (!json) {

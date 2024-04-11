@@ -307,6 +307,9 @@ setState('iot.0.app.message', JSON.stringify({
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (foxriver76) fixed issue that only valid JSON could be sent to app via message state
+
 ### 3.2.0 (2024-04-10)
 * (foxriver76) implemented geofence with ioBroker Visu app
 
