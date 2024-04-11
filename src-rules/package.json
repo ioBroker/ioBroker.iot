@@ -1,7 +1,7 @@
 {
     "name": "iobroker.telegram.rules",
     "private": true,
-    "version": "3.2.0",
+    "version": "3.2.1",
     "scripts": {
         "start": "set PORT=4173 && craco start",
         "old-start": "set PORT=4173 && react-scripts start",
