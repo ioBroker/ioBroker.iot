@@ -11,10 +11,10 @@ const AlexaCustom  = require('./lib/alexaCustom');
 const GoogleHome   = require('./lib/googleHome');
 const YandexAlisa  = require('./lib/alisa');
 const Remote       = require('./lib/remote');
-const fs           = require('fs');
+const fs           = require('node:fs');
 const axios        = require('axios');
 const packageJSON  = require('./package.json');
-const zlib         = require('zlib');
+const zlib         = require('node:zlib');
 const version      = packageJSON.version;
 // @ts-ignore
 const adapterName  = packageJSON.name.split('.').pop();
