@@ -3,6 +3,7 @@
 /* jslint node: true */
 'use strict';
 
+const { handleGeofenceData, handleDevicesData } = require('./lib/visuApp.js')
 const DeviceModule = require('aws-iot-device-sdk').device;
 const utils        = require('@iobroker/adapter-core'); // Get common adapter utils
 const AlexaSH2     = require('./lib/alexaSmartHomeV2');
@@ -874,35 +875,15 @@ async function processMessage(type, request) {
             }
 
             try {
-                /** @type {{ presence: Record<string, boolean> }} */
+                /** @type {{ presence?: Record<string, boolean>, devices?: Record<string, any> }} */
                 const visuData = JSON.parse(request);
 
-                await adapter.setObjectNotExistsAsync('app.geofence', {
-                    type: 'folder',
-                    common: {
-                        name: 'Geofence',
-                        desc: 'Collection of all the Geofence-locations managed by ioBroker Visu App'
-                    },
-                    native: {}
-                });
+                if (visuData.presence) {
+                    await handleGeofenceData(visuData, adapter)
+                }
 
-                for (const [locationName, presenceStatus] of Object.entries(visuData.presence)) {
-                    const id = `app.geofence.${locationName.replace(adapter.FORBIDDEN_CHARS, '_').replace(/\s|ä|ü|ö/g, '_')}`;
-
-                    await adapter.setObjectNotExistsAsync(id, {
-                        type: 'state',
-                        common: {
-                            name: locationName,
-                            desc: `Geofence Status of ${locationName}`,
-                            type: 'boolean',
-                            read: true,
-                            write: false,
-                            role: 'indicator'
-                        },
-                        native: {}
-                    });
-
-                    await adapter.setStateAsync(id, presenceStatus, true);
+                if (visuData.devices) {
+                    await handleDevicesData(visuData, adapter)
                 }
             } catch (e) {
                 adapter.log.error(`Could not handle data "${request}" by Visu App: ${e.message}`)

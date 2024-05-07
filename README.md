@@ -307,6 +307,9 @@ setState('iot.0.app.message', JSON.stringify({
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (foxriver76) prepared adapter for new ioBroker Visu app states
+
 ### 3.2.2 (2024-04-11)
 * (foxriver76) remove some warnings which should only be debug log
 
