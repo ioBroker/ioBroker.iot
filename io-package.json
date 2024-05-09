@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "3.2.2",
+    "version": "3.3.0",
     "news": {
+      "3.3.0": {
+        "en": "Fix error on reconnect\nprepared adapter for new ioBroker Visu app states",
+        "de": "Fehler behoben bei reconnect\nvorbereiteter Adapter für neue ioBroker Visu app Staaten",
+        "ru": "Исправление ошибки при повторном подключении\nподготовленный адаптер для нового ioBroker Состояние приложения Visu",
+        "pt": "Corrigir erro na reconectação\nadaptador preparado para novo ioBroker Visu app estados",
+        "nl": "Fout herstellen bij opnieuw verbinden\nvoorbereide adapter voor nieuwe ioBroker Visu-app geeft aan",
+        "fr": "Correction de l'erreur lors du reconnect\nadaptateur préparé pour le nouveau ioBroker États de l'application Visu",
+        "it": "Risolvere l'errore sulla riconnette\nadattatore preparato per nuovo ioBroker Stati dell'app Visu",
+        "es": "Corregir error en la reconexión\nadaptador preparado para nuevo ioBroker Visu app states",
+        "pl": "Popraw błąd przy ponownym połączeniu\nprzygotowany adapter do nowego jOBrokera Stan aplikacji Visu",
+        "uk": "Виправлення помилки на відключенні\nготовий адаптер для нового ioBroker Вису застосунки",
+        "zh-cn": "重新连接时修正错误\n为新 ioBroker 准备适配器 Visu 应用程序状态"
+      },
       "3.2.2": {
         "en": "remove some warnings which should only be debug log",
         "de": "einige warnungen entfernen, die nur debug log sein sollten",
@@ -80,19 +93,6 @@
         "pl": "Wsparcie dla państwa (alexa 3)\nDo niewielkiej poprawy aleksji 3",
         "uk": "Додана підтримка державного торгування (alexa 3)\nДо одного невеликого поліпшення для Олександра 3 хв",
         "zh-cn": "进一步支持国家乞讨(alexa 3)\n法拉的小改进 3"
-      },
-      "2.0.10": {
-        "en": "Done small improvements for alexa v3",
-        "de": "Fertige kleine Verbesserungen für alexa v3",
-        "ru": "Сделайте небольшие улучшения для alexa v3",
-        "pt": "Feito pequenas melhorias para alexa v3",
-        "nl": "Kleine verbetering voor Alexa v3",
-        "fr": "Fait de petites améliorations pour alexa v3",
-        "it": "Fatto piccoli miglioramenti per alexa v3",
-        "es": "Hecho pequeñas mejoras para alexa v3",
-        "pl": "Do niewielkiej poprawy alexa v3",
-        "uk": "Дон невеликі поліпшення для alexa v3",
-        "zh-cn": "法拉诉3的小改进"
       }
     },
     "title": "IoT Assistants",

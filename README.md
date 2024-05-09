@@ -307,7 +307,7 @@ setState('iot.0.app.message', JSON.stringify({
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 3.3.0 (2024-05-09)
 * (foxriver76) Fix error on reconnect
 * (foxriver76) prepared adapter for new ioBroker Visu app states
 
