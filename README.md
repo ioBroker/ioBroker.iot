@@ -307,12 +307,16 @@ setState('iot.0.app.message', JSON.stringify({
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) updated packages
+
 ### 3.3.0 (2024-05-09)
 * (foxriver76) Fix error on reconnect
 * (foxriver76) prepared adapter for new ioBroker Visu app states
+* (bluefox) updated packages
 
 ### 3.2.2 (2024-04-11)
-* (foxriver76) remove some warnings which should only be debug log
+* (foxriver76) remove some warnings that should only be debug log
 
 ### 3.2.1 (2024-04-11)
 * (foxriver76) fixed issue that only valid JSON could be sent to app via message state
