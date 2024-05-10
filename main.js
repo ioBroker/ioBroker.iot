@@ -416,7 +416,6 @@ async function sendMessageToApp(message) {
         json.ttlSeconds = 3600 * 48;
     }
 
-
     if (!json.message) {
         throw new Error('Empty message');
     }
