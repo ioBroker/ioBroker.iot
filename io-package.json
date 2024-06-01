@@ -123,7 +123,6 @@
     "authors": [
       "bluefox <dogafox@gmail.com>"
     ],
-    "license": "MIT",
     "platform": "Javascript/Node.js",
     "mode": "daemon",
     "loglevel": "info",
@@ -147,10 +146,12 @@
     "logTransporter": true,
     "dependencies": [
       {
-        "admin": ">=4.0.1"
-      },
-      {
         "js-controller": ">=3.3.22"
+      }
+    ],
+    "globalDependencies": [
+      {
+        "admin": ">=4.0.1"
       }
     ],
     "preserveSettings": "smartName",
@@ -177,7 +178,7 @@
     },
     "licenseInformation": {
       "type": "free",
-      "link": "https://github.com/ioBroker/ioBroker.iot/blob/master/LICENSE"
+      "license": "MIT"
     }
   },
   "protectedNative": [
