@@ -1,13 +1,12 @@
 {
   "files": {
     "main.css": "./static/css/main.96b3c861.css",
-    "main.js": "./static/js/main.112b1011.js",
+    "main.js": "./static/js/main.3d31b75a.js",
     "static/media/Ground Floor.svg": "./static/media/Ground Floor.2b7c5c91db7f070935a2.svg",
     "static/media/Second Floor.svg": "./static/media/Second Floor.a2d5ed32df336591c06b.svg",
     "static/media/Cellar.svg": "./static/media/Cellar.7ec1b1803a2437c8b78c.svg",
     "static/media/Anteroom.svg": "./static/media/Anteroom.93a742135f2c060ad619.svg",
     "static/media/Corridor.svg": "./static/media/Corridor.93a742135f2c060ad619.svg",
-    "static/media/names.txt": "./static/media/names.3a7dae0bd6b8b03b280f.txt",
     "static/media/Home Theater.svg": "./static/media/Home Theater.1e5f19a0b2a013f153f5.svg",
     "static/media/Driveway.svg": "./static/media/Driveway.fbd31101c5a80a8bb37a.svg",
     "static/media/Equipment Room.svg": "./static/media/Equipment Room.db92bdca64f653c844f8.svg",
@@ -123,10 +122,10 @@
     "static/media/Outdoor Blinds.svg": "./static/media/Outdoor Blinds.37b85a9c060a4af48da9.svg",
     "static/media/Upstairs.svg": "./static/media/Upstairs.441813e54e0daca0882d.svg",
     "main.96b3c861.css.map": "./static/css/main.96b3c861.css.map",
-    "main.112b1011.js.map": "./static/js/main.112b1011.js.map"
+    "main.3d31b75a.js.map": "./static/js/main.3d31b75a.js.map"
   },
   "entrypoints": [
     "static/css/main.96b3c861.css",
-    "static/js/main.112b1011.js"
+    "static/js/main.3d31b75a.js"
   ]
 }

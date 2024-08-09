@@ -1,27 +1,28 @@
 import React from 'react';
 
 import PropTypes from 'prop-types';
-import { withStyles } from '@mui/styles';
 
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import TableSortLabel from '@mui/material/TableSortLabel';
-import IconButton from '@mui/material/IconButton';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import TextField from '@mui/material/TextField';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableRow,
+    TableSortLabel,
+    IconButton,
+    Select,
+    MenuItem,
+    TextField,
+} from '@mui/material';
 
-import IconEdit from '@mui/icons-material/Edit';
-import IconDelete from '@mui/icons-material/Delete';
-import IconExpand from '@mui/icons-material/NavigateNext';
-import IconCollapse from '@mui/icons-material/ExpandMore';
-import IconCheck from '@mui/icons-material/Check';
-import IconClose from '@mui/icons-material/Close';
-
-import { Utils } from '@iobroker/adapter-react-v5';
+import {
+    Edit as IconEdit,
+    Delete as IconDelete,
+    NavigateNext as IconExpand,
+    ExpandMore as IconCollapse,
+    Check as IconCheck,
+    Close as IconClose,
+} from '@mui/icons-material';
 
 function getAttr(obj, attr, lookup) {
     if (typeof attr === 'string') {
@@ -57,7 +58,7 @@ function setAttr(obj, attr, value) {
     return setAttr(obj[name], attr, value);
 }
 
-const styles = theme => ({
+const styles = {
     tableContainer: {
         width: '100%',
         height: '100%',
@@ -89,14 +90,14 @@ const styles = theme => ({
     cellButton: {
         width: 30,
     },
-    cellHeader: {
+    cellHeader: theme => ({
         fontWeight: 'bold',
         background: theme.palette.mode === 'dark' ? '#888' : '#888',
         color: theme.palette.mode === 'dark' ? '#EEE' : '#111',
         height: 48,
         wordBreak: 'break-word',
         whiteSpace: 'pre',
-    },
+    }),
     width_name_nicknames: {
         maxWidth: 150,
     },
@@ -129,7 +130,7 @@ const styles = theme => ({
         top: 20,
         width: 1,
     },
-});
+};
 
 function descendingComparator(a, b, orderBy, lookup) {
     const _a = getAttr(a, orderBy, lookup) || '';
@@ -195,8 +196,7 @@ class TreeTable extends React.Component {
             }
             return <TableCell
                 key={col.field}
-                className={Utils.clsx(this.props.classes.cell, level && this.props.classes.cellSecondary)}
-                style={col.cellStyle}
+                style={{ ...styles.cell, ...(level ? styles.cellSecondary : undefined), ...col.cellStyle }}
                 component="th"
             >
                 {
@@ -235,8 +235,7 @@ class TreeTable extends React.Component {
         }
         return <TableCell
             key={col.field}
-            className={Utils.clsx(this.props.classes.cell, level && this.props.classes.cellSecondary)}
-            style={col.cellStyle}
+            style={{ ...styles.cell, ...(level ? styles.cellSecondary : undefined), ...col.cellStyle }}
             component="th"
         >
             {getAttr(item, col.field, col.lookup)}
@@ -261,16 +260,22 @@ class TreeTable extends React.Component {
         return [
             <TableRow
                 key={item.id}
-                className={Utils.clsx(
-                    this.props.classes.row,
-                    level  && this.props.classes.rowSecondary,
-                    !level && children.length && this.props.classes.rowMainWithChildren,
-                    !level && !children.length && this.props.classes.rowMainWithoutChildren,
-                    this.state.editMode !== false && this.state.editMode !== i && this.props.classes.rowNoEdit,
-                    this.state.deleteMode !== false && this.state.deleteMode !== i && this.props.classes.rowNoEdit,
-                )}
+                style={{
+                    ...styles.row,
+                    ...(level ? styles.rowSecondary : undefined),
+                    ...(!level && children.length ? styles.rowMainWithChildren : undefined),
+                    ...(!level && !children.length ? styles.rowMainWithoutChildren : undefined),
+                    ...(this.state.editMode !== false && this.state.editMode !== i ? styles.rowNoEdit : undefined),
+                    ...(this.state.deleteMode !== false && this.state.deleteMode !== i ? styles.rowNoEdit : undefined),
+                }}
             >
-                <TableCell className={Utils.clsx(this.props.classes.cell, this.props.classes.cellExpand, level && this.props.classes.cellSecondary)}>
+                <TableCell
+                    style={{
+                        ...styles.cell,
+                        ...styles.cellExpand,
+                        ...(level ? styles.cellSecondary : undefined),
+                    }}
+                >
                     {children.length ? <IconButton onClick={() => {
                         const _opened = [...this.state.opened];
                         const pos = _opened.indexOf(item.id);
@@ -289,14 +294,17 @@ class TreeTable extends React.Component {
                 </TableCell>
                 <TableCell
                     scope="row"
-                    className={Utils.clsx(this.props.classes.cell, level && this.props.classes.cellSecondary)}
-                    style={this.props.columns[0].cellStyle}
+                    style={{
+                        ...styles.cell,
+                        ...(level ? styles.cellSecondary : undefined),
+                        ...this.props.columns[0].cellStyle,
+                    }}
                 >
                     {getAttr(item, this.props.columns[0].field, this.props.columns[0].lookup)}
                 </TableCell>
                 {this.props.columns.map((col, ii) =>
                     (!ii ? null : this.renderCell(item, col, level, i)))}
-                <TableCell className={Utils.clsx(this.props.classes.cell, this.props.classes.cellButton)}>
+                <TableCell style={{ ...styles.cell, ...styles.cellButton }}>
                     {this.state.editMode === i || this.state.deleteMode === i ?
                         <IconButton
                             disabled={this.state.editMode !== false && (!this.state.editData || !Object.keys(this.state.editData).length)}
@@ -320,7 +328,7 @@ class TreeTable extends React.Component {
                             <IconEdit />
                         </IconButton>}
                 </TableCell>
-                <TableCell className={Utils.clsx(this.props.classes.cell, this.props.classes.cellButton)}>
+                <TableCell style={{ ...styles.cell, ...styles.cellButton }}>
                     {this.state.editMode === i || this.state.deleteMode === i ?
                         <IconButton onClick={() => this.setState({ editMode: false, deleteMode: false })}>
                             <IconClose />
@@ -346,11 +354,19 @@ class TreeTable extends React.Component {
     renderHead() {
         return <TableHead>
             <TableRow>
-                <TableCell component="th" className={Utils.clsx(this.props.classes.cell, this.props.classes.cellHeader, this.props.classes.cellExpand)} />
                 <TableCell
                     component="th"
-                    className={Utils.clsx(this.props.classes.cell, this.props.classes.cellHeader, this.props.classes[`width_${this.props.columns[0].field.replace(/\./g, '_')}`])}
-                    style={this.props.columns[0].cellStyle}
+                    sx={styles.cellHeader}
+                    style={{ ...styles.cell, ...styles.cellExpand }}
+                />
+                <TableCell
+                    component="th"
+                    sx={styles.cellHeader}
+                    style={{
+                        ...styles.cell,
+                        ...styles[`width_${this.props.columns[0].field.replace(/\./g, '_')}`],
+                        ...(this.props.columns[0].cellStyle || undefined),
+                    }}
                     sortDirection={this.state.orderBy === this.props.columns[0].field ? this.state.order : false}
                 >
                     <TableSortLabel
@@ -360,7 +376,7 @@ class TreeTable extends React.Component {
                     >
                         {this.props.columns[0].title}
                         {this.state.orderBy === this.props.columns[0].field ?
-                            <span className={this.props.classes.visuallyHidden}>
+                            <span style={styles.visuallyHidden}>
                                 {this.state.order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                             </span> : null}
                     </TableSortLabel>
@@ -368,8 +384,12 @@ class TreeTable extends React.Component {
                 {this.props.columns.map((col, i) =>
                     (!i ? null : <TableCell
                         key={col.field}
-                        className={Utils.clsx(this.props.classes.cell, this.props.classes.cellHeader, this.props.classes[`width_${col.field.replace(/\./g, '_')}`])}
-                        style={col.cellStyle}
+                        sx={styles.cellHeader}
+                        style={{
+                            ...styles.cell,
+                            ...styles[`width_${col.field.replace(/\./g, '_')}`],
+                            ...col.cellStyle,
+                        }}
                         component="th"
                     >
                         <TableSortLabel
@@ -379,13 +399,21 @@ class TreeTable extends React.Component {
                         >
                             {col.title}
                             {this.state.orderBy === col.field ?
-                                <span className={this.props.classes.visuallyHidden}>
+                                <span style={styles.visuallyHidden}>
                                     {this.state.order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                                 </span> : null}
                         </TableSortLabel>
                     </TableCell>))}
-                <TableCell component="th" className={Utils.clsx(this.props.classes.cell, this.props.classes.cellHeader, this.props.classes.cellButton)} />
-                <TableCell component="th" className={Utils.clsx(this.props.classes.cell, this.props.classes.cellHeader, this.props.classes.cellButton)} />
+                <TableCell
+                    component="th"
+                    sx={styles.cellHeader}
+                    style={{ ...styles.cell, ...styles.cellButton }}
+                />
+                <TableCell
+                    component="th"
+                    sx={styles.cellHeader}
+                    style={{ ...styles.cell, ...styles.cellButton }}
+                />
             </TableRow>
         </TableHead>;
     }
@@ -394,8 +422,11 @@ class TreeTable extends React.Component {
         const lookup = this.props.columns ? this.props.columns.find(col => col.field === this.state.orderBy).lookup : '';
         const table = stableSort(this.props.data, getComparator(this.state.order, this.state.orderBy, lookup));
 
-        return <div className={Utils.clsx(this.props.classes.tableContainer, this.props.className)}>
-            <Table className={this.props.classes.table} aria-label="simple table" size="small" stickyHeader>
+        return <div
+            style={{ ...styles.tableContainer, ...(this.props.style || undefined) }}
+            className={this.props.className}
+        >
+            <Table style={styles.table} aria-label="simple table" size="small" stickyHeader>
                 {this.renderHead()}
                 <TableBody>
                     {table.map(item => this.renderLine(item))}
@@ -415,4 +446,4 @@ TreeTable.propTypes = {
 //    themeType: PropTypes.string,
 };
 
-export default withStyles(styles)(TreeTable);
+export default TreeTable;

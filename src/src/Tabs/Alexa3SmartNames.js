@@ -1,22 +1,23 @@
 import React, { Component } from 'react';
-import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import SVG from 'react-inlinesvg';
 
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import Fab from '@mui/material/Fab';
-import CircularProgress from '@mui/material/CircularProgress';
-import Badge from '@mui/material/Badge';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import FormHelperText from '@mui/material/FormHelperText';
-import FormControl from '@mui/material/FormControl';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import Dialog from '@mui/material/Dialog';
+import {
+    TextField,
+    Button,
+    IconButton,
+    Fab,
+    CircularProgress,
+    Badge,
+    Select,
+    MenuItem,
+    FormHelperText,
+    FormControl,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Dialog, Box,
+} from '@mui/material';
 
 import {
     MdEdit as IconEdit,
@@ -194,7 +195,7 @@ const DEVICES = {
     Window: { label: 'Window sensor', icon: GiWindow, color: '#27c903' },
 };
 
-const styles = theme => ({
+const styles = {
     tab: {
         width: '100%',
         height: '100%',
@@ -345,10 +346,10 @@ const styles = theme => ({
         paddingTop: 2,
         paddingBottom: 2,
     },
-    headerRow: {
-        paddingLeft: theme.spacing(1),
+    headerRow: theme => ({
+        pl: 1,
         background: theme.palette.primary.main,
-    },
+    }),
     headerCell: {
         display: 'inline-block',
         verticalAlign: 'top',
@@ -363,7 +364,7 @@ const styles = theme => ({
         width: 130,
         marginLeft: 8,
     },
-});
+};
 
 function getObjectIcon(obj, id, imagePrefix) {
     imagePrefix = imagePrefix || '.'; // http://localhost:8081';
@@ -650,7 +651,7 @@ class Alexa3SmartNames extends Component {
         });
     }
 
-    renderChannelActions(control) {
+    static renderChannelActions(control) {
         // Type
         const actions = [];
 
@@ -661,16 +662,20 @@ class Alexa3SmartNames extends Component {
             if (control.supported.includes(action)) {
                 let state;
                 const Icon = CAPABILITIES[action].icon;
-                const className = [this.props.classes.actionIcon];
+                let style = styles.actionIcon;
                 let valuePercent = null;
                 let valueBrightness = null;
                 let valueColor = null;
                 if (control.state) {
                     state = control.state.find(st => action === st.name);
                     if (state?.name === 'powerState') {
-                        state?.value === 'OFF' && className.push(this.props.classes.deviceOff);
+                        if (state?.value === 'OFF') {
+                            style = { ...style, ...styles.deviceOff };
+                        }
                     } else if (state?.name === 'detectionState') {
-                        state?.value === 'NOT_DETECTED' && className.push(this.props.classes.deviceOff);
+                        if (state?.value === 'NOT_DETECTED') {
+                            style = { ...style, ...styles.deviceOff };
+                        }
                     } else if (state?.name === 'percentage') {
                         valuePercent = `${state.value}%`;
                     } else if (state?.name === 'brightness') {
@@ -683,16 +688,20 @@ class Alexa3SmartNames extends Component {
                 actions.push(<span
                     key={action}
                     title={CAPABILITIES[action].label + (state ? ` - ${state.value}` : '')}
-                    className={this.props.classes.actionSpan}
+                    style={styles.actionSpan}
                 >
-                    <Icon className={className.join(' ')} style={{ color: CAPABILITIES[action].color, backgroundColor: valueColor }} />
+                    <Icon style={{ ...style, color: CAPABILITIES[action].color, backgroundColor: valueColor }} />
                     {valuePercent !== null ? <span style={{ color: DEVICES[control.type].color }}>{valuePercent}</span> : null}
                     {valueBrightness !== null ? <span style={{ color: DEVICES[control.type].color }}>{valueBrightness}</span> : null}
                 </span>);
             } else if (control.enforced.includes(action)) {
                 const Icon = CAPABILITIES[action].icon;
-                actions.push(<span key={action} title={CAPABILITIES[action].label} className={this.props.classes.actionSpan} style={{ opacity: 0.7 }}>
-                    <Icon className={this.props.classes.actionIcon} style={{ color: CAPABILITIES[action].color }} />
+                actions.push(<span
+                    key={action}
+                    title={CAPABILITIES[action].label}
+                    style={{ ...styles.actionSpan, opacity: 0.7 }}
+                >
+                    <Icon style={{ ...styles.actionIcon, color: CAPABILITIES[action].color }} />
                 </span>);
             }
         });
@@ -702,7 +711,7 @@ class Alexa3SmartNames extends Component {
                 actions.push(<span
                     key={action}
                     title={action}
-                    className={this.props.classes.actionSpan}
+                    style={styles.actionSpan}
                 >
                     {action}
                 </span>);
@@ -713,8 +722,7 @@ class Alexa3SmartNames extends Component {
                 actions.push(<span
                     key={action}
                     title={action}
-                    className={this.props.classes.actionSpan}
-                    style={{ opacity: 0.7 }}
+                    style={{ ...styles.actionSpan, opacity: 0.7 }}
                 >
                     {action}
                 </span>);
@@ -724,7 +732,7 @@ class Alexa3SmartNames extends Component {
         return actions;
     }
 
-    renderDevTypes(dev) {
+    static renderDevTypes(dev) {
         // Type
         const devices = [];
         if (!dev.controls) {
@@ -739,7 +747,7 @@ class Alexa3SmartNames extends Component {
 
                 if (DEVICES[control.type]) {
                     const Icon = DEVICES[control.type].icon;
-                    const className = [this.props.classes.actionSpan];
+                    let style = styles.actionSpan;
                     let valuePercent = null;
                     let valueBrightness = null;
                     let valueColor = null;
@@ -747,9 +755,13 @@ class Alexa3SmartNames extends Component {
                     if (dev.state) {
                         state = dev.state.find(st => control.supported.includes(st.name));
                         if (state?.name === 'powerState') {
-                            state?.value === 'OFF' && className.push(this.props.classes.deviceOff);
+                            if (state?.value === 'OFF') {
+                                style = { ...style, ...styles.deviceOff };
+                            }
                         } else if (state?.name === 'detectionState') {
-                            state?.value === 'NOT_DETECTED' && className.push(this.props.classes.deviceOff);
+                            if (state?.value === 'NOT_DETECTED') {
+                                style = { ...style, ...styles.deviceOff };
+                            }
                         } else if (state?.name === 'percentage') {
                             valuePercent = `${state.value}%`;
                         } else if (state?.name === 'brightness') {
@@ -762,9 +774,9 @@ class Alexa3SmartNames extends Component {
                     const currentType = <span
                         key={`${control.type}_${i}`}
                         title={DEVICES[control.type].label + (state ? ` - ${state.value}` : '')}
-                        className={className.join(' ')}
+                        style={style}
                     >
-                        <Icon className={this.props.classes.deviceIcon} style={{ color: DEVICES[control.type].color, backgroundColor: valueColor }} />
+                        <Icon style={{ ...styles.deviceIcon, color: DEVICES[control.type].color, backgroundColor: valueColor }} />
                         {valuePercent !== null ? <span style={{ color: DEVICES[control.type].color }}>{valuePercent}</span> : null}
                         {valueBrightness !== null ? <span style={{ color: DEVICES[control.type].color }}>{valueBrightness}</span> : null}
                     </span>;
@@ -821,20 +833,20 @@ class Alexa3SmartNames extends Component {
                     %
                 </MenuItem>);
             }
-            return <FormControl className={this.props.classes.selectType} variant="standard">
+            return <FormControl style={styles.selectType} variant="standard">
                 <Select
                     variant="standard"
-                    className={this.props.classes.devSubLineByOnSelect}
+                    style={styles.devSubLineByOnSelect}
                     value={(byON || '').toString()}
                     onChange={e => this.onParamsChange(state.id, e.target.value)}
                 >
                     {items}
                 </Select>
-                <FormHelperText className={this.props.classes.devSubLineTypeTitle}>{I18n.t('by ON')}</FormHelperText>
+                <FormHelperText style={styles.devSubLineTypeTitle}>{I18n.t('by ON')}</FormHelperText>
             </FormControl>;
         }
 
-        return <div className={this.props.classes.selectType} />;
+        return <div style={styles.selectType} />;
     }
 
     onParamsChange(id, byON, type) {
@@ -858,7 +870,7 @@ class Alexa3SmartNames extends Component {
                 .catch(err => this.props.onError(err)));
     }
 
-    renderSelectTypeSelector(type, onChange) {
+    static renderSelectTypeSelector(type, onChange) {
         if (type !== false) {
             const items = [<MenuItem key="_" value="_"><em>{I18n.t('no type')}</em></MenuItem>];
             for (let i = 0; i < SMART_TYPES.length; i++) {
@@ -873,7 +885,7 @@ class Alexa3SmartNames extends Component {
                 }
             }
 
-            return <FormControl variant="standard" className={this.props.classes.selectType}>
+            return <FormControl variant="standard" style={styles.selectType}>
                 <Select
                     variant="standard"
                     value={type || '_'}
@@ -881,7 +893,7 @@ class Alexa3SmartNames extends Component {
                 >
                     {items}
                 </Select>
-                <FormHelperText className={this.props.classes.devSubLineTypeTitle}>{I18n.t('Types')}</FormHelperText>
+                <FormHelperText style={styles.devSubLineTypeTitle}>{I18n.t('Types')}</FormHelperText>
             </FormControl>;
         }
 
@@ -890,32 +902,35 @@ class Alexa3SmartNames extends Component {
 
     renderSelectType(control, dev) {
         if (dev.autoDetected) {
-            return <div className={this.props.classes.selectType} />;
+            return <div style={styles.selectType} />;
         }
         // get first id
         const state = Object.values(control.states)[0];
         const type = state.smartName?.smartType;
 
-        return this.renderSelectTypeSelector(type, value => this.onParamsChange(state.id, undefined, value));
+        return Alexa3SmartNames.renderSelectTypeSelector(type, value => this.onParamsChange(state.id, undefined, value));
     }
 
-    renderStates(control, classes, background) {
-        return <div key="states" className={classes.statesLine} style={{ background }}>
+    renderStates(control, background) {
+        return <div key="states" style={{ ...styles.statesLine, background }}>
             {Object.keys(control.states).map((name, c) =>
                 <div
                     key={name}
-                    className={classes.devSubSubLine}
-                    style={(c % 2) ?
-                        { background: this.props.themeType === 'dark' ? `${DEFAULT_STATE_COLOR_DARK}80` : `${DEFAULT_STATE_COLOR_LIGHT}80` }
-                        :
-                        { background: this.props.themeType === 'dark' ? DEFAULT_STATE_COLOR_DARK : DEFAULT_STATE_COLOR_LIGHT }}
+                    style={{
+                        ...styles.devSubSubLine,
+                        ...((c % 2) ?
+                            { background: this.props.themeType === 'dark' ? `${DEFAULT_STATE_COLOR_DARK}80` : `${DEFAULT_STATE_COLOR_LIGHT}80` }
+                            :
+                            { background: this.props.themeType === 'dark' ? DEFAULT_STATE_COLOR_DARK : DEFAULT_STATE_COLOR_LIGHT }
+                        ),
+                    }}
                 >
-                    <div className={classes.devSubSubLineName}>
-                        <div className={classes.devSubSubLineStateName}>
+                    <div style={styles.devSubSubLineName}>
+                        <div style={styles.devSubSubLineStateName}>
                             {name}
                             :
                         </div>
-                        <span className={classes.devSubSubLineStateId}>{control.states[name].id}</span>
+                        <span style={styles.devSubSubLineStateId}>{control.states[name].id}</span>
                     </div>
                 </div>)}
         </div>;
@@ -987,8 +1002,6 @@ class Alexa3SmartNames extends Component {
     }
 
     renderChannels(dev, lineNum) {
-        const classes = this.props.classes;
-
         return dev.controls.map((control, c) => {
             const id = Object.values(control.states)[0].id;
 
@@ -1008,48 +1021,46 @@ class Alexa3SmartNames extends Component {
             const controlProps = this.getControlProps(control);
 
             return [
-                <div key={c} className={classes.devSubLine} style={{ background }}>
-                    <IconButton className={classes.devSubLineExpand} onClick={() => this.onExpand(lineNum, c)}>
-                        <ChevronRight
-                            className={expanded ? classes.devSubLineExpanded : undefined}
-                        />
+                <div key={c} style={{ ...styles.devSubLine, background }}>
+                    <IconButton style={styles.devSubLineExpand} onClick={() => this.onExpand(lineNum, c)}>
+                        <ChevronRight style={expanded ? styles.devSubLineExpanded : undefined} />
                     </IconButton>
-                    {Icon ? <Icon className={classes.deviceSmallIcon} style={{ color: DEVICES[control.type].color }} /> : null}
-                    <div className={classes.devSubLineName}>
-                        <div className={classes.devSubLineName1}>{I18n.t(control.type)}</div>
-                        <div className={classes.devSubLineName2}>
-                            <div className={classes.devSubLineName2Div}>
+                    {Icon ? <Icon style={{ ...styles.deviceSmallIcon, color: DEVICES[control.type].color }} /> : null}
+                    <div style={styles.devSubLineName}>
+                        <div style={styles.devSubLineName1}>{I18n.t(control.type)}</div>
+                        <div style={styles.devSubLineName2}>
+                            <div style={styles.devSubLineName2Div}>
                                 {controlProps.icon ?
                                     (controlProps.icon.startsWith('data:image/svg') ?
-                                        <SVG className={classes.devSubLineName2Icon} src={controlProps.icon} width={20} height={20} /> :
-                                        <ARIcon src={controlProps.icon} className={classes.devSubLineName2Icon} style={{ width: 20, height: 20 }} />)
+                                        <SVG style={styles.devSubLineName2Icon} src={controlProps.icon} width={20} height={20} /> :
+                                        <ARIcon src={controlProps.icon} style={{ ...styles.devSubLineName2Icon, width: 20, height: 20 }} />)
                                     : null}
                                 {controlProps.name}
                             </div>
                         </div>
                     </div>
-                    <div className={this.props.classes.devLineActions}>{this.renderChannelActions(control)}</div>
+                    <div style={styles.devLineActions}>{Alexa3SmartNames.renderChannelActions(control)}</div>
                     {this.renderSelectByOn(control, dev)}
                     {this.renderSelectType(control, dev)}
                     {!dev.autoDetected ?
-                        <IconButton aria-label="Edit" className={this.props.classes.devLineEdit} onClick={() => this.onEdit(id)}>
+                        <IconButton aria-label="Edit" style={styles.devLineEdit} onClick={() => this.onEdit(id)}>
                             <IconEdit fontSize="middle" />
-                        </IconButton> : <div className={this.props.classes.devLineEdit} />}
+                        </IconButton> : <div style={styles.devLineEdit} />}
                     {!dev.autoDetected ?
-                        <IconButton aria-label="Delete" className={this.props.classes.devLineDelete} onClick={() => this.onAskDelete(id)}>
+                        <IconButton aria-label="Delete" style={styles.devLineDelete} onClick={() => this.onAskDelete(id)}>
                             <IconDelete fontSize="middle" />
                         </IconButton> :
                         (dev.controls.length > 1 ?
                             <IconButton
                                 aria-label="Delete"
-                                className={this.props.classes.devSubLineDelete}
+                                style={styles.devSubLineDelete}
                                 onClick={() => this.onAskDelete(id)}
                             >
                                 <IconDelete fontSize="middle" />
                             </IconButton> :
-                            <div className={this.props.classes.devLineDelete} />)}
+                            <div style={styles.devLineDelete} />)}
                 </div>,
-                expanded ? this.renderStates(control, classes, background) : null,
+                expanded ? this.renderStates(control, background) : null,
             ];
         });
     }
@@ -1058,7 +1069,7 @@ class Alexa3SmartNames extends Component {
         // if (!dev.additionalApplianceDetails.group && dev.additionalApplianceDetails.nameModified) {
         const title = dev.friendlyName;
         // } else {
-        //    title = <span className={this.props.classes.devModified} title={I18n.t('modified')}>{friendlyName}</span>;
+        //    title = <span style={styles.devModified} title={I18n.t('modified')}>{friendlyName}</span>;
         // }
 
         const expanded = this.state.expanded.includes(title);
@@ -1074,28 +1085,28 @@ class Alexa3SmartNames extends Component {
         }
 
         return [
-            <div key={`line${lineNum}`} className={this.props.classes.devLine} style={{ background }}>
-                <div className={this.props.classes.devLineNumber}>
+            <div key={`line${lineNum}`} style={{ ...styles.devLine, background }}>
+                <div style={styles.devLineNumber}>
                     {lineNum + 1}
 .
                 </div>
-                <IconButton className={this.props.classes.devLineExpand} onClick={() => this.onExpand(lineNum)}>
+                <IconButton style={styles.devLineExpand} onClick={() => this.onExpand(lineNum)}>
                     {dev.controls.length > 1 ?
                         <Badge badgeContent={dev.controls.length} color="primary">
                             {expanded ? <IconCollapse /> : <IconExpand />}
                         </Badge> :
                         (expanded ? <IconCollapse /> : <IconExpand />)}
                 </IconButton>
-                <div className={this.props.classes.devLineNameBlock}>
+                <div style={styles.devLineNameBlock}>
                     {dev.autoDetected ? <>
-                        <span className={this.props.classes.devLineName}>{title}</span>
-                        <span className={this.props.classes.devLineDescription}>
+                        <span style={styles.devLineName}>{title}</span>
+                        <span style={styles.devLineDescription}>
                             {I18n.t('Grouped from %s and %s', getName(dev.roomName, this.language), getName(dev.funcName, this.language))}
                         </span>
                     </> : title}
-                    {changed ? <CircularProgress className={this.props.classes.devLineProgress} size={20} /> : null}
+                    {changed ? <CircularProgress style={styles.devLineProgress} size={20} /> : null}
                 </div>
-                <span className={this.props.classes.devLineActions}>{this.renderDevTypes(dev)}</span>
+                <span style={styles.devLineActions}>{Alexa3SmartNames.renderDevTypes(dev)}</span>
             </div>,
             expanded ? this.renderChannels(dev, lineNum) : null,
         ];
@@ -1164,7 +1175,7 @@ class Alexa3SmartNames extends Component {
                     <p>
                         <span>ID:</span>
                         {' '}
-                        <span className={this.props.classes.editedId}>{this.state.editId}</span>
+                        <span style={styles.editedId}>{this.state.editId}</span>
                     </p>
                     <TextField
                         variant="standard"
@@ -1249,6 +1260,7 @@ class Alexa3SmartNames extends Component {
             return <DialogSelectID
                 key="dialogSelectID1"
                 imagePrefix="../.."
+                theme={this.props.theme}
                 socket={this.props.socket}
                 selected=""
                 types={['state']}
@@ -1303,15 +1315,13 @@ class Alexa3SmartNames extends Component {
             result.push(this.renderDevice(this.state.devices[i], i));
         }
 
-        return <div key="listDevices" className={this.props.classes.columnDiv}>{result}</div>;
+        return <div key="listDevices" style={styles.columnDiv}>{result}</div>;
     }
 
     renderListOfDevices() {
         if (!this.state.showListOfDevices) {
             return null;
         }
-        const classes = this.props.classes;
-
         return <Dialog
             open={!0}
             maxWidth="xl"
@@ -1326,12 +1336,12 @@ class Alexa3SmartNames extends Component {
                 <span role="img" aria-label="smile">😄</span>
             </DialogTitle>
             <DialogContent>
-                <div className={classes.headerRow}>
-                    <div className={classes.headerCell}>{I18n.t('Name')}</div>
-                </div>
-                <div className={this.props.classes.tableDiv}>
+                <Box sx={styles.headerRow}>
+                    <div style={styles.headerCell}>{I18n.t('Name')}</div>
+                </Box>
+                <div style={styles.tableDiv}>
                     {this.state.devices.map((item, i) => <div key={i}>
-                        <div className={classes.tableCell}>{item.friendlyName}</div>
+                        <div style={styles.tableCell}>{item.friendlyName}</div>
                     </div>)}
                 </div>
             </DialogContent>
@@ -1366,13 +1376,13 @@ class Alexa3SmartNames extends Component {
             return <CircularProgress key="alexaProgress" />;
         }
 
-        return <form key="alexa" className={this.props.classes.tab}>
+        return <form key="alexa" style={styles.tab}>
             <Fab
                 size="small"
                 color="secondary"
                 aria-label="Add"
                 disabled={(!!this.state.lastChanged && !!this.waitForUpdateID) || !this.state.alive}
-                className={this.props.classes.button}
+                style={styles.button}
                 onClick={() => this.setState({ showSelectId: true })}
             >
                 {this.state.lastChanged && this.waitForUpdateID ? <CircularProgress /> : <IconAdd />}
@@ -1382,18 +1392,17 @@ class Alexa3SmartNames extends Component {
                 color="primary"
                 aria-label="Refresh"
                 disable={!this.state.alive}
-                className={this.props.classes.button}
+                style={styles.button}
                 onClick={() => this.browse(true)}
                 disabled={this.state.browse}
             >
                 {this.state.browse ? <CircularProgress size={20} /> : <IconRefresh />}
             </Fab>
             <Fab
-                style={{ marginLeft: '1rem' }}
+                style={{ ...styles.button, marginLeft: '1rem' }}
                 title={I18n.t('Show all devices for print out')}
                 size="small"
                 aria-label="List of devices"
-                className={this.props.classes.button}
                 onClick={() => this.setState({ showListOfDevices: true })}
                 disabled={this.state.browse || !this.state.alive}
             >
@@ -1402,7 +1411,6 @@ class Alexa3SmartNames extends Component {
             <TextField
                 variant="standard"
                 placeholder={I18n.t('Filter')}
-                className={this.state.filter}
                 value={this.state.filter}
                 onChange={e => this.setState({ filter: e.target.value })}
                 InputProps={{
@@ -1432,6 +1440,7 @@ Alexa3SmartNames.propTypes = {
     // onChange: PropTypes.func,
     socket: PropTypes.object.isRequired,
     themeType: PropTypes.string,
+    theme: PropTypes.object,
 };
 
-export default withStyles(styles)(Alexa3SmartNames);
+export default Alexa3SmartNames;

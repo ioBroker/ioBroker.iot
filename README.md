@@ -309,6 +309,7 @@ setState('iot.0.app.message', JSON.stringify({
 ## Changelog
 ### **WORK IN PROGRESS**
 * (bluefox) updated packages
+* (bluefox) Migrated GUI for admin v7
 
 ### 3.3.0 (2024-05-09)
 * (foxriver76) Fix error on reconnect

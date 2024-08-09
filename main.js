@@ -3,38 +3,40 @@
 /* jslint node: true */
 'use strict';
 
-const { handleGeofenceData, handleDevicesData } = require('./lib/visuApp.js')
 const DeviceModule = require('aws-iot-device-sdk').device;
-const utils        = require('@iobroker/adapter-core'); // Get common adapter utils
-const AlexaSH2     = require('./lib/alexaSmartHomeV2');
-const AlexaSH3     = require('./lib/alexaSmartHomeV3');
-const AlexaCustom  = require('./lib/alexaCustom');
-const GoogleHome   = require('./lib/googleHome');
-const YandexAlisa  = require('./lib/alisa');
-const Remote       = require('./lib/remote');
-const fs           = require('node:fs');
-const axios        = require('axios');
-const packageJSON  = require('./package.json');
-const zlib         = require('node:zlib');
-const version      = packageJSON.version;
+const utils = require('@iobroker/adapter-core'); // Get common adapter utils
+const fs = require('node:fs');
+const axios = require('axios');
+const zlib = require('node:zlib');
+
+const AlexaSH2 = require('./lib/alexaSmartHomeV2');
+const AlexaSH3 = require('./lib/alexaSmartHomeV3');
+const AlexaCustom = require('./lib/alexaCustom');
+const GoogleHome = require('./lib/googleHome');
+const YandexAlisa = require('./lib/alisa');
+const Remote = require('./lib/remote');
+const packageJSON = require('./package.json');
+const { handleGeofenceData, handleDevicesData } = require('./lib/visuApp.js')
+
+const version = packageJSON.version;
 // @ts-ignore
-const adapterName  = packageJSON.name.split('.').pop();
+const adapterName = packageJSON.name.split('.').pop();
 
-let recalcTimeout  = null;
-let lang           = 'de';
-let translate      = false;
-let alexaSH2       = null;
-let alexaSH3       = null;
-let googleHome     = null;
-let alexaCustom    = null;
-let yandexAlisa    = null;
-let remote         = null;
-let device         = null;
+let recalcTimeout = null;
+let lang = 'de';
+let translate = false;
+let alexaSH2 = null;
+let alexaSH3 = null;
+let googleHome = null;
+let alexaCustom = null;
+let yandexAlisa = null;
+let remote = null;
+let device = null;
 let defaultHistory = null;
-let urlKey         = '';
+let urlKey = '';
 
-let connected      = false;
-let uuid           = null;
+let connected = false;
+let uuid = null;
 let secret;
 let adapter;
 let connectStarted;
