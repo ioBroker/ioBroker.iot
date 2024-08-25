@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
+
 import {
     TextField,
     Button,
@@ -10,7 +10,7 @@ import {
     CircularProgress,
     DialogTitle,
     DialogContent,
-    DialogActions,
+    DialogActions, Box,
 } from '@mui/material';
 
 import { MdEdit as IconEdit } from 'react-icons/md';
@@ -23,7 +23,7 @@ import { Utils, I18n, Message as MessageDialog } from '@iobroker/adapter-react-v
 
 const CHANGED_COLOR = '#e7000040';
 
-const styles = theme => ({
+const styles = {
     tab: {
         width: '100%',
         height: '100%',
@@ -70,12 +70,12 @@ const styles = theme => ({
         fontStyle: 'italic',
         fontSize: 12,
     },
-    columnHeader: {
+    columnHeader: theme => ({
         background: theme.palette.primary.light,
-        padding: 10,
+        p: '10px',
         color: theme.palette.primary.contrastText,
-    },
-});
+    }),
+};
 
 class Enums extends Component {
     constructor(props) {
@@ -216,25 +216,25 @@ class Enums extends Component {
         }
         const name = Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() });
 
-        return <div key={obj._id} className={this.props.classes.enumLine} style={{ background: this.state.changed.indexOf(obj._id) !== -1 ? CHANGED_COLOR : 'inherit' }}>
-            <span className={this.props.classes.enumLineName} style={{ opacity: smartName === false ? 0.5 : 1 }}>
+        return <div key={obj._id} style={{ ...styles.enumLine, background: this.state.changed.indexOf(obj._id) !== -1 ? CHANGED_COLOR : 'inherit' }}>
+            <span style={{ ...styles.enumLineName, opacity: smartName === false ? 0.5 : 1 }}>
                 {smartName || null}
-                {smartName ? <span className={this.props.classes.enumLineSubName}>
+                {smartName ? <span style={styles.enumLineSubName}>
                     {' '}
 (
                     {name}
 )
                 </span> : name}
             </span>
-            <span className={this.props.classes.enumLineId} style={{ opacity: smartName === false ? 0.5 : 1 }}>
+            <span style={{ ...styles.enumLineId, opacity: smartName === false ? 0.5 : 1 }}>
                 {obj._id}
             </span>
             <Switch
-                className={this.props.classes.enumLineEnabled}
+                style={styles.enumLineEnabled}
                 checked={smartName !== false}
                 onChange={() => this.onToggleEnum(obj._id)}
             />
-            <IconButton aria-label="Edit" className={this.props.classes.enumLineEdit} onClick={() => this.onEdit(obj._id)}>
+            <IconButton aria-label="Edit" style={styles.enumLineEdit} onClick={() => this.onEdit(obj._id)}>
                 <IconEdit fontSize="small" />
             </IconButton>
         </div>;
@@ -285,7 +285,7 @@ class Enums extends Component {
             const obj = this.state.funcs.find(e => e._id === this.state.editId) || this.state.rooms.find(e => e._id === this.state.editId);
 
             return <Dialog
-                open
+                open={!0}
                 maxWidth="sm"
                 fullWidth
                 onClose={() => this.setState({ editId: '' })}
@@ -334,14 +334,14 @@ class Enums extends Component {
         if (this.state.loading) {
             return <CircularProgress />;
         }
-        return <form className={this.props.classes.tab}>
-            <div className={this.props.classes.column}>
-                <h5 className={this.props.classes.columnHeader}>{I18n.t('Rooms')}</h5>
-                <div className={this.props.classes.columnDiv}>{this.renderEnums('rooms')}</div>
+        return <form style={styles.tab}>
+            <div style={styles.column}>
+                <Box component="h5" sx={styles.columnHeader}>{I18n.t('Rooms')}</Box>
+                <div style={styles.columnDiv}>{this.renderEnums('rooms')}</div>
             </div>
-            <div className={this.props.classes.column}>
-                <h5 className={this.props.classes.columnHeader}>{I18n.t('Functions')}</h5>
-                <div className={this.props.classes.columnDiv}>{this.renderEnums('funcs')}</div>
+            <div style={styles.column}>
+                <Box component="h5" sx={styles.columnHeader}>{I18n.t('Functions')}</Box>
+                <div style={styles.columnDiv}>{this.renderEnums('funcs')}</div>
             </div>
             {this.renderMessage()}
             {this.renderEditDialog()}
@@ -360,4 +360,4 @@ Enums.propTypes = {
     socket: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Enums);
+export default Enums;

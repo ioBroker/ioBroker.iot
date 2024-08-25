@@ -1,24 +1,25 @@
 import React, { Component } from 'react';
-import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Card from '@mui/material/Card';
-import CardActionArea from '@mui/material/CardActionArea';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import Snackbar from '@mui/material/Snackbar';
-import IconButton from '@mui/material/IconButton';
+import {
+    TextField,
+    Button,
+    FormControlLabel,
+    Checkbox,
+    Card,
+    CardActionArea,
+    CardActions,
+    CardContent,
+    CardMedia,
+    Snackbar,
+    IconButton,
+} from '@mui/material';
 
 import { MdRefresh as IconReload, MdClose as IconClose } from 'react-icons/md';
 
 import { I18n, Utils, Logo } from '@iobroker/adapter-react-v5';
 
-const styles = () => ({
+const styles = {
     tab: {
         width: '100%',
         minHeight: '100%',
@@ -58,7 +59,7 @@ const styles = () => ({
         color: 'red',
         fontStyle: 'italic',
     },
-});
+};
 
 class Options extends Component {
     constructor(props) {
@@ -103,7 +104,7 @@ class Options extends Component {
             label={I18n.t(title)}
             error={!!error}
             autoComplete={autoComplete || ''}
-            className={this.props.classes.input}
+            style={styles.input}
             value={this.props.native[attr]}
             type={type || 'text'}
             helperText={error || ''}
@@ -113,10 +114,10 @@ class Options extends Component {
     }
 
     renderCard() {
-        return <Card className={this.props.classes.card}>
+        return <Card style={styles.card}>
             <CardActionArea>
                 <CardMedia
-                    className={this.props.classes.media}
+                    style={styles.media}
                     image="alexalogo.png"
                     title="Alexa logo"
                 />
@@ -217,7 +218,7 @@ class Options extends Component {
                     key="close"
                     aria-label="Close"
                     color="inherit"
-                    className={this.props.classes.close}
+                    style={styles.close}
                     onClick={() => this.setState({ toast: '' })}
                 >
                     <IconClose />
@@ -229,8 +230,7 @@ class Options extends Component {
     renderCheckbox(title, attr, style) {
         return <FormControlLabel
             key={attr}
-            style={({ paddingTop: 5, ...style })}
-            className={this.props.classes.controlElement}
+            style={{ ...styles.controlElement, paddingTop: 5, ...style }}
             control={
                 <Checkbox
                     checked={this.props.native[attr]}
@@ -243,16 +243,15 @@ class Options extends Component {
     }
 
     render() {
-        return <form className={this.props.classes.tab}>
+        return <form style={styles.tab}>
             <Logo
-                classes={{}}
                 instance={this.props.instance}
                 common={this.props.common}
                 native={this.props.native}
                 onError={text => window.alert(text)}
                 onLoad={this.props.onLoad}
             />
-            <div className={Utils.clsx(this.props.classes.column, this.props.classes.columnSettings)}>
+            <div style={{ ...styles.column, ...styles.columnSettings }}>
                 {this.renderInput('ioBroker.pro Login', 'login', null, 'username')}
                 <br />
                 {this.renderInput('ioBroker.pro Password', 'pass', 'password', 'current-password')}
@@ -261,8 +260,7 @@ class Options extends Component {
                 {this.renderCheckbox('Amazon AlexaV3 (Beta)', 'amazonAlexaV3')}
                 <FormControlLabel
                     key="googleHome"
-                    className={this.props.classes.controlElement}
-                    style={{ marginTop: 5 }}
+                    style={{ ...styles.controlElement, marginTop: 5 }}
                     control={
                         <Checkbox
                             checked={this.props.native.googleHome}
@@ -281,10 +279,10 @@ class Options extends Component {
                 <br />
 
                 <p>{I18n.t('new_certs_tip')}</p>
-                {this.props.changed ? <div className={this.props.classes.hintUnsaved}>{I18n.t('Save settings before pressing this button')}</div> : null}
+                {this.props.changed ? <div style={styles.hintUnsaved}>{I18n.t('Save settings before pressing this button')}</div> : null}
                 <Button
                     variant="outlined"
-                    className={this.props.classes.button}
+                    style={styles.button}
                     disabled={this.props.changed || this.state.inAction || !this.state.isInstanceAlive}
                     title={!this.state.isInstanceAlive ? I18n.t('Instance must be enabled') : ''}
                     onClick={() => this.resetCerts()}
@@ -296,11 +294,11 @@ class Options extends Component {
 
                 <p>{I18n.t('new_credentials_tip')}</p>
                 {this.props.changed ?
-                    <div className={this.props.classes.hintUnsaved}>{I18n.t('Save settings before pressing this button')}</div> : null}
+                    <div style={styles.hintUnsaved}>{I18n.t('Save settings before pressing this button')}</div> : null}
                 <Button
                     variant="outlined"
                     color="grey"
-                    className={this.props.classes.button}
+                    style={styles.button}
                     disabled={this.props.changed || this.state.inAction || !this.state.isInstanceAlive}
                     title={!this.state.isInstanceAlive ? I18n.t('Instance must be enabled') : ''}
                     onClick={() => this.resetCerts(true)}
@@ -314,7 +312,7 @@ class Options extends Component {
                 <p style={{ fontWeight: 'bold' }}>{Utils.renderTextWithA(I18n.t('help_link_tip2'))}</p>
                 <p style={{ fontWeight: 'bold', color: 'red' }}>{Utils.renderTextWithA(I18n.t('help_link_tip3'))}</p>
             </div>
-            <div className={Utils.clsx(this.props.classes.column, this.props.classes.columnLogo)}>{this.renderCard()}</div>
+            <div style={{ ...styles.column, ...styles.columnLogo }}>{this.renderCard()}</div>
             {this.renderToast()}
         </form>;
     }
@@ -332,4 +330,4 @@ Options.propTypes = {
     socket: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Options);
+export default Options;
