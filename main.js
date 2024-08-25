@@ -16,7 +16,7 @@ const GoogleHome = require('./lib/googleHome');
 const YandexAlisa = require('./lib/alisa');
 const Remote = require('./lib/remote');
 const packageJSON = require('./package.json');
-const { handleGeofenceData, handleDevicesData, handleSendToAdapter, handleGetInstances } = require('./lib/visuApp.js')
+const { handleGeofenceData, handleDevicesData, handleSendToAdapter, handleGetInstances } = require('./lib/visuApp.js');
 
 const version = packageJSON.version;
 // @ts-ignore
@@ -889,7 +889,7 @@ async function processMessage(type, request) {
 
                 if (visuData.command === 'getInstances') {
                     const res = await handleGetInstances(visuData, adapter);
-                    return { result: 'Ok', ...res }
+                    return { result: 'Ok', ...res };
                 }
 
                 if (visuData.command === 'sendToAdapter') {
