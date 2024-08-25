@@ -1,5 +1,4 @@
 import React from 'react';
-import { withStyles } from '@mui/styles';
 import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 
 import {
@@ -14,8 +13,10 @@ import {
     Button,
 } from '@mui/material';
 
-import GenericApp from '@iobroker/adapter-react-v5/GenericApp';
-import { I18n, Loader, AdminConnection } from '@iobroker/adapter-react-v5';
+import {
+    GenericApp, I18n,
+    Loader, AdminConnection,
+} from '@iobroker/adapter-react-v5';
 
 import TabOptions from './Tabs/Options';
 import TabExtended from './Tabs/Extended';
@@ -26,7 +27,7 @@ import TabAlexa3SmartNames from './Tabs/Alexa3SmartNames';
 import TabAlisaSmartNames from './Tabs/AlisaSmartNames';
 import TabGoogleSmartNames from './Tabs/GoogleSmartNames';
 
-const styles = theme => ({
+const styles = {
     root: {},
     tabContent: {
         padding: 10,
@@ -38,13 +39,13 @@ const styles = theme => ({
         height: 'calc(100% - 64px - 48px - 20px - 38px)',
         overflow: 'auto',
     },
-    selected: {
+    selected: theme => ({
         color: theme.palette.mode === 'dark' ? undefined : '#FFF !important',
-    },
-    indicator: {
+    }),
+    indicator: theme => ({
         backgroundColor: theme.palette.mode === 'dark' ? theme.palette.secondary.main : '#FFF',
-    },
-});
+    }),
+};
 
 class App extends GenericApp {
     constructor(props) {
@@ -74,7 +75,7 @@ class App extends GenericApp {
 
         super(props, extendedProps);
 
-        this.state.selectedTab = window.localStorage.getItem(`${this.adapterName}.${this.instance}.selectedTab`) || 'options';
+        Object.assign(this.state, { selectedTab: window.localStorage.getItem(`${this.adapterName}.${this.instance}.selectedTab`) || 'options' });
     }
 
     onConnectionReady() {
@@ -91,7 +92,7 @@ class App extends GenericApp {
             return null;
         }
         return <Dialog
-            open
+            open={!0}
             onClose={() => this.setState({ showAckTempPasswordDialog: false }, () => setTimeout(() => this.setState({ showAckTempPasswordDialog: true }), 1000))}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
@@ -134,7 +135,7 @@ class App extends GenericApp {
         if (!this.state.loaded) {
             return <StyledEngineProvider injectFirst>
                 <ThemeProvider theme={this.state.theme}>
-                    <Loader theme={this.state.themeType} />
+                    <Loader themeType={this.state.themeType} />
                 </ThemeProvider>
             </StyledEngineProvider>;
         }
@@ -150,23 +151,24 @@ class App extends GenericApp {
                                 window.localStorage.setItem(`${this.adapterName}.${this.instance}.selectedTab`, value);
                             }}
                             scrollButtons="auto"
-                            classes={{ indicator: this.props.classes.indicator }}
+                            sx={{ '& .MuiTabs-indicator': styles.indicator }}
                         >
-                            <Tab value="options" classes={{ selected: this.props.classes.selected }} label={I18n.t('Options')} data-name="options" />
-                            <Tab value="enums" classes={{ selected: this.props.classes.selected }} label={I18n.t('Smart enums')} data-name="enums" />
-                            {this.state.native.amazonAlexa && <Tab value="alexa" classes={{ selected: this.props.classes.selected }} selected={this.state.selectedTab === 'alexa'} label={I18n.t('Alexa devices')} data-name="alexa" />}
-                            {this.state.native.amazonAlexa && this.state.native.amazonAlexaV3 && <Tab value="alexa3" classes={{ selected: this.props.classes.selected }} selected={this.state.selectedTab === 'alexa3'} label={`${I18n.t('Alexa devices')} v3`} data-name="alexa3" />}
-                            {this.state.native.googleHome && <Tab value="google" classes={{ selected: this.props.classes.selected }} selected={this.state.selectedTab === 'google'} label={I18n.t('Google devices')} data-name="google" />}
-                            {this.state.native.yandexAlisa && <Tab value="alisa" classes={{ selected: this.props.classes.selected }} selected={this.state.selectedTab === 'alisa'} label={I18n.t('Alisa devices')} data-name="alisa" />}
-                            <Tab value="extended" classes={{ selected: this.props.classes.selected }} label={I18n.t('Extended options')} data-name="extended" />
-                            <Tab value="services" classes={{ selected: this.props.classes.selected }} label={I18n.t('Services and IFTTT')} data-name="services" />
+                            <Tab value="options" sx={{ '&.Mui-selected': styles.selected }} label={I18n.t('Options')} data-name="options" />
+                            <Tab value="enums" sx={{ '&.Mui-selected': styles.selected }} label={I18n.t('Smart enums')} data-name="enums" />
+                            {this.state.native.amazonAlexa && <Tab value="alexa" sx={{ '&.Mui-selected': styles.selected }} selected={this.state.selectedTab === 'alexa'} label={I18n.t('Alexa devices')} data-name="alexa" />}
+                            {this.state.native.amazonAlexa && this.state.native.amazonAlexaV3 && <Tab value="alexa3" sx={{ '&.Mui-selected': styles.selected }} selected={this.state.selectedTab === 'alexa3'} label={`${I18n.t('Alexa devices')} v3`} data-name="alexa3" />}
+                            {this.state.native.googleHome && <Tab value="google" sx={{ '&.Mui-selected': styles.selected }} selected={this.state.selectedTab === 'google'} label={I18n.t('Google devices')} data-name="google" />}
+                            {this.state.native.yandexAlisa && <Tab value="alisa" sx={{ '&.Mui-selected': styles.selected }} selected={this.state.selectedTab === 'alisa'} label={I18n.t('Alisa devices')} data-name="alisa" />}
+                            <Tab value="extended" sx={{ '&.Mui-selected': styles.selected }} label={I18n.t('Extended options')} data-name="extended" />
+                            <Tab value="services" sx={{ '&.Mui-selected': styles.selected }} label={I18n.t('Services and IFTTT')} data-name="services" />
                         </Tabs>
                     </AppBar>
 
-                    <div className={this.isIFrame ? this.props.classes.tabContentIFrame : this.props.classes.tabContent}>
+                    <div style={this.isIFrame ? styles.tabContentIFrame : styles.tabContent}>
                         {(this.state.selectedTab === 'options' || !this.state.selectedTab) && <TabOptions
                             key="options"
                             common={this.common}
+                            theme={this.state.theme}
                             socket={this.socket}
                             native={this.state.native}
                             onError={text => this.setState({ errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text })}
@@ -178,6 +180,7 @@ class App extends GenericApp {
                         />}
                         {this.state.selectedTab === 'enums' && <TabEnums
                             key="enums"
+                            theme={this.state.theme}
                             common={this.common}
                             socket={this.socket}
                             native={this.state.native}
@@ -188,6 +191,7 @@ class App extends GenericApp {
                         {this.state.selectedTab === 'alexa' && <TabAlexaSmartNames
                             key="alexa"
                             themeType={this.state.themeType}
+                            theme={this.state.theme}
                             common={this.common}
                             socket={this.socket}
                             native={this.state.native}
@@ -198,6 +202,7 @@ class App extends GenericApp {
                         {this.state.selectedTab === 'alexa3' && <TabAlexa3SmartNames
                             key="alexa3"
                             themeType={this.state.themeType}
+                            theme={this.state.theme}
                             common={this.common}
                             socket={this.socket}
                             native={this.state.native}
@@ -208,6 +213,7 @@ class App extends GenericApp {
                         {this.state.selectedTab === 'google' && <TabGoogleSmartNames
                             key="google"
                             themeType={this.state.themeType}
+                            theme={this.state.theme}
                             common={this.common}
                             socket={this.socket}
                             native={this.state.native}
@@ -218,6 +224,7 @@ class App extends GenericApp {
                         {this.state.selectedTab === 'alisa' && <TabAlisaSmartNames
                             key="alisa"
                             themeType={this.state.themeType}
+                            theme={this.state.theme}
                             common={this.common}
                             socket={this.socket}
                             native={this.state.native}
@@ -228,6 +235,7 @@ class App extends GenericApp {
                         {this.state.selectedTab === 'extended' && <TabExtended
                             key="extended"
                             common={this.common}
+                            theme={this.state.theme}
                             socket={this.socket}
                             native={this.state.native}
                             onError={text => this.setState({ errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text })}
@@ -237,6 +245,7 @@ class App extends GenericApp {
                         />}
                         {this.state.selectedTab === 'services' && <TabServices
                             key="services"
+                            theme={this.state.theme}
                             common={this.common}
                             socket={this.socket}
                             native={this.state.native}
@@ -256,4 +265,4 @@ class App extends GenericApp {
     }
 }
 
-export default withStyles(styles)(App);
+export default App;

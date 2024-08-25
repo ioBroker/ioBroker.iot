@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.js": "/static/js/main.ea7319e6.js",
+    "main.js": "/static/js/main.a767cd16.js",
     "ActionVisu.js": "/customRuleBlocks.js",
-    "static/js/src_bootstrap_jsx.27e3013b.chunk.js": "/static/js/src_bootstrap_jsx.27e3013b.chunk.js",
-    "static/js/node_modules_iobroker_adapter-react-v5_assets_devices_sync_recursive_-node_modules_iobroker_a-b694110.50566baf.chunk.js": "/static/js/node_modules_iobroker_adapter-react-v5_assets_devices_sync_recursive_-node_modules_iobroker_a-b694110.50566baf.chunk.js",
-    "static/js/node_modules_prop-types_index_js.38d0433d.chunk.js": "/static/js/node_modules_prop-types_index_js.38d0433d.chunk.js",
-    "static/js/node_modules_react_index_js.6114a944.chunk.js": "/static/js/node_modules_react_index_js.6114a944.chunk.js",
-    "static/js/src_ActionVisu_jsx.d09fe751.chunk.js": "/static/js/src_ActionVisu_jsx.d09fe751.chunk.js",
-    "static/js/vendors-node_modules_react-dom_index_js.f4621d4e.chunk.js": "/static/js/vendors-node_modules_react-dom_index_js.f4621d4e.chunk.js",
-    "static/js/node_modules_iobroker_adapter-react-v5_assets_devices_sync_recursive_-node_modules_iobroker_a-b694111.f34776f9.chunk.js": "/static/js/node_modules_iobroker_adapter-react-v5_assets_devices_sync_recursive_-node_modules_iobroker_a-b694111.f34776f9.chunk.js",
-    "static/js/vendors-node_modules_iobroker_adapter-react-v5_assets_devices_parseNames_d_ts-node_modules_io-1d9f06.7cb8cd7a.chunk.js": "/static/js/vendors-node_modules_iobroker_adapter-react-v5_assets_devices_parseNames_d_ts-node_modules_io-1d9f06.7cb8cd7a.chunk.js",
+    "static/js/src_bootstrap_jsx.ff91d7a5.chunk.js": "/static/js/src_bootstrap_jsx.ff91d7a5.chunk.js",
+    "static/js/node_modules_iobroker_adapter-react-v5_assets_devices_sync_recursive_-node_modules_iobroker_a-b694110.21992d56.chunk.js": "/static/js/node_modules_iobroker_adapter-react-v5_assets_devices_sync_recursive_-node_modules_iobroker_a-b694110.21992d56.chunk.js",
+    "static/js/node_modules_prop-types_index_js.4a6f1268.chunk.js": "/static/js/node_modules_prop-types_index_js.4a6f1268.chunk.js",
+    "static/js/node_modules_react_index_js.03847742.chunk.js": "/static/js/node_modules_react_index_js.03847742.chunk.js",
+    "static/js/src_ActionVisu_jsx.a56ad32e.chunk.js": "/static/js/src_ActionVisu_jsx.a56ad32e.chunk.js",
+    "static/js/vendors-node_modules_react-dom_index_js.b29d2602.chunk.js": "/static/js/vendors-node_modules_react-dom_index_js.b29d2602.chunk.js",
+    "static/js/node_modules_iobroker_adapter-react-v5_assets_devices_sync_recursive_-node_modules_iobroker_a-b694111.f0d7afe5.chunk.js": "/static/js/node_modules_iobroker_adapter-react-v5_assets_devices_sync_recursive_-node_modules_iobroker_a-b694111.f0d7afe5.chunk.js",
+    "static/js/vendors-node_modules_iobroker_adapter-react-v5_assets_devices_parseNames_d_ts-node_modules_io-1d9f06.affc863e.chunk.js": "/static/js/vendors-node_modules_iobroker_adapter-react-v5_assets_devices_parseNames_d_ts-node_modules_io-1d9f06.affc863e.chunk.js",
     "static/media/Ground Floor.svg": "/static/media/Ground Floor.2b7c5c91db7f070935a2.svg",
     "static/media/Second Floor.svg": "/static/media/Second Floor.a2d5ed32df336591c06b.svg",
     "static/media/Cellar.svg": "/static/media/Cellar.7ec1b1803a2437c8b78c.svg",
@@ -130,18 +130,18 @@
     "static/media/Outdoor Blinds.svg": "/static/media/Outdoor Blinds.37b85a9c060a4af48da9.svg",
     "static/media/Upstairs.svg": "/static/media/Upstairs.441813e54e0daca0882d.svg",
     "index.html": "/index.html",
-    "main.ea7319e6.js.map": "/static/js/main.ea7319e6.js.map",
+    "main.a767cd16.js.map": "/static/js/main.a767cd16.js.map",
     "customRuleBlocks.js.map": "/customRuleBlocks.js.map",
-    "src_bootstrap_jsx.27e3013b.chunk.js.map": "/static/js/src_bootstrap_jsx.27e3013b.chunk.js.map",
-    "node_modules_iobroker_adapter-react-v5_assets_devices_sync_recursive_-node_modules_iobroker_a-b694110.50566baf.chunk.js.map": "/static/js/node_modules_iobroker_adapter-react-v5_assets_devices_sync_recursive_-node_modules_iobroker_a-b694110.50566baf.chunk.js.map",
-    "node_modules_prop-types_index_js.38d0433d.chunk.js.map": "/static/js/node_modules_prop-types_index_js.38d0433d.chunk.js.map",
-    "node_modules_react_index_js.6114a944.chunk.js.map": "/static/js/node_modules_react_index_js.6114a944.chunk.js.map",
-    "src_ActionVisu_jsx.d09fe751.chunk.js.map": "/static/js/src_ActionVisu_jsx.d09fe751.chunk.js.map",
-    "vendors-node_modules_react-dom_index_js.f4621d4e.chunk.js.map": "/static/js/vendors-node_modules_react-dom_index_js.f4621d4e.chunk.js.map",
-    "node_modules_iobroker_adapter-react-v5_assets_devices_sync_recursive_-node_modules_iobroker_a-b694111.f34776f9.chunk.js.map": "/static/js/node_modules_iobroker_adapter-react-v5_assets_devices_sync_recursive_-node_modules_iobroker_a-b694111.f34776f9.chunk.js.map",
-    "vendors-node_modules_iobroker_adapter-react-v5_assets_devices_parseNames_d_ts-node_modules_io-1d9f06.7cb8cd7a.chunk.js.map": "/static/js/vendors-node_modules_iobroker_adapter-react-v5_assets_devices_parseNames_d_ts-node_modules_io-1d9f06.7cb8cd7a.chunk.js.map"
+    "src_bootstrap_jsx.ff91d7a5.chunk.js.map": "/static/js/src_bootstrap_jsx.ff91d7a5.chunk.js.map",
+    "node_modules_iobroker_adapter-react-v5_assets_devices_sync_recursive_-node_modules_iobroker_a-b694110.21992d56.chunk.js.map": "/static/js/node_modules_iobroker_adapter-react-v5_assets_devices_sync_recursive_-node_modules_iobroker_a-b694110.21992d56.chunk.js.map",
+    "node_modules_prop-types_index_js.4a6f1268.chunk.js.map": "/static/js/node_modules_prop-types_index_js.4a6f1268.chunk.js.map",
+    "node_modules_react_index_js.03847742.chunk.js.map": "/static/js/node_modules_react_index_js.03847742.chunk.js.map",
+    "src_ActionVisu_jsx.a56ad32e.chunk.js.map": "/static/js/src_ActionVisu_jsx.a56ad32e.chunk.js.map",
+    "vendors-node_modules_react-dom_index_js.b29d2602.chunk.js.map": "/static/js/vendors-node_modules_react-dom_index_js.b29d2602.chunk.js.map",
+    "node_modules_iobroker_adapter-react-v5_assets_devices_sync_recursive_-node_modules_iobroker_a-b694111.f0d7afe5.chunk.js.map": "/static/js/node_modules_iobroker_adapter-react-v5_assets_devices_sync_recursive_-node_modules_iobroker_a-b694111.f0d7afe5.chunk.js.map",
+    "vendors-node_modules_iobroker_adapter-react-v5_assets_devices_parseNames_d_ts-node_modules_io-1d9f06.affc863e.chunk.js.map": "/static/js/vendors-node_modules_iobroker_adapter-react-v5_assets_devices_parseNames_d_ts-node_modules_io-1d9f06.affc863e.chunk.js.map"
   },
   "entrypoints": [
-    "static/js/main.ea7319e6.js"
+    "static/js/main.a767cd16.js"
   ]
 }

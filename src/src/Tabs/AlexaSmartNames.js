@@ -1,36 +1,56 @@
 import React, { Component } from 'react';
-import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import Fab from '@mui/material/Fab';
-import CircularProgress from '@mui/material/CircularProgress';
-import Badge from '@mui/material/Badge';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import FormHelperText from '@mui/material/FormHelperText';
-import FormControl from '@mui/material/FormControl';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import Dialog from '@mui/material/Dialog';
+import {
+    TextField,
+    Button,
+    IconButton,
+    Fab,
+    CircularProgress,
+    Badge,
+    Select,
+    MenuItem,
+    FormHelperText,
+    FormControl,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Dialog,
+    Box,
+} from '@mui/material';
 
 import {
-    MdEdit as IconEdit, MdAdd as IconAdd, MdRefresh as IconRefresh, MdClear as IconClear, MdDelete as IconDelete, MdFormatAlignJustify as IconExpand, MdDragHandle as IconCollapse, MdList as IconList,
+    MdEdit as IconEdit,
+    MdAdd as IconAdd,
+    MdRefresh as IconRefresh,
+    MdClear as IconClear,
+    MdDelete as IconDelete,
+    MdFormatAlignJustify as IconExpand,
+    MdDragHandle as IconCollapse,
+    MdList as IconList,
 } from 'react-icons/md';
 
 import {
-    FaPowerOff as IconOn, FaThermometerHalf as IconTemperature, FaLongArrowAltUp as IconUp, FaLongArrowAltDown as IconDown, FaPercentage as IconPercentage, FaPalette as IconColor, FaLightbulb as IconBulb, FaLockOpen as IconLock, FaThermometer as IconThermometer,
+    FaPowerOff as IconOn,
+    FaThermometerHalf as IconTemperature,
+    FaLongArrowAltUp as IconUp,
+    FaLongArrowAltDown as IconDown,
+    FaPercentage as IconPercentage,
+    FaPalette as IconColor,
+    FaLightbulb as IconBulb,
+    FaLockOpen as IconLock,
+    FaThermometer as IconThermometer,
 } from 'react-icons/fa';
 
-import IconCopy from '@mui/icons-material/FileCopy';
-import IconClose from '@mui/icons-material/Close';
-import IconCheck from '@mui/icons-material/Check';
+import {
+    FileCopy as IconCopy,
+    Check as IconCheck,
+    Close as IconClose,
+} from '@mui/icons-material';
 
 import {
-    Utils, I18n, Message as MessageDialog, SelectID as DialogSelectID,
+    Utils, I18n,
+    Message as MessageDialog, SelectID as DialogSelectID,
 } from '@iobroker/adapter-react-v5';
 
 const colorOn = '#aba613';
@@ -101,7 +121,7 @@ const actionsMapping = {
 
 const SMARTTYPES = ['LIGHT', 'SWITCH', 'THERMOSTAT', 'ACTIVITY_TRIGGER', 'SCENE_TRIGGER', 'SMARTPLUG', 'SMARTLOCK', 'CAMERA'];
 
-const styles = theme => ({
+const styles = {
     tab: {
         width: '100%',
         height: '100%',
@@ -184,11 +204,6 @@ const styles = theme => ({
         display: 'inline-block',
         width: 'calc(100% - 350px)',
     },
-    columnHeader: {
-        background: theme.palette.primary.light,
-        padding: 10,
-        color: theme.palette.primary.contrastText,
-    },
     devModified: {
         fontStyle: 'italic',
     },
@@ -229,10 +244,10 @@ const styles = theme => ({
     devSubLineTypeTitle: {
         marginTop: 0,
     },
-    headerRow: {
-        paddingLeft: theme.spacing(1),
+    headerRow: theme => ({
+        pl: 1,
         background: theme.palette.primary.main,
-    },
+    }),
     headerCell: {
         display: 'inline-block',
         verticalAlign: 'top',
@@ -243,7 +258,7 @@ const styles = theme => ({
         verticalAlign: 'top',
         width: '100%',
     },
-});
+};
 
 class AlexaSmartNames extends Component {
     constructor(props) {
@@ -460,7 +475,7 @@ class AlexaSmartNames extends Component {
         });
     }
 
-    renderActions(dev) {
+    static renderActions(dev) {
         // Type
         const actions = [];
         if (!dev.actions) {
@@ -480,7 +495,9 @@ class AlexaSmartNames extends Component {
         Object.keys(actionsMapping).forEach(action => {
             if (dev.actions.includes(action)) {
                 const Icon = actionsMapping[action].icon;
-                actions.push(<span key={action} title={actionsMapping[action].desc}><Icon className={this.props.classes.actionIcon} style={{ color: actionsMapping[action].color }} /></span>);
+                actions.push(<span key={action} title={actionsMapping[action].desc}>
+                    <Icon style={{ ...styles.actionIcon, color: actionsMapping[action].color }} />
+                </span>);
             }
         });
         // add unknown actions
@@ -517,16 +534,16 @@ class AlexaSmartNames extends Component {
 %
                 </MenuItem>);
             }
-            return <FormControl className={this.props.classes.devSubLineByOn} variant="standard">
+            return <FormControl style={styles.devSubLineByOn} variant="standard">
                 <Select
                     variant="standard"
-                    className={this.props.classes.devSubLineByOnSelect}
+                    style={styles.devSubLineByOnSelect}
                     value={(type || '').toString()}
                     onChange={e => this.onParamsChange(id, e.target.value)}
                 >
                     {items}
                 </Select>
-                <FormHelperText className={this.props.classes.devSubLineTypeTitle}>{I18n.t('by ON')}</FormHelperText>
+                <FormHelperText style={styles.devSubLineTypeTitle}>{I18n.t('by ON')}</FormHelperText>
             </FormControl>;
         }
         return null;
@@ -557,7 +574,7 @@ class AlexaSmartNames extends Component {
         });
     }
 
-    renderSelectTypeSelector(type, onChange) {
+    static renderSelectTypeSelector(type, onChange) {
         if (type !== false) {
             const items = [<MenuItem key="_" value="_"><em>{I18n.t('no type')}</em></MenuItem>];
             for (let i = 0; i < SMARTTYPES.length; i++) {
@@ -565,20 +582,18 @@ class AlexaSmartNames extends Component {
             }
             return <FormControl variant="standard">
                 <Select variant="standard" value={type || '_'} onChange={e => onChange(e.target.value === '_' ? '' : e.target.value)}>{items}</Select>
-                <FormHelperText className={this.props.classes.devSubLineTypeTitle}>{I18n.t('Types')}</FormHelperText>
+                <FormHelperText style={styles.devSubLineTypeTitle}>{I18n.t('Types')}</FormHelperText>
             </FormControl>;
         }
         return '';
     }
 
     renderSelectType(dev, lineNum, id, type) {
-        return this.renderSelectTypeSelector(type, value => this.onParamsChange(id, undefined, value));
+        return AlexaSmartNames.renderSelectTypeSelector(type, value => this.onParamsChange(id, undefined, value));
     }
 
     renderChannels(dev, lineNum) {
         const result = [];
-        const classes = this.props.classes;
-
         if (dev.additionalApplianceDetails.group) {
             const channels   = dev.additionalApplianceDetails.channels;
             const names      = dev.additionalApplianceDetails.names;
@@ -593,15 +608,15 @@ class AlexaSmartNames extends Component {
                     if (this.state.lastChanged === id && (background === DEFAULT_CHANNEL_COLOR_DARK || background === DEFAULT_CHANNEL_COLOR_LIGHT)) {
                         background = this.props.themeType === 'dark' ? LAST_CHANGED_COLOR_DARK : LAST_CHANGED_COLOR_LIGHT;
                     }
-                    result.push(<div key={`sub${id}`} className={classes.devSubLine} style={(c % 2) ? {} : { background }}>
-                        <div className={Utils.clsx(this.props.classes.devLineActions, this.props.classes.channelLineActions)}>{this.renderActions(channels[chan][i])}</div>
-                        <div className={classes.devSubLineName} title={id}>
+                    result.push(<div key={`sub${id}`} style={{ ...styles.devSubLine, ...((c % 2) ? undefined : { background }) }}>
+                        <div style={{ ...styles.devLineActions, ...styles.channelLineActions }}>{AlexaSmartNames.renderActions(channels[chan][i])}</div>
+                        <div style={styles.devSubLineName} title={id}>
                             {(names[id] || id)}
-                            {id !== names[id] ? <span className={classes.devSubSubLineName}>{id}</span> : null}
+                            {id !== names[id] ? <span style={styles.devSubSubLineName}>{id}</span> : null}
                         </div>
                         {this.renderSelectType(dev, lineNum, id, smarttypes[id])}
                         {this.renderSelectByOn(dev, lineNum, id, types[id])}
-                        <IconButton aria-label="Delete" className={this.props.classes.devSubLineDelete} onClick={() => this.onAskDelete(id, lineNum)}>
+                        <IconButton aria-label="Delete" style={styles.devSubLineDelete} onClick={() => this.onAskDelete(id, lineNum)}>
                             <IconDelete fontSize="middle" />
                         </IconButton>
                     </div>);
@@ -615,9 +630,9 @@ class AlexaSmartNames extends Component {
             if (this.state.lastChanged === id && (background === DEFAULT_CHANNEL_COLOR_DARK || background === DEFAULT_CHANNEL_COLOR_LIGHT)) {
                 background = this.props.themeType === 'dark' ? LAST_CHANGED_COLOR_DARK : LAST_CHANGED_COLOR_LIGHT;
             }
-            result.push(<div key={`sub${id}`} className={classes.devSubLine} style={{ background }}>
-                <div className={Utils.clsx(this.props.classes.devLineActions, this.props.classes.channelLineActions)} style={{ width: 80 }}>{this.renderActions(dev)}</div>
-                <div className={classes.devSubLineName} title={(id || '')}>{name}</div>
+            result.push(<div key={`sub${id}`} style={{ ...styles.devSubLine, background }}>
+                <div style={{ ...styles.devLineActions, ...styles.channelLineActions, width: 80 }}>{AlexaSmartNames.renderActions(dev)}</div>
+                <div style={styles.devSubLineName} title={(id || '')}>{name}</div>
                 {this.renderSelectType(dev, lineNum, id, dev.additionalApplianceDetails.smartType)}
                 {this.renderSelectByOn(dev, lineNum, id, dev.additionalApplianceDetails.byON)}
             </div>);
@@ -631,7 +646,7 @@ class AlexaSmartNames extends Component {
         if (!dev.additionalApplianceDetails.group && dev.additionalApplianceDetails.nameModified) {
             title = friendlyName;
         } else {
-            title = <span className={this.props.classes.devModified} title={I18n.t('modified')}>{friendlyName}</span>;
+            title = <span style={styles.devModified} title={I18n.t('modified')}>{friendlyName}</span>;
         }
 
         let devCount = 0;
@@ -669,30 +684,30 @@ class AlexaSmartNames extends Component {
         }
 
         return [
-            <div key={`line${lineNum}`} className={this.props.classes.devLine} style={{ background }}>
-                <div className={this.props.classes.devLineNumber}>
+            <div key={`line${lineNum}`} style={{ ...styles.devLine, background }}>
+                <div style={styles.devLineNumber}>
                     {lineNum + 1}
 .
                 </div>
-                <IconButton className={this.props.classes.devLineExpand} onClick={() => this.onExpand(lineNum)}>
+                <IconButton style={styles.devLineExpand} onClick={() => this.onExpand(lineNum)}>
                     {devCount > 1 ?
                         <Badge badgeContent={devCount} color="primary">
                             {expanded ? <IconCollapse /> : <IconExpand />}
                         </Badge> :
                         (expanded ? <IconCollapse /> : <IconExpand />)}
                 </IconButton>
-                <div className={this.props.classes.devLineNameBlock} style={{ display: 'inline-block', position: 'relative' }}>
-                    <span className={this.props.classes.devLineName}>{title}</span>
-                    <span className={this.props.classes.devLineDescription}>{dev.friendlyDescription}</span>
-                    {changed ? <CircularProgress className={this.props.classes.devLineProgress} size={20} /> : null}
+                <div style={{ ...styles.devLineNameBlock, display: 'inline-block', position: 'relative' }}>
+                    <span style={styles.devLineName}>{title}</span>
+                    <span style={styles.devLineDescription}>{dev.friendlyDescription}</span>
+                    {changed ? <CircularProgress style={styles.devLineProgress} size={20} /> : null}
                 </div>
-                <span className={this.props.classes.devLineActions}>{this.renderActions(dev)}</span>
+                <span style={styles.devLineActions}>{AlexaSmartNames.renderActions(dev)}</span>
                 {!dev.additionalApplianceDetails.group ?
-                    <IconButton aria-label="Edit" className={this.props.classes.devLineEdit} onClick={() => this.onEdit(id)}>
+                    <IconButton aria-label="Edit" style={styles.devLineEdit} onClick={() => this.onEdit(id)}>
                         <IconEdit fontSize="middle" />
                     </IconButton> : null}
                 {!dev.additionalApplianceDetails.group ?
-                    <IconButton aria-label="Delete" className={this.props.classes.devLineDelete} onClick={() => this.onAskDelete(id)}>
+                    <IconButton aria-label="Delete" style={styles.devLineDelete} onClick={() => this.onAskDelete(id)}>
                         <IconDelete fontSize="middle" />
                     </IconButton> : null}
             </div>,
@@ -763,7 +778,7 @@ class AlexaSmartNames extends Component {
                     <p>
                         <span>ID:</span>
                         {' '}
-                        <span className={this.props.classes.editedId}>{this.state.editId}</span>
+                        <span style={styles.editedId}>{this.state.editId}</span>
                     </p>
                     <TextField
                         variant="standard"
@@ -846,6 +861,7 @@ class AlexaSmartNames extends Component {
     getSelectIdDialog() {
         if (this.state.showSelectId) {
             return <DialogSelectID
+                theme={this.props.theme}
                 key="dialogSelectID1"
                 imagePrefix="../.."
                 socket={this.props.socket}
@@ -901,14 +917,13 @@ class AlexaSmartNames extends Component {
             }
             result.push(this.renderDevice(this.state.devices[i], i));
         }
-        return <div key="listDevices" className={this.props.classes.columnDiv}>{result}</div>;
+        return <div key="listDevices" style={styles.columnDiv}>{result}</div>;
     }
 
     renderListOfDevices() {
         if (!this.state.showListOfDevices) {
             return null;
         }
-        const classes = this.props.classes;
 
         return <Dialog
             open={!0}
@@ -924,12 +939,12 @@ class AlexaSmartNames extends Component {
                 <span role="img" aria-label="smile">😄</span>
             </DialogTitle>
             <DialogContent>
-                <div className={classes.headerRow}>
-                    <div className={classes.headerCell}>{I18n.t('Name')}</div>
-                </div>
-                <div className={this.props.classes.tableDiv}>
+                <Box sx={styles.headerRow}>
+                    <div style={styles.headerCell}>{I18n.t('Name')}</div>
+                </Box>
+                <div style={styles.tableDiv}>
                     {this.state.devices.map((item, i) => <div key={i}>
-                        <div className={classes.tableCell}>{item.friendlyName}</div>
+                        <div style={styles.tableCell}>{item.friendlyName}</div>
                     </div>)}
                 </div>
             </DialogContent>
@@ -964,12 +979,12 @@ class AlexaSmartNames extends Component {
             return <CircularProgress key="alexaProgress" />;
         }
 
-        return <form key="alexa" className={this.props.classes.tab}>
+        return <form key="alexa" style={styles.tab}>
             <Fab
                 size="small"
                 color="secondary"
                 aria-label="Add"
-                className={this.props.classes.button}
+                style={styles.button}
                 onClick={() => this.setState({ showSelectId: true })}
             >
                 <IconAdd />
@@ -978,18 +993,17 @@ class AlexaSmartNames extends Component {
                 size="small"
                 color="primary"
                 aria-label="Refresh"
-                className={this.props.classes.button}
+                style={styles.button}
                 onClick={() => this.browse(true)}
                 disabled={this.state.browse}
             >
                 {this.state.browse ? <CircularProgress size={20} /> : <IconRefresh />}
             </Fab>
             <Fab
-                style={{ marginLeft: '1rem' }}
+                style={{ ...styles.button, marginLeft: '1rem' }}
                 title={I18n.t('Show all devices for print out')}
                 size="small"
                 aria-label="List of devices"
-                className={this.props.classes.button}
                 onClick={() => this.setState({ showListOfDevices: true })}
                 disabled={this.state.browse}
             >
@@ -1028,6 +1042,7 @@ AlexaSmartNames.propTypes = {
     // onChange: PropTypes.func,
     socket: PropTypes.object.isRequired,
     themeType: PropTypes.string,
+    theme: PropTypes.object,
 };
 
-export default withStyles(styles)(AlexaSmartNames);
+export default AlexaSmartNames;

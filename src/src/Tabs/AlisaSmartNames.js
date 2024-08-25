@@ -1,16 +1,18 @@
 import React, { Component } from 'react';
-import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import Fab from '@mui/material/Fab';
-import CircularProgress from '@mui/material/CircularProgress';
-import Badge from '@mui/material/Badge';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import Dialog from '@mui/material/Dialog';
+
+import {
+    TextField,
+    Button,
+    IconButton,
+    CircularProgress,
+    Badge,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Dialog,
+    Fab, Box,
+} from '@mui/material';
 
 import {
     MdEdit as IconEdit,
@@ -37,9 +39,11 @@ import {
     FaLink as IconContact,
 } from 'react-icons/fa';
 
-import IconCopy from '@mui/icons-material/FileCopy';
-import IconClose from '@mui/icons-material/Close';
-import IconCheck from '@mui/icons-material/Check';
+import {
+    FileCopy as IconCopy,
+    Close as IconClose,
+    Check as IconCheck,
+} from '@mui/icons-material';
 
 import {
     Utils,
@@ -93,7 +97,7 @@ const actionsMapping = {
 
 // const SMARTTYPES = ['LIGHT', 'SWITCH', 'THERMOSTAT', 'ACTIVITY_TRIGGER', 'SCENE_TRIGGER', 'SMARTPLUG', 'SMARTLOCK', 'CAMERA', 'THERMOSTAT.AC', 'VACUUM_CLEANER'];
 
-const styles = theme => ({
+const styles = {
     tab: {
         width: '100%',
         height: '100%',
@@ -176,11 +180,6 @@ const styles = theme => ({
         display: 'inline-block',
         width: 'calc(100% - 350px)',
     },
-    columnHeader: {
-        background: theme.palette.primary.light,
-        padding: 10,
-        color: theme.palette.primary.contrastText,
-    },
     devModified: {
         fontStyle: 'italic',
     },
@@ -230,10 +229,10 @@ const styles = theme => ({
     devSubLineTypeTitle: {
         marginTop: 0,
     },
-    headerRow: {
+    headerRow: theme => ({
         paddingLeft: theme.spacing(1),
         background: theme.palette.primary.main,
-    },
+    }),
     headerCell: {
         display: 'inline-block',
         verticalAlign: 'top',
@@ -244,7 +243,7 @@ const styles = theme => ({
         verticalAlign: 'top',
         width: '100%',
     },
-});
+};
 
 class AlisaDevices extends Component {
     constructor(props) {
@@ -444,7 +443,7 @@ class AlisaDevices extends Component {
         });
     }
 
-    renderActions(dev) {
+    static renderActions(dev) {
         // Type
         const actions = [];
         if (!dev.actions) {
@@ -469,7 +468,7 @@ class AlisaDevices extends Component {
             if (dev.actions.includes(action)) {
                 const Icon = actionsMapping[action].icon;
                 actions.push(<span key={action} title={actionsMapping[action].desc}>
-                    <Icon className={this.props.classes.actionIcon} style={{ color: actionsMapping[action].color }} />
+                    <Icon style={{ ...styles.actionIcon, color: actionsMapping[action].color }} />
                 </span>);
             }
         });
@@ -527,7 +526,7 @@ class AlisaDevices extends Component {
             }
             return <FormControl variant="standard">
                 <Select variant="standard" value={type || '_'} onChange={e => this.onParamsChange(id, undefined, e.target.value)}>{items}</Select>
-                <FormHelperText className={this.props.classes.devSubLineTypeTitle}>{I18n.t('Types')}</FormHelperText>
+                <FormHelperText style={styles.devSubLineTypeTitle}>{I18n.t('Types')}</FormHelperText>
             </FormControl>;
         }
         return '';
@@ -536,8 +535,6 @@ class AlisaDevices extends Component {
 
     renderChannels(dev, lineNum) {
         const result = [];
-        const classes = this.props.classes;
-
         const id = dev.main.getId || dev.iobID;
         const name = dev.func;
         const background = this.props.themeType === 'dark' ? DEFAULT_CHANNEL_COLOR_DARK : DEFAULT_CHANNEL_COLOR_LIGHT; /* this.state.changed.includes(id) ? CHANGED_COLOR : DEFAULT_CHANNEL_COLOR;
@@ -545,20 +542,20 @@ class AlisaDevices extends Component {
             background = LAST_CHANGED_COLOR;
         }
         */
-        result.push(<div key={`sub${id}_${lineNum}`} className={classes.devSubLine} style={{ background }}>
-            <div className={classes.devSubLineName}>{name.toUpperCase()}</div>
-            <div className={classes.devSubSubLine}>
+        result.push(<div key={`sub${id}_${lineNum}`} style={{ ...styles.devSubLine, background }}>
+            <div style={styles.devSubLineName}>{name.toUpperCase()}</div>
+            <div style={styles.devSubSubLine}>
                 <div>{dev.main.getId}</div>
-                {dev.main.setId && dev.main.setId !== dev.main.getId ? <div className={classes.devSubLineSetId}>{dev.main.setId}</div> : null}
+                {dev.main.setId && dev.main.setId !== dev.main.getId ? <div style={styles.devSubLineSetId}>{dev.main.setId}</div> : null}
             </div>
         </div>);
 
         dev.attributes.forEach(attr => {
-            result.push(<div key={`sub${attr.getId}`} className={classes.devSubLine} style={{ background }}>
-                <div className={classes.devSubLineName}>{attr.name.toUpperCase()}</div>
-                <div className={classes.devSubSubLine}>
+            result.push(<div key={`sub${attr.getId}`} style={{ ...styles.devSubLine, background }}>
+                <div style={styles.devSubLineName}>{attr.name.toUpperCase()}</div>
+                <div style={styles.devSubSubLine}>
                     <div>{attr.getId}</div>
-                    {attr.setId && attr.setId !== attr.getId ? <div className={classes.devSubLineSetId}>{attr.setId}</div> : null}
+                    {attr.setId && attr.setId !== attr.getId ? <div style={styles.devSubLineSetId}>{attr.setId}</div> : null}
                 </div>
             </div>);
         });
@@ -578,14 +575,14 @@ class AlisaDevices extends Component {
                         if (this.state.lastChanged === id && background === DEFAULT_CHANNEL_COLOR) {
                             background = LAST_CHANGED_COLOR;
                         }
-                        result.push(<div key={'sub' + id} className={classes.devSubLine} style={(c % 2) ? {} : {background}}>
-                            <div className={Utils.clsx(this.props.classes.devLineActions,this.props.classes.channelLineActions)}>{this.renderActions(channels[chan][i])}</div>
-                            <div className={classes.devSubLineName} title={id}>{(names[id] || id)}
-                                {id !== names[id] ? <span className={classes.devSubSubLineName}>{id}</span> : null}
+                        result.push(<div key={'sub' + id} style={styles.devSubLine} style={(c % 2) ? {} : {background}}>
+                            <div style={{ ...styles.devLineActions, ...styles.channelLineActions }}>{AlisaSmartNames.renderActions(channels[chan][i])}</div>
+                            <div style={styles.devSubLineName} title={id}>{(names[id] || id)}
+                                {id !== names[id] ? <span style={styles.devSubSubLineName}>{id}</span> : null}
                             </div>
                             {this.renderSelectType(dev, lineNum, id, smarttypes[id])}
                             {this.renderSelectByOn(dev, lineNum, id, types[id])}
-                            <IconButton aria-label="Delete" className={this.props.classes.devSubLineDelete} onClick={() => this.onAskDelete(id, lineNum)}><IconDelete fontSize="middle" /></IconButton>
+                            <IconButton aria-label="Delete" style={styles.devSubLineDelete} onClick={() => this.onAskDelete(id, lineNum)}><IconDelete fontSize="middle" /></IconButton>
                         </div>);
                         c++;
                     }
@@ -610,24 +607,24 @@ class AlisaDevices extends Component {
         // const isComplex = dev.
 
         return [
-            <div key={`line${lineNum}`} className={this.props.classes.devLine} style={{ background }}>
-                <div className={this.props.classes.devLineNumber}>
+            <div key={`line${lineNum}`} style={{ ...styles.devLine, background }}>
+                <div style={styles.devLineNumber}>
                     {lineNum + 1}
 .
                 </div>
-                <IconButton className={this.props.classes.devLineExpand} onClick={() => this.onExpand(lineNum)}>
+                <IconButton style={styles.devLineExpand} onClick={() => this.onExpand(lineNum)}>
                     {dev.attributes.length ?
                         <Badge badgeContent={dev.attributes.length} color="primary">{expanded ? <IconCollapse /> : <IconExpand />}</Badge> :
                         (expanded ? <IconCollapse /> : <IconExpand />)}
                 </IconButton>
-                <div className={this.props.classes.devLineNameBlock} style={{ display: 'inline-block', position: 'relative' }}>
-                    <span className={this.props.classes.devLineName}>{dev.name}</span>
-                    <span className={this.props.classes.devLineDescription}>{dev.description}</span>
-                    {changed ? <CircularProgress className={this.props.classes.devLineProgress} size={20} /> : null}
+                <div style={{ ...styles.devLineNameBlock, display: 'inline-block', position: 'relative' }}>
+                    <span style={styles.devLineName}>{dev.name}</span>
+                    <span style={styles.devLineDescription}>{dev.description}</span>
+                    {changed ? <CircularProgress style={styles.devLineProgress} size={20} /> : null}
                 </div>
-                <span className={this.props.classes.devLineActions}>{this.renderActions(dev)}</span>
-                <IconButton aria-label="Edit" className={this.props.classes.devLineEdit} onClick={() => this.onEdit(dev.iobID)}><IconEdit fontSize="middle" /></IconButton>
-                <IconButton aria-label="Delete" className={this.props.classes.devLineDelete} onClick={() => this.onAskDelete(dev.iobID)}><IconDelete fontSize="middle" /></IconButton>
+                <span style={styles.devLineActions}>{AlisaDevices.renderActions(dev)}</span>
+                <IconButton aria-label="Edit" style={styles.devLineEdit} onClick={() => this.onEdit(dev.iobID)}><IconEdit fontSize="middle" /></IconButton>
+                <IconButton aria-label="Delete" style={styles.devLineDelete} onClick={() => this.onAskDelete(dev.iobID)}><IconDelete fontSize="middle" /></IconButton>
 
             </div>,
             expanded ? this.renderChannels(dev, lineNum) : null,
@@ -668,7 +665,7 @@ class AlisaDevices extends Component {
     renderEditDialog() {
         if (this.state.editId) {
             return <Dialog
-                open
+                open={!0}
                 maxWidth="sm"
                 fullWidth
                 onClose={() => {
@@ -683,7 +680,7 @@ class AlisaDevices extends Component {
                     <p>
                         <span>ID:</span>
                         {' '}
-                        <span className={this.props.classes.editedId}>{this.state.editId}</span>
+                        <span style={styles.editedId}>{this.state.editId}</span>
                     </p>
                     <TextField
                         variant="standard"
@@ -727,7 +724,7 @@ class AlisaDevices extends Component {
     renderConfirmDialog() {
         if (this.state.showConfirmation) {
             return <Dialog
-                open
+                open={!0}
                 maxWidth="sm"
                 fullWidth
                 onClose={() => this.setState({ showConfirmation: '' })}
@@ -765,6 +762,7 @@ class AlisaDevices extends Component {
     getSelectIdDialog() {
         if (this.state.showSelectId) {
             return <DialogSelectID
+                theme={this.props.theme}
                 key="dialogSelectAlisa"
                 imagePrefix="../.."
                 socket={this.props.socket}
@@ -813,17 +811,15 @@ class AlisaDevices extends Component {
             }
             result.push(this.renderDevice(this.state.devices[i], i));
         }
-        return <div key="listDevices" className={this.props.classes.columnDiv}>{result}</div>;
+        return <div key="listDevices" style={styles.columnDiv}>{result}</div>;
     }
 
     renderListOfDevices() {
         if (!this.state.showListOfDevices) {
             return null;
         }
-        const classes = this.props.classes;
-
         return <Dialog
-            open
+            open={!0}
             maxWidth="xl"
             fullWidth
             onClose={() => this.setState({ showListOfDevices: false })}
@@ -836,12 +832,12 @@ class AlisaDevices extends Component {
                 <span role="img" aria-label="smile">😄</span>
             </DialogTitle>
             <DialogContent>
-                <div className={classes.headerRow}>
-                    <div className={classes.headerCell}>{I18n.t('Name')}</div>
-                </div>
-                <div className={this.props.classes.tableDiv}>
+                <Box sx={styles.headerRow}>
+                    <div style={styles.headerCell}>{I18n.t('Name')}</div>
+                </Box>
+                <div style={styles.tableDiv}>
                     { this.state.devices.map((item, i) => <div key={i}>
-                        <div className={classes.tableCell}>{item.name}</div>
+                        <div style={styles.tableCell}>{item.name}</div>
                     </div>)}
                 </div>
             </DialogContent>
@@ -876,24 +872,23 @@ class AlisaDevices extends Component {
             return <CircularProgress key="alexaProgress" />;
         }
 
-        return <form key="alexa" className={this.props.classes.tab}>
-            <Fab size="small" color="secondary" aria-label="Add" className={this.props.classes.button} onClick={() => this.setState({ showSelectId: true })}><IconAdd /></Fab>
+        return <form key="alexa" style={styles.tab}>
+            <Fab size="small" color="secondary" aria-label="Add" style={styles.button} onClick={() => this.setState({ showSelectId: true })}><IconAdd /></Fab>
             <Fab
                 size="small"
                 color="primary"
                 aria-label="Refresh"
-                className={this.props.classes.button}
+                style={styles.button}
                 onClick={() => this.browse(true)}
                 disabled={this.state.browse}
             >
                 {this.state.browse ? <CircularProgress size={20} /> : <IconRefresh />}
             </Fab>
             <Fab
-                style={{ marginLeft: '1rem' }}
+                style={{ ...styles.button, marginLeft: '1rem' }}
                 title={I18n.t('Show all devices for print out')}
                 size="small"
                 aria-label="List of devices"
-                className={this.props.classes.button}
                 onClick={() => this.setState({ showListOfDevices: true })}
                 disabled={this.state.browse}
             >
@@ -906,11 +901,9 @@ class AlisaDevices extends Component {
                 value={this.state.filter}
                 onChange={e => this.setState({ filter: e.target.value })}
                 InputProps={{
-                    endAdornment: this.state.filter ? (
-                        <IconButton onClick={() => this.setState({ filter: '' })}>
-                            <IconClear />
-                        </IconButton>
-                    ) : undefined,
+                    endAdornment: this.state.filter ? <IconButton onClick={() => this.setState({ filter: '' })}>
+                        <IconClear />
+                    </IconButton> : undefined,
                 }}
             />
             {this.renderDevices()}
@@ -933,6 +926,7 @@ AlisaDevices.propTypes = {
     //    onChange: PropTypes.func,
     socket: PropTypes.object.isRequired,
     themeType: PropTypes.string,
+    theme: PropTypes.object,
 };
 
-export default withStyles(styles)(AlisaDevices);
+export default AlisaDevices;

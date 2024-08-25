@@ -1,21 +1,24 @@
 import React, { Component } from 'react';
-import { withStyles } from '@mui/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import PropTypes from 'prop-types';
 
-import Fab from '@mui/material/Fab';
-import CircularProgress from '@mui/material/CircularProgress';
-import Toolbar from '@mui/material/Toolbar';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import IconButton from '@mui/material/IconButton';
+import {
+    useMediaQuery,
+    Fab,
+    CircularProgress,
+    Toolbar,
+    TextField,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    IconButton, Box,
+} from '@mui/material';
 
-import IconCopy from '@mui/icons-material/FileCopy';
-import IconClose from '@mui/icons-material/Close';
+import {
+    FileCopy as IconCopy,
+    Close as IconClose,
+} from '@mui/icons-material';
 
 import {
     Utils,
@@ -26,12 +29,16 @@ import {
 } from '@iobroker/adapter-react-v5';
 
 import {
-    MdAdd as IconAdd, MdRefresh as IconRefresh, MdHelpOutline as IconHelp, MdList as IconList, MdClear as IconClear,
+    MdAdd as IconAdd,
+    MdRefresh as IconRefresh,
+    MdHelpOutline as IconHelp,
+    MdList as IconList,
+    MdClear as IconClear,
 } from 'react-icons/md';
 
 import TreeTable from '../Components/TreeTable';
 
-const styles = theme => ({
+const styles = {
     tab: {
         height: '100%',
         overflow: 'hidden',
@@ -43,13 +50,13 @@ const styles = theme => ({
     },
     searchText: {
         width: 150,
-        marginLeft: theme.spacing(1),
+        marginLeft: 8,
         verticalAlign: 'middle',
     },
-    headerRow: {
-        paddingLeft: theme.spacing(1),
+    headerRow: theme => ({
+        pl: 1,
         background: theme.palette.primary.main,
-    },
+    }),
     headerCell: {
         display: 'inline-block',
         verticalAlign: 'top',
@@ -60,7 +67,7 @@ const styles = theme => ({
         verticalAlign: 'top',
         width: '30%',
     },
-});
+};
 
 const MOBILE_HEIGHT = 400;
 const MOBILE_WIDTH  = 400;
@@ -462,9 +469,9 @@ class GoogleSmartNames extends Component {
 %
                 </MenuItem>);
             }
-            return <FormControl className={this.props.classes.devSubLineByOn} variant="standard">
-                <Select variant="standard" className={this.props.classes.devSubLineByOnSelect} value={(type || '').toString()} onChange={e => this.onParamsChange(id, e.target.value)}>{items}</Select>
-                <FormHelperText className={this.props.classes.devSubLineTypeTitle}>{I18n.t('by ON')}</FormHelperText>
+            return <FormControl style={styles.devSubLineByOn} variant="standard">
+                <Select variant="standard" style={styles.devSubLineByOnSelect} value={(type || '').toString()} onChange={e => this.onParamsChange(id, e.target.value)}>{items}</Select>
+                <FormHelperText style={styles.devSubLineTypeTitle}>{I18n.t('by ON')}</FormHelperText>
             </FormControl>;
         }
         return null;
@@ -575,6 +582,7 @@ class GoogleSmartNames extends Component {
         if (this.state.showSelectId) {
             return <DialogSelectID
                 key="dialogSelectGoogle"
+                theme={this.props.theme}
                 imagePrefix="../.."
                 socket={this.props.socket}
                 selected=""
@@ -641,8 +649,6 @@ class GoogleSmartNames extends Component {
         if (!this.state.showListOfDevices) {
             return null;
         }
-        const classes = this.props.classes;
-
         return <Dialog
             open={!0}
             maxWidth="xl"
@@ -657,16 +663,16 @@ class GoogleSmartNames extends Component {
                 <span role="img" aria-label="smile">😄</span>
             </DialogTitle>
             <DialogContent>
-                <div className={classes.headerRow}>
-                    <div className={classes.headerCell}>{ I18n.t('Name') }</div>
-                    <div className={classes.headerCell}>{ I18n.t('Function') }</div>
-                    <div className={classes.headerCell}>{ I18n.t('Room') }</div>
-                </div>
-                <div className={this.props.classes.tableDiv}>
+                <Box sx={styles.headerRow}>
+                    <div style={styles.headerCell}>{ I18n.t('Name')}</div>
+                    <div style={styles.headerCell}>{ I18n.t('Function')}</div>
+                    <div style={styles.headerCell}>{ I18n.t('Room')}</div>
+                </Box>
+                <div style={styles.tableDiv}>
                     {this.state.devices.map((item, i) => <div key={i}>
-                        <div className={classes.tableCell}>{item.name.nicknames.join(', ')}</div>
-                        <div className={classes.tableCell}>{item.displayTraits.map(n => n.replace('action.devices.traits.', '')).join(', ')}</div>
-                        <div className={classes.tableCell}>{item.roomHint}</div>
+                        <div style={styles.tableCell}>{item.name.nicknames.join(', ')}</div>
+                        <div style={styles.tableCell}>{item.displayTraits.map(n => n.replace('action.devices.traits.', '')).join(', ')}</div>
+                        <div style={styles.tableCell}>{item.roomHint}</div>
                     </div>)}
                 </div>
             </DialogContent>
@@ -726,24 +732,22 @@ class GoogleSmartNames extends Component {
         const desktop = window.innerHeight > MOBILE_HEIGHT && window.innerWidth > MOBILE_WIDTH;
 
         return <Toolbar variant="dense">
-            <Fab size="small" color="secondary" aria-label="Add" className={this.props.classes.button} onClick={() => this.setState({ showSelectId: true })}><IconAdd /></Fab>
+            <Fab size="small" color="secondary" aria-label="Add" style={styles.button} onClick={() => this.setState({ showSelectId: true })}><IconAdd /></Fab>
             <Fab
-                style={{ marginLeft: '1rem' }}
+                style={{ ...styles.button, marginLeft: '1rem' }}
                 size="small"
                 color="primary"
                 aria-label="Refresh"
-                className={this.props.classes.button}
                 onClick={() => this.browse(true)}
                 disabled={this.state.browse}
             >
                 {this.state.browse ? <CircularProgress size={20} /> : <IconRefresh />}
             </Fab>
             {desktop && !this.state.hideHelp ? <Fab
-                style={{ marginLeft: '1rem' }}
+                style={{ ...styles.button, marginLeft: '1rem' }}
                 size="small"
                 color={this.state.helpHidden ? 'default' : 'primary'}
                 aria-label="Help"
-                className={this.props.classes.button}
                 title={I18n.t('Show/Hide help')}
                 onClick={() => {
                     window.localStorage.setItem('App.helpHidden', this.state.helpHidden ? 'false' : 'true');
@@ -754,11 +758,10 @@ class GoogleSmartNames extends Component {
                 <IconHelp />
             </Fab> : null }
             <Fab
-                style={{ marginLeft: '1rem' }}
+                style={{ ...styles.button, marginLeft: '1rem' }}
                 size="small"
                 color={this.state.expertMode ? 'primary' : 'default'}
                 aria-label="Help"
-                className={this.props.classes.button}
                 title={I18n.t('Toggle expert mode')}
                 onClick={() => {
                     window.localStorage.setItem('App.expertMode', this.state.expertMode ? 'false' : 'true');
@@ -769,11 +772,10 @@ class GoogleSmartNames extends Component {
                 <ExpertIcon />
             </Fab>
             <Fab
-                style={{ marginLeft: '1rem' }}
+                style={{ ...styles.button, marginLeft: '1rem' }}
                 title={I18n.t('Show all devices for print out')}
                 size="small"
                 aria-label="List of devices"
-                className={this.props.classes.button}
                 onClick={() => this.setState({ showListOfDevices: true })}
                 disabled={this.state.browse}
             >
@@ -781,16 +783,14 @@ class GoogleSmartNames extends Component {
             </Fab>
             {!this.props.smallDisplay ? <TextField
                 variant="standard"
-                className={this.props.classes.searchText}
+                style={styles.searchText}
                 label={I18n.t('Filter')}
                 value={this.state.searchText}
                 onChange={e => this.setState({ searchText: e.target.value })}
                 InputProps={{
-                    endAdornment: this.state.searchText ? (
-                        <IconButton onClick={() => this.setState({ searchText: '' })}>
-                            <IconClear />
-                        </IconButton>
-                    ) : undefined,
+                    endAdornment: this.state.searchText ? <IconButton onClick={() => this.setState({ searchText: '' })}>
+                        <IconClear />
+                    </IconButton> : undefined,
                 }}
             /> : null}
         </Toolbar>;
@@ -822,10 +822,10 @@ class GoogleSmartNames extends Component {
             item.name?.nicknames?.find(n => n.toLowerCase().includes(searchText)))
             : this.state.devices;
 
-        return <form key="gh" className={this.props.classes.tab}>
+        return <form key="gh" style={styles.tab}>
             {this.renderToolbar()}
             {this.renderInstructions()}
-            <div className={this.props.classes.tableDiv} style={{ height: `calc(100% - ${48 + (this.state.helpHeight ? this.state.helpHeight + 64 : 0)}px)` }}>
+            <div style={{ ...styles.tableDiv, height: `calc(100% - ${48 + (this.state.helpHeight ? this.state.helpHeight + 64 : 0)}px)` }}>
                 <TreeTable
                     columns={this.state.expertMode ? this.columns : this.columns.filter(item => !item.expertMode)}
                     data={devices}
@@ -895,10 +895,10 @@ GoogleSmartNames.propTypes = {
     //    onLoad:      PropTypes.func,
     //    onChange:    PropTypes.func,
     socket:      PropTypes.object.isRequired,
-//    themeType:   PropTypes.string.isRequired,
+    theme: PropTypes.object,
 };
 
 export const withMediaQuery = () => GoogleSmartNamesComponent => props =>
     <GoogleSmartNamesComponent smallDisplay={useMediaQuery('(max-width:600px)')} {...props} />;
 
-export default withStyles(styles)(withMediaQuery()(GoogleSmartNames));
+export default withMediaQuery()(GoogleSmartNames);

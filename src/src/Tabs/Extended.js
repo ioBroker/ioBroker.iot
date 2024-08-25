@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
-import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 
-import TextField from '@mui/material/TextField';
-import Input from '@mui/material/Input';
-import FormHelperText from '@mui/material/FormHelperText';
-import Fab from '@mui/material/Fab';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
+import {
+    TextField,
+    Input,
+    FormHelperText,
+    Fab,
+    FormControl,
+    Select,
+    MenuItem,
+    FormControlLabel,
+    Checkbox,
+} from '@mui/material';
 
 import { MdAdd as IconAdd } from 'react-icons/md';
 
@@ -18,7 +19,7 @@ import {
     Utils, I18n, SelectID as DialogSelectID,
 } from '@iobroker/adapter-react-v5';
 
-const styles = () => ({
+const styles = {
     tab: {
         display: 'flex',
         flexDirection: 'column',
@@ -55,7 +56,7 @@ const styles = () => ({
         // background: '#d2d2d2',
         marginBottom: 5,
     },
-});
+};
 
 class ExtendedOptions extends Component {
     constructor(props) {
@@ -96,7 +97,7 @@ class ExtendedOptions extends Component {
             variant="standard"
             label={I18n.t(title)}
             disabled={disabled}
-            className={Utils.clsx(this.props.classes.input, this.props.classes.controlElement)}
+            style={{ ...styles.input, ...styles.controlElement }}
             value={this.props.native[attr]}
             type={type || 'text'}
             helperText={helperText ? I18n.t(helperText) : ''}
@@ -107,8 +108,13 @@ class ExtendedOptions extends Component {
 
     renderSelect(title, attr, options, style) {
         return <FormControl
-            className={Utils.clsx(this.props.classes.input, this.props.classes.controlElement)}
-            style={({ paddingTop: 5, paddingRight: 8, ...style })}
+            style={{
+                ...styles.input,
+                ...styles.controlElement,
+                paddingTop: 5,
+                paddingRight: 8,
+                ...style,
+            }}
             variant="standard"
         >
             <Select
@@ -126,8 +132,7 @@ class ExtendedOptions extends Component {
     renderCheckbox(title, attr, style) {
         return <FormControlLabel
             key={attr}
-            style={({ paddingTop: 5, ...style })}
-            className={this.props.classes.controlElement}
+            style={{ ...styles.controlElement, paddingTop: 5, ...style }}
             control={
                 <Checkbox
                     checked={this.props.native[attr]}
@@ -143,6 +148,7 @@ class ExtendedOptions extends Component {
         if (this.state.showSelectId) {
             return <DialogSelectID
                 key="dialogSelectID2"
+                theme={this.props.theme}
                 imagePrefix="../.."
                 socket={this.props.socket}
                 selected={this.props.native[attr]}
@@ -158,7 +164,7 @@ class ExtendedOptions extends Component {
     }
 
     render() {
-        return <form className={this.props.classes.tab}>
+        return <form style={styles.tab}>
             {
                 /* this.renderInput('Cloud URL', 'cloudUrl', null, true) */
             }
@@ -175,8 +181,12 @@ class ExtendedOptions extends Component {
             }
             {this.props.native.amazonAlexaV3 ?
                 <FormControl
-                    className={Utils.clsx(this.props.classes.input, this.props.classes.controlElement)}
-                    style={({ paddingTop: 5, paddingRight: 8 })}
+                    style={{
+                        ...styles.input,
+                        ...styles.controlElement,
+                        paddingTop: 5,
+                        paddingRight: 8,
+                    }}
                     variant="standard"
                 >
                     <Select
@@ -190,18 +200,18 @@ class ExtendedOptions extends Component {
                     <FormHelperText>{I18n.t('Default toggle behaviour (Only alexa v3)')}</FormHelperText>
                 </FormControl> : null}
             {this.renderInput('OFF level for switches in %', 'deviceOffLevel', null, false, '(Set to 0 if behavior not desired)')}
-            <div className={this.props.classes.controlElement}>
+            <div style={styles.controlElement}>
                 {this.renderInput('Write response to', 'responseOID')}
                 <Fab size="small" color="secondary" onClick={() => this.setState({ showSelectId: true })} aria-label="Add" style={{ marginLeft: 5, marginTop: 10 }}>
                     <IconAdd />
                 </Fab>
             </div>
-            <div className={this.props.classes.controlElement}>
+            <div style={styles.controlElement}>
                 {this.renderCheckbox('Personal settings (only pro)', 'noCommon')}
                 <FormHelperText>{Utils.renderTextWithA(I18n.t('help_tip'))}</FormHelperText>
             </div>
             {this.renderCheckbox('Debug outputs', 'debug')}
-            <div className={this.props.classes.controlElement}>
+            <div style={styles.controlElement}>
                 {this.renderCheckbox('Allow remote access', 'remote')}
                 {this.props.native.remote ? this.renderSelect('Admin instance', 'remoteAdminInstance', this.state.adminInstances, { width: 120, minWidth: 120 }) : null}
                 {this.props.native.remote ? this.renderSelect('Web instance', 'remoteWebInstance', this.state.webInstances, { width: 120, minWidth: 120 }) : null}
@@ -220,6 +230,7 @@ ExtendedOptions.propTypes = {
     //    onLoad: PropTypes.func,
     onChange: PropTypes.func,
     socket: PropTypes.object.isRequired,
+    theme: PropTypes.object,
 };
 
-export default withStyles(styles)(ExtendedOptions);
+export default ExtendedOptions;

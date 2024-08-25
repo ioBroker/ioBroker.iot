@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 
 import {
@@ -25,10 +24,11 @@ import {
 } from 'react-icons/md';
 
 import {
-    Utils, I18n, SelectID as DialogSelectID, IconCopy,
+    Utils, I18n,
+    SelectID as DialogSelectID, IconCopy,
 } from '@iobroker/adapter-react-v5';
 
-const styles = () => ({
+const styles = {
     tab: {
         width: '100%',
         minHeight: '100%',
@@ -83,7 +83,7 @@ const styles = () => ({
     chip: {
         marginRight: 5,
     },
-});
+};
 
 class Services extends Component {
     constructor(props) {
@@ -130,7 +130,7 @@ class Services extends Component {
         return <TextField
             variant="standard"
             label={I18n.t(title)}
-            className={Utils.clsx(this.props.classes.input, this.props.classes.controlElement)}
+            style={{ ...styles.input, ...styles.controlElement }}
             value={this.props.native[attr]}
             type={type || 'text'}
             onChange={e => this.props.onChange(attr, e.target.value)}
@@ -177,7 +177,7 @@ class Services extends Component {
                     key="close"
                     aria-label="Close"
                     color="inherit"
-                    className={this.props.classes.close}
+                    style={styles.close}
                     onClick={() => this.setState({ toast: '' })}
                 >
                     <IconClose />
@@ -215,6 +215,7 @@ class Services extends Component {
     getSelectIdDialog(attr) {
         if (this.state.showSelectId) {
             return <DialogSelectID
+                theme={this.props.theme}
                 key="dialogSelectID3"
                 imagePrefix="../.."
                 socket={this.props.socket}
@@ -231,7 +232,7 @@ class Services extends Component {
     }
 
     renderChips(label, attr) {
-        return <div className={this.props.classes.chipsDiv}>
+        return <div style={styles.chipsDiv}>
             <FormHelperText>{Utils.renderTextWithA(I18n.t(label))}</FormHelperText>
             <TextField
                 variant="standard"
@@ -246,21 +247,21 @@ class Services extends Component {
 
             <Fab size="small" color="secondary" disabled={!this.state.addValue} onClick={() => this.onChipsAdd(attr)} style={{ marginLeft: 5, marginTop: -15 }}><IconAdd /></Fab>
 
-            <div className={this.props.classes.chips}>
+            <div style={styles.chips}>
                 {(this.props.native[attr] || '').split(/[,;\s]/).filter(a => !!a)
                     .map(word => <Chip
                         key={word}
                         size="small"
                         label={word}
                         onDelete={() => this.onChipsDelete(attr, word)}
-                        className={this.props.classes.chip}
+                        style={styles.chip}
                     />)}
             </div>
         </div>;
     }
 
     render() {
-        return <form className={this.props.classes.tab}>
+        return <form style={styles.tab}>
             <Button
                 variant="outlined"
                 disabled={!this.state.isInstanceAlive || this.state.running}
@@ -278,15 +279,25 @@ class Services extends Component {
 
             <TextField
                 variant="standard"
-                style={{ marginTop: 10 }}
                 label={I18n.t('Use following link for IFTTT')}
-                className={Utils.clsx(this.props.classes.input, this.props.classes.controlElement, this.props.classes.fullSize)}
+                style={{
+                    ...styles.input,
+                    ...styles.controlElement,
+                    ...styles.fullSize,
+                    marginTop: 10,
+                }}
                 value={`https://service.iobroker.in/v1/iotService?service=ifttt&key=${this.state.key}&user=${encodeURIComponent(this.props.native.login)}`}
                 type="text"
                 InputProps={{ readOnly: true }}
                 margin="normal"
             />
-            <Fab size="small" style={{ marginTop: 10, marginLeft: 5 }} onClick={() => Utils.copyToClipboard(`https://service.iobroker.in/v1/iotService?service=ifttt&key=${this.state.key}&user=${encodeURIComponent(this.props.native.login)}`)}><IconCopy /></Fab>
+            <Fab
+                size="small"
+                style={{ marginTop: 10, marginLeft: 5 }}
+                onClick={() => Utils.copyToClipboard(`https://service.iobroker.in/v1/iotService?service=ifttt&key=${this.state.key}&user=${encodeURIComponent(this.props.native.login)}`)}
+            >
+                <IconCopy />
+            </Fab>
             <br />
             <br />
 
@@ -295,9 +306,13 @@ class Services extends Component {
 
             <TextField
                 variant="standard"
-                style={{ marginTop: 10 }}
                 label={I18n.t('Use following link for custom service')}
-                className={Utils.clsx(this.props.classes.input, this.props.classes.controlElement, this.props.classes.fullSize)}
+                style={{
+                    ...styles.input,
+                    ...styles.controlElement,
+                    ...styles.fullSize,
+                    marginTop: 10,
+                }}
                 value={`https://service.iobroker.in/v1/iotService?service=custom_<SERVICE_NAME>&key=${this.state.key}&user=${encodeURIComponent(this.props.native.login)}&data=<SOME_TEXT>`}
                 type="text"
                 InputProps={{ readOnly: true }}
@@ -306,7 +321,7 @@ class Services extends Component {
             <Fab size="small" style={{ marginTop: 10, marginLeft: 5 }} onClick={() => Utils.copyToClipboard(`https://service.iobroker.in/v1/iotService?service=custom_<SERVICE_NAME>&key=${this.state.key}&user=${encodeURIComponent(this.props.native.login)}&data=<SOME_TEXT>`)}><IconCopy /></Fab>
             <br />
 
-            <FormControl className={Utils.clsx(this.props.classes.input, this.props.classes.controlElement)} style={{ paddingTop: 20 }} variant="standard">
+            <FormControl style={{ ...styles.input, ...styles.controlElement, paddingTop: 20 }} variant="standard">
                 <Select
                     variant="standard"
                     value={this.props.native.text2command || '_'}
@@ -322,7 +337,7 @@ text2command.
                 <FormHelperText>{I18n.t('Use text2command instance')}</FormHelperText>
             </FormControl>
             <br />
-            <FormControl className={Utils.clsx(this.props.classes.input, this.props.classes.controlElement)} style={{ paddingTop: 20 }} variant="standard">
+            <FormControl style={{ ...styles.input, ...styles.controlElement, paddingTop: 20 }} variant="standard">
                 <Select
                     variant="standard"
                     value={this.props.native.nightscout || '_'}
@@ -339,19 +354,27 @@ nightscout.
             </FormControl>
             {this.props.native.nightscout ? <TextField
                 variant="standard"
-                style={{ marginTop: 3.5 }}
                 label={I18n.t('Nightscout password')}
                 onChange={e => this.props.onChange('nightscoutPass', e.target.value.replace(/[^\w\d-_]/g, '_'))}
-                className={Utils.clsx(this.props.classes.input, this.props.classes.controlElement, this.props.classes.normalSize)}
+                style={{
+                    ...styles.input,
+                    ...styles.controlElement,
+                    ...styles.normalSize,
+                    marginTop: 3.5,
+                }}
                 value={this.props.native.nightscoutPass}
                 type="text"
                 margin="normal"
             /> : null}
             {this.props.native.nightscout ? <TextField
                 variant="standard"
-                style={{ marginTop: 3.5 }}
                 label={I18n.t('Nightscout api-secret')}
-                className={Utils.clsx(this.props.classes.input, this.props.classes.controlElement, this.props.classes.normalSize)}
+                style={{
+                    ...styles.input,
+                    ...styles.controlElement,
+                    ...styles.normalSize,
+                    marginTop: 3.5,
+                }}
                 value={this.calcNightscoutSecret()}
                 type="text"
                 InputProps={{ readOnly: true }}
@@ -359,11 +382,11 @@ nightscout.
             /> : null}
             <br />
             <br />
-            <div className={this.props.classes.controlElement}>
+            <div style={styles.controlElement}>
                 <TextField
                     variant="standard"
                     label={I18n.t('Read blood sugar from')}
-                    className={Utils.clsx(this.props.classes.input, this.props.classes.controlElement)}
+                    style={{ ...styles.input, ...styles.controlElement }}
                     value={this.props.native.amazonAlexaBlood || ''}
                     type="text"
                     onChange={e => this.props.onChange('amazonAlexaBlood', e.target.value)}
@@ -371,7 +394,7 @@ nightscout.
                 />
                 <Fab size="small" color="secondary" onClick={() => this.setState({ showSelectId: true })} aria-label="Add" style={{ marginLeft: 5, marginTop: 10 }}><IconAdd /></Fab>
                 <FormControlLabel
-                    className={this.props.classes.controlElement}
+                    style={styles.controlElement}
                     control={
                         <Checkbox
                             style={{ paddingLeft: 30 }}
@@ -391,7 +414,7 @@ nightscout.
 }
 
 Services.propTypes = {
-//     common: PropTypes.object.isRequired,
+    //     common: PropTypes.object.isRequired,
     native: PropTypes.object.isRequired,
     instance: PropTypes.number.isRequired,
     adapterName: PropTypes.string.isRequired,
@@ -399,7 +422,8 @@ Services.propTypes = {
     //    onLoad: PropTypes.func,
     onChange: PropTypes.func,
     socket: PropTypes.object.isRequired,
-//    onShowError: PropTypes.func,
+    //    onShowError: PropTypes.func,
+    theme: PropTypes.object,
 };
 
-export default withStyles(styles)(Services);
+export default Services;
