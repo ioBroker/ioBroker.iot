@@ -888,11 +888,13 @@ async function processMessage(type, request) {
                 }
 
                 if (visuData.command === 'getInstances') {
-                    return handleGetInstances(visuData, adapter);
+                    const res = await handleGetInstances(visuData, adapter);
+                    return { result: 'Ok', ...res }
                 }
 
                 if (visuData.command === 'sendToAdapter') {
-                    return handleSendToAdapter(visuData, adapter);
+                    const res = await handleSendToAdapter(visuData, adapter);
+                    return { result: 'Ok', ...res }
                 }
             } catch (e) {
                 adapter.log.error(`Could not handle data "${request}" by Visu App: ${e.message}`)
