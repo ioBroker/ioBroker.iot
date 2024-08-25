@@ -16,7 +16,7 @@ const GoogleHome = require('./lib/googleHome');
 const YandexAlisa = require('./lib/alisa');
 const Remote = require('./lib/remote');
 const packageJSON = require('./package.json');
-const { handleGeofenceData, handleDevicesData } = require('./lib/visuApp.js')
+const { handleGeofenceData, handleDevicesData, handleSendToAdapter, handleGetInstances } = require('./lib/visuApp.js')
 
 const version = packageJSON.version;
 // @ts-ignore
@@ -876,15 +876,23 @@ async function processMessage(type, request) {
             }
 
             try {
-                /** @type {{ presence?: Record<string, boolean>, devices?: Record<string, any> }} */
+                /** @type {{ command?: string; presence?: Record<string, boolean>, devices?: Record<string, any> }} */
                 const visuData = JSON.parse(request);
 
                 if (visuData.presence) {
-                    await handleGeofenceData(visuData, adapter)
+                    await handleGeofenceData(visuData, adapter);
                 }
 
                 if (visuData.devices) {
-                    await handleDevicesData(visuData, adapter)
+                    await handleDevicesData(visuData, adapter);
+                }
+
+                if (visuData.command === 'getInstances') {
+                    return handleGetInstances(visuData, adapter);
+                }
+
+                if (visuData.command === 'sendToAdapter') {
+                    return handleSendToAdapter(visuData, adapter);
                 }
             } catch (e) {
                 adapter.log.error(`Could not handle data "${request}" by Visu App: ${e.message}`)
