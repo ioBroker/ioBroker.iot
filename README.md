@@ -308,6 +308,7 @@ setState('iot.0.app.message', JSON.stringify({
 
 ## Changelog
 ### **WORK IN PROGRESS**
+* (@foxriver76) added new commands for the visu app
 * (bluefox) updated packages
 * (bluefox) Migrated GUI for admin v7
 
