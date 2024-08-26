@@ -4,9 +4,9 @@
  */
 'use strict';
 
-const gulp      = require('gulp');
-const fs        = require('fs');
-const cp        = require('child_process');
+const gulp = require('gulp');
+const fs = require('node:fs');
+const cp = require('node:child_process');
 
 function deleteFoldersRecursive(path, exceptions) {
     if (fs.existsSync(path)) {
@@ -27,7 +27,6 @@ function deleteFoldersRecursive(path, exceptions) {
         }
     }
 }
-
 
 gulp.task('clean', done => {
     deleteFoldersRecursive(`${__dirname}/admin`, ['actions.js', 'alexalogo.png', 'blockly.js', 'iot.png']);
@@ -61,6 +60,7 @@ function npmInstallRules() {
         });
     });
 }
+
 function buildRules() {
     const version = JSON.parse(fs.readFileSync(`${__dirname}/package.json`).toString('utf8')).version;
     const data    = JSON.parse(fs.readFileSync(`${__dirname}/src-rules/package.json`).toString('utf8'));
@@ -133,7 +133,7 @@ function npmInstall() {
         child.stdout.pipe(process.stdout);
 
         child.on('exit', (code /* , signal */) => {
-            // code 1 is strange error that cannot be explained. Everything is installed but error :(
+            // code 1 is a strange error that cannot be explained. Everything is installed but error :(
             if (code && code !== 1) {
                 reject(`Cannot install: ${code}`);
             } else {
@@ -159,7 +159,7 @@ function build() {
     return new Promise((resolve, reject) => {
         const options = {
             stdio: 'pipe',
-            cwd:   `${__dirname}/src/`
+            cwd:   `${__dirname}/src/`,
         };
 
         const version = JSON.parse(fs.readFileSync(`${__dirname}/package.json`).toString('utf8')).version;

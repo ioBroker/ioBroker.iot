@@ -1,7 +1,6 @@
-import WidgetGenericBlock from './GenericBlock';
 import { I18n } from '@iobroker/adapter-react-v5';
 
-const GenericBlock = window.GenericBlock || WidgetGenericBlock;
+const GenericBlock = window.GenericBlock;
 
 class ActionVisu extends GenericBlock {
     constructor(props) {

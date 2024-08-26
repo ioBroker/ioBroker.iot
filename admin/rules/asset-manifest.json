@@ -1,21 +1,18 @@
 {
   "files": {
-    "main.js": "/static/js/main.a767cd16.js",
+    "main.js": "/static/js/main.509dc23c.js",
     "ActionVisu.js": "/customRuleBlocks.js",
-    "static/js/src_bootstrap_jsx.ff91d7a5.chunk.js": "/static/js/src_bootstrap_jsx.ff91d7a5.chunk.js",
-    "static/js/node_modules_iobroker_adapter-react-v5_assets_devices_sync_recursive_-node_modules_iobroker_a-b694110.21992d56.chunk.js": "/static/js/node_modules_iobroker_adapter-react-v5_assets_devices_sync_recursive_-node_modules_iobroker_a-b694110.21992d56.chunk.js",
-    "static/js/node_modules_prop-types_index_js.4a6f1268.chunk.js": "/static/js/node_modules_prop-types_index_js.4a6f1268.chunk.js",
+    "static/js/node_modules_iobroker_adapter-react-v5_assets_devices_sync_recursive_-node_modules_iobroker_a-3fbe7d.bd060777.chunk.js": "/static/js/node_modules_iobroker_adapter-react-v5_assets_devices_sync_recursive_-node_modules_iobroker_a-3fbe7d.bd060777.chunk.js",
+    "static/js/node_modules_prop-types_index_js.b33ab61f.chunk.js": "/static/js/node_modules_prop-types_index_js.b33ab61f.chunk.js",
     "static/js/node_modules_react_index_js.03847742.chunk.js": "/static/js/node_modules_react_index_js.03847742.chunk.js",
-    "static/js/src_ActionVisu_jsx.a56ad32e.chunk.js": "/static/js/src_ActionVisu_jsx.a56ad32e.chunk.js",
-    "static/js/vendors-node_modules_react-dom_index_js.b29d2602.chunk.js": "/static/js/vendors-node_modules_react-dom_index_js.b29d2602.chunk.js",
-    "static/js/node_modules_iobroker_adapter-react-v5_assets_devices_sync_recursive_-node_modules_iobroker_a-b694111.f0d7afe5.chunk.js": "/static/js/node_modules_iobroker_adapter-react-v5_assets_devices_sync_recursive_-node_modules_iobroker_a-b694111.f0d7afe5.chunk.js",
-    "static/js/vendors-node_modules_iobroker_adapter-react-v5_assets_devices_parseNames_d_ts-node_modules_io-1d9f06.affc863e.chunk.js": "/static/js/vendors-node_modules_iobroker_adapter-react-v5_assets_devices_parseNames_d_ts-node_modules_io-1d9f06.affc863e.chunk.js",
+    "static/js/src_ActionVisu_jsx.8137adbd.chunk.js": "/static/js/src_ActionVisu_jsx.8137adbd.chunk.js",
+    "static/js/vendors-node_modules_react-dom_index_js.220be104.chunk.js": "/static/js/vendors-node_modules_react-dom_index_js.220be104.chunk.js",
+    "static/js/vendors-node_modules_iobroker_adapter-react-v5_index_js-node_modules_iobroker_adapter-react-v-de88f8.e5660021.chunk.js": "/static/js/vendors-node_modules_iobroker_adapter-react-v5_index_js-node_modules_iobroker_adapter-react-v-de88f8.e5660021.chunk.js",
     "static/media/Ground Floor.svg": "/static/media/Ground Floor.2b7c5c91db7f070935a2.svg",
     "static/media/Second Floor.svg": "/static/media/Second Floor.a2d5ed32df336591c06b.svg",
     "static/media/Cellar.svg": "/static/media/Cellar.7ec1b1803a2437c8b78c.svg",
     "static/media/Anteroom.svg": "/static/media/Anteroom.93a742135f2c060ad619.svg",
     "static/media/Corridor.svg": "/static/media/Corridor.93a742135f2c060ad619.svg",
-    "static/media/names.txt": "/static/media/names.3a7dae0bd6b8b03b280f.txt",
     "static/media/Home Theater.svg": "/static/media/Home Theater.1e5f19a0b2a013f153f5.svg",
     "static/media/Driveway.svg": "/static/media/Driveway.fbd31101c5a80a8bb37a.svg",
     "static/media/Equipment Room.svg": "/static/media/Equipment Room.db92bdca64f653c844f8.svg",
@@ -130,18 +127,16 @@
     "static/media/Outdoor Blinds.svg": "/static/media/Outdoor Blinds.37b85a9c060a4af48da9.svg",
     "static/media/Upstairs.svg": "/static/media/Upstairs.441813e54e0daca0882d.svg",
     "index.html": "/index.html",
-    "main.a767cd16.js.map": "/static/js/main.a767cd16.js.map",
+    "main.509dc23c.js.map": "/static/js/main.509dc23c.js.map",
     "customRuleBlocks.js.map": "/customRuleBlocks.js.map",
-    "src_bootstrap_jsx.ff91d7a5.chunk.js.map": "/static/js/src_bootstrap_jsx.ff91d7a5.chunk.js.map",
-    "node_modules_iobroker_adapter-react-v5_assets_devices_sync_recursive_-node_modules_iobroker_a-b694110.21992d56.chunk.js.map": "/static/js/node_modules_iobroker_adapter-react-v5_assets_devices_sync_recursive_-node_modules_iobroker_a-b694110.21992d56.chunk.js.map",
-    "node_modules_prop-types_index_js.4a6f1268.chunk.js.map": "/static/js/node_modules_prop-types_index_js.4a6f1268.chunk.js.map",
+    "node_modules_iobroker_adapter-react-v5_assets_devices_sync_recursive_-node_modules_iobroker_a-3fbe7d.bd060777.chunk.js.map": "/static/js/node_modules_iobroker_adapter-react-v5_assets_devices_sync_recursive_-node_modules_iobroker_a-3fbe7d.bd060777.chunk.js.map",
+    "node_modules_prop-types_index_js.b33ab61f.chunk.js.map": "/static/js/node_modules_prop-types_index_js.b33ab61f.chunk.js.map",
     "node_modules_react_index_js.03847742.chunk.js.map": "/static/js/node_modules_react_index_js.03847742.chunk.js.map",
-    "src_ActionVisu_jsx.a56ad32e.chunk.js.map": "/static/js/src_ActionVisu_jsx.a56ad32e.chunk.js.map",
-    "vendors-node_modules_react-dom_index_js.b29d2602.chunk.js.map": "/static/js/vendors-node_modules_react-dom_index_js.b29d2602.chunk.js.map",
-    "node_modules_iobroker_adapter-react-v5_assets_devices_sync_recursive_-node_modules_iobroker_a-b694111.f0d7afe5.chunk.js.map": "/static/js/node_modules_iobroker_adapter-react-v5_assets_devices_sync_recursive_-node_modules_iobroker_a-b694111.f0d7afe5.chunk.js.map",
-    "vendors-node_modules_iobroker_adapter-react-v5_assets_devices_parseNames_d_ts-node_modules_io-1d9f06.affc863e.chunk.js.map": "/static/js/vendors-node_modules_iobroker_adapter-react-v5_assets_devices_parseNames_d_ts-node_modules_io-1d9f06.affc863e.chunk.js.map"
+    "src_ActionVisu_jsx.8137adbd.chunk.js.map": "/static/js/src_ActionVisu_jsx.8137adbd.chunk.js.map",
+    "vendors-node_modules_react-dom_index_js.220be104.chunk.js.map": "/static/js/vendors-node_modules_react-dom_index_js.220be104.chunk.js.map",
+    "vendors-node_modules_iobroker_adapter-react-v5_index_js-node_modules_iobroker_adapter-react-v-de88f8.e5660021.chunk.js.map": "/static/js/vendors-node_modules_iobroker_adapter-react-v5_index_js-node_modules_iobroker_adapter-react-v-de88f8.e5660021.chunk.js.map"
   },
   "entrypoints": [
-    "static/js/main.a767cd16.js"
+    "static/js/main.509dc23c.js"
   ]
 }

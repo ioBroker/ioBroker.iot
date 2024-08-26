@@ -18,6 +18,9 @@ module.exports = {
         './ActionVisu': './src/ActionVisu.jsx',
     },
     shared: makeShared([
-        'react', '@iobroker/adapter-react-v5', 'react-dom', 'prop-types'
+        'react',
+        '@iobroker/adapter-react-v5',
+        'react-dom',
+        'prop-types',
     ])
 };
