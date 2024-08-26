@@ -76,8 +76,8 @@ Alexa, change the kitchen to the color chocolate
 ```
 
 ### Lock
-To have the possibility to lock the locks, the state must have the role "switch.lock" and have "native.LOCK_VALUE" to determine the lock state.
-If you need a separate Value to control the Lock, you can use "native.CONTROL VALUE".
+To have the possibility to lock the locks, the state must have the role `switch.lock` and have `native.LOCK_VALUE` to determine the lock state.
+If you need a separate Value to control the Lock, you can use `native.CONTROL VALUE`.
 
 ```
 Alexa, is "lock name" locked/unlocked
@@ -95,7 +95,7 @@ Functions are like: light, blind, heating.
 The following conditions must be met to get the state in the automatically generated list:
 
 - the state must be in some "function" enumeration.
-- the state must have role ("state", "switch" or "level.*", e.g. level.dimmer) if not directly included in "functions".
+- the state must have a role ("state", "switch" or "level.*", e.g. level.dimmer) if not directly included in "functions".
 It can be that the channel is in the "functions", but state itself not.
 - the state must be writable: `common.write` = true
 - the state dimmer must have `common.type` as 'number'
@@ -103,7 +103,7 @@ It can be that the channel is in the "functions", but state itself not.
 
 If the state is only in "functions" and not in any "room", the name of state will be used.
 
-The state names will be generated from function and room. E.g. all *lights* in the *living room* will be collected in the virtual device *living room light*.
+The state names will be generated from function and room. E.g., all *lights* in the *living room* will be collected in the virtual device *living room light*.
 The user cannot change this name, because it is generated automatically.
 But if the enumeration name changes, this name will be changed too. (e.g., function "light" changed to "lights", so the *living room light* will be changed to *living room lights*)
 
@@ -117,7 +117,7 @@ The configuration dialog lets the comfortable remove and add the single states t
 If the group has only one state, it can be renamed, as for this the state's smartName will be used.
 If the group has more than one state, the group must be renamed via the enumeration's names.
 
-To create own groups, the user can install "scenes" adapter or create "script" in Javascript adapter.
+To create own groups, the user can install "scenes" adapter or create "script" in JavaScript adapter.
 
 ### Replaces
 You can specify strings that could be automatically replaced in the device names. E.g., if you set replaces to:
