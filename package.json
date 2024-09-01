@@ -27,7 +27,7 @@
     "aws-iot-device-sdk": "^2.2.15",
     "iobroker.type-detector": "^3.0.5",
     "mime": "^3.0.0",
-    "axios": "^1.7.5",
+    "axios": "^1.7.7",
     "uuid": "^10.0.0"
   },
   "devDependencies": {
