@@ -288,7 +288,9 @@ class Services extends Component {
                 }}
                 value={`https://service.iobroker.in/v1/iotService?service=ifttt&key=${this.state.key}&user=${encodeURIComponent(this.props.native.login)}`}
                 type="text"
-                InputProps={{ readOnly: true }}
+                slotProps={{
+                    htmlInput: { readOnly: true },
+                }}
                 margin="normal"
             />
             <Fab
@@ -315,8 +317,9 @@ class Services extends Component {
                 }}
                 value={`https://service.iobroker.in/v1/iotService?service=custom_<SERVICE_NAME>&key=${this.state.key}&user=${encodeURIComponent(this.props.native.login)}&data=<SOME_TEXT>`}
                 type="text"
-                InputProps={{ readOnly: true }}
-                margin="normal"
+                slotProps={{
+                    htmlInput: { readOnly: true },
+                }}                margin="normal"
             />
             <Fab size="small" style={{ marginTop: 10, marginLeft: 5 }} onClick={() => Utils.copyToClipboard(`https://service.iobroker.in/v1/iotService?service=custom_<SERVICE_NAME>&key=${this.state.key}&user=${encodeURIComponent(this.props.native.login)}&data=<SOME_TEXT>`)}><IconCopy /></Fab>
             <br />
@@ -377,7 +380,9 @@ nightscout.
                 }}
                 value={this.calcNightscoutSecret()}
                 type="text"
-                InputProps={{ readOnly: true }}
+                slotProps={{
+                    htmlInput: { readOnly: true },
+                }}
                 margin="normal"
             /> : null}
             <br />

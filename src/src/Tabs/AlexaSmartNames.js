@@ -1015,11 +1015,13 @@ class AlexaSmartNames extends Component {
                 className={this.state.filter}
                 value={this.state.filter}
                 onChange={e => this.setState({ filter: e.target.value })}
-                InputProps={{
-                    endAdornment: this.state.filter ?
-                        <IconButton onClick={() => this.setState({ filter: '' })}>
-                            <IconClear />
-                        </IconButton> : undefined,
+                slotProps={{
+                    input: {
+                        endAdornment: this.state.filter ?
+                            <IconButton onClick={() => this.setState({filter: ''})}>
+                                <IconClear/>
+                            </IconButton> : undefined,
+                    },
                 }}
             />
             {this.renderDevices()}

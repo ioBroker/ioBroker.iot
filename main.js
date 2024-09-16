@@ -771,12 +771,10 @@ async function processMessage(type, request) {
             let state = await adapter.getForeignStateAsync(`system.adapter.nightscout.${adapter.config.nightscout}.alive`);
             if (state && state.val) {
                 return sendToAsync(`nightscout.${adapter.config.nightscout}`, 'send', request);
-            } else {
-                return { error: `nightscout.${adapter.config.nightscout} is offline` };
             }
-        } else {
-            return { error: 'Service is disabled' };
+            return { error: `nightscout.${adapter.config.nightscout} is offline` };
         }
+        return { error: 'Service is disabled' };
     } else if (type.startsWith('alexa')) {
         if (typeof request === 'string') {
             try {
@@ -792,9 +790,8 @@ async function processMessage(type, request) {
         if (request && request.directive) {
             if (alexaSH3) {
                 return await alexaSH3.process(request);
-            } else {
-                return { error: 'Service is disabled' };
             }
+            return { error: 'Service is disabled' };
         } else if (request && request.error) {
             // answer from alexa3 events cloud actually just show it in log
             if (request.error.includes('You have no iobroker.iot license')) {
@@ -806,15 +803,13 @@ async function processMessage(type, request) {
         if (request && !request.header) {
             if (alexaCustom) {
                 return alexaCustom.process(request, adapter.config.amazonAlexa);
-            } else {
-                return { error: 'Service is disabled' };
             }
+            return { error: 'Service is disabled' };
         } else {
             if (alexaSH2) {
                 return alexaSH2.process(request, adapter.config.amazonAlexa);
-            } else {
-                return { error: 'Service is disabled' };
             }
+            return { error: 'Service is disabled' };
         }
     } else if (type.startsWith('ifttt')) {
         try {
@@ -841,9 +836,8 @@ async function processMessage(type, request) {
 
         if (googleHome) {
             return googleHome.process(request, adapter.config.googleHome);
-        } else {
-            return { error: 'Service is disabled' };
         }
+        return { error: 'Service is disabled' };
     } else if (type.startsWith('alisa')) {
         if (typeof request === 'string') {
             try {
@@ -857,9 +851,8 @@ async function processMessage(type, request) {
         adapter.log.debug(`${Date.now()} ALISA: ${JSON.stringify(request)}`);
         if (yandexAlisa) {
             return yandexAlisa.process(request, adapter.config.yandexAlisa);
-        } else {
-            return { error: 'Service is disabled' };
         }
+        return { error: 'Service is disabled' };
     } else {
         let isCustom = false;
         let _type = type;

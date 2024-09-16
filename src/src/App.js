@@ -150,6 +150,7 @@ class App extends GenericApp {
                                 this.setState({ selectedTab: value });
                                 window.localStorage.setItem(`${this.adapterName}.${this.instance}.selectedTab`, value);
                             }}
+                            variant="scrollable"
                             scrollButtons="auto"
                             sx={{ '& .MuiTabs-indicator': styles.indicator }}
                         >

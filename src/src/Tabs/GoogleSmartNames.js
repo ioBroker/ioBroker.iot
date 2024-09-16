@@ -787,10 +787,13 @@ class GoogleSmartNames extends Component {
                 label={I18n.t('Filter')}
                 value={this.state.searchText}
                 onChange={e => this.setState({ searchText: e.target.value })}
-                InputProps={{
-                    endAdornment: this.state.searchText ? <IconButton onClick={() => this.setState({ searchText: '' })}>
-                        <IconClear />
-                    </IconButton> : undefined,
+                slotProps={{
+                    input: {
+                        endAdornment: this.state.searchText ?
+                            <IconButton onClick={() => this.setState({searchText: ''})}>
+                                <IconClear/>
+                            </IconButton> : undefined,
+                    },
                 }}
             /> : null}
         </Toolbar>;
