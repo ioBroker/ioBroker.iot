@@ -887,11 +887,6 @@ async function processMessage(type, request) {
 
                 if (visuData.command === 'sendToAdapter') {
                     const res = await handleSendToAdapter(visuData, adapter);
-
-                    if (!res.error) {
-                        res.result = 'Ok';
-                    }
-
                     return res;
                 }
             } catch (e) {
