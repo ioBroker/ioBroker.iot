@@ -307,7 +307,7 @@ setState('iot.0.app.message', JSON.stringify({
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 3.4.1 (2024-09-16)
 * (@GermanBluefox) Updated GUI packages and removed `gulp`
 * (@foxriver76) do not override custom `result` attribute on `sendToAdapter` response (Visu App - only relevant for developers)
 
