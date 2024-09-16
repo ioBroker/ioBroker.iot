@@ -22,7 +22,7 @@ To use the iot adapter, you should first register on the ioBroker cloud [https:/
 ![Intro](img/intro.png)
 
 ### Language
-If you select "default" language, the smart names of devices and of enumerations will not be translated. If some language specified all known names will be translated into this language.
+If you select "default" language, the smart names of devices and of enumerations will not be translated. If some language is specified, all known names will be translated into this language.
 It is done to switch fast between many languages for demonstration purposes.
 
 ### Place function in names first
@@ -41,7 +41,7 @@ Some groups consist of mixed devices: dimmers and switches. It is allowed to con
 If command is `Set to 30%` and the `OFF level is 30%` so the switches will be turned on. By command "Set to 25%" all switches will be turned OFF.
 
 Additionally, if the command is "OFF", so the adapter will remember the current dimmer level if the actual value is over or equal to the "30%".
-Later when the new "ON" command will come, the adapter will switch the dimmer not to 100% but to the level in memory.
+Later when the new "ON" command comes, the adapter will switch the dimmer not to 100% but to the level in memory.
 
 Example:
 
@@ -95,7 +95,7 @@ Functions are like: light, blind, heating.
 The following conditions must be met to get the state in the automatically generated list:
 
 - the state must be in some "function" enumeration.
-- the state must have a role ("state", "switch" or "level.*", e.g. level.dimmer) if not directly included in "functions".
+- the state must have a role ("state", "switch" or "level.*", e.g., level.dimmer) if not directly included in "functions".
 It can be that the channel is in the "functions", but state itself not.
 - the state must be writable: `common.write` = true
 - the state dimmer must have `common.type` as 'number'
@@ -165,7 +165,7 @@ IFTTT service is allowed only if an IFTTT key is set.
 Reserved names are `ifttt`, `text2command`, `simpleApi`, `swagger`. These must be used without the `custom_` prefix.
 
 You can ask by message the valid URL for service too:
-```
+```js
 sendTo('iot.0', 'getServiceEndpoint', {serviceName: 'custom_myService'}, result => 
   console.log(JSON.stringify(result)));
   // Output: {"result":
@@ -227,7 +227,7 @@ The iot instance also accepts a message with the name "alexaCustomResponse" cont
 There will be no response from the iot instance to the message!
 
 **Example of a script that uses texts**
-```
+```js
 // important, that ack=true
 on({id: 'iot.0.smart.lastCommand', ack: true, change: 'any'}, obj => {
     // you have 200ms to prepare the answer and to write it into iot.X.smart.lastResponse
@@ -236,7 +236,7 @@ on({id: 'iot.0.smart.lastCommand', ack: true, change: 'any'}, obj => {
 ```
 
 **Example of a script that uses JSON objects**
-```
+```js
 // important, that ack=true
 on({id: 'iot.0.smart.lastCommandObj', ack: true, change: 'any'}, obj => {
     // you have 200ms to prepare the answer and to write it into iot.X.smart.lastResponse
@@ -261,7 +261,7 @@ If you use private skill/action/навык for communication with `Alexa/Google 
 
 E.g. for `yandex alice`:
 
-```
+```js
 const OBJECT_FROM_ALISA_SERVICE = {}; // object from alisa service or empty object
 OBJECT_FROM_ALISA_SERVICE.alisa = '/path/v1.0/user/devices'; // called URL, 'path' could be any text, but it must be there
 sendTo('iot.0', 'private', {type: 'alisa', request: OBJECT_FROM_ALISA_SERVICE}, response => {
@@ -307,13 +307,16 @@ setState('iot.0.app.message', JSON.stringify({
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Updated GUI packages and removed `gulp`
+
 ### 3.4.0 (2024-08-26)
 * (@foxriver76) added new commands for the visu app
 * (bluefox) updated packages
 * (bluefox) Migrated GUI for admin v7
 
 ### 3.3.0 (2024-05-09)
-* (foxriver76) Fix error on reconnect
+* (foxriver76) Fix error on reconnecting
 * (foxriver76) prepared adapter for new ioBroker Visu app states
 * (bluefox) updated packages
 
