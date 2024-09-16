@@ -319,7 +319,8 @@ class Services extends Component {
                 type="text"
                 slotProps={{
                     htmlInput: { readOnly: true },
-                }}                margin="normal"
+                }}
+                margin="normal"
             />
             <Fab size="small" style={{ marginTop: 10, marginLeft: 5 }} onClick={() => Utils.copyToClipboard(`https://service.iobroker.in/v1/iotService?service=custom_<SERVICE_NAME>&key=${this.state.key}&user=${encodeURIComponent(this.props.native.login)}&data=<SOME_TEXT>`)}><IconCopy /></Fab>
             <br />

@@ -902,8 +902,8 @@ class AlisaDevices extends Component {
                 onChange={e => this.setState({ filter: e.target.value })}
                 slotProps={{
                     input: {
-                        endAdornment: this.state.filter ? <IconButton onClick={() => this.setState({filter: ''})}>
-                            <IconClear/>
+                        endAdornment: this.state.filter ? <IconButton onClick={() => this.setState({ filter: '' })}>
+                            <IconClear />
                         </IconButton> : undefined,
                     },
                 }}

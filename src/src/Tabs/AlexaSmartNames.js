@@ -1018,8 +1018,8 @@ class AlexaSmartNames extends Component {
                 slotProps={{
                     input: {
                         endAdornment: this.state.filter ?
-                            <IconButton onClick={() => this.setState({filter: ''})}>
-                                <IconClear/>
+                            <IconButton onClick={() => this.setState({ filter: '' })}>
+                                <IconClear />
                             </IconButton> : undefined,
                     },
                 }}

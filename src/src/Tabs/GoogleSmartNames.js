@@ -790,8 +790,8 @@ class GoogleSmartNames extends Component {
                 slotProps={{
                     input: {
                         endAdornment: this.state.searchText ?
-                            <IconButton onClick={() => this.setState({searchText: ''})}>
-                                <IconClear/>
+                            <IconButton onClick={() => this.setState({ searchText: '' })}>
+                                <IconClear />
                             </IconButton> : undefined,
                     },
                 }}
