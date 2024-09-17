@@ -57,7 +57,7 @@
   "scripts": {
     "test": "mocha --exit",
     "test-alexa-v3": "mocha --grep AlexaSmartHomeV3 --recursive",
-    "prepublishOnly": "gulp",
+    "prepublishOnly": "node tasks",
     "build": "node tasks",
     "release": "release-script",
     "release-patch": "release-script patch --yes",

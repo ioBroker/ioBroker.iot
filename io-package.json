@@ -3,19 +3,6 @@
     "name": "iot",
     "version": "3.4.1",
     "news": {
-      "3.4.1": {
-        "en": "Updated GUI packages and removed `gulp`\ndo not override custom `result` attribute on `sendToAdapter` response (Visu App - only relevant for developers)",
-        "de": "Aktualisierte GUI-Pakete und entfernt `gulp`\nnicht überschreiben benutzerdefinierte `result` Attribut auf `sendToAdapter` Antwort (Visu App - nur für Entwickler relevant)",
-        "ru": "Обновленные пакеты GUI и удаленные `gulp'\nне переопределять пользовательский атрибут `result' на ответе `sendToAdapter' (Visu App - только соответствующий для разработчиков)",
-        "pt": "Pacotes de GUI atualizados e removidos `gulp`\nnão substituir o atributo `result` personalizado na resposta `sendToAdapter` (Visu App - apenas relevante para desenvolvedores)",
-        "nl": "Bijgewerkt GUI-pakketten en verwijderde GUI-pakketten\ngeen attribuut overschrijven op aangepaste ",
-        "fr": "Mise à jour des paquets GUI et suppression de 'gulp'\nne pas surcharger l'attribut `result` personnalisé sur la réponse `sendToAdapter` (Visu App - uniquement pertinent pour les développeurs)",
-        "it": "Pacchetti GUI aggiornati e rimossi `gulp`\nnon sovrascrivere l'attributo `risultato` personalizzato sulla risposta `sendToAdapter` (Visu App - solo pertinente per gli sviluppatori)",
-        "es": "Paquetes GUI actualizados y eliminados\nno invalidar el atributo personalizado `result` en la respuesta `sendToAdapter` (Visu App - sólo relevante para desarrolladores)",
-        "pl": "Aktualizacja pakietów GUI i usunięcie 'gulp'\nnie nadpisywać atrybutu 'result' w odpowiedzi 'sendToAdapter' (aplikacja Visu - dotyczy tylko deweloperów)",
-        "uk": "Оновлено пакети GUI та видалено `gulp`\nне перевизначте користувацький атрибут `result` на відповідь `sendToAdapter` (Visu App - тільки відповідний розробникам)",
-        "zh-cn": "更新了 GUI 软件包并删除了“ gulp ”\n不在“ sendToAdapter” 响应上覆盖自定义的“ 结果”属性( Visu App - 仅与开发者相关)"
-      },
       "3.4.0": {
         "en": "added new commands for the visu app\nupdated packages\nMigrated GUI for admin v7",
         "de": "neue befehle für die visu app hinzugefügt\naktualisierte pakete\nMigrated GUI für admin v7",
