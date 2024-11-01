@@ -38,7 +38,7 @@
     "@iobroker/legacy-testing": "^1.0.13",
     "@types/node": "^22.7.4",
     "chai": "^4.5.0",
-    "mocha": "^10.7.3"
+    "mocha": "^10.8.2"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.iot/issues"
