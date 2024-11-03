@@ -29,7 +29,7 @@ const styles = {
     column: {
         display: 'inline-block',
         verticalAlign: 'top',
-        marginRight: 20,
+        marginRight: 10,
         height: '100%',
         overflow: 'hidden',
         width: 'calc(50% - 20px)',
@@ -37,20 +37,20 @@ const styles = {
         maxWidth: 450,
     },
     columnDiv: {
-        height: 'calc(100% - 60px)',
+        height: 'calc(100% - 40px)',
         overflow: 'auto',
         minWidth: 300,
     },
     enumLineEnabled: {
-        position: 'absolute',
-        right: 0,
-        top: 0,
+        // position: 'absolute',
+        // right: 0,
+        // top: 0,
     },
     enumLineEdit: {
         // float: 'right'
-        position: 'absolute',
-        top: 5,
-        right: 50,
+        // position: 'absolute',
+        // top: 5,
+        // right: 50,
     },
     enumLineName: {},
     enumLineSubName: {
@@ -60,6 +60,8 @@ const styles = {
         height: 48,
         width: '100%',
         position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
     },
     enumLineId: {
         display: 'block',
@@ -68,8 +70,10 @@ const styles = {
     },
     columnHeader: theme => ({
         background: theme.palette.primary.light,
-        p: '10px',
+        padding: '10px',
         color: theme.palette.primary.contrastText,
+        marginTop: 0,
+        marginBottom: 0,
     }),
 };
 
@@ -215,7 +219,7 @@ class Enums extends Component {
             `${this.props.adapterName}.${this.props.instance}`,
             this.props.native.noCommon,
         );
-        // convert old format
+        // convert an old format
         if (smartName && typeof smartName === 'object') {
             smartName = smartName[I18n.getLanguage()] || smartName.en || '';
         }
@@ -229,23 +233,26 @@ class Enums extends Component {
                     background: this.state.changed.indexOf(obj._id) !== -1 ? CHANGED_COLOR : 'inherit',
                 }}
             >
-                <span style={{ ...styles.enumLineName, opacity: smartName === false ? 0.5 : 1 }}>
-                    {smartName || null}
-                    {smartName ? <span style={styles.enumLineSubName}> ({name})</span> : name}
-                </span>
-                <span style={{ ...styles.enumLineId, opacity: smartName === false ? 0.5 : 1 }}>{obj._id}</span>
-                <Switch
-                    style={styles.enumLineEnabled}
-                    checked={smartName !== false}
-                    onChange={() => this.onToggleEnum(obj._id)}
-                />
+                <div style={{ marginLeft: 8 }}>
+                    <span style={{ ...styles.enumLineName, opacity: smartName === false ? 0.5 : 1 }}>
+                        {smartName || null}
+                        {smartName ? <span style={styles.enumLineSubName}> ({name})</span> : name}
+                    </span>
+                    <span style={{ ...styles.enumLineId, opacity: smartName === false ? 0.5 : 1 }}>{obj._id}</span>
+                </div>
+                <div style={{ flex: 1 }} />
                 <IconButton
                     aria-label="Edit"
                     style={styles.enumLineEdit}
                     onClick={() => this.onEdit(obj._id)}
                 >
-                    <IconEdit fontSize="small" />
+                    <IconEdit fontSize="large" />
                 </IconButton>
+                <Switch
+                    style={styles.enumLineEnabled}
+                    checked={smartName !== false}
+                    onChange={() => this.onToggleEnum(obj._id)}
+                />
             </div>
         );
     }
@@ -255,15 +262,15 @@ class Enums extends Component {
     }
 
     renderMessage() {
-        if (this.state.message) {
-            return (
-                <DialogMessage
-                    text={this.state.message}
-                    onClose={() => this.setState({ message: '' })}
-                />
-            );
+        if (!this.state.message) {
+            return null;
         }
-        return null;
+        return (
+            <DialogMessage
+                text={this.state.message}
+                onClose={() => this.setState({ message: '' })}
+            />
+        );
     }
 
     changeSmartName() {
