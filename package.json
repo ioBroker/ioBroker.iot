@@ -39,7 +39,9 @@
         "@iobroker/legacy-testing": "^1.0.13",
         "@types/node": "^22.8.6",
         "chai": "^4.5.0",
-        "mocha": "^10.8.2"
+        "colorette": "^2.0.20",
+        "mocha": "^10.8.2",
+        "puppeteer": "^23.6.1"
     },
     "bugs": {
         "url": "https://github.com/ioBroker/ioBroker.iot/issues"
