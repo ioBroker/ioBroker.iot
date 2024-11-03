@@ -10,16 +10,14 @@ import {
     CircularProgress,
     DialogTitle,
     DialogContent,
-    DialogActions, Box,
+    DialogActions,
+    Box,
 } from '@mui/material';
 
 import { MdEdit as IconEdit } from 'react-icons/md';
-import {
-    Close as IconClose,
-    Check as IconCheck,
-} from '@mui/icons-material';
+import { Close as IconClose, Check as IconCheck } from '@mui/icons-material';
 
-import { Utils, I18n, Message as MessageDialog } from '@iobroker/adapter-react-v5';
+import { Utils, I18n, DialogMessage } from '@iobroker/adapter-react-v5';
 
 const CHANGED_COLOR = '#e7000040';
 
@@ -54,10 +52,8 @@ const styles = {
         top: 5,
         right: 50,
     },
-    enumLineName: {
-
-    },
-    enumLineSubName:{
+    enumLineName: {},
+    enumLineSubName: {
         fontStyle: 'italic',
     },
     enumLine: {
@@ -94,27 +90,25 @@ class Enums extends Component {
 
         this.onEnumUpdateBound = this.onEnumUpdate.bind(this);
 
-        this.props.socket.getEnums()
-            .then(res => {
-                const funcs = [];
-                const rooms = [];
-                res && Object.keys(res)
-                    .forEach(id => {
-                        if (id.match(/^enum\.rooms\./)) {
-                            rooms.push(res[id]);
-                        } else if (id.match(/^enum\.functions\./)) {
-                            funcs.push(res[id]);
-                        }
-                    });
+        this.props.socket.getEnums().then(res => {
+            const funcs = [];
+            const rooms = [];
+            res &&
+                Object.keys(res).forEach(id => {
+                    if (id.match(/^enum\.rooms\./)) {
+                        rooms.push(res[id]);
+                    } else if (id.match(/^enum\.functions\./)) {
+                        funcs.push(res[id]);
+                    }
+                });
 
-                this.setState({ funcs, rooms, loading: false });
-                return this.props.socket.subscribeObject('enum.*', this.onEnumUpdateBound);
-            });
+            this.setState({ funcs, rooms, loading: false });
+            return this.props.socket.subscribeObject('enum.*', this.onEnumUpdateBound);
+        });
     }
 
     componentWillUnmount() {
-        this.props.socket.unsubscribeObject('enum.*', this.onEnumUpdateBound)
-            .then(() => {});
+        this.props.socket.unsubscribeObject('enum.*', this.onEnumUpdateBound).then(() => {});
     }
 
     onEnumUpdate(id, obj) {
@@ -178,7 +172,11 @@ class Enums extends Component {
     onToggleEnum(id) {
         let obj = this.state.funcs.find(e => e._id === id) || this.state.rooms.find(e => e._id === id);
 
-        const smartName = Utils.getSmartNameFromObj(obj, `${this.props.adapterName}.${this.props.instance}`, this.props.native.noCommon);
+        const smartName = Utils.getSmartNameFromObj(
+            obj,
+            `${this.props.adapterName}.${this.props.instance}`,
+            this.props.native.noCommon,
+        );
         obj = JSON.parse(JSON.stringify(obj));
         if (smartName !== false) {
             Utils.disableSmartName(obj, `${this.props.adapterName}.${this.props.instance}`, this.props.native.noCommon);
@@ -188,19 +186,22 @@ class Enums extends Component {
 
         this.addChanged(id);
 
-        this.props.socket.setObject(id, obj)
-            .then(() => {
-                // update obj
-                this.updateObjInState(id, obj);
-                this.informInstance(id);
+        this.props.socket.setObject(id, obj).then(() => {
+            // update obj
+            this.updateObjInState(id, obj);
+            this.informInstance(id);
 
-                setTimeout(() => this.removeChanged(id), 500);
-            });
+            setTimeout(() => this.removeChanged(id), 500);
+        });
     }
 
     onEdit(id) {
         const obj = this.state.funcs.find(e => e._id === id) || this.state.rooms.find(e => e._id === id);
-        let smartName = Utils.getSmartNameFromObj(obj, `${this.props.adapterName}.${this.props.instance}`, this.props.native.noCommon);
+        let smartName = Utils.getSmartNameFromObj(
+            obj,
+            `${this.props.adapterName}.${this.props.instance}`,
+            this.props.native.noCommon,
+        );
         if (typeof smartName === 'object' && smartName) {
             smartName = smartName[I18n.getLanguage()] || smartName.en;
         }
@@ -209,35 +210,44 @@ class Enums extends Component {
     }
 
     renderEnum(obj) {
-        let smartName = Utils.getSmartNameFromObj(obj, `${this.props.adapterName}.${this.props.instance}`, this.props.native.noCommon);
+        let smartName = Utils.getSmartNameFromObj(
+            obj,
+            `${this.props.adapterName}.${this.props.instance}`,
+            this.props.native.noCommon,
+        );
         // convert old format
         if (smartName && typeof smartName === 'object') {
             smartName = smartName[I18n.getLanguage()] || smartName.en || '';
         }
         const name = Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() });
 
-        return <div key={obj._id} style={{ ...styles.enumLine, background: this.state.changed.indexOf(obj._id) !== -1 ? CHANGED_COLOR : 'inherit' }}>
-            <span style={{ ...styles.enumLineName, opacity: smartName === false ? 0.5 : 1 }}>
-                {smartName || null}
-                {smartName ? <span style={styles.enumLineSubName}>
-                    {' '}
-(
-                    {name}
-)
-                </span> : name}
-            </span>
-            <span style={{ ...styles.enumLineId, opacity: smartName === false ? 0.5 : 1 }}>
-                {obj._id}
-            </span>
-            <Switch
-                style={styles.enumLineEnabled}
-                checked={smartName !== false}
-                onChange={() => this.onToggleEnum(obj._id)}
-            />
-            <IconButton aria-label="Edit" style={styles.enumLineEdit} onClick={() => this.onEdit(obj._id)}>
-                <IconEdit fontSize="small" />
-            </IconButton>
-        </div>;
+        return (
+            <div
+                key={obj._id}
+                style={{
+                    ...styles.enumLine,
+                    background: this.state.changed.indexOf(obj._id) !== -1 ? CHANGED_COLOR : 'inherit',
+                }}
+            >
+                <span style={{ ...styles.enumLineName, opacity: smartName === false ? 0.5 : 1 }}>
+                    {smartName || null}
+                    {smartName ? <span style={styles.enumLineSubName}> ({name})</span> : name}
+                </span>
+                <span style={{ ...styles.enumLineId, opacity: smartName === false ? 0.5 : 1 }}>{obj._id}</span>
+                <Switch
+                    style={styles.enumLineEnabled}
+                    checked={smartName !== false}
+                    onChange={() => this.onToggleEnum(obj._id)}
+                />
+                <IconButton
+                    aria-label="Edit"
+                    style={styles.enumLineEdit}
+                    onClick={() => this.onEdit(obj._id)}
+                >
+                    <IconEdit fontSize="small" />
+                </IconButton>
+            </div>
+        );
     }
 
     renderEnums(name) {
@@ -246,7 +256,12 @@ class Enums extends Component {
 
     renderMessage() {
         if (this.state.message) {
-            return <MessageDialog text={this.state.message} onClose={() => this.setState({ message: '' })} />;
+            return (
+                <DialogMessage
+                    text={this.state.message}
+                    onClose={() => this.setState({ message: '' })}
+                />
+            );
         }
         return null;
     }
@@ -254,10 +269,20 @@ class Enums extends Component {
     changeSmartName() {
         // Check if the name is duplicate
         const enums = this.state.editId.startsWith('enum.functions.') ? this.state.funcs : this.state.rooms;
-        if (enums.find(obj =>
-            this.state.editId !== obj._id && (
-                this.state.editedSmartName === Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() }) ||
-            this.state.editedSmartName === Utils.getSmartNameFromObj(obj, `${this.props.adapterName}.${this.props.instance}`, this.props.native.noCommon)))) {
+        if (
+            enums.find(
+                obj =>
+                    this.state.editId !== obj._id &&
+                    (this.state.editedSmartName ===
+                        Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() }) ||
+                        this.state.editedSmartName ===
+                            Utils.getSmartNameFromObj(
+                                obj,
+                                `${this.props.adapterName}.${this.props.instance}`,
+                                this.props.native.noCommon,
+                            )),
+            )
+        ) {
             this.setState({ message: I18n.t('Duplicate name') });
         } else {
             this.addChanged(this.state.editId);
@@ -265,9 +290,17 @@ class Enums extends Component {
             const id = this.state.editId;
             this.setState({ editId: '' });
             let newObj;
-            this.props.socket.getObject(id)
+            this.props.socket
+                .getObject(id)
                 .then(obj => {
-                    Utils.updateSmartName(obj, this.state.editedSmartName, undefined, undefined, `${this.props.adapterName}.${this.props.instance}`, this.props.native.noCommon);
+                    Utils.updateSmartName(
+                        obj,
+                        this.state.editedSmartName,
+                        undefined,
+                        undefined,
+                        `${this.props.adapterName}.${this.props.instance}`,
+                        this.props.native.noCommon,
+                    );
                     newObj = obj;
                     return this.props.socket.setObject(id, obj);
                 })
@@ -282,50 +315,58 @@ class Enums extends Component {
 
     renderEditDialog() {
         if (this.state.editId) {
-            const obj = this.state.funcs.find(e => e._id === this.state.editId) || this.state.rooms.find(e => e._id === this.state.editId);
+            const obj =
+                this.state.funcs.find(e => e._id === this.state.editId) ||
+                this.state.rooms.find(e => e._id === this.state.editId);
 
-            return <Dialog
-                open={!0}
-                maxWidth="sm"
-                fullWidth
-                onClose={() => this.setState({ editId: '' })}
-                aria-labelledby="message-dialog-title"
-                aria-describedby="message-dialog-description"
-            >
-                <DialogTitle id="message-dialog-title">
-                    {this.props.title || I18n.t('Smart name for %s', Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() }))}
-                </DialogTitle>
-                <DialogContent>
-                    <TextField
-                        variant="standard"
-                        autoFocus
-                        style={{ width: '100%' }}
-                        label={I18n.t('Smart name')}
-                        onChange={e => this.setState({ editedSmartName: e.target.value })}
-                        value={this.state.editedSmartName}
-                        helperText={I18n.t('You can enter several names divided by comma')}
-                        margin="normal"
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button
-                        variant="contained"
-                        onClick={() => this.changeSmartName()}
-                        color="primary"
-                        startIcon={<IconCheck />}
-                    >
-                        {I18n.t('Ok')}
-                    </Button>
-                    <Button
-                        color="grey"
-                        variant="contained"
-                        onClick={() => this.setState({ editId: '' })}
-                        startIcon={<IconClose />}
-                    >
-                        {I18n.t('Cancel')}
-                    </Button>
-                </DialogActions>
-            </Dialog>;
+            return (
+                <Dialog
+                    open={!0}
+                    maxWidth="sm"
+                    fullWidth
+                    onClose={() => this.setState({ editId: '' })}
+                    aria-labelledby="message-dialog-title"
+                    aria-describedby="message-dialog-description"
+                >
+                    <DialogTitle id="message-dialog-title">
+                        {this.props.title ||
+                            I18n.t(
+                                'Smart name for %s',
+                                Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() }),
+                            )}
+                    </DialogTitle>
+                    <DialogContent>
+                        <TextField
+                            variant="standard"
+                            autoFocus
+                            style={{ width: '100%' }}
+                            label={I18n.t('Smart name')}
+                            onChange={e => this.setState({ editedSmartName: e.target.value })}
+                            value={this.state.editedSmartName}
+                            helperText={I18n.t('You can enter several names divided by comma')}
+                            margin="normal"
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button
+                            variant="contained"
+                            onClick={() => this.changeSmartName()}
+                            color="primary"
+                            startIcon={<IconCheck />}
+                        >
+                            {I18n.t('Ok')}
+                        </Button>
+                        <Button
+                            color="grey"
+                            variant="contained"
+                            onClick={() => this.setState({ editId: '' })}
+                            startIcon={<IconClose />}
+                        >
+                            {I18n.t('Cancel')}
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            );
         }
         return null;
     }
@@ -334,23 +375,35 @@ class Enums extends Component {
         if (this.state.loading) {
             return <CircularProgress />;
         }
-        return <form style={styles.tab}>
-            <div style={styles.column}>
-                <Box component="h5" sx={styles.columnHeader}>{I18n.t('Rooms')}</Box>
-                <div style={styles.columnDiv}>{this.renderEnums('rooms')}</div>
-            </div>
-            <div style={styles.column}>
-                <Box component="h5" sx={styles.columnHeader}>{I18n.t('Functions')}</Box>
-                <div style={styles.columnDiv}>{this.renderEnums('funcs')}</div>
-            </div>
-            {this.renderMessage()}
-            {this.renderEditDialog()}
-        </form>;
+        return (
+            <form style={styles.tab}>
+                <div style={styles.column}>
+                    <Box
+                        component="h5"
+                        sx={styles.columnHeader}
+                    >
+                        {I18n.t('Rooms')}
+                    </Box>
+                    <div style={styles.columnDiv}>{this.renderEnums('rooms')}</div>
+                </div>
+                <div style={styles.column}>
+                    <Box
+                        component="h5"
+                        sx={styles.columnHeader}
+                    >
+                        {I18n.t('Functions')}
+                    </Box>
+                    <div style={styles.columnDiv}>{this.renderEnums('funcs')}</div>
+                </div>
+                {this.renderMessage()}
+                {this.renderEditDialog()}
+            </form>
+        );
     }
 }
 
 Enums.propTypes = {
-//    common: PropTypes.object.isRequired,
+    //    common: PropTypes.object.isRequired,
     native: PropTypes.object.isRequired,
     instance: PropTypes.number.isRequired,
     adapterName: PropTypes.string.isRequired,

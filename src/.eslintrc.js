@@ -17,10 +17,7 @@ module.exports = {
         ecmaVersion: 'latest',
         sourceType: 'module',
     },
-    plugins: [
-        'react',
-        'only-warn',
-    ],
+    plugins: ['react', 'only-warn'],
     rules: {
         'arrow-parens': [1, 'as-needed'],
         'react/jsx-indent': 'off',

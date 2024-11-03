@@ -1,22 +1,24 @@
 {
   "files": {
-    "main.js": "/static/js/main.e7f53aed.js",
+    "main.js": "/static/js/main.94e4efb7.js",
     "ActionVisu.js": "/customRuleBlocks.js",
-    "static/js/node_modules_prop-types_index_js.5fb9b7fc.chunk.js": "/static/js/node_modules_prop-types_index_js.5fb9b7fc.chunk.js",
-    "static/js/node_modules_react_index_js.df0e65a7.chunk.js": "/static/js/node_modules_react_index_js.df0e65a7.chunk.js",
-    "static/js/src_ActionVisu_jsx.2c0507d7.chunk.js": "/static/js/src_ActionVisu_jsx.2c0507d7.chunk.js",
-    "static/js/vendors-node_modules_react-dom_index_js.cc13669c.chunk.js": "/static/js/vendors-node_modules_react-dom_index_js.cc13669c.chunk.js",
-    "static/js/vendors-node_modules_iobroker_adapter-react-v5_index_js.32194cbe.chunk.js": "/static/js/vendors-node_modules_iobroker_adapter-react-v5_index_js.32194cbe.chunk.js",
+    "static/js/node_modules_prop-types_index_js.c791425e.chunk.js": "/static/js/node_modules_prop-types_index_js.c791425e.chunk.js",
+    "static/js/node_modules_react_index_js-_ca78.448bd231.chunk.js": "/static/js/node_modules_react_index_js-_ca78.448bd231.chunk.js",
+    "static/js/node_modules_react_index_js-_7806.0dcfe1c6.chunk.js": "/static/js/node_modules_react_index_js-_7806.0dcfe1c6.chunk.js",
+    "static/js/src_ActionVisu_jsx.9953f9cb.chunk.js": "/static/js/src_ActionVisu_jsx.9953f9cb.chunk.js",
+    "static/js/vendors-node_modules_react-dom_index_js.a2b81804.chunk.js": "/static/js/vendors-node_modules_react-dom_index_js.a2b81804.chunk.js",
+    "static/js/vendors-node_modules_iobroker_adapter-react-v5_build_index_js.c61a5736.chunk.js": "/static/js/vendors-node_modules_iobroker_adapter-react-v5_build_index_js.c61a5736.chunk.js",
     "index.html": "/index.html",
-    "main.e7f53aed.js.map": "/static/js/main.e7f53aed.js.map",
+    "main.94e4efb7.js.map": "/static/js/main.94e4efb7.js.map",
     "customRuleBlocks.js.map": "/customRuleBlocks.js.map",
-    "node_modules_prop-types_index_js.5fb9b7fc.chunk.js.map": "/static/js/node_modules_prop-types_index_js.5fb9b7fc.chunk.js.map",
-    "node_modules_react_index_js.df0e65a7.chunk.js.map": "/static/js/node_modules_react_index_js.df0e65a7.chunk.js.map",
-    "src_ActionVisu_jsx.2c0507d7.chunk.js.map": "/static/js/src_ActionVisu_jsx.2c0507d7.chunk.js.map",
-    "vendors-node_modules_react-dom_index_js.cc13669c.chunk.js.map": "/static/js/vendors-node_modules_react-dom_index_js.cc13669c.chunk.js.map",
-    "vendors-node_modules_iobroker_adapter-react-v5_index_js.32194cbe.chunk.js.map": "/static/js/vendors-node_modules_iobroker_adapter-react-v5_index_js.32194cbe.chunk.js.map"
+    "node_modules_prop-types_index_js.c791425e.chunk.js.map": "/static/js/node_modules_prop-types_index_js.c791425e.chunk.js.map",
+    "node_modules_react_index_js-_ca78.448bd231.chunk.js.map": "/static/js/node_modules_react_index_js-_ca78.448bd231.chunk.js.map",
+    "node_modules_react_index_js-_7806.0dcfe1c6.chunk.js.map": "/static/js/node_modules_react_index_js-_7806.0dcfe1c6.chunk.js.map",
+    "src_ActionVisu_jsx.9953f9cb.chunk.js.map": "/static/js/src_ActionVisu_jsx.9953f9cb.chunk.js.map",
+    "vendors-node_modules_react-dom_index_js.a2b81804.chunk.js.map": "/static/js/vendors-node_modules_react-dom_index_js.a2b81804.chunk.js.map",
+    "vendors-node_modules_iobroker_adapter-react-v5_build_index_js.c61a5736.chunk.js.map": "/static/js/vendors-node_modules_iobroker_adapter-react-v5_build_index_js.c61a5736.chunk.js.map"
   },
   "entrypoints": [
-    "static/js/main.e7f53aed.js"
+    "static/js/main.94e4efb7.js"
   ]
 }

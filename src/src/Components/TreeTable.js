@@ -49,7 +49,7 @@ function setAttr(obj, attr, value) {
     }
 
     if (attr.length === 1) {
-        return obj[attr[0]] = value;
+        return (obj[attr[0]] = value);
     }
     const name = attr.shift();
     if (obj[name] === null || obj[name] === undefined) {
@@ -75,12 +75,8 @@ const styles = {
         paddingLeft: 4,
         paddingRight: 4,
     },
-    rowMainWithChildren: {
-
-    },
-    rowMainWithoutChildren: {
-
-    },
+    rowMainWithChildren: {},
+    rowMainWithoutChildren: {},
     rowNoEdit: {
         opacity: 0.3,
     },
@@ -138,7 +134,8 @@ function descendingComparator(a, b, orderBy, lookup) {
 
     if (_b < _a) {
         return -1;
-    } if (_b > _a) {
+    }
+    if (_b > _a) {
         return 1;
     }
     return 0;
@@ -194,13 +191,13 @@ class TreeTable extends React.Component {
             if (Array.isArray(val)) {
                 val = val[0];
             }
-            return <TableCell
-                key={col.field}
-                style={{ ...styles.cell, ...(level ? styles.cellSecondary : undefined), ...col.cellStyle }}
-                component="th"
-            >
-                {
-                    col.lookup ?
+            return (
+                <TableCell
+                    key={col.field}
+                    style={{ ...styles.cell, ...(level ? styles.cellSecondary : undefined), ...col.cellStyle }}
+                    component="th"
+                >
+                    {col.lookup ? (
                         <Select
                             variant="standard"
                             onChange={e => {
@@ -214,12 +211,18 @@ class TreeTable extends React.Component {
                             }}
                             value={(this.state.editData && this.state.editData[col.field]) || val}
                         >
-                            {Object.keys(col.lookup).map(v => <MenuItem value={v}>{col.lookup[v]}</MenuItem>)}
+                            {Object.keys(col.lookup).map(v => (
+                                <MenuItem value={v}>{col.lookup[v]}</MenuItem>
+                            ))}
                         </Select>
-                        :
+                    ) : (
                         <TextField
                             variant="standard"
-                            value={this.state.editData && this.state.editData[col.field] !== undefined ? this.state.editData[col.field] : val}
+                            value={
+                                this.state.editData && this.state.editData[col.field] !== undefined
+                                    ? this.state.editData[col.field]
+                                    : val
+                            }
                             onChange={e => {
                                 const editData = this.state.editData ? { ...this.state.editData } : {};
                                 if (e.target.value === val) {
@@ -230,16 +233,19 @@ class TreeTable extends React.Component {
                                 this.setState({ editData });
                             }}
                         />
-                }
-            </TableCell>;
+                    )}
+                </TableCell>
+            );
         }
-        return <TableCell
-            key={col.field}
-            style={{ ...styles.cell, ...(level ? styles.cellSecondary : undefined), ...col.cellStyle }}
-            component="th"
-        >
-            {getAttr(item, col.field, col.lookup)}
-        </TableCell>;
+        return (
+            <TableCell
+                key={col.field}
+                style={{ ...styles.cell, ...(level ? styles.cellSecondary : undefined), ...col.cellStyle }}
+                component="th"
+            >
+                {getAttr(item, col.field, col.lookup)}
+            </TableCell>
+        );
     }
 
     renderLine(item, level) {
@@ -250,7 +256,8 @@ class TreeTable extends React.Component {
         }
         if (!level && item.parentId) {
             return null;
-        } if (level && !item.parentId) {
+        }
+        if (level && !item.parentId) {
             return null; // should never happens
         }
         // try to find children
@@ -276,21 +283,24 @@ class TreeTable extends React.Component {
                         ...(level ? styles.cellSecondary : undefined),
                     }}
                 >
-                    {children.length ? <IconButton onClick={() => {
-                        const _opened = [...this.state.opened];
-                        const pos = _opened.indexOf(item.id);
-                        if (pos === -1) {
-                            _opened.push(item.id);
-                            _opened.sort();
-                        } else {
-                            _opened.splice(pos, 1);
-                        }
+                    {children.length ? (
+                        <IconButton
+                            onClick={() => {
+                                const _opened = [...this.state.opened];
+                                const pos = _opened.indexOf(item.id);
+                                if (pos === -1) {
+                                    _opened.push(item.id);
+                                    _opened.sort();
+                                } else {
+                                    _opened.splice(pos, 1);
+                                }
 
-                        this.setState({ opened: _opened });
-                    }}
-                    >
-                        {opened ? <IconCollapse /> : <IconExpand />}
-                    </IconButton>  : null}
+                                this.setState({ opened: _opened });
+                            }}
+                        >
+                            {opened ? <IconCollapse /> : <IconExpand />}
+                        </IconButton>
+                    ) : null}
                 </TableCell>
                 <TableCell
                     scope="row"
@@ -302,16 +312,21 @@ class TreeTable extends React.Component {
                 >
                     {getAttr(item, this.props.columns[0].field, this.props.columns[0].lookup)}
                 </TableCell>
-                {this.props.columns.map((col, ii) =>
-                    (!ii ? null : this.renderCell(item, col, level, i)))}
+                {this.props.columns.map((col, ii) => (!ii ? null : this.renderCell(item, col, level, i)))}
                 <TableCell style={{ ...styles.cell, ...styles.cellButton }}>
-                    {this.state.editMode === i || this.state.deleteMode === i ?
+                    {this.state.editMode === i || this.state.deleteMode === i ? (
                         <IconButton
-                            disabled={this.state.editMode !== false && (!this.state.editData || !Object.keys(this.state.editData).length)}
+                            disabled={
+                                this.state.editMode !== false &&
+                                (!this.state.editData || !Object.keys(this.state.editData).length)
+                            }
                             onClick={() => {
                                 if (this.state.editMode !== false) {
                                     const newData = JSON.parse(JSON.stringify(item));
-                                    this.state.editData && Object.keys(this.state.editData).forEach(attr => setAttr(newData, attr, this.state.editData[attr]));
+                                    this.state.editData &&
+                                        Object.keys(this.state.editData).forEach(attr =>
+                                            setAttr(newData, attr, this.state.editData[attr]),
+                                        );
                                     this.setState({ editMode: false }, () => this.props.onUpdate(newData, item));
                                 } else {
                                     this.setState({ deleteMode: false }, () => this.props.onDelete(item));
@@ -320,29 +335,33 @@ class TreeTable extends React.Component {
                         >
                             <IconCheck />
                         </IconButton>
-                        :
+                    ) : (
                         <IconButton
                             disabled={this.state.editMode !== false}
                             onClick={() => this.setState({ editMode: i, editData: null })}
                         >
                             <IconEdit />
-                        </IconButton>}
+                        </IconButton>
+                    )}
                 </TableCell>
                 <TableCell style={{ ...styles.cell, ...styles.cellButton }}>
-                    {this.state.editMode === i || this.state.deleteMode === i ?
+                    {this.state.editMode === i || this.state.deleteMode === i ? (
                         <IconButton onClick={() => this.setState({ editMode: false, deleteMode: false })}>
                             <IconClose />
                         </IconButton>
-                        :
+                    ) : (
                         <IconButton
                             disabled={this.state.deleteMode !== false}
                             onClick={() => this.setState({ deleteMode: i })}
                         >
                             <IconDelete />
-                        </IconButton>}
+                        </IconButton>
+                    )}
                 </TableCell>
             </TableRow>,
-            !level && this.state.opened.includes(item.id) ? children.map(_item => this.renderLine(_item, level + 1)) : null,
+            !level && this.state.opened.includes(item.id)
+                ? children.map(_item => this.renderLine(_item, level + 1))
+                : null,
         ];
     }
 
@@ -352,87 +371,101 @@ class TreeTable extends React.Component {
     }
 
     renderHead() {
-        return <TableHead>
-            <TableRow>
-                <TableCell
-                    component="th"
-                    sx={styles.cellHeader}
-                    style={{ ...styles.cell, ...styles.cellExpand }}
-                />
-                <TableCell
-                    component="th"
-                    sx={styles.cellHeader}
-                    style={{
-                        ...styles.cell,
-                        ...styles[`width_${this.props.columns[0].field.replace(/\./g, '_')}`],
-                        ...(this.props.columns[0].cellStyle || undefined),
-                    }}
-                    sortDirection={this.state.orderBy === this.props.columns[0].field ? this.state.order : false}
-                >
-                    <TableSortLabel
-                        active={this.state.orderBy === this.props.columns[0].field}
-                        direction={this.state.orderBy === this.props.columns[0].field ? this.state.order : 'asc'}
-                        onClick={() => this.handleRequestSort(this.props.columns[0].field)}
-                    >
-                        {this.props.columns[0].title}
-                        {this.state.orderBy === this.props.columns[0].field ?
-                            <span style={styles.visuallyHidden}>
-                                {this.state.order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                            </span> : null}
-                    </TableSortLabel>
-                </TableCell>
-                {this.props.columns.map((col, i) =>
-                    (!i ? null : <TableCell
-                        key={col.field}
+        return (
+            <TableHead>
+                <TableRow>
+                    <TableCell
+                        component="th"
+                        sx={styles.cellHeader}
+                        style={{ ...styles.cell, ...styles.cellExpand }}
+                    />
+                    <TableCell
+                        component="th"
                         sx={styles.cellHeader}
                         style={{
                             ...styles.cell,
-                            ...styles[`width_${col.field.replace(/\./g, '_')}`],
-                            ...col.cellStyle,
+                            ...styles[`width_${this.props.columns[0].field.replace(/\./g, '_')}`],
+                            ...(this.props.columns[0].cellStyle || undefined),
                         }}
-                        component="th"
+                        sortDirection={this.state.orderBy === this.props.columns[0].field ? this.state.order : false}
                     >
                         <TableSortLabel
-                            active={this.state.orderBy === col.field}
-                            direction={this.state.orderBy === col.field ? this.state.order : 'asc'}
-                            onClick={() => this.handleRequestSort(col.field)}
+                            active={this.state.orderBy === this.props.columns[0].field}
+                            direction={this.state.orderBy === this.props.columns[0].field ? this.state.order : 'asc'}
+                            onClick={() => this.handleRequestSort(this.props.columns[0].field)}
                         >
-                            {col.title}
-                            {this.state.orderBy === col.field ?
+                            {this.props.columns[0].title}
+                            {this.state.orderBy === this.props.columns[0].field ? (
                                 <span style={styles.visuallyHidden}>
                                     {this.state.order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                                </span> : null}
+                                </span>
+                            ) : null}
                         </TableSortLabel>
-                    </TableCell>))}
-                <TableCell
-                    component="th"
-                    sx={styles.cellHeader}
-                    style={{ ...styles.cell, ...styles.cellButton }}
-                />
-                <TableCell
-                    component="th"
-                    sx={styles.cellHeader}
-                    style={{ ...styles.cell, ...styles.cellButton }}
-                />
-            </TableRow>
-        </TableHead>;
+                    </TableCell>
+                    {this.props.columns.map((col, i) =>
+                        !i ? null : (
+                            <TableCell
+                                key={col.field}
+                                sx={styles.cellHeader}
+                                style={{
+                                    ...styles.cell,
+                                    ...styles[`width_${col.field.replace(/\./g, '_')}`],
+                                    ...col.cellStyle,
+                                }}
+                                component="th"
+                            >
+                                <TableSortLabel
+                                    active={this.state.orderBy === col.field}
+                                    direction={this.state.orderBy === col.field ? this.state.order : 'asc'}
+                                    onClick={() => this.handleRequestSort(col.field)}
+                                >
+                                    {col.title}
+                                    {this.state.orderBy === col.field ? (
+                                        <span style={styles.visuallyHidden}>
+                                            {this.state.order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                        </span>
+                                    ) : null}
+                                </TableSortLabel>
+                            </TableCell>
+                        ),
+                    )}
+                    <TableCell
+                        component="th"
+                        sx={styles.cellHeader}
+                        style={{ ...styles.cell, ...styles.cellButton }}
+                    />
+                    <TableCell
+                        component="th"
+                        sx={styles.cellHeader}
+                        style={{ ...styles.cell, ...styles.cellButton }}
+                    />
+                </TableRow>
+            </TableHead>
+        );
     }
 
     render() {
-        const lookup = this.props.columns ? this.props.columns.find(col => col.field === this.state.orderBy).lookup : '';
+        const lookup = this.props.columns
+            ? this.props.columns.find(col => col.field === this.state.orderBy).lookup
+            : '';
         const table = stableSort(this.props.data, getComparator(this.state.order, this.state.orderBy, lookup));
 
-        return <div
-            style={{ ...styles.tableContainer, ...(this.props.style || undefined) }}
-            className={this.props.className}
-        >
-            <Table style={styles.table} aria-label="simple table" size="small" stickyHeader>
-                {this.renderHead()}
-                <TableBody>
-                    {table.map(item => this.renderLine(item))}
-                </TableBody>
-            </Table>
-        </div>;
+        return (
+            <div
+                style={{ ...styles.tableContainer, ...(this.props.style || undefined) }}
+                className={this.props.className}
+            >
+                <Table
+                    style={styles.table}
+                    aria-label="simple table"
+                    size="small"
+                    stickyHeader
+                >
+                    {this.renderHead()}
+                    <TableBody>{table.map(item => this.renderLine(item))}</TableBody>
+                </Table>
+            </div>
+        );
     }
 }
 
@@ -443,7 +476,7 @@ TreeTable.propTypes = {
     columns: PropTypes.array,
     onUpdate: PropTypes.func,
     onDelete: PropTypes.func,
-//    themeType: PropTypes.string,
+    //    themeType: PropTypes.string,
 };
 
 export default TreeTable;

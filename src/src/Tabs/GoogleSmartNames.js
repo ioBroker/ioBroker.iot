@@ -12,21 +12,13 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
-    IconButton, Box,
+    IconButton,
+    Box,
 } from '@mui/material';
 
-import {
-    FileCopy as IconCopy,
-    Close as IconClose,
-} from '@mui/icons-material';
+import { FileCopy as IconCopy, Close as IconClose } from '@mui/icons-material';
 
-import {
-    Utils,
-    IconExpert as ExpertIcon,
-    I18n,
-    SelectID as DialogSelectID,
-    Message as MessageDialog,
-} from '@iobroker/adapter-react-v5';
+import { Utils, IconExpert as ExpertIcon, I18n, DialogSelectID, DialogMessage } from '@iobroker/adapter-react-v5';
 
 import {
     MdAdd as IconAdd,
@@ -70,7 +62,7 @@ const styles = {
 };
 
 const MOBILE_HEIGHT = 400;
-const MOBILE_WIDTH  = 400;
+const MOBILE_WIDTH = 400;
 
 class GoogleSmartNames extends Component {
     constructor(props) {
@@ -124,79 +116,79 @@ class GoogleSmartNames extends Component {
                 title: I18n.t('Type'),
                 field: 'type',
                 lookup: {
-                    'action.devices.types.AC_UNIT':         'Air conditioning unit',
-                    'action.devices.types.AIRFRESHENER':    'Air Freshener',
-                    'action.devices.types.AIRPURIFIER':     'Air purifier',
-                    'action.devices.types.AWNING':          'Awning',
-                    'action.devices.types.BLINDS':          'Blinds',
-                    'action.devices.types.BOILER':          'Boiler',
-                    'action.devices.types.CAMERA':          'Camera',
-                    'action.devices.types.COFFEE_MAKER':    'Coffee maker',
-                    'action.devices.types.CURTAIN':         'Curtain',
-                    'action.devices.types.DISHWASHER':      'Dishwasher',
-                    'action.devices.types.DOOR':            'Door',
-                    'action.devices.types.DRYER':           'Dryer',
-                    'action.devices.types.FAN':             'Fan',
-                    'action.devices.types.FIREPLACE':       'Fireplace',
-                    'action.devices.types.GARAGE':          'Garage',
-                    'action.devices.types.GATE':            'Gate',
-                    'action.devices.types.HEATER':          'Heater',
-                    'action.devices.types.HOOD':            'Hood',
-                    'action.devices.types.KETTLE':          'Kettle',
-                    'action.devices.types.LIGHT':           'Light',
-                    'action.devices.types.LOCK':            'Lock',
-                    'action.devices.types.MOP':             'Mop',
-                    'action.devices.types.MICROWAVE':       'Microwave',
-                    'action.devices.types.OUTLET':          'Outlet',
-                    'action.devices.types.OVEN':            'Oven',
-                    'action.devices.types.PERGOLA':         'Pergola',
-                    'action.devices.types.REFRIGERATOR':    'Refrigerator',
-                    'action.devices.types.SCENE':           'Scene',
-                    'action.devices.types.SECURITYSYSTEM':  'Security System',
-                    'action.devices.types.SENSOR':          'Sensor',
-                    'action.devices.types.SHUTTER':         'Shutter',
-                    'action.devices.types.SHOWER':          'Shower',
-                    'action.devices.types.SPEAKER':         'Speaker',
-                    'action.devices.types.SPRINKLER':       'Sprinkler',
-                    'action.devices.types.SWITCH':          'Switch',
-                    'action.devices.types.THERMOSTAT':      'Thermostat',
-                    'action.devices.types.VACUUM':          'Vacuum',
-                    'action.devices.types.VALVE':           'Valve',
-                    'action.devices.types.WASHER':          'Washer',
-                    'action.devices.types.WATERHEATER':     'Water heater',
-                    'action.devices.types.WINDOW':          'Window',
+                    'action.devices.types.AC_UNIT': 'Air conditioning unit',
+                    'action.devices.types.AIRFRESHENER': 'Air Freshener',
+                    'action.devices.types.AIRPURIFIER': 'Air purifier',
+                    'action.devices.types.AWNING': 'Awning',
+                    'action.devices.types.BLINDS': 'Blinds',
+                    'action.devices.types.BOILER': 'Boiler',
+                    'action.devices.types.CAMERA': 'Camera',
+                    'action.devices.types.COFFEE_MAKER': 'Coffee maker',
+                    'action.devices.types.CURTAIN': 'Curtain',
+                    'action.devices.types.DISHWASHER': 'Dishwasher',
+                    'action.devices.types.DOOR': 'Door',
+                    'action.devices.types.DRYER': 'Dryer',
+                    'action.devices.types.FAN': 'Fan',
+                    'action.devices.types.FIREPLACE': 'Fireplace',
+                    'action.devices.types.GARAGE': 'Garage',
+                    'action.devices.types.GATE': 'Gate',
+                    'action.devices.types.HEATER': 'Heater',
+                    'action.devices.types.HOOD': 'Hood',
+                    'action.devices.types.KETTLE': 'Kettle',
+                    'action.devices.types.LIGHT': 'Light',
+                    'action.devices.types.LOCK': 'Lock',
+                    'action.devices.types.MOP': 'Mop',
+                    'action.devices.types.MICROWAVE': 'Microwave',
+                    'action.devices.types.OUTLET': 'Outlet',
+                    'action.devices.types.OVEN': 'Oven',
+                    'action.devices.types.PERGOLA': 'Pergola',
+                    'action.devices.types.REFRIGERATOR': 'Refrigerator',
+                    'action.devices.types.SCENE': 'Scene',
+                    'action.devices.types.SECURITYSYSTEM': 'Security System',
+                    'action.devices.types.SENSOR': 'Sensor',
+                    'action.devices.types.SHUTTER': 'Shutter',
+                    'action.devices.types.SHOWER': 'Shower',
+                    'action.devices.types.SPEAKER': 'Speaker',
+                    'action.devices.types.SPRINKLER': 'Sprinkler',
+                    'action.devices.types.SWITCH': 'Switch',
+                    'action.devices.types.THERMOSTAT': 'Thermostat',
+                    'action.devices.types.VACUUM': 'Vacuum',
+                    'action.devices.types.VALVE': 'Valve',
+                    'action.devices.types.WASHER': 'Washer',
+                    'action.devices.types.WATERHEATER': 'Water heater',
+                    'action.devices.types.WINDOW': 'Window',
                 },
             },
             {
                 title: I18n.t('Function/Trait'),
                 field: 'displayTraits',
                 lookup: {
-                // 'action.devices.traits.ArmDisarm':   'ArmDisarm',
-                    'action.devices.traits.Brightness':     'Brightness',
+                    // 'action.devices.traits.ArmDisarm':   'ArmDisarm',
+                    'action.devices.traits.Brightness': 'Brightness',
                     // 'action.devices.traits.CameraStream': 'CameraStream',
                     'action.devices.traits.ColorSetting_temperature': 'ColorSetting_Temperature',
                     'action.devices.traits.ColorSetting_spectrumRGB': 'ColorSetting_RGB',
                     // 'action.devices.traits.Dock':        'Dock',
-                    'action.devices.traits.FanSpeed':       'FanSpeed',
+                    'action.devices.traits.FanSpeed': 'FanSpeed',
                     // 'action.devices.traits.LightEffects': 'LightEffects',
                     // 'action.devices.traits.Locator':     'Locator',
-                    'action.devices.traits.LockUnlock':     'LockUnlock',
-                    'action.devices.traits.Modes':          'Modes',
-                    'action.devices.traits.OnOff':          'OnOff',
-                    'action.devices.traits.OpenClose':      'OpenClose',
+                    'action.devices.traits.LockUnlock': 'LockUnlock',
+                    'action.devices.traits.Modes': 'Modes',
+                    'action.devices.traits.OnOff': 'OnOff',
+                    'action.devices.traits.OpenClose': 'OpenClose',
                     // 'action.devices.traits.RunCycle':    'RunCycle',
-                    'action.devices.traits.Scene':          'Scene',
+                    'action.devices.traits.Scene': 'Scene',
                     // 'action.devices.traits.Sensor':      'Sensor',
-                    'action.devices.traits.StartStop':      'StartStop',
-                    'action.devices.traits.TemperatureControl_temperatureSetpointCelsius':      'Oven_SetTemp',
-                    'action.devices.traits.TemperatureControl_temperatureAmbientCelsius':       'Oven_StatusTemp',
-                    'action.devices.traits.TemperatureSetting_thermostatMode':                  'Thermostat_Mode',
-                    'action.devices.traits.TemperatureSetting_thermostatTemperatureSetpoint':   'Thermostat_SetTemp',
-                    'action.devices.traits.TemperatureSetting_thermostatTemperatureAmbient':    'Thermostat_StatusTemp',
-                    'action.devices.traits.TemperatureSetting_thermostatHumidityAmbient':       'Thermostat_StatusHumidity',
+                    'action.devices.traits.StartStop': 'StartStop',
+                    'action.devices.traits.TemperatureControl_temperatureSetpointCelsius': 'Oven_SetTemp',
+                    'action.devices.traits.TemperatureControl_temperatureAmbientCelsius': 'Oven_StatusTemp',
+                    'action.devices.traits.TemperatureSetting_thermostatMode': 'Thermostat_Mode',
+                    'action.devices.traits.TemperatureSetting_thermostatTemperatureSetpoint': 'Thermostat_SetTemp',
+                    'action.devices.traits.TemperatureSetting_thermostatTemperatureAmbient': 'Thermostat_StatusTemp',
+                    'action.devices.traits.TemperatureSetting_thermostatHumidityAmbient': 'Thermostat_StatusHumidity',
                     // 'action.devices.traits.Timer':       'Timer',
-                    'action.devices.traits.Toggles':        'Toggles',
-                    'action.devices.traits.Volume':         'Volume',
+                    'action.devices.traits.Toggles': 'Toggles',
+                    'action.devices.traits.Volume': 'Volume',
                 },
             },
             {
@@ -246,62 +238,70 @@ class GoogleSmartNames extends Component {
             },
         ];
 
-        this.timerChanged        = null;
-        this.browseTimer         = null;
-        this.browseTimerCount    = 0;
-        this.editedSmartName     = '';
+        this.timerChanged = null;
+        this.browseTimer = null;
+        this.browseTimerCount = 0;
+        this.editedSmartName = '';
 
-        this.waitForUpdateID     = null;
-        this.onReadyUpdateBound  = this.onReadyUpdate.bind(this);
+        this.waitForUpdateID = null;
+        this.onReadyUpdateBound = this.onReadyUpdate.bind(this);
         this.onResultUpdateBound = this.onResultUpdate.bind(this);
-        this.helpRef             = React.createRef();
+        this.helpRef = React.createRef();
 
-        this.props.socket.getObject(`system.adapter.${this.props.adapterName}.${this.props.instance}`)
-            .then(obj => this.props.socket.getState(`system.adapter.${this.props.adapterName}.${this.props.instance}.alive`)
+        this.props.socket.getObject(`system.adapter.${this.props.adapterName}.${this.props.instance}`).then(obj =>
+            this.props.socket
+                .getState(`system.adapter.${this.props.adapterName}.${this.props.instance}.alive`)
                 .then(state => {
                     if (!obj || !obj.common || (!obj.common.enabled && (!state || !state.val))) {
                         this.setState({ message: I18n.t('Instance must be enabled'), loading: false, devices: [] });
                     } else {
                         this.browse();
                     }
-                }));
+                }),
+        );
     }
 
     static editDisplayConv2GH(props) {
-        return <div>
-            Conversation to Google Home = function(value)&#123;
-            <br />
-            <textarea
-                rows={4}
-                style={{ width: '100%', resize: 'vertical' }}
-                value={props.value}
-                onChange={e => props.onChange(e.target.value)}
-            />
-            &#125;
-        </div>;
+        return (
+            <div>
+                Conversation to Google Home = function(value)&#123;
+                <br />
+                <textarea
+                    rows={4}
+                    style={{ width: '100%', resize: 'vertical' }}
+                    value={props.value}
+                    onChange={e => props.onChange(e.target.value)}
+                />
+                &#125;
+            </div>
+        );
     }
 
     static editDisplayConv2iob(props) {
-        return <div>
-            Conversation to ioBroker = function(value)&#123;
-            <br />
+        return (
+            <div>
+                Conversation to ioBroker = function(value)&#123;
+                <br />
+                <textarea
+                    rows={4}
+                    style={{ width: '100%', resize: 'vertical' }}
+                    value={props.value}
+                    onChange={e => props.onChange(e.target.value)}
+                />
+                &#125;
+            </div>
+        );
+    }
+
+    static editDisplayAttributesComponent(props) {
+        return (
             <textarea
                 rows={4}
                 style={{ width: '100%', resize: 'vertical' }}
                 value={props.value}
                 onChange={e => props.onChange(e.target.value)}
             />
-            &#125;
-        </div>;
-    }
-
-    static editDisplayAttributesComponent(props) {
-        return <textarea
-            rows={4}
-            style={{ width: '100%', resize: 'vertical' }}
-            value={props.value}
-            onChange={e => props.onChange(e.target.value)}
-        />;
+        );
     }
 
     browse(isIndicate) {
@@ -326,7 +326,8 @@ class GoogleSmartNames extends Component {
             }
         }, 10000);
 
-        this.props.socket.sendTo(`${this.props.adapterName}.${this.props.instance}`, 'browseGH', null)
+        this.props.socket
+            .sendTo(`${this.props.adapterName}.${this.props.instance}`, 'browseGH', null)
             .then(list => {
                 this.browseTimer && clearTimeout(this.browseTimer);
                 this.browseTimerCount = 0;
@@ -369,13 +370,25 @@ class GoogleSmartNames extends Component {
     }
 
     componentDidMount() {
-        this.props.socket.subscribeState(`${this.props.adapterName}.${this.props.instance}.smart.updatesGH`,     this.onReadyUpdateBound);
-        this.props.socket.subscribeState(`${this.props.adapterName}.${this.props.instance}.smart.updatesResult`, this.onResultUpdateBound);
+        this.props.socket.subscribeState(
+            `${this.props.adapterName}.${this.props.instance}.smart.updatesGH`,
+            this.onReadyUpdateBound,
+        );
+        this.props.socket.subscribeState(
+            `${this.props.adapterName}.${this.props.instance}.smart.updatesResult`,
+            this.onResultUpdateBound,
+        );
     }
 
     componentWillUnmount() {
-        this.props.socket.unsubscribeState(`${this.props.adapterName}.${this.props.instance}.smart.updatesGH`,     this.onReadyUpdateBound);
-        this.props.socket.unsubscribeState(`${this.props.adapterName}.${this.props.instance}.smart.updatesResult`, this.onResultUpdateBound);
+        this.props.socket.unsubscribeState(
+            `${this.props.adapterName}.${this.props.instance}.smart.updatesGH`,
+            this.onReadyUpdateBound,
+        );
+        this.props.socket.unsubscribeState(
+            `${this.props.adapterName}.${this.props.instance}.smart.updatesResult`,
+            this.onResultUpdateBound,
+        );
         if (this.timerChanged) {
             clearTimeout(this.timerChanged);
             this.timerChanged = null;
@@ -412,19 +425,18 @@ class GoogleSmartNames extends Component {
         devices = devices || this.state.devices;
         const device = devices.find(dev => dev.id === id);
         if (device) {
-            this.props.socket.getObject(id)
-                .then(obj => {
-                    let smartName = device.common && device.common.smartName ? device.common.smartName : device._id;
-                    if (typeof smartName === 'object' && smartName) {
-                        smartName = smartName[I18n.getLanguage()] || smartName.en;
-                    }
-                    this.editedSmartName = smartName;
-                    this.setState({
-                        editId: id,
-                        editedSmartName: smartName,
-                        editObjectName: Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() }),
-                    });
+            this.props.socket.getObject(id).then(obj => {
+                let smartName = device.common && device.common.smartName ? device.common.smartName : device._id;
+                if (typeof smartName === 'object' && smartName) {
+                    smartName = smartName[I18n.getLanguage()] || smartName.en;
+                }
+                this.editedSmartName = smartName;
+                this.setState({
+                    editId: id,
+                    editedSmartName: smartName,
+                    editObjectName: Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() }),
                 });
+            });
             return true;
         }
         return false;
@@ -434,9 +446,14 @@ class GoogleSmartNames extends Component {
         const id = this.state.deleteId;
         // const device = this.state.devices.find(dev => dev.additionalApplianceDetails.id === id);
         this.addChanged(id, () => {
-            this.props.socket.getObject(id)
+            this.props.socket
+                .getObject(id)
                 .then(obj => {
-                    Utils.disableSmartName(obj, `${this.props.adapterName}.${this.props.instance}`, this.props.native.noCommon);
+                    Utils.disableSmartName(
+                        obj,
+                        `${this.props.adapterName}.${this.props.instance}`,
+                        this.props.native.noCommon,
+                    );
                     return this.props.socket.setObject(id, obj);
                 })
                 .then(() => {
@@ -503,13 +520,21 @@ class GoogleSmartNames extends Component {
 
     onGHParamsChange(newData, oldData) {
         this.addChanged(newData.id, () => {
-            this.props.socket.getObject(newData.id)
+            this.props.socket
+                .getObject(newData.id)
                 .then(obj => {
                     if (!obj || !obj.common) {
                         return this.setState({ message: I18n.t('Object %s is invalid. No common found.', newData.id) });
                     }
                     //  id, newData.type, newData.displayTraits, newData.displayAttributes
-                    Utils.updateSmartName(obj, this.editedSmartName, undefined, undefined, `${this.props.adapterName}.${this.props.instance}`, this.props.native.noCommon);
+                    Utils.updateSmartName(
+                        obj,
+                        this.editedSmartName,
+                        undefined,
+                        undefined,
+                        `${this.props.adapterName}.${this.props.instance}`,
+                        this.props.native.noCommon,
+                    );
 
                     if (JSON.stringify(newData.displayTraits) !== JSON.stringify(oldData.displayTraits)) {
                         if (!Array.isArray(newData.displayTraits)) {
@@ -547,7 +572,12 @@ class GoogleSmartNames extends Component {
 
     renderMessage() {
         if (this.state.message) {
-            return <MessageDialog text={this.state.message} onClose={() => this.setState({ message: '' })} />;
+            return (
+                <DialogMessage
+                    text={this.state.message}
+                    onClose={() => this.setState({ message: '' })}
+                />
+            );
         }
         return null;
     }
@@ -580,30 +610,31 @@ class GoogleSmartNames extends Component {
 
     getSelectIdDialog() {
         if (this.state.showSelectId) {
-            return <DialogSelectID
-                key="dialogSelectGoogle"
-                theme={this.props.theme}
-                imagePrefix="../.."
-                socket={this.props.socket}
-                selected=""
-                types={['state']}
-                onClose={() => this.setState({ showSelectId: false })}
-                onOk={selected => {
-                    this.setState({ showSelectId: false });
+            return (
+                <DialogSelectID
+                    key="dialogSelectGoogle"
+                    theme={this.props.theme}
+                    imagePrefix="../.."
+                    socket={this.props.socket}
+                    selected=""
+                    types={['state']}
+                    onClose={() => this.setState({ showSelectId: false })}
+                    onOk={selected => {
+                        this.setState({ showSelectId: false });
 
-                    this.props.socket.getObject(selected)
-                        .then(obj => {
+                        this.props.socket.getObject(selected).then(obj => {
                             if (obj) {
                                 if (!obj.common) {
-                                    this.setState({ message: I18n.t('Object %s is invalid. No common found.', selected) });
+                                    this.setState({
+                                        message: I18n.t('Object %s is invalid. No common found.', selected),
+                                    });
                                     return;
                                 }
 
                                 const name = Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() });
                                 Utils.updateSmartName(
                                     obj,
-                                    (name || I18n.t('Device name'))
-                                        .replace(/[-_.]+/g, ' '),
+                                    (name || I18n.t('Device name')).replace(/[-_.]+/g, ' '),
                                     undefined,
                                     undefined,
                                     `${this.props.adapterName}.${this.props.instance}`,
@@ -629,18 +660,24 @@ class GoogleSmartNames extends Component {
                                     obj.common.smartName.ghTraits = ['action.devices.traits.OnOff'];
                                 }
 
-                                this.props.socket.setObject(obj._id, obj)
+                                this.props.socket
+                                    .setObject(obj._id, obj)
                                     .then(() => {
                                         this.informInstance(obj._id);
-                                        this.setState({ message: I18n.t('Please add type and trait to complete the Google Home state.') });
+                                        this.setState({
+                                            message: I18n.t(
+                                                'Please add type and trait to complete the Google Home state.',
+                                            ),
+                                        });
                                     })
                                     .catch(err => this.setState({ message: err }));
                             } else {
                                 this.setState({ message: I18n.t('Invalid ID') });
                             }
                         });
-                }}
-            />;
+                    }}
+                />
+            );
         }
         return null;
     }
@@ -649,57 +686,69 @@ class GoogleSmartNames extends Component {
         if (!this.state.showListOfDevices) {
             return null;
         }
-        return <Dialog
-            open={!0}
-            maxWidth="xl"
-            fullWidth
-            onClose={() => this.setState({ showListOfDevices: false })}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-        >
-            <DialogTitle id="alert-dialog-title">
-                {I18n.t('List of devices to print out, e.g. to give all device names to your partner.')}
-                {' '}
-                <span role="img" aria-label="smile">😄</span>
-            </DialogTitle>
-            <DialogContent>
-                <Box sx={styles.headerRow}>
-                    <div style={styles.headerCell}>{ I18n.t('Name')}</div>
-                    <div style={styles.headerCell}>{ I18n.t('Function')}</div>
-                    <div style={styles.headerCell}>{ I18n.t('Room')}</div>
-                </Box>
-                <div style={styles.tableDiv}>
-                    {this.state.devices.map((item, i) => <div key={i}>
-                        <div style={styles.tableCell}>{item.name.nicknames.join(', ')}</div>
-                        <div style={styles.tableCell}>{item.displayTraits.map(n => n.replace('action.devices.traits.', '')).join(', ')}</div>
-                        <div style={styles.tableCell}>{item.roomHint}</div>
-                    </div>)}
-                </div>
-            </DialogContent>
-            <DialogActions>
-                <Button
-                    variant="outlined"
-                    onClick={() => {
-                        this.setState({ showListOfDevices: false });
-                        const lines = this.state.devices.map(item => `${item.name.nicknames.join(', ')}\t${item.displayTraits}\t${item.roomHint}`);
-                        Utils.copyToClipboard(lines.join('\n'));
-                    }}
-                    color="primary"
-                    startIcon={<IconCopy />}
-                >
-                    {I18n.t('Copy to clipboard')}
-                </Button>
-                <Button
-                    color="grey"
-                    startIcon={<IconClose />}
-                    variant="contained"
-                    onClick={() => this.setState({ showListOfDevices: false })}
-                    autoFocus
-                >
-                    {I18n.t('Close')}
-                </Button>
-            </DialogActions>
-        </Dialog>;
+        return (
+            <Dialog
+                open={!0}
+                maxWidth="xl"
+                fullWidth
+                onClose={() => this.setState({ showListOfDevices: false })}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    {I18n.t('List of devices to print out, e.g. to give all device names to your partner.')}{' '}
+                    <span
+                        role="img"
+                        aria-label="smile"
+                    >
+                        😄
+                    </span>
+                </DialogTitle>
+                <DialogContent>
+                    <Box sx={styles.headerRow}>
+                        <div style={styles.headerCell}>{I18n.t('Name')}</div>
+                        <div style={styles.headerCell}>{I18n.t('Function')}</div>
+                        <div style={styles.headerCell}>{I18n.t('Room')}</div>
+                    </Box>
+                    <div style={styles.tableDiv}>
+                        {this.state.devices.map((item, i) => (
+                            <div key={i}>
+                                <div style={styles.tableCell}>{item.name.nicknames.join(', ')}</div>
+                                <div style={styles.tableCell}>
+                                    {item.displayTraits.map(n => n.replace('action.devices.traits.', '')).join(', ')}
+                                </div>
+                                <div style={styles.tableCell}>{item.roomHint}</div>
+                            </div>
+                        ))}
+                    </div>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        variant="outlined"
+                        onClick={() => {
+                            this.setState({ showListOfDevices: false });
+                            const lines = this.state.devices.map(
+                                item => `${item.name.nicknames.join(', ')}\t${item.displayTraits}\t${item.roomHint}`,
+                            );
+                            Utils.copyToClipboard(lines.join('\n'));
+                        }}
+                        color="primary"
+                        startIcon={<IconCopy />}
+                    >
+                        {I18n.t('Copy to clipboard')}
+                    </Button>
+                    <Button
+                        color="grey"
+                        startIcon={<IconClose />}
+                        variant="contained"
+                        onClick={() => this.setState({ showListOfDevices: false })}
+                        autoFocus
+                    >
+                        {I18n.t('Close')}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        );
     }
 
     renderInstructions() {
@@ -710,93 +759,117 @@ class GoogleSmartNames extends Component {
         }
 
         const manualModeHint = I18n.t('manualModeHint');
-        return <div style={{ width: '100%' }} ref={this.helpRef}>
-            <div style={{ marginTop: '4rem', display: 'flex' }}>
-                <div style={{ flex: '50%' }}>
-                    <div style={{ fontWeight: 'bold' }}>{I18n.t('Auto Mode')}</div>
-                    <div style={{ marginTop: '0.8rem', marginRight: '0.8rem' }}>{I18n.t('To auto detect devices please assign a room and function to the channel if no channel available than assign to a device. Not only to the state or device. And enable them under SmartEnum/Intelligente Aufzählung')}</div>
+        return (
+            <div
+                style={{ width: '100%' }}
+                ref={this.helpRef}
+            >
+                <div style={{ marginTop: '4rem', display: 'flex' }}>
+                    <div style={{ flex: '50%' }}>
+                        <div style={{ fontWeight: 'bold' }}>{I18n.t('Auto Mode')}</div>
+                        <div style={{ marginTop: '0.8rem', marginRight: '0.8rem' }}>
+                            {I18n.t(
+                                'To auto detect devices please assign a room and function to the channel if no channel available than assign to a device. Not only to the state or device. And enable them under SmartEnum/Intelligente Aufzählung',
+                            )}
+                        </div>
+                    </div>
+                    <div style={{ flex: '50%' }}>
+                        <div style={{ fontWeight: 'bold' }}>{I18n.t('Manual Mode')}</div>
+                        <span>{Utils.renderTextWithA(manualModeHint)}</span>
+                    </div>
                 </div>
-                <div style={{ flex: '50%' }}>
-                    <div style={{ fontWeight: 'bold' }}>{I18n.t('Manual Mode')}</div>
-                    <span>{Utils.renderTextWithA(manualModeHint)}</span>
+                <br />
+                <div style={{ flex: '100%' }}>
+                    <div style={{ fontWeight: 'bold' }}>{Utils.renderTextWithA(I18n.t('For help use this forum'))}</div>
                 </div>
             </div>
-            <br />
-            <div style={{ flex: '100%' }}>
-                <div style={{ fontWeight: 'bold' }}>{Utils.renderTextWithA(I18n.t('For help use this forum'))}</div>
-            </div>
-        </div>;
+        );
     }
 
     renderToolbar() {
         const desktop = window.innerHeight > MOBILE_HEIGHT && window.innerWidth > MOBILE_WIDTH;
 
-        return <Toolbar variant="dense">
-            <Fab size="small" color="secondary" aria-label="Add" style={styles.button} onClick={() => this.setState({ showSelectId: true })}><IconAdd /></Fab>
-            <Fab
-                style={{ ...styles.button, marginLeft: '1rem' }}
-                size="small"
-                color="primary"
-                aria-label="Refresh"
-                onClick={() => this.browse(true)}
-                disabled={this.state.browse}
-            >
-                {this.state.browse ? <CircularProgress size={20} /> : <IconRefresh />}
-            </Fab>
-            {desktop && !this.state.hideHelp ? <Fab
-                style={{ ...styles.button, marginLeft: '1rem' }}
-                size="small"
-                color={this.state.helpHidden ? 'default' : 'primary'}
-                aria-label="Help"
-                title={I18n.t('Show/Hide help')}
-                onClick={() => {
-                    window.localStorage.setItem('App.helpHidden', this.state.helpHidden ? 'false' : 'true');
-                    this.setState({ helpHidden: !this.state.helpHidden });
-                }}
-                disabled={this.state.browse}
-            >
-                <IconHelp />
-            </Fab> : null }
-            <Fab
-                style={{ ...styles.button, marginLeft: '1rem' }}
-                size="small"
-                color={this.state.expertMode ? 'primary' : 'default'}
-                aria-label="Help"
-                title={I18n.t('Toggle expert mode')}
-                onClick={() => {
-                    window.localStorage.setItem('App.expertMode', this.state.expertMode ? 'false' : 'true');
-                    this.setState({ expertMode: !this.state.expertMode });
-                }}
-                disabled={this.state.browse}
-            >
-                <ExpertIcon />
-            </Fab>
-            <Fab
-                style={{ ...styles.button, marginLeft: '1rem' }}
-                title={I18n.t('Show all devices for print out')}
-                size="small"
-                aria-label="List of devices"
-                onClick={() => this.setState({ showListOfDevices: true })}
-                disabled={this.state.browse}
-            >
-                <IconList />
-            </Fab>
-            {!this.props.smallDisplay ? <TextField
-                variant="standard"
-                style={styles.searchText}
-                label={I18n.t('Filter')}
-                value={this.state.searchText}
-                onChange={e => this.setState({ searchText: e.target.value })}
-                slotProps={{
-                    input: {
-                        endAdornment: this.state.searchText ?
-                            <IconButton onClick={() => this.setState({ searchText: '' })}>
-                                <IconClear />
-                            </IconButton> : undefined,
-                    },
-                }}
-            /> : null}
-        </Toolbar>;
+        return (
+            <Toolbar variant="dense">
+                <Fab
+                    size="small"
+                    color="secondary"
+                    aria-label="Add"
+                    style={styles.button}
+                    onClick={() => this.setState({ showSelectId: true })}
+                >
+                    <IconAdd />
+                </Fab>
+                <Fab
+                    style={{ ...styles.button, marginLeft: '1rem' }}
+                    size="small"
+                    color="primary"
+                    aria-label="Refresh"
+                    onClick={() => this.browse(true)}
+                    disabled={this.state.browse}
+                >
+                    {this.state.browse ? <CircularProgress size={20} /> : <IconRefresh />}
+                </Fab>
+                {desktop && !this.state.hideHelp ? (
+                    <Fab
+                        style={{ ...styles.button, marginLeft: '1rem' }}
+                        size="small"
+                        color={this.state.helpHidden ? 'default' : 'primary'}
+                        aria-label="Help"
+                        title={I18n.t('Show/Hide help')}
+                        onClick={() => {
+                            window.localStorage.setItem('App.helpHidden', this.state.helpHidden ? 'false' : 'true');
+                            this.setState({ helpHidden: !this.state.helpHidden });
+                        }}
+                        disabled={this.state.browse}
+                    >
+                        <IconHelp />
+                    </Fab>
+                ) : null}
+                <Fab
+                    style={{ ...styles.button, marginLeft: '1rem' }}
+                    size="small"
+                    color={this.state.expertMode ? 'primary' : 'default'}
+                    aria-label="Help"
+                    title={I18n.t('Toggle expert mode')}
+                    onClick={() => {
+                        window.localStorage.setItem('App.expertMode', this.state.expertMode ? 'false' : 'true');
+                        this.setState({ expertMode: !this.state.expertMode });
+                    }}
+                    disabled={this.state.browse}
+                >
+                    <ExpertIcon />
+                </Fab>
+                <Fab
+                    style={{ ...styles.button, marginLeft: '1rem' }}
+                    title={I18n.t('Show all devices for print out')}
+                    size="small"
+                    aria-label="List of devices"
+                    onClick={() => this.setState({ showListOfDevices: true })}
+                    disabled={this.state.browse}
+                >
+                    <IconList />
+                </Fab>
+                {!this.props.smallDisplay ? (
+                    <TextField
+                        variant="standard"
+                        style={styles.searchText}
+                        label={I18n.t('Filter')}
+                        value={this.state.searchText}
+                        onChange={e => this.setState({ searchText: e.target.value })}
+                        slotProps={{
+                            input: {
+                                endAdornment: this.state.searchText ? (
+                                    <IconButton onClick={() => this.setState({ searchText: '' })}>
+                                        <IconClear />
+                                    </IconButton>
+                                ) : undefined,
+                            },
+                        }}
+                    />
+                ) : null}
+            </Toolbar>
+        );
     }
 
     componentDidUpdate(/* prevProps, prevState, snapshot */) {
@@ -819,44 +892,60 @@ class GoogleSmartNames extends Component {
             return <CircularProgress key="alexaProgress" />;
         }
         const searchText = this.state.searchText.toLowerCase();
-        const devices = this.state.searchText ? this.state.devices.filter(item =>
-            item.name?.name?.toLowerCase().includes(searchText) ||
-            item.name?.defaultNames?.find(n => n.toLowerCase().includes(searchText)) ||
-            item.name?.nicknames?.find(n => n.toLowerCase().includes(searchText)))
+        const devices = this.state.searchText
+            ? this.state.devices.filter(
+                  item =>
+                      item.name?.name?.toLowerCase().includes(searchText) ||
+                      item.name?.defaultNames?.find(n => n.toLowerCase().includes(searchText)) ||
+                      item.name?.nicknames?.find(n => n.toLowerCase().includes(searchText)),
+              )
             : this.state.devices;
 
-        return <form key="gh" style={styles.tab}>
-            {this.renderToolbar()}
-            {this.renderInstructions()}
-            <div style={{ ...styles.tableDiv, height: `calc(100% - ${48 + (this.state.helpHeight ? this.state.helpHeight + 64 : 0)}px)` }}>
-                <TreeTable
-                    columns={this.state.expertMode ? this.columns : this.columns.filter(item => !item.expertMode)}
-                    data={devices}
-                    onUpdate={(newData, oldData) => {
-                        if (newData.name.nicknames && Array.isArray(newData.name.nicknames)) {
-                            newData.name.nicknames = newData.name.nicknames.join(',');
-                        }
-                        this.editedSmartName = newData.name.nicknames;
-                        this.setState({ editId: newData.id }, () => {
-                            if (!newData.type || !newData.displayTraits) {
-                                this.setState({ browse: true, message: I18n.t('Please add action and trait to complete the Google Home state.') });
-                            } else {
-                                this.setState({ browse: true });
-                            }
-
-                            this.onGHParamsChange(newData, oldData);
-                            const _devices = JSON.parse(JSON.stringify(this.state.devices));
-                            _devices[_devices.indexOf(oldData)] = newData;
-                            this.setState({ ...this.state, devices: _devices });
-                        });
+        return (
+            <form
+                key="gh"
+                style={styles.tab}
+            >
+                {this.renderToolbar()}
+                {this.renderInstructions()}
+                <div
+                    style={{
+                        ...styles.tableDiv,
+                        height: `calc(100% - ${48 + (this.state.helpHeight ? this.state.helpHeight + 64 : 0)}px)`,
                     }}
-                    onDelete={oldData => {
-                        // if smartenum set smartname on false if not delete/reset smartname content
-                        if (oldData.smartEnum === 'X') {
-                            this.setState({ deleteId: oldData.id });
-                        } else {
-                            this.props.socket.getObject(oldData.id)
-                                .then(obj => {
+                >
+                    <TreeTable
+                        columns={this.state.expertMode ? this.columns : this.columns.filter(item => !item.expertMode)}
+                        data={devices}
+                        onUpdate={(newData, oldData) => {
+                            if (newData.name.nicknames && Array.isArray(newData.name.nicknames)) {
+                                newData.name.nicknames = newData.name.nicknames.join(',');
+                            }
+                            this.editedSmartName = newData.name.nicknames;
+                            this.setState({ editId: newData.id }, () => {
+                                if (!newData.type || !newData.displayTraits) {
+                                    this.setState({
+                                        browse: true,
+                                        message: I18n.t(
+                                            'Please add action and trait to complete the Google Home state.',
+                                        ),
+                                    });
+                                } else {
+                                    this.setState({ browse: true });
+                                }
+
+                                this.onGHParamsChange(newData, oldData);
+                                const _devices = JSON.parse(JSON.stringify(this.state.devices));
+                                _devices[_devices.indexOf(oldData)] = newData;
+                                this.setState({ ...this.state, devices: _devices });
+                            });
+                        }}
+                        onDelete={oldData => {
+                            // if smartenum set smartname on false if not delete/reset smartname content
+                            if (oldData.smartEnum === 'X') {
+                                this.setState({ deleteId: oldData.id });
+                            } else {
+                                this.props.socket.getObject(oldData.id).then(obj => {
                                     if (obj && obj.common && obj.common.smartName) {
                                         delete obj.common.smartName.ghTraits;
                                         delete obj.common.smartName.ghType;
@@ -864,44 +953,49 @@ class GoogleSmartNames extends Component {
                                     }
                                     return this.props.socket.setObject(oldData.id, obj);
                                 });
-                        }
+                            }
 
-                        return new Promise(resolve => {
-                            setTimeout(() => {
-                                if (this.state.deleteId) {
-                                    this.onDelete();
-                                } else {
-                                    this.informInstance(oldData.id);
-                                }
-                                resolve();
-                                const _devices = JSON.parse(JSON.stringify(this.state.devices));
-                                _devices.splice(_devices.indexOf(oldData), 1);
-                                this.setState({ ...this.state, devices: _devices });
-                            }, 600);
-                        });
-                    }}
-                />
-            </div>
-            {this.renderMessage()}
-            {this.getSelectIdDialog()}
-            {this.renderListOfDevices()}
-        </form>;
+                            return new Promise(resolve => {
+                                setTimeout(() => {
+                                    if (this.state.deleteId) {
+                                        this.onDelete();
+                                    } else {
+                                        this.informInstance(oldData.id);
+                                    }
+                                    resolve();
+                                    const _devices = JSON.parse(JSON.stringify(this.state.devices));
+                                    _devices.splice(_devices.indexOf(oldData), 1);
+                                    this.setState({ ...this.state, devices: _devices });
+                                }, 600);
+                            });
+                        }}
+                    />
+                </div>
+                {this.renderMessage()}
+                {this.getSelectIdDialog()}
+                {this.renderListOfDevices()}
+            </form>
+        );
     }
 }
 
 GoogleSmartNames.propTypes = {
-//    common:      PropTypes.object.isRequired,
-    native:      PropTypes.object.isRequired,
-    instance:    PropTypes.number.isRequired,
+    //    common:      PropTypes.object.isRequired,
+    native: PropTypes.object.isRequired,
+    instance: PropTypes.number.isRequired,
     adapterName: PropTypes.string.isRequired,
-    onError:     PropTypes.func,
+    onError: PropTypes.func,
     //    onLoad:      PropTypes.func,
     //    onChange:    PropTypes.func,
-    socket:      PropTypes.object.isRequired,
+    socket: PropTypes.object.isRequired,
     theme: PropTypes.object,
 };
 
-export const withMediaQuery = () => GoogleSmartNamesComponent => props =>
-    <GoogleSmartNamesComponent smallDisplay={useMediaQuery('(max-width:600px)')} {...props} />;
+export const withMediaQuery = () => GoogleSmartNamesComponent => props => (
+    <GoogleSmartNamesComponent
+        smallDisplay={useMediaQuery('(max-width:600px)')}
+        {...props}
+    />
+);
 
 export default withMediaQuery()(GoogleSmartNames);

@@ -1,13 +1,8 @@
-/* jshint -W097 */
-/* jshint strict: false */
-/* jslint node: true */
-'use strict';
-
 const DeviceModule = require('aws-iot-device-sdk').device;
-const utils = require('@iobroker/adapter-core'); // Get common adapter utils
-const fs = require('node:fs');
+const { Adapter } = require('@iobroker/adapter-core'); // Get common adapter utils
+const { readFileSync } = require('node:fs');
 const axios = require('axios');
-const zlib = require('node:zlib');
+const { deflateSync } = require('node:zlib');
 
 const AlexaSH2 = require('./lib/alexaSmartHomeV2');
 const AlexaSH3 = require('./lib/alexaSmartHomeV3');
@@ -15,11 +10,11 @@ const AlexaCustom = require('./lib/alexaCustom');
 const GoogleHome = require('./lib/googleHome');
 const YandexAlisa = require('./lib/alisa');
 const Remote = require('./lib/remote');
-const packageJSON = require('./package.json');
 const { handleGeofenceData, handleDevicesData, handleSendToAdapter, handleGetInstances } = require('./lib/visuApp.js');
 
+const packageJSON = JSON.parse(readFileSync(`${__dirname}/package.json`, 'utf8'));
+
 const version = packageJSON.version;
-// @ts-ignore
 const adapterName = packageJSON.name.split('.').pop();
 
 let recalcTimeout = null;
@@ -58,14 +53,14 @@ function startAdapter(options) {
                 if (lang !== 'en' && lang !== 'de' && lang !== 'ru') {
                     lang = 'en';
                 }
-                defaultHistory= obj.common.defaultHistory;
+                defaultHistory = obj.common.defaultHistory;
 
-                alexaSH2    && alexaSH2.setLanguage(lang);
-                alexaSH3    && alexaSH3.setLanguage(lang);
+                alexaSH2 && alexaSH2.setLanguage(lang);
+                alexaSH3 && alexaSH3.setLanguage(lang);
                 yandexAlisa && yandexAlisa.setLanguage(lang);
                 alexaCustom && alexaCustom.setLanguage(lang);
-                googleHome  && googleHome.setLanguage(lang);
-                remote      && remote.setLanguage(lang);
+                googleHome && googleHome.setLanguage(lang);
+                remote && remote.setLanguage(lang);
             }
             // if it is an instance
             if (id.startsWith('system.adapter.')) {
@@ -85,13 +80,16 @@ function startAdapter(options) {
         },
         stateChange: (id, state) => {
             if (id === `${adapter.namespace}.app.message` && state && !state.ack) {
-                sendMessageToApp(state.val)
-                    .catch(e => adapter.log.error(`Cannot send message to app: ${e}`));
+                sendMessageToApp(state.val).catch(e => adapter.log.error(`Cannot send message to app: ${e}`));
             }
 
-            state && adapter.config.googleHome  && googleHome && googleHome.updateState(id, state);
+            state && adapter.config.googleHome && googleHome && googleHome.updateState(id, state);
             state && adapter.config.amazonAlexa && alexaSH3 && alexaSH3.handleStateUpdate(id, state);
-            state && adapter.config.yandexAlisa && yandexAlisa && yandexAlisa.updateState && yandexAlisa.updateState(id, state);
+            state &&
+                adapter.config.yandexAlisa &&
+                yandexAlisa &&
+                yandexAlisa.updateState &&
+                yandexAlisa.updateState(id, state);
             id && remote && remote.updateState(id, state);
 
             if (id === `${adapter.namespace}.smart.lastResponse` && state && !state.ack) {
@@ -110,7 +108,6 @@ function startAdapter(options) {
                 }
 
                 alexaSH3 && (await alexaSH3.destroy());
-
             } catch (e) {
                 // ignore
             }
@@ -124,11 +121,12 @@ function startAdapter(options) {
 
                         recalcTimeout = setTimeout(async () => {
                             recalcTimeout = null;
-                            alexaSH2 && alexaSH2.updateDevices(obj.message, async analyseAddedId => {
-                                await adapter.setStateAsync('smart.updatesResult', analyseAddedId || '', true);
-                                adapter.log.debug('Devices updated!');
-                                await adapter.setStateAsync('smart.updates', true, true);
-                            });
+                            alexaSH2 &&
+                                alexaSH2.updateDevices(obj.message, async analyseAddedId => {
+                                    await adapter.setStateAsync('smart.updatesResult', analyseAddedId || '', true);
+                                    adapter.log.debug('Devices updated!');
+                                    await adapter.setStateAsync('smart.updates', true, true);
+                                });
 
                             // alexaSH3 && alexaSH3.updateDevices(obj.message, async analyseAddedId => {
                             //     await adapter.setStateAsync('smart.updatesResult', analyseAddedId || '', true);
@@ -139,11 +137,12 @@ function startAdapter(options) {
                                 await adapter.setStateAsync('smart.updates3', true, true);
                             }
 
-                            googleHome && googleHome.updateDevices(async analyseAddedId => {
-                                await adapter.setStateAsync('smart.updatesResult', analyseAddedId || '', true);
-                                adapter.log.debug('GH Devices updated!');
-                                await adapter.setStateAsync('smart.updatesGH', true, true);
-                            });
+                            googleHome &&
+                                googleHome.updateDevices(async analyseAddedId => {
+                                    await adapter.setStateAsync('smart.updatesResult', analyseAddedId || '', true);
+                                    adapter.log.debug('GH Devices updated!');
+                                    await adapter.setStateAsync('smart.updatesGH', true, true);
+                                });
                         }, 1000);
                         break;
 
@@ -156,7 +155,7 @@ function startAdapter(options) {
                                     adapter.setState('smart.updates', false, true);
                                 });
                             } else {
-                                adapter.sendTo(obj.from, obj.command, {error: 'not activated'}, obj.callback);
+                                adapter.sendTo(obj.from, obj.command, { error: 'not activated' }, obj.callback);
                             }
                         }
                         break;
@@ -169,7 +168,7 @@ function startAdapter(options) {
                                 adapter.sendTo(obj.from, obj.command, devices, obj.callback);
                                 await adapter.setStateAsync('smart.updates3', false, true);
                             } else {
-                                adapter.sendTo(obj.from, obj.command, {error: 'not activated'}, obj.callback);
+                                adapter.sendTo(obj.from, obj.command, { error: 'not activated' }, obj.callback);
                             }
                         }
                         break;
@@ -183,7 +182,7 @@ function startAdapter(options) {
                                     adapter.setState('smart.updatesGH', false, true);
                                 });
                             } else {
-                                adapter.sendTo(obj.from, obj.command, {error: 'not activated'}, obj.callback);
+                                adapter.sendTo(obj.from, obj.command, { error: 'not activated' }, obj.callback);
                             }
                         }
                         break;
@@ -197,7 +196,7 @@ function startAdapter(options) {
                                     adapter.setState('smart.updatesYA', false, true);
                                 });
                             } else {
-                                adapter.sendTo(obj.from, obj.command, {error: 'not activated'}, obj.callback);
+                                adapter.sendTo(obj.from, obj.command, { error: 'not activated' }, obj.callback);
                             }
                         }
                         break;
@@ -212,7 +211,7 @@ function startAdapter(options) {
                                 const devices = alexaCustom.getKnownDevices();
                                 adapter.sendTo(obj.from, obj.command, devices, obj.callback);
                             } else {
-                                adapter.sendTo(obj.from, obj.command, {error: 'not activated'}, obj.callback);
+                                adapter.sendTo(obj.from, obj.command, { error: 'not activated' }, obj.callback);
                             }
                         }
                         break;
@@ -227,7 +226,7 @@ function startAdapter(options) {
                                 const users = alexaCustom.getKnownUsers();
                                 adapter.sendTo(obj.from, obj.command, users, obj.callback);
                             } else {
-                                adapter.sendTo(obj.from, obj.command, {error: 'not activated'}, obj.callback);
+                                adapter.sendTo(obj.from, obj.command, { error: 'not activated' }, obj.callback);
                             }
                         }
                         break;
@@ -238,7 +237,13 @@ function startAdapter(options) {
                                 obj.message = JSON.parse(obj.message);
                             } catch (e) {
                                 adapter.log.error(`Cannot parse object: ${e}`);
-                                obj.callback && adapter.sendTo(obj.from, obj.command, {error: 'Invalid message format: cannot parse object'}, obj.callback);
+                                obj.callback &&
+                                    adapter.sendTo(
+                                        obj.from,
+                                        obj.command,
+                                        { error: 'Invalid message format: cannot parse object' },
+                                        obj.callback,
+                                    );
                                 return;
                             }
                         }
@@ -256,8 +261,7 @@ function startAdapter(options) {
                         break;
 
                     case 'debug':
-                        alexaSH2.getDebug(data =>
-                            adapter.sendTo(obj.from, obj.command, data, obj.callback));
+                        alexaSH2.getDebug(data => adapter.sendTo(obj.from, obj.command, data, obj.callback));
                         break;
 
                     case 'getServiceEndpoint':
@@ -269,22 +273,34 @@ function startAdapter(options) {
                                     try {
                                         urlKey = await createUrlKey(adapter.config.login, adapter.config.pass);
                                     } catch (err) {
-                                        return obj.callback && adapter.sendTo(obj.from, obj.command, {error: `Cannot get urlKey: ${err.toString()}`}, obj.callback);
+                                        return (
+                                            obj.callback &&
+                                            adapter.sendTo(
+                                                obj.from,
+                                                obj.command,
+                                                { error: `Cannot get urlKey: ${err.toString()}` },
+                                                obj.callback,
+                                            )
+                                        );
                                     }
                                 }
                             }
 
-                            const result = {url: `https://service.iobroker.in/v1/iotService?key=${urlKey.key}&user=${encodeURIComponent(adapter.config.login)}`};
-                            let serviceName = typeof obj.message === 'string' ? obj.message : obj.message && obj.message.serviceName;
+                            const result = {
+                                url: `https://service.iobroker.in/v1/iotService?key=${urlKey.key}&user=${encodeURIComponent(adapter.config.login)}`,
+                            };
+                            let serviceName =
+                                typeof obj.message === 'string' ? obj.message : obj.message && obj.message.serviceName;
                             if (serviceName) {
                                 result.url += `&service=${encodeURIComponent(serviceName)}`;
-                                result.stateID = `${adapter.namespace}.services.${serviceName}`
+                                result.stateID = `${adapter.namespace}.services.${serviceName}`;
                             }
                             if (obj.message && obj.message.data) {
                                 result.data += `&data=${typeof obj.message.data === 'object' ? JSON.stringify(obj.message.data) : obj.message.data}`;
                             }
                             // check if the service name is in the white list
-                            if (serviceName &&
+                            if (
+                                serviceName &&
                                 adapter.config.allowedServices[0] !== '*' &&
                                 !adapter.config.allowedServices.includes(serviceName.replace(/^custom_/, '')) &&
                                 !ALLOWED_SERVICES.includes(serviceName)
@@ -303,18 +319,18 @@ function startAdapter(options) {
                 }
             }
         },
-        ready: () => main()
-            .then(() => {})
-            .catch(error => {
-                adapter.log.error(`Error in main: ${error.toString()}`);
-            }),
+        ready: () =>
+            main()
+                .then(() => {})
+                .catch(error => {
+                    adapter.log.error(`Error in main: ${error.toString()}`);
+                }),
     });
 
-    adapter = new utils.Adapter(options);
+    adapter = new Adapter(options);
 
     // warning: `adapter.log = obj => console.log(obj)` does not implemented. Only adapter.on('log', obj => console.log(obj))
-    adapter.on('log', obj =>
-        remote.onLog(obj));
+    adapter.on('log', obj => remote.onLog(obj));
 
     return adapter;
 }
@@ -322,8 +338,7 @@ function startAdapter(options) {
 function sendDataToIFTTT(obj) {
     if (!obj) {
         return adapter.log.warn('No data to send to IFTTT');
-    } else
-    if (!adapter.config.iftttKey && (typeof obj !== 'object' || !obj.key)) {
+    } else if (!adapter.config.iftttKey && (typeof obj !== 'object' || !obj.key)) {
         return adapter.log.warn('No IFTTT key is defined');
     }
 
@@ -341,7 +356,7 @@ function sendDataToIFTTT(obj) {
         delete obj.event;
         delete obj.key;
         url = `https://maker.ifttt.com/trigger/${event}/with/key/${key || adapter.config.iftttKey}`;
-        data = obj
+        data = obj;
     } else if (obj.val === undefined) {
         return adapter.log.warn('No value is defined');
     } else {
@@ -355,14 +370,17 @@ function sendDataToIFTTT(obj) {
     }
 
     if (url) {
-        axios.post(url, data, {
-            timeout: 15000,
-            validateStatus: status => status < 400,
-        })
+        axios
+            .post(url, data, {
+                timeout: 15000,
+                validateStatus: status => status < 400,
+            })
             .then(response => adapter.log.debug(`Response from IFTTT: ${JSON.stringify(response.data)}`))
             .catch(error => {
                 if (error.response) {
-                    adapter.log.warn(`Response from IFTTT: ${error.response.data ? JSON.stringify(error.response.data) : error.response.status}`);
+                    adapter.log.warn(
+                        `Response from IFTTT: ${error.response.data ? JSON.stringify(error.response.data) : error.response.status}`,
+                    );
                 } else {
                     adapter.log.warn(`Response from IFTTT: ${error.code}`);
                 }
@@ -425,7 +443,7 @@ async function sendMessageToApp(message) {
     const response = await axios.post('https://app-message.iobroker.in/', json, {
         headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${Buffer.from(`${adapter.config.login}:${adapter.config.pass}`).toString('base64')}`
+            Authorization: `Bearer ${Buffer.from(`${adapter.config.login}:${adapter.config.pass}`).toString('base64')}`,
         },
         timeout: 5000,
         validateStatus: status => status < 400,
@@ -451,7 +469,13 @@ async function controlState(id, data) {
             } else {
                 if (typeof data.val === 'string') data.val = data.val.replace(/^@ifttt\s?/, '');
                 if (obj.common.type === 'boolean') {
-                    data.val = data.val === true || data.val === 'true' || data.val === 'on' || data.val === 'ON' || data.val === 1 || data.val === '1';
+                    data.val =
+                        data.val === true ||
+                        data.val === 'true' ||
+                        data.val === 'on' ||
+                        data.val === 'ON' ||
+                        data.val === 1 ||
+                        data.val === '1';
                 } else if (obj.common.type === 'number') {
                     data.val = parseFloat(data.val);
                 }
@@ -515,19 +539,18 @@ async function processIfttt(data) {
             obj = await adapter.getForeignObjectAsync(newId);
             if (!obj) {
                 // create state
-                await adapter.setObjectNotExistsAsync(`services.${id}`,
-                    {
-                        type: 'state',
-                        common: {
-                            name: 'IFTTT value',
-                            write: false,
-                            role: 'state',
-                            read: true,
-                            type: 'mixed',
-                            desc: 'Custom state',
-                        },
-                        native: {},
-                    });
+                await adapter.setObjectNotExistsAsync(`services.${id}`, {
+                    type: 'state',
+                    common: {
+                        name: 'IFTTT value',
+                        write: false,
+                        role: 'state',
+                        read: true,
+                        type: 'mixed',
+                        desc: 'Custom state',
+                    },
+                    native: {},
+                });
                 id = newId;
             }
         }
@@ -539,18 +562,21 @@ async function processIfttt(data) {
 function onDisconnect(event) {
     const now = Date.now();
     if (now - connectStarted < 500) {
-        adapter.log.warn('Looks like your connection certificates are invalid. Please renew them via configuration dialog.');
+        adapter.log.warn(
+            'Looks like your connection certificates are invalid. Please renew them via configuration dialog.',
+        );
     }
 
     if (typeof event === 'string') {
         if (event.toLowerCase().includes('duplicate')) {
             // disable adapter
-            adapter.log.error(`Two devices are trying to connect with the same iot account. This is not allowed. Stopping`);
-            adapter.getForeignObjectAsync('system.adapter.' + adapter.namespace)
-                .then(obj => {
-                    obj.common.enabled = false;
-                    return adapter.setForeignObjectAsync(obj._id, obj);
-                });
+            adapter.log.error(
+                `Two devices are trying to connect with the same iot account. This is not allowed. Stopping`,
+            );
+            adapter.getForeignObjectAsync('system.adapter.' + adapter.namespace).then(obj => {
+                obj.common.enabled = false;
+                return adapter.setForeignObjectAsync(obj._id, obj);
+            });
         }
         adapter.log.info(`Connection changed: ${event}`);
     } else {
@@ -583,7 +609,7 @@ function onConnect(clientId) {
 
 function encrypt(key, value) {
     let result = '';
-    for(let i = 0; i < value.length; i++) {
+    for (let i = 0; i < value.length; i++) {
         result += String.fromCharCode(key[i % key.length].charCodeAt(0) ^ value.charCodeAt(i));
     }
     return `base64:${Buffer.from(result).toString('base64')}`;
@@ -599,7 +625,7 @@ function decrypt(key, value) {
     }
 
     let result = '';
-    for(let i = 0; i < value.length; i++) {
+    for (let i = 0; i < value.length; i++) {
         result += String.fromCharCode(key[i % key.length].charCodeAt(0) ^ value.charCodeAt(i));
     }
     return result;
@@ -611,7 +637,7 @@ async function readUrlKey() {
     if (!key || !key.val) {
         throw new Error('Not exists');
     } else {
-        return {key: key.val};
+        return { key: key.val };
     }
 }
 
@@ -644,7 +670,7 @@ async function createUrlKey(login, pass) {
         throw new Error(response.data);
     } else if (response.data && response.data.key) {
         await adapter.setStateAsync('certs.urlKey', response.data.key, true);
-        return {key: response.data.key};
+        return { key: response.data.key };
     } else {
         adapter.log.error(`Cannot fetch URL key: ${JSON.stringify(response.data)}`);
         throw new Error(response.data);
@@ -656,7 +682,7 @@ async function readCertificates() {
     let certificate;
 
     try {
-        privateKey  = await adapter.getStateAsync('certs.private');
+        privateKey = await adapter.getStateAsync('certs.private');
         certificate = await adapter.getStateAsync('certs.certificate');
     } catch (error) {
         throw new Error('Not exists');
@@ -667,16 +693,16 @@ async function readCertificates() {
     } else {
         return {
             private: decrypt(secret, privateKey.val),
-            certificate: decrypt(secret, certificate.val)
+            certificate: decrypt(secret, certificate.val),
         };
     }
 }
 
 async function writeKeys(data) {
-    await adapter.setStateAsync('certs.private',     encrypt(secret, data.keyPair.PrivateKey), true);
-    await adapter.setStateAsync('certs.public',      encrypt(secret, data.keyPair.PublicKey),  true);
-    await adapter.setStateAsync('certs.certificate', encrypt(secret, data.certificatePem),     true);
-    await adapter.setStateAsync('certs.id',          data.certificateId,                       true);
+    await adapter.setStateAsync('certs.private', encrypt(secret, data.keyPair.PrivateKey), true);
+    await adapter.setStateAsync('certs.public', encrypt(secret, data.keyPair.PublicKey), true);
+    await adapter.setStateAsync('certs.certificate', encrypt(secret, data.certificatePem), true);
+    await adapter.setStateAsync('certs.id', data.certificateId, true);
 }
 
 async function fetchCertificates(login, pass, _forceUserCreation) {
@@ -696,8 +722,8 @@ async function fetchCertificates(login, pass, _forceUserCreation) {
             `https://create-user.iobroker.in/v1/createUser?user=${encodeURIComponent(login)}&pass=${encodeURIComponent(pass)}&forceRecreate=${forceUserCreation}&version=${version}`,
             {
                 timeout: 15000,
-                validateStatus: status => status < 400
-            }
+                validateStatus: status => status < 400,
+            },
         );
     } catch (error) {
         if (error.response) {
@@ -717,8 +743,8 @@ async function fetchCertificates(login, pass, _forceUserCreation) {
         await writeKeys(response.data.certificates);
 
         return {
-            private:     response.data.certificates.keyPair.PrivateKey,
-            certificate: response.data.certificates.certificatePem
+            private: response.data.certificates.keyPair.PrivateKey,
+            certificate: response.data.certificates.certificatePem,
         };
     } else {
         adapter.log.error(`Cannot fetch connection certificates: ${JSON.stringify(response.data)}`);
@@ -727,18 +753,18 @@ async function fetchCertificates(login, pass, _forceUserCreation) {
 }
 
 function sendToAsync(instance, command, request) {
-    return new Promise(resolve => adapter.sendTo(instance, command, request, response => {
-        adapter.log.debug(`Response from ${instance}: ${JSON.stringify(response)}`);
-        // try to parse JSON
-        if (typeof response === 'string' && (response[0] === '{' || response[0] === '[')) {
-            try {
-                response = JSON.parse(response);
-            } catch (e) {
-
+    return new Promise(resolve =>
+        adapter.sendTo(instance, command, request, response => {
+            adapter.log.debug(`Response from ${instance}: ${JSON.stringify(response)}`);
+            // try to parse JSON
+            if (typeof response === 'string' && (response[0] === '{' || response[0] === '[')) {
+                try {
+                    response = JSON.parse(response);
+                } catch (e) {}
             }
-        }
-        resolve(response);
-    }));
+            resolve(response);
+        }),
+    );
 }
 
 async function processMessage(type, request) {
@@ -755,10 +781,13 @@ async function processMessage(type, request) {
     if (type.startsWith('remote')) {
         const start = Date.now();
         if (remote) {
-            return remote.process(request, type)
+            return remote
+                .process(request, type)
                 .then(response => {
                     if (response !== NONE) {
-                        adapter.log.debug(`[REMOTE] Response in: ${Date.now() - start}ms (Length: ${Array.isArray(response) ? `A ${response.length}` : JSON.stringify(response).length}) for ${request}`);
+                        adapter.log.debug(
+                            `[REMOTE] Response in: ${Date.now() - start}ms (Length: ${Array.isArray(response) ? `A ${response.length}` : JSON.stringify(response).length}) for ${request}`,
+                        );
                     }
                     return response;
                 })
@@ -768,7 +797,9 @@ async function processMessage(type, request) {
         }
     } else if (type.startsWith('nightscout')) {
         if (adapter.config.nightscout) {
-            let state = await adapter.getForeignStateAsync(`system.adapter.nightscout.${adapter.config.nightscout}.alive`);
+            let state = await adapter.getForeignStateAsync(
+                `system.adapter.nightscout.${adapter.config.nightscout}.alive`,
+            );
             if (state && state.val) {
                 return sendToAsync(`nightscout.${adapter.config.nightscout}`, 'send', request);
             }
@@ -799,8 +830,7 @@ async function processMessage(type, request) {
                 alexaSH3 && alexaSH3.pauseEvents();
             }
             adapter.log.error(`Error from Alexa events cloud: ${request.error}`);
-        } else
-        if (request && !request.header) {
+        } else if (request && !request.header) {
             if (alexaCustom) {
                 return alexaCustom.process(request, adapter.config.amazonAlexa);
             }
@@ -890,14 +920,15 @@ async function processMessage(type, request) {
                     return res;
                 }
             } catch (e) {
-                adapter.log.error(`Could not handle data "${request}" by Visu App: ${e.message}`)
-                return { error: e.message }
+                adapter.log.error(`Could not handle data "${request}" by Visu App: ${e.message}`);
+                return { error: e.message };
             }
 
             return { result: 'Ok' };
         } else if (
             adapter.config.allowedServices[0] === '*' ||
-            (adapter.config.allowedServices.includes(_type) || ALLOWED_SERVICES.includes(_type))
+            adapter.config.allowedServices.includes(_type) ||
+            ALLOWED_SERVICES.includes(_type)
         ) {
             if (typeof request === 'object') {
                 request = JSON.stringify(request);
@@ -997,9 +1028,7 @@ async function startDevice(clientId, login, password, retry) {
         if (error.message === 'Not exists') {
             try {
                 certs = await fetchCertificates(login, password);
-            } catch (error) {
-
-            }
+            } catch (error) {}
         } else {
             throw error;
         }
@@ -1017,13 +1046,13 @@ async function startDevice(clientId, login, password, retry) {
         device = new DeviceModule({
             privateKey: Buffer.from(certs.private),
             clientCert: Buffer.from(certs.certificate),
-            caCert:     fs.readFileSync(`${__dirname}/keys/root-CA.crt`),
+            caCert: readFileSync(`${__dirname}/keys/root-CA.crt`),
             clientId,
-            username:   'ioBroker',
-            host:       adapter.config.cloudUrl,
-            debug:      !!adapter.config.debug,
+            username: 'ioBroker',
+            host: adapter.config.cloudUrl,
+            debug: !!adapter.config.debug,
             baseReconnectTimeMs: 5000,
-            keepalive:  60,
+            keepalive: 60,
         });
         remote.registerDevice(device);
 
@@ -1038,9 +1067,10 @@ async function startDevice(clientId, login, password, retry) {
 
             // restart the iot device if DNS cannot be resolved
             if (errorTxt.includes('EAI_AGAIN')) {
-                adapter.log.error(`DNS name of ${adapter.config.cloudUrl} cannot be resolved: connection will be retried in 10 seconds.`);
-                setTimeout(() =>
-                    startDevice(clientId, login, password), 10000);
+                adapter.log.error(
+                    `DNS name of ${adapter.config.cloudUrl} cannot be resolved: connection will be retried in 10 seconds.`,
+                );
+                setTimeout(() => startDevice(clientId, login, password), 10000);
             }
         });
 
@@ -1061,31 +1091,39 @@ async function startDevice(clientId, login, password, retry) {
                             try {
                                 for (let m = 0; m < response.length; m++) {
                                     const trunk = response[m];
-                                    await new Promise((resolve, reject) => device.publish(
-                                        `response/${clientId}/${type}`,
-                                        typeof trunk !== 'string' ? JSON.stringify(trunk) : trunk,
-                                        {qos: 1},
-                                        error => {
-                                            if (error) {
-                                                reject(error);
-                                            } else {
-                                                resolve();
-                                            }
-                                        }
-                                    ));
+                                    await new Promise((resolve, reject) =>
+                                        device.publish(
+                                            `response/${clientId}/${type}`,
+                                            typeof trunk !== 'string' ? JSON.stringify(trunk) : trunk,
+                                            { qos: 1 },
+                                            error => {
+                                                if (error) {
+                                                    reject(error);
+                                                } else {
+                                                    resolve();
+                                                }
+                                            },
+                                        ),
+                                    );
                                 }
                             } catch (err) {
                                 adapter.log.error(`[REMOTE] Cannot send packet: ${err}`);
                             }
                         } else {
-                            adapter.log.debug(`[REMOTE] Send response to 'response/${clientId}/${type}: ${JSON.stringify(response)}`);
+                            adapter.log.debug(
+                                `[REMOTE] Send response to 'response/${clientId}/${type}: ${JSON.stringify(response)}`,
+                            );
 
                             const msg = JSON.stringify(response);
                             if (msg && msg.length > MAX_IOT_MESSAGE_LENGTH) {
-                                let packed = zlib.deflateSync(msg).toString('base64');
-                                adapter.log.debug(`[REMOTE] Content was packed from ${msg.length} bytes to ${packed.length} bytes`);
+                                let packed = deflateSync(msg).toString('base64');
+                                adapter.log.debug(
+                                    `[REMOTE] Content was packed from ${msg.length} bytes to ${packed.length} bytes`,
+                                );
                                 if (packed.length > MAX_IOT_MESSAGE_LENGTH) {
-                                    adapter.log.warn(`[REMOTE] Content was packed to ${packed.length} bytes which is still near/over the message limit!`);
+                                    adapter.log.warn(
+                                        `[REMOTE] Content was packed to ${packed.length} bytes which is still near/over the message limit!`,
+                                    );
                                 }
                                 device.publish(`response/${clientId}/${type}`, packed);
                             } else {
@@ -1104,12 +1142,13 @@ async function startDevice(clientId, login, password, retry) {
         if (error && typeof error === 'object' && error.message) {
             adapter.log.error(`Cannot read connection certificates: ${error.message}`);
         } else {
-            adapter.log.error(`Cannot read connection certificates: ${JSON.stringify(error)} / ${error && error.toString()}`);
+            adapter.log.error(
+                `Cannot read connection certificates: ${JSON.stringify(error)} / ${error && error.toString()}`,
+            );
         }
 
         if ((error === 'timeout' || (error.message && error.message.includes('timeout'))) && retry < 10) {
-            setTimeout(() =>
-                startDevice(clientId, login, password, retry + 1), 10000);
+            setTimeout(() => startDevice(clientId, login, password, retry + 1), 10000);
         }
     }
 }
@@ -1126,13 +1165,10 @@ async function updateNightscoutSecret() {
     let response;
 
     try {
-        response = await axios.get(
-            URL,
-            {
-                timeout: 15000,
-                validateStatus: status => status < 400
-            }
-        );
+        response = await axios.get(URL, {
+            timeout: 15000,
+            validateStatus: status => status < 400,
+        });
         if (response.data.error) {
             adapter.log.error(`Api-Secret cannot be updated: ${response.data.error}`);
         } else {
@@ -1140,7 +1176,9 @@ async function updateNightscoutSecret() {
         }
     } catch (error) {
         if (error.response) {
-            adapter.log.warn(`Cannot update api-secret: ${error.response.data ? JSON.stringify(error.response.data) : error.response.status}`);
+            adapter.log.warn(
+                `Cannot update api-secret: ${error.response.data ? JSON.stringify(error.response.data) : error.response.status}`,
+            );
         } else {
             adapter.log.warn(`Cannot update api-secret: ${error.code}`);
         }
@@ -1149,7 +1187,10 @@ async function updateNightscoutSecret() {
 
 async function createStateForAdapter(adapterName) {
     // find any instance of this adapter
-    const instances = await adapter.getObjectViewAsync('system', 'instance', {startkey: `system.adapter.${adapterName}.`, endkey: `system.adapter.${adapterName}.\u9999`});
+    const instances = await adapter.getObjectViewAsync('system', 'instance', {
+        startkey: `system.adapter.${adapterName}.`,
+        endkey: `system.adapter.${adapterName}.\u9999`,
+    });
     if (instances && instances.rows && instances.rows.length) {
         let obj;
         try {
@@ -1220,7 +1261,7 @@ async function main() {
     let systemConfig = await adapter.getForeignObjectAsync('system.config');
     if (!systemConfig) {
         adapter.log.warn('Object system.config not found. Please check your installation!');
-        systemConfig = {common: {}};
+        systemConfig = { common: {} };
     }
 
     // create service state for netatmo if any instance exists
@@ -1232,13 +1273,13 @@ async function main() {
 
     secret = (systemConfig && systemConfig.native && systemConfig.native.secret) || 'Zgfr56gFe87jJOM';
 
-    adapter.config.pass           = decrypt(secret, adapter.config.pass);
+    adapter.config.pass = decrypt(secret, adapter.config.pass);
     adapter.config.deviceOffLevel = parseFloat(adapter.config.deviceOffLevel) || 0;
-    adapter.config.concatWord     = (adapter.config.concatWord || '').toString().trim();
-    adapter.config.apikey         = (adapter.config.apikey || '').trim();
-    adapter.config.replaces       = adapter.config.replaces ? adapter.config.replaces.split(',') : null;
-    adapter.config.cloudUrl       = (adapter.config.cloudUrl || '').toString();
-    adapter.config.nightscout     = adapter.config.nightscout || '';
+    adapter.config.concatWord = (adapter.config.concatWord || '').toString().trim();
+    adapter.config.apikey = (adapter.config.apikey || '').trim();
+    adapter.config.replaces = adapter.config.replaces ? adapter.config.replaces.split(',') : null;
+    adapter.config.cloudUrl = (adapter.config.cloudUrl || '').toString();
+    adapter.config.nightscout = adapter.config.nightscout || '';
 
     if (adapter.config.replaces) {
         let text = [];
@@ -1248,7 +1289,7 @@ async function main() {
         adapter.log.debug(`Following strings will be replaced in names: ${text.join(', ')}`);
     }
     if (adapter.config.amazonAlexa) {
-        alexaSH2    = new AlexaSH2(adapter);
+        alexaSH2 = new AlexaSH2(adapter);
         alexaCustom = new AlexaCustom(adapter);
     }
     if (adapter.config.yandexAlisa) {
@@ -1317,8 +1358,15 @@ async function main() {
 
     remote && remote.setLanguage(lang);
     // check password
-    if (adapter.config.pass.length < 8 || !adapter.config.pass.match(/[a-z]/) || !adapter.config.pass.match(/[A-Z]/) || !adapter.config.pass.match(/\d/)) {
-        return adapter.log.error('The password must be at least 8 characters long and have numbers, upper and lower case letters. Please change the password in the profile https://iobroker.pro/accountProfile.');
+    if (
+        adapter.config.pass.length < 8 ||
+        !adapter.config.pass.match(/[a-z]/) ||
+        !adapter.config.pass.match(/[A-Z]/) ||
+        !adapter.config.pass.match(/\d/)
+    ) {
+        return adapter.log.error(
+            'The password must be at least 8 characters long and have numbers, upper and lower case letters. Please change the password in the profile https://iobroker.pro/accountProfile.',
+        );
     }
 
     if (oUuid && oUuid.native) {
@@ -1336,7 +1384,8 @@ async function main() {
     try {
         urlKey = await readUrlKey();
     } catch (error) {
-        if (adapter.config.googleHome ||
+        if (
+            adapter.config.googleHome ||
             adapter.config.yandexAlisa ||
             adapter.config.allowedServices.length ||
             adapter.config.iftttKey
@@ -1361,7 +1410,7 @@ async function main() {
 
     if (adapter.config.googleHome) {
         googleHome = new GoogleHome(adapter, urlKey);
-    }// no else
+    } // no else
     if (adapter.config.yandexAlisa) {
         yandexAlisa = new YandexAlisa(adapter, urlKey);
     }
