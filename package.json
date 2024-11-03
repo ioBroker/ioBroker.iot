@@ -66,7 +66,7 @@
         "release-major": "release-script major --yes",
         "translate": "translate-adapter",
         "update-packages": "ncu --upgrade && cd src && ncu --upgrade && cd .. && cd src-rules && ncu --upgrade && cd ..",
-        "npm": "npm i && cd src && npm i -f && cd .. && cd src-rules && npm i -f && cd ..",
+        "npm": "npm i && cd src && npm i -f && cd ../src-rules && npm i -f",
         "rules-0-clean": "node tasks --rules-0-clean",
         "rules-1-npm": "node tasks --rules-1-npm",
         "rules-2-compile": "node tasks --rules-2-compile",

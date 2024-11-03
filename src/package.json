@@ -4,33 +4,29 @@
     "private": true,
     "dependencies": {
         "@iobroker/adapter-react-v5": "^7.2.6",
-        "@mui/material": "^6.1.6",
         "@mui/icons-material": "^6.1.6",
-        "babel-eslint": "^10.1.0",
+        "@mui/material": "^6.1.6",
         "@sentry/browser": "^8.36.0",
+        "@vitejs/plugin-react": "^4.3.3",
+        "eslint": "^9.14.0",
+        "eslint-config-airbnb": "^19.0.4",
+        "eslint-plugin-eqeqeq-fix": "^1.0.3",
+        "eslint-plugin-import": "^2.31.0",
+        "eslint-plugin-jsx-a11y": "^6.10.2",
+        "eslint-plugin-only-warn": "^1.1.0",
+        "eslint-plugin-react": "^7.37.2",
+        "eslint-plugin-react-hooks": "^5.0.0",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
         "react-icons": "^5.3.0",
-        "react-scripts": "^5.0.1",
-        "react-inlinesvg": "^4.1.4",
-        "eslint": "^9.14.0",
-        "eslint-config-airbnb": "^19.0.4",
-        "eslint-plugin-import": "^2.31.0",
-        "eslint-plugin-jsx-a11y": "^6.10.2",
-        "eslint-plugin-react": "^7.37.2",
-        "eslint-plugin-react-hooks": "^5.0.0",
-        "eslint-plugin-eqeqeq-fix": "^1.0.3",
-        "eslint-plugin-only-warn": "^1.1.0"
+        "react-inlinesvg": "^4.1.4"
     },
     "scripts": {
-        "start": "react-scripts start",
-        "build": "react-scripts build",
+        "start": "vite",
+        "build": "vite build",
         "lint": "eslint --fix --ext .js,.jsx src",
         "i18n=>flat": "node tasks --i18n=>flat",
         "flat=>i18n": "node tasks --flat=>i18n"
-    },
-    "eslintConfig": {
-        "extends": "react-app"
     },
     "homepage": ".",
     "browserslist": [

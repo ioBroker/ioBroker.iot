@@ -53,7 +53,7 @@ if (process.argv.find(arg => arg === '--rules-0-clean')) {
         npmInstall('./src/').catch(error => console.error(error));
     }
 } else if (process.argv.find(arg => arg === '--2-build')) {
-    buildReact(`${__dirname}/src/`, { rootDir: __dirname }).catch(error => console.error(error));
+    buildReact(`${__dirname}/src/`, { rootDir: __dirname, vite: true }).catch(error => console.error(error));
 } else if (process.argv.find(arg => arg === '--3-copy')) {
     copyFiles(['src/build/*/**', 'src/build/*'], 'admin/');
 } else if (process.argv.find(arg => arg === '--4-patch')) {
@@ -75,7 +75,7 @@ if (process.argv.find(arg => arg === '--rules-0-clean')) {
         npmPromise = Promise.resolve();
     }
     npmPromise
-        .then(() => buildReact(`${__dirname}/src/`, { rootDir: __dirname }))
+        .then(() => buildReact(`${__dirname}/src/`, { rootDir: __dirname, vite: true }))
         .then(() => copyFiles(['src/build/*/**', 'src/build/*'], 'admin/'))
         .then(() => patchHtmlFile(`${__dirname}/admin/index.html`))
         .then(() => {
@@ -93,7 +93,7 @@ if (process.argv.find(arg => arg === '--rules-0-clean')) {
         installPromise = Promise.resolve();
     }
     installPromise
-        .then(() => buildReact(`${__dirname}/src/`, { rootDir: __dirname }))
+        .then(() => buildReact(`${__dirname}/src/`, { rootDir: __dirname, vite: true }))
         .then(() => copyFiles(['src/build/*/**', 'src/build/*'], 'admin/'))
         .then(() => patchHtmlFile(`${__dirname}/admin/index.html`))
         .then(() => {
