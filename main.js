@@ -916,8 +916,7 @@ async function processMessage(type, request) {
                 }
 
                 if (visuData.command === 'sendToAdapter') {
-                    const res = await handleSendToAdapter(visuData, adapter);
-                    return res;
+                    return await handleSendToAdapter(visuData, adapter);
                 }
             } catch (e) {
                 adapter.log.error(`Could not handle data "${request}" by Visu App: ${e.message}`);
@@ -1351,12 +1350,14 @@ async function main() {
 
     defaultHistory = systemConfig.common.defaultHistory;
 
-    adapter.config.amazonAlexa && alexaSH2 && alexaSH2.setLanguage(lang, translate);
-    adapter.config.amazonAlexa && alexaSH2 && alexaSH2.updateDevices();
+    if (adapter.config.amazonAlexa && alexaSH2) {
+        alexaSH2.setLanguage(lang, translate);
+        alexaSH2.updateDevices();
+    }
 
-    alexaCustom && alexaCustom.setLanguage(lang, translate);
+    alexaCustom?.setLanguage(lang, translate);
 
-    remote && remote.setLanguage(lang);
+    remote?.setLanguage(lang);
     // check password
     if (
         adapter.config.pass.length < 8 ||
@@ -1369,7 +1370,7 @@ async function main() {
         );
     }
 
-    if (oUuid && oUuid.native) {
+    if (oUuid?.native) {
         uuid = oUuid.native.uuid;
     }
 
@@ -1415,11 +1416,11 @@ async function main() {
         yandexAlisa = new YandexAlisa(adapter, urlKey);
     }
 
-    googleHome && googleHome.setLanguage(lang, translate);
-    googleHome && googleHome.updateDevices();
+    googleHome?.setLanguage(lang, translate);
+    googleHome?.updateDevices();
 
-    yandexAlisa && yandexAlisa.setLanguage(lang, translate);
-    yandexAlisa && yandexAlisa.updateDevices();
+    yandexAlisa?.setLanguage(lang, translate);
+    yandexAlisa?.updateDevices();
 
     await adapter.subscribeStatesAsync('app.message');
 }

@@ -80,22 +80,8 @@
                 "pl": "zaimplementowany geofence z aplikacją ioBroker Visu",
                 "uk": "впроваджено геоfence з додатком ioBroker Visu",
                 "zh-cn": "使用 ioBroker Visu app 执行的地理栅栏"
-            },
-            "3.1.0": {
-                "en": "Updated packages\nDisabled the state change report for alexa v3",
-                "de": "Aktualisierte Pakete\nDeaktiviert den Zustandsänderungsbericht für alexa v3",
-                "ru": "Обновленные пакеты\nОтклонить отчет об изменении состояния для alexa v3",
-                "pt": "Pacotes atualizados\nDesativado o relatório de mudança do estado para alexa v3",
-                "nl": "Bijgewerkte pakketten\nHet veranderingsrapport voor Alexa v3 uitgeschakeld",
-                "fr": "Paquets mis à jour\nDésactive le rapport de changement d'état pour alexa v3",
-                "it": "Pacchetti aggiornati\nDisabilitato il rapporto di cambiamento di stato per alexa v3",
-                "es": "Paquetes actualizados\nDiscapacitado el informe de cambio de estado para alexa v3",
-                "pl": "Aktualizacja pakietów\nWyłączył raport zmiany stanu dla alexa v3",
-                "uk": "Оновлені пакети\nВимкнено звіт про зміну стану для alexa v3",
-                "zh-cn": "更新软件包\n禁用Alexa v3 的状态变化报告"
             }
         },
-        "title": "IoT Assistants",
         "titleLang": {
             "en": "IoT cloud connection",
             "de": "Cloud IoT-Verbindung",
@@ -106,6 +92,7 @@
             "it": "Connessione Cloud IoT",
             "es": "Conexión IoT en la nube",
             "pl": "Połączenie Cloud IoT",
+            "uk": "З'єднання Cloud IoT",
             "zh-cn": "IoT云连接"
         },
         "desc": {
@@ -118,6 +105,7 @@
             "it": "Collega il tuo server ioBroker al cloud IoT IoBroker",
             "es": "Conecta su servidor ioBroker a la nube ioBroker IoT",
             "pl": "Łączy twój serwer ioBroker z chmurą IoT ioBroker",
+            "uk": "Підключає ваш сервер ioBroker до хмари ioBroker IoT",
             "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
         },
         "authors": ["bluefox <dogafox@gmail.com>"],
@@ -140,12 +128,7 @@
         "logTransporter": true,
         "dependencies": [
             {
-                "js-controller": ">=3.3.22"
-            }
-        ],
-        "globalDependencies": [
-            {
-                "admin": ">=4.0.1"
+                "js-controller": ">=5.0.19"
             }
         ],
         "preserveSettings": "smartName",
