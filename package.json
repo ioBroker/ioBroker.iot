@@ -58,7 +58,9 @@
         "main.js"
     ],
     "scripts": {
-        "test": "mocha --exit",
+        "test-gui": "mocha test/testAdapter.gui.js --exit",
+        "test-package": "mocha test/testPackageFiles.js --exit",
+        "test": "npm run test-gui && npm run test-package",
         "test-alexa-v3": "mocha --grep AlexaSmartHomeV3 --recursive",
         "prepublishOnly": "node tasks",
         "build": "node tasks",

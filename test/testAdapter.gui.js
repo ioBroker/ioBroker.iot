@@ -25,7 +25,7 @@ describe('test-admin-gui', () => {
     });
 
     it('Select categories', async function (){
-        this.timeout(25_000);
+        this.timeout(5_000);
         await gPage.waitForSelector('.enums-tab', { timeout: 15_000 });
         // ignore message
         try {
@@ -38,7 +38,7 @@ describe('test-admin-gui', () => {
         return new Promise(resolve => setTimeout(async () => {
             await guiHelper.screenshot(rootDir, null, '02_enums');
             resolve();
-        }, 15000));
+        }, 3000));
     });
 
     after(async function () {
