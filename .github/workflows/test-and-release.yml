@@ -59,7 +59,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x, 22.4.1]
+        node-version: [18.x, 20.x, 22.x]
 
     steps:
       - uses: actions/checkout@v4
@@ -75,11 +75,7 @@ jobs:
         run: npm run build
 
       - name: Run local tests
-        #         npm downgrade to 6 (mainly for node.js 16) is needed because else testing fails
-        #         after installing additional adapters
-        run: |
-          npm install -g npm@6
-          npm test
+        run: npm test
 #      - name: Run unit tests
 #        run: npm run test:unit
 #      - name: Run integration tests # (linux/osx)
