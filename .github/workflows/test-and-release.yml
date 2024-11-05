@@ -76,14 +76,14 @@ jobs:
 
       - name: Run local tests
         run: npm test
-#      - name: Run unit tests
-#        run: npm run test:unit
-#      - name: Run integration tests # (linux/osx)
-#        if: startsWith(runner.OS, 'windows') == false
-#        run: DEBUG=testing:* npm run test:integration
-#      - name: Run integration tests # (windows)
-#        if: startsWith(runner.OS, 'windows')
-#        run: set DEBUG=testing:* & npm run test:integration
+
+      - name: Archive screenshots
+        if: always()
+        # if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          path: tmp/screenshots/**/*.png
+          retention-days: 3
 
   # Deploys the final package to NPM
   deploy:
