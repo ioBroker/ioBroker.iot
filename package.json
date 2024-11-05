@@ -36,7 +36,7 @@
         "@alcalzone/release-script-plugin-license": "^3.7.0",
         "@iobroker/build-tools": "^2.0.6",
         "@iobroker/eslint-config": "^0.1.6",
-        "@iobroker/legacy-testing": "^1.0.13",
+        "@iobroker/legacy-testing": "^2.0.0",
         "@types/node": "^22.8.6",
         "chai": "^4.5.0",
         "colorette": "^2.0.20",
