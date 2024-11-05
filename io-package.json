@@ -1,531 +1,559 @@
 {
-    "common": {
-        "name": "iot",
-        "version": "3.4.2",
-        "news": {
-            "3.4.2": {
-                "en": "Updated GUI packages and removed `gulp`\ndo not override custom `result` attribute on `sendToAdapter` response (Visu App - only relevant for developers)",
-                "de": "Aktualisierte GUI-Pakete und entfernt `gulp`\nnicht überschreiben benutzerdefinierte `result` Attribut auf `sendToAdapter` Antwort (Visu App - nur für Entwickler relevant)",
-                "ru": "Обновленные пакеты GUI и удаленные `gulp'\nне переопределять пользовательский атрибут `result' на ответе `sendToAdapter' (Visu App - только соответствующий для разработчиков)",
-                "pt": "Pacotes de GUI atualizados e removidos `gulp`\nnão substituir o atributo `result` personalizado na resposta `sendToAdapter` (Visu App - apenas relevante para desenvolvedores)",
-                "nl": "Bijgewerkt GUI-pakketten en verwijderde GUI-pakketten\ngeen attribuut overschrijven op aangepaste ",
-                "fr": "Mise à jour des paquets GUI et suppression de 'gulp'\nne pas surcharger l'attribut `result` personnalisé sur la réponse `sendToAdapter` (Visu App - uniquement pertinent pour les développeurs)",
-                "it": "Pacchetti GUI aggiornati e rimossi `gulp`\nnon sovrascrivere l'attributo `risultato` personalizzato sulla risposta `sendToAdapter` (Visu App - solo pertinente per gli sviluppatori)",
-                "es": "Paquetes GUI actualizados y eliminados\nno invalidar el atributo personalizado `result` en la respuesta `sendToAdapter` (Visu App - sólo relevante para desarrolladores)",
-                "pl": "Aktualizacja pakietów GUI i usunięcie 'gulp'\nnie nadpisywać atrybutu 'result' w odpowiedzi 'sendToAdapter' (aplikacja Visu - dotyczy tylko deweloperów)",
-                "uk": "Оновлено пакети GUI та видалено `gulp`\nне перевизначте користувацький атрибут `result` на відповідь `sendToAdapter` (Visu App - тільки відповідний розробникам)",
-                "zh-cn": "更新了 GUI 软件包并删除了“ gulp ”\n不在“ sendToAdapter” 响应上覆盖自定义的“ 结果”属性( Visu App - 仅与开发者相关)"
-            },
-            "3.4.0": {
-                "en": "added new commands for the visu app\nupdated packages\nMigrated GUI for admin v7",
-                "de": "neue befehle für die visu app hinzugefügt\naktualisierte pakete\nMigrated GUI für admin v7",
-                "ru": "добавлены новые команды для приложения visu\nобновления пакетов\nMigrated GUI for admin v7",
-                "pt": "adicionou novos comandos para o aplicativo visu\npacotes atualizados\nGUI migrado para admin v7",
-                "nl": "nieuwe commando's voor de visu-app toegevoegd\nbijgewerkte pakketten\nGUI migreren voor admin v7",
-                "fr": "ajout de nouvelles commandes pour l'application visu\npaquets mis à jour\nGUI modifié pour admin v7",
-                "it": "aggiunto nuovi comandi per l'app visu\npacchetti aggiornati\nGUI migrata per admin v7",
-                "es": "añadido nuevos comandos para la aplicación visu\npaquetes actualizados\nGUI migrado para admin v7",
-                "pl": "dodano nowe polecenia dla aplikacji visu\nzaktualizowane pakiety\nMigrated GUI for admin v7",
-                "uk": "додано нові команди для додатка visu\nоновлені пакети\nМігрований графічний інтерфейс для адміністратора v7",
-                "zh-cn": "为 visu app 添加新命令\n更新软件包\n管理 v7 的默认图形用户界面"
-            },
-            "3.3.0": {
-                "en": "Fix error on reconnect\nprepared adapter for new ioBroker Visu app states",
-                "de": "Fehler behoben bei reconnect\nvorbereiteter Adapter für neue ioBroker Visu app Staaten",
-                "ru": "Исправление ошибки при повторном подключении\nподготовленный адаптер для нового ioBroker Состояние приложения Visu",
-                "pt": "Corrigir erro na reconectação\nadaptador preparado para novo ioBroker Visu app estados",
-                "nl": "Fout herstellen bij opnieuw verbinden\nvoorbereide adapter voor nieuwe ioBroker Visu-app geeft aan",
-                "fr": "Correction de l'erreur lors du reconnect\nadaptateur préparé pour le nouveau ioBroker États de l'application Visu",
-                "it": "Risolvere l'errore sulla riconnette\nadattatore preparato per nuovo ioBroker Stati dell'app Visu",
-                "es": "Corregir error en la reconexión\nadaptador preparado para nuevo ioBroker Visu app states",
-                "pl": "Popraw błąd przy ponownym połączeniu\nprzygotowany adapter do nowego jOBrokera Stan aplikacji Visu",
-                "uk": "Виправлення помилки на відключенні\nготовий адаптер для нового ioBroker Вису застосунки",
-                "zh-cn": "重新连接时修正错误\n为新 ioBroker 准备适配器 Visu 应用程序状态"
-            },
-            "3.2.2": {
-                "en": "remove some warnings which should only be debug log",
-                "de": "einige warnungen entfernen, die nur debug log sein sollten",
-                "ru": "удалить некоторые предупреждения, которые должны быть только отладочным журналом",
-                "pt": "remover alguns avisos que só devem ser debug log",
-                "nl": "sommige waarschuwingen verwijderen die alleen debuglog mogen zijn",
-                "fr": "supprimer quelques avertissements qui ne devraient être que debug log",
-                "it": "rimuovere alcuni avvisi che dovrebbero essere solo debug log",
-                "es": "eliminar algunas advertencias que sólo deben ser debug log",
-                "pl": "usunąć niektóre ostrzeżenia, które powinny być tylko logi debugowania",
-                "uk": "видалення деяких попереджень, які повинні бути вилучені",
-                "zh-cn": "删除一些只应该为调试日志的警告"
-            },
-            "3.2.1": {
-                "en": "fixed issue that only valid JSON could be sent to app via message state",
-                "de": "festes Problem, dass nur gültig JSON per Nachrichtenzustand an die App gesendet werden konnte",
-                "ru": "фиксированный вопрос, который может быть отправлен только действительным JSON через состояние сообщения",
-                "pt": "problema fixo que só JSON válido poderia ser enviado para aplicativo via estado de mensagem",
-                "nl": "vast probleem dat alleen geldige JSON via berichtstatus naar de app kan worden verzonden",
-                "fr": "problème corrigé que seul JSON valide pourrait être envoyé à l'application via l'état du message",
-                "it": "problema fisso che solo valido JSON potrebbe essere inviato all'app tramite lo stato del messaggio",
-                "es": "emisión fija que sólo válida JSON podría ser enviado a la aplicación a través del estado del mensaje",
-                "pl": "stałe wydanie, że tylko poprawny JSON może być wysłany do aplikacji przez stan wiadomości",
-                "uk": "виправлено проблему, що тільки дійсний JSON може бути відправлений на додаток через стан повідомлень",
-                "zh-cn": "只能通过消息状态发送到应用程序的 JSON 的固定问题"
-            },
-            "3.2.0": {
-                "en": "implemented geofence with ioBroker Visu app",
-                "de": "geofence with ioBroker Visu app",
-                "ru": "реализована геозона с приложением ioBroker Visu",
-                "pt": "geofence implementado com aplicativo ioBroker Visu",
-                "nl": "geïmplementeerd geofence met ioBroker Visu app",
-                "fr": "géofence mise en œuvre avec l'application ioBroker Visu",
-                "it": "geofence implementato con ioBroker Visu app",
-                "es": "geofence implementado con aplicación ioBroker Visu",
-                "pl": "zaimplementowany geofence z aplikacją ioBroker Visu",
-                "uk": "впроваджено геоfence з додатком ioBroker Visu",
-                "zh-cn": "使用 ioBroker Visu app 执行的地理栅栏"
-            }
-        },
-        "titleLang": {
-            "en": "IoT cloud connection",
-            "de": "Cloud IoT-Verbindung",
-            "ru": "Соединение Cloud IoT",
-            "pt": "Conexão Cloud IoT",
-            "nl": "Cloud IoT-verbinding",
-            "fr": "Connexion Cloud IoT",
-            "it": "Connessione Cloud IoT",
-            "es": "Conexión IoT en la nube",
-            "pl": "Połączenie Cloud IoT",
-            "uk": "З'єднання Cloud IoT",
-            "zh-cn": "IoT云连接"
-        },
-        "desc": {
-            "en": "Connects your ioBroker server to the ioBroker IoT cloud",
-            "de": "Verbindet Ihren ioBroker-Server mit der ioBroker IoT-Cloud",
-            "ru": "Соединяет ваш сервер ioBroker с облаком ioBroker IoT",
-            "pt": "Conecta seu servidor ioBroker à nuvem IoT do ioBroker",
-            "nl": "Verbindt uw ioBroker-server met de ioBroker IoT-cloud",
-            "fr": "Connecte votre serveur ioBroker au cloud ioBroker IoT",
-            "it": "Collega il tuo server ioBroker al cloud IoT IoBroker",
-            "es": "Conecta su servidor ioBroker a la nube ioBroker IoT",
-            "pl": "Łączy twój serwer ioBroker z chmurą IoT ioBroker",
-            "uk": "Підключає ваш сервер ioBroker до хмари ioBroker IoT",
-            "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
-        },
-        "authors": ["bluefox <dogafox@gmail.com>"],
-        "platform": "Javascript/Node.js",
-        "mode": "daemon",
-        "loglevel": "info",
-        "readme": "https://github.com/ioBroker/ioBroker.iot/blob/master/README.md",
-        "icon": "iot.png",
-        "connectionType": "cloud",
-        "dataSource": "push",
-        "tier": 3,
-        "keywords": ["web", "Cloud", "communication"],
-        "enabled": false,
-        "compact": true,
-        "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.iot/master/admin/iot.png",
-        "type": "communication",
-        "messagebox": true,
-        "stopBeforeUpdate": true,
-        "materialize": true,
-        "logTransporter": true,
-        "dependencies": [
-            {
-                "js-controller": ">=5.0.19"
-            }
-        ],
-        "preserveSettings": "smartName",
-        "eraseOnUpload": true,
-        "blockly": true,
-        "osDependencies": {
-            "linux": ["libcairo2-dev", "libpango1.0-dev", "libjpeg-dev", "libgif-dev", "librsvg2-dev"]
-        },
-        "plugins": {
-            "sentry": {
-                "dsn": "https://20987eaf91ef49de821771499fdb4e1a@sentry.iobroker.net/40"
-            }
-        },
-        "javascriptRules": {
-            "i18n": true,
-            "url": "rules/customRuleBlocks.js",
-            "name": "ActionVisu"
-        },
-        "licenseInformation": {
-            "type": "free",
-            "license": "MIT"
-        }
+  "common": {
+    "name": "iot",
+    "version": "3.4.3",
+    "news": {
+      "3.4.3": {
+        "en": "corrected the addition of the devices for Alexa\nchanged compilation of GUI to remove deprecated packages",
+        "de": "korrigierte die Ergänzung der Geräte für Alexa\ngeänderte Zusammenstellung von GUI, um deprecierte Pakete zu entfernen",
+        "ru": "исправил добавление устройств для Alexa\nизмененная компиляция GUI для удаления депрецированных пакетов",
+        "pt": "corrigiu a adição dos dispositivos para Alexa\ncompilação alterada de GUI para remover pacotes deprecated",
+        "nl": "gecorrigeerd de toevoeging van de apparaten voor Alexa\ngewijzigde compilatie van GUI om verouderde pakketten te verwijderen",
+        "fr": "corrigé l'ajout des dispositifs pour Alexa\nmodification de la compilation de GUI pour supprimer les paquets obsolètes",
+        "it": "corretto l'aggiunta dei dispositivi per Alexa\nmodificato la compilazione di GUI per rimuovere i pacchetti deprecati",
+        "es": "corregido la adición de los dispositivos para Alexa\ncambio de compilación de GUI para eliminar paquetes deprecated",
+        "pl": "poprawiła dodanie urządzeń dla Alexa\nzmiana kompilacji GUI w celu usunięcia zdeprecjonowanych pakietów",
+        "uk": "виправлено додавання пристроїв для Alexa\nзмінена компіляція GUI для видалення депресованих пакетів",
+        "zh-cn": "修正了为Alexa添加的设备\n更改 GUI 的编译以删除已贬值的软件包"
+      },
+      "3.4.2": {
+        "en": "Updated GUI packages and removed `gulp`\ndo not override custom `result` attribute on `sendToAdapter` response (Visu App - only relevant for developers)",
+        "de": "Aktualisierte GUI-Pakete und entfernt `gulp`\nnicht überschreiben benutzerdefinierte `result` Attribut auf `sendToAdapter` Antwort (Visu App - nur für Entwickler relevant)",
+        "ru": "Обновленные пакеты GUI и удаленные `gulp'\nне переопределять пользовательский атрибут `result' на ответе `sendToAdapter' (Visu App - только соответствующий для разработчиков)",
+        "pt": "Pacotes de GUI atualizados e removidos `gulp`\nnão substituir o atributo `result` personalizado na resposta `sendToAdapter` (Visu App - apenas relevante para desenvolvedores)",
+        "nl": "Bijgewerkt GUI-pakketten en verwijderde GUI-pakketten\ngeen attribuut overschrijven op aangepaste ",
+        "fr": "Mise à jour des paquets GUI et suppression de 'gulp'\nne pas surcharger l'attribut `result` personnalisé sur la réponse `sendToAdapter` (Visu App - uniquement pertinent pour les développeurs)",
+        "it": "Pacchetti GUI aggiornati e rimossi `gulp`\nnon sovrascrivere l'attributo `risultato` personalizzato sulla risposta `sendToAdapter` (Visu App - solo pertinente per gli sviluppatori)",
+        "es": "Paquetes GUI actualizados y eliminados\nno invalidar el atributo personalizado `result` en la respuesta `sendToAdapter` (Visu App - sólo relevante para desarrolladores)",
+        "pl": "Aktualizacja pakietów GUI i usunięcie 'gulp'\nnie nadpisywać atrybutu 'result' w odpowiedzi 'sendToAdapter' (aplikacja Visu - dotyczy tylko deweloperów)",
+        "uk": "Оновлено пакети GUI та видалено `gulp`\nне перевизначте користувацький атрибут `result` на відповідь `sendToAdapter` (Visu App - тільки відповідний розробникам)",
+        "zh-cn": "更新了 GUI 软件包并删除了“ gulp ”\n不在“ sendToAdapter” 响应上覆盖自定义的“ 结果”属性( Visu App - 仅与开发者相关)"
+      },
+      "3.4.0": {
+        "en": "added new commands for the visu app\nupdated packages\nMigrated GUI for admin v7",
+        "de": "neue befehle für die visu app hinzugefügt\naktualisierte pakete\nMigrated GUI für admin v7",
+        "ru": "добавлены новые команды для приложения visu\nобновления пакетов\nMigrated GUI for admin v7",
+        "pt": "adicionou novos comandos para o aplicativo visu\npacotes atualizados\nGUI migrado para admin v7",
+        "nl": "nieuwe commando's voor de visu-app toegevoegd\nbijgewerkte pakketten\nGUI migreren voor admin v7",
+        "fr": "ajout de nouvelles commandes pour l'application visu\npaquets mis à jour\nGUI modifié pour admin v7",
+        "it": "aggiunto nuovi comandi per l'app visu\npacchetti aggiornati\nGUI migrata per admin v7",
+        "es": "añadido nuevos comandos para la aplicación visu\npaquetes actualizados\nGUI migrado para admin v7",
+        "pl": "dodano nowe polecenia dla aplikacji visu\nzaktualizowane pakiety\nMigrated GUI for admin v7",
+        "uk": "додано нові команди для додатка visu\nоновлені пакети\nМігрований графічний інтерфейс для адміністратора v7",
+        "zh-cn": "为 visu app 添加新命令\n更新软件包\n管理 v7 的默认图形用户界面"
+      },
+      "3.3.0": {
+        "en": "Fix error on reconnect\nprepared adapter for new ioBroker Visu app states",
+        "de": "Fehler behoben bei reconnect\nvorbereiteter Adapter für neue ioBroker Visu app Staaten",
+        "ru": "Исправление ошибки при повторном подключении\nподготовленный адаптер для нового ioBroker Состояние приложения Visu",
+        "pt": "Corrigir erro na reconectação\nadaptador preparado para novo ioBroker Visu app estados",
+        "nl": "Fout herstellen bij opnieuw verbinden\nvoorbereide adapter voor nieuwe ioBroker Visu-app geeft aan",
+        "fr": "Correction de l'erreur lors du reconnect\nadaptateur préparé pour le nouveau ioBroker États de l'application Visu",
+        "it": "Risolvere l'errore sulla riconnette\nadattatore preparato per nuovo ioBroker Stati dell'app Visu",
+        "es": "Corregir error en la reconexión\nadaptador preparado para nuevo ioBroker Visu app states",
+        "pl": "Popraw błąd przy ponownym połączeniu\nprzygotowany adapter do nowego jOBrokera Stan aplikacji Visu",
+        "uk": "Виправлення помилки на відключенні\nготовий адаптер для нового ioBroker Вису застосунки",
+        "zh-cn": "重新连接时修正错误\n为新 ioBroker 准备适配器 Visu 应用程序状态"
+      },
+      "3.2.2": {
+        "en": "remove some warnings which should only be debug log",
+        "de": "einige warnungen entfernen, die nur debug log sein sollten",
+        "ru": "удалить некоторые предупреждения, которые должны быть только отладочным журналом",
+        "pt": "remover alguns avisos que só devem ser debug log",
+        "nl": "sommige waarschuwingen verwijderen die alleen debuglog mogen zijn",
+        "fr": "supprimer quelques avertissements qui ne devraient être que debug log",
+        "it": "rimuovere alcuni avvisi che dovrebbero essere solo debug log",
+        "es": "eliminar algunas advertencias que sólo deben ser debug log",
+        "pl": "usunąć niektóre ostrzeżenia, które powinny być tylko logi debugowania",
+        "uk": "видалення деяких попереджень, які повинні бути вилучені",
+        "zh-cn": "删除一些只应该为调试日志的警告"
+      },
+      "3.2.1": {
+        "en": "fixed issue that only valid JSON could be sent to app via message state",
+        "de": "festes Problem, dass nur gültig JSON per Nachrichtenzustand an die App gesendet werden konnte",
+        "ru": "фиксированный вопрос, который может быть отправлен только действительным JSON через состояние сообщения",
+        "pt": "problema fixo que só JSON válido poderia ser enviado para aplicativo via estado de mensagem",
+        "nl": "vast probleem dat alleen geldige JSON via berichtstatus naar de app kan worden verzonden",
+        "fr": "problème corrigé que seul JSON valide pourrait être envoyé à l'application via l'état du message",
+        "it": "problema fisso che solo valido JSON potrebbe essere inviato all'app tramite lo stato del messaggio",
+        "es": "emisión fija que sólo válida JSON podría ser enviado a la aplicación a través del estado del mensaje",
+        "pl": "stałe wydanie, że tylko poprawny JSON może być wysłany do aplikacji przez stan wiadomości",
+        "uk": "виправлено проблему, що тільки дійсний JSON може бути відправлений на додаток через стан повідомлень",
+        "zh-cn": "只能通过消息状态发送到应用程序的 JSON 的固定问题"
+      },
+      "3.2.0": {
+        "en": "implemented geofence with ioBroker Visu app",
+        "de": "geofence with ioBroker Visu app",
+        "ru": "реализована геозона с приложением ioBroker Visu",
+        "pt": "geofence implementado com aplicativo ioBroker Visu",
+        "nl": "geïmplementeerd geofence met ioBroker Visu app",
+        "fr": "géofence mise en œuvre avec l'application ioBroker Visu",
+        "it": "geofence implementato con ioBroker Visu app",
+        "es": "geofence implementado con aplicación ioBroker Visu",
+        "pl": "zaimplementowany geofence z aplikacją ioBroker Visu",
+        "uk": "впроваджено геоfence з додатком ioBroker Visu",
+        "zh-cn": "使用 ioBroker Visu app 执行的地理栅栏"
+      }
     },
-    "protectedNative": ["login", "pass"],
-    "native": {
-        "login": "email.com",
-        "pass": "",
-        "language": "",
-        "cloudUrl": "a18wym7vjdl22g.iot.eu-west-1.amazonaws.com",
-        "functionFirst": false,
-        "concatWord": "",
-        "responseOID": "",
-        "restartOnDisconnect": false,
-        "iftttKey": "",
-        "replaces": "",
-        "amazonAlexa": true,
-        "amazonAlexaV3": false,
-        "amazonAlexaBlood": "",
-        "amazonAlexaBloodShortAnswer": false,
-        "googleHome": false,
-        "yandexAlisa": false,
-        "allowedServices": "",
-        "text2command": "0",
-        "nightscout": "",
-        "nightscoutPass": "myBlood",
-        "noCommon": false,
-        "debug": false,
-        "remote": false,
-        "defaultToggle": true,
-        "remoteAdminInstance": "",
-        "remoteWebInstance": "",
-        "customKnownAlexaUsers": [],
-        "addCustomKnownAlexaUserNameToText": false,
-        "customKnownAlexaDevices": [],
-        "addCustomKnownAlexaDeviceRoomToText": false
+    "titleLang": {
+      "en": "IoT cloud connection",
+      "de": "Cloud IoT-Verbindung",
+      "ru": "Соединение Cloud IoT",
+      "pt": "Conexão Cloud IoT",
+      "nl": "Cloud IoT-verbinding",
+      "fr": "Connexion Cloud IoT",
+      "it": "Connessione Cloud IoT",
+      "es": "Conexión IoT en la nube",
+      "pl": "Połączenie Cloud IoT",
+      "uk": "З'єднання Cloud IoT",
+      "zh-cn": "IoT云连接"
     },
-    "objects": [],
-    "instanceObjects": [
-        {
-            "_id": "info",
-            "type": "channel",
-            "common": {
-                "name": "Information"
-            },
-            "native": {}
+    "desc": {
+      "en": "Connects your ioBroker server to the ioBroker IoT cloud",
+      "de": "Verbindet Ihren ioBroker-Server mit der ioBroker IoT-Cloud",
+      "ru": "Соединяет ваш сервер ioBroker с облаком ioBroker IoT",
+      "pt": "Conecta seu servidor ioBroker à nuvem IoT do ioBroker",
+      "nl": "Verbindt uw ioBroker-server met de ioBroker IoT-cloud",
+      "fr": "Connecte votre serveur ioBroker au cloud ioBroker IoT",
+      "it": "Collega il tuo server ioBroker al cloud IoT IoBroker",
+      "es": "Conecta su servidor ioBroker a la nube ioBroker IoT",
+      "pl": "Łączy twój serwer ioBroker z chmurą IoT ioBroker",
+      "uk": "Підключає ваш сервер ioBroker до хмари ioBroker IoT",
+      "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
+    },
+    "authors": [
+      "bluefox <dogafox@gmail.com>"
+    ],
+    "platform": "Javascript/Node.js",
+    "mode": "daemon",
+    "loglevel": "info",
+    "readme": "https://github.com/ioBroker/ioBroker.iot/blob/master/README.md",
+    "icon": "iot.png",
+    "connectionType": "cloud",
+    "dataSource": "push",
+    "tier": 3,
+    "keywords": [
+      "web",
+      "Cloud",
+      "communication"
+    ],
+    "enabled": false,
+    "compact": true,
+    "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.iot/master/admin/iot.png",
+    "type": "communication",
+    "messagebox": true,
+    "stopBeforeUpdate": true,
+    "materialize": true,
+    "logTransporter": true,
+    "dependencies": [
+      {
+        "js-controller": ">=5.0.19"
+      }
+    ],
+    "preserveSettings": "smartName",
+    "eraseOnUpload": true,
+    "blockly": true,
+    "osDependencies": {
+      "linux": [
+        "libcairo2-dev",
+        "libpango1.0-dev",
+        "libjpeg-dev",
+        "libgif-dev",
+        "librsvg2-dev"
+      ]
+    },
+    "plugins": {
+      "sentry": {
+        "dsn": "https://20987eaf91ef49de821771499fdb4e1a@sentry.iobroker.net/40"
+      }
+    },
+    "javascriptRules": {
+      "i18n": true,
+      "url": "rules/customRuleBlocks.js",
+      "name": "ActionVisu"
+    },
+    "licenseInformation": {
+      "type": "free",
+      "license": "MIT"
+    }
+  },
+  "protectedNative": [
+    "login",
+    "pass"
+  ],
+  "native": {
+    "login": "email.com",
+    "pass": "",
+    "language": "",
+    "cloudUrl": "a18wym7vjdl22g.iot.eu-west-1.amazonaws.com",
+    "functionFirst": false,
+    "concatWord": "",
+    "responseOID": "",
+    "restartOnDisconnect": false,
+    "iftttKey": "",
+    "replaces": "",
+    "amazonAlexa": true,
+    "amazonAlexaV3": false,
+    "amazonAlexaBlood": "",
+    "amazonAlexaBloodShortAnswer": false,
+    "googleHome": false,
+    "yandexAlisa": false,
+    "allowedServices": "",
+    "text2command": "0",
+    "nightscout": "",
+    "nightscoutPass": "myBlood",
+    "noCommon": false,
+    "debug": false,
+    "remote": false,
+    "defaultToggle": true,
+    "remoteAdminInstance": "",
+    "remoteWebInstance": "",
+    "customKnownAlexaUsers": [],
+    "addCustomKnownAlexaUserNameToText": false,
+    "customKnownAlexaDevices": [],
+    "addCustomKnownAlexaDeviceRoomToText": false
+  },
+  "objects": [],
+  "instanceObjects": [
+    {
+      "_id": "info",
+      "type": "channel",
+      "common": {
+        "name": "Information"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.connection",
+      "type": "state",
+      "common": {
+        "role": "indicator.connected",
+        "name": "If connected to cloud",
+        "type": "boolean",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.ackTempPassword",
+      "type": "state",
+      "common": {
+        "role": "indicator",
+        "name": "If user have read about temp password for iot",
+        "type": "boolean",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.remoteTill",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "Time till pro access is available",
+        "type": "string",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "smart.lastFunction",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "Last controlled function",
+        "type": "string",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "smart.lastRoom",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "Last controlled room",
+        "type": "string",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "smart.lastCommand",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "Last command",
+        "type": "mixed",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "smart.lastCommandObj",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "Last command as object",
+        "type": "string",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "smart.lastResponse",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "Last textual response",
+        "type": "string",
+        "read": true,
+        "write": true
+      },
+      "native": {}
+    },
+    {
+      "_id": "smart.lastObjectID",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "Last accessed object id",
+        "type": "string",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "smart.updates",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "If updates of configuration is ready",
+        "type": "boolean",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "smart.updates3",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "If updates of V3 configuration is ready",
+        "type": "boolean",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "smart.updatesGH",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "If updates of google home configuration is ready",
+        "type": "boolean",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "smart.updatesYA",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "If updates of yandex alice configuration is ready",
+        "type": "boolean",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "smart.updatesResult",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "Result for last devices update",
+        "type": "string",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "services",
+      "type": "channel",
+      "common": {
+        "name": "Information"
+      },
+      "native": {}
+    },
+    {
+      "_id": "certs",
+      "type": "channel",
+      "common": {
+        "expert": true,
+        "name": "Certificates"
+      },
+      "native": {}
+    },
+    {
+      "_id": "certs.id",
+      "type": "state",
+      "common": {
+        "expert": true,
+        "role": "state",
+        "name": "Certificate ID",
+        "type": "string",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "certs.public",
+      "type": "state",
+      "common": {
+        "expert": true,
+        "role": "state",
+        "name": "Public key",
+        "type": "string",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "certs.private",
+      "type": "state",
+      "common": {
+        "expert": true,
+        "role": "state",
+        "name": "Private key",
+        "type": "string",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "certs.certificate",
+      "type": "state",
+      "common": {
+        "expert": true,
+        "role": "state",
+        "name": "Certificate",
+        "type": "string",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "certs.urlKey",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "URL Key",
+        "desc": "Used for access this instance via URL",
+        "type": "string",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "certs.forceUserCreate",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "Force user creation",
+        "desc": "Used to recreate the user and device anew",
+        "def": false,
+        "type": "boolean",
+        "read": true,
+        "write": true
+      },
+      "native": {}
+    },
+    {
+      "_id": "app",
+      "type": "channel",
+      "common": {
+        "expert": true,
+        "name": "Certificates"
+      },
+      "native": {}
+    },
+    {
+      "_id": "app.message",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "Send message to app",
+        "desc": "Could be just message or JSON object {message: 'text', title: 'title', expire: 60, priority: 1}",
+        "type": "string",
+        "read": true,
+        "write": true
+      },
+      "native": {}
+    },
+    {
+      "_id": "app.title",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "Title of message",
+        "type": "string",
+        "read": true,
+        "write": true
+      },
+      "native": {}
+    },
+    {
+      "_id": "app.expire",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "Expire time in seconds",
+        "type": "number",
+        "unit": "seconds",
+        "read": true,
+        "max": 86400,
+        "min": 5,
+        "write": true
+      },
+      "native": {}
+    },
+    {
+      "_id": "app.priority",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "Expire time in seconds",
+        "type": "string",
+        "read": true,
+        "states": {
+          "0": "Normal",
+          "1": "High"
         },
-        {
-            "_id": "info.connection",
-            "type": "state",
-            "common": {
-                "role": "indicator.connected",
-                "name": "If connected to cloud",
-                "type": "boolean",
-                "read": true,
-                "write": false,
-                "def": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "info.ackTempPassword",
-            "type": "state",
-            "common": {
-                "role": "indicator",
-                "name": "If user have read about temp password for iot",
-                "type": "boolean",
-                "read": true,
-                "write": false,
-                "def": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "info.remoteTill",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "Time till pro access is available",
-                "type": "string",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "smart.lastFunction",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "Last controlled function",
-                "type": "string",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "smart.lastRoom",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "Last controlled room",
-                "type": "string",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "smart.lastCommand",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "Last command",
-                "type": "mixed",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "smart.lastCommandObj",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "Last command as object",
-                "type": "string",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "smart.lastResponse",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "Last textual response",
-                "type": "string",
-                "read": true,
-                "write": true
-            },
-            "native": {}
-        },
-        {
-            "_id": "smart.lastObjectID",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "Last accessed object id",
-                "type": "string",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "smart.updates",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "If updates of configuration is ready",
-                "type": "boolean",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "smart.updates3",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "If updates of V3 configuration is ready",
-                "type": "boolean",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "smart.updatesGH",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "If updates of google home configuration is ready",
-                "type": "boolean",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "smart.updatesYA",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "If updates of yandex alice configuration is ready",
-                "type": "boolean",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "smart.updatesResult",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "Result for last devices update",
-                "type": "string",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "services",
-            "type": "channel",
-            "common": {
-                "name": "Information"
-            },
-            "native": {}
-        },
-        {
-            "_id": "certs",
-            "type": "channel",
-            "common": {
-                "expert": true,
-                "name": "Certificates"
-            },
-            "native": {}
-        },
-        {
-            "_id": "certs.id",
-            "type": "state",
-            "common": {
-                "expert": true,
-                "role": "state",
-                "name": "Certificate ID",
-                "type": "string",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "certs.public",
-            "type": "state",
-            "common": {
-                "expert": true,
-                "role": "state",
-                "name": "Public key",
-                "type": "string",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "certs.private",
-            "type": "state",
-            "common": {
-                "expert": true,
-                "role": "state",
-                "name": "Private key",
-                "type": "string",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "certs.certificate",
-            "type": "state",
-            "common": {
-                "expert": true,
-                "role": "state",
-                "name": "Certificate",
-                "type": "string",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "certs.urlKey",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "URL Key",
-                "desc": "Used for access this instance via URL",
-                "type": "string",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id": "certs.forceUserCreate",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "Force user creation",
-                "desc": "Used to recreate the user and device anew",
-                "def": false,
-                "type": "boolean",
-                "read": true,
-                "write": true
-            },
-            "native": {}
-        },
-        {
-            "_id": "app",
-            "type": "channel",
-            "common": {
-                "expert": true,
-                "name": "Certificates"
-            },
-            "native": {}
-        },
-        {
-            "_id": "app.message",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "Send message to app",
-                "desc": "Could be just message or JSON object {message: 'text', title: 'title', expire: 60, priority: 1}",
-                "type": "string",
-                "read": true,
-                "write": true
-            },
-            "native": {}
-        },
-        {
-            "_id": "app.title",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "Title of message",
-                "type": "string",
-                "read": true,
-                "write": true
-            },
-            "native": {}
-        },
-        {
-            "_id": "app.expire",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "Expire time in seconds",
-                "type": "number",
-                "unit": "seconds",
-                "read": true,
-                "max": 86400,
-                "min": 5,
-                "write": true
-            },
-            "native": {}
-        },
-        {
-            "_id": "app.priority",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "Expire time in seconds",
-                "type": "string",
-                "read": true,
-                "states": {
-                    "0": "Normal",
-                    "1": "High"
-                },
-                "def": "normal",
-                "write": true
-            },
-            "native": {}
-        }
-    ]
+        "def": "normal",
+        "write": true
+      },
+      "native": {}
+    }
+  ]
 }

@@ -341,8 +341,7 @@ setState('iot.0.app.message', JSON.stringify({
 -->
 
 ## Changelog
-
-### **WORK IN PROGRESS**
+### 3.4.3 (2024-11-05)
 
 -   (@GermanBluefox) corrected the addition of the devices for Alexa
 -   (@GermanBluefox) changed compilation of GUI to remove deprecated packages
