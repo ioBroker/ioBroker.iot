@@ -143,6 +143,7 @@ class App extends GenericApp {
                     </Button>
                     <Button
                         variant="contained"
+                        className="skill-linking-ok"
                         onClick={() =>
                             this.socket
                                 .setState(`${this.adapterName}.${this.instance}.info.ackTempPassword`, {
@@ -204,6 +205,7 @@ class App extends GenericApp {
                                 />
                                 <Tab
                                     value="enums"
+                                    className="enums-tab"
                                     sx={{ '&.Mui-selected': styles.selected }}
                                     label={I18n.t('Smart enums')}
                                     data-name="enums"

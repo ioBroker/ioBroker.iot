@@ -9,7 +9,8 @@ describe('test-admin-gui', () => {
         this.timeout(240_000);
 
         // install js-controller, web and vis-2-beta
-        await engineHelper.startIoBrokerAdmin();
+        await engineHelper.startIoBrokerAdapters({ adapters: ['admin', 'iot'] });
+        await engineHelper
         const { page } = await guiHelper.startBrowser(`${adapterName}/index_m.html`, rootDir, process.env.CI === 'true');
         gPage = page;
     });
@@ -23,11 +24,28 @@ describe('test-admin-gui', () => {
         }, 1000));
     });
 
+    it('Select categories', async function (){
+        this.timeout(25_000);
+        await gPage.waitForSelector('.enums-tab', { timeout: 15_000 });
+        // ignore message
+        try {
+            await gPage.click('.skill-linking-ok');
+        } catch {
+            // ignore
+        }
+
+        await gPage.click('.enums-tab');
+        return new Promise(resolve => setTimeout(async () => {
+            await guiHelper.screenshot(rootDir, null, '02_enums');
+            resolve();
+        }, 15000));
+    });
+
     after(async function () {
         this.timeout(5000);
         await guiHelper.stopBrowser();
         console.log('BROWSER stopped');
-        await engineHelper.stopIoBrokerAdmin();
+        await engineHelper.stopIoBrokerAdapters();
         console.log('ioBroker stopped');
     });
 });
