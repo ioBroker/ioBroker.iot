@@ -10,7 +10,6 @@ describe('test-admin-gui', () => {
 
         // install js-controller, web and vis-2-beta
         await engineHelper.startIoBrokerAdapters({ adapters: ['admin', 'iot'] });
-        await engineHelper
         const { page } = await guiHelper.startBrowser(`${adapterName}/index_m.html`, rootDir, process.env.CI === 'true');
         gPage = page;
     });
