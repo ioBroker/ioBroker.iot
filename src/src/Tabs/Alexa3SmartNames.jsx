@@ -1365,7 +1365,7 @@ class Alexa3SmartNames extends Component {
                         onKeyDown={e => e.key === 'Enter' && this.changeSmartName(e)}
                         onChange={e => {
                             const edit = JSON.parse(JSON.stringify(this.state.edit));
-                            edit.type = e.target.value;
+                            edit.name = e.target.value;
                             this.setState({ edit });
                         }}
                         value={this.state.edit.name}
