@@ -1,24 +1,22 @@
 {
   "files": {
-    "main.js": "/static/js/main.0f332af6.js",
+    "main.js": "/static/js/main.70537e4a.js",
     "ActionVisu.js": "/customRuleBlocks.js",
     "static/js/node_modules_prop-types_index_js.998adfa4.chunk.js": "/static/js/node_modules_prop-types_index_js.998adfa4.chunk.js",
-    "static/js/node_modules_react_index_js-_ca78.8f48a455.chunk.js": "/static/js/node_modules_react_index_js-_ca78.8f48a455.chunk.js",
-    "static/js/node_modules_react_index_js-_7806.8d4a1244.chunk.js": "/static/js/node_modules_react_index_js-_7806.8d4a1244.chunk.js",
+    "static/js/node_modules_react-dom_index_js.b9c6f96c.chunk.js": "/static/js/node_modules_react-dom_index_js.b9c6f96c.chunk.js",
+    "static/js/node_modules_react_index_js.d0cc0ba3.chunk.js": "/static/js/node_modules_react_index_js.d0cc0ba3.chunk.js",
     "static/js/src_ActionVisu_jsx.e5871f1f.chunk.js": "/static/js/src_ActionVisu_jsx.e5871f1f.chunk.js",
-    "static/js/vendors-node_modules_react-dom_index_js.edf595e1.chunk.js": "/static/js/vendors-node_modules_react-dom_index_js.edf595e1.chunk.js",
-    "static/js/vendors-node_modules_iobroker_adapter-react-v5_build_index_js.a421399f.chunk.js": "/static/js/vendors-node_modules_iobroker_adapter-react-v5_build_index_js.a421399f.chunk.js",
+    "static/js/vendors-node_modules_iobroker_adapter-react-v5_build_index_js.892c0b30.chunk.js": "/static/js/vendors-node_modules_iobroker_adapter-react-v5_build_index_js.892c0b30.chunk.js",
     "index.html": "/index.html",
-    "main.0f332af6.js.map": "/static/js/main.0f332af6.js.map",
+    "main.70537e4a.js.map": "/static/js/main.70537e4a.js.map",
     "customRuleBlocks.js.map": "/customRuleBlocks.js.map",
     "node_modules_prop-types_index_js.998adfa4.chunk.js.map": "/static/js/node_modules_prop-types_index_js.998adfa4.chunk.js.map",
-    "node_modules_react_index_js-_ca78.8f48a455.chunk.js.map": "/static/js/node_modules_react_index_js-_ca78.8f48a455.chunk.js.map",
-    "node_modules_react_index_js-_7806.8d4a1244.chunk.js.map": "/static/js/node_modules_react_index_js-_7806.8d4a1244.chunk.js.map",
+    "node_modules_react-dom_index_js.b9c6f96c.chunk.js.map": "/static/js/node_modules_react-dom_index_js.b9c6f96c.chunk.js.map",
+    "node_modules_react_index_js.d0cc0ba3.chunk.js.map": "/static/js/node_modules_react_index_js.d0cc0ba3.chunk.js.map",
     "src_ActionVisu_jsx.e5871f1f.chunk.js.map": "/static/js/src_ActionVisu_jsx.e5871f1f.chunk.js.map",
-    "vendors-node_modules_react-dom_index_js.edf595e1.chunk.js.map": "/static/js/vendors-node_modules_react-dom_index_js.edf595e1.chunk.js.map",
-    "vendors-node_modules_iobroker_adapter-react-v5_build_index_js.a421399f.chunk.js.map": "/static/js/vendors-node_modules_iobroker_adapter-react-v5_build_index_js.a421399f.chunk.js.map"
+    "vendors-node_modules_iobroker_adapter-react-v5_build_index_js.892c0b30.chunk.js.map": "/static/js/vendors-node_modules_iobroker_adapter-react-v5_build_index_js.892c0b30.chunk.js.map"
   },
   "entrypoints": [
-    "static/js/main.0f332af6.js"
+    "static/js/main.70537e4a.js"
   ]
 }
