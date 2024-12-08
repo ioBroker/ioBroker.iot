@@ -341,7 +341,7 @@ setState('iot.0.app.message', JSON.stringify({
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 3.4.4 (2024-12-08)
 
 -   (@GermanBluefox) Corrected the name editing of the devices for Alexa 3
 

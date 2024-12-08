@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "3.4.3",
+    "version": "3.4.4",
     "news": {
+      "3.4.4": {
+        "en": "Corrected the name editing of the devices for Alexa 3",
+        "de": "Korrektur der Namensbearbeitung der Geräte für Alexa 3",
+        "ru": "Исправлено редактирование названия устройств для Alexa 3",
+        "pt": "Corrigido o nome de edição dos dispositivos para Alexa 3",
+        "nl": "De naambewerking van de apparaten voor Alexa 3 gecorrigeerd",
+        "fr": "Correction de l'édition du nom des appareils pour Alexa 3",
+        "it": "Corretto il nome di modifica dei dispositivi per Alexa 3",
+        "es": "Corregido el nombre de edición de los dispositivos para Alexa 3",
+        "pl": "Poprawił edycję nazwy urządzeń dla Alexa 3",
+        "uk": "Виправлено редагування назв пристроїв для Alexa 3",
+        "zh-cn": "校正了Alexa 3设备的名称编辑"
+      },
       "3.4.3": {
         "en": "corrected the addition of the devices for Alexa\nchanged compilation of GUI to remove deprecated packages",
         "de": "korrigierte die Ergänzung der Geräte für Alexa\ngeänderte Zusammenstellung von GUI, um deprecierte Pakete zu entfernen",
@@ -80,19 +93,6 @@
         "pl": "stałe wydanie, że tylko poprawny JSON może być wysłany do aplikacji przez stan wiadomości",
         "uk": "виправлено проблему, що тільки дійсний JSON може бути відправлений на додаток через стан повідомлень",
         "zh-cn": "只能通过消息状态发送到应用程序的 JSON 的固定问题"
-      },
-      "3.2.0": {
-        "en": "implemented geofence with ioBroker Visu app",
-        "de": "geofence with ioBroker Visu app",
-        "ru": "реализована геозона с приложением ioBroker Visu",
-        "pt": "geofence implementado com aplicativo ioBroker Visu",
-        "nl": "geïmplementeerd geofence met ioBroker Visu app",
-        "fr": "géofence mise en œuvre avec l'application ioBroker Visu",
-        "it": "geofence implementato con ioBroker Visu app",
-        "es": "geofence implementado con aplicación ioBroker Visu",
-        "pl": "zaimplementowany geofence z aplikacją ioBroker Visu",
-        "uk": "впроваджено геоfence з додатком ioBroker Visu",
-        "zh-cn": "使用 ioBroker Visu app 执行的地理栅栏"
       }
     },
     "titleLang": {
