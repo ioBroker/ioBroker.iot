@@ -688,7 +688,7 @@ async function readCertificates() {
         throw new Error('Not exists');
     }
 
-    if (!certificate || !certificate.val || !privateKey || !privateKey.val) {
+    if (!certificate?.val || !privateKey?.val) {
         throw new Error('Not exists');
     } else {
         return {
