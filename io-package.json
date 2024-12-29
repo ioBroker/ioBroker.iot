@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "3.4.4",
+    "version": "3.4.5",
     "news": {
+      "3.4.5": {
+        "en": "Checked the max length of discovered devices for Alexa",
+        "de": "Überprüfte die maximale Länge der entdeckten Geräte für Alexa",
+        "ru": "Проверка максимальной длины обнаруженных устройств для Alexa",
+        "pt": "Verificado o comprimento máximo de dispositivos descobertos para Alexa",
+        "nl": "De maximale lengte van ontdekte apparaten voor Alexa gecontroleerd",
+        "fr": "Vérification de la longueur maximale des appareils découverts pour Alexa",
+        "it": "Controllata la lunghezza massima di dispositivi scoperti per Alexa",
+        "es": "Compruebe la longitud máxima de los dispositivos descubiertos para Alexa",
+        "pl": "Sprawdziliśmy maksymalną długość odkrytych urządzeń dla Alexa",
+        "uk": "Перевірити максимальну довжину відкритих пристроїв для Alexa",
+        "zh-cn": "为 Alexa 检查了已发现设备的最大长度"
+      },
       "3.4.4": {
         "en": "Corrected the name editing of the devices for Alexa 3",
         "de": "Korrektur der Namensbearbeitung der Geräte für Alexa 3",
@@ -80,19 +93,6 @@
         "pl": "usunąć niektóre ostrzeżenia, które powinny być tylko logi debugowania",
         "uk": "видалення деяких попереджень, які повинні бути вилучені",
         "zh-cn": "删除一些只应该为调试日志的警告"
-      },
-      "3.2.1": {
-        "en": "fixed issue that only valid JSON could be sent to app via message state",
-        "de": "festes Problem, dass nur gültig JSON per Nachrichtenzustand an die App gesendet werden konnte",
-        "ru": "фиксированный вопрос, который может быть отправлен только действительным JSON через состояние сообщения",
-        "pt": "problema fixo que só JSON válido poderia ser enviado para aplicativo via estado de mensagem",
-        "nl": "vast probleem dat alleen geldige JSON via berichtstatus naar de app kan worden verzonden",
-        "fr": "problème corrigé que seul JSON valide pourrait être envoyé à l'application via l'état du message",
-        "it": "problema fisso che solo valido JSON potrebbe essere inviato all'app tramite lo stato del messaggio",
-        "es": "emisión fija que sólo válida JSON podría ser enviado a la aplicación a través del estado del mensaje",
-        "pl": "stałe wydanie, że tylko poprawny JSON może być wysłany do aplikacji przez stan wiadomości",
-        "uk": "виправлено проблему, що тільки дійсний JSON може бути відправлений на додаток через стан повідомлень",
-        "zh-cn": "只能通过消息状态发送到应用程序的 JSON 的固定问题"
       }
     },
     "titleLang": {

@@ -341,7 +341,7 @@ setState('iot.0.app.message', JSON.stringify({
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 3.4.5 (2024-12-29)
 
 -   (@GermanBluefox) Checked the max length of discovered devices for Alexa
 
