@@ -37,7 +37,7 @@
     "@iobroker/eslint-config": "^1.0.0",
     "@iobroker/legacy-testing": "^2.0.1",
     "@iobroker/types": "^7.0.6",
-    "@types/node": "^22.10.2",
+    "@types/node": "^22.10.3",
     "chai": "^4.5.0",
     "colorette": "^2.0.20",
     "mocha": "^11.0.1",
