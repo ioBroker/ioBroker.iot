@@ -11,7 +11,7 @@ const GoogleHome = require('./lib/googleHome');
 const YandexAlisa = require('./lib/alisa');
 const Remote = require('./lib/remote');
 const { handleGeofenceData, handleDevicesData, handleSendToAdapter, handleGetInstances } = require('./lib/visuApp.js');
-const {buildMessageFromNotification} = require("./lib/notifications");
+const { buildMessageFromNotification } = require('./lib/notifications');
 
 const packageJSON = JSON.parse(readFileSync(`${__dirname}/package.json`, 'utf8'));
 
@@ -315,17 +315,17 @@ function startAdapter(options) {
                         break;
                     case 'sendNotification':
                         try {
-                            const { message, title } = buildMessageFromNotification(obj.message)
-                            await sendMessageToApp({ message, title})
+                            const { message, title } = buildMessageFromNotification(obj.message);
+                            await sendMessageToApp({ message, title });
                             if (obj.callback) {
-                                adapter.sendTo(obj.from, 'sendNotification', {sent: true}, obj.callback);
+                                adapter.sendTo(obj.from, 'sendNotification', { sent: true }, obj.callback);
                             }
                         } catch {
                             if (obj.callback) {
                                 adapter.sendTo(obj.from, 'sendNotification', { sent: false }, obj.callback);
                             }
                         }
-                        break
+                        break;
                     default:
                         adapter.log.warn(`Unknown command: ${obj.command}`);
                         break;
