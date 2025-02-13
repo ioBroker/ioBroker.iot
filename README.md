@@ -341,6 +341,9 @@ setState('iot.0.app.message', JSON.stringify({
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+-   (@foxriver76) added notification manager support (notifications will be sent as push notifications to the Visu App)
+
 ### 3.4.5 (2024-12-29)
 
 -   (@GermanBluefox) Checked the max length of discovered devices for Alexa

@@ -142,6 +142,10 @@
     "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.iot/master/admin/iot.png",
     "type": "communication",
     "messagebox": true,
+    "supportedMessages": {
+      "custom": true,
+      "notifications": true
+    },
     "stopBeforeUpdate": true,
     "materialize": true,
     "logTransporter": true,
