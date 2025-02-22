@@ -24,9 +24,9 @@
   "dependencies": {
     "@iobroker/adapter-core": "^3.2.3",
     "aws-iot-device-sdk": "^2.2.15",
+    "axios": "^1.7.9",
     "iobroker.type-detector": "^3.0.5",
     "mime": "^3.0.0",
-    "axios": "^1.7.9",
     "uuid": "^11.0.5"
   },
   "devDependencies": {
