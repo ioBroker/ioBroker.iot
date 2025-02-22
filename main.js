@@ -28,11 +28,9 @@ let alexaCustom = null;
 let yandexAlisa = null;
 let remote = null;
 let device = null;
-let defaultHistory = null;
 let urlKey = '';
 
 let connected = false;
-let uuid = null;
 let secret;
 let adapter;
 let connectStarted;
@@ -316,7 +314,7 @@ function startAdapter(options) {
                     case 'sendNotification':
                         try {
                             const { message, title } = buildMessageFromNotification(obj.message);
-                            await sendMessageToApp({ message, title });
+                            await sendMessageToApp(JSON.stringify({ message, title }));
                             if (obj.callback) {
                                 adapter.sendTo(obj.from, 'sendNotification', { sent: true }, obj.callback);
                             }
@@ -445,8 +443,8 @@ async function sendMessageToApp(message) {
 
     json.ttlSeconds = parseInt(json.ttlSeconds, 0) || undefined;
 
-    if (json.ttlSeconds && json.ttlSeconds > 3600 * 48) {
-        json.ttlSeconds = 3600 * 48;
+    if (json.ttlSeconds && json.ttlSeconds > 3_600 * 48) {
+        json.ttlSeconds = 3_600 * 48;
     }
 
     if (!json.message) {
@@ -480,7 +478,9 @@ async function controlState(id, data) {
             if (!obj || !obj.common) {
                 throw new Error(`Unknown ID: ${data.id}`);
             } else {
-                if (typeof data.val === 'string') data.val = data.val.replace(/^@ifttt\s?/, '');
+                if (typeof data.val === 'string') {
+                    data.val = data.val.replace(/^@ifttt\s?/, '');
+                }
                 if (obj.common.type === 'boolean') {
                     data.val =
                         data.val === true ||
@@ -586,7 +586,7 @@ function onDisconnect(event) {
             adapter.log.error(
                 `Two devices are trying to connect with the same iot account. This is not allowed. Stopping`,
             );
-            adapter.getForeignObjectAsync('system.adapter.' + adapter.namespace).then(obj => {
+            adapter.getForeignObjectAsync(`system.adapter.${adapter.namespace}`).then(obj => {
                 obj.common.enabled = false;
                 return adapter.setForeignObjectAsync(obj._id, obj);
             });
@@ -759,10 +759,9 @@ async function fetchCertificates(login, pass, _forceUserCreation) {
             private: response.data.certificates.keyPair.PrivateKey,
             certificate: response.data.certificates.certificatePem,
         };
-    } else {
-        adapter.log.error(`Cannot fetch connection certificates: ${JSON.stringify(response.data)}`);
-        throw new Error(response.data);
     }
+    adapter.log.error(`Cannot fetch connection certificates: ${JSON.stringify(response.data)}`);
+    throw new Error(response.data);
 }
 
 function sendToAsync(instance, command, request) {
@@ -805,9 +804,8 @@ async function processMessage(type, request) {
                     return response;
                 })
                 .catch(err => adapter.log.error(`Error in processing of remote request: ${err.toString()}`));
-        } else {
-            adapter.log.error(`Received command, but remote already closed.`);
         }
+        adapter.log.error(`Received command, but remote already closed.`);
     } else if (type.startsWith('nightscout')) {
         if (adapter.config.nightscout) {
             let state = await adapter.getForeignStateAsync(
@@ -912,7 +910,6 @@ async function processMessage(type, request) {
             }
 
             try {
-                /** @type {{ command?: string; presence?: Record<string, boolean>, devices?: Record<string, any> }} */
                 const visuData = JSON.parse(request);
 
                 if (visuData.presence) {
@@ -964,10 +961,9 @@ async function processMessage(type, request) {
                         return { result: err };
                     }
                     return { result: 'Ok' };
-                } else {
-                    adapter.log.warn('Received service text2command, but instance is not defined');
-                    return { result: 'but instance is not defined' };
                 }
+                adapter.log.warn('Received service text2command, but instance is not defined');
+                return { result: 'but instance is not defined' };
             } else if (type.startsWith('simpleApi')) {
                 return { result: 'not implemented' };
             } else if (isCustom) {
