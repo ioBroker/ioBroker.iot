@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "3.4.5",
+    "version": "3.5.0",
     "news": {
+      "3.5.0": {
+        "en": "added notification manager support (notifications will be sent as push notifications to the Visu App)",
+        "de": "unterstützung von Benachrichtigungsmanagern (Anmerkungen werden als Push-Benachrichtigungen an die Visu App gesendet)",
+        "ru": "добавлена поддержка менеджера уведомлений (уведомления будут отправляться в виде push-уведомлений в приложение Visu)",
+        "pt": "suporte adicional do gerenciador de notificações (as notificações serão enviadas como notificações push para o Visu App)",
+        "nl": "toegevoegde notificatiemanager ondersteuning (meldingen worden verzonden als push notificaties naar de Visu App)",
+        "fr": "support du gestionnaire de notification ajouté (les notifications seront envoyées sous forme de notifications poussées à l'application Visu)",
+        "it": "supporto del gestore di notifiche aggiunto (le notifiche verranno inviate come notifiche push all'App Visu)",
+        "es": "apoyo añadido al administrador de notificaciones (las notificaciones se enviarán como notificaciones push a la aplicación Visu)",
+        "pl": "dodane wsparcie menedżera powiadomień (powiadomienia będą wysyłane jako powiadomienia do aplikacji Visu)",
+        "uk": "додана підтримка менеджера повідомлень (повідомлення буде відправлено як поштові повідомлення до додатку Visu)",
+        "zh-cn": "新增通知管理器支持( 通知将作为推送通知发送给 Visu App)"
+      },
       "3.4.5": {
         "en": "Checked the max length of discovered devices for Alexa",
         "de": "Überprüfte die maximale Länge der entdeckten Geräte für Alexa",
@@ -80,19 +93,6 @@
         "pl": "Popraw błąd przy ponownym połączeniu\nprzygotowany adapter do nowego jOBrokera Stan aplikacji Visu",
         "uk": "Виправлення помилки на відключенні\nготовий адаптер для нового ioBroker Вису застосунки",
         "zh-cn": "重新连接时修正错误\n为新 ioBroker 准备适配器 Visu 应用程序状态"
-      },
-      "3.2.2": {
-        "en": "remove some warnings which should only be debug log",
-        "de": "einige warnungen entfernen, die nur debug log sein sollten",
-        "ru": "удалить некоторые предупреждения, которые должны быть только отладочным журналом",
-        "pt": "remover alguns avisos que só devem ser debug log",
-        "nl": "sommige waarschuwingen verwijderen die alleen debuglog mogen zijn",
-        "fr": "supprimer quelques avertissements qui ne devraient être que debug log",
-        "it": "rimuovere alcuni avvisi che dovrebbero essere solo debug log",
-        "es": "eliminar algunas advertencias que sólo deben ser debug log",
-        "pl": "usunąć niektóre ostrzeżenia, które powinny być tylko logi debugowania",
-        "uk": "видалення деяких попереджень, які повинні бути вилучені",
-        "zh-cn": "删除一些只应该为调试日志的警告"
       }
     },
     "titleLang": {
