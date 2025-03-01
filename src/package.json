@@ -6,7 +6,7 @@
         "@emotion/styled": "^11.14.0",
         "@emotion/react": "^11.14.0",
         "@iobroker/adapter-react-v5": "^7.4.22",
-        "@mui/icons-material": "^6.3.0",
+        "@mui/icons-material": "^6.4.6",
         "@mui/material": "^6.3.0",
         "@sentry/browser": "^8.47.0",
         "@vitejs/plugin-react": "^4.3.4",
