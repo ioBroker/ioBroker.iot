@@ -27,7 +27,7 @@
     "axios": "^1.7.9",
     "iobroker.type-detector": "^3.0.5",
     "mime": "^3.0.0",
-    "uuid": "^11.0.5"
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@alcalzone/release-script": "^3.8.0",
