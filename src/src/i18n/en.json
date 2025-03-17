@@ -159,7 +159,7 @@
     "List of devices to print out, e.g. to give all device names to your partner.": "List of devices to print out, e.g. to give all device names to your partner.",
     "Name": "Name",
     "Function": "Function",
-    "Room": "",
+    "Room": "Room",
     "Copy to clipboard": "Copy to clipboard",
     "Toggle expert mode": "Toggle expert mode",
     "ID": "ID",
