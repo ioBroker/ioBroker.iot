@@ -41,7 +41,7 @@
     "chai": "^4.5.0",
     "colorette": "^2.0.20",
     "mocha": "^11.1.0",
-    "puppeteer": "^23.11.1"
+    "puppeteer": "^24.4.0"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.iot/issues"
