@@ -1,13 +1,39 @@
+import React from 'react';
 import { I18n } from '@iobroker/adapter-react-v5';
 
-const GenericBlock = window.GenericBlock;
+import {
+    type GenericBlockProps,
+    type IGenericBlock,
+    GenericBlock as WidgetGenericBlock,
+    type RuleBlockConfig,
+    type RuleBlockDescription,
+    type RuleContext,
+    type RuleTagCardTitle,
+} from '@iobroker/javascript-rules-dev';
 
-class ActionVisu extends GenericBlock {
-    constructor(props) {
+declare global {
+    interface Window {
+        GenericBlock: typeof IGenericBlock;
+    }
+}
+
+const GenericBlock = window.GenericBlock || WidgetGenericBlock;
+
+export interface ActionVisuRuleBlockConfig extends RuleBlockConfig {
+    message: string;
+    instance: string;
+    tagCard?: RuleTagCardTitle;
+    priority: boolean;
+    title: string;
+    expire: string;
+}
+
+export default class ActionVisu extends GenericBlock<ActionVisuRuleBlockConfig> {
+    constructor(props: GenericBlockProps<ActionVisuRuleBlockConfig>) {
         super(props, ActionVisu.getStaticData());
     }
 
-    static compile(config, context) {
+    static compile(config: ActionVisuRuleBlockConfig, context: RuleContext): string {
         let message = (config.message || '').replace(/"/g, '\\"');
         if (!message) {
             return `// no text defined
@@ -19,11 +45,11 @@ _sendToFrontEnd(${config._id}, {message: 'No message defined'});`;
 \t\tsetState("${config.instance}.app.message", JSON.stringify({message: subActionVar${config._id}, title: "${(config.title || '').replace(/"/g, '\\"')}", priority: ${config.priority ? '"high"': '"normal"'}, expire: ${parseInt((config.expire || '').toString().replace(/"/g, '\\"'), 10) || 3600}}));`;
     }
 
-    renderDebug(debugMessage) {
+    renderDebug(debugMessage: { data: { message: string } }): React.JSX.Element | string {
         return `${I18n.t('Sent:')} ${debugMessage.data.message}`;
     }
 
-    onTagChange(tagCard) {
+    onTagChange(tagCard: RuleTagCardTitle): void {
         this.setState({
             inputs: [
                 {
@@ -62,7 +88,7 @@ _sendToFrontEnd(${config._id}, {message: 'No message defined'});`;
         }, () => super.onTagChange(tagCard));
     }
 
-    static getStaticData() {
+    static getStaticData(): RuleBlockDescription {
         return {
             acceptedBy: 'actions',
             name: 'ioBroker.visu',
@@ -73,9 +99,7 @@ _sendToFrontEnd(${config._id}, {message: 'No message defined'});`;
         };
     }
 
-    getData() {
+    getData(): RuleBlockDescription {
         return ActionVisu.getStaticData();
     }
 }
-
-export default ActionVisu;

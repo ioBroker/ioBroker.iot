@@ -30,7 +30,14 @@ function copyRules() {
 }
 
 function clean() {
-    deleteFoldersRecursive(`${__dirname}/admin`, ['actions.js', 'alexalogo.png', 'blockly.js', 'iot.png', 'rules']);
+    deleteFoldersRecursive(`${__dirname}/admin`, [
+        'actions.js',
+        'alexalogo.png',
+        'blockly.js',
+        'iot.png',
+        'iot.svg',
+        'rules',
+    ]);
 }
 if (process.argv.find(arg => arg === '--rules-0-clean')) {
     cleanRules();

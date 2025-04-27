@@ -18,3 +18,4 @@ package-lock.json
 .dev-server
 .vscode
 /iobroker.iot-*.tgz
+.__mf__temp

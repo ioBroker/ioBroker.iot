@@ -128,7 +128,7 @@
     "mode": "daemon",
     "loglevel": "info",
     "readme": "https://github.com/ioBroker/ioBroker.iot/blob/master/README.md",
-    "icon": "iot.png",
+    "icon": "iot.svg",
     "connectionType": "cloud",
     "dataSource": "push",
     "tier": 3,
@@ -139,7 +139,7 @@
     ],
     "enabled": false,
     "compact": true,
-    "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.iot/master/admin/iot.png",
+    "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.iot/master/admin/iot.svg",
     "type": "communication",
     "messagebox": true,
     "supportedMessages": {

@@ -1,4 +1,4 @@
-![Logo](admin/iot.png)
+<img src="admin/iot.svg" style="width: 100px;"/>
 
 # ioBroker IoT Adapter
 
@@ -314,7 +314,7 @@ The following types are supported:
 From version 1.15.x you can send messages to `ioBroker.visu` application (Android and iOS).
 For that, you need to write the following states:
 
-```
+```js
 setState('iot.0.app.expire', 60); // optional. Time in seconds
 setState('iot.0.app.priority', 'normal'); // optional. Priority: 'high' or 'normal'
 setState('iot.0.app.title', 'ioBroker'); // optional. Default "ioBroker"
@@ -341,6 +341,10 @@ setState('iot.0.app.message', JSON.stringify({
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+
+-   (@GermanBluefox) Package updates. SVG logo
+
 ### 3.5.0 (2025-02-24)
 -   (@foxriver76) added notification manager support (notifications will be sent as push notifications to the Visu App)
 
