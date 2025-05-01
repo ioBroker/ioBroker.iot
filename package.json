@@ -37,7 +37,7 @@
     "@iobroker/eslint-config": "^2.0.1",
     "@iobroker/legacy-testing": "^2.0.2",
     "@iobroker/types": "^7.0.7",
-    "@types/node": "^22.15.2",
+    "@types/node": "^22.15.3",
     "colorette": "^2.0.20",
     "puppeteer": "^24.7.2"
   },
