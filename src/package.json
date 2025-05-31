@@ -1,6 +1,6 @@
 {
     "name": "iot-admin",
-    "version": "3.5.0",
+    "version": "3.5.1",
     "private": true,
     "dependencies": {
         "@emotion/styled": "^11.14.0",

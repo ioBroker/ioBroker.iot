@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "3.5.0",
+    "version": "3.5.1",
     "news": {
+      "3.5.1": {
+        "en": "Rewrite Rules with TypeScript\nPackage updates. SVG logo",
+        "de": "Regeln neu schreiben mit TypeScript\nPaket-Updates. SVG Logo",
+        "ru": "Переписать правила с помощью TypeScript\nОбновления пакетов. Логотип SVG",
+        "pt": "Reescrever regras com TypeScript\nAtualizações do pacote. Logotipo SVG",
+        "nl": "Regels herschrijven met TypeScript\nPakketupdates. SVG-logo",
+        "fr": "Réécrire les règles avec TypeScript\nMises à jour du paquet. Logo SVG",
+        "it": "Regole di riscrittura con TypeScript\nAggiornamenti del pacchetto. Logo SVG",
+        "es": "Reescribir reglas con TipoScript\nActualizaciones de paquetes. Logo SVG",
+        "pl": "Przepisz zasady za pomocą TypeScript\nAktualizacja pakietu. Logo SVG",
+        "uk": "Правила перезапису з TypeScript\nОновлення пакету. Логотип SVG",
+        "zh-cn": "用类型脚本重写规则\n软件包更新. SVG 标志"
+      },
       "3.5.0": {
         "en": "added notification manager support (notifications will be sent as push notifications to the Visu App)",
         "de": "unterstützung von Benachrichtigungsmanagern (Anmerkungen werden als Push-Benachrichtigungen an die Visu App gesendet)",
@@ -80,19 +93,6 @@
         "pl": "dodano nowe polecenia dla aplikacji visu\nzaktualizowane pakiety\nMigrated GUI for admin v7",
         "uk": "додано нові команди для додатка visu\nоновлені пакети\nМігрований графічний інтерфейс для адміністратора v7",
         "zh-cn": "为 visu app 添加新命令\n更新软件包\n管理 v7 的默认图形用户界面"
-      },
-      "3.3.0": {
-        "en": "Fix error on reconnect\nprepared adapter for new ioBroker Visu app states",
-        "de": "Fehler behoben bei reconnect\nvorbereiteter Adapter für neue ioBroker Visu app Staaten",
-        "ru": "Исправление ошибки при повторном подключении\nподготовленный адаптер для нового ioBroker Состояние приложения Visu",
-        "pt": "Corrigir erro na reconectação\nadaptador preparado para novo ioBroker Visu app estados",
-        "nl": "Fout herstellen bij opnieuw verbinden\nvoorbereide adapter voor nieuwe ioBroker Visu-app geeft aan",
-        "fr": "Correction de l'erreur lors du reconnect\nadaptateur préparé pour le nouveau ioBroker États de l'application Visu",
-        "it": "Risolvere l'errore sulla riconnette\nadattatore preparato per nuovo ioBroker Stati dell'app Visu",
-        "es": "Corregir error en la reconexión\nadaptador preparado para nuevo ioBroker Visu app states",
-        "pl": "Popraw błąd przy ponownym połączeniu\nprzygotowany adapter do nowego jOBrokera Stan aplikacji Visu",
-        "uk": "Виправлення помилки на відключенні\nготовий адаптер для нового ioBroker Вису застосунки",
-        "zh-cn": "重新连接时修正错误\n为新 ioBroker 准备适配器 Visu 应用程序状态"
       }
     },
     "titleLang": {
