@@ -1,6 +1,6 @@
 /*!
  * ioBroker tasks file for tasks like build, clean, etc.
- * Date: 2024-09-16
+ * Date: 2025-05-31
  */
 'use strict';
 
@@ -13,18 +13,9 @@ function cleanRules() {
 }
 
 function copyRules() {
-    copyFiles(['src-rules/build/*.js'], 'admin/rules');
-    copyFiles(['src-rules/build/*.map'], 'admin/rules');
-    copyFiles(['src-rules/build/asset-manifest.json'], 'admin/rules');
     copyFiles(
-        [
-            'src-rules/build/static/**/*',
-            '!src-rules/build/static/media/*.svg',
-            '!src-rules/build/static/media/*.txt',
-            '!src-rules/build/static/js/vendors*.js',
-            '!src-rules/build/static/js/vendors*.map',
-        ],
-        'admin/rules/static',
+        ['src-rules/build/**/*', '!src-rules/build/index.html', '!src-rules/build/mf-manifest.json'],
+        'admin/rules',
     );
     copyFiles(['src-rules/src/i18n/*.json'], 'admin/rules/i18n');
 }
@@ -44,13 +35,13 @@ if (process.argv.find(arg => arg === '--rules-0-clean')) {
 } else if (process.argv.find(arg => arg === '--rules-1-npm')) {
     npmInstall('./src-rules/').catch(error => console.error(error));
 } else if (process.argv.find(arg => arg === '--rules-2-compile')) {
-    buildReact(`${__dirname}/src-rules/`, { rootDir: __dirname, craco: true }).catch(error => console.error(error));
+    buildReact(`${__dirname}/src-rules/`, { rootDir: __dirname, vite: true }).catch(error => console.error(error));
 } else if (process.argv.find(arg => arg === '--rules-3-copy')) {
     copyRules();
 } else if (process.argv.find(arg => arg === '--rules-build')) {
     cleanRules();
     npmInstall('./src-rules/')
-        .then(() => buildReact(`${__dirname}/src-rules/`, { rootDir: __dirname, craco: true }))
+        .then(() => buildReact(`${__dirname}/src-rules/`, { rootDir: __dirname, vite: true }))
         .then(() => copyRules())
         .catch(error => console.error(error));
 } else if (process.argv.find(arg => arg === '--0-clean')) {
@@ -110,6 +101,6 @@ if (process.argv.find(arg => arg === '--rules-0-clean')) {
         })
         .then(() => cleanRules())
         .then(() => npmInstall('./src-rules/'))
-        .then(() => buildReact(`${__dirname}/src-rules/`, { rootDir: __dirname, craco: true }))
+        .then(() => buildReact(`${__dirname}/src-rules/`, { rootDir: __dirname, vite: true }))
         .then(() => copyRules());
 }

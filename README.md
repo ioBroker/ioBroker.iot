@@ -342,7 +342,7 @@ setState('iot.0.app.message', JSON.stringify({
 
 ## Changelog
 ### **WORK IN PROGRESS**
-
+-   (@GermanBluefox) Rewrite Rules with TypeScript
 -   (@GermanBluefox) Package updates. SVG logo
 
 ### 3.5.0 (2025-02-24)

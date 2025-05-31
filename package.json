@@ -34,12 +34,12 @@
     "@alcalzone/release-script-plugin-iobroker": "^3.7.2",
     "@alcalzone/release-script-plugin-license": "^3.7.0",
     "@iobroker/build-tools": "^2.0.15",
-    "@iobroker/eslint-config": "^2.0.1",
+    "@iobroker/eslint-config": "^2.0.2",
     "@iobroker/legacy-testing": "^2.0.2",
     "@iobroker/types": "^7.0.7",
-    "@types/node": "^22.15.2",
+    "@types/node": "^22.15.29",
     "colorette": "^2.0.20",
-    "puppeteer": "^24.7.2"
+    "puppeteer": "^24.9.0"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.iot/issues"

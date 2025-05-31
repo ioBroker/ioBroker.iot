@@ -174,7 +174,11 @@
     "javascriptRules": {
       "i18n": true,
       "url": "rules/customRuleBlocks.js",
-      "name": "ActionVisu"
+      "name": "ActionVisu",
+      "type": "module"
+    },
+    "ifInstalledDependencies": {
+      "javascript": ">=8.9.2"
     },
     "licenseInformation": {
       "type": "free",
