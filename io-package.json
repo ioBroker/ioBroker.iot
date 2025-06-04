@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "3.5.1",
+    "version": "3.5.2",
     "news": {
+      "3.5.2": {
+        "en": "Corrected error in back-end",
+        "de": "Fehler im Back-End behoben",
+        "ru": "Исправленная ошибка в back-end",
+        "pt": "Erro corrigido no back-end",
+        "nl": "Fout in back-end gecorrigeerd",
+        "fr": "Erreur corrigée dans le back-end",
+        "it": "Errore corretto in back-end",
+        "es": "Error corregido en back-end",
+        "pl": "Poprawiony błąd w back- endzie",
+        "uk": "Виправлена помилка в спині",
+        "zh-cn": "后端更正错误"
+      },
       "3.5.1": {
         "en": "Rewrite Rules with TypeScript\nPackage updates. SVG logo",
         "de": "Regeln neu schreiben mit TypeScript\nPaket-Updates. SVG Logo",
@@ -80,19 +93,6 @@
         "pl": "Aktualizacja pakietów GUI i usunięcie 'gulp'\nnie nadpisywać atrybutu 'result' w odpowiedzi 'sendToAdapter' (aplikacja Visu - dotyczy tylko deweloperów)",
         "uk": "Оновлено пакети GUI та видалено `gulp`\nне перевизначте користувацький атрибут `result` на відповідь `sendToAdapter` (Visu App - тільки відповідний розробникам)",
         "zh-cn": "更新了 GUI 软件包并删除了“ gulp ”\n不在“ sendToAdapter” 响应上覆盖自定义的“ 结果”属性( Visu App - 仅与开发者相关)"
-      },
-      "3.4.0": {
-        "en": "added new commands for the visu app\nupdated packages\nMigrated GUI for admin v7",
-        "de": "neue befehle für die visu app hinzugefügt\naktualisierte pakete\nMigrated GUI für admin v7",
-        "ru": "добавлены новые команды для приложения visu\nобновления пакетов\nMigrated GUI for admin v7",
-        "pt": "adicionou novos comandos para o aplicativo visu\npacotes atualizados\nGUI migrado para admin v7",
-        "nl": "nieuwe commando's voor de visu-app toegevoegd\nbijgewerkte pakketten\nGUI migreren voor admin v7",
-        "fr": "ajout de nouvelles commandes pour l'application visu\npaquets mis à jour\nGUI modifié pour admin v7",
-        "it": "aggiunto nuovi comandi per l'app visu\npacchetti aggiornati\nGUI migrata per admin v7",
-        "es": "añadido nuevos comandos para la aplicación visu\npaquetes actualizados\nGUI migrado para admin v7",
-        "pl": "dodano nowe polecenia dla aplikacji visu\nzaktualizowane pakiety\nMigrated GUI for admin v7",
-        "uk": "додано нові команди для додатка visu\nоновлені пакети\nМігрований графічний інтерфейс для адміністратора v7",
-        "zh-cn": "为 visu app 添加新命令\n更新软件包\n管理 v7 的默认图形用户界面"
       }
     },
     "titleLang": {

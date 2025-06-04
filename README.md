@@ -341,7 +341,7 @@ setState('iot.0.app.message', JSON.stringify({
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 3.5.2 (2025-06-04)
 -   (@GermanBluefox) Corrected error in back-end
 
 ### 3.5.1 (2025-05-31)
