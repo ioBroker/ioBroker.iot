@@ -320,13 +320,20 @@ setState('iot.0.app.priority', 'normal'); // optional. Priority: 'high' or 'norm
 setState('iot.0.app.title', 'ioBroker'); // optional. Default "ioBroker"
 setState('iot.0.app.message', 'Message text'); // important, that ack=false (default)
 
-// or just one state
+// or just one state (this also allows to use payload -> `actions` and `link` property)
 // only is message is mandatory. All other are optional
 setState('iot.0.app.message', JSON.stringify({
   message: 'Message text',
   title: 'ioBroker',
   expire: 60,
-  priority: 'normal'
+  priority: 'normal', 
+  payload: {
+      openUrl: 'https://www.iobroker.net', // opens a link when clicking on the notification
+      actions: [ // actions to respond to the notification - require Visu App 1.4.0
+          { buttonTitle: 'Yes', identifier: 'home:yes' }, // The app will display the button title and on clicking the identifier will be set to the state `iot.0.app.devices.<deviceName>.actionResponse`
+          { buttonTitle: 'No', identifier: 'home:no' }
+      ]
+  }
 })); // important, that ack=false (default)
 ```
 

@@ -77,9 +77,13 @@ function startAdapter(options) {
 
             id && remote && remote.updateObject(id, obj);
         },
-        stateChange: (id, state) => {
+        stateChange: async (id, state) => {
             if (id === `${adapter.namespace}.app.message` && state && !state.ack) {
-                sendMessageToApp(state.val).catch(e => adapter.log.error(`Cannot send message to app: ${e}`));
+                try {
+                    await sendMessageToApp(state.val);
+                } catch (e) {
+                    adapter.log.error(`Cannot send message to app: ${e}`);
+                }
             }
 
             state && adapter.config.googleHome && googleHome && googleHome.updateState(id, state);
@@ -401,6 +405,12 @@ function sendDataToIFTTT(obj) {
     }
 }
 
+/**
+ * Send a message to the ioBroker Visu App by using the app-message endpoint (which then forwards it to the app via FCM)
+ *
+ * @param message either a json string or the message itself, if the message itself the other props will be taken from the adapter states
+ * @returns {Promise<void>}
+ */
 async function sendMessageToApp(message) {
     if (!message) {
         throw new Error('Empty message');
@@ -409,7 +419,7 @@ async function sendMessageToApp(message) {
     if (json.startsWith('{') && json.endsWith('}')) {
         try {
             json = JSON.parse(json);
-        } catch (e) {
+        } catch {
             adapter.log.warn(`Cannot parse message: ${json}`);
             json = null;
         }
@@ -456,7 +466,7 @@ async function sendMessageToApp(message) {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${Buffer.from(`${adapter.config.login}:${adapter.config.pass}`).toString('base64')}`,
         },
-        timeout: 5000,
+        timeout: 5_000,
         validateStatus: status => status < 400,
     });
     await adapter.setState('app.message', message, true);
