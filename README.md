@@ -311,7 +311,7 @@ The following types are supported:
 
 ## Send messages to app
 
-From version 1.15.x you can send messages to `ioBroker.visu` application (Android and iOS).
+From version 1.15.x you can send messages to `ioBroker Visu` application ([Android](https://play.google.com/store/apps/details?id=com.iobroker.visu) and [iOS](https://apps.apple.com/de/app/iobroker-visu/id1673095774)).
 For that, you need to write the following states:
 
 ```js
@@ -329,7 +329,7 @@ setState('iot.0.app.message', JSON.stringify({
   priority: 'normal', 
   payload: {
       openUrl: 'https://www.iobroker.net', // opens a link when clicking on the notification
-      actions: [ // actions to respond to the notification - require Visu App 1.4.0
+      actions: [ // actions to respond to the notification - requires Visu App 1.4.0
           { buttonTitle: 'Yes', identifier: 'home:yes' }, // The app will display the button title and on clicking the identifier will be set to the state `iot.0.app.devices.<deviceName>.actionResponse`
           { buttonTitle: 'No', identifier: 'home:no' }
       ]
