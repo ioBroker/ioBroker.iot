@@ -328,6 +328,7 @@ setState('iot.0.app.message', JSON.stringify({
   expire: 60,
   priority: 'normal', 
   payload: {
+      devices: ['iPhone von Maelle', 'iPhone von Max'], // devices to send the message to, if not given send to all - requires Visu App 1.4.0
       openUrl: 'https://www.iobroker.net', // opens a link when clicking on the notification
       actions: [ // actions to respond to the notification - requires Visu App 1.4.0
           { buttonTitle: 'Yes', identifier: 'home:yes' }, // The app will display the button title and on clicking the identifier will be set to the state `iot.0.app.devices.<deviceName>.actionResponse`
