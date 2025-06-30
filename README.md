@@ -320,7 +320,7 @@ setState('iot.0.app.priority', 'normal'); // optional. Priority: 'high' or 'norm
 setState('iot.0.app.title', 'ioBroker'); // optional. Default "ioBroker"
 setState('iot.0.app.message', 'Message text'); // important, that ack=false (default)
 
-// or just one state (this also allows to use payload -> `actions` and `link` property)
+// or just one state (this also allows to use payload -> `actions`, `devices` and `link` property)
 // only message is mandatory. All other are optional
 setState('iot.0.app.message', JSON.stringify({
   message: 'Message text',
