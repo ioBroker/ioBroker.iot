@@ -321,7 +321,7 @@ setState('iot.0.app.title', 'ioBroker'); // optional. Default "ioBroker"
 setState('iot.0.app.message', 'Message text'); // important, that ack=false (default)
 
 // or just one state (this also allows to use payload -> `actions` and `link` property)
-// only is message is mandatory. All other are optional
+// only message is mandatory. All other are optional
 setState('iot.0.app.message', JSON.stringify({
   message: 'Message text',
   title: 'ioBroker',
