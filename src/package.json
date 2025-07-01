@@ -3,7 +3,7 @@
     "version": "3.5.2",
     "private": true,
     "dependencies": {
-        "@emotion/styled": "^11.14.0",
+        "@emotion/styled": "^11.14.1",
         "@emotion/react": "^11.14.0",
         "@iobroker/adapter-react-v5": "^7.6.18",
         "@mui/icons-material": "^6.4.11",
