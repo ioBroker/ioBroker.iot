@@ -322,18 +322,20 @@ setState('iot.0.app.message', 'Message text'); // important, that ack=false (def
 
 // or just one state (this also allows to use payload -> `actions`, `devices` and `link` property)
 // only message is mandatory. All other are optional
+// Note that, if you are using `actions`or `devices`, the app needs to handle the notification in the background before showing it
+// in some scenarios, e.g. low power or spamming to many notifications the OS may decide to not show the notification at all
 setState('iot.0.app.message', JSON.stringify({
   message: 'Message text',
   title: 'ioBroker',
   expire: 60,
   priority: 'normal', 
   payload: {
-      devices: ['iPhone von Maelle', 'iPhone von Max'], // devices to send the message to, if not given send to all - requires Visu App 1.4.0
+      devices: JSON.stringify(['iPhone von Maelle', 'iPhone von Max']), // devices to send the message to, if not given send to all - requires Visu App 1.4.0
       openUrl: 'https://www.iobroker.net', // opens a link when clicking on the notification
-      actions: [ // actions to respond to the notification - requires Visu App 1.4.0
+      actions: JSON.stringify([ // actions to respond to the notification - requires Visu App 1.4.0
           { buttonTitle: 'Yes', identifier: 'home:yes' }, // The app will display the button title and on clicking the identifier will be set to the state `iot.0.app.devices.<deviceName>.actionResponse`
           { buttonTitle: 'No', identifier: 'home:no' }
-      ]
+      ])
   }
 })); // important, that ack=false (default)
 ```
