@@ -349,11 +349,9 @@ setState('iot.0.app.message', JSON.stringify({
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-
-### **WORK IN PROGRESS**
+### 3.6.0 (2025-07-02)
 -   (@foxriver76) new features for upcoming Visu App 1.4.0
 
-## Changelog
 ### 3.5.2 (2025-06-04)
 -   (@GermanBluefox) Corrected error in back-end
 

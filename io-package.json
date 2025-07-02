@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "3.5.2",
+    "version": "3.6.0",
     "news": {
+      "3.6.0": {
+        "en": "new features for upcoming Visu App 1.4.0",
+        "de": "neue Features für die kommende Visu App 1.4.0",
+        "ru": "новые возможности для Visu App 1.4.0",
+        "pt": "novas funcionalidades para a próxima aplicação Visu 1.4.0",
+        "nl": "nieuwe functies voor Visu App 1.4.0",
+        "fr": "nouvelles fonctionnalités pour Visu App à venir 1.4.0",
+        "it": "nuove funzionalità per il prossimo Visu App 1.4.0",
+        "es": "nuevas características para la próxima aplicación Visu 1.4.0",
+        "pl": "nowe funkcje dla nadchodzącej aplikacji Visu 1.4.0",
+        "uk": "нові можливості для майбутнього додатка Visu 1.4.0",
+        "zh-cn": "即将到来的 Visu App 1.4.0 的新功能"
+      },
       "3.5.2": {
         "en": "Corrected error in back-end",
         "de": "Fehler im Back-End behoben",
@@ -80,19 +93,6 @@
         "pl": "poprawiła dodanie urządzeń dla Alexa\nzmiana kompilacji GUI w celu usunięcia zdeprecjonowanych pakietów",
         "uk": "виправлено додавання пристроїв для Alexa\nзмінена компіляція GUI для видалення депресованих пакетів",
         "zh-cn": "修正了为Alexa添加的设备\n更改 GUI 的编译以删除已贬值的软件包"
-      },
-      "3.4.2": {
-        "en": "Updated GUI packages and removed `gulp`\ndo not override custom `result` attribute on `sendToAdapter` response (Visu App - only relevant for developers)",
-        "de": "Aktualisierte GUI-Pakete und entfernt `gulp`\nnicht überschreiben benutzerdefinierte `result` Attribut auf `sendToAdapter` Antwort (Visu App - nur für Entwickler relevant)",
-        "ru": "Обновленные пакеты GUI и удаленные `gulp'\nне переопределять пользовательский атрибут `result' на ответе `sendToAdapter' (Visu App - только соответствующий для разработчиков)",
-        "pt": "Pacotes de GUI atualizados e removidos `gulp`\nnão substituir o atributo `result` personalizado na resposta `sendToAdapter` (Visu App - apenas relevante para desenvolvedores)",
-        "nl": "Bijgewerkt GUI-pakketten en verwijderde GUI-pakketten\ngeen attribuut overschrijven op aangepaste ",
-        "fr": "Mise à jour des paquets GUI et suppression de 'gulp'\nne pas surcharger l'attribut `result` personnalisé sur la réponse `sendToAdapter` (Visu App - uniquement pertinent pour les développeurs)",
-        "it": "Pacchetti GUI aggiornati e rimossi `gulp`\nnon sovrascrivere l'attributo `risultato` personalizzato sulla risposta `sendToAdapter` (Visu App - solo pertinente per gli sviluppatori)",
-        "es": "Paquetes GUI actualizados y eliminados\nno invalidar el atributo personalizado `result` en la respuesta `sendToAdapter` (Visu App - sólo relevante para desarrolladores)",
-        "pl": "Aktualizacja pakietów GUI i usunięcie 'gulp'\nnie nadpisywać atrybutu 'result' w odpowiedzi 'sendToAdapter' (aplikacja Visu - dotyczy tylko deweloperów)",
-        "uk": "Оновлено пакети GUI та видалено `gulp`\nне перевизначте користувацький атрибут `result` на відповідь `sendToAdapter` (Visu App - тільки відповідний розробникам)",
-        "zh-cn": "更新了 GUI 软件包并删除了“ gulp ”\n不在“ sendToAdapter” 响应上覆盖自定义的“ 结果”属性( Visu App - 仅与开发者相关)"
       }
     },
     "titleLang": {
