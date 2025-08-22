@@ -10,7 +10,7 @@ const AlexaCustom = require('./lib/alexaCustom');
 const GoogleHome = require('./lib/googleHome');
 const YandexAlisa = require('./lib/alisa');
 const Remote = require('./lib/remote');
-const { handleGeofenceData, handleDevicesData, handleSendToAdapter, handleGetInstances } = require('./lib/visuApp.js');
+const { handleGeofenceData, handleDevicesData, handleSendToAdapter, handleGetInstances } = require('./lib/visuApp.ts');
 const { buildMessageFromNotification } = require('./lib/notifications');
 
 const packageJSON = JSON.parse(readFileSync(`${__dirname}/package.json`, 'utf8'));
@@ -54,12 +54,12 @@ function startAdapter(options) {
                 }
                 defaultHistory = obj.common.defaultHistory;
 
-                alexaSH2 && alexaSH2.setLanguage(lang);
-                alexaSH3 && alexaSH3.setLanguage(lang);
-                yandexAlisa && yandexAlisa.setLanguage(lang);
-                alexaCustom && alexaCustom.setLanguage(lang);
-                googleHome && googleHome.setLanguage(lang);
-                remote && remote.setLanguage(lang);
+                alexaSH2?.setLanguage(lang);
+                alexaSH3?.setLanguage(lang);
+                yandexAlisa?.setLanguage(lang);
+                alexaCustom?.setLanguage(lang);
+                googleHome?.setLanguage(lang);
+                remote?.setLanguage(lang);
             }
             // if it is an instance
             if (id.startsWith('system.adapter.')) {
@@ -73,9 +73,9 @@ function startAdapter(options) {
 
                 return;
             }
-            alexaSH3 && alexaSH3.handleObjectChange(id, obj);
+            alexaSH3?.handleObjectChange(id, obj);
 
-            id && remote && remote.updateObject(id, obj);
+            id && remote?.updateObject(id, obj);
         },
         stateChange: async (id, state) => {
             if (id === `${adapter.namespace}.app.message` && state && !state.ack) {
@@ -110,7 +110,9 @@ function startAdapter(options) {
                     remote = null;
                 }
 
-                alexaSH3 && (await alexaSH3.destroy());
+                if (alexaSH3) {
+                    await alexaSH3.destroy();
+                }
             } catch (e) {
                 // ignore
             }
@@ -839,16 +841,20 @@ async function processMessage(type, request) {
 
         adapter.log.debug(`${Date.now()} ALEXA: ${JSON.stringify(request)}`);
 
-        if (request && request.directive) {
+        if (request?.directive) {
             if (alexaSH3) {
-                return await alexaSH3.process(request);
+                try {
+                    return await alexaSH3.process(request);
+                } catch (e) {
+                    adapter.log.error(`Cannot parse request: ${request}`);
+                }
             }
             return { error: 'Service is disabled' };
-        } else if (request && request.error) {
+        } else if (request?.error) {
             // answer from alexa3 events cloud actually just show it in log
             if (request.error.includes('You have no iobroker.iot license')) {
                 // pause for 30 minutes send of the events
-                alexaSH3 && alexaSH3.pauseEvents();
+                alexaSH3?.pauseEvents();
             }
             adapter.log.error(`Error from Alexa events cloud: ${request.error}`);
         } else if (request && !request.header) {

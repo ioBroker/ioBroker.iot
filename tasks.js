@@ -47,16 +47,16 @@ if (process.argv.find(arg => arg === '--rules-0-clean')) {
 } else if (process.argv.find(arg => arg === '--0-clean')) {
     clean();
 } else if (process.argv.find(arg => arg === '--1-npm')) {
-    if (!existsSync(`${__dirname}/src/node_modules`)) {
-        npmInstall('./src/').catch(error => console.error(error));
+    if (!existsSync(`${__dirname}/src-admin/node_modules`)) {
+        npmInstall('./src-admin/').catch(error => console.error(error));
     }
 } else if (process.argv.find(arg => arg === '--2-build')) {
-    buildReact(`${__dirname}/src/`, { rootDir: __dirname, vite: true }).catch(error => console.error(error));
+    buildReact(`${__dirname}/src-admin/`, { rootDir: __dirname, vite: true }).catch(error => console.error(error));
 } else if (process.argv.find(arg => arg === '--3-copy')) {
-    copyFiles(['src/build/*/**', 'src/build/*'], 'admin/');
+    copyFiles(['src-admin/build/*/**', 'src-admin/build/*'], 'admin/');
 } else if (process.argv.find(arg => arg === '--4-patch')) {
     patchHtmlFile(`${__dirname}/admin/index.html`).then(() =>
-        patchHtmlFile(`${__dirname}/src/build/index.html`)
+        patchHtmlFile(`${__dirname}/src-admin/build/index.html`)
             .then(() => {
                 if (existsSync(`${__dirname}/admin/index.html`)) {
                     renameSync(`${__dirname}/admin/index.html`, `${__dirname}/admin/index_m.html`);
@@ -67,14 +67,14 @@ if (process.argv.find(arg => arg === '--rules-0-clean')) {
 } else if (process.argv.find(arg => arg === '--build-admin')) {
     clean();
     let npmPromise;
-    if (!existsSync(`${__dirname}/src/node_modules`)) {
-        npmPromise = npmInstall('./src/').catch(error => console.error(error));
+    if (!existsSync(`${__dirname}/src-admin/node_modules`)) {
+        npmPromise = npmInstall('./src-admin/').catch(error => console.error(error));
     } else {
         npmPromise = Promise.resolve();
     }
     npmPromise
-        .then(() => buildReact(`${__dirname}/src/`, { rootDir: __dirname, vite: true }))
-        .then(() => copyFiles(['src/build/*/**', 'src/build/*'], 'admin/'))
+        .then(() => buildReact(`${__dirname}/src-admin/`, { rootDir: __dirname, vite: true }))
+        .then(() => copyFiles(['src-admin/build/*/**', 'src/build/*'], 'admin/'))
         .then(() => patchHtmlFile(`${__dirname}/admin/index.html`))
         .then(() => {
             if (existsSync(`${__dirname}/admin/index.html`)) {
@@ -85,14 +85,14 @@ if (process.argv.find(arg => arg === '--rules-0-clean')) {
 } else {
     clean();
     let installPromise;
-    if (!existsSync(`${__dirname}/src/node_modules`)) {
-        installPromise = npmInstall('./src/').catch(error => console.error(error));
+    if (!existsSync(`${__dirname}/src-admin/node_modules`)) {
+        installPromise = npmInstall('./src-admin/').catch(error => console.error(error));
     } else {
         installPromise = Promise.resolve();
     }
     installPromise
-        .then(() => buildReact(`${__dirname}/src/`, { rootDir: __dirname, vite: true }))
-        .then(() => copyFiles(['src/build/*/**', 'src/build/*'], 'admin/'))
+        .then(() => buildReact(`${__dirname}/src-admin/`, { rootDir: __dirname, vite: true }))
+        .then(() => copyFiles(['src-admin/build/*/**', 'src-admin/build/*'], 'admin/'))
         .then(() => patchHtmlFile(`${__dirname}/admin/index.html`))
         .then(() => {
             if (existsSync(`${__dirname}/admin/index.html`)) {
