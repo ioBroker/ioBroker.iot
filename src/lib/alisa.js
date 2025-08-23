@@ -1,11 +1,10 @@
-const { Types, ChannelDetector } = require('iobroker.type-detector');
+const ChannelDetector = require('@iobroker/type-detector');
 const axios = require('axios');
 const uuid = require('uuid').v1;
 
-const textsT = require('./texts');
-const roomsT = require('./rooms');
-const funcsT = require('./functions');
-const version = require('../package.json').version;
+const textsT = require('./texts').default;
+const roomsT = require('./rooms').default;
+const funcsT = require('./functions').default;
 
 // Description
 // ??
@@ -47,24 +46,24 @@ class YandexAliceConverter {
         this.lang = 'ru';
 
         this.types = {
-            [Types.socket]: this._processSocket.bind(this),
-            [Types.light]: this._processLight.bind(this),
-            [Types.dimmer]: this._processDimmer.bind(this),
-            [Types.ct]: this._processCT.bind(this),
-            [Types.rgbSingle]: this._processRGB.bind(this),
-            [Types.airCondition]: this._processAC.bind(this),
-            [Types.thermostat]: this._processAC.bind(this),
-            [Types.blind]: this._processBlinds.bind(this),
-            [Types.lock]: this._processLock.bind(this),
-            [Types.vacuumCleaner]: this._processVacuumCleaner.bind(this),
-            [Types.gate]: this._processLock.bind(this),
+            [ChannelDetector.Types.socket]: this._processSocket.bind(this),
+            [ChannelDetector.Types.light]: this._processLight.bind(this),
+            [ChannelDetector.Types.dimmer]: this._processDimmer.bind(this),
+            [ChannelDetector.Types.ct]: this._processCT.bind(this),
+            [ChannelDetector.Types.rgbSingle]: this._processRGB.bind(this),
+            [ChannelDetector.Types.airCondition]: this._processAC.bind(this),
+            [ChannelDetector.Types.thermostat]: this._processAC.bind(this),
+            [ChannelDetector.Types.blind]: this._processBlinds.bind(this),
+            [ChannelDetector.Types.lock]: this._processLock.bind(this),
+            [ChannelDetector.Types.vacuumCleaner]: this._processVacuumCleaner.bind(this),
+            [ChannelDetector.Types.gate]: this._processLock.bind(this),
             // sensors
-            [Types.motion]: this._processMotion.bind(this),
-            [Types.door]: this._processContact.bind(this),
-            [Types.window]: this._processContact.bind(this),
-            [Types.temperature]: this._processTemperature.bind(this),
-            [Types.humidity]: this._processHumidity.bind(this),
-            [Types.buttonSensor]: this._processButtonSensor.bind(this),
+            [ChannelDetector.Types.motion]: this._processMotion.bind(this),
+            [ChannelDetector.Types.door]: this._processContact.bind(this),
+            [ChannelDetector.Types.window]: this._processContact.bind(this),
+            [ChannelDetector.Types.temperature]: this._processTemperature.bind(this),
+            [ChannelDetector.Types.humidity]: this._processHumidity.bind(this),
+            [ChannelDetector.Types.buttonSensor]: this._processButtonSensor.bind(this),
         };
         this._entities = [];
         this._entity2ID = {};
@@ -77,12 +76,11 @@ class YandexAliceConverter {
 
     _getSmartName(obj) {
         if (!this.adapter.config.noCommon) {
-            return obj && obj.common ? obj.common.smartName || '' : '';
-        } else {
-            return (obj && obj.common && obj.common.custom && obj.common.custom[this.adapter.namespace]) || ''
-                ? obj.common.custom[this.adapter.namespace].smartName
-                : '';
+            return obj?.common ? obj.common.smartName || '' : '';
         }
+        return obj?.common?.custom?.[this.adapter.namespace] || ''
+            ? obj.common.custom[this.adapter.namespace].smartName
+            : '';
     }
 
     _getObjectName(obj, _lang) {
@@ -91,22 +89,21 @@ class YandexAliceConverter {
         let result = this._getSmartName(obj);
 
         if (!result || (typeof result !== 'object' && typeof result !== 'string')) {
-            result = obj && obj.common ? obj.common.name : null;
-            result = result || obj._id;
+            result = obj?.common ? obj.common.name : null;
+            result ||= obj._id;
         }
 
         if (typeof result === 'object') {
             if (result[_lang] || result.en) {
                 return result[_lang] || result.en;
-            } else {
-                // take first not empty value
-                const lang = Object.keys(result).find(lang => result[lang]);
-                if (result[lang]) {
-                    return result[lang];
-                } else {
-                    return obj._id;
-                }
             }
+            // take first not empty value
+            const lang = Object.keys(result).find(lang => result[lang]);
+            if (result[lang]) {
+                return result[lang];
+            }
+
+            return obj._id;
         }
 
         return result || '';
@@ -617,7 +614,7 @@ class YandexAliceConverter {
     _processCommon(id, name, room, func, obj, entityType, entity_id) {
         if (!name) {
             if (func && room) {
-                name = room + ' ' + func;
+                name = `${room} ${func}`;
             } else {
                 name = obj.common.custom[this.adapter.namespace].name || this._generateName(obj);
             }
@@ -625,7 +622,7 @@ class YandexAliceConverter {
         const _name = replaceInvalidChars(this._generateName(obj, 'en'));
 
         const entity = {
-            entity_id: entity_id || entityType + '.' + _name,
+            entity_id: entity_id || `${entityType}.${_name}`,
             //state: this._iobState2EntityState(obj._id, state.val);
             attributes: {
                 friendly_name: name,
@@ -639,13 +636,13 @@ class YandexAliceConverter {
                 description: name,
                 room: room,
                 custom_data: {
-                    entity_id: entity_id || entityType + '.' + _name,
+                    entity_id: entity_id || `${entityType}.${_name}`,
                 },
                 capabilities: [],
                 properties: [],
                 device_info: {
                     manufacturer: 'IOBroker',
-                    model: entity_id || entityType + '.' + _name,
+                    model: entity_id || `${entityType}.${_name}`,
                     hw_version: '',
                     sw_version: this.adapter.version,
                 },
@@ -1648,7 +1645,7 @@ class YandexAlisa {
         this.smartDevices = [];
         this.enums = [];
         this.usedIds = [];
-        this.detector = new ChannelDetector();
+        this.detector = new ChannelDetector.default();
         this.unknownDevices = {};
         this.rateCalculation = [];
 
@@ -2198,7 +2195,7 @@ class YandexAlisa {
         if (this.urlKey && (!this.keyPromise || now - this.keyPromiseTime > 900000)) {
             /* 15 Minutes */
             this.keyPromiseTime = now;
-            const url = `${URL_STATUS}?user=${encodeURIComponent(this.adapter.config.login)}&urlKey=${encodeURIComponent(this.urlKey.key)}&p=${PROTOCOL_VERSION}&v=${version}`;
+            const url = `${URL_STATUS}?user=${encodeURIComponent(this.adapter.config.login)}&urlKey=${encodeURIComponent(this.urlKey.key)}&p=${PROTOCOL_VERSION}&v=${this.adapter.version}`;
             this.keyPromise = axios
                 .get(url, { validateStatus: status => status === 200 })
                 .then(response => {
@@ -2271,7 +2268,7 @@ class YandexAlisa {
                         },
                     };
                     this.adapter.log.debug(`[ALISA] Response: ${JSON.stringify(json)}`);
-                    const url = `${URL_STATUS}?user=${encodeURIComponent(this.adapter.config.login)}&urlKey=${encodeURIComponent(this.urlKey.key)}&p=${PROTOCOL_VERSION}&v=${version}`;
+                    const url = `${URL_STATUS}?user=${encodeURIComponent(this.adapter.config.login)}&urlKey=${encodeURIComponent(this.urlKey.key)}&p=${PROTOCOL_VERSION}&v=${this.adapter.version}`;
                     return axios.post(url, json, { validateStatus: status => status === 200 }).then(response => {
                         if (this.unknownDevices[id]) {
                             delete this.unknownDevices[id];

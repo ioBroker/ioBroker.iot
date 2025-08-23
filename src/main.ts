@@ -4,19 +4,18 @@ import { readFileSync } from 'node:fs';
 import axios from 'axios';
 import { deflateSync } from 'node:zlib';
 
+// @ts-expect-error no types
 import AlexaSH2 from './lib/alexaSmartHomeV2';
 import AlexaSH3 from './lib/alexaSmartHomeV3';
 import AlexaCustom, { type AlexaCustomResponse } from './lib/alexaCustom';
+// @ts-expect-error no types
 import GoogleHome from './lib/googleHome';
+// @ts-expect-error no types
 import YandexAlisa from './lib/alisa';
 import Remote, { type SOCKET_MESSAGE, type SOCKET_TRUNK } from './lib/remote';
 import { handleGeofenceData, handleDevicesData, handleSendToAdapter, handleGetInstances } from './lib/visuApp';
 import { buildMessageFromNotification } from './lib/notifications';
 import type { IotAdapterConfig } from './lib/types';
-
-const packageJSON = JSON.parse(readFileSync(`${__dirname}/package.json`, 'utf8'));
-
-const version = packageJSON.version;
 
 const NONE = '___none___';
 const MAX_IOT_MESSAGE_LENGTH = 127 * 1024;
@@ -730,7 +729,7 @@ export class IotAdapter extends Adapter {
         let response;
         try {
             response = await axios.get(
-                `https://generate-key.iobroker.in/v1/generateUrlKey?user=${encodeURIComponent(login)}&pass=${encodeURIComponent(pass)}&version=${version}`,
+                `https://generate-key.iobroker.in/v1/generateUrlKey?user=${encodeURIComponent(login)}&pass=${encodeURIComponent(pass)}&version=${this.version}`,
                 {
                     timeout: 15000,
                     validateStatus: status => status < 400,
@@ -814,7 +813,7 @@ export class IotAdapter extends Adapter {
         let response;
         try {
             response = await axios.get(
-                `https://create-user.iobroker.in/v1/createUser?user=${encodeURIComponent(login)}&pass=${encodeURIComponent(pass)}&forceRecreate=${forceUserCreation}&version=${version}`,
+                `https://create-user.iobroker.in/v1/createUser?user=${encodeURIComponent(login)}&pass=${encodeURIComponent(pass)}&forceRecreate=${forceUserCreation}&version=${this.version}`,
                 {
                     timeout: 15000,
                     validateStatus: status => status < 400,
@@ -914,6 +913,9 @@ export class IotAdapter extends Adapter {
                 if (this.alexaSH3) {
                     try {
                         const response = await this.alexaSH3.process(request);
+                        if (request.directive.header.messageId != response.event!.header.messageId) {
+                            this.log.warn('Strange');
+                        }
                         return response as any;
                     } catch {
                         this.log.error(`Cannot parse request: ${request}`);
@@ -1151,7 +1153,7 @@ export class IotAdapter extends Adapter {
             this.device = new DeviceModule({
                 privateKey: Buffer.from(certs.private),
                 clientCert: Buffer.from(certs.certificate),
-                caCert: readFileSync(`${__dirname}/keys/root-CA.crt`),
+                caCert: readFileSync(`${__dirname}/../keys/root-CA.crt`),
                 clientId,
                 username: 'ioBroker',
                 host: this.config.cloudUrl,

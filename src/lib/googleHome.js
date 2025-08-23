@@ -1,10 +1,9 @@
 const axios = require('axios');
-const { Types, ChannelDetector } = require('iobroker.type-detector');
+const ChannelDetector = require('@iobroker/type-detector');
 
-const textsT = require('./texts');
-const roomsT = require('./rooms');
-const funcsT = require('./functions');
-const version = require('../package.json').version;
+const textsT = require('./texts').default;
+const roomsT = require('./rooms').default;
+const funcsT = require('./functions').default;
 
 const PROTOCOL_VERSION = 1;
 const RETRY_UNKNOWN_DEVICES_INTERVAL = 10 * 60000; // 10 minutes
@@ -426,7 +425,7 @@ class GoogleHome {
         this.smartDevicesSentToGoogle = {};
         this.enums = [];
         this.usedIds = [];
-        this.detector = new ChannelDetector();
+        this.detector = new ChannelDetector.default();
         this.urlKeyOk = false;
         this.keyPromise = null;
         this.keyPromiseTime = null;
@@ -437,23 +436,23 @@ class GoogleHome {
         this.tasksTimer = null;
 
         this.converter = {
-            [Types.socket]: this.processSocket.bind(this),
-            [Types.light]: this.processLight.bind(this),
-            [Types.info]: this.processInfo.bind(this),
-            [Types.dimmer]: this.processDimmer.bind(this),
-            [Types.rgbSingle]: this.processRgbSingle.bind(this),
-            [Types.rgb]: this.processRgb.bind(this),
-            [Types.hue]: this.processHue.bind(this),
-            [Types.ct]: this.processCT.bind(this),
-            [Types.temperature]: this.processTemperature.bind(this),
-            [Types.thermostat]: this.processThermostat.bind(this),
-            [Types.button]: this.processButton.bind(this),
-            [Types.windowTilt]: this.processWindowTilt.bind(this),
-            [Types.door]: this.processWindowTilt.bind(this),
-            [Types.window]: this.processWindowTilt.bind(this),
-            [Types.blind]: this.processBlind.bind(this),
-            [Types.slider]: this.processBlind.bind(this),
-            [Types.media]: this.processMedia.bind(this),
+            [ChannelDetector.Types.socket]: this.processSocket.bind(this),
+            [ChannelDetector.Types.light]: this.processLight.bind(this),
+            [ChannelDetector.Types.info]: this.processInfo.bind(this),
+            [ChannelDetector.Types.dimmer]: this.processDimmer.bind(this),
+            [ChannelDetector.Types.rgbSingle]: this.processRgbSingle.bind(this),
+            [ChannelDetector.Types.rgb]: this.processRgb.bind(this),
+            [ChannelDetector.Types.hue]: this.processHue.bind(this),
+            [ChannelDetector.Types.ct]: this.processCT.bind(this),
+            [ChannelDetector.Types.temperature]: this.processTemperature.bind(this),
+            [ChannelDetector.Types.thermostat]: this.processThermostat.bind(this),
+            [ChannelDetector.Types.button]: this.processButton.bind(this),
+            [ChannelDetector.Types.windowTilt]: this.processWindowTilt.bind(this),
+            [ChannelDetector.Types.door]: this.processWindowTilt.bind(this),
+            [ChannelDetector.Types.window]: this.processWindowTilt.bind(this),
+            [ChannelDetector.Types.blind]: this.processBlind.bind(this),
+            [ChannelDetector.Types.slider]: this.processBlind.bind(this),
+            [ChannelDetector.Types.media]: this.processMedia.bind(this),
         };
     }
 
@@ -463,7 +462,7 @@ class GoogleHome {
             /* 15 Minutes */
             this.keyPromiseTime = now;
 
-            const url = `${URL_STATUS}?user=${encodeURIComponent(this.adapter.config.login)}&urlKey=${encodeURIComponent(this.urlKey ? this.urlKey.key : '')}&p=${PROTOCOL_VERSION}&v=${version}`;
+            const url = `${URL_STATUS}?user=${encodeURIComponent(this.adapter.config.login)}&urlKey=${encodeURIComponent(this.urlKey ? this.urlKey.key : '')}&p=${PROTOCOL_VERSION}&v=${this.adapter.version}`;
 
             this.keyPromise = axios
                 .get(url, { validateStatus: status => status === 200 })
@@ -2392,7 +2391,7 @@ class GoogleHome {
 
             this.rateCalculation.push(now);
 
-            const url = `${URL_STATUS}?user=${encodeURIComponent(this.adapter.config.login)}&urlKey=${encodeURIComponent(this.urlKey.key)}&p=${PROTOCOL_VERSION}&v=${version}`;
+            const url = `${URL_STATUS}?user=${encodeURIComponent(this.adapter.config.login)}&urlKey=${encodeURIComponent(this.urlKey.key)}&p=${PROTOCOL_VERSION}&v=${this.adapter.version}`;
             axios
                 .post(url, json, { validateStatus: status => status === 200 })
                 .then(response => {
@@ -2630,7 +2629,7 @@ class GoogleHome {
             }
         }
 
-        const url = `${URL_STATUS}?user=${encodeURIComponent(this.adapter.config.login)}&urlKey=${encodeURIComponent(this.urlKey.key)}&p=${PROTOCOL_VERSION}&v=${version}`;
+        const url = `${URL_STATUS}?user=${encodeURIComponent(this.adapter.config.login)}&urlKey=${encodeURIComponent(this.urlKey.key)}&p=${PROTOCOL_VERSION}&v=${this.adapter.version}`;
         const sendRequest = () => {
             axios
                 .post(url, json, { validateStatus: status => status === 200 })

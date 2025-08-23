@@ -14,6 +14,7 @@ package-lock.json
 /src-rules/package-lock.json
 /src-rules/node_modules
 /src-rules/build
+/build-backend
 
 .dev-server
 .vscode

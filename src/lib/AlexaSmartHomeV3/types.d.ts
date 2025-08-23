@@ -365,7 +365,7 @@ export type AlexaV3StateMapping = {
 export type SmartNameObject = { [lang in ioBroker.Languages]?: string } & {
     smartType?: string | null;
     byON?: string | null;
-    toggle?: number;
+    toggle?: boolean;
 };
 export type SmartName = null | false | string | SmartNameObject;
 
@@ -396,7 +396,7 @@ export interface IotExternalPatternControl {
         type: ioBroker.ObjectType;
         common: ioBroker.StateCommon | ioBroker.ChannelCommon | ioBroker.DeviceCommon;
         autoDetected: boolean;
-        toggle?: number;
+        toggle?: boolean;
         smartName?: SmartName;
     };
     groupNames: string[];

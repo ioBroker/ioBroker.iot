@@ -24,7 +24,7 @@ export default [
     {
         ignores: [
             'build-backend/**/*',
-            'lib/**/*.js',
+            'src/lib/**/*.js',
             'admin/**/*',
             'test/**/*',
             'src-admin/**/*',

@@ -8,11 +8,13 @@
 
         "skipLibCheck": true, // Don't report errors in 3rd party definitions
         "noEmitOnError": true,
-        "outDir": "./lib/",
+        "outDir": "./build-backend",
         "esModuleInterop": true,
         "resolveJsonModule": true,
         "module": "Node16",
         "moduleResolution": "node16",
+        "sourceMap": true, // required for debug
+        "inlineSources": true, // required for debug
 
         "strict": true,
         "target": "ES2022",
@@ -20,6 +22,6 @@
         "useUnknownInCatchVariables": false,
         "types": ["node", "@iobroker/types"]
     },
-    "include": ["lib/**/*.ts"],
+    "include": ["src/**/*.*"],
     "exclude": ["build/**", "node_modules/**", "src-admin/**"]
 }

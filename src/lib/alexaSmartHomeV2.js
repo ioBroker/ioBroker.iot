@@ -1,7 +1,9 @@
-'use strict';
+const Actions = require('../../admin/actions');
+const translateRooms = require('./rooms').default;
+const translateFunctions = require('./functions').default;
+const translateDevices = require('./devices').default;
 
 function AlexaSH2(adapter) {
-    let Actions = require('../admin/actions');
     let smartDevices = [];
     let enums = [];
     let valuesON = {};
@@ -9,9 +11,6 @@ function AlexaSH2(adapter) {
     let translate = false;
     let addedId = null;
 
-    let translateRooms;
-    let translateFunctions;
-    let translateDevices;
     const words = {
         'No name': { en: 'No name', de: 'Kein Name', ru: 'Нет имени' },
         Group: { en: 'Group', de: 'Gruppe', ru: 'Группа' },
@@ -243,8 +242,6 @@ function AlexaSH2(adapter) {
                 if (room) {
                     // translate room
                     if (translate) {
-                        translateRooms = translateRooms || require('./rooms.ts');
-                        translateFunctions = translateFunctions || require('./functions.ts');
                         room = translateRooms(lang, room);
                         func = translateFunctions(lang, func);
                     }
@@ -273,7 +270,6 @@ function AlexaSH2(adapter) {
                 friendlyNames[0] = friendlyName;
                 nameModified = false;
             } else if (translate) {
-                translateDevices = translateDevices || require('./devices.ts');
                 friendlyName = translateDevices(lang, friendlyName);
                 nameModified = true;
                 friendlyNames = friendlyName.split(',');

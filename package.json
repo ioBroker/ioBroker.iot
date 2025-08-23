@@ -46,16 +46,15 @@
     "bugs": {
         "url": "https://github.com/ioBroker/ioBroker.iot/issues"
     },
-    "main": "main.ts",
+    "main": "build-backend/main.js",
     "files": [
         "admin/",
         "doc/",
         "img/",
         "keys/",
-        "lib/",
+        "build-backend/",
         "io-package.json",
-        "LICENSE",
-        "main.ts"
+        "LICENSE"
     ],
     "scripts": {
         "test-gui": "mocha test/testAdapter.gui.js --exit",
@@ -63,7 +62,7 @@
         "test": "npm run test-gui && npm run test-package",
         "test-alexa-v3": "mocha --grep AlexaSmartHomeV3 --recursive",
         "prepublishOnly": "node tasks",
-        "tsc": "tsc -p tsconfig.build.json",
+        "tsc": "tsc -p tsconfig.build.json && node tasks --backend",
         "lint": "eslint -c eslint.config.mjs",
         "build": "node tasks",
         "release": "release-script",

@@ -192,7 +192,7 @@ export default class DeviceManager {
             while (detectedControls.length) {
                 // take the next control
                 const control = detectedControls[0];
-                let processedControls: any[] = [];
+                let processedControls: IotExternalPatternControl[] = [];
 
                 if (control.room?.common?.name) {
                     if (control.functionality?.common?.name) {
@@ -210,9 +210,7 @@ export default class DeviceManager {
                             true,
                             this.getName(control.room?.common?.name),
                             this.getName(control.functionality?.common?.name),
-                            processedControls[0].toggle === true || processedControls[0].toggle === false
-                                ? processedControls[0].toggle
-                                : defaultToggle,
+                            processedControls[0].object?.toggle ?? defaultToggle,
                         );
                     } else {
                         this.log.debug(
@@ -231,9 +229,7 @@ export default class DeviceManager {
                                 false,
                                 undefined,
                                 undefined,
-                                processedControls[0].toggle === true || processedControls[0].toggle === false
-                                    ? processedControls[0].toggle
-                                    : defaultToggle,
+                                processedControls[0].object?.toggle ?? defaultToggle,
                             );
                         }
                     });
@@ -247,7 +243,7 @@ export default class DeviceManager {
                 }
 
                 // remove processed controls
-                const objectIds = processedControls.map(item => item.object.id);
+                const objectIds = processedControls.map(item => item.object?.id);
                 detectedControls = detectedControls.filter(item => item.object && !objectIds.includes(item.object.id));
             }
 

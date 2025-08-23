@@ -4,8 +4,14 @@
  */
 'use strict';
 
-const { existsSync, renameSync } = require('node:fs');
+const { existsSync, renameSync, copyFileSync } = require('node:fs');
 const { buildReact, copyFiles, deleteFoldersRecursive, npmInstall, patchHtmlFile } = require('@iobroker/build-tools');
+
+function copyBackend() {
+    copyFileSync(`${__dirname}/src/lib/alexaSmartHomeV2.js`, `${__dirname}/build-backend/lib/alexaSmartHomeV2.js`);
+    copyFileSync(`${__dirname}/src/lib/alisa.js`, `${__dirname}/build-backend/lib/alisa.js`);
+    copyFileSync(`${__dirname}/src/lib/googleHome.js`, `${__dirname}/build-backend/lib/googleHome.js`);
+}
 
 function cleanRules() {
     deleteFoldersRecursive(`${__dirname}/admin/rules`);
@@ -82,6 +88,8 @@ if (process.argv.find(arg => arg === '--rules-0-clean')) {
             }
         })
         .catch(error => console.error(error));
+} else if (process.argv.includes('--backend')) {
+    copyBackend();
 } else {
     clean();
     let installPromise;

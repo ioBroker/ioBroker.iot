@@ -1,7 +1,13 @@
 import { createHash } from 'node:crypto';
 import AdapterProvider from './AdapterProvider';
 import ChannelDetector, { type DetectOptions, Types } from '@iobroker/type-detector';
-import type { AlexaV3EndpointID, IotExternalDetectorState, IotExternalPatternControl, SmartName } from '../types';
+import type {
+    AlexaV3EndpointID,
+    IotExternalDetectorState,
+    IotExternalPatternControl,
+    SmartName,
+    SmartNameObject,
+} from '../types';
 import type { IotAdapterConfig } from '../../types';
 import roomTranslator from '../../rooms';
 import functionTranslator from '../../functions';
@@ -65,22 +71,32 @@ function getSmartNameFromObj(
     obj: ioBroker.Object | ioBroker.StateCommon,
     instanceId: string,
     noCommon?: boolean,
-): SmartName | undefined {
+): undefined | false | SmartNameObject {
     if (!obj) {
         return undefined;
     }
+    let result: undefined | false | SmartNameObject;
+    // If it is a common object
     if (!(obj as ioBroker.StateObject).common) {
-        return (obj as ioBroker.StateCommon).smartName;
+        result = (obj as ioBroker.StateCommon).smartName as undefined | false | SmartNameObject;
+    } else if (!noCommon) {
+        result = (obj as ioBroker.StateObject).common.smartName as undefined | false | SmartNameObject;
+    } else {
+        const custom = (obj as ioBroker.StateObject).common.custom;
+        if (!custom) {
+            return undefined;
+        }
+        result = custom[instanceId] ? custom[instanceId].smartName : undefined;
     }
-
-    if (!noCommon) {
-        return (obj as ioBroker.StateObject).common.smartName;
+    if (result && typeof result === 'string') {
+        if (result === 'ignore') {
+            return false;
+        }
+        return {
+            en: result,
+        };
     }
-    const custom = (obj as ioBroker.StateObject).common.custom;
-    if (!custom) {
-        return undefined;
-    }
-    return custom[instanceId] ? custom[instanceId].smartName : undefined;
+    return result;
 }
 
 async function functionalitiesAndRooms(
@@ -95,7 +111,7 @@ async function functionalitiesAndRooms(
                 adapter.namespace,
                 (adapter.config as IotAdapterConfig).noCommon,
             );
-            return smartName !== false && smartName !== 'ignore';
+            return smartName !== false;
         })
         .filter(item => item?.common?.members?.length);
     // all enums that are of type 'function'
@@ -319,14 +335,12 @@ export async function controls(
                 (adapter.config as IotAdapterConfig).noCommon,
             );
 
+            const objType = devicesObject[id].type;
             if (
                 devicesObject[id]?.common &&
-                (devicesObject[id].type === 'state' ||
-                    devicesObject[id].type === 'channel' ||
-                    devicesObject[id].type === 'device') &&
+                (objType === 'state' || objType === 'channel' || objType === 'device') &&
                 !list.includes(id) &&
-                smartName !== false && // if the device is not disabled
-                smartName !== 'ignore'
+                smartName !== false // if the device is not disabled
             ) {
                 list.push(id);
             }
@@ -336,20 +350,20 @@ export async function controls(
     // a member of a room enumeration is only added if neither its parent (channel) nor its grandparent (device) is in
     rooms.forEach(roomEnumItem => {
         roomEnumItem.common.members?.forEach(id => {
+            if (!devicesObject[id]) {
+                return;
+            }
             const smartName = getSmartNameFromObj(
                 devicesObject[id],
                 adapter.namespace,
                 (adapter.config as IotAdapterConfig).noCommon,
             );
+            const objType = devicesObject[id].type;
             if (
-                devicesObject[id] &&
-                devicesObject[id].common &&
-                (devicesObject[id].type === 'state' ||
-                    devicesObject[id].type === 'channel' ||
-                    devicesObject[id].type === 'device') &&
+                devicesObject[id]?.common &&
+                (objType === 'state' || objType === 'channel' || objType === 'device') &&
                 !list.includes(id) &&
-                smartName !== false && // if the device is not disabled
-                smartName !== 'ignore'
+                smartName !== false // if the device is not disabled
             ) {
                 const channelId = getChannelId(id, devicesObject);
                 if (channelId) {
@@ -380,12 +394,13 @@ export async function controls(
         const smartName =
             devicesObject[id] &&
             getSmartNameFromObj(devicesObject[id], adapter.namespace, (adapter.config as IotAdapterConfig).noCommon);
+
+        const objType = devicesObject[id].type;
+
         if (
             isValidSmartName(smartName, lang) &&
             devicesObject[id].common &&
-            (devicesObject[id].type === 'state' ||
-                devicesObject[id].type === 'channel' ||
-                devicesObject[id].type === 'device')
+            (objType === 'state' || objType === 'channel' || objType === 'device')
         ) {
             idsWithSmartName.push(id);
         }
@@ -404,11 +419,7 @@ export async function controls(
             devicesObject[id],
             adapter.namespace,
             (adapter.config as IotAdapterConfig).noCommon,
-        ) as { [lang in ioBroker.Languages]?: string } & {
-            smartType?: string | null;
-            byON?: string | null;
-            toggle?: number;
-        };
+        ) as SmartNameObject;
 
         // try to convert the state to typeDetector format
         // "smartName": {
