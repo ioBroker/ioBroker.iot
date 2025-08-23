@@ -23,12 +23,13 @@ export default [
     {
         ignores: [
             'build-backend/**/*',
-            'lib/AlexaSmartHomeV3/*.js',
+            'lib/**/*.js',
             'admin/**/*',
-            'lib/AlexaSmartHomeV3/*.js',
             'test/**/*',
             'src-admin/**/*',
-            'src-rules/**/*'
+            'src-rules/**/*',
+            'tasks.js',
+            '**/*.mjs'
         ],
     },
 ];

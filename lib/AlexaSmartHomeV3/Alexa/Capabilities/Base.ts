@@ -3,7 +3,7 @@ import type { AlexaV3Capability, AlexaV3EndpointID, AlexaV3Namespace, AlexaV3Req
 import type { Base as PropertiesBase } from '../Properties/Base';
 
 export class Base {
-    private readonly _properties: PropertiesBase[];
+    public readonly _properties: PropertiesBase[];
 
     constructor() {
         this._properties = this.initProperties();
@@ -56,7 +56,7 @@ export class Base {
 
     /**
      *
-     * @param {*} event Contains the Alexa event.
+     * @param event Contains the Alexa event.
      * @returns Property to handle on Alexa directive
      */
     property(event: AlexaV3Request): PropertiesBase | undefined {

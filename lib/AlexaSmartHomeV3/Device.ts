@@ -14,11 +14,9 @@ import type AlexaResponse from './Alexa/AlexaResponse';
  * to be the same endpoint from Alexa's perspective.
  * This leads to a situation where while Alexa believes controlling a single endpoint by sending a directive
  * to change the endpoint's state, in reality, the states of multiple controls, i.e. physical devices, are changed.
- *
- * @class
  */
 export default class Device {
-    private log: Logger;
+    public log: Logger;
     public id: string;
     public friendlyName: string;
     public controls: Control[];

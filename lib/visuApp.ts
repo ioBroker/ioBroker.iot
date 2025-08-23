@@ -128,8 +128,8 @@ const commonMapping: Record<string, ioBroker.StateCommon> = {
 /**
  *  Handle device's data update from app
  *
- * @param {{ presence?: Record<string, boolean>, devices: Record<string, any> }} visuData the data sent by app
- * @param {ioBroker.Adapter} adapter the adapter instance
+ * @param visuData the data sent by app
+ * @param adapter the adapter instance
  */
 export async function handleDevicesData(
     visuData: {

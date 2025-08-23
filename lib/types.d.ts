@@ -23,8 +23,8 @@ export interface IotAdapterConfig {
     debug: boolean;
     remote: boolean;
     defaultToggle: boolean;
-    remoteAdminInstance: string;
-    remoteWebInstance: string;
+    remoteAdminInstance: `${string}.${number}`;
+    remoteWebInstance: `${string}.${number}`;
     customKnownAlexaUsers: {
         id: string;
         name: string;
@@ -37,4 +37,7 @@ export interface IotAdapterConfig {
         lastSeen: number;
     }[];
     addCustomKnownAlexaDeviceRoomToText: boolean;
+    collectStatesMs?: number | string;
+    collectObjectsMs?: number | string;
+    collectLogsMs?: number | string;
 }

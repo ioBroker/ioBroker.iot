@@ -6,7 +6,7 @@ export default class Logger {
     private readonly logged: Map<number, number> = new Map();
     private readonly maxLoggedEntries = 500;
     private readonly ttl = 30;
-    private _component: string;
+    public _component: string;
 
     constructor(instance: unknown) {
         if (instance && typeof instance === 'object' && 'constructor' in instance) {

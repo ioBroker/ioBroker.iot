@@ -35,13 +35,12 @@ export default class Control {
         'ON',
         'MUTE',
     ];
-    protected readonly log: Logger;
-    private readonly _supported: CapabilitiesBase[];
-    private readonly _enforced: CapabilitiesBase[];
-    private readonly _states: Record<string, IotExternalDetectorState | undefined> = {};
+    public readonly log: Logger;
+    public readonly _supported: CapabilitiesBase[];
+    public readonly _enforced: CapabilitiesBase[];
+    public readonly _states: Record<string, IotExternalDetectorState | undefined> = {};
 
     /**
-     * @constructor
      * @param detectedControl - The detected control in terms of iobroker type detector.
      */
     constructor(detectedControl: IotExternalPatternControl) {
