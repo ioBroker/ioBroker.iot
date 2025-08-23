@@ -3,9 +3,9 @@ import AdapterProvider from './AlexaSmartHomeV3/Helpers/AdapterProvider';
 import IotProxy from './AlexaSmartHomeV3/Helpers/IotProxy';
 import RateLimiter from './AlexaSmartHomeV3/Helpers/RateLimiter';
 import type { device as DeviceModule } from 'aws-iot-device-sdk';
-import type { IotAdapterConfig } from './types';
 import type { AlexaV3ReportedState, AlexaV3Request, IotExternalDetectorState } from './AlexaSmartHomeV3/types';
 import type AlexaResponse from './AlexaSmartHomeV3/Alexa/AlexaResponse';
+import type { IotAdapter } from '../main';
 
 export type AlexaSH3ControlDescription = {
     type: string;
@@ -29,10 +29,10 @@ export type AlexaSH3DeviceDescription = {
 export default class AlexaSH3 {
     private readonly deviceManager: DeviceManager;
 
-    constructor(options: { adapter: ioBroker.Adapter; iotDevice: DeviceModule; iotClientId: string }) {
+    constructor(options: { adapter: IotAdapter; iotDevice: DeviceModule; iotClientId: string }) {
         this.deviceManager = new DeviceManager();
         AdapterProvider.init(options.adapter);
-        IotProxy.init(options.iotDevice, options.iotClientId, (options.adapter.config as IotAdapterConfig).login);
+        IotProxy.init(options.iotDevice, options.iotClientId, options.adapter.config.login);
         RateLimiter.init().catch((err: Error) => options.adapter.log.error(err.message));
         // Subscribe on enum changes
         options.adapter.subscribeForeignObjects('enum.functions.*');

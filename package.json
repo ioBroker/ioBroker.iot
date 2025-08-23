@@ -46,7 +46,7 @@
     "bugs": {
         "url": "https://github.com/ioBroker/ioBroker.iot/issues"
     },
-    "main": "main.js",
+    "main": "main.ts",
     "files": [
         "admin/",
         "doc/",
@@ -55,7 +55,7 @@
         "lib/",
         "io-package.json",
         "LICENSE",
-        "main.js"
+        "main.ts"
     ],
     "scripts": {
         "test-gui": "mocha test/testAdapter.gui.js --exit",

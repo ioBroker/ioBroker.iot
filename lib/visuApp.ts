@@ -1,3 +1,4 @@
+import type { IotAdapter } from '../main';
 /**
  * Handles `sendToAdapter` command
  *
@@ -6,12 +7,12 @@
  */
 export async function handleSendToAdapter(
     visuData: { command: 'sendToAdapter'; instance: string; message: string; data: any },
-    adapter: ioBroker.Adapter,
-): Promise<ioBroker.Message | undefined> {
+    adapter: IotAdapter,
+): Promise<{ error?: string; result?: string }> {
     const { instance, message, data } = visuData;
 
     const resp = await adapter.sendToAsync(instance, message, data, { timeout: 2_000 });
-    return { ...resp } as ioBroker.Message;
+    return { ...resp } as { error?: string; result?: string };
 }
 
 /**
@@ -22,7 +23,7 @@ export async function handleSendToAdapter(
  */
 export async function handleGetInstances(
     visuData: { command: 'getInstances'; adapterName: string },
-    adapter: ioBroker.Adapter,
+    adapter: IotAdapter,
 ): Promise<{ instances: string[] }> {
     const { adapterName } = visuData;
 
@@ -43,7 +44,7 @@ export async function handleGetInstances(
  */
 export async function handleGeofenceData(
     visuData: { presence: Record<string, boolean>; devices?: Record<string, any> },
-    adapter: ioBroker.Adapter,
+    adapter: IotAdapter,
 ): Promise<void> {
     await adapter.setObjectNotExistsAsync('app.geofence', {
         type: 'folder',
@@ -136,7 +137,7 @@ export async function handleDevicesData(
         presence?: Record<string, boolean>;
         devices: { [deviceId: string]: { [dataName: string]: ioBroker.StateValue } };
     },
-    adapter: ioBroker.Adapter,
+    adapter: IotAdapter,
 ): Promise<void> {
     // e.g. {"devices":{"iPhone":{"batteryLevel":95,"batteryState":2,"ssid":"FRITZ!Box Fon WLAN","connectionType":"wifi"}}}
     for (const [deviceName, deviceData] of Object.entries(visuData.devices)) {

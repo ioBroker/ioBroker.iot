@@ -3,6 +3,7 @@ import { deflateSync } from 'node:zlib';
 import AdminSocket from './adminCommonSocket';
 import type { IotAdapterConfig } from './types';
 import type { device as DeviceModule } from 'aws-iot-device-sdk';
+import type { IotAdapter } from '../main';
 
 type MESSAGE_TYPE = number;
 const MESSAGE_TYPES: Record<string, MESSAGE_TYPE> = {
@@ -50,20 +51,20 @@ type SOCKET_PAYLOAD = [
     readUrlOrTotalMultiPackageLength?: string | number,
     numberOfPacketInMultiPackage?: number,
 ];
-type SOCKET_MESSAGE = {
+export type SOCKET_MESSAGE = {
     sid: SessionID;
     d: SOCKET_PAYLOAD;
     wu?: string;
     ru?: string;
 };
-type SOCKET_CHANGE_MESSAGE = {
+export type SOCKET_CHANGE_MESSAGE = {
     name: SubscribeType;
     args: string | [ioBroker.LogMessage[]] | [string[], (ioBroker.Object | null | undefined)[]];
     sid: SessionID;
     multi?: boolean;
 };
 
-type SOCKET_TRUNK = {
+export type SOCKET_TRUNK = {
     sid: string;
     i: number;
     l: number;
@@ -71,7 +72,7 @@ type SOCKET_TRUNK = {
 };
 
 export default class RemoteAccess {
-    private readonly adapter: ioBroker.Adapter;
+    private readonly adapter: IotAdapter;
     private device: DeviceModule | null = null;
     private gcInterval: NodeJS.Timeout | null = null;
     private name = {};
@@ -111,9 +112,9 @@ export default class RemoteAccess {
     private infoTimeout: NodeJS.Timeout | null = null;
     private secret: string = '';
 
-    constructor(adapter: ioBroker.Adapter, clientId: string) {
+    constructor(adapter: IotAdapter, clientId: string) {
         this.adapter = adapter;
-        this.config = adapter.config as IotAdapterConfig;
+        this.config = adapter.config;
         this.clientId = clientId;
         this.collectStatesMs =
             this.config.collectStatesMs === undefined

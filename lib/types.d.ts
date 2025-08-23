@@ -2,20 +2,21 @@ export interface IotAdapterConfig {
     login: string;
     pass: string;
     language: ioBroker.Languages;
-    cloudUrl: 'a18wym7vjdl22g.iot.eu-west-1.amazonaws.com';
+    cloudUrl: string;
     functionFirst: boolean;
     concatWord: string;
     responseOID: string;
     restartOnDisconnect: boolean;
     iftttKey: string;
-    replaces: string;
+    replaces: string | string[] | null;
     amazonAlexa: boolean;
     amazonAlexaV3: boolean;
     amazonAlexaBlood: string;
     amazonAlexaBloodShortAnswer: boolean;
     googleHome: boolean;
     yandexAlisa: boolean;
-    allowedServices: string;
+    pingTimeout?: string | number;
+    allowedServices: string | string[];
     text2command: `${number}`;
     nightscout: string;
     nightscoutPass: string;
@@ -40,4 +41,6 @@ export interface IotAdapterConfig {
     collectStatesMs?: number | string;
     collectObjectsMs?: number | string;
     collectLogsMs?: number | string;
+    deviceOffLevel?: number | string;
+    apikey?: string;
 }

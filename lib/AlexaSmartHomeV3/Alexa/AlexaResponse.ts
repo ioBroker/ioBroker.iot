@@ -303,10 +303,17 @@ export default class AlexaResponse {
             capabilityResources: Utils.defaultIfNullOrEmpty(opts.capabilityResources, undefined),
         };
 
-        for (const prop in ['instance', 'configuration', 'semantics', 'capabilityResources']) {
-            if (!Object.prototype.hasOwnProperty.call(opts, prop) || !(response as Record<string, any>)[prop]) {
-                delete (response as Record<string, any>)[prop];
-            }
+        if (!response.instance) {
+            delete response.instance;
+        }
+        if (!response.configuration) {
+            delete response.configuration;
+        }
+        if (!response.semantics) {
+            delete response.semantics;
+        }
+        if (!response.capabilityResources) {
+            delete response.capabilityResources;
         }
 
         return response;

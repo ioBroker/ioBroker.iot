@@ -1,8 +1,7 @@
 import { normalize } from 'node:path';
 import { existsSync, lstatSync, readdirSync } from 'node:fs';
 import axios from 'axios';
-
-import type { IotAdapterConfig } from './types';
+import type { IotAdapter } from '../main';
 
 const ALLOW_CACHE = [
     'getRepository',
@@ -184,36 +183,36 @@ export type InstanceDescription = {
 const cache: { [commandAndHost: string]: { ts: number; res: string } } = {};
 let cacheGB: NodeJS.Timeout | null = null;
 
-function fixAdminUI(obj: Record<string, any>): void {
+function fixAdminUI(obj: ioBroker.InstanceObject | ioBroker.AdapterObject): void {
     if (obj?.common) {
         if (!obj.common.adminUI) {
             if (obj.common.noConfig) {
-                obj.common.adminUI = obj.common.adminUI || {};
+                obj.common.adminUI ||= { config: 'none' };
                 obj.common.adminUI.config = 'none';
-            } else if (obj.common.jsonConfig) {
-                obj.common.adminUI = obj.common.adminUI || {};
+            } else if ((obj.common as any).jsonConfig) {
+                obj.common.adminUI ||= { config: 'json' };
                 obj.common.adminUI.config = 'json';
             } else if (obj.common.materialize) {
-                obj.common.adminUI = obj.common.adminUI || {};
+                obj.common.adminUI ||= { config: 'materialize' };
                 obj.common.adminUI.config = 'materialize';
             } else {
-                obj.common.adminUI = obj.common.adminUI || {};
+                obj.common.adminUI ||= { config: 'html' };
                 obj.common.adminUI.config = 'html';
             }
 
-            if (obj.common.jsonCustom) {
-                obj.common.adminUI = obj.common.adminUI || {};
+            if ((obj.common as any).jsonCustom) {
+                obj.common.adminUI ||= { config: 'html' };
                 obj.common.adminUI.custom = 'json';
             } else if (obj.common.supportCustoms) {
-                obj.common.adminUI = obj.common.adminUI || {};
+                obj.common.adminUI ||= { config: 'html' };
                 obj.common.adminUI.custom = 'json';
             }
 
             if (obj.common.materializeTab && obj.common.adminTab) {
-                obj.common.adminUI = obj.common.adminUI || {};
+                obj.common.adminUI ||= { config: 'html' };
                 obj.common.adminUI.tab = 'materialize';
             } else if (obj.common.adminTab) {
-                obj.common.adminUI = obj.common.adminUI || {};
+                obj.common.adminUI ||= { config: 'html' };
                 obj.common.adminUI.tab = 'html';
             }
 
@@ -236,7 +235,7 @@ function fixAdminUI(obj: Record<string, any>): void {
                 }
             }
 
-            if (obj.common.jsonCustom || obj.common.supportCustoms) {
+            if ((obj.common as any).jsonCustom || obj.common.supportCustoms) {
                 if (obj.common.adminUI.custom !== 'json') {
                     obj.common.adminUI.custom = 'json';
                     changed = true;
@@ -248,7 +247,7 @@ function fixAdminUI(obj: Record<string, any>): void {
                     obj.common.adminUI.config = 'none';
                     changed = true;
                 }
-            } else if (obj.common.jsonConfig) {
+            } else if ((obj.common as any).jsonConfig) {
                 if (obj.common.adminUI.config !== 'json') {
                     obj.common.adminUI.config = 'json';
                     changed = true;
@@ -275,7 +274,7 @@ function fixAdminUI(obj: Record<string, any>): void {
 }
 
 async function _readInstanceConfig(
-    adapter: ioBroker.Adapter,
+    adapter: IotAdapter,
     id: string,
     user: string,
     isTab: boolean,
@@ -310,7 +309,7 @@ async function _readInstanceConfig(
 }
 
 export async function getEasyMode(
-    adapter: ioBroker.Adapter,
+    adapter: IotAdapter,
     adminObj: ioBroker.InstanceObject | undefined | null,
 ): Promise<{
     strict: boolean;
@@ -368,10 +367,7 @@ export async function getEasyMode(
     return { strict: false, configs };
 }
 
-export function getAdapterInstances(
-    adapter: ioBroker.Adapter,
-    adapterName: string,
-): Promise<ioBroker.InstanceObject[]> {
+export function getAdapterInstances(adapter: IotAdapter, adapterName: string): Promise<ioBroker.InstanceObject[]> {
     return adapter
         .getObjectViewAsync('system', 'instance', {
             startkey: `system.adapter.${adapterName ? `${adapterName}.` : ''}`,
@@ -391,7 +387,7 @@ export function getAdapterInstances(
         );
 }
 
-export function getAdapters(adapter: ioBroker.Adapter, adapterName: string): Promise<ioBroker.AdapterObject[]> {
+export function getAdapters(adapter: IotAdapter, adapterName: string): Promise<ioBroker.AdapterObject[]> {
     return adapter
         .getObjectViewAsync('system', 'adapter', {
             startkey: `system.adapter.${adapterName || ''}`,
@@ -412,7 +408,7 @@ export function getAdapters(adapter: ioBroker.Adapter, adapterName: string): Pro
         );
 }
 
-export function getCompactInstances(adapter: ioBroker.Adapter): Promise<
+export function getCompactInstances(adapter: IotAdapter): Promise<
     Record<
         string,
         {
@@ -452,7 +448,7 @@ export function getCompactInstances(adapter: ioBroker.Adapter): Promise<
 }
 
 export function getCompactSystemRepositories(
-    adapter: ioBroker.Adapter,
+    adapter: IotAdapter,
 ): Promise<ioBroker.RepositoryObject | null | undefined> {
     return adapter.getForeignObjectAsync('system.repositories').then(obj => {
         obj?.native?.repositories &&
@@ -469,7 +465,7 @@ export function getCompactSystemRepositories(
 }
 
 export function getCompactAdapters(
-    adapter: ioBroker.Adapter,
+    adapter: IotAdapter,
 ): Promise<{ [adapter: string]: { icon?: string; v: string; iv?: string } }> {
     return adapter
         .getObjectViewAsync('system', 'adapter', { startkey: `system.adapter.`, endkey: `system.adapter.\u9999` })
@@ -491,7 +487,7 @@ export function getCompactAdapters(
         });
 }
 
-function sendToHost(adapter: ioBroker.Adapter, host: string, command: string, message: any): Promise<any> {
+function sendToHost(adapter: IotAdapter, host: string, command: string, message: any): Promise<any> {
     return new Promise(resolve => {
         if (!message && ALLOW_CACHE.includes(command) && cache[`${host}_${command}`]) {
             if (Date.now() - cache[`${host}_${command}`].ts < 500) {
@@ -532,12 +528,7 @@ function sendToHost(adapter: ioBroker.Adapter, host: string, command: string, me
     });
 }
 
-export function sendTo(
-    adapter: ioBroker.Adapter,
-    adapterInstance: string,
-    command: string,
-    message: any,
-): Promise<any> {
+export function sendTo(adapter: IotAdapter, adapterInstance: string, command: string, message: any): Promise<any> {
     return adapter.sendToAsync(adapterInstance, command, message);
 }
 
@@ -552,7 +543,7 @@ export function stopGB(): void {
 }
 
 export function updateLicenses(
-    adapter: ioBroker.Adapter,
+    adapter: IotAdapter,
     login: string,
     password: string,
     adminObj: ioBroker.InstanceObject | null | undefined,
@@ -579,14 +570,14 @@ export function updateLicenses(
 }
 
 export function getIsEasyModeStrict(
-    _adapter: ioBroker.Adapter,
+    _adapter: IotAdapter,
     adminObj: ioBroker.InstanceObject | null | undefined,
 ): Promise<boolean> {
     return Promise.resolve(!!(adminObj?.native as AdminConfig)?.accessLimit);
 }
 
 export function getCompactInstalled(
-    adapter: ioBroker.Adapter,
+    adapter: IotAdapter,
     host: string,
 ): Promise<{ [adapterName: string]: { version: string } }> {
     return sendToHost(adapter, host, 'getInstalled', null).then(data => {
@@ -596,7 +587,7 @@ export function getCompactInstalled(
     });
 }
 
-export function getCompactSystemConfig(adapter: ioBroker.Adapter): Promise<ioBroker.SystemConfigObject> {
+export function getCompactSystemConfig(adapter: IotAdapter): Promise<ioBroker.SystemConfigObject> {
     return adapter.getForeignObjectAsync('system.config').then(obj => {
         obj ||= {} as ioBroker.SystemConfigObject;
         const secret = obj.native?.secret;
@@ -609,7 +600,7 @@ export function getCompactSystemConfig(adapter: ioBroker.Adapter): Promise<ioBro
 }
 
 export function getCompactRepository(
-    adapter: ioBroker.Adapter,
+    adapter: IotAdapter,
     host: string,
 ): Promise<{
     [adapterName: string]: {
@@ -638,7 +629,7 @@ export function getCompactRepository(
     });
 }
 
-export function getCompactHosts(adapter: ioBroker.Adapter): Promise<
+export function getCompactHosts(adapter: IotAdapter): Promise<
     {
         _id: string;
         common: {
@@ -697,7 +688,7 @@ export function getCompactHosts(adapter: ioBroker.Adapter): Promise<
 }
 
 export function readLogs(
-    adapter: ioBroker.Adapter,
+    adapter: IotAdapter,
     host: string,
 ): Promise<
     {
@@ -794,7 +785,7 @@ let ratingsCached: {
 
 let ratingTimeout: NodeJS.Timeout | null = null;
 export function getRatings(
-    adapter: ioBroker.Adapter,
+    adapter: IotAdapter,
     forceUpdate?: boolean,
     autoUpdate?: boolean,
 ): Promise<{
@@ -855,7 +846,7 @@ export function getRatings(
 }
 
 export function listPermissions(
-    _adapter: ioBroker.Adapter,
+    _adapter: IotAdapter,
 ): Promise<
     Record<
         PermissionCommands,
@@ -865,10 +856,7 @@ export function listPermissions(
     return Promise.resolve(COMMANDS_PERMISSIONS);
 }
 
-export function getHostByIp(
-    adapter: ioBroker.Adapter,
-    ip: string,
-): Promise<{ ip: string; obj: ioBroker.HostObject | null }> {
+export function getHostByIp(adapter: IotAdapter, ip: string): Promise<{ ip: string; obj: ioBroker.HostObject | null }> {
     return adapter.getObjectViewAsync('system', 'host', {}).then(data => {
         if (data?.rows?.length) {
             for (let i = 0; i < data.rows.length; i++) {
@@ -897,7 +885,7 @@ export function getHostByIp(
 }
 
 export async function getListOfAllAdapters(
-    adapter: ioBroker.Adapter,
+    adapter: IotAdapter,
 ): Promise<{ link: string; name: string; color: string; order: number }[]> {
     // read all instances
     const instances = await adapter.getObjectViewAsync('system', 'instance', {});
@@ -932,7 +920,7 @@ export async function getListOfAllAdapters(
             }
         }
     }
-    const config = adapter.config as IotAdapterConfig;
+    const config = adapter.config;
 
     if (
         config.remoteWebInstance &&
@@ -976,7 +964,7 @@ export async function getListOfAllAdapters(
 let objectsTs: number | null = null;
 let cachedObjects: { [key: string]: ioBroker.Object } | null = null;
 
-export async function getAllObjects(adapter: ioBroker.Adapter): Promise<{ [key: string]: ioBroker.Object }> {
+export async function getAllObjects(adapter: IotAdapter): Promise<{ [key: string]: ioBroker.Object }> {
     const now = Date.now();
     if (cachedObjects && objectsTs && now - objectsTs < 20000) {
         return cachedObjects;

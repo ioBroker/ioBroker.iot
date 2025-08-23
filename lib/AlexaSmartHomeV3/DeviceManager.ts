@@ -11,7 +11,6 @@ import RateLimiter from './Helpers/RateLimiter';
 import OverallDailyRateLimitExceeded from './Exceptions/OverallDailyRateLimitExceeded';
 import HourlyDeviceRateLimitExceeded from './Exceptions/HourlyDeviceRateLimitExceeded';
 import type { AlexaV3EndpointID, AlexaV3Request, IotExternalPatternControl } from './types';
-import type { IotAdapterConfig } from '../types';
 import ChangeReport from './Alexa/Directives/ChangeReport';
 import Discovery from './Alexa/Directives/Discovery';
 import ReportState from './Alexa/Directives/ReportState';
@@ -175,7 +174,7 @@ export default class DeviceManager {
             // const discoveryNeeded = this.devices.length > 0;
 
             this.devices = [];
-            const defaultToggle = (AdapterProvider.get().config as IotAdapterConfig).defaultToggle || false;
+            const defaultToggle = AdapterProvider.get().config.defaultToggle || false;
 
             // collect all iobroker controls in terms of iobroker type detector (https://github.com/ioBroker/ioBroker.type-detector)
             let detectedControls = await Utils.controls(AdapterProvider.get(), this.lang);

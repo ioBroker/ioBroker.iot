@@ -1,5 +1,6 @@
 import textsT from './texts';
 import type { IotAdapterConfig } from './types';
+import type { IotAdapter } from '../main';
 
 // Stop phrases all in lower case!
 // Required by v2 custom skill to detect when the user wants to cancel the conversation
@@ -114,10 +115,10 @@ export default class AlexaCustom {
     } = {};
     private lastSkillRequestWasV2 = false;
     private config: IotAdapterConfig;
-    private adapter: ioBroker.Adapter;
+    private adapter: IotAdapter;
 
-    constructor(adapter: ioBroker.Adapter) {
-        this.config = adapter.config as IotAdapterConfig;
+    constructor(adapter: IotAdapter) {
+        this.config = adapter.config;
         this.adapter = adapter;
         if (this.config.customKnownAlexaDevices && Array.isArray(this.config.customKnownAlexaDevices)) {
             this.config.customKnownAlexaDevices.forEach(device => {

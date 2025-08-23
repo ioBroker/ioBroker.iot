@@ -214,7 +214,7 @@ export function friendlyNameByRoomAndFunctionName(
     control: IotExternalPatternControl,
     lang: ioBroker.Languages,
 ): string {
-    const config: IotAdapterConfig = AdapterProvider.get().config as IotAdapterConfig;
+    const config: IotAdapterConfig = AdapterProvider.get().config;
     const funcNameFirst = config.functionFirst;
     let concatenation = config.concatWord;
     let name;

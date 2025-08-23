@@ -1,11 +1,13 @@
-export default class AdapterProvider {
-    static adapterInstance: ioBroker.Adapter;
+import type { IotAdapter } from '../../../main';
 
-    static init(adapter: ioBroker.Adapter): void {
+export default class AdapterProvider {
+    static adapterInstance: IotAdapter;
+
+    static init(adapter: IotAdapter): void {
         AdapterProvider.adapterInstance = adapter;
     }
 
-    static get(): ioBroker.Adapter {
+    static get(): IotAdapter {
         return AdapterProvider.adapterInstance;
     }
 

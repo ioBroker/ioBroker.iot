@@ -18,6 +18,7 @@ export default [
         rules: {
             'jsdoc/require-jsdoc': 'off',
             'jsdoc/require-param': 'off',
+            'jsdoc/check-param-names': 'off',
         },
     },
     {
