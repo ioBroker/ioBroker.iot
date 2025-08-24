@@ -1,7 +1,5 @@
 import React from 'react';
 
-import PropTypes from 'prop-types';
-
 import {
     Table,
     TableBody,
@@ -23,8 +21,9 @@ import {
     Check as IconCheck,
     Close as IconClose,
 } from '@mui/icons-material';
+import type { IobTheme } from '@iobroker/adapter-react-v5';
 
-function getAttr(obj, attr, lookup) {
+function getAttr(obj: Record<string, any>, attr: string | string[], lookup?: Record<string, string>): any {
     if (typeof attr === 'string') {
         attr = attr.split('.');
     }
@@ -39,11 +38,11 @@ function getAttr(obj, attr, lookup) {
         }
         return obj[attr[0]];
     }
-    const name = attr.shift();
+    const name = attr.shift() || '';
     return getAttr(obj[name], attr);
 }
 
-function setAttr(obj, attr, value) {
+function setAttr(obj: Record<string, any>, attr: string | string[], value: any): void {
     if (typeof attr === 'string') {
         attr = attr.split('.');
     }
@@ -51,14 +50,14 @@ function setAttr(obj, attr, value) {
     if (attr.length === 1) {
         return (obj[attr[0]] = value);
     }
-    const name = attr.shift();
+    const name = attr.shift() || '';
     if (obj[name] === null || obj[name] === undefined) {
         obj[name] = {};
     }
     return setAttr(obj[name], attr, value);
 }
 
-const styles = {
+const styles: Record<string, any> = {
     tableContainer: {
         width: '100%',
         height: '100%',
@@ -86,7 +85,7 @@ const styles = {
     cellButton: {
         width: 30,
     },
-    cellHeader: theme => ({
+    cellHeader: (theme: IobTheme): React.CSSProperties => ({
         fontWeight: 'bold',
         background: theme.palette.mode === 'dark' ? '#888' : '#888',
         color: theme.palette.mode === 'dark' ? '#EEE' : '#111',
@@ -128,7 +127,12 @@ const styles = {
     },
 };
 
-function descendingComparator(a, b, orderBy, lookup) {
+function descendingComparator(
+    a: Record<string, any>,
+    b: Record<string, any>,
+    orderBy: string,
+    lookup?: Record<string, string>,
+): 1 | 0 | -1 {
     const _a = getAttr(a, orderBy, lookup) || '';
     const _b = getAttr(b, orderBy, lookup) || '';
 
@@ -141,14 +145,22 @@ function descendingComparator(a, b, orderBy, lookup) {
     return 0;
 }
 
-function getComparator(order, orderBy, lookup) {
+function getComparator(
+    order: 'asc' | 'desc',
+    orderBy: string,
+    lookup?: Record<string, string>,
+): (a: Record<string, any>, b: Record<string, any>) => -1 | 0 | 1 {
     return order === 'desc'
-        ? (a, b) => descendingComparator(a, b, orderBy, lookup)
-        : (a, b) => -descendingComparator(a, b, orderBy, lookup);
+        ? (a: Record<string, any>, b: Record<string, any>) => descendingComparator(a, b, orderBy, lookup)
+        : (a: Record<string, any>, b: Record<string, any>) =>
+              -descendingComparator(a, b, orderBy, lookup) as -1 | 0 | 1;
 }
 
-function stableSort(array, comparator) {
-    const stabilizedThis = array.map((el, index) => [el, index]);
+function stableSort(
+    array: Record<string, any>[],
+    comparator: (a: Record<string, any>, b: Record<string, any>) => -1 | 0 | 1,
+) {
+    const stabilizedThis: [el: Record<string, any>, index: number][] = array.map((el, index) => [el, index]);
 
     stabilizedThis.sort((a, b) => {
         const order = comparator(a[0], b[0]);
@@ -161,13 +173,40 @@ function stableSort(array, comparator) {
     return stabilizedThis.map(el => el[0]);
 }
 
-class TreeTable extends React.Component {
-    constructor(props) {
+interface TreeTableProps {
+    data: Record<string, any>[];
+    className?: string;
+    //    loading?: boolean;
+    columns: {
+        field: string;
+        title: string;
+        editable?: 'never';
+        lookup?: Record<string, string>;
+        cellStyle?: React.CSSProperties;
+    }[];
+    onUpdate: (newData: Record<string, any>, oldData: Record<string, any>) => void;
+    onDelete: (oldData: Record<string, any>) => void;
+    //    themeType: ThemeType;
+    style?: React.CSSProperties;
+}
+
+interface TreeTableState {
+    opened: string[];
+    editMode: false | number;
+    deleteMode: false | number;
+    editData: null | Record<string, any>;
+    order: 'asc' | 'desc';
+    orderBy: string;
+}
+
+export default class TreeTable extends React.Component<TreeTableProps, TreeTableState> {
+    constructor(props: TreeTableProps) {
         super(props);
 
-        let opened = window.localStorage.getItem('iot.ghome.opened') || '[]';
+        let openedStr = window.localStorage.getItem('iot.ghome.opened') || '[]';
+        let opened: string[];
         try {
-            opened = JSON.parse(opened) || [];
+            opened = JSON.parse(openedStr) || [];
         } catch (e) {
             opened = [];
         }
@@ -185,7 +224,12 @@ class TreeTable extends React.Component {
         };
     }
 
-    renderCell(item, col, level, i) {
+    renderCell(
+        item: Record<string, any>,
+        col: TreeTableProps['columns'][0],
+        level: number,
+        i: number,
+    ): React.JSX.Element {
         if (this.state.editMode === i && col.editable !== 'never') {
             let val = getAttr(item, col.field);
             if (Array.isArray(val)) {
@@ -212,7 +256,7 @@ class TreeTable extends React.Component {
                             value={(this.state.editData && this.state.editData[col.field]) || val}
                         >
                             {Object.keys(col.lookup).map(v => (
-                                <MenuItem value={v}>{col.lookup[v]}</MenuItem>
+                                <MenuItem value={v}>{col.lookup![v]}</MenuItem>
                             ))}
                         </Select>
                     ) : (
@@ -248,8 +292,8 @@ class TreeTable extends React.Component {
         );
     }
 
-    renderLine(item, level) {
-        level = level || 0;
+    renderLine(item: Record<string, any>, level?: number): null | (React.JSX.Element | null)[] {
+        level ||= 0;
         const i = this.props.data.indexOf(item);
         if (!item) {
             return null;
@@ -258,7 +302,7 @@ class TreeTable extends React.Component {
             return null;
         }
         if (level && !item.parentId) {
-            return null; // should never happens
+            return null; // should never happen
         }
         // try to find children
         const children = this.props.data.filter(it => it.parentId === item.id);
@@ -323,10 +367,11 @@ class TreeTable extends React.Component {
                             onClick={() => {
                                 if (this.state.editMode !== false) {
                                     const newData = JSON.parse(JSON.stringify(item));
-                                    this.state.editData &&
+                                    if (this.state.editData) {
                                         Object.keys(this.state.editData).forEach(attr =>
-                                            setAttr(newData, attr, this.state.editData[attr]),
+                                            setAttr(newData, attr, this.state.editData![attr]),
                                         );
+                                    }
                                     this.setState({ editMode: false }, () => this.props.onUpdate(newData, item));
                                 } else {
                                     this.setState({ deleteMode: false }, () => this.props.onDelete(item));
@@ -360,12 +405,12 @@ class TreeTable extends React.Component {
                 </TableCell>
             </TableRow>,
             !level && this.state.opened.includes(item.id)
-                ? children.map(_item => this.renderLine(_item, level + 1))
+                ? (children.map(_item => this.renderLine(_item, level + 1)) as unknown as React.JSX.Element)
                 : null,
         ];
     }
 
-    handleRequestSort(property) {
+    handleRequestSort(property: string): void {
         const isAsc = this.state.orderBy === property && this.state.order === 'asc';
         this.setState({ order: isAsc ? 'desc' : 'asc', orderBy: property });
     }
@@ -444,10 +489,10 @@ class TreeTable extends React.Component {
         );
     }
 
-    render() {
+    render():React.JSX.Element {
         const lookup = this.props.columns
-            ? this.props.columns.find(col => col.field === this.state.orderBy).lookup
-            : '';
+            ? this.props.columns.find(col => col.field === this.state.orderBy)?.lookup
+            : undefined;
         const table = stableSort(this.props.data, getComparator(this.state.order, this.state.orderBy, lookup));
 
         return (
@@ -468,15 +513,3 @@ class TreeTable extends React.Component {
         );
     }
 }
-
-TreeTable.propTypes = {
-    data: PropTypes.array.isRequired,
-    className: PropTypes.string,
-    //    loading: PropTypes.bool,
-    columns: PropTypes.array,
-    onUpdate: PropTypes.func,
-    onDelete: PropTypes.func,
-    //    themeType: PropTypes.string,
-};
-
-export default TreeTable;

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 
 import {
     TextField,
@@ -19,9 +18,10 @@ import {
 
 import { MdRefresh as IconRefresh, MdClose as IconClose, MdAdd as IconAdd } from 'react-icons/md';
 
-import { Utils, I18n, DialogSelectID, IconCopy } from '@iobroker/adapter-react-v5';
+import { Utils, I18n, DialogSelectID, IconCopy, type AdminConnection, type IobTheme } from '@iobroker/adapter-react-v5';
+import type { IotAdapterConfig } from '../types';
 
-const styles = {
+const styles: Record<string, React.CSSProperties> = {
     tab: {
         width: '100%',
         minHeight: '100%',
@@ -78,8 +78,29 @@ const styles = {
     },
 };
 
-class Services extends Component {
-    constructor(props) {
+interface ServicesProps {
+    native: IotAdapterConfig;
+    instance: number;
+    adapterName: string;
+    onChange: (attr: string, value: any) => void;
+    socket: AdminConnection;
+    onError: (error: string) => void;
+    theme: IobTheme;
+}
+
+interface ServicesState {
+    running: boolean;
+    toast: string;
+    showSelectId: boolean;
+    text2commandList: string[];
+    nightscoutList: string[];
+    addValue: string;
+    key?: string;
+    isInstanceAlive: boolean;
+}
+
+export default class Services extends Component<ServicesProps, ServicesState> {
+    constructor(props: ServicesProps) {
         super(props);
 
         this.state = {
@@ -91,9 +112,8 @@ class Services extends Component {
             addValue: '',
             isInstanceAlive: false,
         };
-        this.onKeyChangedBound = this.onKeyChanged.bind(this);
 
-        this.props.socket.getAdapterInstances('text2command').then(list =>
+        void this.props.socket.getAdapterInstances('text2command').then(list =>
             this.props.socket.getAdapterInstances('nightscout').then(nsList =>
                 this.setState({
                     nightscoutList: nsList.map(obj => obj._id.replace('system.adapter.nightscout.', '')),
@@ -103,33 +123,35 @@ class Services extends Component {
         );
     }
 
-    componentDidMount() {
-        this.props.socket.subscribeState(`iot.${this.props.instance}.certs.urlKey`, this.onKeyChangedBound);
+    componentDidMount(): void {
+        void this.props.socket.subscribeState(`iot.${this.props.instance}.certs.urlKey`, this.onKeyChanged);
 
-        this.props.socket
+        void this.props.socket
             .getObject(`system.adapter.${this.props.adapterName}.${this.props.instance}`)
             .then(obj =>
                 this.props.socket
                     .getState(`system.adapter.${this.props.adapterName}.${this.props.instance}.alive`)
-                    .then(state => this.setState({ isInstanceAlive: obj && obj.common && state && state.val })),
+                    .then(state => this.setState({ isInstanceAlive: !!obj?.common && !!state?.val })),
             );
     }
 
-    componentWillUnmount() {
-        this.props.socket.unsubscribeState(`iot.${this.props.instance}.certs.urlKey`, this.onKeyChangedBound);
+    componentWillUnmount(): void {
+        this.props.socket.unsubscribeState(`iot.${this.props.instance}.certs.urlKey`, this.onKeyChanged);
     }
 
-    onKeyChanged(id, state) {
-        state && this.setState({ key: state.val });
-    }
+    onKeyChanged = (id: string, state: ioBroker.State | null | undefined): void => {
+        if (state) {
+            this.setState({ key: state.val as string });
+        }
+    };
 
-    renderInput(title, attr, type) {
+    renderInput(title: string, attr: string, type?: 'text' | 'number' | 'password'): React.JSX.Element {
         return (
             <TextField
                 variant="standard"
                 label={I18n.t(title)}
                 style={{ ...styles.input, ...styles.controlElement }}
-                value={this.props.native[attr]}
+                value={(this.props.native as unknown as Record<string, string>)[attr]}
                 type={type || 'text'}
                 onChange={e => this.props.onChange(attr, e.target.value)}
                 margin="normal"
@@ -137,7 +159,7 @@ class Services extends Component {
         );
     }
 
-    reissueUrlKey() {
+    reissueUrlKey(): Promise<void> {
         this.setState({ running: true });
         return this.props.socket
             .setState(`iot.${this.props.instance}.certs.urlKey`, { val: '', ack: true })
@@ -146,7 +168,7 @@ class Services extends Component {
                 if (!obj || !obj.common || !obj.common.enabled) {
                     this.setState({ running: false, toast: I18n.t('Key will be updated after start') });
                 } else {
-                    this.props.socket.setObject(`system.adapter.iot.${this.props.instance}`, obj);
+                    void this.props.socket.setObject(`system.adapter.iot.${this.props.instance}`, obj);
                 }
             })
             .then(() =>
@@ -157,11 +179,11 @@ class Services extends Component {
             )
             .catch(err => {
                 this.setState({ running: false });
-                this.props.showError(err);
+                this.props.onError(err);
             });
     }
 
-    renderToast() {
+    renderToast(): React.JSX.Element | null {
         if (!this.state.toast) {
             return null;
         }
@@ -174,8 +196,10 @@ class Services extends Component {
                 open={!0}
                 autoHideDuration={6000}
                 onClose={() => this.setState({ toast: '' })}
-                ContentProps={{
-                    'aria-describedby': 'message-id',
+                slotProps={{
+                    content: {
+                        'aria-describedby': 'message-id',
+                    },
                 }}
                 message={<span id="message-id">{this.state.toast}</span>}
                 action={[
@@ -193,8 +217,10 @@ class Services extends Component {
         );
     }
 
-    onChipsDelete(attr, value) {
-        const chips = (this.props.native[attr] || '').split(/[,;\s]/).filter(a => !!a);
+    onChipsDelete(attr: string, value: string): void {
+        const chips = ((this.props.native as unknown as Record<string, string>)[attr] || '')
+            .split(/[,;\s]/)
+            .filter(a => !!a);
         const pos = chips.indexOf(value);
         if (pos !== -1) {
             chips.splice(pos, 1);
@@ -202,8 +228,10 @@ class Services extends Component {
         }
     }
 
-    onChipsAdd(attr) {
-        const chips = (this.props.native[attr] || '').split(/[,;\s]/).filter(a => !!a);
+    onChipsAdd(attr: string): void {
+        const chips = ((this.props.native as unknown as Record<string, string>)[attr] || '')
+            .split(/[,;\s]/)
+            .filter(a => !!a);
         if (this.state.addValue === 'visu') {
             this.props.onError(
                 I18n.t('This service is reserved for the ioBroker.visu app. Please use another service name.'),
@@ -215,13 +243,13 @@ class Services extends Component {
         }
     }
 
-    calcNightscoutSecret() {
+    calcNightscoutSecret(): string {
         const email = this.props.native.login.replace(/[^\w\d-_]/g, '_');
         const secret = this.props.native.nightscoutPass;
         return email + (secret ? `-${secret}` : '');
     }
 
-    getSelectIdDialog(attr) {
+    getSelectIdDialog(attr: string): React.JSX.Element | null {
         if (this.state.showSelectId) {
             return (
                 <DialogSelectID
@@ -229,7 +257,7 @@ class Services extends Component {
                     key="dialogSelectID3"
                     imagePrefix="../.."
                     socket={this.props.socket}
-                    selected={this.props.native[attr]}
+                    selected={(this.props.native as unknown as Record<string, string>)[attr]}
                     types={['state']}
                     onClose={() => this.setState({ showSelectId: false })}
                     onOk={selected => {
@@ -242,7 +270,7 @@ class Services extends Component {
         return null;
     }
 
-    renderChips(label, attr) {
+    renderChips(label: string, attr: string): React.JSX.Element {
         return (
             <div style={styles.chipsDiv}>
                 <FormHelperText>{Utils.renderTextWithA(I18n.t(label))}</FormHelperText>
@@ -268,7 +296,7 @@ class Services extends Component {
                 </Fab>
 
                 <div style={styles.chips}>
-                    {(this.props.native[attr] || '')
+                    {((this.props.native as unknown as Record<string, string>)[attr] || '')
                         .split(/[,;\s]/)
                         .filter(a => !!a)
                         .map(word => (
@@ -285,7 +313,7 @@ class Services extends Component {
         );
     }
 
-    render() {
+    render(): React.JSX.Element {
         return (
             <form style={styles.tab}>
                 <Button
@@ -509,18 +537,3 @@ class Services extends Component {
         );
     }
 }
-
-Services.propTypes = {
-    //     common: PropTypes.object.isRequired,
-    native: PropTypes.object.isRequired,
-    instance: PropTypes.number.isRequired,
-    adapterName: PropTypes.string.isRequired,
-    onError: PropTypes.func,
-    //    onLoad: PropTypes.func,
-    onChange: PropTypes.func,
-    socket: PropTypes.object.isRequired,
-    //    onShowError: PropTypes.func,
-    theme: PropTypes.object,
-};
-
-export default Services;

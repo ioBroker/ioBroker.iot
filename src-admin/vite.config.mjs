@@ -26,8 +26,8 @@ export default defineConfig(() => {
                             console.log('Received Response from the Target:', proxyRes.statusCode, req.url);
                         });
                     },
-                }
-            }
+                },
+            },
         },
     };
 });

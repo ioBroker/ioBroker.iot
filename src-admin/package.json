@@ -6,6 +6,7 @@
         "@emotion/styled": "^11.14.1",
         "@emotion/react": "^11.14.0",
         "@iobroker/adapter-react-v5": "^7.6.18",
+        "@iobroker/types": "^7.0.7",
         "@mui/icons-material": "^6.4.11",
         "@mui/material": "^6.4.11",
         "@sentry/browser": "^9.24.0",

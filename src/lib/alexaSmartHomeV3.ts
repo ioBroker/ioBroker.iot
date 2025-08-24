@@ -3,28 +3,9 @@ import AdapterProvider from './AlexaSmartHomeV3/Helpers/AdapterProvider';
 import IotProxy from './AlexaSmartHomeV3/Helpers/IotProxy';
 import RateLimiter from './AlexaSmartHomeV3/Helpers/RateLimiter';
 import type { device as DeviceModule } from 'aws-iot-device-sdk';
-import type { AlexaV3ReportedState, AlexaV3Request, IotExternalDetectorState } from './AlexaSmartHomeV3/types';
+import type { AlexaSH3ControlDescription, AlexaSH3DeviceDescription, AlexaV3Request } from './AlexaSmartHomeV3/types';
 import type AlexaResponse from './AlexaSmartHomeV3/Alexa/AlexaResponse';
 import type { IotAdapter } from '../main';
-
-export type AlexaSH3ControlDescription = {
-    type: string;
-    states: Record<string, IotExternalDetectorState | undefined>;
-    supported: string[];
-    enforced: string[];
-    state: AlexaV3ReportedState[];
-};
-
-export type AlexaSH3DeviceDescription = {
-    controls: AlexaSH3ControlDescription[];
-    friendlyName: string;
-    autoDetected: boolean;
-    funcName?: string;
-    roomName?: string;
-    id: string;
-    type: string;
-    state: AlexaV3ReportedState[];
-};
 
 export default class AlexaSH3 {
     private readonly deviceManager: DeviceManager;

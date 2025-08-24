@@ -1,0 +1,9 @@
+{
+  "You can use %s in the text to display current trigger value or %id to display the triggered object ID": "您可以在文本中使用 %s 显示当前触发值或使用 %id 显示触发对象 ID",
+  "Sends to ioBroker.visu": "发送到 ioBroker.visu",
+  "ioBroker.visu": "ioBroker.visu",
+  "Message:": "信息：",
+  "Title:": "标题：",
+  "Expire(sec):": "过期（秒）：",
+  "Priority": "优先事项"
+}

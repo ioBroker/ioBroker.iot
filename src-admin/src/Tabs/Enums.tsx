@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 
 import {
     TextField,
@@ -17,11 +16,12 @@ import {
 import { MdEdit as IconEdit } from 'react-icons/md';
 import { Close as IconClose, Check as IconCheck } from '@mui/icons-material';
 
-import { Utils, I18n, DialogMessage } from '@iobroker/adapter-react-v5';
+import { Utils, I18n, DialogMessage, type IobTheme, type AdminConnection } from '@iobroker/adapter-react-v5';
+import type { IotAdapterConfig } from '../types';
 
 const CHANGED_COLOR = '#e7000040';
 
-const styles = {
+const styles: Record<string, any> = {
     tab: {
         width: '100%',
         height: '100%',
@@ -68,7 +68,7 @@ const styles = {
         fontStyle: 'italic',
         fontSize: 12,
     },
-    columnHeader: theme => ({
+    columnHeader: (theme: IobTheme): React.CSSProperties => ({
         background: theme.palette.primary.light,
         padding: '10px',
         color: theme.palette.primary.contrastText,
@@ -77,8 +77,28 @@ const styles = {
     }),
 };
 
-class Enums extends Component {
-    constructor(props) {
+interface EnumsProps {
+    native: IotAdapterConfig;
+    instance: number;
+    adapterName: string;
+    onError: (err: Error) => void;
+    socket: AdminConnection;
+    title?: string;
+}
+
+interface EnumsState {
+    inAction: boolean;
+    editId: string;
+    editedSmartName: string;
+    funcs: ioBroker.EnumObject[];
+    rooms: ioBroker.EnumObject[];
+    changed: string[];
+    message: string;
+    loading: boolean;
+}
+
+export default class Enums extends Component<EnumsProps, EnumsState> {
+    constructor(props: EnumsProps) {
         super(props);
 
         this.state = {
@@ -92,12 +112,10 @@ class Enums extends Component {
             loading: true,
         };
 
-        this.onEnumUpdateBound = this.onEnumUpdate.bind(this);
-
-        this.props.socket.getEnums().then(res => {
-            const funcs = [];
-            const rooms = [];
-            res &&
+        void this.props.socket.getEnums().then(res => {
+            const funcs: ioBroker.EnumObject[] = [];
+            const rooms: ioBroker.EnumObject[] = [];
+            if (res) {
                 Object.keys(res).forEach(id => {
                     if (id.match(/^enum\.rooms\./)) {
                         rooms.push(res[id]);
@@ -105,26 +123,27 @@ class Enums extends Component {
                         funcs.push(res[id]);
                     }
                 });
+            }
 
             this.setState({ funcs, rooms, loading: false });
-            return this.props.socket.subscribeObject('enum.*', this.onEnumUpdateBound);
+            return this.props.socket.subscribeObject('enum.*', this.onEnumUpdate);
         });
     }
 
-    componentWillUnmount() {
-        this.props.socket.unsubscribeObject('enum.*', this.onEnumUpdateBound).then(() => {});
+    componentWillUnmount(): void {
+        void this.props.socket.unsubscribeObject('enum.*', this.onEnumUpdate).then(() => {});
     }
 
-    onEnumUpdate(id, obj) {
+    onEnumUpdate = (id: string, obj: ioBroker.Object | null | undefined): void => {
         this.removeChanged(id);
-        this.updateObjInState(id, obj);
+        this.updateObjInState(id, obj as ioBroker.EnumObject | null | undefined);
+    };
+
+    informInstance(id: string): void {
+        void this.props.socket.sendTo(`${this.props.adapterName}.${this.props.instance}`, 'update', id);
     }
 
-    informInstance(id) {
-        this.props.socket.sendTo(`${this.props.adapterName}.${this.props.instance}`, 'update', id);
-    }
-
-    addChanged(id) {
+    addChanged(id: string): void {
         const changed = JSON.parse(JSON.stringify(this.state.changed));
         if (!changed.includes(id)) {
             changed.push(id);
@@ -132,7 +151,7 @@ class Enums extends Component {
         }
     }
 
-    removeChanged(id) {
+    removeChanged(id: string): void {
         const changed = JSON.parse(JSON.stringify(this.state.changed));
         const pos = changed.indexOf(id);
 
@@ -142,12 +161,12 @@ class Enums extends Component {
         }
     }
 
-    updateObjInState(id, obj) {
+    updateObjInState(id: string, obj: ioBroker.EnumObject | null | undefined): void {
         // update obj
         if (id.match(/^enum\.functions\./)) {
             for (let i = this.state.funcs.length - 1; i >= 0; i--) {
                 if (this.state.funcs[i]._id === id) {
-                    const funcs = JSON.parse(JSON.stringify(this.state.funcs));
+                    const funcs: ioBroker.EnumObject[] = JSON.parse(JSON.stringify(this.state.funcs));
                     if (obj) {
                         funcs[i] = obj;
                     } else {
@@ -160,7 +179,7 @@ class Enums extends Component {
         } else if (id.match(/^enum\.rooms\./)) {
             for (let i = this.state.rooms.length - 1; i >= 0; i--) {
                 if (this.state.rooms[i]._id === id) {
-                    const rooms = JSON.parse(JSON.stringify(this.state.rooms));
+                    const rooms: ioBroker.EnumObject[] = JSON.parse(JSON.stringify(this.state.rooms));
                     if (obj) {
                         rooms[i] = obj;
                     } else {
@@ -173,49 +192,65 @@ class Enums extends Component {
         }
     }
 
-    onToggleEnum(id) {
-        let obj = this.state.funcs.find(e => e._id === id) || this.state.rooms.find(e => e._id === id);
+    onToggleEnum(id: string): void {
+        let obj: ioBroker.EnumObject | undefined =
+            this.state.funcs.find(e => e._id === id) || this.state.rooms.find(e => e._id === id);
 
+        if (!obj) {
+            return;
+        }
         const smartName = Utils.getSmartNameFromObj(
-            obj,
+            obj as unknown as ioBroker.StateObject,
             `${this.props.adapterName}.${this.props.instance}`,
             this.props.native.noCommon,
         );
         obj = JSON.parse(JSON.stringify(obj));
         if (smartName !== false) {
-            Utils.disableSmartName(obj, `${this.props.adapterName}.${this.props.instance}`, this.props.native.noCommon);
+            Utils.disableSmartName(
+                obj as unknown as ioBroker.StateObject,
+                `${this.props.adapterName}.${this.props.instance}`,
+                this.props.native.noCommon,
+            );
         } else {
-            Utils.removeSmartName(obj, `${this.props.adapterName}.${this.props.instance}`, this.props.native.noCommon);
+            Utils.removeSmartName(
+                obj as unknown as ioBroker.StateObject,
+                `${this.props.adapterName}.${this.props.instance}`,
+                this.props.native.noCommon,
+            );
         }
 
         this.addChanged(id);
 
-        this.props.socket.setObject(id, obj).then(() => {
+        void this.props.socket.setObject(id, obj!).then(() => {
             // update obj
-            this.updateObjInState(id, obj);
+            this.updateObjInState(id, obj! as ioBroker.EnumObject | null | undefined);
             this.informInstance(id);
 
             setTimeout(() => this.removeChanged(id), 500);
         });
     }
 
-    onEdit(id) {
+    onEdit(id: string): void {
         const obj = this.state.funcs.find(e => e._id === id) || this.state.rooms.find(e => e._id === id);
+
+        if (!obj) {
+            return;
+        }
         let smartName = Utils.getSmartNameFromObj(
-            obj,
+            obj as unknown as ioBroker.StateObject,
             `${this.props.adapterName}.${this.props.instance}`,
             this.props.native.noCommon,
         );
         if (typeof smartName === 'object' && smartName) {
             smartName = smartName[I18n.getLanguage()] || smartName.en;
         }
-        smartName = smartName || Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() });
+        smartName ||= Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() });
         this.setState({ editId: id, editedSmartName: smartName });
     }
 
-    renderEnum(obj) {
+    renderEnum(obj: ioBroker.EnumObject): React.JSX.Element {
         let smartName = Utils.getSmartNameFromObj(
-            obj,
+            obj as unknown as ioBroker.StateObject,
             `${this.props.adapterName}.${this.props.instance}`,
             this.props.native.noCommon,
         );
@@ -257,11 +292,11 @@ class Enums extends Component {
         );
     }
 
-    renderEnums(name) {
+    renderEnums(name: 'funcs' | 'rooms'): React.JSX.Element[] {
         return this.state[name].map(e => this.renderEnum(e));
     }
 
-    renderMessage() {
+    renderMessage(): React.JSX.Element | null {
         if (!this.state.message) {
             return null;
         }
@@ -273,7 +308,7 @@ class Enums extends Component {
         );
     }
 
-    changeSmartName() {
+    changeSmartName(): void {
         // Check if the name is duplicate
         const enums = this.state.editId.startsWith('enum.functions.') ? this.state.funcs : this.state.rooms;
         if (
@@ -281,10 +316,10 @@ class Enums extends Component {
                 obj =>
                     this.state.editId !== obj._id &&
                     (this.state.editedSmartName ===
-                        Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() }) ||
+                        Utils.getObjectNameFromObj(obj as unknown as ioBroker.StateObject, I18n.getLanguage()) ||
                         this.state.editedSmartName ===
                             Utils.getSmartNameFromObj(
-                                obj,
+                                obj as unknown as ioBroker.StateObject,
                                 `${this.props.adapterName}.${this.props.instance}`,
                                 this.props.native.noCommon,
                             )),
@@ -296,20 +331,24 @@ class Enums extends Component {
             setTimeout(() => this.removeChanged(this.state.editId), 500);
             const id = this.state.editId;
             this.setState({ editId: '' });
-            let newObj;
+
+            let newObj: ioBroker.EnumObject;
             this.props.socket
                 .getObject(id)
                 .then(obj => {
-                    Utils.updateSmartName(
-                        obj,
-                        this.state.editedSmartName,
-                        undefined,
-                        undefined,
-                        `${this.props.adapterName}.${this.props.instance}`,
-                        this.props.native.noCommon,
-                    );
-                    newObj = obj;
-                    return this.props.socket.setObject(id, obj);
+                    if (obj) {
+                        Utils.updateSmartName(
+                            // @ts-expect-error fixed in admin
+                            obj as ioBroker.StateObject | ioBroker.EnumObject,
+                            this.state.editedSmartName,
+                            undefined,
+                            undefined,
+                            `${this.props.adapterName}.${this.props.instance}`,
+                            this.props.native.noCommon,
+                        );
+                        newObj = obj as ioBroker.EnumObject;
+                        return this.props.socket.setObject(id, obj);
+                    }
                 })
                 .then(() => {
                     // update obj
@@ -320,7 +359,7 @@ class Enums extends Component {
         }
     }
 
-    renderEditDialog() {
+    renderEditDialog(): React.JSX.Element | null {
         if (this.state.editId) {
             const obj =
                 this.state.funcs.find(e => e._id === this.state.editId) ||
@@ -339,7 +378,7 @@ class Enums extends Component {
                         {this.props.title ||
                             I18n.t(
                                 'Smart name for %s',
-                                Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() }),
+                                Utils.getObjectNameFromObj(obj as unknown as ioBroker.StateObject, I18n.getLanguage()),
                             )}
                     </DialogTitle>
                     <DialogContent>
@@ -378,7 +417,7 @@ class Enums extends Component {
         return null;
     }
 
-    render() {
+    render(): React.JSX.Element {
         if (this.state.loading) {
             return <CircularProgress />;
         }
@@ -408,16 +447,3 @@ class Enums extends Component {
         );
     }
 }
-
-Enums.propTypes = {
-    //    common: PropTypes.object.isRequired,
-    native: PropTypes.object.isRequired,
-    instance: PropTypes.number.isRequired,
-    adapterName: PropTypes.string.isRequired,
-    onError: PropTypes.func,
-    //    onLoad: PropTypes.func,
-    //    onChange: PropTypes.func,
-    socket: PropTypes.object.isRequired,
-};
-
-export default Enums;

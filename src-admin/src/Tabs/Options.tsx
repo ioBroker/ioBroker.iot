@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 
 import {
     TextField,
@@ -17,9 +16,10 @@ import {
 
 import { MdRefresh as IconReload, MdClose as IconClose } from 'react-icons/md';
 
-import { I18n, Utils, Logo } from '@iobroker/adapter-react-v5';
+import { I18n, Utils, Logo, type AdminConnection } from '@iobroker/adapter-react-v5';
+import type { IotAdapterConfig } from '../types';
 
-const styles = {
+const styles: Record<string, React.CSSProperties> = {
     tab: {
         width: '100%',
         minHeight: '100%',
@@ -61,8 +61,27 @@ const styles = {
     },
 };
 
-class Options extends Component {
-    constructor(props) {
+interface OptionsProps {
+    common: ioBroker.AdapterCommon;
+    native: IotAdapterConfig;
+    instance: number;
+    adapterName: string;
+    onError: (text: string) => void;
+    onLoad: (native: IotAdapterConfig) => void;
+    onChange: (attr: string, value: any, cb?: () => void) => void;
+    changed: boolean;
+    socket: AdminConnection;
+}
+
+interface OptionsState {
+    inAction: boolean;
+    toast: string;
+    isInstanceAlive: boolean;
+    debugVisible?: boolean;
+}
+
+export default class Options extends Component<OptionsProps, OptionsState> {
+    constructor(props: OptionsProps) {
         super(props);
 
         this.state = {
@@ -71,32 +90,32 @@ class Options extends Component {
             isInstanceAlive: false,
         };
 
-        this.props.socket
+        void this.props.socket
             .getState(`system.adapter.${this.props.adapterName}.${this.props.instance}.alive`)
-            .then(state => this.setState({ isInstanceAlive: state && state.val }));
+            .then(state => this.setState({ isInstanceAlive: !!state?.val }));
     }
 
-    componentDidMount() {
+    componentDidMount(): void {
         this.props.socket.subscribeState(
             `system.adapter.${this.props.adapterName}.${this.props.instance}.alive`,
             this.onAliveChanged,
         );
     }
 
-    componentWillUnmount() {
+    componentWillUnmount(): void {
         this.props.socket.unsubscribeState(
             `system.adapter.${this.props.adapterName}.${this.props.instance}.alive`,
             this.onAliveChanged,
         );
     }
 
-    onAliveChanged = (id, state) => {
+    onAliveChanged = (id: string, state: ioBroker.State | null | undefined): void => {
         if (id === `system.adapter.${this.props.adapterName}.${this.props.instance}.alive`) {
-            this.setState({ isInstanceAlive: state && state.val });
+            this.setState({ isInstanceAlive: !!state?.val });
         }
     };
 
-    static checkPassword(pass) {
+    static checkPassword(pass: string): string | false {
         pass = (pass || '').toString();
         if (pass.length < 8 || !pass.match(/[a-z]/) || !pass.match(/[A-Z]/) || !pass.match(/\d/)) {
             return I18n.t('invalid_password_warning');
@@ -104,7 +123,12 @@ class Options extends Component {
         return false;
     }
 
-    renderInput(title, attr, type, autoComplete) {
+    renderInput(
+        title: string,
+        attr: string,
+        type?: 'text' | 'number' | 'password',
+        autoComplete?: string,
+    ): React.JSX.Element {
         const error = attr === 'pass' && Options.checkPassword(this.props.native[attr]);
         return (
             <TextField
@@ -113,7 +137,7 @@ class Options extends Component {
                 error={!!error}
                 autoComplete={autoComplete || ''}
                 style={styles.input}
-                value={this.props.native[attr]}
+                value={(this.props.native as unknown as Record<string, string>)[attr]}
                 type={type || 'text'}
                 helperText={error || ''}
                 onChange={e => this.props.onChange(attr, e.target.value)}
@@ -122,7 +146,7 @@ class Options extends Component {
         );
     }
 
-    renderCard() {
+    renderCard(): React.JSX.Element {
         return (
             <Card style={styles.card}>
                 <CardActionArea>
@@ -144,7 +168,7 @@ class Options extends Component {
                                 'https://alexa.amazon.de/spa/index.html#skills/dp/B07L66BFF9/reviews',
                                 '_blank',
                             );
-                            win.focus();
+                            win?.focus();
                         }}
                     >
                         {I18n.t('Review')}
@@ -166,11 +190,13 @@ class Options extends Component {
         );
     }
 
-    onDebug() {
+    onDebug(): void {
         this.props.socket.sendTo(`${this.props.adapterName}.${this.props.instance}`, 'debug', null).then(data => {
             const file = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            // @ts-expect-error old browsers
             if (window.navigator.msSaveOrOpenBlob) {
                 // IE10+
+                // @ts-expect-error old browsers
                 window.navigator.msSaveOrOpenBlob(file, 'debug.json');
             } else {
                 // Others
@@ -189,9 +215,9 @@ class Options extends Component {
         });
     }
 
-    async resetCerts(forceUserCreate) {
+    async resetCerts(forceUserCreate?: boolean): Promise<void> {
         this.setState({ inAction: true });
-        const newState = { inAction: false };
+        const newState: Partial<OptionsState> = { inAction: false };
         try {
             const prefix = `iot.${this.props.instance}.certs.`;
             await this.props.socket.setState(`${prefix}private`, { val: '', ack: true });
@@ -203,7 +229,7 @@ class Options extends Component {
             }
             // read actual instance object
             const obj = await this.props.socket.getObject(`system.adapter.iot.${this.props.instance}`);
-            if (obj && obj.common && obj.common.enabled) {
+            if (obj?.common?.enabled) {
                 // restart adapter
                 await this.props.socket.setObject(obj._id, obj);
             }
@@ -212,10 +238,10 @@ class Options extends Component {
             this.props.onError(err);
         }
 
-        this.setState(newState);
+        this.setState(newState as OptionsState);
     }
 
-    renderToast() {
+    renderToast(): React.JSX.Element | null {
         if (!this.state.toast) {
             return null;
         }
@@ -228,7 +254,11 @@ class Options extends Component {
                 open
                 autoHideDuration={6000}
                 onClose={() => this.setState({ toast: '' })}
-                ContentProps={{ 'aria-describedby': 'message-id' }}
+                slotProps={{
+                    content: {
+                        'aria-describedby': 'message-id',
+                    },
+                }}
                 message={<span id="message-id">{this.state.toast}</span>}
                 action={[
                     <IconButton
@@ -245,15 +275,17 @@ class Options extends Component {
         );
     }
 
-    renderCheckbox(title, attr, style) {
+    renderCheckbox(title: string, attr: string, style?: React.CSSProperties): React.JSX.Element {
         return (
             <FormControlLabel
                 key={attr}
                 style={{ ...styles.controlElement, paddingTop: 5, ...style }}
                 control={
                     <Checkbox
-                        checked={this.props.native[attr]}
-                        onChange={() => this.props.onChange(attr, !this.props.native[attr])}
+                        checked={!!(this.props.native as unknown as Record<string, string>)[attr]}
+                        onChange={() =>
+                            this.props.onChange(attr, !(this.props.native as unknown as Record<string, string>)[attr])
+                        }
                         color="primary"
                     />
                 }
@@ -262,7 +294,7 @@ class Options extends Component {
         );
     }
 
-    render() {
+    render(): React.JSX.Element {
         return (
             <form style={styles.tab}>
                 <Logo
@@ -273,7 +305,7 @@ class Options extends Component {
                     onLoad={this.props.onLoad}
                 />
                 <div style={{ ...styles.column, ...styles.columnSettings }}>
-                    {this.renderInput('ioBroker.pro Login', 'login', null, 'username')}
+                    {this.renderInput('ioBroker.pro Login', 'login', 'text', 'username')}
                     <br />
                     {this.renderInput('ioBroker.pro Password', 'pass', 'password', 'current-password')}
                     <br />
@@ -349,17 +381,3 @@ class Options extends Component {
         );
     }
 }
-
-Options.propTypes = {
-    common: PropTypes.object.isRequired,
-    native: PropTypes.object.isRequired,
-    instance: PropTypes.number.isRequired,
-    adapterName: PropTypes.string.isRequired,
-    onError: PropTypes.func,
-    onLoad: PropTypes.func,
-    onChange: PropTypes.func,
-    changed: PropTypes.bool,
-    socket: PropTypes.object.isRequired,
-};
-
-export default Options;

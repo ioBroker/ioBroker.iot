@@ -13,7 +13,16 @@ import {
     Button,
 } from '@mui/material';
 
-import { GenericApp, I18n, Loader, AdminConnection } from '@iobroker/adapter-react-v5';
+import {
+    GenericApp,
+    I18n,
+    Loader,
+    AdminConnection,
+    type IobTheme,
+    type GenericAppProps,
+    type GenericAppState,
+} from '@iobroker/adapter-react-v5';
+import type { IotAdapterConfig } from './types';
 
 import TabOptions from './Tabs/Options';
 import TabExtended from './Tabs/Extended';
@@ -24,19 +33,19 @@ import TabAlexa3SmartNames from './Tabs/Alexa3SmartNames';
 import TabAlisaSmartNames from './Tabs/AlisaSmartNames';
 import TabGoogleSmartNames from './Tabs/GoogleSmartNames';
 
-import enLang from './i18n/en';
-import deLang from './i18n/de';
-import ruLang from './i18n/ru';
-import ptLang from './i18n/pt';
-import nlLang from './i18n/nl';
-import frLang from './i18n/fr';
-import itLang from './i18n/it';
-import esLang from './i18n/es';
-import plLang from './i18n/pl';
-import ukLang from './i18n/uk';
-import zhCnLang from './i18n/zh-cn';
+import enLang from './i18n/en.json';
+import deLang from './i18n/de.json';
+import ruLang from './i18n/ru.json';
+import ptLang from './i18n/pt.json';
+import nlLang from './i18n/nl.json';
+import frLang from './i18n/fr.json';
+import itLang from './i18n/it.json';
+import esLang from './i18n/es.json';
+import plLang from './i18n/pl.json';
+import ukLang from './i18n/uk.json';
+import zhCnLang from './i18n/zh-cn.json';
 
-const styles = {
+const styles: Record<string, any> = {
     root: {},
     tabContent: {
         padding: 10,
@@ -48,16 +57,26 @@ const styles = {
         height: 'calc(100% - 64px - 48px - 20px - 38px)',
         overflow: 'auto',
     },
-    selected: theme => ({
+    selected: (theme: IobTheme): React.CSSProperties => ({
         color: theme.palette.mode === 'dark' ? undefined : '#FFF !important',
     }),
-    indicator: theme => ({
+    indicator: (theme: IobTheme): React.CSSProperties => ({
         backgroundColor: theme.palette.mode === 'dark' ? theme.palette.secondary.main : '#FFF',
     }),
 };
 
-class App extends GenericApp {
-    constructor(props) {
+interface AppState extends GenericAppState {
+    selectedTab: string;
+    showAckTempPasswordDialog: boolean;
+    theme: IobTheme;
+    themeType: 'light' | 'dark';
+    native: IotAdapterConfig;
+    loaded: boolean;
+    changed: boolean;
+}
+
+export default class App extends GenericApp<GenericAppProps, AppState> {
+    constructor(props: any) {
         const extendedProps = { ...props };
         extendedProps.encryptedFields = ['pass'];
         extendedProps.Connection = AdminConnection;
@@ -89,7 +108,7 @@ class App extends GenericApp {
         });
     }
 
-    onConnectionReady() {
+    onConnectionReady(): void {
         this.socket.getState(`${this.adapterName}.${this.instance}.info.ackTempPassword`).then(state => {
             if (!state || !state.val) {
                 this.setState({ showAckTempPasswordDialog: true });
@@ -97,7 +116,7 @@ class App extends GenericApp {
         });
     }
 
-    renderAckTempPasswordDialog() {
+    renderAckTempPasswordDialog(): React.JSX.Element | null {
         if (!this.state.showAckTempPasswordDialog) {
             return null;
         }
@@ -162,7 +181,7 @@ class App extends GenericApp {
         );
     }
 
-    render() {
+    render(): React.JSX.Element {
         if (!this.state.loaded) {
             return (
                 <StyledEngineProvider injectFirst>
@@ -186,7 +205,7 @@ class App extends GenericApp {
                         <AppBar position="static">
                             <Tabs
                                 value={this.state.selectedTab || 'options'}
-                                onChange={(e, value) => {
+                                onChange={(e, value: string): void => {
                                     this.setState({ selectedTab: value });
                                     window.localStorage.setItem(
                                         `${this.adapterName}.${this.instance}.selectedTab`,
@@ -214,7 +233,6 @@ class App extends GenericApp {
                                     <Tab
                                         value="alexa"
                                         sx={{ '&.Mui-selected': styles.selected }}
-                                        selected={this.state.selectedTab === 'alexa'}
                                         label={I18n.t('Alexa devices')}
                                         data-name="alexa"
                                     />
@@ -223,7 +241,6 @@ class App extends GenericApp {
                                     <Tab
                                         value="alexa3"
                                         sx={{ '&.Mui-selected': styles.selected }}
-                                        selected={this.state.selectedTab === 'alexa3'}
                                         label={`${I18n.t('Alexa devices')} v3`}
                                         data-name="alexa3"
                                     />
@@ -232,7 +249,6 @@ class App extends GenericApp {
                                     <Tab
                                         value="google"
                                         sx={{ '&.Mui-selected': styles.selected }}
-                                        selected={this.state.selectedTab === 'google'}
                                         label={I18n.t('Google devices')}
                                         data-name="google"
                                     />
@@ -241,7 +257,6 @@ class App extends GenericApp {
                                     <Tab
                                         value="alisa"
                                         sx={{ '&.Mui-selected': styles.selected }}
-                                        selected={this.state.selectedTab === 'alisa'}
                                         label={I18n.t('Alisa devices')}
                                         data-name="alisa"
                                     />
@@ -265,15 +280,14 @@ class App extends GenericApp {
                             {(this.state.selectedTab === 'options' || !this.state.selectedTab) && (
                                 <TabOptions
                                     key="options"
-                                    common={this.common}
-                                    theme={this.state.theme}
+                                    common={this.common!}
                                     socket={this.socket}
                                     native={this.state.native}
                                     onError={text =>
                                         this.setState({
                                             errorText:
-                                                (text || text === 0) && typeof text !== 'string'
-                                                    ? text.toString()
+                                                (text || (text as any) === 0) && typeof text !== 'string'
+                                                    ? (text as any).toString()
                                                     : text,
                                         })
                                     }
@@ -287,15 +301,13 @@ class App extends GenericApp {
                             {this.state.selectedTab === 'enums' && (
                                 <TabEnums
                                     key="enums"
-                                    theme={this.state.theme}
-                                    common={this.common}
                                     socket={this.socket}
                                     native={this.state.native}
                                     onError={text =>
                                         this.setState({
                                             errorText:
-                                                (text || text === 0) && typeof text !== 'string'
-                                                    ? text.toString()
+                                                (text || (text as any) === 0) && typeof text !== 'string'
+                                                    ? (text as any).toString()
                                                     : text,
                                         })
                                     }
@@ -311,11 +323,11 @@ class App extends GenericApp {
                                     common={this.common}
                                     socket={this.socket}
                                     native={this.state.native}
-                                    onError={text =>
+                                    onError={(text: string | Error): void =>
                                         this.setState({
                                             errorText:
-                                                (text || text === 0) && typeof text !== 'string'
-                                                    ? text.toString()
+                                                (text || (text as any) === 0) && typeof text !== 'string'
+                                                    ? (text as any).toString()
                                                     : text,
                                         })
                                     }
@@ -328,14 +340,13 @@ class App extends GenericApp {
                                     key="alexa3"
                                     themeType={this.state.themeType}
                                     theme={this.state.theme}
-                                    common={this.common}
                                     socket={this.socket}
                                     native={this.state.native}
                                     onError={text =>
                                         this.setState({
                                             errorText:
-                                                (text || text === 0) && typeof text !== 'string'
-                                                    ? text.toString()
+                                                (text || (text as any) === 0) && typeof text !== 'string'
+                                                    ? (text as any).toString()
                                                     : text,
                                         })
                                     }
@@ -351,11 +362,11 @@ class App extends GenericApp {
                                     common={this.common}
                                     socket={this.socket}
                                     native={this.state.native}
-                                    onError={text =>
+                                    onError={(text: string | Error): void =>
                                         this.setState({
                                             errorText:
-                                                (text || text === 0) && typeof text !== 'string'
-                                                    ? text.toString()
+                                                (text || (text as any) === 0) && typeof text !== 'string'
+                                                    ? (text as any).toString()
                                                     : text,
                                         })
                                     }
@@ -371,11 +382,11 @@ class App extends GenericApp {
                                     common={this.common}
                                     socket={this.socket}
                                     native={this.state.native}
-                                    onError={text =>
+                                    onError={(text: string | Error): void =>
                                         this.setState({
                                             errorText:
-                                                (text || text === 0) && typeof text !== 'string'
-                                                    ? text.toString()
+                                                (text || (text as any) === 0) && typeof text !== 'string'
+                                                    ? (text as any).toString()
                                                     : text,
                                         })
                                     }
@@ -386,20 +397,9 @@ class App extends GenericApp {
                             {this.state.selectedTab === 'extended' && (
                                 <TabExtended
                                     key="extended"
-                                    common={this.common}
                                     theme={this.state.theme}
                                     socket={this.socket}
                                     native={this.state.native}
-                                    onError={text =>
-                                        this.setState({
-                                            errorText:
-                                                (text || text === 0) && typeof text !== 'string'
-                                                    ? text.toString()
-                                                    : text,
-                                        })
-                                    }
-                                    instance={this.instance}
-                                    adapterName={this.adapterName}
                                     onChange={(attr, value) => this.updateNativeValue(attr, value)}
                                 />
                             )}
@@ -407,20 +407,18 @@ class App extends GenericApp {
                                 <TabServices
                                     key="services"
                                     theme={this.state.theme}
-                                    common={this.common}
                                     socket={this.socket}
                                     native={this.state.native}
-                                    onError={text =>
+                                    onError={(text: string | Error): void =>
                                         this.setState({
                                             errorText:
-                                                (text || text === 0) && typeof text !== 'string'
-                                                    ? text.toString()
+                                                (text || (text as any) === 0) && typeof text !== 'string'
+                                                    ? (text as any).toString()
                                                     : text,
                                         })
                                     }
                                     instance={this.instance}
                                     adapterName={this.adapterName}
-                                    onShowError={error => this.showError(error)}
                                     onChange={(attr, value) => this.updateNativeValue(attr, value)}
                                 />
                             )}
@@ -434,5 +432,3 @@ class App extends GenericApp {
         );
     }
 }
-
-export default App;

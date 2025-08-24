@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import SVG from 'react-inlinesvg';
 
 import {
@@ -64,7 +63,24 @@ import {
     ChevronRight,
 } from '@mui/icons-material';
 
-import { Utils, I18n, DialogMessage, DialogSelectID, Icon as ARIcon } from '@iobroker/adapter-react-v5';
+import {
+    Utils,
+    I18n,
+    DialogMessage,
+    DialogSelectID,
+    Icon as ARIcon,
+    type IobTheme,
+    type AdminConnection,
+    type ThemeType,
+} from '@iobroker/adapter-react-v5';
+import type { IconType } from 'react-icons';
+import type { IotAdapterConfig } from '../types';
+import type {
+    AlexaSH3DeviceDescription,
+    AlexaSH3ControlDescription,
+    IotExternalDetectorState,
+    SmartNameObject,
+} from './alexa.types';
 
 const CHANGED_COLOR = '#e7000040';
 const DEFAULT_CHANNEL_COLOR_DARK = '#4f4f4f';
@@ -77,7 +93,7 @@ const LAST_CHANGED_COLOR_LIGHT = '#b4ffbe';
 const DEFAULT_STATE_COLOR_DARK = '#6e6e6e';
 const DEFAULT_STATE_COLOR_LIGHT = '#d0d0d0';
 
-const SMART_TYPES = [
+const SMART_TYPES: string[] = [
     'socket',
     'light',
     'dimmer',
@@ -93,7 +109,7 @@ const SMART_TYPES = [
     'window',
 ];
 
-const SMART_TYPES_V2 = {
+const SMART_TYPES_V2: Record<string, string> = {
     LIGHT: 'light',
     SWITCH: 'socket',
     THERMOSTAT: 'thermostat',
@@ -102,7 +118,7 @@ const SMART_TYPES_V2 = {
     CAMERA: 'camera',
 };
 
-const CAPABILITIES = {
+const CAPABILITIES: Record<string, { label: string; icon: IconType; color: string }> = {
     brightness: { label: 'Brightness', icon: Brightness5, color: '#c9b803' },
     powerState: { label: 'Power', icon: ToggleOn, color: '#70bd00' },
     colorTemperatureInKelvin: { label: 'Color temperature', icon: Gradient, color: '#019bb6' },
@@ -117,8 +133,12 @@ const CAPABILITIES = {
     thermostatMode: { label: 'Thermostat mode', icon: ThermostatAuto, color: '#800048' },
     volume: { label: 'Volume', icon: VolumeUp, color: '#006702' },
 };
+let capabilitiesTranslated = false;
 
-const DEVICES = {
+const DEVICES: Record<
+    string,
+    { label: string; icon: IconType; color: string; control?: string; controllable?: boolean }
+> = {
     Light: {
         label: 'Light',
         icon: FaLightbulb,
@@ -186,7 +206,9 @@ const DEVICES = {
     Window: { label: 'Window sensor', icon: GiWindow, color: '#27c903' },
 };
 
-const styles = {
+let devicesTranslated = false;
+
+const styles: Record<string, any> = {
     tab: {
         width: '100%',
         height: '100%',
@@ -335,7 +357,7 @@ const styles = {
         paddingTop: 2,
         paddingBottom: 2,
     },
-    headerRow: theme => ({
+    headerRow: (theme: IobTheme): any => ({
         pl: 1,
         background: theme.palette.primary.main,
     }),
@@ -355,10 +377,17 @@ const styles = {
     },
 };
 
-function getObjectIcon(obj, id, imagePrefix) {
-    imagePrefix = imagePrefix || '.'; // http://localhost:8081';
+function getName(name: ioBroker.StringOrTranslated | undefined, lang: ioBroker.Languages): string {
+    if (name && typeof name === 'object') {
+        return name[lang] || name.en;
+    }
+    return name || '';
+}
+
+function getObjectIcon(obj: ioBroker.Object, id: string, imagePrefix: string, lang: ioBroker.Languages): string | null {
+    imagePrefix ||= '.'; // http://localhost:8081';
     let src = '';
-    const common = obj && obj.common;
+    const common = obj?.common;
 
     if (common) {
         const cIcon = common.icon;
@@ -367,7 +396,7 @@ function getObjectIcon(obj, id, imagePrefix) {
                 if (cIcon.includes('.')) {
                     let instance;
                     if (obj.type === 'instance' || obj.type === 'adapter') {
-                        src = `${imagePrefix}/adapter/${common.name}/${cIcon}`;
+                        src = `${imagePrefix}/adapter/${getName(common.name, lang)}/${cIcon}`;
                     } else if (id && id.startsWith('system.adapter.')) {
                         instance = id.split('.', 3);
                         if (cIcon[0] === '/') {
@@ -397,31 +426,78 @@ function getObjectIcon(obj, id, imagePrefix) {
     return src || null;
 }
 
-function getName(name, lang) {
-    if (name && typeof name === 'object') {
-        return name[lang] || name.en;
-    }
-    return name;
+interface Alexa3SmartNamesProps {
+    socket: AdminConnection;
+    adapterName: string;
+    instance: number;
+    native: IotAdapterConfig;
+    onError: (error: string) => void;
+    themeType: ThemeType;
+    title?: string;
+    theme: IobTheme;
 }
 
-class Alexa3SmartNames extends Component {
-    constructor(props) {
+interface Alexa3SmartNamesState {
+    edit: null | {
+        id: string;
+        type: string | null;
+        name: string;
+        originalType: string | null;
+        originalName: string;
+        objectName: string;
+    };
+    deleteId: string;
+
+    showListOfDevices: boolean;
+    showSelectId: boolean;
+    showConfirmation: boolean | string;
+    changed: string[];
+    devices: AlexaSH3DeviceDescription[];
+    message: string;
+    filter: string;
+    loading: boolean;
+    browse: boolean;
+    expanded: string[];
+    lastChanged: string;
+    objects: Record<
+        string,
+        {
+            name: string;
+            icon?: string | null;
+        }
+    >;
+    alive: boolean;
+}
+
+export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, Alexa3SmartNamesState> {
+    private readonly requesting: Record<string, boolean> = {};
+    private timerChanged: null | ReturnType<typeof setTimeout> = null;
+    private devTimer: null | ReturnType<typeof setTimeout> = null;
+    private browseTimer: null | ReturnType<typeof setTimeout> = null;
+    private browseTimerCount: number = 0;
+    private lastBrowse = 0;
+    private waitForUpdateID: null | string = null;
+    private readonly language: ioBroker.Languages = I18n.getLanguage();
+    private editedSmartName: string | null;
+
+    constructor(props: Alexa3SmartNamesProps) {
         super(props);
 
-        if (!CAPABILITIES.translated) {
+        if (!capabilitiesTranslated) {
             Object.keys(CAPABILITIES).forEach(a => (CAPABILITIES[a].label = I18n.t(CAPABILITIES[a].label)));
-            CAPABILITIES.translated = true;
+            capabilitiesTranslated = true;
         }
 
-        if (!DEVICES.translated) {
+        if (!devicesTranslated) {
             Object.keys(DEVICES).forEach(a => (DEVICES[a].label = I18n.t(DEVICES[a].label)));
-            DEVICES.translated = true;
+            devicesTranslated = true;
         }
 
-        let expanded = window.localStorage.getItem('v3.expanded') || '[]';
+        const expandedStr = window.localStorage.getItem('v3.expanded') || '[]';
+        let expanded: string[];
         try {
-            expanded = JSON.parse(expanded);
-        } catch (e) {
+            expanded = JSON.parse(expandedStr);
+        } catch {
             expanded = [];
         }
 
@@ -443,23 +519,19 @@ class Alexa3SmartNames extends Component {
             objects: {},
             alive: false,
         };
-
-        this.requesting = {};
-        this.timerChanged = null;
-        this.browseTimer = null;
-        this.browseTimerCount = 0;
-
-        this.waitForUpdateID = null;
-        this.language = I18n.getLanguage();
     }
 
-    onAliveChanged = (id, state) => {
+    onAliveChanged = (id: string, state: ioBroker.State | null | undefined): void => {
         if (!!state?.val !== this.state.alive) {
-            this.setState({ alive: !!state?.val }, () => this.state.alive && setTimeout(() => this.browse(), 10000));
+            this.setState({ alive: !!state?.val }, () => {
+                if (this.state.alive) {
+                    setTimeout(() => this.browse(), 10000);
+                }
+            });
         }
     };
 
-    browse(isIndicate) {
+    browse(isIndicate?: boolean): void {
         if (Date.now() - this.lastBrowse < 500) {
             return;
         }
@@ -483,21 +555,24 @@ class Alexa3SmartNames extends Component {
 
         this.props.socket
             .sendTo(`${this.props.adapterName}.${this.props.instance}`, 'browse3', null)
-            .then(list => {
-                this.browseTimer && clearTimeout(this.browseTimer);
+            .then((list: AlexaSH3DeviceDescription[] | { error: string } | null): void => {
+                if (this.browseTimer) {
+                    clearTimeout(this.browseTimer);
+                    this.browseTimer = null;
+                }
                 this.browseTimerCount = 0;
-                this.browseTimer = null;
-                if (list && list.error) {
-                    this.setState({ message: I18n.t(list.error) });
-                } else {
+                if ((list as { error: string })?.error) {
+                    this.setState({ message: I18n.t((list as { error: string }).error) });
+                } else if (list) {
+                    const typedList: AlexaSH3DeviceDescription[] = list as AlexaSH3DeviceDescription[];
                     if (this.waitForUpdateID) {
-                        if (!this.onEdit(this.waitForUpdateID, list)) {
+                        if (!this.onEdit(this.waitForUpdateID, typedList)) {
                             this.setState({ message: I18n.t('Device %s was not added', this.waitForUpdateID) });
                         }
                         this.waitForUpdateID = null;
                     }
                     console.log('BROWSE received.');
-                    list.sort((a, b) => {
+                    typedList.sort((a, b) => {
                         if (a.friendlyName > b.friendlyName) {
                             return 1;
                         }
@@ -508,23 +583,25 @@ class Alexa3SmartNames extends Component {
                     });
 
                     this.setState({
-                        devices: list,
+                        devices: typedList,
                         loading: false,
                         changed: [],
                         browse: false,
                     });
 
-                    if (list.length > 300) {
-                        this.props.onError(I18n.t('Too many devices (%s) configured. Max number is 300', list.length));
+                    if (typedList.length > 300) {
+                        this.props.onError(
+                            I18n.t('Too many devices (%s) configured. Max number is 300', typedList.length),
+                        );
                     }
                 }
             })
             .catch(e => this.setState({ message: I18n.t('Error %s', e), browse: false }));
     }
 
-    onReadyUpdate = (id, state) => {
+    onReadyUpdate = (id: string, state: ioBroker.State | null | undefined): void => {
         console.log(`Update ${id} ${state ? `${state.val}/${state.ack}` : 'null'}`);
-        if (state && state.ack === true && state.val === true) {
+        if (state?.ack === true && state.val === true) {
             this.devTimer && clearTimeout(this.devTimer);
             this.devTimer = setTimeout(() => {
                 this.devTimer = null;
@@ -533,11 +610,13 @@ class Alexa3SmartNames extends Component {
         }
     };
 
-    onResultUpdate = (id, state) => {
-        state && state.ack === true && state.val && this.setState({ message: state.val });
+    onResultUpdate = (_id: string, state: ioBroker.State | null | undefined): void => {
+        if (state?.ack === true && state.val) {
+            this.setState({ message: state.val as string });
+        }
     };
 
-    componentDidMount() {
+    componentDidMount(): void {
         this.props.socket.getObject(`system.adapter.${this.props.adapterName}.${this.props.instance}`).then(obj =>
             this.props.socket
                 .getState(`system.adapter.${this.props.adapterName}.${this.props.instance}.alive`)
@@ -569,7 +648,7 @@ class Alexa3SmartNames extends Component {
         );
     }
 
-    componentWillUnmount() {
+    componentWillUnmount(): void {
         this.props.socket.unsubscribeState(
             `${this.props.adapterName}.${this.props.instance}.smart.updates3`,
             this.onReadyUpdate,
@@ -588,48 +667,51 @@ class Alexa3SmartNames extends Component {
         }
     }
 
-    informInstance(id) {
+    informInstance(id: string): void {
         this.props.socket.sendTo(`${this.props.adapterName}.${this.props.instance}`, 'update', id);
     }
 
-    addChanged(id, cb) {
+    addChanged(id: string, cb?: () => void): void {
         const changed = JSON.parse(JSON.stringify(this.state.changed));
         if (!changed.includes(id)) {
             changed.push(id);
-            this.setState({ changed }, () => cb && cb());
+            this.setState({ changed }, () => cb?.());
         } else {
             cb && cb();
         }
     }
 
-    onEdit(id, devices) {
-        devices = devices || this.state.devices;
+    onEdit(id: string, devices?: AlexaSH3DeviceDescription[]): boolean {
+        devices ||= this.state.devices;
         const device = devices.find(dev =>
-            dev.controls.find(control => Object.values(control.states).find(item => item.id === id)),
+            dev.controls.find(control =>
+                Object.values(control.states).find((item: IotExternalDetectorState) => item.id === id),
+            ),
         );
         if (device) {
             this.props.socket.getObject(id).then(obj => {
-                let smartName = Utils.getSmartNameFromObj(
-                    obj,
-                    `${this.props.adapterName}.${this.props.instance}`,
-                    this.props.native.noCommon,
-                );
-                if (typeof smartName === 'object' && smartName) {
-                    smartName = smartName[I18n.getLanguage()] || smartName.en;
-                }
-                this.editedSmartName = smartName;
-                let editedSmartType = null;
+                if (obj) {
+                    let smartName = Utils.getSmartNameFromObj(
+                        obj as ioBroker.StateObject,
+                        `${this.props.adapterName}.${this.props.instance}`,
+                        this.props.native.noCommon,
+                    );
+                    if (typeof smartName === 'object' && smartName) {
+                        smartName = smartName[I18n.getLanguage()] || smartName.en;
+                    }
+                    this.editedSmartName = smartName || '';
 
-                this.setState({
-                    edit: {
-                        id,
-                        type: editedSmartType,
-                        name: smartName,
-                        originalType: editedSmartType,
-                        originalName: smartName,
-                        objectName: Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() }),
-                    },
-                });
+                    this.setState({
+                        edit: {
+                            id,
+                            type: null,
+                            name: this.editedSmartName,
+                            originalType: null,
+                            originalName: this.editedSmartName,
+                            objectName: Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() }),
+                        },
+                    });
+                }
             });
             return true;
         }
@@ -637,31 +719,35 @@ class Alexa3SmartNames extends Component {
         return false;
     }
 
-    onAskDelete(deleteId) {
+    onAskDelete(deleteId: string): void {
         this.setState({ deleteId, showConfirmation: true });
     }
 
-    onDelete() {
+    onDelete(): void {
         const id = this.state.deleteId;
         // const device = this.state.devices.find(dev => dev.additionalApplianceDetails.id === id);
         this.addChanged(id, () => {
             this.props.socket
                 .getObject(id)
                 .then(obj => {
-                    Utils.disableSmartName(
-                        obj,
-                        `${this.props.adapterName}.${this.props.instance}`,
-                        this.props.native.noCommon,
-                    );
-                    return this.props.socket.setObject(id, obj);
+                    if (obj) {
+                        Utils.disableSmartName(
+                            obj as ioBroker.StateObject,
+                            `${this.props.adapterName}.${this.props.instance}`,
+                            this.props.native.noCommon,
+                        );
+                        return this.props.socket.setObject(id, obj);
+                    }
                 })
                 .then(() => {
                     this.setState({ deleteId: '', showConfirmation: false, lastChanged: id });
 
-                    this.timerChanged && clearTimeout(this.timerChanged);
+                    if (this.timerChanged) {
+                        clearTimeout(this.timerChanged);
+                    }
                     this.timerChanged = setTimeout(() => {
-                        this.setState({ lastChanged: '' });
                         this.timerChanged = null;
+                        this.setState({ lastChanged: '' });
                     }, 30000);
 
                     // update obj
@@ -671,9 +757,9 @@ class Alexa3SmartNames extends Component {
         });
     }
 
-    static renderChannelActions(control) {
+    static renderChannelActions(control: AlexaSH3ControlDescription): React.JSX.Element[] {
         // Type
-        const actions = [];
+        const actions: React.JSX.Element[] = [];
 
         Object.keys(CAPABILITIES).forEach(action => {
             if (action === 'translated') {
@@ -764,15 +850,15 @@ class Alexa3SmartNames extends Component {
         return actions;
     }
 
-    static renderDevTypes(dev) {
+    static renderDevTypes(dev: AlexaSH3DeviceDescription): React.JSX.Element[] | null {
         // Type
-        const devices = [];
+        const devices: React.JSX.Element[] = [];
         if (!dev.controls) {
             console.log('Something went wrong');
             return null;
         }
 
-        const usedTypes = [];
+        const usedTypes: string[] = [];
         dev.controls.forEach((control, i) => {
             if (!usedTypes.includes(control.type)) {
                 usedTypes.push(control.type);
@@ -838,13 +924,13 @@ class Alexa3SmartNames extends Component {
         return devices;
     }
 
-    getControlId(lineNum, controlNum) {
+    getControlId(lineNum: number, controlNum?: number): string {
         return controlNum === undefined
             ? this.state.devices[lineNum].friendlyName
             : `${this.state.devices[lineNum].friendlyName}_${controlNum}`;
     }
 
-    onExpand(lineNum, controlNum) {
+    onExpand(lineNum: number, controlNum?: number): void {
         const expanded = [...this.state.expanded];
         const id = this.getControlId(lineNum, controlNum);
         const pos = expanded.indexOf(id);
@@ -858,7 +944,7 @@ class Alexa3SmartNames extends Component {
         this.setState({ expanded });
     }
 
-    renderSelectByOn(control) {
+    renderSelectByOn(control: AlexaSH3ControlDescription): React.JSX.Element {
         // check if brightness and powerState or percentage and powerState exists
         const allCapabilities = control.supported.concat(control.enforced);
         if (
@@ -867,7 +953,8 @@ class Alexa3SmartNames extends Component {
         ) {
             const state = Object.values(control.states)[0];
             // get first id
-            const byON = state.smartName?.byON || undefined;
+            const byON =
+                state?.smartName === 'object' ? (state?.smartName as SmartNameObject)?.byON || undefined : undefined;
             // type = '-', 'stored', false or number [5-100]
             const items = [
                 <MenuItem
@@ -908,7 +995,7 @@ class Alexa3SmartNames extends Component {
                         variant="standard"
                         style={styles.devSubLineByOnSelect}
                         value={(byON || '').toString()}
-                        onChange={e => this.onParamsChange(state.id, e.target.value)}
+                        onChange={e => state?.id && this.onParamsChange(state.id, e.target.value)}
                     >
                         {items}
                     </Select>
@@ -920,37 +1007,39 @@ class Alexa3SmartNames extends Component {
         return <div style={styles.selectType} />;
     }
 
-    onParamsChange(id, byON, type) {
+    onParamsChange(id: string, byON: string | undefined, type?: string): void {
         this.addChanged(id, () =>
             this.props.socket
                 .getObject(id)
                 .then(obj => {
-                    Utils.updateSmartName(
-                        obj,
-                        undefined,
-                        byON,
-                        type,
-                        `${this.props.adapterName}.${this.props.instance}`,
-                        this.props.native.noCommon,
-                    );
+                    if (obj) {
+                        Utils.updateSmartName(
+                            // @ts-expect-error fixed in admin
+                            obj,
+                            undefined, // undefined means do not update
+                            byON,
+                            type,
+                            `${this.props.adapterName}.${this.props.instance}`,
+                            this.props.native.noCommon,
+                        );
+                        if (this.state.lastChanged !== id) {
+                            this.setState({ lastChanged: id });
+                            this.timerChanged && clearTimeout(this.timerChanged);
+                            this.timerChanged = setTimeout(() => {
+                                this.setState({ lastChanged: '' });
+                                this.timerChanged = null;
+                            }, 30000);
+                        }
 
-                    if (this.state.lastChanged !== id) {
-                        this.setState({ lastChanged: id });
-                        this.timerChanged && clearTimeout(this.timerChanged);
-                        this.timerChanged = setTimeout(() => {
-                            this.setState({ lastChanged: '' });
-                            this.timerChanged = null;
-                        }, 30000);
+                        return this.props.socket.setObject(id, obj);
                     }
-
-                    return this.props.socket.setObject(id, obj);
                 })
                 .then(() => this.informInstance(id)) // update obj
                 .catch(err => this.props.onError(err)),
         );
     }
 
-    static renderSelectTypeSelector(type, onChange) {
+    static renderSelectTypeSelector(type: false | string, onChange: (value: string) => void): React.JSX.Element | null {
         if (type !== false) {
             const items = [
                 <MenuItem
@@ -971,8 +1060,8 @@ class Alexa3SmartNames extends Component {
                 );
             }
             // convert from AlexaV2 to AlexaV3
-            if (type && !SMART_TYPES[type]) {
-                if (SMART_TYPES[type.toLowerCase()]) {
+            if (type && !SMART_TYPES.includes(type)) {
+                if (SMART_TYPES.includes(type.toLowerCase())) {
                     type = type.toLowerCase();
                 } else if (SMART_TYPES_V2[type]) {
                     type = SMART_TYPES_V2[type];
@@ -999,20 +1088,20 @@ class Alexa3SmartNames extends Component {
         return null;
     }
 
-    renderSelectType(control, dev) {
+    renderSelectType(control: AlexaSH3ControlDescription, dev: AlexaSH3DeviceDescription): React.JSX.Element | null {
         if (dev.autoDetected) {
             return <div style={styles.selectType} />;
         }
         // get first id
-        const state = Object.values(control.states)[0];
-        const type = state.smartName?.smartType;
+        const state = Object.values(control.states)[0]!;
+        const type = (state?.smartName as SmartNameObject)?.smartType || false;
 
         return Alexa3SmartNames.renderSelectTypeSelector(type, value =>
             this.onParamsChange(state.id, undefined, value),
         );
     }
 
-    renderStates(control, background) {
+    renderStates(control: AlexaSH3ControlDescription, background: string): React.JSX.Element {
         return (
             <div
                 key="states"
@@ -1040,7 +1129,7 @@ class Alexa3SmartNames extends Component {
                     >
                         <div style={styles.devSubSubLineName}>
                             <div style={styles.devSubSubLineStateName}>{name}:</div>
-                            <span style={styles.devSubSubLineStateId}>{control.states[name].id}</span>
+                            <span style={styles.devSubSubLineStateId}>{control.states[name]!.id}</span>
                         </div>
                     </div>
                 ))}
@@ -1048,13 +1137,13 @@ class Alexa3SmartNames extends Component {
         );
     }
 
-    static getParentId(id) {
+    static getParentId(id: string): string {
         const parts = id.split('.');
         parts.pop();
         return parts.join('.');
     }
 
-    async findDeviceForState(stateId) {
+    async findDeviceForState(stateId: string): Promise<ioBroker.Object | null | undefined> {
         // read channel
         const channelId = Alexa3SmartNames.getParentId(stateId);
         const channelObj = await this.props.socket.getObject(channelId);
@@ -1084,9 +1173,12 @@ class Alexa3SmartNames extends Component {
         return this.props.socket.getObject(stateId);
     }
 
-    getControlProps(control) {
+    getControlProps(control: AlexaSH3ControlDescription): {
+        name: string;
+        icon?: string | null;
+    } {
         // get first state
-        const stateId = Object.values(control.states)[0].id;
+        const stateId = Object.values(control.states)[0]!.id;
         if (this.state.objects[stateId] === undefined && !this.requesting[stateId]) {
             this.requesting[stateId] = true;
             // try to find the device
@@ -1094,10 +1186,10 @@ class Alexa3SmartNames extends Component {
                 this.findDeviceForState(stateId).then(obj => {
                     delete this.requesting[stateId];
                     const objects = JSON.parse(JSON.stringify(this.state.objects));
-                    if (obj && obj.common) {
+                    if (obj?.common) {
                         objects[stateId] = {
                             name: obj.common?.name || null,
-                            icon: getObjectIcon(obj, stateId, '../..'),
+                            icon: getObjectIcon(obj, stateId, '../..', this.language),
                         };
                         objects[stateId].name = getName(objects[stateId].name, this.language);
                     } else {
@@ -1115,9 +1207,12 @@ class Alexa3SmartNames extends Component {
         return { name: stateId };
     }
 
-    renderChannels(dev, lineNum) {
-        return dev.controls.map((control, c) => {
-            const id = Object.values(control.states)[0].id;
+    renderChannels(dev: AlexaSH3DeviceDescription, lineNum: number): (React.JSX.Element | null)[] {
+        return dev.controls.map((control: AlexaSH3ControlDescription, c: number): React.JSX.Element | null => {
+            if (!control.states || !Object.keys(control.states).length) {
+                return null;
+            }
+            const id: string = Object.values(control.states)[0]!.id;
 
             let background = this.state.changed.includes(id)
                 ? CHANGED_COLOR
@@ -1177,7 +1272,7 @@ class Alexa3SmartNames extends Component {
                         </div>
                     </div>
                     <div style={styles.devLineActions}>{Alexa3SmartNames.renderChannelActions(control)}</div>
-                    {this.renderSelectByOn(control, dev)}
+                    {this.renderSelectByOn(control)}
                     {this.renderSelectType(control, dev)}
                     {!dev.autoDetected ? (
                         <IconButton
@@ -1211,11 +1306,11 @@ class Alexa3SmartNames extends Component {
                     )}
                 </div>,
                 expanded ? this.renderStates(control, background) : null,
-            ];
+            ] as unknown as React.JSX.Element;
         });
     }
 
-    renderDevice(dev, lineNum) {
+    renderDevice(dev: AlexaSH3DeviceDescription, lineNum: number): React.JSX.Element | null {
         // if (!dev.additionalApplianceDetails.group && dev.additionalApplianceDetails.nameModified) {
         const title = dev.friendlyName;
         // } else {
@@ -1224,7 +1319,7 @@ class Alexa3SmartNames extends Component {
 
         const expanded = this.state.expanded.includes(title);
         // take the very first ID
-        const id = Object.values(dev.controls[0].states)[0].id;
+        const id = Object.values(dev.controls[0].states)[0]!.id;
 
         let background = lineNum % 2 ? (this.props.themeType === 'dark' ? '#272727' : '#f1f1f1') : 'inherit';
         const changed = this.state.changed.includes(id);
@@ -1282,10 +1377,10 @@ class Alexa3SmartNames extends Component {
                 <span style={styles.devLineActions}>{Alexa3SmartNames.renderDevTypes(dev)}</span>
             </div>,
             expanded ? this.renderChannels(dev, lineNum) : null,
-        ];
+        ] as unknown as React.JSX.Element;
     }
 
-    renderMessage() {
+    renderMessage(): React.JSX.Element | null {
         if (!this.state.message) {
             return null;
         }
@@ -1297,13 +1392,17 @@ class Alexa3SmartNames extends Component {
         );
     }
 
-    changeSmartName(e) {
+    changeSmartName(e?: React.SyntheticEvent): void {
         e?.preventDefault();
+        if (!this.state.edit) {
+            return;
+        }
+
         // Check if the name is duplicate
         this.addChanged(this.state.edit.id, () => {
-            const id = this.state.edit.id;
-            const editedSmartType = this.state.edit.type;
-            const editedSmartName = this.state.edit.name;
+            const id = this.state.edit!.id;
+            const editedSmartType = this.state.edit!.type;
+            const editedSmartName = this.state.edit!.name;
 
             this.setState({
                 edit: null,
@@ -1314,30 +1413,32 @@ class Alexa3SmartNames extends Component {
                 clearTimeout(this.timerChanged);
             }
             this.timerChanged = setTimeout(() => {
-                this.setState({ lastChanged: '' });
                 this.timerChanged = null;
+                this.setState({ lastChanged: '' });
             }, 30000); // show for 30 seconds the green background for changes
 
             this.props.socket
                 .getObject(id)
                 .then(obj => {
-                    Utils.updateSmartName(
-                        obj,
-                        editedSmartName,
-                        undefined,
-                        editedSmartType === null ? undefined : editedSmartType,
-                        `${this.props.adapterName}.${this.props.instance}`,
-                        this.props.native.noCommon,
-                    );
-
-                    return this.props.socket.setObject(id, obj);
+                    if (obj) {
+                        Utils.updateSmartName(
+                            // @ts-expect-error fixed in admin
+                            obj,
+                            editedSmartName,
+                            undefined,
+                            editedSmartType,
+                            `${this.props.adapterName}.${this.props.instance}`,
+                            this.props.native.noCommon,
+                        );
+                        return this.props.socket.setObject(id, obj);
+                    }
                 })
                 .then(() => this.informInstance(id)) // update obj
                 .catch(err => this.props.onError(err));
         });
     }
 
-    renderEditDialog() {
+    renderEditDialog(): React.JSX.Element | null {
         if (!this.state.edit) {
             return null;
         }
@@ -1374,10 +1475,10 @@ class Alexa3SmartNames extends Component {
                     />
                     {this.state.edit.type !== null
                         ? Alexa3SmartNames.renderSelectTypeSelector(this.state.edit.type, value => {
-                            const edit = JSON.parse(JSON.stringify(this.state.edit));
-                            edit.type = value;
-                            this.setState({ edit });
-                        })
+                              const edit = JSON.parse(JSON.stringify(this.state.edit));
+                              edit.type = value;
+                              this.setState({ edit });
+                          })
                         : null}
                 </DialogContent>
                 <DialogActions>
@@ -1407,7 +1508,7 @@ class Alexa3SmartNames extends Component {
         );
     }
 
-    renderConfirmDialog() {
+    renderConfirmDialog(): React.JSX.Element | null {
         if (this.state.showConfirmation) {
             return (
                 <Dialog
@@ -1449,7 +1550,7 @@ class Alexa3SmartNames extends Component {
         return null;
     }
 
-    getSelectIdDialog() {
+    getSelectIdDialog(): React.JSX.Element | null {
         if (this.state.showSelectId) {
             return (
                 <DialogSelectID
@@ -1462,11 +1563,17 @@ class Alexa3SmartNames extends Component {
                     onClose={() => this.setState({ showSelectId: false })}
                     onOk={(selected /* , name */) => {
                         this.setState({ showSelectId: false });
+                        const selectedId = Array.isArray(selected) ? selected[0] : selected;
 
-                        this.props.socket.getObject(selected).then(obj => {
+                        if (!selectedId) {
+                            this.setState({ message: I18n.t('Invalid ID') });
+                            return;
+                        }
+                        this.props.socket.getObject(selectedId).then(obj => {
                             if (obj) {
                                 const name = Utils.getObjectNameFromObj(obj, null, { language: this.language });
                                 Utils.updateSmartName(
+                                    // @ts-expect-error fixed in admin
                                     obj,
                                     (name || I18n.t('Device name')).replace(/[-_.]+/g, ' '),
                                     undefined,
@@ -1501,7 +1608,7 @@ class Alexa3SmartNames extends Component {
         return null;
     }
 
-    renderDevices() {
+    renderDevices(): React.JSX.Element {
         const filter = this.state.filter.toLowerCase();
         const result = [];
         for (let i = 0; i < this.state.devices.length; i++) {
@@ -1521,7 +1628,7 @@ class Alexa3SmartNames extends Component {
         );
     }
 
-    renderListOfDevices() {
+    renderListOfDevices(): React.JSX.Element | null {
         if (!this.state.showListOfDevices) {
             return null;
         }
@@ -1582,7 +1689,7 @@ class Alexa3SmartNames extends Component {
         );
     }
 
-    render() {
+    render(): React.JSX.Element {
         if (this.state.loading) {
             return <CircularProgress key="alexaProgress" />;
         }
@@ -1606,10 +1713,9 @@ class Alexa3SmartNames extends Component {
                     size="small"
                     color="primary"
                     aria-label="Refresh"
-                    disable={!this.state.alive}
                     style={styles.button}
                     onClick={() => this.browse(true)}
-                    disabled={this.state.browse}
+                    disabled={this.state.browse || !this.state.alive}
                 >
                     {this.state.browse ? <CircularProgress size={20} /> : <IconRefresh />}
                 </Fab>
@@ -1648,18 +1754,3 @@ class Alexa3SmartNames extends Component {
         );
     }
 }
-
-Alexa3SmartNames.propTypes = {
-    // common: PropTypes.object.isRequired,
-    native: PropTypes.object.isRequired,
-    instance: PropTypes.number.isRequired,
-    adapterName: PropTypes.string.isRequired,
-    onError: PropTypes.func,
-    // onLoad: PropTypes.func,
-    // onChange: PropTypes.func,
-    socket: PropTypes.object.isRequired,
-    themeType: PropTypes.string,
-    theme: PropTypes.object,
-};
-
-export default Alexa3SmartNames;

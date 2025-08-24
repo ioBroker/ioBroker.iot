@@ -1,0 +1,37 @@
+// Specialized tsconfig for the admin directory,
+// includes DOM typings and configures the admin build
+{
+    "compilerOptions": {
+        "module": "esnext",
+        "moduleResolution": "node",
+        // check JS files
+        "allowJs": true,
+        // This is necessary for the automatic typing of the adapter config
+        "resolveJsonModule": true,
+        // If you want to disable the stricter type checks (not recommended), uncomment the following line
+        // "strict": false,
+        // And enable some of those features for more fine-grained control
+        "strictNullChecks": true,
+        // "strictPropertyInitialization": true,
+        // "strictBindCallApply": true,
+        // "noUnusedLocals": true,
+        // "noUnusedParameters": true,
+        "useUnknownInCatchVariables": false,
+        "target": "ES2022",
+        "baseUrl": "./",
+        "allowSyntheticDefaultImports": true,
+        "checkJs": false,
+        "noEmit": false,
+        "outDir": "./build",
+        "sourceMap": true,
+        "sourceRoot": "./src",
+        "noImplicitAny": true,
+        "skipLibCheck": true,
+        "verbatimModuleSyntax": true,
+        "lib": ["es2018", "DOM"],
+        "jsx": "react",
+        "types": ["@iobroker/types"]
+    },
+    "include": ["./src/**/*.ts", "./src/**/*.d.ts", "./src/**/*.tsx", "./src/**/*.json", "./src/**/*.css"],
+    "exclude": ["**/node_modules", "**/dist"]
+}

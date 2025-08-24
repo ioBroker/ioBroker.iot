@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 
 import {
     TextField,
@@ -15,9 +14,10 @@ import {
 
 import { MdAdd as IconAdd } from 'react-icons/md';
 
-import { Utils, I18n, DialogSelectID } from '@iobroker/adapter-react-v5';
+import { Utils, I18n, DialogSelectID, type AdminConnection, type IobTheme } from '@iobroker/adapter-react-v5';
+import type { IotAdapterConfig } from '../types';
 
-const styles = {
+const styles: Record<string, React.CSSProperties> = {
     tab: {
         display: 'flex',
         flexDirection: 'column',
@@ -56,8 +56,21 @@ const styles = {
     },
 };
 
-class ExtendedOptions extends Component {
-    constructor(props) {
+interface ExtendedOptionsProps {
+    native: IotAdapterConfig;
+    onChange: (attr: string, value: any) => void;
+    socket: AdminConnection;
+    theme: IobTheme;
+}
+
+interface ExtendedOptionsState {
+    showSelectId: boolean;
+    adminInstances: { title: string; value: string; noTranslation?: true }[];
+    webInstances: { title: string; value: string; noTranslation?: true }[];
+}
+
+export default class ExtendedOptions extends Component<ExtendedOptionsProps, ExtendedOptionsState> {
+    constructor(props: ExtendedOptionsProps) {
         super(props);
 
         this.state = {
@@ -67,43 +80,49 @@ class ExtendedOptions extends Component {
         };
     }
 
-    componentDidMount() {
-        this.props.socket.getAdapterInstances('admin').then(adminInstances => {
+    componentDidMount(): void {
+        void this.props.socket.getAdapterInstances('admin').then(adminInstances => {
             // filter out instances with authentication
-            adminInstances = adminInstances
-                .filter(item => !item.common.auth)
+            const aInstances: { title: string; value: string; noTranslation?: true }[] = adminInstances
+                .filter(item => !item.native.auth)
                 .map(item => ({
                     title: `${item.common.name}.${item._id.split('.').pop()}`,
                     value: `${item.common.name}.${item._id.split('.').pop()}`,
                     noTranslation: true,
                 }));
 
-            adminInstances.unshift({ title: 'disabled', value: '' });
+            aInstances.unshift({ title: 'disabled', value: '' });
 
             return this.props.socket.getAdapterInstances('web').then(webInstances => {
-                webInstances = webInstances
-                    .filter(item => !item.common.auth)
+                const wInstances: { title: string; value: string; noTranslation?: true }[] = webInstances
+                    .filter(item => !item.native.auth)
                     .map(item => ({
                         title: `${item.common.name}.${item._id.split('.').pop()}`,
                         value: `${item.common.name}.${item._id.split('.').pop()}`,
                         noTranslation: true,
                     }));
 
-                webInstances.unshift({ title: 'disabled', value: '' });
+                wInstances.unshift({ title: 'disabled', value: '' });
 
-                this.setState({ adminInstances, webInstances });
+                this.setState({ adminInstances: aInstances, webInstances: wInstances });
             });
         });
     }
 
-    renderInput(title, attr, type, disabled, helperText) {
+    renderInput(
+        title: string,
+        attr: string,
+        type?: 'text' | 'password' | 'number',
+        disabled?: boolean,
+        helperText?: string,
+    ): React.JSX.Element {
         return (
             <TextField
                 variant="standard"
                 label={I18n.t(title)}
                 disabled={disabled}
                 style={{ ...styles.input, ...styles.controlElement }}
-                value={this.props.native[attr]}
+                value={(this.props.native as unknown as Record<string, string>)[attr]}
                 type={type || 'text'}
                 helperText={helperText ? I18n.t(helperText) : ''}
                 onChange={e => this.props.onChange(attr, e.target.value)}
@@ -112,7 +131,12 @@ class ExtendedOptions extends Component {
         );
     }
 
-    renderSelect(title, attr, options, style) {
+    renderSelect(
+        title: string,
+        attr: string,
+        options: { value: string; title: string; noTranslation?: true }[],
+        style?: React.CSSProperties,
+    ): React.JSX.Element {
         return (
             <FormControl
                 style={{
@@ -126,7 +150,7 @@ class ExtendedOptions extends Component {
             >
                 <Select
                     variant="standard"
-                    value={this.props.native[attr] || '_'}
+                    value={(this.props.native as unknown as Record<string, string>)[attr] || '_'}
                     onChange={e => this.props.onChange(attr, e.target.value === '_' ? '' : e.target.value)}
                     input={
                         <Input
@@ -149,15 +173,17 @@ class ExtendedOptions extends Component {
         );
     }
 
-    renderCheckbox(title, attr, style) {
+    renderCheckbox(title: string, attr: string, style?: React.CSSProperties): React.JSX.Element {
         return (
             <FormControlLabel
                 key={attr}
                 style={{ ...styles.controlElement, paddingTop: 5, ...style }}
                 control={
                     <Checkbox
-                        checked={this.props.native[attr]}
-                        onChange={() => this.props.onChange(attr, !this.props.native[attr])}
+                        checked={!!(this.props.native as unknown as Record<string, string>)[attr]}
+                        onChange={() =>
+                            this.props.onChange(attr, !(this.props.native as unknown as Record<string, string>)[attr])
+                        }
                         color="primary"
                     />
                 }
@@ -166,7 +192,7 @@ class ExtendedOptions extends Component {
         );
     }
 
-    getSelectIdDialog(attr) {
+    getSelectIdDialog(attr: string): React.JSX.Element | null {
         if (this.state.showSelectId) {
             return (
                 <DialogSelectID
@@ -174,7 +200,7 @@ class ExtendedOptions extends Component {
                     theme={this.props.theme}
                     imagePrefix="../.."
                     socket={this.props.socket}
-                    selected={this.props.native[attr]}
+                    selected={(this.props.native as unknown as Record<string, string>)[attr]}
                     types={['state']}
                     onClose={() => this.setState({ showSelectId: false })}
                     onOk={selected => {
@@ -187,7 +213,7 @@ class ExtendedOptions extends Component {
         return null;
     }
 
-    render() {
+    render(): React.JSX.Element {
         return (
             <form style={styles.tab}>
                 {/* this.renderInput('Cloud URL', 'cloudUrl', null, true) */}
@@ -212,11 +238,11 @@ class ExtendedOptions extends Component {
                     >
                         <Select
                             variant="standard"
-                            value={this.props.native.defaultToggle || false}
-                            onChange={e => this.props.onChange('defaultToggle', e.target.value)}
+                            value={this.props.native.defaultToggle ? 'true' : 'false'}
+                            onChange={e => this.props.onChange('defaultToggle', e.target.value === 'true')}
                         >
-                            <MenuItem value={!1}>{I18n.t('Do not toggle')}</MenuItem>
-                            <MenuItem value={!0}>{I18n.t('Toggle')}</MenuItem>
+                            <MenuItem value={'false'}>{I18n.t('Do not toggle')}</MenuItem>
+                            <MenuItem value={'true'}>{I18n.t('Toggle')}</MenuItem>
                         </Select>
                         <FormHelperText>{I18n.t('Default toggle behaviour (Only alexa v3)')}</FormHelperText>
                     </FormControl>
@@ -224,7 +250,7 @@ class ExtendedOptions extends Component {
                 {this.renderInput(
                     'OFF level for switches in %',
                     'deviceOffLevel',
-                    null,
+                    'text',
                     false,
                     '(Set to 0 if behavior not desired)',
                 )}
@@ -266,16 +292,3 @@ class ExtendedOptions extends Component {
         );
     }
 }
-
-ExtendedOptions.propTypes = {
-    //    common: PropTypes.object.isRequired,
-    native: PropTypes.object.isRequired,
-    //    instance: PropTypes.number.isRequired,
-    //    onError: PropTypes.func,
-    //    onLoad: PropTypes.func,
-    onChange: PropTypes.func,
-    socket: PropTypes.object.isRequired,
-    theme: PropTypes.object,
-};
-
-export default ExtendedOptions;

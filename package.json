@@ -34,14 +34,14 @@
         "@alcalzone/release-script-plugin-iobroker": "^3.7.2",
         "@alcalzone/release-script-plugin-license": "^3.7.0",
         "@iobroker/build-tools": "^2.0.15",
-        "@iobroker/eslint-config": "^2.0.3",
+        "@iobroker/eslint-config": "^2.1.0",
         "@iobroker/legacy-testing": "^2.0.2",
         "@iobroker/types": "^7.0.7",
         "@types/node": "^24.3.0",
         "@types/aws-iot-device-sdk": "^2.2.8",
         "colorette": "^2.0.20",
         "puppeteer": "^24.16.2",
-        "typescript": "^5.8.3"
+        "typescript": "^5.9.2"
     },
     "bugs": {
         "url": "https://github.com/ioBroker/ioBroker.iot/issues"
