@@ -105,12 +105,12 @@ Functions are like: light, blind, heating.
 
 The following conditions must be met to get the state in the automatically generated list:
 
--   the state must be in some "function" enumeration.
--   the state must have a role ("state", "switch" or "level.\*", e.g., level.dimmer) if not directly included in "functions".
-    It can be that the channel is in the "functions", but state itself not.
+-   the state must be in some `function` enumeration.
+-   the state must have a role (`state`, `switch` or `level.\*`, e.g., `level.dimmer`) if not directly included in "functions".
+    It can be that the channel is in the `functions`, but state itself not.
 -   the state must be writable: `common.write` = true
 -   the state dimmer must have `common.type` as 'number'
--   the state heating must have `common.unit` as '°C', '°F' or '°K' and `common.type` as `number`
+-   the state heating must have `common.unit` as `°C`, `°F` or `°K` and `common.type` as `number`
 
 If the state is only in "functions" and not in any "room", the name of state will be used.
 
