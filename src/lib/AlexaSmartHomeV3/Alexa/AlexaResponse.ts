@@ -20,6 +20,9 @@ export default class AlexaResponse {
     public context?: {
         properties: AlexaV3ReportedState[];
     };
+
+    public iobVersion = '1';
+
     public readonly event?: AlexaV3Directive;
 
     static ErrorResponseName: AlexaV3DirectiveType = 'ErrorResponse';

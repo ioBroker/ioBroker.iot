@@ -83,51 +83,10 @@ export default class DeviceManager {
 
         detectedControls.forEach(item => {
             this.log.silly(`processing control: ${JSON.stringify(item)}`);
-            this.log.debug(`${item.type} added to ${friendlyName}`);
-            if (item.type === 'AdjustableControl') {
-                controls.push(new Controls.AdjustableControl(item));
-            } else if (item.type === 'AdjustablePercentageControl') {
-                controls.push(new Controls.AdjustablePercentageControl(item));
-            } else if (item.type === 'AirCondition') {
-                controls.push(new Controls.AirCondition(item));
-            } else if (item.type === 'Blind') {
-                controls.push(new Controls.Blind(item));
-            } else if (item.type === 'ContactSensor') {
-                controls.push(new Controls.ContactSensor(item));
-            } else if (item.type === 'Ct') {
-                controls.push(new Controls.Ct(item));
-            } else if (item.type === 'Dimmer') {
-                controls.push(new Controls.Dimmer(item));
-            } else if (item.type === 'Door') {
-                controls.push(new Controls.Door(item));
-            } else if (item.type === 'Gate') {
-                controls.push(new Controls.Gate(item));
-            } else if (item.type === 'Hue') {
-                controls.push(new Controls.Hue(item));
-            } else if (item.type === 'Light') {
-                controls.push(new Controls.Light(item));
-            } else if (item.type === 'Lock') {
-                controls.push(new Controls.Lock(item));
-            } else if (item.type === 'Motion') {
-                controls.push(new Controls.Motion(item));
-            } else if (item.type === 'ReadOnlyDetector') {
-                controls.push(new Controls.ReadOnlyDetector(item));
-            } else if (item.type === 'Slider') {
-                controls.push(new Controls.Slider(item));
-            } else if (item.type === 'Socket') {
-                controls.push(new Controls.Socket(item));
-            } else if (item.type === 'Temperature') {
-                controls.push(new Controls.Temperature(item));
-            } else if (item.type === 'Thermostat') {
-                controls.push(new Controls.Thermostat(item));
-            } else if (item.type === 'VacuumCleaner') {
-                controls.push(new Controls.VacuumCleaner(item));
-            } else if (item.type === 'Volume') {
-                controls.push(new Controls.Volume(item));
-            } else if (item.type === 'VolumeGroup') {
-                controls.push(new Controls.VolumeGroup(item));
-            } else if (item.type === 'Window') {
-                controls.push(new Controls.Window(item));
+            const control = Controls.factory(item);
+            if (control) {
+                this.log.debug(`${item.type} added to ${friendlyName}`);
+                controls.push(control);
             } else {
                 this.log.debug(`control of type ${item.type} not supported yet. Skipped.`);
             }

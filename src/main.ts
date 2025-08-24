@@ -914,7 +914,7 @@ export class IotAdapter extends Adapter {
                     try {
                         const response = await this.alexaSH3.process(request);
                         if (request.directive.header.messageId != response.event!.header.messageId) {
-                            this.log.warn('Strange');
+                            throw new Error('Incoming and outgoing header message IDs are not equal!');
                         }
                         return response as any;
                     } catch {
