@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "3.6.0",
+    "version": "4.0.0",
     "news": {
+      "4.0.0": {
+        "en": "Some files were rewritten in TypeScript\nImprovement of Alexa V3",
+        "de": "Einige Dateien wurden in TypeScript neu geschrieben\nVerbesserung von Alexa V3",
+        "ru": "Некоторые файлы были переписаны в TypeScript\nУлучшение Alexa V3",
+        "pt": "Alguns arquivos foram reescritos no TypeScript\nMelhoria da Alexa V3",
+        "nl": "Sommige bestanden zijn herschreven in TypeScript\nVerbetering van Alexa V3",
+        "fr": "Certains fichiers ont été réécrits dans TypeScript\nAmélioration de Alexa V3",
+        "it": "Alcuni file sono stati riscritti in TypeScript\nMiglioramento di Alexa V3",
+        "es": "Algunos archivos fueron reescritos en TipoScript\nMejora de Alexa V3",
+        "pl": "Niektóre pliki zostały zmienione w TypeScript\nPoprawa jakości Alexa V3",
+        "uk": "Деякі файли були записані у TypeScript\nУдосконалення Alexa V3",
+        "zh-cn": "一些文件在 TypeScript 中重写\n改进Alexa V3"
+      },
       "3.6.0": {
         "en": "new features for upcoming Visu App 1.4.0",
         "de": "neue Features für die kommende Visu App 1.4.0",
@@ -80,19 +93,6 @@
         "pl": "Poprawił edycję nazwy urządzeń dla Alexa 3",
         "uk": "Виправлено редагування назв пристроїв для Alexa 3",
         "zh-cn": "校正了Alexa 3设备的名称编辑"
-      },
-      "3.4.3": {
-        "en": "corrected the addition of the devices for Alexa\nchanged compilation of GUI to remove deprecated packages",
-        "de": "korrigierte die Ergänzung der Geräte für Alexa\ngeänderte Zusammenstellung von GUI, um deprecierte Pakete zu entfernen",
-        "ru": "исправил добавление устройств для Alexa\nизмененная компиляция GUI для удаления депрецированных пакетов",
-        "pt": "corrigiu a adição dos dispositivos para Alexa\ncompilação alterada de GUI para remover pacotes deprecated",
-        "nl": "gecorrigeerd de toevoeging van de apparaten voor Alexa\ngewijzigde compilatie van GUI om verouderde pakketten te verwijderen",
-        "fr": "corrigé l'ajout des dispositifs pour Alexa\nmodification de la compilation de GUI pour supprimer les paquets obsolètes",
-        "it": "corretto l'aggiunta dei dispositivi per Alexa\nmodificato la compilazione di GUI per rimuovere i pacchetti deprecati",
-        "es": "corregido la adición de los dispositivos para Alexa\ncambio de compilación de GUI para eliminar paquetes deprecated",
-        "pl": "poprawiła dodanie urządzeń dla Alexa\nzmiana kompilacji GUI w celu usunięcia zdeprecjonowanych pakietów",
-        "uk": "виправлено додавання пристроїв для Alexa\nзмінена компіляція GUI для видалення депресованих пакетів",
-        "zh-cn": "修正了为Alexa添加的设备\n更改 GUI 的编译以删除已贬值的软件包"
       }
     },
     "titleLang": {
