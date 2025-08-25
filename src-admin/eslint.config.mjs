@@ -22,6 +22,6 @@ export default [
         },
     },
     {
-        ignores: ['build/**/*', 'node_modules/**/*', '**/*.mjs'],
+        ignores: ['build/**/*', 'node_modules/**/*', '**/*.mjs', '**/*.jsx'],
     },
 ];

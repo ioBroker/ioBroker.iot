@@ -333,7 +333,9 @@ class AlisaDevices extends Component {
 
     onReadyUpdate(id, state) {
         if (state && state.ack === true && state.val === true) {
-            if (this.devTimer) clearTimeout(this.devTimer);
+            if (this.devTimer) {
+                clearTimeout(this.devTimer);
+            }
             this.devTimer = setTimeout(() => {
                 this.devTimer = null;
                 this.browse();

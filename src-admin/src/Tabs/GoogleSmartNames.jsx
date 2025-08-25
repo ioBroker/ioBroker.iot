@@ -357,7 +357,9 @@ class GoogleSmartNames extends Component {
     onReadyUpdate(id, state) {
         console.log(`Update ${id} ${state ? `${state.val}/${state.ack}` : 'null'}`);
         if (state && state.ack === true && state.val === true) {
-            if (this.devTimer) clearTimeout(this.devTimer);
+            if (this.devTimer) {
+                clearTimeout(this.devTimer);
+            }
             this.devTimer = setTimeout(() => {
                 this.devTimer = null;
                 this.browse();

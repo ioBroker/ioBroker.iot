@@ -550,12 +550,22 @@ class AlexaSmartNames extends Component {
             return null;
         }
         dev.actions.sort((a, b) => {
-            if (a === b) return 0;
-            if (a === 'turnOn') return -1;
-            if (b === 'turnOn') return 1;
+            if (a === b) {
+                return 0;
+            }
+            if (a === 'turnOn') {
+                return -1;
+            }
+            if (b === 'turnOn') {
+                return 1;
+            }
 
-            if (a === 'turnOff') return -1;
-            if (b === 'turnOff') return 1;
+            if (a === 'turnOff') {
+                return -1;
+            }
+            if (b === 'turnOff') {
+                return 1;
+            }
             return 0;
         });
 

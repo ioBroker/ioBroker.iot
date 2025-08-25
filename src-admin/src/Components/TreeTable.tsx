@@ -159,8 +159,8 @@ function getComparator(
 function stableSort(
     array: Record<string, any>[],
     comparator: (a: Record<string, any>, b: Record<string, any>) => -1 | 0 | 1,
-) {
-    const stabilizedThis: [el: Record<string, any>, index: number][] = array.map((el, index) => [el, index]);
+): Record<string, any>[] {
+    const stabilizedThis: [item: Record<string, any>, index: number][] = array.map((el, index) => [el, index]);
 
     stabilizedThis.sort((a, b) => {
         const order = comparator(a[0], b[0]);
@@ -203,11 +203,11 @@ export default class TreeTable extends React.Component<TreeTableProps, TreeTable
     constructor(props: TreeTableProps) {
         super(props);
 
-        let openedStr = window.localStorage.getItem('iot.ghome.opened') || '[]';
+        const openedStr = window.localStorage.getItem('iot.ghome.opened') || '[]';
         let opened: string[];
         try {
             opened = JSON.parse(openedStr) || [];
-        } catch (e) {
+        } catch {
             opened = [];
         }
         if (!Array.isArray(opened)) {
@@ -415,7 +415,7 @@ export default class TreeTable extends React.Component<TreeTableProps, TreeTable
         this.setState({ order: isAsc ? 'desc' : 'asc', orderBy: property });
     }
 
-    renderHead() {
+    renderHead(): React.JSX.Element {
         return (
             <TableHead>
                 <TableRow>
@@ -489,11 +489,14 @@ export default class TreeTable extends React.Component<TreeTableProps, TreeTable
         );
     }
 
-    render():React.JSX.Element {
+    render(): React.JSX.Element {
         const lookup = this.props.columns
             ? this.props.columns.find(col => col.field === this.state.orderBy)?.lookup
             : undefined;
-        const table = stableSort(this.props.data, getComparator(this.state.order, this.state.orderBy, lookup));
+        const table: Record<string, any>[] = stableSort(
+            this.props.data,
+            getComparator(this.state.order, this.state.orderBy, lookup),
+        );
 
         return (
             <div

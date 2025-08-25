@@ -109,7 +109,7 @@ export default class App extends GenericApp<GenericAppProps, AppState> {
     }
 
     onConnectionReady(): void {
-        this.socket.getState(`${this.adapterName}.${this.instance}.info.ackTempPassword`).then(state => {
+        void this.socket.getState(`${this.adapterName}.${this.instance}.info.ackTempPassword`).then(state => {
             if (!state || !state.val) {
                 this.setState({ showAckTempPasswordDialog: true });
             }

@@ -617,7 +617,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
     };
 
     componentDidMount(): void {
-        this.props.socket.getObject(`system.adapter.${this.props.adapterName}.${this.props.instance}`).then(obj =>
+        void this.props.socket.getObject(`system.adapter.${this.props.adapterName}.${this.props.instance}`).then(obj =>
             this.props.socket
                 .getState(`system.adapter.${this.props.adapterName}.${this.props.instance}.alive`)
                 .then(state => {
@@ -634,15 +634,15 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                 }),
         );
 
-        this.props.socket.subscribeState(
+        void this.props.socket.subscribeState(
             `${this.props.adapterName}.${this.props.instance}.smart.updates3`,
             this.onReadyUpdate,
         );
-        this.props.socket.subscribeState(
+        void this.props.socket.subscribeState(
             `${this.props.adapterName}.${this.props.instance}.smart.updatesResult`,
             this.onResultUpdate,
         );
-        this.props.socket.subscribeState(
+        void this.props.socket.subscribeState(
             `system.adapter.${this.props.adapterName}.${this.props.instance}.alive`,
             this.onAliveChanged,
         );
@@ -668,7 +668,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
     }
 
     informInstance(id: string): void {
-        this.props.socket.sendTo(`${this.props.adapterName}.${this.props.instance}`, 'update', id);
+        void this.props.socket.sendTo(`${this.props.adapterName}.${this.props.instance}`, 'update', id);
     }
 
     addChanged(id: string, cb?: () => void): void {
@@ -689,7 +689,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
             ),
         );
         if (device) {
-            this.props.socket.getObject(id).then(obj => {
+            void this.props.socket.getObject(id).then(obj => {
                 if (obj) {
                     let smartName = Utils.getSmartNameFromObj(
                         obj as ioBroker.StateObject,
@@ -1183,7 +1183,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
             this.requesting[stateId] = true;
             // try to find the device
             setTimeout(() => {
-                this.findDeviceForState(stateId).then(obj => {
+                void this.findDeviceForState(stateId).then(obj => {
                     delete this.requesting[stateId];
                     const objects = JSON.parse(JSON.stringify(this.state.objects));
                     if (obj?.common) {
@@ -1569,7 +1569,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                             this.setState({ message: I18n.t('Invalid ID') });
                             return;
                         }
-                        this.props.socket.getObject(selectedId).then(obj => {
+                        void this.props.socket.getObject(selectedId).then(obj => {
                             if (obj) {
                                 const name = Utils.getObjectNameFromObj(obj, null, { language: this.language });
                                 Utils.updateSmartName(

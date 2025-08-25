@@ -96,7 +96,7 @@ export default class Options extends Component<OptionsProps, OptionsState> {
     }
 
     componentDidMount(): void {
-        this.props.socket.subscribeState(
+        void this.props.socket.subscribeState(
             `system.adapter.${this.props.adapterName}.${this.props.instance}.alive`,
             this.onAliveChanged,
         );
@@ -191,7 +191,7 @@ export default class Options extends Component<OptionsProps, OptionsState> {
     }
 
     onDebug(): void {
-        this.props.socket.sendTo(`${this.props.adapterName}.${this.props.instance}`, 'debug', null).then(data => {
+        void this.props.socket.sendTo(`${this.props.adapterName}.${this.props.instance}`, 'debug', null).then(data => {
             const file = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             // @ts-expect-error old browsers
             if (window.navigator.msSaveOrOpenBlob) {
