@@ -269,6 +269,7 @@ export function friendlyNameByRoomAndFunctionName(
 
     return onlyValidCharactersAndLengthForFriendlyName(name);
 }
+
 /**
  * Checks whether the provided value is a valid smart name.
  *
@@ -286,6 +287,7 @@ export function isValidSmartName(smartName: SmartName | undefined, lang: ioBroke
     }
     return ![null, undefined, 'ignore', false].includes(name as string);
 }
+
 /**
  * Checks a value for validity or returns a default.
  *
@@ -305,6 +307,7 @@ export function defaultIfNullOrEmpty<T>(value: T | undefined, defaultValue: T): 
 
     return value;
 }
+
 /**
  * Inspects all objects (states, channels and devices) and tries to identify so-called 'controls'
  *
