@@ -80,7 +80,7 @@ if (process.argv.find(arg => arg === '--rules-0-clean')) {
     }
     npmPromise
         .then(() => buildReact(`${__dirname}/src-admin/`, { rootDir: __dirname, vite: true }))
-        .then(() => copyFiles(['src-admin/build/*/**', 'src/build/*'], 'admin/'))
+        .then(() => copyFiles(['src-admin/build/**/*', 'src/build/*'], 'admin/'))
         .then(() => patchHtmlFile(`${__dirname}/admin/index.html`))
         .then(() => {
             if (existsSync(`${__dirname}/admin/index.html`)) {
@@ -100,7 +100,7 @@ if (process.argv.find(arg => arg === '--rules-0-clean')) {
     }
     installPromise
         .then(() => buildReact(`${__dirname}/src-admin/`, { rootDir: __dirname, vite: true }))
-        .then(() => copyFiles(['src-admin/build/*/**', 'src-admin/build/*'], 'admin/'))
+        .then(() => copyFiles(['src-admin/build/**/*', 'src-admin/build/*'], 'admin/'))
         .then(() => patchHtmlFile(`${__dirname}/admin/index.html`))
         .then(() => {
             if (existsSync(`${__dirname}/admin/index.html`)) {
