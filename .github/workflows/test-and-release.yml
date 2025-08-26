@@ -127,6 +127,7 @@ jobs:
           npm config set //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
           npm whoami
           npm install
+          npm build
           NODE_OPTIONS=--max_old_space_size=8192 npm publish
 
       - name: Create Github Release
