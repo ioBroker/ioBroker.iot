@@ -61,7 +61,7 @@
     "test-package": "mocha test/testPackageFiles.js --exit",
     "test": "npm run test-gui && npm run test-package",
     "test-alexa-v3": "mocha --grep AlexaSmartHomeV3 --recursive",
-    "prepublishOnly": "node tasks",
+    "prepublishOnly": "npm run build",
     "tsc": "tsc -p tsconfig.build.json && node tasks --backend",
     "lint": "eslint -c eslint.config.mjs",
     "build": "node tasks && npm run tsc",
