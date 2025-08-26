@@ -1,9 +1,9 @@
 {
-  "You can use %s in the text to display current trigger value or %id to display the triggered object ID": "Możesz użyć %s w tekście, aby wyświetlić bieżącą wartość wyzwalacza lub %id, aby wyświetlić identyfikator wyzwalanego obiektu",
-  "Sends to ioBroker.visu": "Wysyła do ioBroker.visu",
-  "ioBroker.visu": "ioBroker.visu",
-  "Message:": "Wiadomość:",
-  "Title:": "Tytuł:",
-  "Expire(sec):": "Wygaśnięcie (s):",
-  "Priority": "Priorytet"
+    "You can use %s in the text to display current trigger value or %id to display the triggered object ID": "Możesz użyć %s w tekście, aby wyświetlić bieżącą wartość wyzwalacza lub %id, aby wyświetlić identyfikator wyzwalanego obiektu",
+    "Sends to ioBroker.visu": "Wysyła do ioBroker.visu",
+    "ioBroker.visu": "ioBroker.visu",
+    "Message:": "Wiadomość:",
+    "Title:": "Tytuł:",
+    "Expire(sec):": "Wygaśnięcie (s):",
+    "Priority": "Priorytet"
 }
