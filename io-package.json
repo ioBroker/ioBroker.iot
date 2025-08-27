@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "4.0.2",
+    "version": "4.0.3",
     "news": {
+      "4.0.3": {
+        "en": "Added response ID to custom skill responses",
+        "de": "Antwort ID auf benutzerdefinierte Fähigkeiten Antworten hinzugefügt",
+        "ru": "Добавлен идентификатор ответа на пользовательские ответы навыков",
+        "pt": "ID de resposta adicionado às respostas personalizadas da habilidade",
+        "nl": "Reactie-ID toegevoegd aan aangepaste vaardigheidsresponsen",
+        "fr": "Ajout de l'ID de réponse aux réponses de compétence personnalisées",
+        "it": "Aggiunto ID risposta alle risposte di abilità personalizzate",
+        "es": "ID de respuesta adicional a respuestas de habilidad personalizadas",
+        "pl": "Dodano ID odpowiedzi do własnych odpowiedzi umiejętności",
+        "uk": "Додано ідентифікатор відповіді на користувацькі відповіді",
+        "zh-cn": "添加自定义技能响应的响应 ID"
+      },
       "4.0.2": {
         "en": "Some files were rewritten in TypeScript\nImprovement of Alexa V3",
         "de": "Einige Dateien wurden in TypeScript neu geschrieben\nVerbesserung von Alexa V3",
@@ -80,19 +93,6 @@
         "pl": "Sprawdziliśmy maksymalną długość odkrytych urządzeń dla Alexa",
         "uk": "Перевірити максимальну довжину відкритих пристроїв для Alexa",
         "zh-cn": "为 Alexa 检查了已发现设备的最大长度"
-      },
-      "3.4.4": {
-        "en": "Corrected the name editing of the devices for Alexa 3",
-        "de": "Korrektur der Namensbearbeitung der Geräte für Alexa 3",
-        "ru": "Исправлено редактирование названия устройств для Alexa 3",
-        "pt": "Corrigido o nome de edição dos dispositivos para Alexa 3",
-        "nl": "De naambewerking van de apparaten voor Alexa 3 gecorrigeerd",
-        "fr": "Correction de l'édition du nom des appareils pour Alexa 3",
-        "it": "Corretto il nome di modifica dei dispositivi per Alexa 3",
-        "es": "Corregido el nombre de edición de los dispositivos para Alexa 3",
-        "pl": "Poprawił edycję nazwy urządzeń dla Alexa 3",
-        "uk": "Виправлено редагування назв пристроїв для Alexa 3",
-        "zh-cn": "校正了Alexa 3设备的名称编辑"
       }
     },
     "titleLang": {
