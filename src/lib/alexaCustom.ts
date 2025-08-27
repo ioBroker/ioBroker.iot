@@ -13,25 +13,45 @@ const stopPhrases: { [language: string]: string[] } = {
 export type AlexaCustomResponse = {
     version: string;
     sessionAttributes: { [key: string]: string };
+    responseId?: string; // This field added by iot adapter and will be deleted in the cloud
     response: {
-        outputSpeech: {
-            type: string;
-            text: string;
-        };
+        outputSpeech:
+            | {
+                  type: 'PlainText';
+                  text?: string;
+                  playBehavior?: 'REPLACE_ENQUEUED' | 'ENQUEUE' | 'REPLACE_ALL';
+              }
+            | {
+                  type: 'SSML';
+                  ssml: string;
+                  playBehavior?: 'REPLACE_ENQUEUED' | 'ENQUEUE' | 'REPLACE_ALL';
+              };
         card: {
+            type: 'Simple' | 'Standard' | 'LinkAccount' | 'AskForPermissionsConsent';
             content: string;
             title: string;
-            type: 'Simple';
-        };
-        shouldEndSession: boolean;
-        reprompt?: {
-            outputSpeech: {
-                type: string;
-                ssml: string;
+            text?: string;
+            image?: {
+                smallImageUrl: string;
+                largeImageUrl: string;
             };
         };
+        shouldEndSession: boolean | null;
+        reprompt?: {
+            outputSpeech:
+                | {
+                      type: 'PlainText';
+                      text?: string;
+                      playBehavior?: 'REPLACE_ENQUEUED' | 'ENQUEUE' | 'REPLACE_ALL';
+                  }
+                | {
+                      type: 'SSML';
+                      ssml?: string;
+                      playBehavior?: 'REPLACE_ENQUEUED' | 'ENQUEUE' | 'REPLACE_ALL';
+                  };
+        };
         directives?: {
-            type: 'Dialog.ElicitSlot';
+            type: 'Dialog.ElicitSlot'; // | 'InterfaceName.Directive';
             updatedIntent: {
                 name: 'queryIntent';
                 confirmationStatus: 'NONE';
@@ -49,40 +69,141 @@ export type AlexaCustomResponse = {
 };
 
 type AlexaCustomSession = {
-    sessionId: string;
-    user: {
-        userId: string;
+    sessionId: `amzn1.echo-api.session.${string}`;
+    application: {
+        applicationId: `amzn1.ask.skill.${string}`;
     };
+    attributes: Record<string, unknown>;
+    user: {
+        userId: `amzn1.ask.account.${string}`;
+        accessToken: string;
+    };
+    new: boolean;
 };
-type AlexaCustomRequest = {
-    session: AlexaCustomSession;
-    customSkillV2?: boolean;
-    request: {
-        type: string;
-        reason: string;
-        dialogState: string;
-        intent: {
-            name: string;
-            slots: {
-                [key: string]: {
-                    value: string;
-                    resolutions: {
-                        resolutionsPerAuthority: {
-                            status: { code: string };
-                            values: { value: { name: string } }[];
-                        }[];
-                    };
+type AlexaCustomLaunchRequest = {
+    type: 'LaunchRequest';
+    requestId: string;
+    timestamp: string;
+    locale: string;
+};
+type AlexaCustomIntentRequest = {
+    type: 'IntentRequest';
+    requestId: string;
+    timestamp: string;
+    dialogState: 'STARTED' | 'IN_PROGRESS' | 'COMPLETED';
+    locale: string;
+    intent: {
+        name: string;
+        confirmationStatus: 'NONE' | 'CONFIRMED' | 'DENIED';
+        slots: {
+            [slotName: string]: {
+                name: string;
+                value: string;
+                confirmationStatus: 'NONE' | 'CONFIRMED' | 'DENIED';
+                slotValue?: {
+                    value:
+                        | {
+                              resolutions: any;
+                              type: 'Simple';
+                              value: string;
+                          }
+                        | {
+                              resolutions: any;
+                              type: 'List';
+                              values: string[];
+                          };
+                };
+                resolutions?: {
+                    resolutionsPerAuthority: [
+                        {
+                            authority: string;
+                            status: {
+                                code:
+                                    | 'ER_SUCCESS_MATCH'
+                                    | 'ER_SUCCESS_NO_MATCH'
+                                    | 'ER_ERROR_TIMEOUT'
+                                    | 'ER_ERROR_EXCEPTION';
+                            };
+                            values: [
+                                {
+                                    value: {
+                                        name: string;
+                                        id: string;
+                                    };
+                                },
+                            ];
+                        },
+                    ];
                 };
             };
         };
     };
-    context: {
-        System: {
-            device: {
-                deviceId: string;
-            };
-        };
+};
+type AlexaCustomSessionEndedRequest = {
+    type: 'SessionEndedRequest';
+    requestId: string;
+    timestamp: string;
+    reason: 'USER_INITIATED' | 'ERROR' | 'EXCEEDED_MAX_REPROMPTS';
+    locale: string;
+    error: {
+        type: string;
+        message: string;
     };
+};
+type AlexaCustomCanFulfillIntentRequest = {
+    // ONly english
+    type: 'CanFulfillIntentRequest';
+    requestId: string;
+    timestamp: string;
+};
+
+type AlexaCustomRequestContext = {
+    System: {
+        device: {
+            deviceId: string;
+            supportedInterfaces: {
+                AudioPlayer: { [key: string]: any };
+            };
+            persistentEndpointId: `amzn1.alexa.endpoint.${string}`;
+        };
+        application: {
+            applicationId: `amzn1.ask.skill.${string}`;
+        };
+        user: {
+            userId: `amzn1.ask.account.${string}`;
+            accessToken: string;
+        };
+        person: {
+            personId: `amzn1.ask.person.${string}`;
+            accessToken: string;
+        };
+        unit: {
+            unitId: `amzn1.ask.unit.${string}`;
+            persistentUnitId: `amzn1.alexa.unit.did.${string}`;
+        };
+        apiEndpoint: 'https://api.amazonalexa.com';
+        apiAccessToken: string;
+    };
+    Advertising: {
+        advertisingId: string;
+        limitAdTracking: boolean;
+    };
+    AudioPlayer: {
+        playerActivity: 'PLAYING';
+        token: string;
+        offsetInMilliseconds: number;
+    };
+};
+
+type AlexaCustomRequest = {
+    session: AlexaCustomSession;
+    customSkillV2?: boolean;
+    request:
+        | AlexaCustomLaunchRequest
+        | AlexaCustomIntentRequest
+        | AlexaCustomSessionEndedRequest
+        | AlexaCustomCanFulfillIntentRequest;
+    context: AlexaCustomRequestContext;
 };
 
 type StoredSession = {
@@ -113,7 +234,6 @@ export default class AlexaCustom {
             lastSeen: number;
         };
     } = {};
-    private lastSkillRequestWasV2 = false;
     private config: IotAdapterConfig;
     private adapter: IotAdapter;
 
@@ -163,15 +283,20 @@ export default class AlexaCustom {
         // adapter.log.warn('[CUSTOM] Unknown applianceId: ' + deviceId);
     }
 
-    #getResponseV1(text: string, repromptText: string | null, shouldEndSession?: boolean): AlexaCustomResponse {
+    #getResponseV1(
+        text: string,
+        repromptText: string | null,
+        requestId: string,
+        shouldEndSession?: boolean,
+    ): AlexaCustomResponse {
         let speechPlainText = text;
-        let speechType = 'PlainText';
+        let speechType: 'PlainText' | 'SSML' = 'PlainText';
         if (text.startsWith('<speak>')) {
             speechPlainText = text.replace(/<[^>]*>/g, '').trim();
             speechType = 'SSML';
         }
 
-        let repromptType = 'PlainText';
+        let repromptType: 'PlainText' | 'SSML' = 'PlainText';
         if (repromptText?.startsWith('<speak>')) {
             repromptType = 'SSML';
         }
@@ -179,11 +304,15 @@ export default class AlexaCustom {
         const response: AlexaCustomResponse = {
             version: '1.0',
             sessionAttributes: {},
+            responseId: requestId,
             response: {
-                outputSpeech: {
-                    type: speechType,
-                    text: text,
-                },
+                outputSpeech:
+                    speechType === 'PlainText'
+                        ? {
+                              type: 'PlainText',
+                              text,
+                          }
+                        : { type: 'SSML', ssml: `text` },
                 card: {
                     content: speechPlainText,
                     title: textsT(this.lang, 'Answer from ioBroker') || 'ioBroker',
@@ -192,19 +321,32 @@ export default class AlexaCustom {
                 shouldEndSession: shouldEndSession || false,
             },
         };
+
         if (repromptText) {
             response.response.reprompt = {
-                outputSpeech: {
-                    type: repromptType,
-                    ssml: repromptText,
-                },
+                outputSpeech:
+                    repromptType === 'PlainText'
+                        ? {
+                              type: 'PlainText',
+                              text: repromptText,
+                          }
+                        : {
+                              type: 'SSML',
+                              ssml: repromptText,
+                          },
             };
         }
+
         return response;
     }
 
-    #getResponseV2(text: string, repromptText: string | null, shouldEndSession?: boolean): AlexaCustomResponse {
-        const response = this.#getResponseV1(text, repromptText, shouldEndSession);
+    #getResponseV2(
+        text: string,
+        repromptText: string | null,
+        requestId: string,
+        shouldEndSession?: boolean,
+    ): AlexaCustomResponse {
+        const response = this.#getResponseV1(text, repromptText, requestId, shouldEndSession);
 
         if (!shouldEndSession) {
             // We redirect the user to the Dialog Intent to capture the full traffic
@@ -298,7 +440,8 @@ export default class AlexaCustom {
     ): void {
         void this.adapter.setState('smart.lastResponse', text, true);
 
-        const sessionId = request.session && request.session.sessionId ? request.session.sessionId : '';
+        const sessionId = request.session?.sessionId || '';
+        const requestId = request.request?.requestId || '';
 
         if (this.openSessions[sessionId].responseTimer) {
             clearTimeout(this.openSessions[sessionId].responseTimer);
@@ -313,18 +456,18 @@ export default class AlexaCustom {
                 ? this.openSessions[sessionId].isV2Skill
                 : !!request.customSkillV2;
         if (isV2Skill) {
-            callback(this.#getResponseV2(text, null, shouldEndSession));
+            callback(this.#getResponseV2(text, null, requestId, shouldEndSession));
         } else {
-            callback(this.#getResponseV1(text, null, shouldEndSession));
+            callback(this.#getResponseV1(text, null, requestId, shouldEndSession));
         }
     }
 
     touchSession(sessionId: string, isV2Skill: boolean): void {
-        if (this.openSessions[sessionId] && this.openSessions[sessionId].expiryTimer) {
+        if (this.openSessions[sessionId]?.expiryTimer) {
             clearTimeout(this.openSessions[sessionId].expiryTimer);
             this.openSessions[sessionId].expiryTimer = null;
         }
-        this.openSessions[sessionId] = this.openSessions[sessionId] || {
+        this.openSessions[sessionId] ||= {
             expiryTimer: null,
             responseTimer: null,
             request: null,
@@ -337,7 +480,7 @@ export default class AlexaCustom {
     }
 
     deleteSession(sessionId: string): void {
-        if (this.openSessions[sessionId] && this.openSessions[sessionId].expiryTimer) {
+        if (this.openSessions[sessionId]?.expiryTimer) {
             clearTimeout(this.openSessions[sessionId].expiryTimer);
         }
         delete this.openSessions[sessionId];
@@ -391,14 +534,15 @@ export default class AlexaCustom {
             return { error: 'Invalid request: no intent!' };
         }
         const isV2Skill = !!request.customSkillV2;
-        this.lastSkillRequestWasV2 = isV2Skill;
         const getResponse = isV2Skill ? this.#getResponseV2 : this.#getResponseV1;
+        const requestId = request.request?.requestId || '';
 
         if (!isEnabled) {
             if (this.lang === 'en') {
                 return getResponse(
                     'The service is not activated. Please enable Alexa integration in the iot Adapter.',
                     null,
+                    requestId,
                     true,
                 );
             }
@@ -406,20 +550,19 @@ export default class AlexaCustom {
                 return getResponse(
                     'Услуга не активирована. Включите интеграцию Alexa в адаптере Интернета вещей.',
                     null,
+                    requestId,
                     true,
                 );
             }
             return getResponse(
                 'Der Service ist nicht aktiviert. Bitte aktiviere die Alex-Integration im iot-Adapter um Ihn zu aktivieren.',
                 null,
+                requestId,
                 true,
             );
         }
 
-        const sessionId = request.session && request.session.sessionId ? request.session.sessionId : '';
-        this.adapter.log.debug(
-            `Custom Skill ${isV2Skill ? 'V2' : 'V1'} request: ${request.request.type}/${request.request.intent && request.request.intent.name} for session ${sessionId}, dialog: ${request.request.dialogState}`,
-        );
+        const sessionId = request.session?.sessionId || '';
 
         if (request.request.type === 'LaunchRequest') {
             this.adapter.log.debug(request.request.type);
@@ -428,17 +571,26 @@ export default class AlexaCustom {
                 return getResponse(
                     'Hello, what do you want to know or control?',
                     'What do you want to know or control?',
+                    requestId,
                 );
             }
             if (this.lang === 'ru') {
                 return getResponse(
                     'Привет. Что вы хотите знать или контролировать?',
                     'Что вы хотите знать или контролировать?',
+                    requestId,
                 );
             }
-            return getResponse('Hallo, was möchtest Du wissen oder steuern?', 'Was möchtest Du wissen oder steuern?');
+            return getResponse(
+                'Hallo, was möchtest Du wissen oder steuern?',
+                'Was möchtest Du wissen oder steuern?',
+                requestId,
+            );
         }
         if (request.request.type === 'IntentRequest') {
+            this.adapter.log.debug(
+                `Custom Skill ${isV2Skill ? 'V2' : 'V1'} request: ${request.request.type}/${request.request.intent?.name} for session ${sessionId}, dialog: ${request.request.dialogState}`,
+            );
             if (request.request.intent) {
                 this.touchSession(sessionId, isV2Skill);
 
@@ -447,17 +599,20 @@ export default class AlexaCustom {
                         return getResponse(
                             'This skill will pass all recognized words to your ioBroker installation and you can configure actions and responses there! What do you want to know or control?',
                             'What do you want to know or control?',
+                            requestId,
                         );
                     }
                     if (this.lang === 'ru') {
                         return getResponse(
                             'Этот навык передаст все распознанные слова в вашу установку ioBroker, и вы сможете настроить действия и ответы там! Что вы хотите знать или контролировать?',
                             'Что вы хотите знать или контролировать?',
+                            requestId,
                         );
                     }
                     return getResponse(
                         'Dieser Skill gibt alle erkannten Wörter an Deine ioBroker-Installation weiter und Du kannst dort Aktionen und Antworten konfigurieren! Was möchtest Du wissen oder steuern?',
                         'Was möchtest Du wissen oder steuern?',
+                        requestId,
                     );
                 } else if (
                     request.request.intent.name === 'AMAZON.CancelIntent' ||
@@ -466,12 +621,12 @@ export default class AlexaCustom {
                     this.adapter.log.debug(request.request.intent.name);
                     this.deleteSession(sessionId);
                     if (this.lang === 'en') {
-                        return getResponse('Goodbye!', null, true);
+                        return getResponse('Goodbye!', null, requestId, true);
                     }
                     if (this.lang === 'ru') {
-                        return getResponse('До скорого!', null, true);
+                        return getResponse('До скорого!', null, requestId, true);
                     }
-                    return getResponse('Bis bald!', null, true);
+                    return getResponse('Bis bald!', null, requestId, true);
                 }
                 const textsLog = [];
                 const texts = [];
@@ -527,31 +682,37 @@ export default class AlexaCustom {
                     // No slots and nothing from above
                     this.adapter.log.warn(`Unexpected ALEXA Request: ${JSON.stringify(request)}`);
                     if (this.lang === 'en') {
-                        return getResponse('I did not hear you. Please repeat your question!', null);
+                        return getResponse('I did not hear you. Please repeat your question!', null, requestId);
                     }
                     if (this.lang === 'ru') {
-                        return getResponse('Я не слышал тебя. Пожалуйста, повторите свой вопрос!', null);
+                        return getResponse('Я не слышал тебя. Пожалуйста, повторите свой вопрос!', null, requestId);
                     }
-                    return getResponse('Ich habe Dich nicht verstanden. Bitte wiederhole deine Frage!', null);
+                    return getResponse(
+                        'Ich habe Dich nicht verstanden. Bitte wiederhole deine Frage!',
+                        null,
+                        requestId,
+                    );
                 }
 
+                const internRequest: AlexaCustomIntentRequest = request.request;
                 // collect all filled slots (v1 and v2 skill)
-                if (request.request.intent.slots) {
-                    const slots = Object.keys(request.request.intent.slots);
+                if (internRequest.intent.slots) {
+                    const slots = Object.keys(internRequest.intent.slots);
                     slots.forEach(slotId => {
-                        const slot = request.request.intent.slots[slotId];
+                        const slot = internRequest.intent.slots[slotId];
                         let value = slot.value;
                         const resolution =
-                            slot.resolutions?.resolutionsPerAuthority?.length > 0
+                            slot.resolutions?.resolutionsPerAuthority &&
+                            slot.resolutions.resolutionsPerAuthority.length > 0
                                 ? slot.resolutions.resolutionsPerAuthority[0]
                                 : null;
 
-                        if (resolution && resolution.status.code === 'ER_SUCCESS_MATCH') {
+                        if (resolution?.status.code === 'ER_SUCCESS_MATCH') {
                             const resolutionValue = resolution.values[0].value;
                             value = resolutionValue.name;
                         }
 
-                        if (value && value.length) {
+                        if (value?.length) {
                             texts.push(value);
                             textsLog.push(`${slotId} = ${value}`);
                         }
@@ -560,7 +721,7 @@ export default class AlexaCustom {
 
                 let text = texts.join(' ');
 
-                const intent = request.request.intent.name || '';
+                const intent = internRequest.intent.name || '';
                 if (originalIntentName.startsWith('queryIntentStarteDialog')) {
                     // v2 Skill StarteDialog* intents are automatically handled without sending anywhere
                     let response = '';
@@ -584,19 +745,19 @@ export default class AlexaCustom {
                             response = 'Ja?';
                         }
                     }
-                    return getResponse(response, response);
+                    return getResponse(response, response, requestId);
                 }
                 if (intent === 'queryIntent' && stopPhrases[this.lang].includes(text.toLowerCase())) {
                     // v2 Skill when in dialog mode, we need to take care of the exit criteria ourselves
                     this.deleteSession(sessionId);
 
                     if (this.lang === 'en') {
-                        return getResponse('Goodbye!', null, true);
+                        return getResponse('Goodbye!', null, requestId, true);
                     }
                     if (this.lang === 'ru') {
-                        return getResponse('До скорого!', null, true);
+                        return getResponse('До скорого!', null, requestId, true);
                     }
-                    return getResponse('Bis bald!', null, true);
+                    return getResponse('Bis bald!', null, requestId, true);
                 }
                 // v1 and v2 Skill
                 const deviceId = request?.context?.System?.device?.deviceId
@@ -633,13 +794,13 @@ export default class AlexaCustom {
                 this.adapter.log.debug(`${intent}: ${textsLog.join(', ')}`);
 
                 if (intent) {
-                    let text_timeout;
+                    let textTimeout;
                     if (this.lang === 'en') {
-                        text_timeout = `Processing of ${text} is not possible!`;
+                        textTimeout = `Processing of ${text} is not possible!`;
                     } else if (this.lang === 'ru') {
-                        text_timeout = `Обработка ${text} не возможна!`;
+                        textTimeout = `Обработка ${text} не возможна!`;
                     } else {
-                        text_timeout = `Die Verarbeitung von ${text} ist nicht möglich!`;
+                        textTimeout = `Die Verarbeitung von ${text} ist nicht möglich!`;
                     }
 
                     if (
@@ -656,7 +817,7 @@ export default class AlexaCustom {
                                     this.openSessions[sessionId].responseTimer = setTimeout(() => {
                                         this.openSessions[sessionId].responseTimer = null;
                                         if (resolve) {
-                                            this.processAfter(request, text_timeout, true, resolve);
+                                            this.processAfter(request, textTimeout, true, resolve);
                                             resolve = null;
                                         }
                                     }, 1000);
@@ -681,7 +842,7 @@ export default class AlexaCustom {
 
                                         void this.adapter.setState('smart.lastResponse', typedResult.response, true);
                                         if (resolve) {
-                                            resolve(getResponse(typedResult.response, null, true));
+                                            resolve(getResponse(typedResult.response, null, requestId, true));
                                             resolve = null;
                                         }
                                     });
@@ -697,32 +858,33 @@ export default class AlexaCustom {
                         this.openSessions[sessionId].request = request;
 
                         this.openSessions[sessionId].responseTimer = setTimeout(
-                            () => this.processAfter(request, text_timeout, true, resolve),
+                            () => this.processAfter(request, textTimeout, true, resolve),
                             200,
                         );
                     });
                 }
                 if (this.lang === 'en') {
-                    return getResponse('I did not understand the question!', null);
+                    return getResponse('I did not understand the question!', null, requestId);
                 }
                 if (this.lang === 'ru') {
-                    return getResponse('Я не поняла ваш вопрос!', null);
+                    return getResponse('Я не поняла ваш вопрос!', null, requestId);
                 }
-                return getResponse('Ich habe Deine Frage nicht verstanden!', null);
+                return getResponse('Ich habe Deine Frage nicht verstanden!', null, requestId);
             }
             this.adapter.log.warn(`Unexpected ALEXA Request: ${JSON.stringify(request)}`);
             if (this.lang === 'en') {
-                return getResponse('Please repeat your question!', null);
+                return getResponse('Please repeat your question!', null, requestId);
             }
             if (this.lang === 'ru') {
-                return getResponse('Пожалуйста, повторите вопрос!', null);
+                return getResponse('Пожалуйста, повторите вопрос!', null, requestId);
             }
-            return getResponse('Bitte wiederhole die Frage!', null);
+            return getResponse('Bitte wiederhole die Frage!', null, requestId);
         }
         if (request.request.type === 'SessionEndedRequest') {
             this.adapter.log.debug(`SessionEndedRequest: ${request.request.reason}`);
             this.deleteSession(sessionId);
             // Should not be called
+            // A skill cannot return a response to SessionEndedRequest.
             return { error: 'Unexpected Session Ended' };
         }
 

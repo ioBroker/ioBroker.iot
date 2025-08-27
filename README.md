@@ -349,6 +349,9 @@ setState('iot.0.app.message', JSON.stringify({
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Added response ID to custom skill responses
+
 ### 4.0.2 (2025-08-26)
 - (@GermanBluefox) Some files were rewritten in TypeScript
 - (@GermanBluefox) Improvement of Alexa V3
