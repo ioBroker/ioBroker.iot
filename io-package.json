@@ -171,6 +171,7 @@
         "dsn": "https://20987eaf91ef49de821771499fdb4e1a@sentry.iobroker.net/40"
       }
     },
+    "nogit": true,
     "javascriptRules": {
       "i18n": true,
       "url": "rules/customRuleBlocks.js",
