@@ -1,5 +1,5 @@
 {
-    "You can use %s in the text to display current trigger value or %id to display the triggered object ID": "Sie können %s im Text verwenden, um den aktuellen Triggerwert anzuzeigen, oder %id, um die ID des ausgelösten Objekts anzuzeigen",
+    "You can use %s in the text to display current trigger value or %id to display the triggered object ID": "%s kann im Text verwendet werden, um den aktuellen Triggerwert anzuzeigen, oder %id, um die ID des ausgelösten Objekts anzuzeigen",
     "Sends to ioBroker.visu": "Sendet an ioBroker.visu",
     "ioBroker.visu": "ioBroker.visu",
     "Message:": "Nachricht:",
