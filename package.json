@@ -41,7 +41,7 @@
     "@types/aws-iot-device-sdk": "^2.2.8",
     "colorette": "^2.0.20",
     "puppeteer": "^24.17.1",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.3"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.iot/issues"
