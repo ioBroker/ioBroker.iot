@@ -24,23 +24,23 @@
   "dependencies": {
     "@iobroker/adapter-core": "^3.3.2",
     "aws-iot-device-sdk": "^2.2.15",
-    "axios": "^1.11.0",
+    "axios": "^1.12.2",
     "@iobroker/type-detector": "^4.5.1",
     "mime": "^3.0.0",
-    "uuid": "^11.1.0"
+    "uuid": "^11.0.0"
   },
   "devDependencies": {
-    "@alcalzone/release-script": "^3.8.0",
-    "@alcalzone/release-script-plugin-iobroker": "^3.7.2",
-    "@alcalzone/release-script-plugin-license": "^3.7.0",
+    "@alcalzone/release-script": "^4.0.0",
+    "@alcalzone/release-script-plugin-iobroker": "^4.0.0",
+    "@alcalzone/release-script-plugin-license": "^4.0.0",
     "@iobroker/build-tools": "^2.0.15",
-    "@iobroker/eslint-config": "^2.1.0",
+    "@iobroker/eslint-config": "^2.2.0",
     "@iobroker/legacy-testing": "^2.0.2",
     "@iobroker/types": "^7.0.7",
-    "@types/node": "^24.3.0",
+    "@types/node": "^24.7.1",
     "@types/aws-iot-device-sdk": "^2.2.8",
     "colorette": "^2.0.20",
-    "puppeteer": "^24.22.3",
+    "puppeteer": "^24.24.0",
     "typescript": "^5.9.3"
   },
   "bugs": {

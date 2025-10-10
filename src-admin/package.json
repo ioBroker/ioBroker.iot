@@ -5,14 +5,14 @@
     "dependencies": {
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.1",
-        "@iobroker/adapter-react-v5": "^7.7.2",
+        "@iobroker/adapter-react-v5": "^7.7.3",
         "@iobroker/types": "^7.0.7",
         "@mui/icons-material": "^6.5.0",
         "@mui/material": "^6.5.0",
-        "@sentry/browser": "^10.7.0",
-        "@types/react": "^18.3.24",
+        "@sentry/browser": "^10.19.0",
+        "@types/react": "^18.3.26",
         "@types/react-dom": "^18.3.7",
-        "@vitejs/plugin-react": "^5.0.1",
+        "@vitejs/plugin-react": "^5.0.4",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
         "react-icons": "^5.4.0"

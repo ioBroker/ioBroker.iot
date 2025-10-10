@@ -1,9 +1,9 @@
 {
-  "You can use %s in the text to display current trigger value or %id to display the triggered object ID": "Você pode usar %s no texto para exibir o valor atual do acionador ou %id para exibir o ID do objeto acionado",
-  "Sends to ioBroker.visu": "Envia para ioBroker.visu",
-  "ioBroker.visu": "ioBroker.visu",
-  "Message:": "Mensagem:",
-  "Title:": "Título:",
-  "Expire(sec):": "Expirar (seg):",
-  "Priority": "Prioridade"
+    "You can use %s in the text to display current trigger value or %id to display the triggered object ID": "Você pode usar %s no texto para exibir o valor atual do acionador ou %id para exibir o ID do objeto acionado",
+    "Sends to ioBroker.visu": "Envia para ioBroker.visu",
+    "ioBroker.visu": "ioBroker.visu",
+    "Message:": "Mensagem:",
+    "Title:": "Título:",
+    "Expire(sec):": "Expirar (seg):",
+    "Priority": "Prioridade"
 }
