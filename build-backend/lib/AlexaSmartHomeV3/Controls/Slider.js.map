@@ -1,0 +1,1 @@
+{"version":3,"file":"Slider.js","sourceRoot":"","sources":["../../../../src/lib/AlexaSmartHomeV3/Controls/Slider.ts"],"names":[],"mappings":";;;;;AAAA,gGAAwE;AAExE,MAAqB,MAAO,SAAQ,qCAA2B;CAAG;AAAlE,yBAAkE","sourcesContent":["import AdjustablePercentageControl from './AdjustablePercentageControl';\n\nexport default class Slider extends AdjustablePercentageControl {}\n"]}

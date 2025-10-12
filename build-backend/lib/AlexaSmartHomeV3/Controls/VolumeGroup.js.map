@@ -1,0 +1,1 @@
+{"version":3,"file":"VolumeGroup.js","sourceRoot":"","sources":["../../../../src/lib/AlexaSmartHomeV3/Controls/VolumeGroup.ts"],"names":[],"mappings":";;;;;AAAA,sDAA8B;AAE9B,MAAqB,WAAY,SAAQ,gBAAM;CAAG;AAAlD,8BAAkD","sourcesContent":["import Volume from './Volume';\n\nexport default class VolumeGroup extends Volume {}\n"]}

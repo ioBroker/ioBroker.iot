@@ -1,0 +1,1 @@
+{"version":3,"file":"Window.js","sourceRoot":"","sources":["../../../../src/lib/AlexaSmartHomeV3/Controls/Window.ts"],"names":[],"mappings":";;;;;AAAA,oEAA4C;AAE5C,MAAqB,MAAO,SAAQ,uBAAa;CAAG;AAApD,yBAAoD","sourcesContent":["import ContactSensor from './ContactSensor';\n\nexport default class Window extends ContactSensor {}\n"]}
