@@ -28,7 +28,10 @@ export default class AdapterProvider {
      */
     static async getState(id: string): Promise<ioBroker.StateValue | undefined> {
         const state = await AdapterProvider.get().getForeignStateAsync(id);
-        return state?.val;
+        if (state === null) {
+            return null;
+        }
+        return state ? (state.val === undefined ? null : state.val) : undefined;
     }
 
     static async subscribe(id: string): Promise<void> {

@@ -1,23 +1,24 @@
 import ThermostatMode from '../Properties/ThermostatMode';
 import TargetSetpoint from '../Properties/TargetSetpoint';
 import Base from './Base';
-import type { Base as PropertiesBase } from '../Properties/Base';
 import type { AlexaV3ActionMapping, AlexaV3FriendlyName, AlexaV3Namespace, AlexaV3StateMapping } from '../../types';
+import type { ControlStateInitObject } from '../Properties/Base';
 
 export default class ThermostatController extends Base {
-    private _thermostatMode: ThermostatMode | undefined;
+    private readonly _thermostatMode: ThermostatMode;
+
+    constructor(modeOpts: ControlStateInitObject, setPointOpts: ControlStateInitObject) {
+        super();
+        this._thermostatMode = new ThermostatMode(modeOpts);
+        this._properties = [new TargetSetpoint(setPointOpts), this._thermostatMode];
+    }
 
     get version(): string {
         return '3.2';
     }
 
-    initProperties(): PropertiesBase[] {
-        this._thermostatMode = new ThermostatMode();
-        return [new TargetSetpoint(), this._thermostatMode];
-    }
-
     get thermostatMode(): ThermostatMode {
-        return this._thermostatMode!;
+        return this._thermostatMode;
     }
 
     get alexaResponse(): {
@@ -57,7 +58,7 @@ export default class ThermostatController extends Base {
     } {
         return {
             ordered: false,
-            supportedModes: this._thermostatMode!.supportedModes,
+            supportedModes: this._thermostatMode.supportedModes,
         };
     }
 }

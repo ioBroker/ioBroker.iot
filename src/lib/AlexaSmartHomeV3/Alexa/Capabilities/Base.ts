@@ -1,12 +1,18 @@
 import { className } from '../../Helpers/Utils';
-import type { AlexaV3Capability, AlexaV3EndpointID, AlexaV3Namespace, AlexaV3Request } from '../../types';
+import type {
+    AlexaV3Capability,
+    AlexaV3DirectiveValue,
+    AlexaV3EndpointID,
+    AlexaV3Namespace,
+    AlexaV3Request,
+} from '../../types';
 import type { Base as PropertiesBase } from '../Properties/Base';
 
-export class Base {
-    public readonly _properties: PropertiesBase[];
+export abstract class Base {
+    protected _properties: PropertiesBase[];
 
-    constructor() {
-        this._properties = this.initProperties();
+    protected constructor() {
+        this._properties = [];
     }
 
     get name(): string {
@@ -19,10 +25,6 @@ export class Base {
 
     reportValue(value: number | boolean): any {
         return value;
-    }
-
-    initProperties(): PropertiesBase[] {
-        return [];
     }
 
     /**
@@ -116,10 +118,8 @@ export class Base {
     /**
      * Extracts value to be set on the smart device sent in an Alexa directive
      */
-    alexaValue(event: AlexaV3Request): number | boolean | undefined {
+    alexaValue(_event: AlexaV3Request): AlexaV3DirectiveValue {
         throw new Error(`Method alexaValue is not implemented in ${this.name} capability`);
-        // @ts-expect-error fix later!!!!
-        return this.property(event)?.alexaValue(event);
     }
 
     /**

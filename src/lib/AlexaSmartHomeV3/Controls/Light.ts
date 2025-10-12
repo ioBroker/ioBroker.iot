@@ -1,30 +1,27 @@
 import Capabilities from '../Alexa/Capabilities';
 import Control from './Control';
-import type { AlexaV3Category, AlexaV3DirectiveValue, IotExternalDetectorState } from '../types';
-import type { Base as CapabilitiesBase } from '../Alexa/Capabilities/Base';
+import type {
+    AlexaV3Category,
+    AlexaV3DirectiveValue,
+    IotExternalDetectorState,
+    IotExternalPatternControl,
+} from '../types';
 
 export default class Light extends Control {
+    constructor(detectedControl: IotExternalPatternControl) {
+        super(detectedControl);
+
+        // Init enforced capabilities
+        const brightnessController = new Capabilities.BrightnessController(this.brightnessInitObject());
+        this._enforced = [brightnessController];
+
+        // Init capabilities
+        const powerController = new Capabilities.PowerController(this.powerStateInitObject());
+        this._supported = [powerController];
+    }
+
     get categories(): AlexaV3Category[] {
         return ['LIGHT'];
-    }
-
-    initCapabilities(): CapabilitiesBase[] {
-        const result = [new Capabilities.PowerController()];
-
-        for (const property of result.flatMap(item => item.properties)) {
-            property.init(this.powerStateInitObject());
-        }
-
-        return result;
-    }
-
-    initEnforcedCapabilities(): CapabilitiesBase[] {
-        const result = [new Capabilities.BrightnessController()];
-        for (const property of result.flatMap(item => item.properties)) {
-            property.init(this.brightnessInitObject());
-        }
-
-        return result;
     }
 
     get statesMap(): {
@@ -37,7 +34,7 @@ export default class Light extends Control {
         };
     }
 
-    brightnessInitObject(): {
+    private brightnessInitObject(): {
         setState: IotExternalDetectorState;
         getState: IotExternalDetectorState;
         alexaSetter?: (alexaValue: AlexaV3DirectiveValue) => ioBroker.StateValue | undefined;

@@ -5,12 +5,23 @@ import { Volume as PropertiesVolume } from '../Alexa/Properties/Volume';
 import AdapterProvider from '../Helpers/AdapterProvider';
 import { denormalize_0_100, normalize_0_100 } from '../Helpers/Utils';
 import AdjustableControl from './AdjustableControl';
-import type { Base as CapabilitiesBase } from '../Alexa/Capabilities/Base';
-import type { AlexaV3Category, AlexaV3DirectiveValue, IotExternalDetectorState } from '../types';
+import type {
+    AlexaV3Category,
+    AlexaV3DirectiveValue,
+    IotExternalDetectorState,
+    IotExternalPatternControl,
+} from '../types';
 
 export default class Volume extends AdjustableControl {
-    private _speaker: Speaker | undefined;
+    private readonly _speaker: Speaker;
     private _lastVolume: ioBroker.StateValue | undefined;
+
+    constructor(detectedControl: IotExternalPatternControl) {
+        super(detectedControl);
+
+        this._speaker = new Speaker(this.composeInitObjectVolume(), this.composeInitObjectMuted());
+        this._supported = [this._speaker];
+    }
 
     get categories(): AlexaV3Category[] {
         return ['SPEAKER'];
@@ -18,19 +29,6 @@ export default class Volume extends AdjustableControl {
 
     adjustableProperties(): (typeof PropertiesBase)[] {
         return [PropertiesVolume];
-    }
-
-    initCapabilities(): CapabilitiesBase[] {
-        this._speaker = new Speaker();
-        const result = [this._speaker];
-        for (const property of result.flatMap(item => item.properties)) {
-            const intiOption = this.composeInitObject(property);
-            if (intiOption) {
-                property.init(intiOption);
-            }
-        }
-
-        return result;
     }
 
     async setState(property: PropertiesBase, value: ioBroker.StateValue | undefined): Promise<void> {
@@ -71,21 +69,21 @@ export default class Volume extends AdjustableControl {
             // set muted
             const muted = value === 0;
             // only on different IDs for volume and muted
-            if (this._speaker!.volume.setId !== this._speaker!.muted.setId) {
-                await AdapterProvider.setState(this._speaker!.muted.setId, muted);
+            if (this._speaker.volume.setId !== this._speaker.muted.setId) {
+                await AdapterProvider.setState(this._speaker.muted.setId, muted);
             }
-            this._speaker!.muted.currentValue = muted;
+            this._speaker.muted.currentValue = muted;
         }
     }
 
-    async getOrRetrieveCurrentValue(property: PropertiesBase): Promise<ioBroker.StateValue> {
+    protected async getOrRetrieveCurrentValue(property: PropertiesBase): Promise<ioBroker.StateValue> {
         if (property.currentValue === undefined) {
             property.currentValue = await AdapterProvider.getState(property.getId);
 
             // convert non zero volumes to muted = false
             if (
-                property.propertyName === this._speaker!.muted.propertyName &&
-                property.getId === this._speaker!.volume.getId
+                property.propertyName === this._speaker.muted.propertyName &&
+                property.getId === this._speaker.volume.getId
             ) {
                 property.currentValue = property.currentValue === 0;
             }
@@ -98,54 +96,53 @@ export default class Volume extends AdjustableControl {
         return property.currentValue;
     }
 
-    composeInitObject(property: PropertiesBase):
-        | {
-              setState: IotExternalDetectorState;
-              getState: IotExternalDetectorState;
-              alexaSetter?: (alexaValue: AlexaV3DirectiveValue) => ioBroker.StateValue | undefined;
-              alexaGetter?: (value: ioBroker.StateValue | undefined) => AlexaV3DirectiveValue;
-          }
-        | undefined {
+    private composeInitObjectVolume(): {
+        setState: IotExternalDetectorState;
+        getState: IotExternalDetectorState;
+        alexaSetter?: (alexaValue: AlexaV3DirectiveValue) => ioBroker.StateValue | undefined;
+        alexaGetter?: (value: ioBroker.StateValue | undefined) => AlexaV3DirectiveValue;
+    } {
         const map = this.statesMap;
 
-        if (property.propertyName === Properties.Volume.propertyName) {
-            return {
-                setState: this.states[map.set]!,
-                getState: this.states[map.actual] || this.states[map.set]!,
-                alexaSetter: function (
-                    this: PropertiesBase,
-                    alexaValue: AlexaV3DirectiveValue,
-                ): ioBroker.StateValue | undefined {
-                    return denormalize_0_100(
-                        alexaValue as number,
-                        this.valuesRangeMin as number,
-                        this.valuesRangeMax as number,
-                    );
-                },
-                alexaGetter: function (
-                    this: PropertiesBase,
-                    value: ioBroker.StateValue | undefined,
-                ): AlexaV3DirectiveValue {
-                    return normalize_0_100(
-                        value as number,
-                        this.valuesRangeMin as number,
-                        this.valuesRangeMax as number,
-                    );
-                },
-            };
-        }
+        return {
+            setState: this.states[map.set]!,
+            getState: this.states[map.actual] || this.states[map.set]!,
+            alexaSetter: function (
+                this: PropertiesBase,
+                alexaValue: AlexaV3DirectiveValue,
+            ): ioBroker.StateValue | undefined {
+                return denormalize_0_100(
+                    alexaValue as number,
+                    this.valuesRangeMin as number,
+                    this.valuesRangeMax as number,
+                );
+            },
+            alexaGetter: function (
+                this: PropertiesBase,
+                value: ioBroker.StateValue | undefined,
+            ): AlexaV3DirectiveValue {
+                return normalize_0_100(value as number, this.valuesRangeMin as number, this.valuesRangeMax as number);
+            },
+        };
+    }
 
-        if (property.propertyName === Properties.Muted.propertyName) {
-            return {
-                setState: this.states[map.mute] || this.states[map.set]!,
-                getState: this.states[map.mute] || this.states[map.set]!,
-                alexaSetter: function (alexaValue: AlexaV3DirectiveValue): ioBroker.StateValue | undefined {
-                    return alexaValue as boolean;
-                },
-                alexaGetter: function (value: ioBroker.StateValue | undefined): AlexaV3DirectiveValue {
-                    return value as boolean;
-                },
-            };
-        }
+    private composeInitObjectMuted(): {
+        setState: IotExternalDetectorState;
+        getState: IotExternalDetectorState;
+        alexaSetter?: (alexaValue: AlexaV3DirectiveValue) => ioBroker.StateValue | undefined;
+        alexaGetter?: (value: ioBroker.StateValue | undefined) => AlexaV3DirectiveValue;
+    } {
+        const map = this.statesMap;
+
+        return {
+            setState: this.states[map.mute] || this.states[map.set]!,
+            getState: this.states[map.mute] || this.states[map.set]!,
+            alexaSetter: function (alexaValue: AlexaV3DirectiveValue): ioBroker.StateValue | undefined {
+                return alexaValue as boolean;
+            },
+            alexaGetter: function (value: ioBroker.StateValue | undefined): AlexaV3DirectiveValue {
+                return value as boolean;
+            },
+        };
     }
 }

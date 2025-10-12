@@ -1,10 +1,11 @@
 import Base from './Base';
 import Properties from '../Properties';
-import type { Base as PropertiesBase } from '../Properties/Base';
+import type { ControlStateInitObject } from '../Properties/Base';
 
 export class ContactSensor extends Base {
-    initProperties(): PropertiesBase[] {
-        return [new Properties.DetectionState()];
+    constructor(opts: ControlStateInitObject) {
+        super();
+        this._properties = [new Properties.DetectionState(opts)];
     }
 }
 

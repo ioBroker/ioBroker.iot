@@ -352,6 +352,7 @@ setState('iot.0.app.message', JSON.stringify({
 ### **WORK IN PROGRESS**
 - (@GermanBluefox) Made Alexa V3 default
 - (@GermanBluefox) Updated packages
+- (@GermanBluefox) Corrected Alexa V3 engine
 
 ### 4.0.3 (2025-08-27)
 - (@GermanBluefox) Added response ID to custom skill responses

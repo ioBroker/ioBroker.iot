@@ -4,10 +4,10 @@ import { asEnum } from '../../Helpers/Utils';
 import Base, { type ControlStateInitObject } from './Base';
 
 export default class ThermostatMode extends Base {
-    private _supportedModes: string[] = [];
+    private readonly _supportedModes: string[];
 
-    init(opts: ControlStateInitObject): void {
-        super.init(opts);
+    constructor(opts: ControlStateInitObject) {
+        super(opts);
         if (!opts.supportedModes || !Array.isArray(opts.supportedModes) || opts.supportedModes.length === 0) {
             throw new Error('ThermostatMode control requires supportedModes array with at least one mode');
         }

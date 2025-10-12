@@ -46,7 +46,6 @@ import ukLang from './i18n/uk.json';
 import zhCnLang from './i18n/zh-cn.json';
 
 const styles: Record<string, any> = {
-    root: {},
     tabContent: {
         padding: 10,
         height: 'calc(100% - 64px - 48px - 20px)',
@@ -229,20 +228,20 @@ export default class App extends GenericApp<GenericAppProps, AppState> {
                                     label={I18n.t('Smart enums')}
                                     data-name="enums"
                                 />
+                                {this.state.native.amazonAlexaV3 && (
+                                    <Tab
+                                        value="alexa3"
+                                        sx={{ '&.Mui-selected': styles.selected }}
+                                        label={`${I18n.t('Alexa devices')} v3`}
+                                        data-name="alexa3"
+                                    />
+                                )}
                                 {this.state.native.amazonAlexa && (
                                     <Tab
                                         value="alexa"
                                         sx={{ '&.Mui-selected': styles.selected }}
                                         label={I18n.t('Alexa devices')}
                                         data-name="alexa"
-                                    />
-                                )}
-                                {this.state.native.amazonAlexa && this.state.native.amazonAlexaV3 && (
-                                    <Tab
-                                        value="alexa3"
-                                        sx={{ '&.Mui-selected': styles.selected }}
-                                        label={`${I18n.t('Alexa devices')} v3`}
-                                        data-name="alexa3"
                                     />
                                 )}
                                 {this.state.native.googleHome && (

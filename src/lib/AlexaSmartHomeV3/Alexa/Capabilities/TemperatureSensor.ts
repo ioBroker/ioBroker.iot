@@ -1,9 +1,10 @@
 import Properties from '../Properties';
 import Base from './Base';
-import type { Base as PropertiesBase } from '../Properties/Base';
+import type { ControlStateInitObject } from '../Properties/Base';
 
 export default class TemperatureSensor extends Base {
-    initProperties(): PropertiesBase[] {
-        return [new Properties.Temperature()];
+    constructor(opts: ControlStateInitObject) {
+        super();
+        this._properties = [new Properties.Temperature(opts)];
     }
 }

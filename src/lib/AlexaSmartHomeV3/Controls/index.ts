@@ -25,9 +25,9 @@ import type { IotExternalPatternControl } from '../types';
 
 export default {
     factory: (item: IotExternalPatternControl): Control | null => {
-        if (item.type === AdjustableControl.type) {
-            return new AdjustableControl(item);
-        }
+        // if (item.type === AdjustableControl.type) {
+        //     return new AdjustableControl(item);
+        // }
         if (item.type === AdjustablePercentageControl.type) {
             return new AdjustablePercentageControl(item);
         }
@@ -64,9 +64,9 @@ export default {
         if (item.type === Motion.type) {
             return new Motion(item);
         }
-        if (item.type === ReadOnlyDetector.type) {
-            return new ReadOnlyDetector(item);
-        }
+        // if (item.type === ReadOnlyDetector.type) {
+        //     return new ReadOnlyDetector(item);
+        // }
         if (item.type === Slider.type) {
             return new Slider(item);
         }

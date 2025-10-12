@@ -1,19 +1,17 @@
-import type { AlexaV3Category } from '../types';
+import type { AlexaV3Category, IotExternalPatternControl } from '../types';
 import Capabilities from '../Alexa/Capabilities';
 import Control from './Control';
-import type { Base as CapabilitiesBase } from '../Alexa/Capabilities/Base';
 
 export default class VacuumCleaner extends Control {
-    get categories(): AlexaV3Category[] {
-        return ['VACUUM_CLEANER'];
+    constructor(detectedControl: IotExternalPatternControl) {
+        super(detectedControl);
+
+        const powerController = new Capabilities.PowerController(this.powerStateInitObject());
+        this._supported = [powerController];
     }
 
-    initCapabilities(): CapabilitiesBase[] {
-        const result = [new Capabilities.PowerController()];
-        for (const property of result.flatMap(item => item.properties)) {
-            property.init(this.powerStateInitObject());
-        }
-        return result;
+    get categories(): AlexaV3Category[] {
+        return ['VACUUM_CLEANER'];
     }
 
     get statesMap(): {

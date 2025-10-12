@@ -1,8 +1,9 @@
+import type { device as DeviceModule } from 'aws-iot-device-sdk';
+
 import DeviceManager from './AlexaSmartHomeV3/DeviceManager';
 import AdapterProvider from './AlexaSmartHomeV3/Helpers/AdapterProvider';
 import IotProxy from './AlexaSmartHomeV3/Helpers/IotProxy';
 import RateLimiter from './AlexaSmartHomeV3/Helpers/RateLimiter';
-import type { device as DeviceModule } from 'aws-iot-device-sdk';
 import type { AlexaSH3ControlDescription, AlexaSH3DeviceDescription, AlexaV3Request } from './AlexaSmartHomeV3/types';
 import type AlexaResponse from './AlexaSmartHomeV3/Alexa/AlexaResponse';
 import type { IotAdapter } from '../main';
@@ -45,13 +46,13 @@ export default class AlexaSH3 {
                 const control = endpoint.controls[c];
                 let supported: string[] = [];
                 let enforced: string[] = [];
-                control._supported.forEach(item =>
-                    item._properties.forEach(
+                control.supported.forEach(item =>
+                    item.properties.forEach(
                         prop => !supported.includes(prop.constructor.name) && supported.push(prop.constructor.name),
                     ),
                 );
-                control._enforced.forEach(item =>
-                    item._properties.forEach(
+                control.enforced.forEach(item =>
+                    item.properties.forEach(
                         prop => !enforced.includes(prop.constructor.name) && enforced.push(prop.constructor.name),
                     ),
                 );
@@ -62,7 +63,7 @@ export default class AlexaSH3 {
 
                 controls.push({
                     type: control.log._component,
-                    states: control._states,
+                    states: control.states,
                     // always sort by id, so the GUI can address the group by the first control
                     supported,
                     // always sort by id, so the GUI can address the group by the first control

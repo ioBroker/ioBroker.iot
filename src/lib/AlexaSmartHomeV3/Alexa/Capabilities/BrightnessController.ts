@@ -1,16 +1,17 @@
 import Base from './Base';
-import type { Base as PropertiesBase } from '../Properties/Base';
 import Brightness from '../Properties/Brightness';
+import type { ControlStateInitObject } from '../Properties/Base';
 
 export default class BrightnessController extends Base {
-    private _brightness: Brightness | undefined;
+    readonly #brightness: Brightness;
 
-    initProperties(): PropertiesBase[] {
-        this._brightness = new Brightness();
-        return [this._brightness];
+    constructor(opts: ControlStateInitObject) {
+        super();
+        this.#brightness = new Brightness(opts);
+        this._properties = [this.#brightness];
     }
 
-    get brightness(): PropertiesBase {
-        return this._brightness!;
+    get brightness(): Brightness {
+        return this.#brightness;
     }
 }

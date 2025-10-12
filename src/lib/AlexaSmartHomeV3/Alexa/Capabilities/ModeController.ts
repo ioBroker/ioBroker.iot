@@ -1,5 +1,4 @@
 import Base from './Base';
-import type { Base as PropertiesBase } from '../Properties/Base';
 import Mode from '../Properties/Mode';
 import type {
     AlexaV3ActionMapping,
@@ -8,13 +7,15 @@ import type {
     AlexaV3FriendlyName,
     AlexaV3StateMapping,
 } from '../../types';
+import type { ControlStateInitObject } from '../Properties/Base';
 
 export default class ModeController extends Base {
-    private _property: Mode | undefined;
+    private readonly _property: Mode;
 
-    initProperties(): PropertiesBase[] {
-        this._property = new Mode();
-        return [this._property];
+    constructor(opts: ControlStateInitObject) {
+        super();
+        this._property = new Mode(opts);
+        this._properties = [this._property];
     }
 
     /**
@@ -66,7 +67,7 @@ export default class ModeController extends Base {
     }
 
     get instance(): string {
-        return `${this._property!.instance}`;
+        return `${this._property.instance}`;
     }
 
     get configurationAsDiscoveryResponse(): {
@@ -75,7 +76,7 @@ export default class ModeController extends Base {
     } {
         return {
             ordered: false,
-            supportedModes: this._property!.supportedModes.flatMap(mode => mode.discoveryResponse),
+            supportedModes: this._property.supportedModes.flatMap(mode => mode.discoveryResponse),
         };
     }
 
@@ -84,8 +85,8 @@ export default class ModeController extends Base {
         stateMappings: AlexaV3StateMapping[];
     } {
         return {
-            actionMappings: this._property!.supportedModes.flatMap(mode => mode.actionMappings),
-            stateMappings: this._property!.supportedModes.flatMap(mode => mode.stateMappings),
+            actionMappings: this._property.supportedModes.flatMap(mode => mode.actionMappings),
+            stateMappings: this._property.supportedModes.flatMap(mode => mode.stateMappings),
         };
     }
 }

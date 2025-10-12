@@ -8,7 +8,7 @@
 
         "skipLibCheck": true, // Don't report errors in 3rd party definitions
         "noEmitOnError": true,
-        "outDir": "./build-backend",
+        "outDir": "./build",
         "esModuleInterop": true,
         "resolveJsonModule": true,
         "module": "Node16",
@@ -17,7 +17,7 @@
         "inlineSources": true, // required for debug
 
         "strict": true,
-        "target": "ES2022",
+        "target": "es2022",
         "inlineSourceMap": false,
         "useUnknownInCatchVariables": false,
         "types": ["node", "@iobroker/types"]

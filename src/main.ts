@@ -1395,10 +1395,6 @@ export class IotAdapter extends Adapter {
             }
             this.log.debug(`Following strings will be replaced in names: ${text.join(', ')}`);
         }
-        if (this.config.amazonAlexa) {
-            this.alexaSH2 = new AlexaSH2(this);
-            this.alexaCustom = new AlexaCustom(this);
-        }
         if (this.config.yandexAlisa) {
             this.yandexAlisa = new YandexAlisa(this);
         }
@@ -1456,12 +1452,11 @@ export class IotAdapter extends Adapter {
             this.lang = 'en';
         }
 
-        if (this.alexaSH2) {
+        if (this.config.amazonAlexa) {
+            this.alexaSH2 = new AlexaSH2(this);
             this.alexaSH2.setLanguage(this.lang, this.translate);
             this.alexaSH2.updateDevices();
         }
-
-        this.alexaCustom?.setLanguage(this.lang);
 
         this.remote?.setLanguage(this.lang);
         // check password
@@ -1511,6 +1506,11 @@ export class IotAdapter extends Adapter {
             });
             this.alexaSH3.setLanguage(this.lang);
             await this.alexaSH3.updateDevices();
+        }
+
+        if (this.config.amazonAlexa || this.config.amazonAlexaV3) {
+            this.alexaCustom = new AlexaCustom(this);
+            this.alexaCustom.setLanguage(this.lang);
         }
 
         if (this.config.googleHome) {

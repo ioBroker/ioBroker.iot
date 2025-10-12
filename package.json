@@ -46,13 +46,13 @@
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.iot/issues"
   },
-  "main": "build-backend/main.js",
+  "main": "build/main.js",
   "files": [
     "admin/",
     "doc/",
     "img/",
     "keys/",
-    "build-backend/",
+    "build/",
     "io-package.json",
     "LICENSE"
   ],

@@ -5,15 +5,31 @@ import { configuredRangeOrDefault, denormalize_0_100, normalize_0_100 } from '..
 import PowerState from '../Alexa/Properties/PowerState';
 import Brightness from '../Alexa/Properties/Brightness';
 import AdapterProvider from '../Helpers/AdapterProvider';
-import type { AlexaV3Category, AlexaV3DirectiveValue, IotExternalDetectorState } from '../types';
-import type { Base as CapabilitiesBase } from '../Alexa/Capabilities/Base';
+import type {
+    AlexaV3Category,
+    AlexaV3DirectiveValue,
+    IotExternalDetectorState,
+    IotExternalPatternControl,
+} from '../types';
 import type { Base as PropertiesBase } from '../Alexa/Properties/Base';
 
 export default class Dimmer extends AdjustableControl {
-    private _powerControllerCapability!: PowerController;
-    private _powerState!: PowerState;
-    private _brightnessCapability!: BrightnessController;
-    private _brightness!: Brightness;
+    private readonly _powerControllerCapability: PowerController;
+    private readonly _powerState: PowerState;
+    private readonly _brightnessCapability: BrightnessController;
+    private readonly _brightness: Brightness;
+
+    constructor(detectedControl: IotExternalPatternControl) {
+        super(detectedControl);
+
+        this._powerControllerCapability = new PowerController(this.composeInitObjectPowerState());
+        this._powerState = this._powerControllerCapability.powerState;
+
+        this._brightnessCapability = new BrightnessController(this.composeInitObjectBrightness());
+        this._brightness = this._brightnessCapability.brightness;
+
+        this._supported = [this._powerControllerCapability, this._brightnessCapability];
+    }
 
     get categories(): AlexaV3Category[] {
         return ['LIGHT'];
@@ -21,24 +37,6 @@ export default class Dimmer extends AdjustableControl {
 
     adjustableProperties(): (typeof PropertiesBase)[] {
         return [Brightness];
-    }
-
-    initCapabilities(): CapabilitiesBase[] {
-        this._powerControllerCapability = new PowerController();
-        this._powerState = this._powerControllerCapability.powerState;
-
-        this._brightnessCapability = new BrightnessController();
-        this._brightness = this._brightnessCapability.brightness;
-
-        const result = [this._powerControllerCapability, this._brightnessCapability];
-        for (const property of result.flatMap(item => item.properties)) {
-            const initObj = this.composeInitObject(property);
-            if (initObj) {
-                property.init(initObj);
-            }
-        }
-
-        return result;
     }
 
     async setState(property: PropertiesBase, value: ioBroker.StateValue): Promise<void> {
@@ -100,14 +98,31 @@ export default class Dimmer extends AdjustableControl {
         return property.currentValue;
     }
 
-    composeInitObject(property: PropertiesBase):
-        | {
-              setState: IotExternalDetectorState;
-              getState: IotExternalDetectorState;
-              alexaSetter?: (alexaValue: AlexaV3DirectiveValue) => ioBroker.StateValue | undefined;
-              alexaGetter?: (value: ioBroker.StateValue | undefined) => AlexaV3DirectiveValue;
-          }
-        | undefined {
+    private composeInitObjectPowerState(): {
+        setState: IotExternalDetectorState;
+        getState: IotExternalDetectorState;
+        alexaSetter?: (alexaValue: AlexaV3DirectiveValue) => ioBroker.StateValue | undefined;
+        alexaGetter?: (value: ioBroker.StateValue | undefined) => AlexaV3DirectiveValue;
+    } {
+        const map = this.statesMap;
+        return {
+            setState: this.states[map.on_set] || this.states[map.set]!,
+            getState: this.states[map.on_actual] || this.states[map.on_set] || this.states[map.set]!,
+            alexaSetter: function (this: PropertiesBase, alexaValue: AlexaV3DirectiveValue): ioBroker.StateValue {
+                return alexaValue === PowerState.ON;
+            },
+            alexaGetter: function (value: ioBroker.StateValue | undefined): AlexaV3DirectiveValue {
+                return value ? PowerState.ON : PowerState.OFF;
+            },
+        };
+    }
+
+    private composeInitObjectBrightness(): {
+        setState: IotExternalDetectorState;
+        getState: IotExternalDetectorState;
+        alexaSetter?: (alexaValue: AlexaV3DirectiveValue) => ioBroker.StateValue | undefined;
+        alexaGetter?: (value: ioBroker.StateValue | undefined) => AlexaV3DirectiveValue;
+    } {
         /*
             Device of type 'dimmer' can be switched 'ON'/'OFF' and its brightness can be set to a value between 0 and 100.
 
@@ -117,44 +132,24 @@ export default class Dimmer extends AdjustableControl {
         */
 
         const map = this.statesMap;
-
-        if (property.propertyName === PowerState.propertyName) {
-            return {
-                setState: this.states[map.on_set] || this.states[map.set]!,
-                getState: this.states[map.on_actual] || this.states[map.on_set] || this.states[map.set]!,
-                alexaSetter: function (this: PropertiesBase, alexaValue: AlexaV3DirectiveValue): ioBroker.StateValue {
-                    return alexaValue === PowerState.ON;
-                },
-                alexaGetter: function (value: ioBroker.StateValue | undefined): AlexaV3DirectiveValue {
-                    return value ? PowerState.ON : PowerState.OFF;
-                },
-            };
-        }
-
-        if (property.propertyName === Brightness.propertyName) {
-            return {
-                setState: this.states[map.set]!,
-                getState: this.states[map.actual]!,
-                alexaSetter: function (this: PropertiesBase, alexaValue: AlexaV3DirectiveValue): ioBroker.StateValue {
-                    return (
-                        denormalize_0_100(
-                            alexaValue as number,
-                            this.valuesRangeMin as number,
-                            this.valuesRangeMax as number,
-                        ) ?? 0
-                    );
-                },
-                alexaGetter: function (
-                    this: PropertiesBase,
-                    value: ioBroker.StateValue | undefined,
-                ): AlexaV3DirectiveValue {
-                    return normalize_0_100(
-                        value as number,
+        return {
+            setState: this.states[map.set]!,
+            getState: this.states[map.actual]!,
+            alexaSetter: function (this: PropertiesBase, alexaValue: AlexaV3DirectiveValue): ioBroker.StateValue {
+                return (
+                    denormalize_0_100(
+                        alexaValue as number,
                         this.valuesRangeMin as number,
                         this.valuesRangeMax as number,
-                    );
-                },
-            };
-        }
+                    ) ?? 0
+                );
+            },
+            alexaGetter: function (
+                this: PropertiesBase,
+                value: ioBroker.StateValue | undefined,
+            ): AlexaV3DirectiveValue {
+                return normalize_0_100(value as number, this.valuesRangeMin as number, this.valuesRangeMax as number);
+            },
+        };
     }
 }

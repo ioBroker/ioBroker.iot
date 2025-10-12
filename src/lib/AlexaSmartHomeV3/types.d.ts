@@ -86,7 +86,7 @@ export interface AlexaV3Header {
     messageId: string;
     correlationToken?: string;
     payloadVersion: '3';
-    // Name of the mode, for example Washer.WashCycle or Washer.WashTemperature.
+    // Name of the mode, for example, Washer.WashCycle or Washer.WashTemperature.
     instance?: string;
     physicalInteraction?: boolean;
     propertyName?: string;
@@ -184,7 +184,6 @@ export interface AlexaV3ContextProperty {
     uncertaintyInMilliseconds?: number;
     instance?: string;
 }
-
 // StateReport Response
 export interface AlexaV3StateReportResponse {
     event: {
@@ -193,11 +192,11 @@ export interface AlexaV3StateReportResponse {
         payload: Record<string, any>;
     };
     context?: {
-        properties: ContextProperty[];
+        properties: AlexaV3ContextProperty[];
     };
 }
 
-// Fehlerantwort
+// Error answer
 export interface AlexaV3ErrorResponse {
     event: {
         header: AlexaV3Header & { namespace: 'Alexa'; name: string };
@@ -279,6 +278,7 @@ export interface AlexaV3DiscoverResponse {
         };
     };
 }
+
 // alexa-change-report.d.ts
 export interface AlexaV3ReportedState {
     namespace: AlexaV3Namespace;

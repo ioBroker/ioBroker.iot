@@ -1,23 +1,24 @@
 import Volume from '../Properties/Volume';
 import Muted from '../Properties/Muted';
 import Base from './Base';
-import type { Base as PropertiesBase } from '../Properties/Base';
+import type { ControlStateInitObject } from '../Properties/Base';
 
 export default class Speaker extends Base {
-    private _volume: Volume | undefined;
-    private _muted: Muted | undefined;
+    private readonly _volume: Volume;
+    private readonly _muted: Muted;
 
-    initProperties(): PropertiesBase[] {
-        this._volume = new Volume();
-        this._muted = new Muted();
-        return [this._volume, this._muted];
+    constructor(volumeOpts: ControlStateInitObject, mutedOpts: ControlStateInitObject) {
+        super();
+        this._volume = new Volume(volumeOpts);
+        this._muted = new Muted(mutedOpts);
+        this._properties = [this._volume, this._muted];
     }
 
     get volume(): Volume {
-        return this._volume!;
+        return this._volume;
     }
 
     get muted(): Muted {
-        return this._muted!;
+        return this._muted;
     }
 }

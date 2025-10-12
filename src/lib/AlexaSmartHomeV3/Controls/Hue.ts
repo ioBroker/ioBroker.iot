@@ -9,17 +9,45 @@ import Brightness from '../Alexa/Properties/Brightness';
 import AdapterProvider from '../Helpers/AdapterProvider';
 import AdjustableControl from './AdjustableControl';
 import type { Base as PropertiesBase, ControlStateInitObject } from '../Alexa/Properties/Base';
-import type { AlexaV3Category, AlexaV3DirectiveValue, AlexaV3Request } from '../types';
-import type { Base as CapabilitiesBase } from '../Alexa/Capabilities/Base';
+import type { AlexaV3Category, AlexaV3DirectiveValue, AlexaV3Request, IotExternalPatternControl } from '../types';
 import Color from '../Alexa/Properties/Color';
 import ColorTemperatureInKelvin from '../Alexa/Properties/ColorTemperatureInKelvin';
 
 export default class Hue extends AdjustableControl {
-    private _powerControllerCapability!: PowerController;
-    private _powerState!: PowerState;
-    private _brightnessCapability!: BrightnessController;
-    private _brightness!: Brightness;
-    private _colorTemperatureCapability!: ColorTemperatureController;
+    private readonly _powerControllerCapability: PowerController | undefined;
+    private readonly _powerState: PowerState | undefined;
+    private readonly _brightnessCapability: BrightnessController | undefined;
+    private readonly _brightness: Brightness | undefined;
+    private readonly _colorTemperatureCapability: ColorTemperatureController | undefined;
+
+    constructor(detectedControl: IotExternalPatternControl) {
+        super(detectedControl);
+
+        const map = this.statesMap;
+        this._supported = [new Capabilities.ColorController(this.composeInitObjectColor())];
+
+        // if the state DIMMER or BRIGHTNESS configured
+        if (this.states[map.dimmer] || this.states[map.brightness]) {
+            this._brightnessCapability = new Capabilities.BrightnessController(this.composeInitObjectBrightness());
+            this._brightness = this._brightnessCapability.brightness;
+            this._supported.push(this._brightnessCapability);
+        }
+
+        // if the state TEMPERATURE configured
+        if (this.states[map.temperature]) {
+            this._colorTemperatureCapability = new Capabilities.ColorTemperatureController(
+                this.composeInitObjectColorTemperature(),
+            );
+            this._supported.push(this._colorTemperatureCapability);
+        }
+
+        // if the state ON, DIMMER or BRIGHTNESS configured
+        if (this.states[map.on] || this._brightness) {
+            this._powerControllerCapability = new Capabilities.PowerController(this.composeInitObjectPowerState());
+            this._powerState = this._powerControllerCapability.powerState;
+            this._supported.push(this._powerControllerCapability);
+        }
+    }
 
     get categories(): AlexaV3Category[] {
         return ['LIGHT'];
@@ -27,40 +55,6 @@ export default class Hue extends AdjustableControl {
 
     adjustableProperties(): (typeof PropertiesBase)[] {
         return [Properties.ColorTemperatureInKelvin];
-    }
-
-    initCapabilities(): CapabilitiesBase[] {
-        const map = this.statesMap;
-        const result = [new Capabilities.ColorController()];
-
-        // if the state DIMMER or BRIGHTNESS configured
-        if (this.states[map.dimmer] || this.states[map.brightness]) {
-            this._brightnessCapability = new Capabilities.BrightnessController();
-            this._brightness = this._brightnessCapability.brightness;
-            result.push(this._brightnessCapability);
-        }
-
-        // if the state TEMPERATURE configured
-        if (this.states[map.temperature]) {
-            this._colorTemperatureCapability = new Capabilities.ColorTemperatureController();
-            result.push(this._colorTemperatureCapability);
-        }
-
-        // if the state ON, DIMMER or BRIGHTNESS configured
-        if (this.states[map.on] || this._brightness) {
-            this._powerControllerCapability = new Capabilities.PowerController();
-            this._powerState = this._powerControllerCapability.powerState;
-            result.push(this._powerControllerCapability);
-        }
-
-        for (const property of result.flatMap(item => item.properties)) {
-            const initObj = this.composeInitObject(property);
-            if (initObj) {
-                property.init(initObj);
-            }
-        }
-
-        return result;
     }
 
     async getOrRetrieveCurrentValue(property: Color): Promise<ioBroker.StateValue> {
@@ -111,14 +105,22 @@ export default class Hue extends AdjustableControl {
                         byOn === null || byOn === undefined || isNaN(byOn as number)
                             ? (range.max as number)
                             : parseFloat(byOn as string);
-                    await AdapterProvider.setState(this._brightness.setId, byOn);
-                    this._brightness.currentValue = byOn;
-                    this._powerState.currentValue = true;
+                    if (this._brightness) {
+                        await AdapterProvider.setState(this._brightness.setId, byOn);
+                        this._brightness.currentValue = byOn;
+                    }
+                    if (this._powerState) {
+                        this._powerState.currentValue = true;
+                    }
                 } else {
-                    // set brightness to 0 on power OFF
-                    await AdapterProvider.setState(this._brightness.setId, 0);
-                    this._brightness.currentValue = 0;
-                    this._powerState.currentValue = false;
+                    if (this._brightness) {
+                        // set brightness to 0 on power OFF
+                        await AdapterProvider.setState(this._brightness.setId, 0);
+                        this._brightness.currentValue = 0;
+                    }
+                    if (this._powerState) {
+                        this._powerState.currentValue = false;
+                    }
                 }
             }
         } else if (property.propertyName === Brightness.propertyName) {
@@ -160,100 +162,96 @@ export default class Hue extends AdjustableControl {
         return value as AlexaV3DirectiveValue;
     }
 
-    composeInitObject(property: PropertiesBase): ControlStateInitObject | undefined {
+    private composeInitObjectPowerState(): ControlStateInitObject {
         const map = this.statesMap;
+        return {
+            setState: this.states[map.on] || this.states[map.dimmer] || this.states[map.brightness]!,
+            getState: this.states[map.on] || this.states[map.dimmer] || this.states[map.brightness]!,
+            alexaSetter: function (this: PropertiesBase, alexaValue: AlexaV3DirectiveValue): ioBroker.StateValue {
+                return alexaValue === PowerState.ON;
+            },
+            alexaGetter: function (
+                this: PropertiesBase,
+                value: ioBroker.StateValue | undefined,
+            ): AlexaV3DirectiveValue {
+                return value ? PowerState.ON : PowerState.OFF;
+            },
+        };
+    }
 
-        if (property.propertyName === Properties.PowerState.propertyName) {
-            return {
-                setState: this.states[map.on] || this.states[map.dimmer] || this.states[map.brightness]!,
-                getState: this.states[map.on] || this.states[map.dimmer] || this.states[map.brightness]!,
-                alexaSetter: function (this: PropertiesBase, alexaValue: AlexaV3DirectiveValue): ioBroker.StateValue {
-                    return alexaValue === PowerState.ON;
-                },
-                alexaGetter: function (
-                    this: PropertiesBase,
-                    value: ioBroker.StateValue | undefined,
-                ): AlexaV3DirectiveValue {
-                    return value ? PowerState.ON : PowerState.OFF;
-                },
-            };
-        }
-
-        if (property.propertyName === Brightness.propertyName) {
-            return {
-                setState: this.states[map.dimmer] || this.states[map.brightness]!,
-                getState: this.states[map.dimmer] || this.states[map.brightness]!,
-                alexaSetter: function (this: PropertiesBase, alexaValue: AlexaV3DirectiveValue): ioBroker.StateValue {
-                    return (
-                        denormalize_0_100(
-                            alexaValue as number,
-                            this.valuesRangeMin as number,
-                            this.valuesRangeMax as number,
-                        ) ?? 0
-                    );
-                },
-                alexaGetter: function (
-                    this: PropertiesBase,
-                    value: ioBroker.StateValue | undefined,
-                ): AlexaV3DirectiveValue {
-                    return normalize_0_100(
-                        value as number,
+    private composeInitObjectBrightness(): ControlStateInitObject {
+        const map = this.statesMap;
+        return {
+            setState: this.states[map.dimmer] || this.states[map.brightness]!,
+            getState: this.states[map.dimmer] || this.states[map.brightness]!,
+            alexaSetter: function (this: PropertiesBase, alexaValue: AlexaV3DirectiveValue): ioBroker.StateValue {
+                return (
+                    denormalize_0_100(
+                        alexaValue as number,
                         this.valuesRangeMin as number,
                         this.valuesRangeMax as number,
+                    ) ?? 0
+                );
+            },
+            alexaGetter: function (
+                this: PropertiesBase,
+                value: ioBroker.StateValue | undefined,
+            ): AlexaV3DirectiveValue {
+                return normalize_0_100(value as number, this.valuesRangeMin as number, this.valuesRangeMax as number);
+            },
+        };
+    }
+
+    private composeInitObjectColor(): ControlStateInitObject {
+        const map = this.statesMap;
+        return {
+            hal: {
+                hue: this.states[map.hue]!.id,
+                saturation: this.states[map.saturation]?.id,
+                brightness: (this.states[map.dimmer] || this.states[map.brightness])?.id,
+            },
+        };
+    }
+
+    private composeInitObjectColorTemperature(): ControlStateInitObject {
+        const map = this.statesMap;
+
+        return {
+            setState: this.states[map.temperature]!,
+            getState: this.states[map.temperature]!,
+            alexaSetter: function (
+                this: ColorTemperatureInKelvin,
+                alexaValue: AlexaV3DirectiveValue,
+            ): ioBroker.StateValue {
+                if (alexaValue === 1) {
+                    // increase directive
+                    const closest = closestFromList(
+                        (this.currentValue as number) || this.colorTemperatureTable[0],
+                        this.colorTemperatureTable,
                     );
-                },
-            };
-        }
+                    let index = this.colorTemperatureTable.indexOf(closest) + 1;
+                    index = index >= this.colorTemperatureTable.length ? this.colorTemperatureTable.length - 1 : index;
+                    return this.colorTemperatureTable[index];
+                }
+                if (alexaValue === -1) {
+                    // decrease directive
+                    const closest = closestFromList(
+                        (this.currentValue as number) || this.colorTemperatureTable[0],
+                        this.colorTemperatureTable,
+                    );
+                    let index = this.colorTemperatureTable.indexOf(closest) - 1;
+                    index = index < 0 ? 0 : index;
+                    return this.colorTemperatureTable[index];
+                }
 
-        if (property.propertyName === Properties.Color.propertyName) {
-            return {
-                hal: {
-                    hue: this.states[map.hue]!.id,
-                    saturation: this.states[map.saturation]?.id,
-                    brightness: (this.states[map.dimmer] || this.states[map.brightness])?.id,
-                },
-            };
-        }
-
-        if (property.propertyName === Properties.ColorTemperatureInKelvin.propertyName) {
-            return {
-                setState: this.states[map.temperature]!,
-                getState: this.states[map.temperature]!,
-                alexaSetter: function (
-                    this: ColorTemperatureInKelvin,
-                    alexaValue: AlexaV3DirectiveValue,
-                ): ioBroker.StateValue {
-                    if (alexaValue === 1) {
-                        // increase directive
-                        const closest = closestFromList(
-                            (this.currentValue as number) || this.colorTemperatureTable[0],
-                            this.colorTemperatureTable,
-                        );
-                        let index = this.colorTemperatureTable.indexOf(closest) + 1;
-                        index =
-                            index >= this.colorTemperatureTable.length ? this.colorTemperatureTable.length - 1 : index;
-                        return this.colorTemperatureTable[index];
-                    }
-                    if (alexaValue === -1) {
-                        // decrease directive
-                        const closest = closestFromList(
-                            (this.currentValue as number) || this.colorTemperatureTable[0],
-                            this.colorTemperatureTable,
-                        );
-                        let index = this.colorTemperatureTable.indexOf(closest) - 1;
-                        index = index < 0 ? 0 : index;
-                        return this.colorTemperatureTable[index];
-                    }
-
-                    return alexaValue as number;
-                },
-                alexaGetter: function (
-                    this: PropertiesBase,
-                    value: ioBroker.StateValue | undefined,
-                ): AlexaV3DirectiveValue {
-                    return value as number;
-                },
-            };
-        }
+                return alexaValue as number;
+            },
+            alexaGetter: function (
+                this: PropertiesBase,
+                value: ioBroker.StateValue | undefined,
+            ): AlexaV3DirectiveValue {
+                return value as number;
+            },
+        };
     }
 }

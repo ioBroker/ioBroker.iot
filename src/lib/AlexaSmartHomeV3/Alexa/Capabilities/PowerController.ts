@@ -1,16 +1,17 @@
 import PowerState from '../Properties/PowerState';
 import Base from './Base';
-import type { Base as PropertiesBase } from '../Properties/Base';
+import type { ControlStateInitObject } from '../Properties/Base';
 
 export default class PowerController extends Base {
-    private _powerState: PowerState | undefined;
+    readonly #powerState: PowerState;
 
-    initProperties(): PropertiesBase[] {
-        this._powerState = new PowerState();
-        return [this._powerState];
+    constructor(opts: ControlStateInitObject) {
+        super();
+        this.#powerState = new PowerState(opts);
+        this._properties = [this.#powerState];
     }
 
-    get powerState(): PropertiesBase {
-        return this._powerState!;
+    get powerState(): PowerState {
+        return this.#powerState;
     }
 }

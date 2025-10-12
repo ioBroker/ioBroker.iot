@@ -61,6 +61,8 @@ import {
     VolumeUp,
     DeviceThermostat,
     ChevronRight,
+    UnfoldMore,
+    UnfoldLess,
 } from '@mui/icons-material';
 
 import {
@@ -326,6 +328,7 @@ const styles: Record<string, any> = {
         fontSize: 11,
         fontStyle: 'italic',
         paddingLeft: 10,
+        flexGrow: 1,
     },
     devSubSubLineStateName: {
         minWidth: 121,
@@ -374,6 +377,10 @@ const styles: Record<string, any> = {
     selectType: {
         width: 130,
         marginLeft: 8,
+    },
+    stateValueAck: {},
+    stateValueNoAck: {
+        color: '#ff0000',
     },
 };
 
@@ -467,6 +474,7 @@ interface Alexa3SmartNamesState {
         }
     >;
     alive: boolean;
+    values: { [id: string]: ioBroker.State | null | undefined };
 }
 
 export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, Alexa3SmartNamesState> {
@@ -479,6 +487,14 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
     private waitForUpdateID: null | string = null;
     private readonly language: ioBroker.Languages = I18n.getLanguage();
     private editedSmartName: string | null;
+    private subscribedStates: Record<string, number> = {};
+    private tempStates: Record<string, ioBroker.State | null | undefined> | null = null;
+    private updateValuesTimeout: null | ReturnType<typeof setTimeout> = null;
+    private objects: { [id: string]: ioBroker.Object | null | undefined } = {};
+    private collectSubscribes: string[] | null = null;
+    private collectSubscribesTimer: null | ReturnType<typeof setTimeout> = null;
+    private collectUnsubscribes: string[] | null = null;
+    private collectUnsubscribesTimer: null | ReturnType<typeof setTimeout> = null;
 
     constructor(props: Alexa3SmartNamesProps) {
         super(props);
@@ -518,8 +534,128 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
             lastChanged: '',
             objects: {},
             alive: false,
+            values: {},
         };
     }
+
+    subscribe(id: string): void {
+        if (this.subscribedStates[id]) {
+            this.subscribedStates[id]++;
+        } else {
+            this.subscribedStates[id] = 1;
+
+            this.collectSubscribes ||= [];
+            this.collectSubscribes.push(id);
+            const pos = this.collectUnsubscribes?.indexOf(id);
+            if (pos !== -1 && pos !== undefined) {
+                this.collectUnsubscribes?.splice(pos);
+                if (!this.collectUnsubscribes?.length) {
+                    this.collectUnsubscribes = null;
+                    if (this.collectUnsubscribesTimer) {
+                        clearTimeout(this.collectUnsubscribesTimer);
+                        this.collectUnsubscribesTimer = null;
+                    }
+                }
+            }
+
+            if (this.collectSubscribesTimer) {
+                clearTimeout(this.collectSubscribesTimer);
+            }
+
+            this.collectSubscribesTimer = setTimeout(async (): Promise<void> => {
+                this.collectSubscribesTimer = null;
+                if (this.collectSubscribes?.length) {
+                    const collect = this.collectSubscribes;
+                    this.collectSubscribes = null;
+                    const objectIds = collect.filter(id => !this.objects[id]);
+                    const objects = await this.props.socket.getObjectsById(objectIds);
+
+                    if (objects) {
+                        Object.keys(objects).forEach(id => (this.objects[id] = objects[id]));
+                    }
+                    void this.props.socket.subscribeState(collect, this.onStateChange);
+                }
+            }, 200);
+        }
+    }
+
+    unsubscribe(id: string): void {
+        if (this.subscribedStates[id]) {
+            this.subscribedStates[id]--;
+            if (!this.subscribedStates[id]) {
+                delete this.subscribedStates[id];
+
+                this.collectUnsubscribes ||= [];
+                this.collectUnsubscribes.push(id);
+
+                const pos = this.collectSubscribes?.indexOf(id);
+                if (pos !== -1 && pos !== undefined) {
+                    this.collectSubscribes?.splice(pos);
+                    if (!this.collectSubscribes?.length) {
+                        this.collectSubscribes = null;
+                        if (this.collectSubscribesTimer) {
+                            clearTimeout(this.collectSubscribesTimer);
+                            this.collectSubscribesTimer = null;
+                        }
+                    }
+                }
+
+                if (this.collectUnsubscribesTimer) {
+                    clearTimeout(this.collectUnsubscribesTimer);
+                }
+
+                this.collectUnsubscribesTimer = setTimeout(() => {
+                    this.collectUnsubscribesTimer = null;
+                    if (this.collectUnsubscribes?.length) {
+                        void this.props.socket.unsubscribeState(this.collectUnsubscribes, this.onStateChange);
+                        this.collectUnsubscribes = null;
+                    }
+                }, 200);
+            }
+        }
+    }
+
+    unsubscribeAll(): void {
+        Object.keys(this.subscribedStates).forEach(id => {
+            void this.props.socket.unsubscribeState(id, this.onStateChange);
+            delete this.subscribedStates[id];
+        });
+    }
+
+    onStateChange = (id: string, state: ioBroker.State | null | undefined): void => {
+        this.tempStates ||= {};
+        this.tempStates[id] = state;
+        if (this.updateValuesTimeout) {
+            clearTimeout(this.updateValuesTimeout);
+        }
+        this.updateValuesTimeout = setTimeout((): void => {
+            this.updateValuesTimeout = null;
+            if (this.tempStates) {
+                const tempStates = this.tempStates;
+                this.tempStates = null;
+                const values = JSON.parse(JSON.stringify(this.state.values));
+                let changed = false;
+                Object.keys(tempStates).forEach(sid => {
+                    const state = tempStates[sid];
+                    if (values[sid]?.val !== state?.val || values[sid]?.ack !== state?.ack) {
+                        changed = true;
+                        values[sid] = state;
+                    }
+                });
+                if (changed) {
+                    this.setState({ values });
+                }
+            }
+        }, 200);
+
+        if (this.state.values[id]?.val !== state?.val || this.state.values[id]?.ack !== state?.ack) {
+            this.setState(prevState => {
+                const values = JSON.parse(JSON.stringify(prevState));
+                values[id] = state;
+                return { values };
+            });
+        }
+    };
 
     onAliveChanged = (id: string, state: ioBroker.State | null | undefined): void => {
         if (!!state?.val !== this.state.alive) {
@@ -653,6 +789,12 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
             `${this.props.adapterName}.${this.props.instance}.smart.updates3`,
             this.onReadyUpdate,
         );
+
+        if (this.updateValuesTimeout) {
+            clearTimeout(this.updateValuesTimeout);
+            this.updateValuesTimeout = null;
+        }
+
         this.props.socket.unsubscribeState(
             `${this.props.adapterName}.${this.props.instance}.smart.updatesResult`,
             this.onResultUpdate,
@@ -661,6 +803,9 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
             `system.adapter.${this.props.adapterName}.${this.props.instance}.alive`,
             this.onAliveChanged,
         );
+
+        this.unsubscribeAll();
+
         if (this.timerChanged) {
             clearTimeout(this.timerChanged);
             this.timerChanged = null;
@@ -690,6 +835,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
         );
         if (device) {
             void this.props.socket.getObject(id).then(obj => {
+                this.objects[id] = obj; // remember for later
                 if (obj) {
                     let smartName = Utils.getSmartNameFromObj(
                         obj as ioBroker.StateObject,
@@ -730,6 +876,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
             this.props.socket
                 .getObject(id)
                 .then(obj => {
+                    this.objects[id] = obj; // remember for later
                     if (obj) {
                         Utils.disableSmartName(
                             obj as ioBroker.StateObject,
@@ -783,18 +930,22 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                             style = { ...style, ...styles.deviceOff };
                         }
                     } else if (state?.name === 'percentage') {
-                        valuePercent = `${state.value}%`;
+                        valuePercent = `${state.value === null ? '--' : state.value}%`;
                     } else if (state?.name === 'brightness') {
-                        valueBrightness = state.value;
+                        valueBrightness = state.value === null ? '--' : state.value;
                     } else if (state?.name === 'color') {
                         valueColor = `hsl(${state.value}, 50%, 50%)`;
                     }
+                    if (state?.value && typeof state.value === 'object') {
+                        state.value = `${state.value.value} ${state.value.scale === 'CELSIUS' ? '°C' : state.value.scale}`;
+                    }
                 }
+                const stateValue = state ? ` - ${state.value === null ? '--' : state.value}` : '';
 
                 actions.push(
                     <span
                         key={action}
-                        title={CAPABILITIES[action].label + (state ? ` - ${state.value}` : '')}
+                        title={CAPABILITIES[action].label + stateValue}
                         style={styles.actionSpan}
                     >
                         <Icon style={{ ...style, color: CAPABILITIES[action].color, backgroundColor: valueColor }} />
@@ -819,6 +970,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                 );
             }
         });
+
         // add unknown actions
         control.supported.forEach(action => {
             if (!CAPABILITIES[action]) {
@@ -881,18 +1033,22 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                                 style = { ...style, ...styles.deviceOff };
                             }
                         } else if (state?.name === 'percentage') {
-                            valuePercent = `${state.value}%`;
+                            valuePercent = `${state.value === null ? '--' : state.value}%`;
                         } else if (state?.name === 'brightness') {
-                            valueBrightness = state.value;
+                            valueBrightness = state.value === null ? '--' : state.value;
                         } else if (state?.name === 'color') {
                             valueColor = `hsl(${state.value}, 100%, 50%)`;
                         }
+                        if (state?.value && typeof state.value === 'object') {
+                            state.value = `${state.value.value} ${state.value.scale === 'CELSIUS' ? '°C' : state.value.scale}`;
+                        }
                     }
+                    const stateValue = state ? ` - ${state.value === null ? '--' : state.value}` : '';
 
                     const currentType = (
                         <span
                             key={`${control.type}_${i}`}
-                            title={DEVICES[control.type].label + (state ? ` - ${state.value}` : '')}
+                            title={DEVICES[control.type].label + stateValue}
                             style={style}
                         >
                             <Icon
@@ -938,6 +1094,22 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
             expanded.push(id);
         } else {
             expanded.splice(pos, 1);
+            // Unsubscribe all states of this control
+            if (controlNum !== undefined) {
+                const control = this.state.devices[lineNum].controls[controlNum];
+                Object.values(control.states).forEach((state: IotExternalDetectorState) => {
+                    state.subscribed = false;
+                    this.unsubscribe(state.id);
+                });
+            } else {
+                const device = this.state.devices[lineNum];
+                device.controls.forEach(control => {
+                    Object.values(control.states).forEach((state: IotExternalDetectorState) => {
+                        state.subscribed = false;
+                        this.unsubscribe(state.id);
+                    });
+                });
+            }
         }
         window.localStorage.setItem('v3.expanded', JSON.stringify(expanded));
 
@@ -1012,6 +1184,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
             this.props.socket
                 .getObject(id)
                 .then(obj => {
+                    this.objects[id] = obj; // remember for later
                     if (obj) {
                         Utils.updateSmartName(
                             // @ts-expect-error fixed in admin
@@ -1107,32 +1280,86 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                 key="states"
                 style={{ ...styles.statesLine, background }}
             >
-                {Object.keys(control.states).map((name, c) => (
-                    <div
-                        key={name}
-                        style={{
-                            ...styles.devSubSubLine,
-                            ...(c % 2
-                                ? {
-                                      background:
-                                          this.props.themeType === 'dark'
-                                              ? `${DEFAULT_STATE_COLOR_DARK}80`
-                                              : `${DEFAULT_STATE_COLOR_LIGHT}80`,
-                                  }
-                                : {
-                                      background:
-                                          this.props.themeType === 'dark'
-                                              ? DEFAULT_STATE_COLOR_DARK
-                                              : DEFAULT_STATE_COLOR_LIGHT,
-                                  }),
-                        }}
-                    >
-                        <div style={styles.devSubSubLineName}>
-                            <div style={styles.devSubSubLineStateName}>{name}:</div>
-                            <span style={styles.devSubSubLineStateId}>{control.states[name]!.id}</span>
+                {Object.keys(control.states).map((name, c) => {
+                    const stateId = control.states[name]!.id;
+                    if (stateId && !control.states[name]!.subscribed) {
+                        this.subscribe(stateId);
+                        control.states[name]!.subscribed = true;
+                    }
+                    const unit = this.objects[stateId]?.common?.unit || '';
+                    let states = this.objects[stateId]?.common?.states;
+                    if (Array.isArray(states)) {
+                        const nStates: { [val: string]: string } = {};
+                        states.forEach((s, i) => (nStates[i] = s));
+                        states = nStates;
+                        this.objects[stateId]!.common.states = states;
+                    }
+                    let valueStr: React.JSX.Element | null = null;
+                    const stateValue = this.state.values[stateId];
+                    if (stateValue) {
+                        if (states) {
+                            if (states[String(stateValue.val)] !== undefined) {
+                                valueStr = (
+                                    <span style={stateValue.ack ? styles.stateValueAck : styles.stateValueNoAck}>
+                                        {states[String(stateValue.val)]}({String(stateValue.val)})
+                                    </span>
+                                );
+                            } else {
+                                valueStr = (
+                                    <span style={stateValue.ack ? styles.stateValueAck : styles.stateValueNoAck}>
+                                        {String(stateValue.val)}
+                                    </span>
+                                );
+                            }
+                        } else if (unit) {
+                            valueStr = (
+                                <span>
+                                    <span style={stateValue.ack ? styles.stateValueAck : styles.stateValueNoAck}>
+                                        {String(stateValue.val)}
+                                    </span>
+                                    <span style={{ opacity: 0.7, fontSize: 'smaller' }}>{unit}</span>
+                                </span>
+                            );
+                        } else {
+                            valueStr = (
+                                <span style={stateValue.ack ? styles.stateValueAck : styles.stateValueNoAck}>
+                                    {String(stateValue.val)}{' '}
+                                </span>
+                            );
+                        }
+                    } else {
+                        valueStr = <span>--{unit}</span>;
+                    }
+
+                    return (
+                        <div
+                            key={name}
+                            style={{
+                                ...styles.devSubSubLine,
+                                ...(c % 2
+                                    ? {
+                                          background:
+                                              this.props.themeType === 'dark'
+                                                  ? `${DEFAULT_STATE_COLOR_DARK}80`
+                                                  : `${DEFAULT_STATE_COLOR_LIGHT}80`,
+                                      }
+                                    : {
+                                          background:
+                                              this.props.themeType === 'dark'
+                                                  ? DEFAULT_STATE_COLOR_DARK
+                                                  : DEFAULT_STATE_COLOR_LIGHT,
+                                      }),
+                            }}
+                        >
+                            <div style={styles.devSubSubLineName}>
+                                <div style={styles.devSubSubLineStateName}>{name}:</div>
+                                <span style={styles.devSubSubLineStateId}>{stateId}</span>
+                            </div>
+                            <div>{valueStr}</div>
+                            <div style={{ width: 130 + 130 + 40 + 40 + 30 }} />
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
         );
     }
@@ -1147,6 +1374,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
         // read channel
         const channelId = Alexa3SmartNames.getParentId(stateId);
         const channelObj = await this.props.socket.getObject(channelId);
+        this.objects[channelId] = channelObj; // remember for later
         if (channelObj?.type === 'device') {
             return channelObj;
         }
@@ -1154,6 +1382,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
         if (channelObj && (channelObj.type === 'channel' || channelObj.type === 'folder')) {
             let deviceId = Alexa3SmartNames.getParentId(channelId);
             let deviceObj = await this.props.socket.getObject(deviceId);
+            this.objects[deviceId] = deviceObj; // remember for later
 
             if (deviceObj?.type === 'device') {
                 return deviceObj;
@@ -1162,6 +1391,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
             if (deviceObj?.type === 'folder') {
                 deviceId = Alexa3SmartNames.getParentId(channelId);
                 deviceObj = await this.props.socket.getObject(deviceId);
+                this.objects[deviceId] = deviceObj; // remember for later
                 if (deviceObj?.type === 'device') {
                     return deviceObj;
                 }
@@ -1170,7 +1400,9 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
             return channelObj;
         }
 
-        return this.props.socket.getObject(stateId);
+        const result = await this.props.socket.getObject(stateId);
+        this.objects[stateId] = result; // remember for later
+        return result;
     }
 
     getControlProps(control: AlexaSH3ControlDescription): {
@@ -1306,6 +1538,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                     )}
                 </div>,
                 expanded ? this.renderStates(control, background) : null,
+                dev.controls.length - 1 === c ? <div style={{ marginBottom: 10 }} /> : null,
             ] as unknown as React.JSX.Element;
         });
     }
@@ -1420,6 +1653,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
             this.props.socket
                 .getObject(id)
                 .then(obj => {
+                    this.objects[id] = obj; // remember for later
                     if (obj) {
                         Utils.updateSmartName(
                             // @ts-expect-error fixed in admin
@@ -1570,6 +1804,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                             return;
                         }
                         void this.props.socket.getObject(selectedId).then(obj => {
+                            this.objects[selectedId] = obj; // remember for later
                             if (obj) {
                                 const name = Utils.getObjectNameFromObj(obj, null, { language: this.language });
                                 Utils.updateSmartName(
@@ -1703,6 +1938,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                     size="small"
                     color="secondary"
                     aria-label="Add"
+                    title={I18n.t('Add new device from state')}
                     disabled={(!!this.state.lastChanged && !!this.waitForUpdateID) || !this.state.alive}
                     style={styles.button}
                     onClick={() => this.setState({ showSelectId: true })}
@@ -1712,6 +1948,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                 <Fab
                     size="small"
                     color="primary"
+                    title={I18n.t('Refresh list of devices')}
                     aria-label="Refresh"
                     style={styles.button}
                     onClick={() => this.browse(true)}
@@ -1719,6 +1956,33 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                 >
                     {this.state.browse ? <CircularProgress size={20} /> : <IconRefresh />}
                 </Fab>
+                <IconButton
+                    title={I18n.t('Open all devices')}
+                    onClick={() => {
+                        const expanded: string[] = [];
+                        this.state.devices.forEach((dev, lineNum) => {
+                            expanded.push(dev.friendlyName);
+                            dev.controls.forEach((control, c) => {
+                                expanded.push(this.getControlId(lineNum, c));
+                            });
+                        });
+                        window.localStorage.setItem('v3.expanded', JSON.stringify(expanded));
+                        this.setState({ expanded });
+                    }}
+                >
+                    <UnfoldMore />
+                </IconButton>
+                <IconButton
+                    disabled={!this.state.expanded.length}
+                    onClick={() => {
+                        this.setState({ expanded: [] });
+                        this.unsubscribeAll();
+                        window.localStorage.removeItem('v3.expanded');
+                    }}
+                    title={I18n.t('Collapse all devices')}
+                >
+                    <UnfoldLess />
+                </IconButton>
                 <Fab
                     style={{ ...styles.button, marginLeft: '1rem' }}
                     title={I18n.t('Show all devices for print out')}

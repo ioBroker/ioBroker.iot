@@ -2,19 +2,17 @@ import Capabilities from '../Alexa/Capabilities';
 import AdjustableControl from './AdjustableControl';
 import Percentage from '../Alexa/Properties/Percentage';
 import type { Base as PropertiesBase } from '../Alexa/Properties/Base';
-import type { Base as CapabilitiesBase } from '../Alexa/Capabilities/Base';
+import { type IotExternalPatternControl } from '../types';
 
 export default class AdjustablePercentageControl extends AdjustableControl {
-    adjustableProperties(): (typeof PropertiesBase)[] {
-        return [Percentage];
+    constructor(detectedControl: IotExternalPatternControl) {
+        super(detectedControl);
+        const percentageController = new Capabilities.PercentageController(this.percentageInitObject());
+        this._supported = [percentageController];
     }
 
-    initCapabilities(): CapabilitiesBase[] {
-        const result: CapabilitiesBase[] = [new Capabilities.PercentageController()];
-        for (const property of result.flatMap(item => item.properties)) {
-            property.init(this.percentageInitObject());
-        }
-        return result;
+    adjustableProperties(): (typeof PropertiesBase)[] {
+        return [Percentage];
     }
 
     async setState(property: PropertiesBase, value: ioBroker.StateValue): Promise<void> {

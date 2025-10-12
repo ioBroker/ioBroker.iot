@@ -2,10 +2,8 @@ import Control from './Control';
 import { Base as PropertiesBase } from '../Alexa/Properties/Base';
 import type { AlexaV3DirectiveValue, AlexaV3Request } from '../types';
 
-export default class AdjustableControl extends Control {
-    adjustableProperties(): (typeof PropertiesBase)[] {
-        return [];
-    }
+export default abstract class AdjustableControl extends Control {
+    abstract adjustableProperties(): (typeof PropertiesBase)[];
 
     isAdjustDirective(event: AlexaV3Request): boolean {
         return this.adjustableProperties().some(

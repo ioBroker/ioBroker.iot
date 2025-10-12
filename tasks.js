@@ -8,9 +8,9 @@ const { existsSync, renameSync, copyFileSync } = require('node:fs');
 const { buildReact, copyFiles, deleteFoldersRecursive, npmInstall, patchHtmlFile } = require('@iobroker/build-tools');
 
 function copyBackend() {
-    copyFileSync(`${__dirname}/src/lib/alexaSmartHomeV2.js`, `${__dirname}/build-backend/lib/alexaSmartHomeV2.js`);
-    copyFileSync(`${__dirname}/src/lib/alisa.js`, `${__dirname}/build-backend/lib/alisa.js`);
-    copyFileSync(`${__dirname}/src/lib/googleHome.js`, `${__dirname}/build-backend/lib/googleHome.js`);
+    copyFileSync(`${__dirname}/src/lib/alexaSmartHomeV2.js`, `${__dirname}/build/lib/alexaSmartHomeV2.js`);
+    copyFileSync(`${__dirname}/src/lib/alisa.js`, `${__dirname}/build/lib/alisa.js`);
+    copyFileSync(`${__dirname}/src/lib/googleHome.js`, `${__dirname}/build/lib/googleHome.js`);
 }
 
 function cleanRules() {

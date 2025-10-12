@@ -397,6 +397,8 @@ export interface IotInternalDetectorState extends InternalDetectorState {
         role?: string;
         name?: ioBroker.StringOrTranslated;
     };
+    // Used by GUI
+    subscribed?: boolean;
 }
 
 export interface IotExternalDetectorState extends Omit<IotInternalDetectorState, 'enums' | 'role'> {

@@ -309,8 +309,8 @@ export default class Options extends Component<OptionsProps, OptionsState> {
                     <br />
                     {this.renderInput('ioBroker.pro Password', 'pass', 'password', 'current-password')}
                     <br />
-                    {this.renderCheckbox('Amazon Alexa', 'amazonAlexa')}
-                    {this.renderCheckbox('Amazon AlexaV3 (Beta)', 'amazonAlexaV3')}
+                    {this.renderCheckbox('Amazon AlexaV3', 'amazonAlexaV3')}
+                    {this.renderCheckbox('Amazon Alexa (deprecated)', 'amazonAlexa')}
                     <FormControlLabel
                         key="googleHome"
                         style={{ ...styles.controlElement, marginTop: 5 }}
@@ -318,13 +318,8 @@ export default class Options extends Component<OptionsProps, OptionsState> {
                             <Checkbox
                                 checked={this.props.native.googleHome}
                                 onChange={() => {
-                                    // activate alexa if Google home is on (temporary)
                                     const newVal = !this.props.native.googleHome;
-                                    this.props.onChange(
-                                        'googleHome',
-                                        newVal,
-                                        () => newVal && this.props.onChange('amazonAlexa', true),
-                                    );
+                                    this.props.onChange('googleHome', newVal);
                                 }}
                                 color="primary"
                             />

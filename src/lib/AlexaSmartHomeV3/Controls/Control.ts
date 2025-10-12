@@ -36,41 +36,20 @@ export default class Control {
         'MUTE',
     ];
     public readonly log: Logger;
-    public readonly _supported: CapabilitiesBase[];
-    public readonly _enforced: CapabilitiesBase[];
-    public readonly _states: Record<string, IotExternalDetectorState | undefined> = {};
+    protected _supported: CapabilitiesBase[];
+    protected _enforced: CapabilitiesBase[];
+    protected readonly _states: Record<string, IotExternalDetectorState | undefined> = {};
 
     /**
      * @param detectedControl - The detected control in terms of iobroker type detector.
      */
     constructor(detectedControl: IotExternalPatternControl) {
-        this.initStates(detectedControl);
-        this._supported = this.initCapabilities();
-        this._enforced = this.initEnforcedCapabilities();
         this.log = new Logger(this);
         this.log.silly(`created instance`);
-    }
-    /**
-     * This function maps a passed on control to an array of objects. Each object contains an Alexa capability the control natively supports
-     * and at least one property. Every property is initialized with corresponding iobroker state ids and value converters from Alexa to iobroker types
-     * and vice versa.
-     *
-     * @returns Array of objects with natively supported Alexa capabilities and correspondingly configured instances of StateProxies
-     */
-    initCapabilities(): CapabilitiesBase[] {
-        return [];
-    }
-    /**
-     * This function maps a passed on control to an array of objects. Each object contains an Alexa capability the control can handle even
-     * though not natively supported (e.g., the light control can handle the Alexa BrightnessController directive by switching
-     * itself `ON` on brightness > 0 and `OFF` on brightness == 0)
-     * Every capability has at least one property with set up iobroker state ids and value converters from Alexa to iobroker types
-     * and vice versa.
-     *
-     * @returns Array of objects with natively supported Alexa capabilities and correspondingly configured instances of StateProxies
-     */
-    initEnforcedCapabilities(): CapabilitiesBase[] {
-        return [];
+
+        this.initStates(detectedControl);
+        this._supported = [];
+        this._enforced = [];
     }
 
     get allCapabilities(): CapabilitiesBase[] {
@@ -253,9 +232,13 @@ export default class Control {
         return adjustedValue;
     }
 
-    async getOrRetrieveCurrentValue(property: PropertiesBase): Promise<ioBroker.StateValue> {
+    protected async getOrRetrieveCurrentValue(property: PropertiesBase): Promise<ioBroker.StateValue> {
         if (property.currentValue === undefined) {
-            property.currentValue = await AdapterProvider.getState(property.getId);
+            const id = property.getId;
+            if (!id) {
+                throw new Error(`no ID defined for property "${property.propertyName}" of "${this.name}"`);
+            }
+            property.currentValue = await AdapterProvider.getState(id);
         }
 
         if (property.currentValue === undefined) {
@@ -266,8 +249,6 @@ export default class Control {
     }
 
     async reportState(): Promise<AlexaV3ReportedState[]> {
-        this.log.debug(`reporting state`);
-
         const propertiesToReport: AlexaV3ReportedState[] = [];
 
         for (const capability of this.supported) {
@@ -288,13 +269,16 @@ export default class Control {
 
                     propertiesToReport.push(toReport);
                 } catch (error) {
-                    this.log.error(`failed reporting state for property ${property.propertyName} of ${this.name}`);
+                    this.log.error(`failed reporting state for property "${property.propertyName}" of "${this.name}"`);
+                    if (error.stack) {
+                        this.log.debug(`${error.stack}`);
+                    }
                     this.log.debug(`${error}`);
                 }
             }
         }
 
-        this.log.debug(`${JSON.stringify(propertiesToReport)}`);
+        this.log.debug(`reporting state: ${JSON.stringify(propertiesToReport)}`);
         return propertiesToReport;
     }
 
@@ -302,7 +286,7 @@ export default class Control {
         return `${this.constructor.name}`;
     }
 
-    initStates(ctrl: IotExternalPatternControl): void {
+    private initStates(ctrl: IotExternalPatternControl): void {
         for (const stateKey of Control.stateKeys) {
             this._states[stateKey] = ctrl.states.find(s => s.name === stateKey);
         }
@@ -329,7 +313,7 @@ export default class Control {
     // standard property init objects
     //
 
-    blankInitObject(): ControlStateInitObject {
+    protected blankInitObject(): ControlStateInitObject {
         // const states = this.initStates(ctrl);
         const map = this.statesMap;
         return {
@@ -338,7 +322,7 @@ export default class Control {
         };
     }
 
-    powerStateInitObject(): ControlStateInitObject {
+    protected powerStateInitObject(): ControlStateInitObject {
         // const states = this.initStates(ctrl);
         const map = this.statesMap;
 
@@ -354,7 +338,7 @@ export default class Control {
         };
     }
 
-    detectedStateInitObject(): ControlStateInitObject {
+    protected detectedStateInitObject(): ControlStateInitObject {
         const map = this.statesMap;
         return {
             setState: this.states[map.actual]!,
@@ -369,7 +353,7 @@ export default class Control {
         };
     }
 
-    percentageInitObject(): ControlStateInitObject {
+    protected percentageInitObject(): ControlStateInitObject {
         const map = this.statesMap;
         // const range = configuredRangeOrDefault(this.states[map.set]);
         return {

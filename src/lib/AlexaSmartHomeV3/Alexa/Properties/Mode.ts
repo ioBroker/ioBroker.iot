@@ -8,15 +8,15 @@ import type {
 } from '../../types';
 
 export default class Mode extends Base {
-    private _supportedModes: {
+    private readonly _supportedModes: {
         value: string;
         actionMappings: AlexaV3ActionMapping[];
         discoveryResponse: AlexaV3DiscoveryResponse[];
         stateMappings: AlexaV3StateMapping[];
-    }[] = [];
+    }[];
 
-    init(opts: ControlStateInitObject): void {
-        super.init(opts);
+    constructor(opts: ControlStateInitObject) {
+        super(opts);
         if (!opts.supportedModes || !Array.isArray(opts.supportedModes) || opts.supportedModes.length === 0) {
             throw new Error('Mode control requires supportedModes array with at least one mode');
         }

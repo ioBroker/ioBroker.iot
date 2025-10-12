@@ -1,16 +1,17 @@
 import Base from './Base';
-import type { Base as PropertiesBase } from '../Properties/Base';
 import ColorTemperatureInKelvin from '../Properties/ColorTemperatureInKelvin';
+import type { ControlStateInitObject } from '../Properties/Base';
 
 export default class ColorTemperatureController extends Base {
-    private _colorTemperatureInKelvin: ColorTemperatureInKelvin | undefined;
+    private readonly _colorTemperatureInKelvin: ColorTemperatureInKelvin;
 
-    initProperties(): PropertiesBase[] {
-        this._colorTemperatureInKelvin = new ColorTemperatureInKelvin();
-        return [this._colorTemperatureInKelvin];
+    constructor(opts: ControlStateInitObject) {
+        super();
+        this._colorTemperatureInKelvin = new ColorTemperatureInKelvin(opts);
+        this._properties = [this._colorTemperatureInKelvin];
     }
 
-    get colorTemperatureInKelvin(): PropertiesBase {
-        return this._colorTemperatureInKelvin!;
+    get colorTemperatureInKelvin(): ColorTemperatureInKelvin {
+        return this._colorTemperatureInKelvin;
     }
 }

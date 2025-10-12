@@ -25,15 +25,14 @@ export type ControlStateInitObject = {
 };
 
 export class Base {
-    private _properties: string[] = [];
-    private _setState: IotExternalDetectorState | null = null;
+    #setState: IotExternalDetectorState | null = null;
     protected _setId: string = '';
     protected _getId: string = '';
-    private _valuesRange: { min: number | boolean; max: number | boolean } = { min: 0, max: 100 };
-    private _currentValue: ioBroker.StateValue | undefined;
+    #valuesRange: { min: number | boolean; max: number | boolean } = { min: 0, max: 100 };
+    #currentValue: ioBroker.StateValue | undefined;
     protected _alexaSetter?: (value: AlexaV3DirectiveValue) => ioBroker.StateValue | undefined;
     protected _alexaGetter?: (value: ioBroker.StateValue | undefined) => AlexaV3DirectiveValue;
-    private _instance?: string;
+    #instance?: string;
     protected _supportedModesAsEnum: Record<string, number | string> = {};
 
     /**
@@ -42,16 +41,19 @@ export class Base {
      * @param opts.getState The iobroker state to read values from.
      * @param opts.alexaSetter The function to apply to an Alexa value to transform it to the iobroker's one
      * @param opts.alexaGetter The function to apply to an iobroker value to transform it to the Alexa's one
+     * @param ignoreStandard If the standard checks should be ignored (used for Color control)
      */
-    init(opts: ControlStateInitObject): void {
-        if (!opts.setState) {
-            throw new Error(`missing setState in ${this.constructor.name}`);
+    constructor(opts: ControlStateInitObject, ignoreStandard?: boolean) {
+        if (!ignoreStandard) {
+            if (!opts.setState) {
+                throw new Error(`missing setState in ${this.constructor.name}`);
+            }
+            this.#setState = opts.setState;
+            this._setId = opts.setState.id;
+            this._getId = opts.getState?.id || this._setId;
+            this.#valuesRange = configuredRangeOrDefault(this.#setState);
+            this.#instance = opts.instance;
         }
-        this._setState = opts.setState;
-        this._setId = opts.setState.id;
-        this._getId = opts.getState?.id || this._setId;
-        this._valuesRange = configuredRangeOrDefault(this._setState);
-        this._instance = opts.instance;
 
         if (opts.alexaSetter) {
             this._alexaSetter = opts.alexaSetter;
@@ -62,7 +64,7 @@ export class Base {
     }
 
     get instance(): string | undefined {
-        return this._instance;
+        return this.#instance;
     }
 
     get propertyName(): string {
@@ -74,11 +76,11 @@ export class Base {
     }
 
     get valuesRangeMin(): number | boolean {
-        return this._valuesRange.min;
+        return this.#valuesRange.min;
     }
 
     get valuesRangeMax(): number | boolean {
-        return this._valuesRange.max;
+        return this.#valuesRange.max;
     }
 
     get setId(): string {
@@ -92,11 +94,11 @@ export class Base {
      * returns last known iobroker value
      */
     get currentValue(): ioBroker.StateValue | undefined {
-        return this._currentValue;
+        return this.#currentValue;
     }
 
     set currentValue(value: ioBroker.StateValue | undefined) {
-        this._currentValue = value;
+        this.#currentValue = value;
     }
 
     value(alexaValue: AlexaV3DirectiveValue): ioBroker.StateValue | undefined {
