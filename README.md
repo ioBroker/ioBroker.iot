@@ -349,6 +349,9 @@ setState('iot.0.app.message', JSON.stringify({
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Corrected Alexa V3 engine
+
 ### 4.1.0 (2025-10-13)
 - (@GermanBluefox) Made Alexa V3 default
 - (@GermanBluefox) Updated packages
@@ -580,7 +583,7 @@ setState('iot.0.app.message', JSON.stringify({
 
 ### 1.8.20 (2021-05-16)
 
--   (foxriver76) we now write data received from custom services with the acknowledge flag
+-   (foxriver76) we now write data received from custom services with the acknowledgment flag
 
 ### 1.8.19 (2021-05-14)
 
