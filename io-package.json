@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "4.1.0",
+    "version": "4.1.1",
     "news": {
+      "4.1.1": {
+        "en": "Corrected Alexa V3 engine",
+        "de": "Korrektur Alexa V3 Motor",
+        "ru": "Исправлен двигатель Alexa V3",
+        "pt": "Motor Alexa V3 corrigido",
+        "nl": "Gecorrigeerde Alexa V3-motor",
+        "fr": "Moteur Alexa V3 corrigé",
+        "it": "Motore Alexa V3 corretto",
+        "es": "Motor Alexa V3 corregido",
+        "pl": "Poprawiony silnik Alexa V3",
+        "uk": "Виправлений двигун Alexa V3",
+        "zh-cn": "校正 Alexa V3 引擎"
+      },
       "4.1.0": {
         "en": "Made Alexa V3 default\nUpdated packages\nCorrected Alexa V3 engine",
         "de": "Made Alexa V3 default\nAktualisierte Pakete\nKorrektur Alexa V3 Motor",
@@ -80,19 +93,6 @@
         "pl": "Przepisz zasady za pomocą TypeScript\nAktualizacja pakietu. Logo SVG",
         "uk": "Правила перезапису з TypeScript\nОновлення пакету. Логотип SVG",
         "zh-cn": "用类型脚本重写规则\n软件包更新. SVG 标志"
-      },
-      "3.5.0": {
-        "en": "added notification manager support (notifications will be sent as push notifications to the Visu App)",
-        "de": "unterstützung von Benachrichtigungsmanagern (Anmerkungen werden als Push-Benachrichtigungen an die Visu App gesendet)",
-        "ru": "добавлена поддержка менеджера уведомлений (уведомления будут отправляться в виде push-уведомлений в приложение Visu)",
-        "pt": "suporte adicional do gerenciador de notificações (as notificações serão enviadas como notificações push para o Visu App)",
-        "nl": "toegevoegde notificatiemanager ondersteuning (meldingen worden verzonden als push notificaties naar de Visu App)",
-        "fr": "support du gestionnaire de notification ajouté (les notifications seront envoyées sous forme de notifications poussées à l'application Visu)",
-        "it": "supporto del gestore di notifiche aggiunto (le notifiche verranno inviate come notifiche push all'App Visu)",
-        "es": "apoyo añadido al administrador de notificaciones (las notificaciones se enviarán como notificaciones push a la aplicación Visu)",
-        "pl": "dodane wsparcie menedżera powiadomień (powiadomienia będą wysyłane jako powiadomienia do aplikacji Visu)",
-        "uk": "додана підтримка менеджера повідомлень (повідомлення буде відправлено як поштові повідомлення до додатку Visu)",
-        "zh-cn": "新增通知管理器支持( 通知将作为推送通知发送给 Visu App)"
       }
     },
     "titleLang": {

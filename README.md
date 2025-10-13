@@ -349,7 +349,7 @@ setState('iot.0.app.message', JSON.stringify({
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 4.1.1 (2025-10-13)
 - (@GermanBluefox) Corrected Alexa V3 engine
 
 ### 4.1.0 (2025-10-13)
