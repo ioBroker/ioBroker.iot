@@ -11,6 +11,7 @@ export default class Light extends Control {
     constructor(detectedControl: IotExternalPatternControl) {
         super(detectedControl);
 
+        // We support dimmer as enforced capability to allow setting group commands to dim to 0% and to 100%
         // Init enforced capabilities
         const brightnessController = new Capabilities.BrightnessController(this.brightnessInitObject());
         this._enforced = [brightnessController];
