@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "4.0.3",
+    "version": "4.1.0",
     "news": {
+      "4.1.0": {
+        "en": "Made Alexa V3 default\nUpdated packages\nCorrected Alexa V3 engine",
+        "de": "Made Alexa V3 default\nAktualisierte Pakete\nKorrektur Alexa V3 Motor",
+        "ru": "По умолчанию Alexa V3\nОбновленные пакеты\nИсправлен двигатель Alexa V3",
+        "pt": "Made Alexa V3 por omissão\nPacotes atualizados\nMotor Alexa V3 corrigido",
+        "nl": "Alexa V3 standaard gemaakt\nBijgewerkte pakketten\nGecorrigeerde Alexa V3-motor",
+        "fr": "A fait Alexa V3 par défaut\nPaquets mis à jour\nMoteur Alexa V3 corrigé",
+        "it": "Made Alexa V3 default\nPacchetti aggiornati\nMotore Alexa V3 corretto",
+        "es": "Fabricado Alexa V3 por defecto\nPaquetes actualizados\nMotor Alexa V3 corregido",
+        "pl": "Domyślnie Alexa V3\nAktualizacja pakietów\nPoprawiony silnik Alexa V3",
+        "uk": "Зроблено Alexa V3 за замовчуванням\nОновлені пакети\nВиправлений двигун Alexa V3",
+        "zh-cn": "让 Alexa V3 默认\n更新软件包\n校正 Alexa V3 引擎"
+      },
       "4.0.3": {
         "en": "Added response ID to custom skill responses",
         "de": "Antwort ID auf benutzerdefinierte Fähigkeiten Antworten hinzugefügt",
@@ -80,19 +93,6 @@
         "pl": "dodane wsparcie menedżera powiadomień (powiadomienia będą wysyłane jako powiadomienia do aplikacji Visu)",
         "uk": "додана підтримка менеджера повідомлень (повідомлення буде відправлено як поштові повідомлення до додатку Visu)",
         "zh-cn": "新增通知管理器支持( 通知将作为推送通知发送给 Visu App)"
-      },
-      "3.4.5": {
-        "en": "Checked the max length of discovered devices for Alexa",
-        "de": "Überprüfte die maximale Länge der entdeckten Geräte für Alexa",
-        "ru": "Проверка максимальной длины обнаруженных устройств для Alexa",
-        "pt": "Verificado o comprimento máximo de dispositivos descobertos para Alexa",
-        "nl": "De maximale lengte van ontdekte apparaten voor Alexa gecontroleerd",
-        "fr": "Vérification de la longueur maximale des appareils découverts pour Alexa",
-        "it": "Controllata la lunghezza massima di dispositivi scoperti per Alexa",
-        "es": "Compruebe la longitud máxima de los dispositivos descubiertos para Alexa",
-        "pl": "Sprawdziliśmy maksymalną długość odkrytych urządzeń dla Alexa",
-        "uk": "Перевірити максимальну довжину відкритих пристроїв для Alexa",
-        "zh-cn": "为 Alexa 检查了已发现设备的最大长度"
       }
     },
     "titleLang": {
