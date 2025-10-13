@@ -46,6 +46,13 @@ export default class AlexaResponse {
         });
     }
 
+    static throttlingException(messageId: string): AlexaResponse {
+        return AlexaResponse.errorResponse(messageId, {
+            type: 'THROTTLING_EXCEPTION',
+            message: 'Unable to reach endpoint.',
+        });
+    }
+
     static directiveNotSupportedByControl(
         controlName: string,
         namespace: AlexaV3Namespace,

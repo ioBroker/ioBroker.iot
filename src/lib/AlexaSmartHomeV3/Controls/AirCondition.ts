@@ -76,8 +76,7 @@ export default class AirCondition extends AdjustableControl {
             if (property.propertyName === ThermostatMode.propertyName) {
                 this._lastKnownMode = value as string;
                 if (!this.dedicatedOnOff) {
-                    this._powerState.currentValue =
-                        value !== this._thermostatMode.supportedModesAsEnum[ThermostatMode.OFF];
+                    this._powerState.currentValue = value !== ThermostatMode.OFF;
                 }
             }
         }

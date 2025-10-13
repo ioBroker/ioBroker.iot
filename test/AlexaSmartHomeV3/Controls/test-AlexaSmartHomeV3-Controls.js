@@ -1,8 +1,8 @@
 const assert = require('assert');
 const helpers = require('../helpers');
-const Device = require('../../../build/lib/AlexaSmartHomeV3/Device');
-const DeviceManager = require('../../../build/lib/AlexaSmartHomeV3/DeviceManager');
-const AdapterProvider = require('../../../build/lib/AlexaSmartHomeV3/Helpers/AdapterProvider');
+const Device = require('../../../build/lib/AlexaSmartHomeV3/Device').default;
+const DeviceManager = require('../../../build/lib/AlexaSmartHomeV3/DeviceManager').default;
+const AdapterProvider = require('../../../build/lib/AlexaSmartHomeV3/Helpers/AdapterProvider').default;
 
 describe('AlexaSmartHomeV3 - Controls', function () {
     before(function () {
@@ -21,7 +21,7 @@ describe('AlexaSmartHomeV3 - Controls', function () {
                 new Device({
                     id: endpointId,
                     friendlyName: friendlyName,
-                    displayCategries: ['LIGHT'],
+                    displayCategories: ['LIGHT'],
                     controls: [light],
                 }),
             );
@@ -31,7 +31,7 @@ describe('AlexaSmartHomeV3 - Controls', function () {
                 new Device({
                     id: endpointId,
                     friendlyName: friendlyName,
-                    displayCategries: ['LIGHT'],
+                    displayCategories: ['LIGHT'],
                     controls: [dimmer],
                 }),
             );
@@ -120,11 +120,12 @@ describe('AlexaSmartHomeV3 - Controls', function () {
             const event = helpers.thermostatControllerSetThermostatModeRequest();
 
             for (const mode of ['AUTO', 'HEAT', 'ECO', 'OFF']) {
-                event.directive.payload.thermostatMode.value = mode;
-                const d = deviceManager.endpointById(event.directive.endpoint.endpointId);
+                const newEvent = JSON.parse(JSON.stringify(event));
+                newEvent.directive.payload.thermostatMode.value = mode;
+                const d = deviceManager.endpointById(newEvent.directive.endpoint.endpointId);
                 assert.notEqual(d, undefined);
                 assert.equal(d instanceof Device, true);
-                let response = await d.handle(event);
+                let response = await d.handle(newEvent);
                 assert.equal(
                     response.context.properties[0].namespace,
                     'Alexa.ThermostatController',

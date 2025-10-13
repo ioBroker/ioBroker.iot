@@ -1,10 +1,17 @@
 const assert = require('assert');
 const helpers = require('../helpers');
-const DeviceManager = require('../../../build/lib/AlexaSmartHomeV3/DeviceManager');
-const Device = require('../../../build/lib/AlexaSmartHomeV3/Device');
-const AdapterProvider = require('../../../build/lib/AlexaSmartHomeV3/Helpers/AdapterProvider');
-const IotProxy = require('../../../build/lib/AlexaSmartHomeV3/Helpers/IotProxy');
-const RateLimiter = require('../../../build/lib/AlexaSmartHomeV3/Helpers/RateLimiter');
+const DeviceManager = require('../../../build/lib/AlexaSmartHomeV3/DeviceManager').default;
+const Device = require('../../../build/lib/AlexaSmartHomeV3/Device').default;
+const AdapterProvider = require('../../../build/lib/AlexaSmartHomeV3/Helpers/AdapterProvider').default;
+const IotProxy = require('../../../build/lib/AlexaSmartHomeV3/Helpers/IotProxy').default;
+const RateLimiter = require('../../../build/lib/AlexaSmartHomeV3/Helpers/RateLimiter').default;
+
+let stateChange;
+let endpointId;
+let friendlyName;
+let deviceManager;
+let dimmer;
+let light;
 
 describe('AlexaSmartHomeV3 - BrightnessController', function () {
     beforeEach(function () {
@@ -26,7 +33,7 @@ describe('AlexaSmartHomeV3 - BrightnessController', function () {
             new Device({
                 id: endpointId,
                 friendlyName: friendlyName,
-                displayCategries: ['LIGHT'],
+                displayCategories: ['LIGHT'],
                 controls: [light, dimmer],
             }),
         );

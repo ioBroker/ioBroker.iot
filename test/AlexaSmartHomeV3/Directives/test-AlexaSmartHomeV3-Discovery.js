@@ -1,9 +1,12 @@
 const assert = require('assert');
 const helpers = require('../helpers');
-const DeviceManager = require('../../../build/lib/AlexaSmartHomeV3/DeviceManager');
-const Device = require('../../../build/lib/AlexaSmartHomeV3/Device');
-const Directives = require('../../../build/lib/AlexaSmartHomeV3/Alexa/Directives');
-const AdapterProvider = require('../../../build/lib/AlexaSmartHomeV3/Helpers/AdapterProvider');
+const DeviceManager = require('../../../build/lib/AlexaSmartHomeV3/DeviceManager').default;
+const Device = require('../../../build/lib/AlexaSmartHomeV3/Device').default;
+const Directives = require('../../../build/lib/AlexaSmartHomeV3/Alexa/Directives').default;
+const AdapterProvider = require('../../../build/lib/AlexaSmartHomeV3/Helpers/AdapterProvider').default;
+
+let endpointId;
+let friendlyName;
 
 describe('AlexaSmartHomeV3 - Discovery', function () {
     before(function () {
@@ -368,7 +371,7 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             assert.equal(
                 response.event.payload.endpoints[0].capabilities[1].configuration.supportedModes[0].modeResources
                     .friendlyNames[1].value.text,
-                'Open',
+                'Opened',
             );
             assert.equal(
                 response.event.payload.endpoints[0].capabilities[1].configuration.supportedModes[0].modeResources
@@ -441,7 +444,7 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             );
             assert.equal(
                 response.event.payload.endpoints[0].capabilities[1].semantics.stateMappings[0].states[0],
-                'Alexa.States.Open',
+                'Alexa.States.Opened',
             );
             assert.equal(
                 response.event.payload.endpoints[0].capabilities[1].semantics.stateMappings[0].value,

@@ -1,9 +1,9 @@
 const assert = require('assert');
 const Utils = require('../../../build/lib/AlexaSmartHomeV3/Helpers/Utils');
-const RateLimiter = require('../../../build/lib/AlexaSmartHomeV3/Helpers/RateLimiter');
-const HourlyDeviceRateLimitExceeded = require('../../../build/lib/AlexaSmartHomeV3/Exceptions/HourlyDeviceRateLimitExceeded');
-const OverallDailyRateLimitExceeded = require('../../../build/lib/AlexaSmartHomeV3/Exceptions/OverallDailyRateLimitExceeded');
-const AdapterProvider = require('../../../build/lib/AlexaSmartHomeV3/Helpers/AdapterProvider');
+const RateLimiter = require('../../../build/lib/AlexaSmartHomeV3/Helpers/RateLimiter').default;
+const HourlyDeviceRateLimitExceeded = require('../../../build/lib/AlexaSmartHomeV3/Exceptions/HourlyDeviceRateLimitExceeded').default;
+const OverallDailyRateLimitExceeded = require('../../../build/lib/AlexaSmartHomeV3/Exceptions/OverallDailyRateLimitExceeded').default;
+const AdapterProvider = require('../../../build/lib/AlexaSmartHomeV3/Helpers/AdapterProvider').default;
 const helpers = require('../helpers');
 
 async function expectAsyncThrows(promise, exceptionInstance) {
@@ -27,12 +27,12 @@ describe('AlexaSmartHomeV3 - Helpers', function () {
     });
 
     describe('Normalizing from min..max to 0..100', async function () {
-        it('Min normilized to 0', async function () {
+        it('Min normalized to 0', async function () {
             const normalized = Utils.normalize_0_100(0, 0, 200);
             assert.equal(normalized, 0);
         });
 
-        it('Max normilized to 100', async function () {
+        it('Max normalized to 100', async function () {
             const normalized = Utils.normalize_0_100(200, 0, 200);
             assert.equal(normalized, 100);
         });
@@ -66,7 +66,7 @@ describe('AlexaSmartHomeV3 - Helpers', function () {
         });
     });
 
-    describe('Denormalizing from 0..100 to min..max', async function () {
+    describe('De-normalizing from 0..100 to min..max', async function () {
         it('0 denormalized to min', async function () {
             const denormalized = Utils.denormalize_0_100(0, 0, 200);
             assert.equal(denormalized, 0);
@@ -87,12 +87,12 @@ describe('AlexaSmartHomeV3 - Helpers', function () {
             assert.equal(denormalized, undefined);
         });
 
-        it('Undefined on normilized < 0', async function () {
+        it('Undefined on normalized < 0', async function () {
             const denormalized = Utils.denormalize_0_100(-1, 0, 200);
             assert.equal(denormalized, undefined);
         });
 
-        it('Undefined on normilized > 100', async function () {
+        it('Undefined on normalized > 100', async function () {
             let denormalized = Utils.denormalize_0_100(101, 0, 200);
             assert.equal(denormalized, undefined);
         });
@@ -128,7 +128,7 @@ describe('AlexaSmartHomeV3 - Helpers', function () {
         });
     });
 
-    describe('Range ensurance', async function () {
+    describe('Range validation', async function () {
         it('ensureValueInRange0..100 returns 0 for a negative value', async function () {
             const valueInRange = Utils.ensureValueInRange_0_100(-2);
             assert.equal(valueInRange, 0);
@@ -267,6 +267,8 @@ describe('AlexaSmartHomeV3 - Helpers', function () {
         it('can store usage in a file', async function () {
             this.timeout(4000);
             RateLimiter.usage.clear();
+            // In production, we do not store the usage data in the file
+            process.env.TESTS_EXECUTION = 'true';
 
             assert.equal(RateLimiter.usage.size, 0);
             let value1 = Utils.currentHour().toISOString();

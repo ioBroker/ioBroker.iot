@@ -1,5 +1,5 @@
 const https = require('https');
-const Controls = require('../../build/lib/AlexaSmartHomeV3/Controls');
+const Controls = require('../../build/lib/AlexaSmartHomeV3/Controls').default;
 
 class AdapterMock {
     constructor() {
@@ -32,6 +32,10 @@ class AdapterMock {
     }
 
     async setForeignStateAsync() {
+        return {};
+    }
+
+    async setState() {
         return {};
     }
 

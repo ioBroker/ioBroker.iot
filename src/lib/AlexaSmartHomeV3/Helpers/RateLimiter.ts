@@ -1,7 +1,7 @@
-// import path from 'path';
+import path from 'path';
 import HourlyDeviceRateLimitExceeded from '../Exceptions/HourlyDeviceRateLimitExceeded';
 import OverallDailyRateLimitExceeded from '../Exceptions/OverallDailyRateLimitExceeded';
-// import FileHelper from './FileHelper';
+import FileHelper from './FileHelper';
 import * as Utils from './Utils';
 import type { AlexaV3EndpointID } from '../types';
 
@@ -19,28 +19,33 @@ export default class RateLimiter {
         }
     > = new Map();
 
-    static init(): Promise<void> {
+    static async init(): Promise<void> {
         try {
-            // await FileHelper.createFolder(FileHelper.absolutePath(this.USAGE_STORAGE_FOLDER));
-            // const raw = await FileHelper.read(this.storageFileName);
-            // this.usage = new Map(JSON.parse(raw));
-            this.usage = new Map();
+            if (process.env.TESTS_EXECUTION) {
+                await FileHelper.createFolder(FileHelper.absolutePath(this.USAGE_STORAGE_FOLDER));
+                const raw = await FileHelper.read(this.storageFileName);
+                this.usage = new Map(JSON.parse(raw));
+            } else {
+                this.usage = new Map();
+            }
         } catch {
             this.usage = new Map();
         }
-        return Promise.resolve();
+        return;
     }
 
-    // static get storageFileName(): string {
-    //     return FileHelper.absolutePath(path.join(this.USAGE_STORAGE_FOLDER, this.USAGE_STORAGE_FILE_NAME));
-    // }
+    static get storageFileName(): string {
+        return FileHelper.absolutePath(path.join(this.USAGE_STORAGE_FOLDER, this.USAGE_STORAGE_FILE_NAME));
+    }
 
     static async store(): Promise<void> {
-        // try {
-        //     await FileHelper.write(this.storageFileName, JSON.stringify(Array.from(this.usage.entries())));
-        // } catch (error) {
-        //     // nop
-        // }
+        if (process.env.TESTS_EXECUTION) {
+            try {
+                await FileHelper.write(this.storageFileName, JSON.stringify(Array.from(this.usage.entries())));
+            } catch {
+                // nop
+            }
+        }
     }
 
     static get(endpointId: AlexaV3EndpointID): {

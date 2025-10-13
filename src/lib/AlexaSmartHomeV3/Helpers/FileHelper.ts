@@ -1,12 +1,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import utils from '@iobroker/adapter-core';
+import { getAbsoluteInstanceDataDir } from '@iobroker/adapter-core';
 import AdapterProvider from './AdapterProvider';
 
 export default class FileHelper {
     static _rootFolder: string;
     static get rootFolder(): string {
-        this._rootFolder ||= utils.getAbsoluteInstanceDataDir(AdapterProvider.get());
+        this._rootFolder ||= getAbsoluteInstanceDataDir(AdapterProvider.get());
         return this._rootFolder;
     }
 

@@ -34,7 +34,7 @@ export default class Lock extends Control {
                 return alexaValue === Properties.LockState.UNLOCK;
             },
             alexaGetter: function (value) {
-                return value ? Properties.LockState.UNLOCKED : Properties.LockState.LOCKED;
+                return value ? Properties.LockState.LOCKED : Properties.LockState.UNLOCKED;
             },
         };
     }

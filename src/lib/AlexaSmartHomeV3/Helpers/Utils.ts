@@ -707,7 +707,6 @@ export function asEnum(values: string[]): Record<string, number | string> {
     for (let i = 0; i < values.length; i++) {
         enumeration[i] = values[i];
         enumeration[values[i]] = i;
-        i++;
     }
     return enumeration;
 }

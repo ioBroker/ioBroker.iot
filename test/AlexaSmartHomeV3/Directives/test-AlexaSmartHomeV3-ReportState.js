@@ -1,9 +1,12 @@
 const assert = require('assert');
 const helpers = require('../helpers');
-const DeviceManager = require('../../../build/lib/AlexaSmartHomeV3/DeviceManager');
-const Device = require('../../../build/lib/AlexaSmartHomeV3/Device');
-const Directives = require('../../../build/lib/AlexaSmartHomeV3/Alexa/Directives');
-const AdapterProvider = require('../../../build/lib/AlexaSmartHomeV3/Helpers/AdapterProvider');
+const DeviceManager = require('../../../build/lib/AlexaSmartHomeV3/DeviceManager').default;
+const Device = require('../../../build/lib/AlexaSmartHomeV3/Device').default;
+const Directives = require('../../../build/lib/AlexaSmartHomeV3/Alexa/Directives').default;
+const AdapterProvider = require('../../../build/lib/AlexaSmartHomeV3/Helpers/AdapterProvider').default;
+
+let endpointId;
+let friendlyName;
 
 describe('AlexaSmartHomeV3 - ReportState', function () {
     before(function () {
@@ -21,7 +24,7 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
                 new Device({
                     id: endpointId,
                     friendlyName: friendlyName,
-                    displayCategries: ['LIGHT'],
+                    displayCategories: ['LIGHT'],
                     controls: [helpers.lightControl(), helpers.dimmerControl()],
                 }),
             );
@@ -39,7 +42,7 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
                 new Device({
                     id: endpointId,
                     friendlyName: friendlyName,
-                    displayCategries: ['TEMPERATURE_SENSOR'],
+                    displayCategories: ['TEMPERATURE_SENSOR'],
                     controls: [helpers.temperatureControl()],
                 }),
             );
@@ -66,7 +69,7 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
                 new Device({
                     id: endpointId,
                     friendlyName: friendlyName,
-                    displayCategries: ['TEMPERATURE_SENSOR', 'THERMOSTAT'],
+                    displayCategories: ['TEMPERATURE_SENSOR', 'THERMOSTAT'],
                     controls: [helpers.thermostatControl()],
                 }),
             );
@@ -107,7 +110,7 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
                 new Device({
                     id: endpointId,
                     friendlyName: friendlyName,
-                    displayCategries: ['MOTION_SENSOR'],
+                    displayCategories: ['MOTION_SENSOR'],
                     controls: [helpers.motionControl()],
                 }),
             );
@@ -133,7 +136,7 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
                 new Device({
                     id: endpointId,
                     friendlyName: friendlyName,
-                    displayCategries: ['SMARTLOCK'],
+                    displayCategories: ['SMARTLOCK'],
                     controls: [helpers.lockControl()],
                 }),
             );
@@ -147,7 +150,7 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
             assert.equal(response.context.properties[0].hasOwnProperty('instance'), false);
             assert.equal(response.context.properties[0].namespace, 'Alexa.LockController');
             assert.equal(response.context.properties[0].name, 'lockState');
-            assert.equal(response.context.properties[0].value, 'UNLOCKED');
+            assert.equal(response.context.properties[0].value, 'LOCKED');
             assert.equal(response.context.properties[0].uncertaintyInMilliseconds, 0);
         });
 
@@ -159,7 +162,7 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
                 new Device({
                     id: endpointId,
                     friendlyName: friendlyName,
-                    displayCategries: ['CONTACT_SENSOR'],
+                    displayCategories: ['CONTACT_SENSOR'],
                     controls: [helpers.doorControl()],
                 }),
             );
@@ -198,7 +201,7 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
             assert.equal(response.context.properties[0].namespace, 'Alexa.ModeController');
             assert.equal(response.context.properties[0].instance, 'Gate.Position');
             assert.equal(response.context.properties[0].name, 'mode');
-            assert.equal(response.context.properties[0].value, 'Gate.Position.Closed');
+            assert.equal(response.context.properties[0].value, 'Gate.Position.Open');
             assert.equal(response.context.properties[0].uncertaintyInMilliseconds, 0);
         });
 

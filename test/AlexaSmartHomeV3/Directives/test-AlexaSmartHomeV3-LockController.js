@@ -1,10 +1,16 @@
 const assert = require('assert');
 const helpers = require('../helpers');
-const DeviceManager = require('../../../build/lib/AlexaSmartHomeV3/DeviceManager');
-const Device = require('../../../build/lib/AlexaSmartHomeV3/Device');
-const AdapterProvider = require('../../../build/lib/AlexaSmartHomeV3/Helpers/AdapterProvider');
-const IotProxy = require('../../../build/lib/AlexaSmartHomeV3/Helpers/IotProxy');
-const RateLimiter = require('../../../build/lib/AlexaSmartHomeV3/Helpers/RateLimiter');
+const DeviceManager = require('../../../build/lib/AlexaSmartHomeV3/DeviceManager').default;
+const Device = require('../../../build/lib/AlexaSmartHomeV3/Device').default;
+const AdapterProvider = require('../../../build/lib/AlexaSmartHomeV3/Helpers/AdapterProvider').default;
+const IotProxy = require('../../../build/lib/AlexaSmartHomeV3/Helpers/IotProxy').default;
+const RateLimiter = require('../../../build/lib/AlexaSmartHomeV3/Helpers/RateLimiter').default;
+
+let stateChange;
+let endpointId;
+let friendlyName;
+let deviceManager;
+let lock;
 
 describe('AlexaSmartHomeV3 - LockController', function () {
     beforeEach(function () {
@@ -25,7 +31,7 @@ describe('AlexaSmartHomeV3 - LockController', function () {
             new Device({
                 id: endpointId,
                 friendlyName: friendlyName,
-                displayCategries: ['SMARTLOCK'],
+                displayCategories: ['SMARTLOCK'],
                 controls: [lock],
             }),
         );
@@ -60,7 +66,7 @@ describe('AlexaSmartHomeV3 - LockController', function () {
             );
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
 
-            assert.equal(deviceManager.devices[0].controls[0].supported[0].properties[0].currentValue, false);
+            assert.equal(deviceManager.devices[0].controls[0].supported[0].properties[0].currentValue, true);
         });
 
         it('LockController Unlock', async function () {
@@ -79,7 +85,7 @@ describe('AlexaSmartHomeV3 - LockController', function () {
             );
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
 
-            assert.equal(deviceManager.devices[0].controls[0].supported[0].properties[0].currentValue, true);
+            assert.equal(deviceManager.devices[0].controls[0].supported[0].properties[0].currentValue, false);
         });
     });
 });

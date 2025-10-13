@@ -31,8 +31,8 @@ export default class DeviceManager {
         this.log = new Logger(this);
     }
 
-    informAboutStatesChange(): void {
-        void AdapterProvider.get().setState('smart.updates3', true, true);
+    async informAboutStatesChange(): Promise<void> {
+        await AdapterProvider.get().setStateAsync('smart.updates3', true, true);
     }
 
     get language(): ioBroker.Languages {
@@ -354,15 +354,17 @@ export default class DeviceManager {
                                 const directive = this.matchDirective(responseEvent);
                                 if (directive) {
                                     // BF[2024.02.04]: temporarily disabled as produced a huge number of events
-                                    // const stateChange = await directive.handle(responseEvent, this);
+                                    const stateChange = await directive.handle(responseEvent, this);
                                     // get device state (not just one control)
                                     const deviceState = await device.reportState();
                                     if (JSON.stringify(device.lastReportedState) !== JSON.stringify(deviceState)) {
                                         device.lastReportedState = deviceState;
                                         // fire state change report to Alexa
                                         // BF[2024.02.04]: temporarily disabled as produced a huge number of events
-                                        // this.publishStateChange(stateChange);
-                                        this.informAboutStatesChange();
+                                        if (process.env.TESTS_EXECUTION) {
+                                            this.publishStateChange(stateChange);
+                                        }
+                                        await this.informAboutStatesChange();
                                     } else {
                                         this.log.debug(
                                             `ignoring state change event for ${endpointId} due to the same_ value [${JSON.stringify(deviceState)}]`,
@@ -372,7 +374,7 @@ export default class DeviceManager {
                             }
                             return response;
                         },
-                        AlexaResponse.endpointUnreachable(event.directive.header.messageId).get(),
+                        AlexaResponse.throttlingException(event.directive.header.messageId).get(),
                     );
                 } else {
                     response = AlexaResponse.directiveNotSupportedByDevice(
@@ -422,19 +424,27 @@ export default class DeviceManager {
                     const directive = this.matchDirective(responseEvent);
                     if (directive) {
                         // BF[2024.02.04]: temporarily disabled as produced a huge number of events
-                        // const stateChange = await directive.handle(event, this);
+                        const stateChange = await directive.handle(responseEvent, this);
 
                         // get device state (not just one control)
                         const deviceState = await device.reportState();
 
                         if (JSON.stringify(device.lastReportedState) !== JSON.stringify(deviceState)) {
                             device.lastReportedState = deviceState;
-                            this.informAboutStatesChange();
+                            await this.informAboutStatesChange();
                             // fire state change report to Alexa
 
                             // BF[2024.02.04]: temporarily disabled as produced a huge number of events
-                            // await this.executeWithinRateLimits(device.id, async () =>
-                            //     this.publishStateChange(stateChange), undefined);
+                            if (process.env.TESTS_EXECUTION) {
+                                await this.executeWithinRateLimits(
+                                    device.id,
+                                    () => {
+                                        this.publishStateChange(stateChange);
+                                        return Promise.resolve(stateChange);
+                                    },
+                                    AlexaResponse.throttlingException(responseEvent.directive.header.messageId).get(),
+                                );
+                            }
                         } else {
                             this.log.debug(
                                 `ignoring state change event for ${id} due to the same_ value [${JSON.stringify(deviceState)}]`,

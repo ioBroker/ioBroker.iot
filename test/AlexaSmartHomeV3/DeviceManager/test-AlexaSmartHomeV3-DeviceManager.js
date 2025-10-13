@@ -1,15 +1,23 @@
 const assert = require('assert');
 const helpers = require('../helpers');
-const IotProxy = require('../../../build/lib/AlexaSmartHomeV3/Helpers/IotProxy');
-const RateLimiter = require('../../../build/lib/AlexaSmartHomeV3/Helpers/RateLimiter');
-const AdapterProvider = require('../../../build/lib/AlexaSmartHomeV3/Helpers/AdapterProvider');
-const DeviceManager = require('../../../build/lib/AlexaSmartHomeV3/DeviceManager');
-const Device = require('../../../build/lib/AlexaSmartHomeV3/Device');
+const IotProxy = require('../../../build/lib/AlexaSmartHomeV3/Helpers/IotProxy').default;
+const RateLimiter = require('../../../build/lib/AlexaSmartHomeV3/Helpers/RateLimiter').default;
+const AdapterProvider = require('../../../build/lib/AlexaSmartHomeV3/Helpers/AdapterProvider').default;
+const DeviceManager = require('../../../build/lib/AlexaSmartHomeV3/DeviceManager').default;
+const Device = require('../../../build/lib/AlexaSmartHomeV3/Device').default;
+
+let stateChange;
+let endpointId;
+let friendlyName;
+let deviceManager;
+let dimmer;
 
 describe('AlexaSmartHomeV3 - DeviceManager', function () {
     before(function () {
         AdapterProvider.init(helpers.adapterMock());
-        IotProxy.publishStateChange = event => (stateChange = event);
+        IotProxy.publishStateChange = event => {
+            stateChange = event;
+        };
 
         endpointId = 'endpoint-001';
         friendlyName = 'some-friendly-name';
@@ -22,7 +30,7 @@ describe('AlexaSmartHomeV3 - DeviceManager', function () {
             new Device({
                 id: endpointId,
                 friendlyName: friendlyName,
-                displayCategries: ['LIGHT'],
+                displayCategories: ['LIGHT'],
                 controls: [dimmer],
             }),
         );
@@ -30,6 +38,7 @@ describe('AlexaSmartHomeV3 - DeviceManager', function () {
 
     describe('sends ChangeReport...', async function () {
         it('on voice interaction', async function () {
+            process.env.TESTS_EXECUTION = 'true';
             // set dimmer power to ON
             deviceManager.endpoints[0].controls[0].allCapabilities[0].properties[0].currentValue = true;
 
@@ -69,9 +78,8 @@ describe('AlexaSmartHomeV3 - DeviceManager', function () {
         it('on physical interaction', async function () {
             RateLimiter.usage = new Map();
 
-            let value = false;
-            // set dimmer power to value
-            deviceManager.endpoints[0].controls[0].allCapabilities[0].properties[0].currentValue = value;
+            // get the dimmer power value
+            let value = deviceManager.endpoints[0].controls[0].allCapabilities[0].properties[0].currentValue;
 
             for (let i = 0; i < RateLimiter.MAX_DEVICE_STATE_CHANGES_PER_HOUR; i++) {
                 value = !value;

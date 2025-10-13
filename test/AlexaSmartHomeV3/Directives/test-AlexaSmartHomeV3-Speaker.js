@@ -1,10 +1,15 @@
 const assert = require('assert');
 const helpers = require('../helpers');
-const DeviceManager = require('../../../build/lib/AlexaSmartHomeV3/DeviceManager');
-const Device = require('../../../build/lib/AlexaSmartHomeV3/Device');
-const AdapterProvider = require('../../../build/lib/AlexaSmartHomeV3/Helpers/AdapterProvider');
-const IotProxy = require('../../../build/lib/AlexaSmartHomeV3/Helpers/IotProxy');
-const RateLimiter = require('../../../build/lib/AlexaSmartHomeV3/Helpers/RateLimiter');
+const DeviceManager = require('../../../build/lib/AlexaSmartHomeV3/DeviceManager').default;
+const Device = require('../../../build/lib/AlexaSmartHomeV3/Device').default;
+const AdapterProvider = require('../../../build/lib/AlexaSmartHomeV3/Helpers/AdapterProvider').default;
+const IotProxy = require('../../../build/lib/AlexaSmartHomeV3/Helpers/IotProxy').default;
+const RateLimiter = require('../../../build/lib/AlexaSmartHomeV3/Helpers/RateLimiter').default;
+
+let stateChange;
+let endpointId;
+let friendlyName;
+let deviceManager;
 
 describe('AlexaSmartHomeV3 - Speaker', function () {
     beforeEach(function () {

@@ -40,6 +40,24 @@ export default class Mode extends Base {
         return event.directive.payload.mode;
     }
 
+    alexaValue(value: ioBroker.StateValue | undefined): AlexaV3DirectiveValue {
+        if (
+            (typeof value === 'string' || typeof value === 'number') &&
+            this.supportedModes[parseInt(value as string, 10)]
+        ) {
+            return this.supportedModes[parseInt(value as string, 10)].value;
+        }
+        return this.supportedModes[0].value;
+    }
+
+    value(alexaValue: AlexaV3DirectiveValue): ioBroker.StateValue | undefined {
+        const pos = this.supportedModes.findIndex(mode => mode.value === alexaValue);
+        if (pos !== -1) {
+            return pos;
+        }
+        return undefined;
+    }
+
     get supportedModes(): {
         value: string;
         actionMappings: AlexaV3ActionMapping[];

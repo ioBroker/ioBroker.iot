@@ -1,5 +1,5 @@
 import Base, { type ControlStateInitObject } from './Base';
-import type { AlexaV3DirectiveName, AlexaV3Request } from '../../types';
+import type { AlexaV3DirectiveName, AlexaV3DirectiveValue, AlexaV3Request } from '../../types';
 
 export default class DetectionState extends Base {
     constructor(opts: ControlStateInitObject) {
@@ -23,5 +23,13 @@ export default class DetectionState extends Base {
 
     static get NOT_DETECTED(): AlexaV3DirectiveName {
         return 'NOT_DETECTED';
+    }
+
+    alexaValue(value: ioBroker.StateValue | undefined): AlexaV3DirectiveValue {
+        return value ? DetectionState.DETECTED : DetectionState.NOT_DETECTED;
+    }
+
+    value(alexaValue: AlexaV3DirectiveValue): ioBroker.StateValue | undefined {
+        return alexaValue === DetectionState.DETECTED;
     }
 }

@@ -59,7 +59,7 @@
   "scripts": {
     "test-gui": "mocha test/testAdapter.gui.js --exit",
     "test-package": "mocha test/testPackageFiles.js --exit",
-    "test": "npm run test-gui && npm run test-package",
+    "test": "npm run test-gui && npm run test-package && npm run test-alexa-v3",
     "test-alexa-v3": "mocha --grep AlexaSmartHomeV3 --recursive",
     "prepublishOnly": "npm run build",
     "tsc": "tsc -p tsconfig.build.json && node tasks --backend",

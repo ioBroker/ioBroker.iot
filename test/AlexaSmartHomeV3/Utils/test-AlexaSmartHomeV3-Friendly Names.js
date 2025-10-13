@@ -1,6 +1,6 @@
 const assert = require('assert');
 const Utils = require('../../../build/lib/AlexaSmartHomeV3/Helpers/Utils');
-const AdapterProvider = require('../../../build/lib/AlexaSmartHomeV3/Helpers/AdapterProvider');
+const AdapterProvider = require('../../../build/lib/AlexaSmartHomeV3/Helpers/AdapterProvider').default;
 const helpers = require('../helpers');
 
 describe('AlexaSmartHomeV3 - Friendly Names', function () {

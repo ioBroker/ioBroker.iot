@@ -1,10 +1,16 @@
 const assert = require('assert');
 const helpers = require('../helpers');
-const DeviceManager = require('../../../build/lib/AlexaSmartHomeV3/DeviceManager');
-const Device = require('../../../build/lib/AlexaSmartHomeV3/Device');
-const AdapterProvider = require('../../../build/lib/AlexaSmartHomeV3/Helpers/AdapterProvider');
-const IotProxy = require('../../../build/lib/AlexaSmartHomeV3/Helpers/IotProxy');
-const RateLimiter = require('../../../build/lib/AlexaSmartHomeV3/Helpers/RateLimiter');
+const DeviceManager = require('../../../build/lib/AlexaSmartHomeV3/DeviceManager').default;
+const Device = require('../../../build/lib/AlexaSmartHomeV3/Device').default;
+const AdapterProvider = require('../../../build/lib/AlexaSmartHomeV3/Helpers/AdapterProvider').default;
+const IotProxy = require('../../../build/lib/AlexaSmartHomeV3/Helpers/IotProxy').default;
+const RateLimiter = require('../../../build/lib/AlexaSmartHomeV3/Helpers/RateLimiter').default;
+
+let stateChange;
+let endpointId;
+let friendlyName;
+let deviceManager;
+let thermostat;
 
 describe('AlexaSmartHomeV3 - ThermostatController', function () {
     beforeEach(function () {
@@ -24,7 +30,7 @@ describe('AlexaSmartHomeV3 - ThermostatController', function () {
             new Device({
                 id: endpointId,
                 friendlyName: friendlyName,
-                displayCategries: ['THERMOSTAT'],
+                displayCategories: ['THERMOSTAT'],
                 controls: [thermostat],
             }),
         );
@@ -101,7 +107,6 @@ describe('AlexaSmartHomeV3 - ThermostatController', function () {
 
         it('ThermostatController SetThermostatMode', async function () {
             const event = helpers.thermostatControllerSetThermostatModeRequest();
-            //const event = await helpers.getSample('ThermostatController/ThermostatController.SetThermostatMode.request.json')
             const response = await deviceManager.handleAlexaEvent(event);
             assert.equal(
                 response.context.properties[0].namespace,

@@ -1,13 +1,17 @@
 const assert = require('assert');
 const helpers = require('../helpers');
-const DeviceManager = require('../../../build/lib/AlexaSmartHomeV3/DeviceManager');
-const Device = require('../../../build/lib/AlexaSmartHomeV3/Device');
-const Directives = require('../../../build/lib/AlexaSmartHomeV3/Alexa/Directives');
-const Properties = require('../../../build/lib/AlexaSmartHomeV3/Alexa/Properties');
-const AdapterProvider = require('../../../build/lib/AlexaSmartHomeV3/Helpers/AdapterProvider');
+const DeviceManager = require('../../../build/lib/AlexaSmartHomeV3/DeviceManager').default;
+const Device = require('../../../build/lib/AlexaSmartHomeV3/Device').default;
+const Directives = require('../../../build/lib/AlexaSmartHomeV3/Alexa/Directives').default;
+const Properties = require('../../../build/lib/AlexaSmartHomeV3/Alexa/Properties').default;
+const AdapterProvider = require('../../../build/lib/AlexaSmartHomeV3/Helpers/AdapterProvider').default;
+
+let endpointId;
+let friendlyName;
+let deviceManager;
 
 describe('AlexaSmartHomeV3 - ChangeReport', function () {
-    before(function () {
+    before(async function () {
         endpointId = 'endpoint-001';
         friendlyName = 'some-friendly-name';
 
@@ -18,7 +22,7 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
             new Device({
                 id: endpointId,
                 friendlyName: friendlyName,
-                displayCategries: ['LIGHT'],
+                displayCategories: ['LIGHT'],
                 controls: [helpers.dimmerControl(), helpers.temperatureControl()],
             }),
         );
@@ -98,7 +102,7 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
                 new Device({
                     id: endpointId,
                     friendlyName: friendlyName,
-                    displayCategries: ['THERMOSTAT'],
+                    displayCategories: ['THERMOSTAT'],
                     controls: [helpers.thermostatControl()],
                 }),
             );
@@ -139,7 +143,7 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
                 new Device({
                     id: endpointId,
                     friendlyName: friendlyName,
-                    displayCategries: ['MOTION_SENSOR'],
+                    displayCategories: ['MOTION_SENSOR'],
                     controls: [helpers.motionControl()],
                 }),
             );
@@ -166,7 +170,7 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
                 new Device({
                     id: endpointId,
                     friendlyName: friendlyName,
-                    displayCategries: ['SMARTLOCK'],
+                    displayCategories: ['SMARTLOCK'],
                     controls: [helpers.lockControl()],
                 }),
             );
@@ -181,7 +185,7 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
             assert.equal(response.event.payload.change.properties.length, 1);
             assert.equal(response.event.payload.change.properties[0].namespace, 'Alexa.LockController');
             assert.equal(response.event.payload.change.properties[0].name, 'lockState');
-            assert.equal(response.event.payload.change.properties[0].value, 'UNLOCKED');
+            assert.equal(response.event.payload.change.properties[0].value, 'LOCKED');
             assert.equal(response.event.payload.change.properties[0].uncertaintyInMilliseconds, 0);
         });
 
@@ -193,7 +197,7 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
                 new Device({
                     id: endpointId,
                     friendlyName: friendlyName,
-                    displayCategries: ['CONTACT_SENSOR'],
+                    displayCategories: ['CONTACT_SENSOR'],
                     controls: [helpers.doorControl()],
                 }),
             );
@@ -235,7 +239,7 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
             assert.equal(response.event.payload.change.properties[0].namespace, 'Alexa.ModeController');
             assert.equal(response.event.payload.change.properties[0].instance, 'Gate.Position');
             assert.equal(response.event.payload.change.properties[0].name, 'mode');
-            assert.equal(response.event.payload.change.properties[0].value, 'Gate.Position.Closed');
+            assert.equal(response.event.payload.change.properties[0].value, 'Gate.Position.Open');
             assert.equal(response.event.payload.change.properties[0].uncertaintyInMilliseconds, 0);
         });
 
