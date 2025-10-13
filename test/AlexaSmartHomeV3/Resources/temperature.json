@@ -26,11 +26,7 @@
             "name": {
                 "en": "Living Room"
             },
-            "members": [
-                "alias.0.Wohnzimmer.Dimmer",
-                "alias.0.Wohnzimmer.Lampe",
-                "alias.0.Wohnzimmer.Temperature"
-            ]
+            "members": ["alias.0.Wohnzimmer.Dimmer", "alias.0.Wohnzimmer.Lampe", "alias.0.Wohnzimmer.Temperature"]
         }
     }
 }

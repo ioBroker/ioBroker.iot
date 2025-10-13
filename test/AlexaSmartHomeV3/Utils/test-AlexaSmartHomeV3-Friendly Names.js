@@ -1,24 +1,19 @@
-const assert = require('assert')
-const Utils = require('../../../lib/AlexaSmartHomeV3/Helpers/Utils')
-const AdapterProvider = require('../../../lib/AlexaSmartHomeV3/Helpers/AdapterProvider')
-const helpers = require('../helpers')
+const assert = require('assert');
+const Utils = require('../../../build/lib/AlexaSmartHomeV3/Helpers/Utils');
+const AdapterProvider = require('../../../build/lib/AlexaSmartHomeV3/Helpers/AdapterProvider');
+const helpers = require('../helpers');
 
 describe('AlexaSmartHomeV3 - Friendly Names', function () {
-
     before(function () {
-        // runs before all tests in this file 
+        // runs before all tests in this file
         AdapterProvider.init(helpers.adapterMock());
-    });
-
-    after(function () {
-        // runs after all tests in this file
     });
 
     describe('By SmartName', async function () {
         it('SmartName as Object', async function () {
             const smartName = {
-                en: "Light",
-                de: "Licht",
+                en: 'Light',
+                de: 'Licht',
             };
 
             let name = Utils.stringify(smartName);
@@ -26,7 +21,6 @@ describe('AlexaSmartHomeV3 - Friendly Names', function () {
 
             name = Utils.stringify(smartName, 'de');
             assert.equal(name, 'Licht');
-
         });
 
         it('SmartName as String', async function () {
@@ -47,9 +41,9 @@ describe('AlexaSmartHomeV3 - Friendly Names', function () {
                     id: 'enum.rooms.living_room',
                     common: {
                         name: {
-                            en: 'Living Room'
+                            en: 'Living Room',
                         },
-                    }
+                    },
                 },
                 functionality: {
                     id: 'enum.functions.light',
@@ -57,7 +51,7 @@ describe('AlexaSmartHomeV3 - Friendly Names', function () {
                         name: {
                             en: 'Light',
                         },
-                    }
+                    },
                 },
             };
 
@@ -66,7 +60,6 @@ describe('AlexaSmartHomeV3 - Friendly Names', function () {
 
             name = Utils.friendlyNameByRoomAndFunctionName(control);
             assert.equal(name, 'Living Room Light');
-
         });
     });
 });

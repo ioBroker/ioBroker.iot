@@ -858,14 +858,16 @@ export class IotAdapter extends Adapter {
             request = request.toString();
         }
 
-        this.log.debug(`Data: ${JSON.stringify(request)}`);
-
         if (!request || !type) {
+            this.log.debug(`Invalid request: ${JSON.stringify(request)}`);
             return { error: 'invalid request' };
         }
 
         if (type.startsWith('remote')) {
             const start = Date.now();
+
+            this.log.debug(`Remote request: ${JSON.stringify(request)}`);
+
             if (this.remote) {
                 return this.remote
                     .process(request, type as `remote${string}`)
@@ -884,6 +886,7 @@ export class IotAdapter extends Adapter {
             }
             this.log.error(`Received command, but remote already closed.`);
         } else if (type.startsWith('nightscout')) {
+            this.log.debug(`Nightscout request: ${JSON.stringify(request)}`);
             if (this.config.nightscout) {
                 const state = await this.getForeignStateAsync(
                     `system.adapter.nightscout.${this.config.nightscout}.alive`,
@@ -907,7 +910,14 @@ export class IotAdapter extends Adapter {
                 }
             }
 
-            this.log.debug(`${Date.now()} ALEXA: ${JSON.stringify(request)}`);
+            const printRequest = JSON.parse(JSON.stringify(request));
+            if (printRequest.directive?.header?.correlationToken) {
+                printRequest.directive.header.correlationToken = '***';
+            }
+            if (printRequest.directive?.endpoint?.scope?.token) {
+                printRequest.directive.endpoint.scope.token = '***';
+            }
+            this.log.debug(`${Date.now()} ALEXA: ${JSON.stringify(printRequest)}`);
 
             if (request?.directive) {
                 if (this.alexaSH3) {
@@ -951,6 +961,7 @@ export class IotAdapter extends Adapter {
                 this.log.error(`Cannot parse request: ${request}`);
                 return { error: 'Cannot parse request' };
             }
+            this.log.debug(`IFTTT request: ${JSON.stringify(request)}`);
 
             await this.processIfttt(request);
             return NONE;
@@ -963,6 +974,7 @@ export class IotAdapter extends Adapter {
                     return { error: 'Cannot parse request' };
                 }
             }
+            this.log.debug(`[GHOME] request: ${JSON.stringify(request)}`);
 
             if (this.googleHome) {
                 return this.googleHome.process(request, this.config.googleHome);
@@ -977,6 +989,7 @@ export class IotAdapter extends Adapter {
                     return { error: 'Cannot parse request' };
                 }
             }
+            this.log.debug(`[ALISA] request: ${JSON.stringify(request)}`);
 
             this.log.debug(`${Date.now()} ALISA: ${JSON.stringify(request)}`);
             if (this.yandexAlisa) {
@@ -1033,6 +1046,7 @@ export class IotAdapter extends Adapter {
                 } else {
                     request = request.toString();
                 }
+                this.log.debug(`Custom request: ${JSON.stringify(request)}`);
 
                 if (SPECIAL_ADAPTERS.includes(_type)) {
                     try {
@@ -1219,8 +1233,17 @@ export class IotAdapter extends Adapter {
                                     this.log.error(`[REMOTE] Cannot send packet: ${err}`);
                                 }
                             } else {
+                                const printResponse = JSON.parse(JSON.stringify(response));
+                                if (printResponse?.event?.header?.correlationToken) {
+                                    printResponse.event.header.correlationToken = '***';
+                                }
+                                if (printResponse?.event?.endpoint?.scope?.token) {
+                                    printResponse.event.endpoint.scope.token = '***';
+                                }
                                 this.log.debug(
-                                    `[REMOTE] Send response to 'response/${clientId}/${type}: ${JSON.stringify(response)}`,
+                                    `[REMOTE] Response to 'response/${clientId}/${type}: ${JSON.stringify(
+                                        printResponse,
+                                    )}`,
                                 );
 
                                 const msg = JSON.stringify(response);

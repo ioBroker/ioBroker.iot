@@ -28,10 +28,7 @@
             "name": {
                 "en": "Living Room"
             },
-            "members": [
-                "alias.0.Wohnzimmer.Dimmer",
-                "alias.0.Wohnzimmer.Lampe"
-            ]
+            "members": ["alias.0.Wohnzimmer.Dimmer", "alias.0.Wohnzimmer.Lampe"]
         }
     },
     "functionality": {
@@ -40,10 +37,7 @@
             "name": {
                 "en": "Light"
             },
-            "members": [
-                "alias.0.Wohnzimmer.Lampe",
-                "0_userdata.0.Blinds"
-            ]
+            "members": ["alias.0.Wohnzimmer.Lampe", "0_userdata.0.Blinds"]
         }
     }
 }

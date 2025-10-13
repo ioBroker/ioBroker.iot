@@ -620,6 +620,18 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
             void this.props.socket.unsubscribeState(id, this.onStateChange);
             delete this.subscribedStates[id];
         });
+        // Go through all states and set the subscribed flag to false
+        this.state.devices.forEach(dev => {
+            dev.controls.forEach(control => {
+                if (control.states) {
+                    Object.keys(control.states).forEach(id => {
+                        if (control.states[id]) {
+                            control.states[id].subscribed = false;
+                        }
+                    });
+                }
+            });
+        });
     }
 
     onStateChange = (id: string, state: ioBroker.State | null | undefined): void => {
@@ -647,14 +659,6 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                 }
             }
         }, 200);
-
-        if (this.state.values[id]?.val !== state?.val || this.state.values[id]?.ack !== state?.ack) {
-            this.setState(prevState => {
-                const values = JSON.parse(JSON.stringify(prevState));
-                values[id] = state;
-                return { values };
-            });
-        }
     };
 
     onAliveChanged = (id: string, state: ioBroker.State | null | undefined): void => {
@@ -922,7 +926,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                 if (control.state) {
                     state = control.state.find(st => action === st.name);
                     if (state?.name === 'powerState') {
-                        if (state?.value === 'OFF') {
+                        if (state?.value === 'OFF' || state?.value === false) {
                             style = { ...style, ...styles.deviceOff };
                         }
                     } else if (state?.name === 'detectionState') {
@@ -1025,7 +1029,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                     if (dev.state) {
                         state = dev.state.find(st => control.supported.includes(st.name));
                         if (state?.name === 'powerState') {
-                            if (state?.value === 'OFF') {
+                            if (state?.value === 'OFF' || state?.value === false) {
                                 style = { ...style, ...styles.deviceOff };
                             }
                         } else if (state?.name === 'detectionState') {
@@ -1333,7 +1337,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
 
                     return (
                         <div
-                            key={name}
+                            key={c}
                             style={{
                                 ...styles.devSubSubLine,
                                 ...(c % 2
@@ -1470,7 +1474,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
 
             return [
                 <div
-                    key={c}
+                    key={`channel_${c}`}
                     style={{ ...styles.devSubLine, background }}
                 >
                     <IconButton
@@ -1538,7 +1542,12 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                     )}
                 </div>,
                 expanded ? this.renderStates(control, background) : null,
-                dev.controls.length - 1 === c ? <div style={{ marginBottom: 10 }} /> : null,
+                dev.controls.length - 1 === c ? (
+                    <div
+                        key={`margin_${c}`}
+                        style={{ marginBottom: 10 }}
+                    />
+                ) : null,
             ] as unknown as React.JSX.Element;
         });
     }
@@ -1957,7 +1966,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                     {this.state.browse ? <CircularProgress size={20} /> : <IconRefresh />}
                 </Fab>
                 <IconButton
-                    title={I18n.t('Open all devices')}
+                    title={I18n.t('Expand all devices')}
                     onClick={() => {
                         const expanded: string[] = [];
                         this.state.devices.forEach((dev, lineNum) => {

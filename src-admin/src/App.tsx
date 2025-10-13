@@ -53,7 +53,7 @@ const styles: Record<string, any> = {
     },
     tabContentIFrame: {
         padding: 10,
-        height: 'calc(100% - 64px - 48px - 20px - 38px)',
+        height: 'calc(100% - 64px - 48px - 20px)',
         overflow: 'auto',
     },
     selected: (theme: IobTheme): React.CSSProperties => ({

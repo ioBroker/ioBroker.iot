@@ -1,5 +1,5 @@
 const https = require('https');
-const Controls = require('../../lib/AlexaSmartHomeV3/Controls');
+const Controls = require('../../build/lib/AlexaSmartHomeV3/Controls');
 
 class AdapterMock {
     constructor() {
@@ -8,12 +8,12 @@ class AdapterMock {
             debug: this.nop,
             info: this.nop,
             warn: this.nop,
-            error: this.nop
-        }
+            error: this.nop,
+        };
         this.config = {
             functionFirst: false,
-            concatWord: ''
-        }
+            concatWord: '',
+        };
     }
 
     nop() {
@@ -21,81 +21,81 @@ class AdapterMock {
     }
 
     get namespace() {
-        return "iot.0";
+        return 'iot.0';
     }
 
     async getObjectViewAsync() {
         return { rows: [] };
     }
     async setStateAsync() {
-        return {}
+        return {};
     }
 
     async setForeignStateAsync() {
-        return {}
+        return {};
     }
 
     async getForeignStateAsync(id) {
         if (id.includes('Lampe')) {
-            return { val: true }
+            return { val: true };
         }
 
         // 875 of 500..1000 range corresponds to 75 of 0..100 range
         if (id.includes('Dimmer')) {
-            return { val: 875 }
+            return { val: 875 };
         }
 
         if (id.includes('Blinds')) {
-            return { val: 25 }
+            return { val: 25 };
         }
 
         if (id.includes('Temperature')) {
-            return { val: 21.5 }
+            return { val: 21.5 };
         }
 
         if (id.includes('Volume')) {
-            return { val: 35 }
+            return { val: 35 };
         }
 
         if (id.includes('Thermostat')) {
-            return { val: 23.5 }
+            return { val: 23.5 };
         }
 
         if (id.includes('AirCondition.SET')) {
-            return { val: 23.5 }
+            return { val: 23.5 };
         }
 
         if (id.includes('Lamp.HUE')) {
-            return { val: 330.5 }
+            return { val: 330.5 };
         }
 
         if (id.includes('Lamp.TEMPERATURE')) {
-            return { val: 2200 }
+            return { val: 2200 };
         }
 
         if (id.includes('Lamp.BRIGHTNESS')) {
-            return { val: 22 }
+            return { val: 22 };
         }
 
         if (id.includes('AirCondition.MODE')) {
             // OFF
-            return { val: 4 }
+            return { val: 4 };
         }
 
         if (id.includes('Motion')) {
-            return { val: true }
+            return { val: true };
         }
 
         if (id.includes('Door')) {
-            return { val: true }
+            return { val: true };
         }
 
         if (id.includes('Gate')) {
-            return { val: false }
+            return { val: false };
         }
 
         if (id.includes('Lock')) {
-            return { val: true }
+            return { val: true };
         }
     }
 
@@ -110,17 +110,16 @@ class AdapterMock {
 
 module.exports = {
     resetCurrentValues: function (deviceManager) {
-        deviceManager
-            .endpoints
+        deviceManager.endpoints
             .flatMap(e => e.controls)
             .flatMap(c => c.allCapabilities)
             .flatMap(c => c.properties)
             .map(p => p.currentValue)
-            .forEach(v => v = undefined);
+            .forEach(v => (v = undefined));
     },
 
     adapterMock: function () {
-        return new AdapterMock()
+        return new AdapterMock();
     },
 
     temperatureControl: function () {
@@ -138,7 +137,6 @@ module.exports = {
     hueControl: function () {
         return new Controls.Hue(require('./Resources/hue.json'));
     },
-
 
     dimmerControl: function () {
         return new Controls.Dimmer(require('./Resources/dimmer.json'));
@@ -201,14 +199,14 @@ module.exports = {
             hostname: 'raw.githubusercontent.com',
             port: 443,
             path: '/alexa/alexa-smarthome/master/sample_messages/' + sample_json_name,
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
         };
 
         let json_string = '';
         return new Promise((resolve, reject) => {
-            let req = https.request(options, (res) => {
+            let req = https.request(options, res => {
                 res.setEncoding('utf8');
-                res.on('data', (data) => {
+                res.on('data', data => {
                     json_string += data;
                 });
 
@@ -216,14 +214,12 @@ module.exports = {
                     resolve(JSON.parse(json_string));
                 });
 
-                req.on('error', (e) => {
+                req.on('error', e => {
                     reject(e);
                 });
-
             });
 
             req.end();
-        })
-    }
-}
-
+        });
+    },
+};

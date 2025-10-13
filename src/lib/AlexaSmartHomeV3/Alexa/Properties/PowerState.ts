@@ -21,4 +21,12 @@ export default class PowerState extends Base {
     alexaDirectiveValue(event: AlexaV3Request): AlexaV3DirectiveValue {
         return event.directive.header.name === 'TurnOn' ? PowerState.ON : PowerState.OFF;
     }
+
+    alexaValue(value: ioBroker.StateValue | undefined): AlexaV3DirectiveValue {
+        return value === true ? PowerState.ON : value === false ? PowerState.OFF : undefined;
+    }
+
+    value(alexaValue: AlexaV3DirectiveValue): ioBroker.StateValue | undefined {
+        return alexaValue === PowerState.ON ? true : alexaValue === PowerState.OFF ? false : undefined;
+    }
 }

@@ -1,31 +1,29 @@
 const assert = require('assert');
-const Utils = require('../../../lib/AlexaSmartHomeV3/Helpers/Utils');
-const RateLimiter = require('../../../lib/AlexaSmartHomeV3/Helpers/RateLimiter');
-const HourlyDeviceRateLimitExceeded = require('../../../lib/AlexaSmartHomeV3/Exceptions/HourlyDeviceRateLimitExceeded');
-const OverallDailyRateLimitExceeded = require('../../../lib/AlexaSmartHomeV3/Exceptions/OverallDailyRateLimitExceeded');
-const AdapterProvider = require('../../../lib/AlexaSmartHomeV3/Helpers/AdapterProvider');
+const Utils = require('../../../build/lib/AlexaSmartHomeV3/Helpers/Utils');
+const RateLimiter = require('../../../build/lib/AlexaSmartHomeV3/Helpers/RateLimiter');
+const HourlyDeviceRateLimitExceeded = require('../../../build/lib/AlexaSmartHomeV3/Exceptions/HourlyDeviceRateLimitExceeded');
+const OverallDailyRateLimitExceeded = require('../../../build/lib/AlexaSmartHomeV3/Exceptions/OverallDailyRateLimitExceeded');
+const AdapterProvider = require('../../../build/lib/AlexaSmartHomeV3/Helpers/AdapterProvider');
 const helpers = require('../helpers');
 
 async function expectAsyncThrows(promise, exceptionInstance) {
     return promise.then(
-        () => { throw new Error(`No exception of type ${exceptionInstance} was thrown`) },
-        (e) => {
+        () => {
+            throw new Error(`No exception of type ${exceptionInstance} was thrown`);
+        },
+        e => {
             assert.equal(e instanceof exceptionInstance, true);
-        }
+        },
     );
 }
 
 describe('AlexaSmartHomeV3 - Helpers', function () {
-
     beforeEach(function () {
         RateLimiter.usage = new Map();
     });
 
     before(function () {
         AdapterProvider.init(helpers.adapterMock());
-    });
-
-    after(function () {
     });
 
     describe('Normalizing from min..max to 0..100', async function () {
@@ -101,7 +99,7 @@ describe('AlexaSmartHomeV3 - Helpers', function () {
 
         it('In the range min..max', async function () {
             let denormalized = Utils.denormalize_0_100(50, 0, 200);
-            assert.equal(denormalized, 100)
+            assert.equal(denormalized, 100);
 
             denormalized = Utils.denormalize_0_100(75, 0, 200);
             assert.equal(denormalized, 150);
@@ -110,13 +108,21 @@ describe('AlexaSmartHomeV3 - Helpers', function () {
 
     describe('Distinct by property name', async function () {
         it('All items taken on distinct property values', async function () {
-            const list = [{ id: 1, name: 'one' }, { id: 2, name: 'two' }, { id: 3, name: 'three' }];
+            const list = [
+                { id: 1, name: 'one' },
+                { id: 2, name: 'two' },
+                { id: 3, name: 'three' },
+            ];
             const distinct = Utils.distinctByPropertyName(list, 'name');
             assert.equal(JSON.stringify(distinct), JSON.stringify(list));
         });
 
         it('Last item returned for the same property values', async function () {
-            const list = [{ id: 1, name: 'one' }, { id: 2, name: 'one' }, { id: 3, name: 'one' }];
+            const list = [
+                { id: 1, name: 'one' },
+                { id: 2, name: 'one' },
+                { id: 3, name: 'one' },
+            ];
             const distinct = Utils.distinctByPropertyName(list, 'name');
             assert.equal(JSON.stringify(distinct), JSON.stringify([{ id: 3, name: 'one' }]));
         });
@@ -152,8 +158,7 @@ describe('AlexaSmartHomeV3 - Helpers', function () {
             const valueInRange = Utils.ensureValueInRange_0_100(2, 1, 3);
             assert.equal(valueInRange, 2);
         });
-
-    })
+    });
 
     describe('Endpoint Id', async function () {
         it('Limited to 256 chars', async function () {
@@ -164,9 +169,9 @@ describe('AlexaSmartHomeV3 - Helpers', function () {
 
         it('Allowed chars are not cut off', async function () {
             let alpha = Array.from(Array(26)).map((e, i) => i + 65);
-            const capitals = alpha.map((x) => String.fromCharCode(x));
+            const capitals = alpha.map(x => String.fromCharCode(x));
             alpha = Array.from(Array(26)).map((e, i) => i + 97);
-            const smalls = alpha.map((x) => String.fromCharCode(x));
+            const smalls = alpha.map(x => String.fromCharCode(x));
             const input = `${capitals.join('')}${smalls.join('')}0123456789-_`;
             const id = Utils.endpointId(input);
             assert.equal(id, input);
@@ -296,7 +301,6 @@ describe('AlexaSmartHomeV3 - Helpers', function () {
 
     describe('Enumeration', async function () {
         it('Converts strings to numbers and vice versa', async function () {
-
             const e = Utils.asEnum(['AUTO', 'ECO', 'OFF']);
 
             assert.equal(e['AUTO'], 0);
@@ -307,4 +311,4 @@ describe('AlexaSmartHomeV3 - Helpers', function () {
             assert.equal(e[2], 'OFF');
         });
     });
-})
+});
