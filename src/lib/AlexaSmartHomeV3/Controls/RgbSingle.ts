@@ -91,6 +91,14 @@ export default class RgbSingle extends AdjustableControl {
             if (property.propertyName === PowerState.propertyName && !this.states[map.on]) {
                 property.currentValue = property.currentValue !== 0;
             }
+
+            // For Color property, convert RGB hex string to HAL format
+            if (property.propertyName === 'color') {
+                const rgbValue = await AdapterProvider.getState(this.states[map.rgb]!.id);
+                const halValue = rgb2hal(rgbwToHex(rgbValue as string));
+                // @ts-expect-error HAL value is a special object format for color
+                property.currentValue = halValue;
+            }
         }
 
         if (property.currentValue === undefined) {
@@ -141,6 +149,13 @@ export default class RgbSingle extends AdjustableControl {
                     this._powerState.currentValue = false;
                 }
             }
+        } else if (property.propertyName === 'color') {
+            // For Color property, convert HAL format to RGB hex string
+            if (typeof value === 'object' && value !== null) {
+                const rgbHex = hal2rgb(value as { hue: number; saturation: number; brightness: number });
+                await AdapterProvider.setState(this.states[map.rgb]!.id, rgbHex);
+                property.currentValue = value;
+            }
         } else if (
             property.propertyName === Brightness.propertyName ||
             property.propertyName === Color.propertyName ||
@@ -165,29 +180,24 @@ export default class RgbSingle extends AdjustableControl {
     }
 
     protected composeInitObjectColor(): {
-        setState: IotExternalDetectorState;
-        getState: IotExternalDetectorState;
+        setState?: IotExternalDetectorState;
+        getState?: IotExternalDetectorState;
         alexaSetter?: (alexaValue: AlexaV3DirectiveValue) => ioBroker.StateValue | undefined;
         alexaGetter?: (value: ioBroker.StateValue | undefined) => AlexaV3DirectiveValue;
+        hal?: {
+            hue: string;
+            saturation?: string;
+            brightness?: string;
+        };
     } {
         const map = this.statesMap;
+        // For RgbSingle, use the same RGB state for all hal components
+        // The conversion between RGB and HAL formats happens in getOrRetrieveCurrentValue and setState
         return {
-            setState: this.states[map.RGB]!,
-            getState: this.states[map.RGB]!,
-            alexaSetter: function (this: PropertiesBase, alexaValue: AlexaV3DirectiveValue): ioBroker.StateValue {
-                // Convert  {
-                //   "hue": 350.5,
-                //   "saturation": 0.7138,
-                //   "brightness": 0.6524
-                // } to RGB hex #RRGGBB
-                if (typeof alexaValue === 'object' && alexaValue !== null) {
-                    return hal2rgb(alexaValue as { hue: number; saturation: number; brightness: number });
-                }
-
-                return null;
-            },
-            alexaGetter: function (value: ioBroker.StateValue | undefined): AlexaV3DirectiveValue {
-                return rgb2hal(rgbwToHex(value as string));
+            hal: {
+                hue: this.states[map.rgb]!.id,
+                saturation: this.states[map.rgb]!.id,
+                brightness: this.states[map.rgb]!.id,
             },
         };
     }
