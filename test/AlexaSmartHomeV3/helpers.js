@@ -69,16 +69,28 @@ class AdapterMock {
             return { val: 23.5 };
         }
 
+        if (id.includes('RgbLamp.RGB')) {
+            return { val: '#a82c66' };
+        }
+
+        if (id.includes('RgbLamp.BRIGHTNESS')) {
+            return { val: 65 };
+        }
+
+        if (id.includes('RgbLamp.TEMPERATURE')) {
+            return { val: 5000 };
+        }
+
+        if (id.includes('Lamp.BRIGHTNESS')) {
+            return { val: 22 };
+        }
+
         if (id.includes('Lamp.HUE')) {
             return { val: 330.5 };
         }
 
         if (id.includes('Lamp.TEMPERATURE')) {
             return { val: 2200 };
-        }
-
-        if (id.includes('Lamp.BRIGHTNESS')) {
-            return { val: 22 };
         }
 
         if (id.includes('AirCondition.MODE')) {
@@ -140,6 +152,10 @@ module.exports = {
 
     hueControl: function () {
         return new Controls.Hue(require('./Resources/hue.json'));
+    },
+
+    rgbSingleControl: function () {
+        return new Controls.RgbSingle(require('./Resources/rgbSingle.json'));
     },
 
     dimmerControl: function () {

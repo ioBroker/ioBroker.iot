@@ -28,6 +28,7 @@ export default class Control {
         'POWER',
         'MODE',
         'HUE',
+        'RGB',
         'DIMMER',
         'BRIGHTNESS',
         'SATURATION',
