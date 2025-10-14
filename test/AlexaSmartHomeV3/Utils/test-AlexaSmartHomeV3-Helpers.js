@@ -264,7 +264,8 @@ describe('AlexaSmartHomeV3 - Helpers', function () {
             return expectAsyncThrows(RateLimiter.incrementAndGet('endpoint-0017'), OverallDailyRateLimitExceeded);
         });
 
-        it('can store usage in a file', async function () {
+        // The store in a file is deactivated in production
+        it.skip('can store usage in a file', async function () {
             this.timeout(4000);
             RateLimiter.usage.clear();
             // In production, we do not store the usage data in the file

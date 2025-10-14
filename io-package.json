@@ -3,19 +3,6 @@
     "name": "iot",
     "version": "4.1.1",
     "news": {
-      "4.1.1": {
-        "en": "Corrected Alexa V3 engine",
-        "de": "Korrektur Alexa V3 Motor",
-        "ru": "Исправлен двигатель Alexa V3",
-        "pt": "Motor Alexa V3 corrigido",
-        "nl": "Gecorrigeerde Alexa V3-motor",
-        "fr": "Moteur Alexa V3 corrigé",
-        "it": "Motore Alexa V3 corretto",
-        "es": "Motor Alexa V3 corregido",
-        "pl": "Poprawiony silnik Alexa V3",
-        "uk": "Виправлений двигун Alexa V3",
-        "zh-cn": "校正 Alexa V3 引擎"
-      },
       "4.1.0": {
         "en": "Made Alexa V3 default\nUpdated packages\nCorrected Alexa V3 engine",
         "de": "Made Alexa V3 default\nAktualisierte Pakete\nKorrektur Alexa V3 Motor",
