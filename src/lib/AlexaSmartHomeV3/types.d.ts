@@ -34,6 +34,7 @@ export type AlexaV3Category =
     | 'LIGHT'
     | 'MOTION_SENSOR'
     | 'OTHER'
+    | 'SCENE_TRIGGER'
     | 'SMARTLOCK'
     | 'SMARTPLUG'
     | 'SPEAKER'
@@ -65,7 +66,9 @@ export type AlexaV3DirectiveType =
     | 'ChangeReport'
     | 'Discover.Response'
     | 'AcceptGrant.Response'
-    | 'SetBrightness';
+    | 'SetBrightness'
+    | 'Activate'
+    | 'ActivationStarted';
 
 export type AlexaV3Namespace =
     | 'Alexa'
@@ -77,7 +80,8 @@ export type AlexaV3Namespace =
     | 'Alexa.LockController'
     | 'Alexa.Speaker'
     | 'Alexa.EndpointHealth'
-    | 'Alexa.ContactSensor';
+    | 'Alexa.ContactSensor'
+    | 'Alexa.SceneController';
 
 // Basis Header
 export interface AlexaV3Header {
@@ -243,6 +247,7 @@ export interface AlexaV3Capability {
     capabilityResources?: {
         friendlyNames: AlexaV3FriendlyName[];
     };
+    supportsDeactivation?: boolean;
     cookie?: Record<string, string>;
     alexaResponse?: any;
 }
