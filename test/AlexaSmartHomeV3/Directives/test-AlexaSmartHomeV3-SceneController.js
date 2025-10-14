@@ -12,7 +12,7 @@ let friendlyName;
 let deviceManager;
 let scene;
 
-describe('AlexaSmartHomeV3 - SceneController', function () {
+describe.only('AlexaSmartHomeV3 - SceneController', function () {
     beforeEach(function () {
         RateLimiter.usage = new Map();
     });
@@ -48,7 +48,7 @@ describe('AlexaSmartHomeV3 - SceneController', function () {
         it('SceneController Activate', async function () {
             const event = require('../Resources/SceneController.Activate.request.json');
             const response = await deviceManager.handleAlexaEvent(event);
-            
+
             assert.equal(response.event.header.namespace, 'Alexa.SceneController', 'Namespace!');
             assert.equal(response.event.header.name, 'ActivationStarted', 'Name!');
             assert.equal(
@@ -57,7 +57,9 @@ describe('AlexaSmartHomeV3 - SceneController', function () {
                 'Correlation Token!',
             );
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
-            
+            assert.equal(response.event.payload.cause.type, 'VOICE_INTERACTION', 'Cause type!');
+            assert.ok(response.event.payload.timestamp, 'Timestamp!');
+
             // Scenes don't have context properties since they don't report state
             assert.equal(response.context, undefined, 'Context should be undefined for scenes');
         });

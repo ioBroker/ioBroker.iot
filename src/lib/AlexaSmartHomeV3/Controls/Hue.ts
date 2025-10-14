@@ -68,7 +68,7 @@ export default class Hue extends AdjustableControl {
             }
 
             if (property.propertyName === Properties.Color.propertyName) {
-                // @ts-expect-error special case for Color property
+                // @ts-expect-error special case for Hue property
                 property.currentValue = {
                     hue: property.currentValue,
                     saturation: property.hal.saturation,

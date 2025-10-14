@@ -1,11 +1,20 @@
 import Capabilities from '../Alexa/Capabilities';
-import { configuredRangeOrDefault, denormalize_0_100, normalize_0_100, closestFromList } from '../Helpers/Utils';
+import {
+    configuredRangeOrDefault,
+    denormalize_0_100,
+    normalize_0_100,
+    closestFromList,
+    rgbwToHex,
+    hal2rgb,
+    rgb2hal,
+} from '../Helpers/Utils';
 import AdapterProvider from '../Helpers/AdapterProvider';
 import AdjustableControl from './AdjustableControl';
 import type { Base as PropertiesBase } from '../Alexa/Properties/Base';
 import type BrightnessController from '../Alexa/Capabilities/BrightnessController';
 import Brightness from '../Alexa/Properties/Brightness';
 import ColorTemperatureInKelvin from '../Alexa/Properties/ColorTemperatureInKelvin';
+import type ColorTemperatureController from '../Alexa/Capabilities/ColorTemperatureController';
 import type PowerController from '../Alexa/Capabilities/PowerController';
 import PowerState from '../Alexa/Properties/PowerState';
 import type {
@@ -16,9 +25,23 @@ import type {
     IotExternalPatternControl,
 } from '../types';
 
-export default class Ct extends AdjustableControl {
+// ### RGB Light Single [rgbSingle]
+//
+// RGB light with one state of color. Could be HEX #RRGGBB, or rgb(0-255,0-255,0-255).
+//
+// | R | Name            | Role                          | Unit | Type    | Wr | Ind | Multi | Regex                                             |
+// |---|-----------------|-------------------------------|------|---------|----|-----|-------|---------------------------------------------------|
+// | * | RGB             | level.color.rgb               |      | string  | W  |     |       | `/^level\.color\.rgb$/`                           |
+// |   | DIMMER          | level.dimmer                  | %    | number  | W  |     |       | `/^level\.dimmer$/`                               |
+// |   | BRIGHTNESS      |                               | %    | number  | W  |     |       | `/^level\.brightness$/`                           |
+// |   | TEMPERATURE     | level.color.temperature       | °K   | number  | W  |     |       | `/^level\.color\.temperature$/`                   |
+// |   | ON              | switch.light                  |      | boolean | W  |     |       | `/^switch(\.light)?$/`                            |
+// |   | ON_ACTUAL       | sensor.light                  |      | boolean | -  |     |       | `/^(state｜switch｜sensor)\.light｜switch$/`         |
+
+export default class RgbSingle extends AdjustableControl {
     private readonly _brightnessCapability: BrightnessController | undefined;
     private readonly _brightness: Brightness | undefined;
+    private readonly _colorTemperatureCapability: ColorTemperatureController | undefined;
     private readonly _powerControllerCapability: PowerController | undefined;
     private readonly _powerState: PowerState | undefined;
 
@@ -26,7 +49,14 @@ export default class Ct extends AdjustableControl {
         super(detectedControl);
 
         const map = this.statesMap;
-        this._supported = [new Capabilities.ColorTemperatureController(this.composeInitObjectColorTemperature())];
+        this._supported = [new Capabilities.ColorController(this.composeInitObjectColor())];
+
+        if (this.states[map.temperature]) {
+            this._colorTemperatureCapability = new Capabilities.ColorTemperatureController(
+                this.composeInitObjectColorTemperature(),
+            );
+            this._supported.push(this._colorTemperatureCapability);
+        }
 
         // if the state DIMMER or BRIGHTNESS configured
         if (this.states[map.dimmer] || this.states[map.brightness]) {
@@ -130,6 +160,34 @@ export default class Ct extends AdjustableControl {
         await this.setState(property, value ?? 0);
 
         return value as AlexaV3DirectiveValue;
+    }
+
+    protected composeInitObjectColor(): {
+        setState: IotExternalDetectorState;
+        getState: IotExternalDetectorState;
+        alexaSetter?: (alexaValue: AlexaV3DirectiveValue) => ioBroker.StateValue | undefined;
+        alexaGetter?: (value: ioBroker.StateValue | undefined) => AlexaV3DirectiveValue;
+    } {
+        const map = this.statesMap;
+        return {
+            setState: this.states[map.RGB]!,
+            getState: this.states[map.RGB]!,
+            alexaSetter: function (this: PropertiesBase, alexaValue: AlexaV3DirectiveValue): ioBroker.StateValue {
+                // Convert  {
+                //   "hue": 350.5,
+                //   "saturation": 0.7138,
+                //   "brightness": 0.6524
+                // } to RGB hex #RRGGBB
+                if (typeof alexaValue === 'object' && alexaValue !== null) {
+                    return hal2rgb(alexaValue as { hue: number; saturation: number; brightness: number });
+                }
+
+                return null;
+            },
+            alexaGetter: function (value: ioBroker.StateValue | undefined): AlexaV3DirectiveValue {
+                return rgb2hal(rgbwToHex(value as string));
+            },
+        };
     }
 
     protected composeInitObjectPowerState(): {

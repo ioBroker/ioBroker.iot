@@ -5,7 +5,7 @@
             "defaultRole": "button",
             "id": "deconz.0.Groups.6.recall",
             "smartName": {
-                "smartType": "SCENE"
+                "smartType": "button"
             },
             "write": true,
             "read": false,

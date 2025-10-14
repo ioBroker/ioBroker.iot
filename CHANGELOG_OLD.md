@@ -445,7 +445,7 @@
 ### 1.0.8 (2019-09-03)
 
 -   (TA2k) Improved support for Google Home
--   (TA2k) Added auto detection for RGB, RGBSingle, Hue, CT, MediaDevice, Switch, Info, Socket, Light, Dimmer, Thermostat, WindowTilt, Blinds, Slider
+-   (TA2k) Added auto detection for RGB, RGBSingle, Color, CT, MediaDevice, Switch, Info, Socket, Light, Dimmer, Thermostat, WindowTilt, Blinds, Slider
 -   (TA2k) Added support for manually adding states as devices
 -   (TA2k) Fix update state after Sync
 -   (TA2k) Added typical Google Home devices and traits/actions

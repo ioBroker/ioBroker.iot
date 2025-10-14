@@ -288,7 +288,7 @@ export default class AlexaResponse {
     asEndpointCapability(opts?: AlexaV3Capability): AlexaV3Capability {
         opts ||= {} as AlexaV3Capability;
 
-        const response = {
+        const response: AlexaV3Capability = {
             type: Utils.defaultIfNullOrEmpty(opts.type, 'AlexaInterface'),
             interface: Utils.defaultIfNullOrEmpty(opts.interface, 'Alexa'),
             version: Utils.defaultIfNullOrEmpty(opts.version, '3'),
@@ -311,6 +311,7 @@ export default class AlexaResponse {
             configuration: Utils.defaultIfNullOrEmpty(opts.configuration, undefined),
             semantics: Utils.defaultIfNullOrEmpty(opts.semantics, undefined),
             capabilityResources: Utils.defaultIfNullOrEmpty(opts.capabilityResources, undefined),
+            supportsDeactivation: Utils.defaultIfNullOrEmpty(opts.supportsDeactivation, undefined),
         };
 
         if (!response.instance) {
@@ -324,6 +325,12 @@ export default class AlexaResponse {
         }
         if (!response.capabilityResources) {
             delete response.capabilityResources;
+        }
+        if (response.supportsDeactivation === undefined) {
+            delete response.supportsDeactivation;
+        }
+        if (response.properties && !Object.keys(response.properties).length) {
+            delete response.properties;
         }
 
         return response;

@@ -164,6 +164,18 @@ type AlexaV3Payload = {
         };
         properties: any[];
     };
+    timestamp?: string; // ISO 8601
+    cause?: {
+        type:
+            | 'PHYSICAL_INTERACTION'
+            | 'VOICE_INTERACTION'
+            | 'APP_INTERACTION'
+            | 'PERIODIC_POLL'
+            | 'RULE_TRIGGER'
+            | 'TIMER_EXPIRED'
+            | 'ALARM_CLOCK'
+            | 'HANGUP'; // forward-compat
+    };
     endpoints?: AlexaV3DiscoverAppliance[];
 };
 

@@ -108,6 +108,7 @@ const SMART_TYPES: string[] = [
     'motion',
     'levelSlider',
     'temperature',
+    'button',
     'window',
 ];
 
@@ -1816,15 +1817,34 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                             this.objects[selectedId] = obj; // remember for later
                             if (obj) {
                                 const name = Utils.getObjectNameFromObj(obj, null, { language: this.language });
-                                Utils.updateSmartName(
-                                    // @ts-expect-error fixed in admin
-                                    obj,
-                                    (name || I18n.t('Device name')).replace(/[-_.]+/g, ' '),
-                                    undefined,
-                                    undefined,
-                                    `${this.props.adapterName}.${this.props.instance}`,
-                                    this.props.native.noCommon,
-                                );
+                                // special case for buttons
+                                if (obj.common.role?.includes('button')) {
+                                    if (this.props.native.noCommon) {
+                                        obj.common.custom ||= {};
+                                        obj.common.custom[`${this.props.adapterName}.${this.props.instance}`] ||= {};
+                                        obj.common.custom[
+                                            `${this.props.adapterName}.${this.props.instance}`
+                                        ].smartName = {
+                                            smartType: 'button',
+                                            [this.language]: name || I18n.t('Button'),
+                                        };
+                                    } else {
+                                        obj.common.smartName = {
+                                            smartType: 'button',
+                                            [this.language]: name || I18n.t('Button'),
+                                        };
+                                    }
+                                } else {
+                                    Utils.updateSmartName(
+                                        // @ts-expect-error fixed in admin
+                                        obj,
+                                        (name || I18n.t('Device name')).replace(/[-_.]+/g, ' '),
+                                        undefined,
+                                        undefined,
+                                        `${this.props.adapterName}.${this.props.instance}`,
+                                        this.props.native.noCommon,
+                                    );
+                                }
                                 this.addChanged(obj._id);
                                 this.waitForUpdateID = obj._id;
 

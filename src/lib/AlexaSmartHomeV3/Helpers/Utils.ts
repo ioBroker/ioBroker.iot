@@ -710,3 +710,251 @@ export function asEnum(values: string[]): Record<string, number | string> {
     }
     return enumeration;
 }
+
+function toHex(x: number): string {
+    return x.toString(16).padStart(2, '0');
+}
+function to255(x: number): number {
+    return Math.round(x * 255);
+}
+
+/**
+ * Converts a color from HAL (Hue, Saturation, Brightness) to RGB hex string
+ *
+ * @param hal The color in HAL format
+ * @param hal.hue The hue (0-360)
+ * @param hal.saturation The saturation (0-1)
+ * @param hal.brightness The brightness (0-1)
+ * @returns The color in RGB hex format (e.g. #ff0000 for red)
+ */
+export function hal2rgb(hal: { hue: number; saturation: number; brightness: number }): string {
+    const hue = hal.hue;
+    const saturation = hal.saturation;
+    const brightness = hal.brightness;
+
+    let r: number;
+    let g: number;
+    let b: number;
+
+    const i = Math.floor(hue / 60) % 6;
+    const f = hue / 60 - i;
+    const p = brightness * (1 - saturation);
+    const q = brightness * (1 - f * saturation);
+    const t = brightness * (1 - (1 - f) * saturation);
+
+    switch (i) {
+        case 0:
+            r = brightness;
+            g = t;
+            b = p;
+            break;
+        case 1:
+            r = q;
+            g = brightness;
+            b = p;
+            break;
+        case 2:
+            r = p;
+            g = brightness;
+            b = t;
+            break;
+        case 3:
+            r = p;
+            g = q;
+            b = brightness;
+            break;
+        case 4:
+            r = t;
+            g = p;
+            b = brightness;
+            break;
+        case 5:
+            r = brightness;
+            g = p;
+            b = q;
+            break;
+        default:
+            r = 0;
+            g = 0;
+            b = 0;
+    }
+
+    return `#${toHex(to255(r))}${toHex(to255(g))}${toHex(to255(b))}`;
+}
+
+/**
+ * Convert an RGB hex string to HAL (Hue, Saturation, Brightness)
+ *
+ * @param rgb The color in RGB hex format (e.g. #ff0000 for red)
+ * @returns The color in HAL format or null on invalid input
+ */
+export function rgb2hal(rgb: string): { hue: number; saturation: number; brightness: number } {
+    if (!rgb || typeof rgb !== 'string' || !rgb.startsWith('#') || (rgb.length !== 7 && rgb.length !== 4)) {
+        return {
+            hue: 0,
+            saturation: 0,
+            brightness: 0,
+        };
+    }
+
+    let r: number;
+    let g: number;
+    let b: number;
+
+    if (rgb.length === 7) {
+        r = parseInt(rgb.substring(1, 3), 16);
+        g = parseInt(rgb.substring(3, 5), 16);
+        b = parseInt(rgb.substring(5, 7), 16);
+    } else {
+        r = parseInt(rgb[1] + rgb[1], 16);
+        g = parseInt(rgb[2] + rgb[2], 16);
+        b = parseInt(rgb[3] + rgb[3], 16);
+    }
+
+    r /= 255;
+    g /= 255;
+    b /= 255;
+
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    let h: number;
+    const v = max;
+
+    const d = max - min;
+    const s = max === 0 ? 0 : d / max;
+
+    if (max === min) {
+        h = 0; // achromatic
+    } else {
+        switch (max) {
+            case r:
+                h = (g - b) / d + (g < b ? 6 : 0);
+                break;
+            case g:
+                h = (b - r) / d + 2;
+                break;
+            case b:
+                h = (r - g) / d + 4;
+                break;
+            default:
+                h = 0;
+        }
+        h /= 6;
+    }
+
+    return {
+        hue: Math.round(h * 360),
+        saturation: parseFloat(s.toFixed(2)),
+        brightness: parseFloat(v.toFixed(2)),
+    };
+}
+
+/** Convert rgb(w)(1-255,1-255,1-255(,0-1)) to hex string */
+export function rgbwToHex(rgbw: string): string {
+    if (!rgbw || typeof rgbw !== 'string') {
+        return '#00000000';
+    }
+    if (rgbw.startsWith('#')) {
+        return rgbw;
+    }
+    if (rgbw.startsWith('rgba(')) {
+        rgbw = rgbw.substring(5, rgbw.length - 1);
+    } else if (rgbw.startsWith('rgb(')) {
+        rgbw = rgbw.substring(4, rgbw.length - 1);
+    }
+    const parts = rgbw.split(',');
+    if (parts.length < 3 || parts.length > 4) {
+        return '#000000';
+    }
+    let r = parseInt(parts[0].trim(), 10);
+    let g = parseInt(parts[1].trim(), 10);
+    let b = parseInt(parts[2].trim(), 10);
+    let w = parts.length === 4 ? parseFloat(parts[3].trim()) : 1;
+
+    if (isNaN(r) || isNaN(g) || isNaN(b) || isNaN(w)) {
+        if (parts.length === 4) {
+            return '#00000000';
+        }
+        return '#000000';
+    }
+    r = Math.max(0, Math.min(255, r));
+    g = Math.max(0, Math.min(255, g));
+    b = Math.max(0, Math.min(255, b));
+    w = Math.max(0, Math.min(1, w));
+
+    if (parts.length === 3) {
+        return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+    }
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}${toHex(Math.round(w * 255))}`;
+}
+
+/**
+ * Convert an RGBW hex string to HAL (Hue, Saturation, Brightness)
+ *
+ * @param rgbw The color in RGB hex format (e.g. #ff0000 for red)
+ * @returns The color in HAL format or null on invalid input
+ */
+export function rgbw2hal(rgbw: string): { hue: number; saturation: number; brightness: number } | null {
+    if (!rgbw || typeof rgbw !== 'string' || !rgbw.startsWith('#') || (rgbw.length !== 9 && rgbw.length !== 5)) {
+        return null;
+    }
+
+    let r: number;
+    let g: number;
+    let b: number;
+    let w: number;
+
+    if (rgbw.length === 9) {
+        r = parseInt(rgbw.substring(1, 3), 16);
+        g = parseInt(rgbw.substring(3, 5), 16);
+        b = parseInt(rgbw.substring(5, 7), 16);
+        w = parseInt(rgbw.substring(7, 9), 16);
+    } else {
+        r = parseInt(rgbw[1] + rgbw[1], 16);
+        g = parseInt(rgbw[2] + rgbw[2], 16);
+        b = parseInt(rgbw[3] + rgbw[3], 16);
+        w = parseInt(rgbw[4] + rgbw[4], 16);
+    }
+
+    // remove white from RGB
+    r = Math.max(0, r - w);
+    g = Math.max(0, g - w);
+    b = Math.max(0, b - w);
+
+    r /= 255;
+    g /= 255;
+    b /= 255;
+    w /= 255;
+
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    let h: number;
+    const v = Math.max(max, w); // use white channel as brightness if higher
+    const d = max - min;
+    const s = v === 0 ? 0 : d / v;
+
+    if (max === min) {
+        h = 0; // achromatic
+    } else {
+        switch (max) {
+            case r:
+                h = (g - b) / d + (g < b ? 6 : 0);
+                break;
+            case g:
+                h = (b - r) / d + 2;
+                break;
+            case b:
+                h = (r - g) / d + 4;
+                break;
+            default:
+                h = 0;
+        }
+        h /= 6;
+    }
+
+    return {
+        hue: Math.round(h * 360),
+        saturation: parseFloat(s.toFixed(2)),
+        brightness: parseFloat(v.toFixed(2)),
+    };
+}

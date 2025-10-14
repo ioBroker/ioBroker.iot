@@ -12,7 +12,7 @@ export type ControlStateInitObject = {
     alexaSetter?: (alexaValue: AlexaV3DirectiveValue) => ioBroker.StateValue | undefined;
     alexaGetter?: (value: ioBroker.StateValue | undefined) => AlexaV3DirectiveValue;
 
-    // Extra for Color control
+    // Extra for Hue control
     hal?: {
         hue: string;
         saturation?: string;

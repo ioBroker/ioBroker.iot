@@ -34,7 +34,7 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             deviceManager.addDevice(
                 new Device({
                     id: endpointId,
-                    friendlyName: friendlyName,
+                    friendlyName,
                     controls: [helpers.lightControl(), helpers.dimmerControl()],
                 }),
             );
@@ -59,7 +59,7 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             deviceManager.addDevice(
                 new Device({
                     id: endpointId,
-                    friendlyName: friendlyName,
+                    friendlyName,
                     controls: [helpers.lightControl()],
                 }),
             );
@@ -83,7 +83,7 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             deviceManager.addDevice(
                 new Device({
                     id: endpointId,
-                    friendlyName: friendlyName,
+                    friendlyName,
                     controls: [helpers.temperatureControl()],
                 }),
             );
@@ -111,7 +111,7 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             deviceManager.addDevice(
                 new Device({
                     id: endpointId,
-                    friendlyName: friendlyName,
+                    friendlyName,
                     controls: [helpers.thermostatControl()],
                 }),
             );
@@ -149,7 +149,7 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             deviceManager.addDevice(
                 new Device({
                     id: endpointId,
-                    friendlyName: friendlyName,
+                    friendlyName,
                     controls: [helpers.motionControl()],
                 }),
             );
@@ -177,7 +177,7 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             deviceManager.addDevice(
                 new Device({
                     id: endpointId,
-                    friendlyName: friendlyName,
+                    friendlyName,
                     controls: [helpers.lockControl()],
                 }),
             );
@@ -202,7 +202,7 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             deviceManager.addDevice(
                 new Device({
                     id: endpointId,
-                    friendlyName: friendlyName,
+                    friendlyName,
                     controls: [helpers.doorControl()],
                 }),
             );
@@ -223,6 +223,33 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             );
         });
 
+        it('Discovery of a scene', async function () {
+            const event = await helpers.getSample('Discovery/Discovery.request.json');
+
+            const deviceManager = new DeviceManager();
+            deviceManager.addDevice(
+                new Device({
+                    id: endpointId,
+                    friendlyName,
+                    controls: [helpers.sceneControl()],
+                }),
+            );
+
+            const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(response.event.header.namespace, 'Alexa.Discovery', 'Namespace!');
+            assert.equal(response.event.header.name, 'Discover.Response', 'Name!');
+            assert.equal(response.event.payload.endpoints[0].endpointId, endpointId, 'Endpoint Id!');
+            assert.equal(response.event.payload.endpoints[0].friendlyName, friendlyName, 'Friendly Name!');
+            assert.equal(response.event.payload.endpoints[0].displayCategories[0], 'SCENE_TRIGGER', 'SCENE_TRIGGER!');
+
+            assert.equal(response.event.payload.endpoints[0].capabilities.length, 2);
+            assert.equal(response.event.payload.endpoints[0].capabilities[0].type, 'AlexaInterface');
+            assert.equal(response.event.payload.endpoints[0].capabilities[0].interface, 'Alexa');
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].interface, 'Alexa.SceneController');
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].properties, undefined);
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].supportsDeactivation, false);
+        });
+
         it('Discovery of blinds', async function () {
             const event = await helpers.getSample('Discovery/Discovery.request.json');
 
@@ -230,7 +257,7 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             deviceManager.addDevice(
                 new Device({
                     id: endpointId,
-                    friendlyName: friendlyName,
+                    friendlyName,
                     controls: [helpers.blindsControl()],
                 }),
             );
@@ -258,7 +285,7 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             deviceManager.addDevice(
                 new Device({
                     id: endpointId,
-                    friendlyName: friendlyName,
+                    friendlyName,
                     controls: [helpers.vacuumCleanerControl()],
                 }),
             );
@@ -282,7 +309,7 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             deviceManager.addDevice(
                 new Device({
                     id: endpointId,
-                    friendlyName: friendlyName,
+                    friendlyName,
                     controls: [helpers.volumeControl()],
                 }),
             );
@@ -306,7 +333,7 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             deviceManager.addDevice(
                 new Device({
                     id: endpointId,
-                    friendlyName: friendlyName,
+                    friendlyName,
                     controls: [helpers.volumeGroupControl()],
                 }),
             );
@@ -330,7 +357,7 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             deviceManager.addDevice(
                 new Device({
                     id: endpointId,
-                    friendlyName: friendlyName,
+                    friendlyName,
                     controls: [helpers.gateControl()],
                 }),
             );

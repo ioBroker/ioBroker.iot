@@ -85,10 +85,10 @@ export default class DeviceManager {
             this.log.silly(`processing control: ${JSON.stringify(item)}`);
             const control = Controls.factory(item);
             if (control) {
-                this.log.debug(`${item.type} added to ${friendlyName}`);
+                this.log.debug(`"${item.type}" added to "${friendlyName}"`);
                 controls.push(control);
             } else {
-                this.log.debug(`control of type ${item.type} not supported yet. Skipped.`);
+                this.log.debug(`control of type "${item.type}" not supported yet. Skipped.`);
             }
         });
 
@@ -269,6 +269,9 @@ export default class DeviceManager {
             }
         } catch (e) {
             this.log.error(`failed to collect devices: ${e}`);
+            if (e.stack) {
+                this.log.error(e.stack);
+            }
         }
 
         this.collecting = false;
@@ -397,6 +400,10 @@ export default class DeviceManager {
         // ignore updates not confirmed by a corresponding device
         if (!state?.ack) {
             this.log.silly(`ignoring state change event for ${id} due to state.ack == ${state?.ack}`);
+            return;
+        }
+        if (id.startsWith(`${AdapterProvider.get().namespace}.`)) {
+            // nop, this is just to inform Alexa app about changes
             return;
         }
 

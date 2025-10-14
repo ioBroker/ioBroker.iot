@@ -4,7 +4,7 @@ import Control from './Control';
 import AlexaResponse from '../Alexa/AlexaResponse';
 import AdapterProvider from '../Helpers/AdapterProvider';
 
-export default class Scene extends Control {
+export default class Button extends Control {
     constructor(detectedControl: IotExternalPatternControl) {
         super(detectedControl);
 
@@ -55,6 +55,12 @@ export default class Scene extends Control {
                     token: event.directive.endpoint?.scope?.token,
                     endpointId: event.directive.endpoint?.endpointId,
                 });
+                response.event!.payload = {
+                    cause: {
+                        type: 'VOICE_INTERACTION',
+                    },
+                    timestamp: new Date().toISOString(),
+                };
 
                 this.log.debug('Scene activated successfully');
                 this.log.silly(`${JSON.stringify(response.get())}`);
@@ -72,4 +78,3 @@ export default class Scene extends Control {
         return super.handle(event);
     }
 }
-
