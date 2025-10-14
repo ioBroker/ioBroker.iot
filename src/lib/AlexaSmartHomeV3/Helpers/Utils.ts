@@ -782,6 +782,61 @@ export function hal2rgb(hal: { hue: number; saturation: number; brightness: numb
     return `#${toHex(to255(r))}${toHex(to255(g))}${toHex(to255(b))}`;
 }
 
+export function hal2rgbw(hal: { hue: number; saturation: number; brightness: number }): string {
+    const hue = hal.hue;
+    const saturation = hal.saturation;
+    const brightness = hal.brightness;
+
+    let r: number;
+    let g: number;
+    let b: number;
+
+    const i = Math.floor(hue / 60) % 6;
+    const f = hue / 60 - i;
+    const p = brightness * (1 - saturation);
+    const q = brightness * (1 - f * saturation);
+    const t = brightness * (1 - (1 - f) * saturation);
+
+    switch (i) {
+        case 0:
+            r = brightness;
+            g = t;
+            b = p;
+            break;
+        case 1:
+            r = q;
+            g = brightness;
+            b = p;
+            break;
+        case 2:
+            r = p;
+            g = brightness;
+            b = t;
+            break;
+        case 3:
+            r = p;
+            g = q;
+            b = brightness;
+            break;
+        case 4:
+            r = t;
+            g = p;
+            b = brightness;
+            break;
+        case 5:
+            r = brightness;
+            g = p;
+            b = q;
+            break;
+        default:
+            r = 0;
+            g = 0;
+            b = 0;
+    }
+
+    return `#${toHex(to255(r))}${toHex(to255(g))}${toHex(to255(b))}${toHex(to255(255))}`;
+}
+
 /**
  * Convert an RGB hex string to HAL (Hue, Saturation, Brightness)
  *
@@ -894,9 +949,13 @@ export function rgbwToHex(rgbw: string): string {
  * @param rgbw The color in RGB hex format (e.g. #ff0000 for red)
  * @returns The color in HAL format or null on invalid input
  */
-export function rgbw2hal(rgbw: string): { hue: number; saturation: number; brightness: number } | null {
+export function rgbw2hal(rgbw: string): { hue: number; saturation: number; brightness: number } {
     if (!rgbw || typeof rgbw !== 'string' || !rgbw.startsWith('#') || (rgbw.length !== 9 && rgbw.length !== 5)) {
-        return null;
+        return {
+            hue: 0,
+            saturation: 0,
+            brightness: 0,
+        };
     }
 
     let r: number;

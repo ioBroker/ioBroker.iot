@@ -5,14 +5,15 @@ import {
     normalize_0_100,
     closestFromList,
     rgbwToHex,
-    hal2rgb,
-    rgb2hal,
+    rgbw2hal,
+    hal2rgbw,
 } from '../Helpers/Utils';
 import AdapterProvider from '../Helpers/AdapterProvider';
 import AdjustableControl from './AdjustableControl';
 import type { Base as PropertiesBase } from '../Alexa/Properties/Base';
 import type BrightnessController from '../Alexa/Capabilities/BrightnessController';
 import Brightness from '../Alexa/Properties/Brightness';
+import Color from '../Alexa/Properties/Color';
 import ColorTemperatureInKelvin from '../Alexa/Properties/ColorTemperatureInKelvin';
 import type ColorTemperatureController from '../Alexa/Capabilities/ColorTemperatureController';
 import type PowerController from '../Alexa/Capabilities/PowerController';
@@ -24,22 +25,21 @@ import type {
     IotExternalDetectorState,
     IotExternalPatternControl,
 } from '../types';
-import Color from '../Alexa/Properties/Color';
 
-// ### RGB Light Single [rgbSingle]
+// ### RGBW Light Single [rgbwSingle]
 //
-// RGB light with one state of color. Could be HEX #RRGGBB, or rgb(0-255,0-255,0-255).
+// RGBW light one state of color. Could be HEX #RRGGBBWW, or rgba(0-255,0-255,0-255,0-1).
 //
 // | R | Name            | Role                          | Unit | Type    | Wr | Ind | Multi | Regex                                             |
 // |---|-----------------|-------------------------------|------|---------|----|-----|-------|---------------------------------------------------|
-// | * | RGB             | level.color.rgb               |      | string  | W  |     |       | `/^level\.color\.rgb$/`                           |
+// | * | RGBW            | level.color.rgbw              |      | string  | W  |     |       | `/^level\.color\.rgbw$/`                          |
 // |   | DIMMER          | level.dimmer                  | %    | number  | W  |     |       | `/^level\.dimmer$/`                               |
 // |   | BRIGHTNESS      |                               | %    | number  | W  |     |       | `/^level\.brightness$/`                           |
 // |   | TEMPERATURE     | level.color.temperature       | °K   | number  | W  |     |       | `/^level\.color\.temperature$/`                   |
 // |   | ON              | switch.light                  |      | boolean | W  |     |       | `/^switch(\.light)?$/`                            |
 // |   | ON_ACTUAL       | sensor.light                  |      | boolean | -  |     |       | `/^(state｜switch｜sensor)\.light｜switch$/`         |
 
-export default class RgbSingle extends AdjustableControl {
+export default class RgbwSingle extends AdjustableControl {
     private readonly _brightnessCapability: BrightnessController | undefined;
     private readonly _brightness: Brightness | undefined;
     private readonly _colorTemperatureCapability: ColorTemperatureController | undefined;
@@ -172,22 +172,22 @@ export default class RgbSingle extends AdjustableControl {
     } {
         const map = this.statesMap;
         return {
-            setState: this.states[map.RGB]!,
-            getState: this.states[map.RGB]!,
+            setState: this.states[map.RGBW]!,
+            getState: this.states[map.RGBW]!,
             alexaSetter: function (this: PropertiesBase, alexaValue: AlexaV3DirectiveValue): ioBroker.StateValue {
                 // Convert  {
                 //   "hue": 350.5,
                 //   "saturation": 0.7138,
                 //   "brightness": 0.6524
-                // } to RGB hex #RRGGBB
+                // } to RGB hex #RRGGBBWW
                 if (typeof alexaValue === 'object' && alexaValue !== null) {
-                    return hal2rgb(alexaValue as { hue: number; saturation: number; brightness: number });
+                    return hal2rgbw(alexaValue as { hue: number; saturation: number; brightness: number });
                 }
 
                 return null;
             },
             alexaGetter: function (value: ioBroker.StateValue | undefined): AlexaV3DirectiveValue {
-                return rgb2hal(rgbwToHex(value as string));
+                return rgbw2hal(rgbwToHex(value as string));
             },
         };
     }

@@ -13,6 +13,7 @@ import Light from './Light';
 import Lock from './Lock';
 import Motion from './Motion';
 import RgbSingle from './RgbSingle';
+import RgbwSingle from './RgbwSingle';
 import ReadOnlyDetector from './ReadOnlyDetector';
 import Button from './Button';
 import Slider from './Slider';
@@ -113,6 +114,7 @@ export default {
     Motion,
     ReadOnlyDetector,
     RgbSingle,
+    RgbwSingle,
     Scene: Button,
     Slider,
     Socket,

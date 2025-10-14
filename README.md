@@ -352,6 +352,7 @@ setState('iot.0.app.message', JSON.stringify({
 ## Changelog
 ### **WORK IN PROGRESS**
 - (@GermanBluefox) Fixed custom skill
+- (@GermanBluefox) Added RGB single and scene support
 
 ### 4.1.2 (2025-10-14)
 - (@GermanBluefox) Made Alexa V3 default
