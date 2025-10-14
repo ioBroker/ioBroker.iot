@@ -349,7 +349,7 @@ setState('iot.0.app.message', JSON.stringify({
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 4.1.2 (2025-10-14)
 - (@GermanBluefox) Made Alexa V3 default
 - (@GermanBluefox) Updated packages
 - (@GermanBluefox) Corrected Alexa V3 engine
@@ -366,10 +366,6 @@ setState('iot.0.app.message', JSON.stringify({
 
 ### 3.5.2 (2025-06-04)
 -   (@GermanBluefox) Corrected error in back-end
-
-### 3.5.1 (2025-05-31)
--   (@GermanBluefox) Rewrite Rules with TypeScript
--   (@GermanBluefox) Package updates. SVG logo
 
 ## License
 
