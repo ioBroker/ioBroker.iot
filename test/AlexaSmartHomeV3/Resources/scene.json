@@ -1,0 +1,48 @@
+{
+    "states": [
+        {
+            "name": "SET",
+            "defaultRole": "button",
+            "id": "deconz.0.Groups.6.recall",
+            "smartName": {
+                "smartType": "SCENE"
+            },
+            "write": true,
+            "read": false,
+            "type": "boolean"
+        }
+    ],
+    "type": "button",
+    "object": {
+        "id": "deconz.0.Groups.6.recall",
+        "type": "state",
+        "common": {
+            "name": "recall",
+            "role": "button",
+            "type": "boolean",
+            "smartName": {
+                "en": "Living Room Movie"
+            },
+            "write": true,
+            "read": false
+        }
+    },
+    "room": {
+        "id": "enum.rooms.living_room",
+        "common": {
+            "name": {
+                "en": "Living Room"
+            },
+            "members": ["deconz.0.Groups.6.recall"]
+        }
+    },
+    "functionality": {
+        "id": "enum.functions.scenes",
+        "common": {
+            "name": {
+                "en": "Scenes"
+            },
+            "members": ["deconz.0.Groups.6.recall"]
+        }
+    }
+}
