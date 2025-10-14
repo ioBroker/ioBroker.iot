@@ -7,6 +7,7 @@ import ModeController from './ModeController';
 import MotionSensor from './MotionSensor';
 import PercentageController from './PercentageController';
 import PowerController from './PowerController';
+import SceneController from './SceneController';
 import Speaker from './Speaker';
 import TemperatureSensor from './TemperatureSensor';
 import ThermostatController from './ThermostatController';
@@ -21,6 +22,7 @@ export default {
     MotionSensor,
     PercentageController,
     PowerController,
+    SceneController,
     Speaker,
     TemperatureSensor,
     ThermostatController,

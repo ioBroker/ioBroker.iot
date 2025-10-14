@@ -1,0 +1,20 @@
+{
+    "directive": {
+        "header": {
+            "namespace": "Alexa.SceneController",
+            "name": "Activate",
+            "messageId": "abc-123-def-456",
+            "correlationToken": "dFMb0z+PgpgdDmluhJ1LddFvSqZ/jCc8ptlAKulUj90jSqg==",
+            "payloadVersion": "3"
+        },
+        "endpoint": {
+            "scope": {
+                "type": "BearerToken",
+                "token": "access-token-from-skill"
+            },
+            "endpointId": "endpoint-001",
+            "cookie": {}
+        },
+        "payload": {}
+    }
+}

@@ -182,6 +182,10 @@ module.exports = {
         return new Controls.Lock(require('./Resources/lock.json'));
     },
 
+    sceneControl: function () {
+        return new Controls.Scene(require('./Resources/scene.json'));
+    },
+
     thermostatControllerAdjustTargetTemperatureRequest: function () {
         return require('./Resources/ThermostatController.AdjustTargetTemperature.request.json');
     },

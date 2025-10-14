@@ -13,6 +13,7 @@ import Light from './Light';
 import Lock from './Lock';
 import Motion from './Motion';
 import ReadOnlyDetector from './ReadOnlyDetector';
+import Scene from './Scene';
 import Slider from './Slider';
 import Socket from './Socket';
 import Temperature from './Temperature';
@@ -67,6 +68,9 @@ export default {
         // if (item.type === ReadOnlyDetector.type) {
         //     return new ReadOnlyDetector(item);
         // }
+        if (item.type === Scene.type) {
+            return new Scene(item);
+        }
         if (item.type === Slider.type) {
             return new Slider(item);
         }
@@ -107,6 +111,7 @@ export default {
     Lock,
     Motion,
     ReadOnlyDetector,
+    Scene,
     Slider,
     Socket,
     Temperature,
