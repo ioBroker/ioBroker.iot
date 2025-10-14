@@ -349,6 +349,7 @@ setState('iot.0.app.message', JSON.stringify({
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+## Changelog
 ### **WORK IN PROGRESS**
 - (@GermanBluefox) Fixed custom skill
 
