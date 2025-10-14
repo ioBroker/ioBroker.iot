@@ -534,7 +534,7 @@ export default class AlexaCustom {
             return { error: 'Invalid request: no intent!' };
         }
         const isV2Skill = !!request.customSkillV2;
-        const getResponse = isV2Skill ? this.#getResponseV2 : this.#getResponseV1;
+        const getResponse = isV2Skill ? this.#getResponseV2.bind(this) : this.#getResponseV1.bind(this);
         const requestId = request.request?.requestId || '';
 
         if (!isEnabled) {

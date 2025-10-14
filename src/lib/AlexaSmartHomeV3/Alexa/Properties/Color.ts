@@ -14,7 +14,7 @@ export default class Color extends Base {
 
     constructor(opts: ControlStateInitObject) {
         super(opts, true);
-        if (!opts.hal) {
+        if (!opts?.hal) {
             throw new Error('Color control requires hal object with hue, saturation, and brightness properties');
         }
         this.hal = opts.hal;
