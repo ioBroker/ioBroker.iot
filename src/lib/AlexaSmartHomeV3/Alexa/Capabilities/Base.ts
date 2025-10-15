@@ -86,7 +86,9 @@ export abstract class Base {
      * Returns whether the smart device proactively reports state changes
      */
     get proactivelyReported(): boolean {
-        return true;
+        // disable it temporally as active reporting is disabled now as generating too many events
+        // return true;
+        return false;
     }
 
     /**

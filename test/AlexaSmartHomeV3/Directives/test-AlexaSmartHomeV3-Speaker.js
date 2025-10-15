@@ -58,6 +58,8 @@ describe('AlexaSmartHomeV3 - Speaker', function () {
         it('Speaker AdjustVolume for volume', async function () {
             const event = await helpers.getSample('Speaker/Speaker.AdjustVolume.request.json');
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+
             assert.equal(response.context.properties[0].namespace, 'Alexa.Speaker', 'Properties Namespace!');
             assert.equal(response.context.properties[0].name, 'volume', 'Properties Name!');
             assert.equal(response.context.properties[0].value, 15, 'Value!');
@@ -77,6 +79,8 @@ describe('AlexaSmartHomeV3 - Speaker', function () {
         it('Speaker SetVolume for volume', async function () {
             const event = await helpers.getSample('Speaker/Speaker.SetVolume.request.json');
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+
             assert.equal(response.context.properties[0].namespace, 'Alexa.Speaker', 'Properties Namespace!');
             assert.equal(response.context.properties[0].name, 'volume', 'Properties Name!');
             assert.equal(response.context.properties[0].value, 50, 'Value!');
@@ -96,6 +100,8 @@ describe('AlexaSmartHomeV3 - Speaker', function () {
         it('Speaker SetMute for volume', async function () {
             const event = await helpers.getSample('Speaker/Speaker.SetMute.request.json');
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+
             assert.equal(response.context.properties[0].namespace, 'Alexa.Speaker', 'Properties Namespace!');
             assert.equal(response.context.properties[0].name, 'muted', 'Properties Name!');
             assert.equal(response.context.properties[0].value, true, 'Value!');

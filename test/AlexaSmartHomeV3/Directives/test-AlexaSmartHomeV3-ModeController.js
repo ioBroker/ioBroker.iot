@@ -50,6 +50,7 @@ describe('AlexaSmartHomeV3 - ModeController', function () {
         it('ModeController SetPosition for a gate', async function () {
             const event = helpers.modeControllerSetGatePositionRequest();
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
             assert.equal(response.context.properties[0].namespace, 'Alexa.ModeController', 'Properties Namespace!');
             assert.equal(response.context.properties[0].instance, 'Gate.Position', 'Properties Name!');
             assert.equal(response.context.properties[0].name, 'mode', 'Properties Name!');

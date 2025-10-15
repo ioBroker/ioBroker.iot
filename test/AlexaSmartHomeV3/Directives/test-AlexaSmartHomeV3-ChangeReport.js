@@ -40,6 +40,7 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
         it('ChangeReport for a dimmer', async function () {
             const event = Directives.ChangeReport.get(endpointId, Properties.PowerState.propertyName, true);
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
             assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
             assert.equal(response.event.header.name, 'ChangeReport', 'Name!');
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
@@ -68,6 +69,7 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
         it('ChangeReport for a temperature sensor', async function () {
             const event = Directives.ChangeReport.get(endpointId, Properties.Temperature.propertyName, true);
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
             assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
             assert.equal(response.event.header.name, 'ChangeReport', 'Name!');
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
@@ -107,6 +109,7 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
                 }),
             );
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
 
             assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
             assert.equal(response.event.header.name, 'ChangeReport', 'Name!');
@@ -148,6 +151,7 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
                 }),
             );
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
 
             assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
             assert.equal(response.event.header.name, 'ChangeReport', 'Name!');
@@ -175,6 +179,7 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
                 }),
             );
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
 
             assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
             assert.equal(response.event.header.name, 'ChangeReport', 'Name!');
@@ -202,6 +207,7 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
                 }),
             );
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
 
             assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
             assert.equal(response.event.header.name, 'ChangeReport', 'Name!');
@@ -228,6 +234,7 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
                 }),
             );
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
 
             assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
             assert.equal(response.event.header.name, 'ChangeReport', 'Name!');
@@ -255,6 +262,7 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
                 }),
             );
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
 
             assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
             assert.equal(response.event.header.name, 'ChangeReport', 'Name!');
@@ -281,6 +289,7 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
                 }),
             );
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
 
             assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
             assert.equal(response.event.header.name, 'ChangeReport', 'Name!');

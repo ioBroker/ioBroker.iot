@@ -4,8 +4,17 @@ const Device = require('../../../build/lib/AlexaSmartHomeV3/Device').default;
 const DeviceManager = require('../../../build/lib/AlexaSmartHomeV3/DeviceManager').default;
 const AdapterProvider = require('../../../build/lib/AlexaSmartHomeV3/Helpers/AdapterProvider').default;
 
+
+let deviceManager;
+let dimmerDeviceManager;
+let lightDeviceManager;
+let dimmer;
+let light;
+let endpointId;
+let friendlyName;
+
 describe('AlexaSmartHomeV3 - Controls', function () {
-    before(function () {
+    before(async function () {
         AdapterProvider.init(helpers.adapterMock());
     });
 
@@ -40,6 +49,7 @@ describe('AlexaSmartHomeV3 - Controls', function () {
         it('Light reports state', async function () {
             const event = await helpers.getSample('StateReport/ReportState.json');
             const response = await lightDeviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
             assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
             assert.equal(response.event.header.name, 'StateReport', 'Name!');
             assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, 'Name!');
@@ -49,6 +59,8 @@ describe('AlexaSmartHomeV3 - Controls', function () {
             assert.equal(response.context.properties[0].namespace, 'Alexa.PowerController');
             assert.equal(response.context.properties[0].name, 'powerState');
             assert.equal(response.context.properties[0].value, 'ON');
+
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
         });
     });
 
@@ -80,11 +92,13 @@ describe('AlexaSmartHomeV3 - Controls', function () {
                 'Correlation Token!',
             );
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
         });
 
         it('Dimmer reports state', async function () {
             const event = await helpers.getSample('StateReport/ReportState.json');
             const response = await dimmerDeviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
             assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
             assert.equal(response.event.header.name, 'StateReport', 'Name!');
             assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, 'Name!');
@@ -98,6 +112,7 @@ describe('AlexaSmartHomeV3 - Controls', function () {
             assert.equal(response.context.properties[1].namespace, 'Alexa.BrightnessController');
             assert.equal(response.context.properties[1].name, 'brightness');
             assert.equal(response.context.properties[1].value, 75);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
         });
     });
 
@@ -145,12 +160,14 @@ describe('AlexaSmartHomeV3 - Controls', function () {
                     'Correlation Token!',
                 );
                 assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+                assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
             }
         });
 
         it('AirCondition reports state', async function () {
             const event = await helpers.getSample('StateReport/ReportState.json');
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
             assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
             assert.equal(response.event.header.name, 'StateReport', 'Name!');
             assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, 'Name!');
@@ -175,6 +192,7 @@ describe('AlexaSmartHomeV3 - Controls', function () {
             assert.equal(response.context.properties[3].namespace, 'Alexa.PowerController');
             assert.equal(response.context.properties[3].name, 'powerState');
             assert.equal(response.context.properties[3].value, 'OFF');
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
         });
     });
 
@@ -198,12 +216,12 @@ describe('AlexaSmartHomeV3 - Controls', function () {
             const d = deviceManager.endpointById(event.directive.endpoint.endpointId);
             assert.notEqual(d, undefined);
             assert.equal(d instanceof Device, true);
-            let response = await d.handle(event);
+            const response = await d.handle(event);
             assert.equal(response.context.properties[0].namespace, 'Alexa.ColorController', 'Properties Namespace!');
             assert.equal(response.context.properties[0].name, 'color', 'Properties Name!');
-            assert.equal(response.context.properties[0].value.hue, 350.5);
-            assert.equal(response.context.properties[0].value.saturation, 0.7138);
-            assert.equal(response.context.properties[0].value.brightness, 0.6524);
+            assert.equal(response.context.properties[0].value.hue, 351);
+            assert.equal(response.context.properties[0].value.saturation, 0.71);
+            assert.equal(response.context.properties[0].value.brightness, 0.65);
 
             assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
             assert.equal(response.event.header.name, 'Response', 'Namespace!');
@@ -213,6 +231,7 @@ describe('AlexaSmartHomeV3 - Controls', function () {
                 'Correlation Token!',
             );
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
         });
 
         it('Hue allows to set color temperature', async function () {
@@ -239,6 +258,7 @@ describe('AlexaSmartHomeV3 - Controls', function () {
                 'Correlation Token!',
             );
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
         });
 
         it('Hue allows to increase color temperature', async function () {
@@ -269,6 +289,7 @@ describe('AlexaSmartHomeV3 - Controls', function () {
                 'Correlation Token!',
             );
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
         });
 
         it('Hue allows to decrease color temperature', async function () {
@@ -299,6 +320,7 @@ describe('AlexaSmartHomeV3 - Controls', function () {
                 'Correlation Token!',
             );
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
         });
     });
 
@@ -325,9 +347,9 @@ describe('AlexaSmartHomeV3 - Controls', function () {
             let response = await d.handle(event);
             assert.equal(response.context.properties[0].namespace, 'Alexa.ColorController', 'Properties Namespace!');
             assert.equal(response.context.properties[0].name, 'color', 'Properties Name!');
-            assert.equal(response.context.properties[0].value.hue, 350.5);
-            assert.equal(response.context.properties[0].value.saturation, 0.7138);
-            assert.equal(response.context.properties[0].value.brightness, 0.6524);
+            assert.equal(response.context.properties[0].value.hue, 351);
+            assert.equal(response.context.properties[0].value.saturation, 0.71);
+            assert.equal(response.context.properties[0].value.brightness, 0.65);
 
             assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
             assert.equal(response.event.header.name, 'Response', 'Namespace!');
@@ -461,6 +483,7 @@ describe('AlexaSmartHomeV3 - Controls', function () {
 
             const event = await helpers.getSample('StateReport/ReportState.json');
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
             assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
             assert.equal(response.event.header.name, 'StateReport', 'Name!');
             assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, 'Name!');

@@ -53,6 +53,7 @@ describe('AlexaSmartHomeV3 - LockController', function () {
         it('LockController Lock', async function () {
             const event = await helpers.getSample('LockController/LockController.Lock.request.json');
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
             assert.equal(response.context.properties[0].namespace, 'Alexa.LockController', 'Properties Namespace!');
             assert.equal(response.context.properties[0].name, 'lockState', 'Properties Name!');
             assert.equal(response.context.properties[0].value, 'LOCKED', 'Value!');
@@ -72,6 +73,7 @@ describe('AlexaSmartHomeV3 - LockController', function () {
         it('LockController Unlock', async function () {
             const event = await helpers.getSample('LockController/LockController.Unlock.request.json');
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
             assert.equal(response.context.properties[0].namespace, 'Alexa.LockController', 'Properties Namespace!');
             assert.equal(response.context.properties[0].name, 'lockState', 'Properties Name!');
             assert.equal(response.context.properties[0].value, 'UNLOCKED', 'Value!');

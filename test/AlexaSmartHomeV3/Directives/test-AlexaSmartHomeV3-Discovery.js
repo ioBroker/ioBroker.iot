@@ -40,6 +40,9 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             );
 
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
             assert.equal(response.event.header.namespace, 'Alexa.Discovery', 'Namespace!');
             assert.equal(response.event.header.name, 'Discover.Response', 'Name!');
             assert.equal(response.event.payload.endpoints[0].endpointId, endpointId, 'Endpoint Id!');
@@ -65,6 +68,8 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             );
 
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+
             assert.equal(response.event.header.namespace, 'Alexa.Discovery', 'Namespace!');
             assert.equal(response.event.header.name, 'Discover.Response', 'Name!');
             assert.equal(response.event.payload.endpoints[0].endpointId, endpointId, 'Endpoint Id!');
@@ -89,6 +94,8 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             );
 
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+
             assert.equal(response.event.header.namespace, 'Alexa.Discovery', 'Namespace!');
             assert.equal(response.event.header.name, 'Discover.Response', 'Name!');
             assert.equal(response.event.payload.endpoints[0].endpointId, endpointId, 'Endpoint Id!');
@@ -117,6 +124,9 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             );
 
             const response = await deviceManager.handleAlexaEvent(event);
+            // schema does not support version 3.2
+            // assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+
             assert.equal(response.event.header.namespace, 'Alexa.Discovery', 'Namespace!');
             assert.equal(response.event.header.name, 'Discover.Response', 'Name!');
             assert.equal(response.event.payload.endpoints[0].endpointId, endpointId, 'Endpoint Id!');
@@ -155,6 +165,8 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             );
 
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+
             assert.equal(response.event.header.namespace, 'Alexa.Discovery', 'Namespace!');
             assert.equal(response.event.header.name, 'Discover.Response', 'Name!');
             assert.equal(response.event.payload.endpoints[0].endpointId, endpointId, 'Endpoint Id!');
@@ -183,6 +195,8 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             );
 
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+
             assert.equal(response.event.header.namespace, 'Alexa.Discovery', 'Namespace!');
             assert.equal(response.event.header.name, 'Discover.Response', 'Name!');
             assert.equal(response.event.payload.endpoints[0].endpointId, endpointId, 'Endpoint Id!');
@@ -208,6 +222,8 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             );
 
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+
             assert.equal(response.event.header.namespace, 'Alexa.Discovery', 'Namespace!');
             assert.equal(response.event.header.name, 'Discover.Response', 'Name!');
             assert.equal(response.event.payload.endpoints[0].endpointId, endpointId, 'Endpoint Id!');
@@ -236,6 +252,8 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             );
 
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+
             assert.equal(response.event.header.namespace, 'Alexa.Discovery', 'Namespace!');
             assert.equal(response.event.header.name, 'Discover.Response', 'Name!');
             assert.equal(response.event.payload.endpoints[0].endpointId, endpointId, 'Endpoint Id!');
@@ -263,6 +281,8 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             );
 
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+
             assert.equal(response.event.header.namespace, 'Alexa.Discovery', 'Namespace!');
             assert.equal(response.event.header.name, 'Discover.Response', 'Name!');
             assert.equal(response.event.payload.endpoints[0].endpointId, endpointId, 'Endpoint Id!');
@@ -291,6 +311,9 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             );
 
             const response = await deviceManager.handleAlexaEvent(event);
+            // Vacuum cleaner does not validate against the schema, as schema is too old: https://github.com/alexa-samples/alexa-smarthome/blob/master/validation_schemas/alexa_smart_home_message_schema.json#L12726
+            // assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+
             assert.equal(response.event.header.namespace, 'Alexa.Discovery', 'Namespace!');
             assert.equal(response.event.header.name, 'Discover.Response', 'Name!');
             assert.equal(response.event.payload.endpoints[0].endpointId, endpointId, 'Endpoint Id!');
@@ -315,6 +338,8 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             );
 
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+
             assert.equal(response.event.header.namespace, 'Alexa.Discovery', 'Namespace!');
             assert.equal(response.event.header.name, 'Discover.Response', 'Name!');
             assert.equal(response.event.payload.endpoints[0].endpointId, endpointId, 'Endpoint Id!');
@@ -339,6 +364,8 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             );
 
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+
             assert.equal(response.event.header.namespace, 'Alexa.Discovery', 'Namespace!');
             assert.equal(response.event.header.name, 'Discover.Response', 'Name!');
             assert.equal(response.event.payload.endpoints[0].endpointId, endpointId, 'Endpoint Id!');
@@ -363,6 +390,8 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             );
 
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+
             assert.equal(response.event.header.namespace, 'Alexa.Discovery', 'Namespace!');
             assert.equal(response.event.header.name, 'Discover.Response', 'Name!');
             assert.equal(response.event.payload.endpoints[0].endpointId, endpointId, 'Endpoint Id!');
@@ -504,6 +533,8 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             );
 
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+
             assert.equal(response.event.header.namespace, 'Alexa.Discovery', 'Namespace!');
             assert.equal(response.event.header.name, 'Discover.Response', 'Name!');
             assert.equal(response.event.payload.endpoints[0].endpointId, endpointId, 'Endpoint Id!');

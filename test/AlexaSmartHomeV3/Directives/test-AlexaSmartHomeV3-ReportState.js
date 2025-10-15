@@ -48,6 +48,8 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
             );
 
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+
             assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
             assert.equal(response.event.header.name, 'StateReport', 'Name!');
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
@@ -75,6 +77,8 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
             );
 
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+
             assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
             assert.equal(response.event.header.name, 'StateReport', 'Name!');
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
@@ -116,6 +120,8 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
             );
 
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+
             assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
             assert.equal(response.event.header.name, 'StateReport', 'Name!');
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
@@ -142,6 +148,8 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
             );
 
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+
             assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
             assert.equal(response.event.header.name, 'StateReport', 'Name!');
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
@@ -168,6 +176,8 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
             );
 
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+
             assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
             assert.equal(response.event.header.name, 'StateReport', 'Name!');
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
@@ -193,6 +203,8 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
             );
 
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+
             assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
             assert.equal(response.event.header.name, 'StateReport', 'Name!');
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
@@ -218,6 +230,8 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
             );
 
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+
             assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
             assert.equal(response.event.header.name, 'StateReport', 'Name!');
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');

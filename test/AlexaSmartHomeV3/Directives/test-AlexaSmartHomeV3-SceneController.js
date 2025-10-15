@@ -12,7 +12,7 @@ let friendlyName;
 let deviceManager;
 let scene;
 
-describe.only('AlexaSmartHomeV3 - SceneController', function () {
+describe('AlexaSmartHomeV3 - SceneController', function () {
     beforeEach(function () {
         RateLimiter.usage = new Map();
     });
@@ -48,6 +48,7 @@ describe.only('AlexaSmartHomeV3 - SceneController', function () {
         it('SceneController Activate', async function () {
             const event = require('../Resources/SceneController.Activate.request.json');
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
 
             assert.equal(response.event.header.namespace, 'Alexa.SceneController', 'Namespace!');
             assert.equal(response.event.header.name, 'ActivationStarted', 'Name!');

@@ -94,6 +94,7 @@ describe('AlexaSmartHomeV3 - ColorController', function () {
                 'ColorController/ColorController.SetColor.request.json',
             );
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
             assert.equal(
                 response.context.properties[0].namespace,
                 'Alexa.ColorController',
@@ -118,6 +119,7 @@ describe('AlexaSmartHomeV3 - ColorController', function () {
                 'PowerController/PowerController.TurnOff.request.json',
             );
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
             assert.equal(
                 response.context.properties[0].namespace,
                 'Alexa.PowerController',

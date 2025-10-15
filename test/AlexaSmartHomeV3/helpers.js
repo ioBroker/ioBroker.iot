@@ -1,5 +1,11 @@
 const https = require('https');
+const addFormats = require('ajv-formats');
+const Ajv = require('ajv-draft-04');
 const Controls = require('../../build/lib/AlexaSmartHomeV3/Controls').default;
+
+const ajv = new Ajv({ allErrors: true, strict: false });
+addFormats(ajv);
+let schema;
 
 class AdapterMock {
     constructor() {
@@ -27,6 +33,7 @@ class AdapterMock {
     async getObjectViewAsync() {
         return { rows: [] };
     }
+
     async setStateAsync() {
         return {};
     }
@@ -79,6 +86,14 @@ class AdapterMock {
 
         if (id.includes('RgbLamp.TEMPERATURE')) {
             return { val: 5000 };
+        }
+
+        if (id.includes('RgbLamp.ON')) {
+            return { val: true };
+        }
+
+        if (id.includes('RgbLamp.ACTUAL')) {
+            return { val: true };
         }
 
         if (id.includes('Lamp.BRIGHTNESS')) {
@@ -223,23 +238,23 @@ module.exports = {
     },
 
     getSample: async function (sample_json_name) {
-        let options = {
+        const options = {
             hostname: 'raw.githubusercontent.com',
             port: 443,
             path: `/alexa/alexa-smarthome/master/sample_messages/${sample_json_name}`,
             headers: { 'Content-Type': 'application/json' },
         };
 
-        let json_string = '';
+        let jsonString = '';
         return new Promise((resolve, reject) => {
-            let req = https.request(options, res => {
+            const req = https.request(options, res => {
                 res.setEncoding('utf8');
                 res.on('data', data => {
-                    json_string += data;
+                    jsonString += data;
                 });
 
                 res.on('end', () => {
-                    resolve(JSON.parse(json_string));
+                    resolve(JSON.parse(jsonString));
                 });
 
                 req.on('error', e => {
@@ -249,5 +264,57 @@ module.exports = {
 
             req.end();
         });
+    },
+
+    getSchema: async function () {
+        // https://github.com/alexa-samples/alexa-smarthome/blob/master/validation_schemas/alexa_smart_home_message_schema.json
+        const options = {
+            hostname: 'raw.githubusercontent.com',
+            port: 443,
+            path: `/alexa-samples/alexa-smarthome/refs/heads/master/validation_schemas/alexa_smart_home_message_schema.json`,
+            headers: { 'Content-Type': 'application/json' },
+        };
+
+        let jsonString = '';
+        return new Promise((resolve, reject) => {
+            const req = https.request(options, res => {
+                res.setEncoding('utf8');
+                res.on('data', data => {
+                    jsonString += data;
+                });
+
+                res.on('end', () => {
+                    resolve(JSON.parse(jsonString));
+                });
+
+                req.on('error', e => {
+                    reject(e);
+                });
+            });
+
+            req.end();
+        });
+    },
+
+    validateAnswer: async function (response) {
+        schema ||= await module.exports.getSchema();
+        const validate = ajv.compile(schema);
+
+        response = JSON.parse(JSON.stringify(response)); // deep clone
+        delete response.iobVersion;
+        if (response.event?.payload?.endpoints?.[0]?.capabilities?.find(c => c.interface === 'Alexa.ThermostatController')) {
+            const pos = response.event.payload.endpoints[0].capabilities.findIndex(
+                c => c.interface === 'Alexa.ThermostatController',
+            );
+            // we have random values in the thermostat, so set them to a fixed value for validation
+            response.event.payload.endpoints[0].capabilities[pos].version = '3';
+        }
+
+        const valid = validate(response);
+        if (!valid) {
+            console.warn(`Invalid jsonConfig: ${JSON.stringify(validate.errors, null, 2)}`);
+            return validate.errors;
+        }
+        return null;
     },
 };

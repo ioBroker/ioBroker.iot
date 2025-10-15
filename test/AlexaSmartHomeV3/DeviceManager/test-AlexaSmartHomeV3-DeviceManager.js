@@ -46,7 +46,8 @@ describe('AlexaSmartHomeV3 - DeviceManager', function () {
 
             stateChange = null;
 
-            await deviceManager.handleAlexaEvent(event);
+            const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
 
             assert.notEqual(stateChange, null);
             assert.equal(stateChange.context.properties.length, 1);

@@ -66,6 +66,8 @@ describe('AlexaSmartHomeV3 - ThermostatController', function () {
         it('ThermostatController AdjustTargetTemperature', async function () {
             const event = helpers.thermostatControllerAdjustTargetTemperatureRequest();
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+
             assert.equal(
                 response.context.properties[0].namespace,
                 'Alexa.ThermostatController',
@@ -87,6 +89,8 @@ describe('AlexaSmartHomeV3 - ThermostatController', function () {
         it('ThermostatController SetTargetTemperature', async function () {
             const event = helpers.thermostatControllerSetTargetTemperatureRequest();
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+
             assert.equal(
                 response.context.properties[0].namespace,
                 'Alexa.ThermostatController',
@@ -108,6 +112,8 @@ describe('AlexaSmartHomeV3 - ThermostatController', function () {
         it('ThermostatController SetThermostatMode', async function () {
             const event = helpers.thermostatControllerSetThermostatModeRequest();
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+
             assert.equal(
                 response.context.properties[0].namespace,
                 'Alexa.ThermostatController',

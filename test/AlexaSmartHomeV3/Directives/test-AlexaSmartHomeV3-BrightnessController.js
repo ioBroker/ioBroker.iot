@@ -68,6 +68,7 @@ describe('AlexaSmartHomeV3 - BrightnessController', function () {
                 'BrightnessController/BrightnessController.AdjustBrightness.request.json',
             );
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
             assert.equal(
                 response.context.properties[0].namespace,
                 'Alexa.BrightnessController',
@@ -91,6 +92,7 @@ describe('AlexaSmartHomeV3 - BrightnessController', function () {
                 'BrightnessController/BrightnessController.SetBrightness.request.json',
             );
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
             assert.equal(
                 response.context.properties[0].namespace,
                 'Alexa.BrightnessController',

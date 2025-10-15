@@ -3,7 +3,7 @@
         "header": {
             "namespace": "Alexa.ThermostatController",
             "name": "SetThermostatMode",
-            "messageId": "Unique version 4 UUID",
+            "messageId": "Unique-version-4-UUID",
             "correlationToken": "Opaque correlation token",
             "payloadVersion": "3.2"
         },

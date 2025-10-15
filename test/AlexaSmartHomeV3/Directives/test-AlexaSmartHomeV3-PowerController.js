@@ -111,6 +111,7 @@ describe('AlexaSmartHomeV3 - PowerController', function () {
         it('PowerController TurnOff for a light+dimmer', async function () {
             const event = await helpers.getSample('PowerController/PowerController.TurnOff.request.json');
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
             assert.equal(response.context.properties[0].namespace, 'Alexa.PowerController', 'Properties Namespace!');
             assert.equal(response.context.properties[0].name, 'powerState', 'Properties Name!');
             assert.equal(response.context.properties[0].value, 'OFF', 'Value!');
@@ -165,6 +166,7 @@ describe('AlexaSmartHomeV3 - PowerController', function () {
         it('PowerController TurnOn for a light+dimmer', async function () {
             const event = await helpers.getSample('PowerController/PowerController.TurnOn.request.json');
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
             assert.equal(response.context.properties[0].namespace, 'Alexa.PowerController', 'Properties Namespace!');
             assert.equal(response.context.properties[0].name, 'powerState', 'Properties Name!');
             assert.equal(response.context.properties[0].value, 'ON', 'Value!');

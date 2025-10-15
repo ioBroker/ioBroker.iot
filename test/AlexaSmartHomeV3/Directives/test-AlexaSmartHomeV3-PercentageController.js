@@ -61,6 +61,7 @@ describe('AlexaSmartHomeV3 - PercentageController', function () {
                 'PercentageController/PercentageController.AdjustPercentage.request.json',
             );
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
             assert.equal(
                 response.context.properties[0].namespace,
                 'Alexa.PercentageController',
@@ -84,6 +85,7 @@ describe('AlexaSmartHomeV3 - PercentageController', function () {
                 'PercentageController/PercentageController.SetPercentage.request.json',
             );
             const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
             assert.equal(
                 response.context.properties[0].namespace,
                 'Alexa.PercentageController',
