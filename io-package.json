@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "4.1.2",
+    "version": "4.1.3",
     "news": {
+      "4.1.3": {
+        "en": "Fixed custom skill\nAdded RGB single and scene support",
+        "de": "Benutzerdefinierte Fähigkeiten behoben\nRGB Single und Szenenunterstützung hinzugefügt",
+        "ru": "Фиксированный пользовательский навык\nДобавлена поддержка RGB одиночных и сцен",
+        "pt": "Habilidade personalizada fixa\nAdicionado suporte RGB single e cena",
+        "nl": "Vaste aangepaste vaardigheden\nToegevoegd RGB enkele en scène ondersteuning",
+        "fr": "Compétence personnalisée fixe\nAjout d'un seul RGB et d'un support de scène",
+        "it": "Abilità personalizzata fissa\nAggiunto supporto RGB singolo e scena",
+        "es": "Habilidad personalizada fija\nAñadido RGB single y soporte de escena",
+        "pl": "Naprawiono niestandardowe umiejętności\nDodano wsparcie RGB single i sceny",
+        "uk": "Фіксована спеціальна майстерність\nДодано RGB єдиного і сцена підтримки",
+        "zh-cn": "固定定制技能\n添加 RGB 单场和场景支持"
+      },
       "4.1.2": {
         "en": "Made Alexa V3 default\nUpdated packages\nCorrected Alexa V3 engine",
         "de": "Made Alexa V3 default\nAktualisierte Pakete\nKorrektur Alexa V3 Motor",
@@ -80,19 +93,6 @@
         "pl": "Poprawiony błąd w back- endzie",
         "uk": "Виправлена помилка в спині",
         "zh-cn": "后端更正错误"
-      },
-      "3.5.1": {
-        "en": "Rewrite Rules with TypeScript\nPackage updates. SVG logo",
-        "de": "Regeln neu schreiben mit TypeScript\nPaket-Updates. SVG Logo",
-        "ru": "Переписать правила с помощью TypeScript\nОбновления пакетов. Логотип SVG",
-        "pt": "Reescrever regras com TypeScript\nAtualizações do pacote. Logotipo SVG",
-        "nl": "Regels herschrijven met TypeScript\nPakketupdates. SVG-logo",
-        "fr": "Réécrire les règles avec TypeScript\nMises à jour du paquet. Logo SVG",
-        "it": "Regole di riscrittura con TypeScript\nAggiornamenti del pacchetto. Logo SVG",
-        "es": "Reescribir reglas con TipoScript\nActualizaciones de paquetes. Logo SVG",
-        "pl": "Przepisz zasady za pomocą TypeScript\nAktualizacja pakietu. Logo SVG",
-        "uk": "Правила перезапису з TypeScript\nОновлення пакету. Логотип SVG",
-        "zh-cn": "用类型脚本重写规则\n软件包更新. SVG 标志"
       }
     },
     "titleLang": {

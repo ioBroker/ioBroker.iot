@@ -350,7 +350,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 4.1.3 (2025-10-15)
 - (@GermanBluefox) Fixed custom skill
 - (@GermanBluefox) Added RGB single and scene support
 
@@ -368,9 +368,6 @@ setState('iot.0.app.message', JSON.stringify({
 
 ### 3.6.0 (2025-07-02)
 -   (@foxriver76) new features for upcoming Visu App 1.4.0
-
-### 3.5.2 (2025-06-04)
--   (@GermanBluefox) Corrected error in back-end
 
 ## License
 

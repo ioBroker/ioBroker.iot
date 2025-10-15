@@ -511,6 +511,9 @@
 ### 0.1.4 (2018-09-26)
 
 -   (bluefox) Initial commit
+## 3.5.2 (2025-06-04)
+-   (@GermanBluefox) Corrected error in back-end
+
 ## 3.5.1 (2025-05-31)
 -   (@GermanBluefox) Rewrite Rules with TypeScript
 -   (@GermanBluefox) Package updates. SVG logo
