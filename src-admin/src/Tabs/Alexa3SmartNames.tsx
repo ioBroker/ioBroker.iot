@@ -104,6 +104,7 @@ const SMART_TYPES: string[] = [
     'gate',
     'lock',
     'hue',
+    'rgb',
     'rgbSingle',
     'rgbwSingle',
     'ct',

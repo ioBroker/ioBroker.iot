@@ -619,9 +619,13 @@ export async function controls(
  * @param value value to be normalized
  * @param min min observed (possible) value
  * @param max max observed (possible) value
+ * @param noRound do not round the result
  * @returns Normalized value in the range 0..100 or undefined on invalid input
  */
-export function normalize_0_100(value: number, min: number, max: number): number | undefined {
+export function normalize_0_100(value: number, min: number, max: number, noRound?: boolean): number | undefined {
+    if (noRound) {
+        return min >= max || value < min || value > max ? undefined : ((value - min) / (max - min)) * 100;
+    }
     return min >= max || value < min || value > max ? undefined : Math.round(((value - min) / (max - min)) * 100);
 }
 
@@ -631,9 +635,14 @@ export function normalize_0_100(value: number, min: number, max: number): number
  * @param normalized normalized value
  * @param min min observed (possible) value
  * @param max max observed (possible) value
+ * @param noRound do not round the result
  * @returns Denormalized value in the range min-max
  */
-export function denormalize_0_100(normalized: number, min: number, max: number): number | undefined {
+export function denormalize_0_100(normalized: number, min: number, max: number, noRound?: boolean): number | undefined {
+    if (noRound) {
+        return min >= max || normalized < 0 || normalized > 100 ? undefined : (normalized / 100) * (max - min) + min;
+    }
+
     return min >= max || normalized < 0 || normalized > 100
         ? undefined
         : Math.round((normalized / 100) * (max - min) + min);

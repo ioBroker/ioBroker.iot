@@ -12,6 +12,7 @@ import Hue from './Hue';
 import Light from './Light';
 import Lock from './Lock';
 import Motion from './Motion';
+import Rgb from './Rgb';
 import RgbSingle from './RgbSingle';
 import RgbwSingle from './RgbwSingle';
 import ReadOnlyDetector from './ReadOnlyDetector';
@@ -67,6 +68,9 @@ export default {
         if (item.type === Motion.type) {
             return new Motion(item);
         }
+        if (item.type === Rgb.type) {
+            return new Rgb(item);
+        }
         if (item.type === RgbSingle.type) {
             return new RgbSingle(item);
         }
@@ -116,6 +120,7 @@ export default {
     Lock,
     Motion,
     ReadOnlyDetector,
+    Rgb,
     RgbSingle,
     RgbwSingle,
     Scene: Button,

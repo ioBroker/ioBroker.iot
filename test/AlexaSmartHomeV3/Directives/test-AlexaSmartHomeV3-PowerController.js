@@ -85,8 +85,8 @@ describe('AlexaSmartHomeV3 - PowerController', function () {
             const response = await lightDevice.handle(event);
 
             let id = helpers.getConfigForName('SET', helpers.lightConfig());
-            let storedValue = await AdapterProvider.get().getForeignStateAsync(id);
-            assert.equal(storedValue.val, false, 'ioBroker.Value!');
+            let storedValue = await AdapterProvider.getState(id);
+            assert.equal(storedValue, false, 'ioBroker.Value!');
 
             assert.equal(response.context.properties[0].namespace, 'Alexa.PowerController', 'Properties Namespace!');
             assert.equal(response.context.properties[0].name, 'powerState', 'Properties Name!');
@@ -109,9 +109,9 @@ describe('AlexaSmartHomeV3 - PowerController', function () {
             const response = await dimmerDevice.handle(event);
 
             const id = helpers.getConfigForName('SET', helpers.dimmerConfig());
-            const storedValue = await AdapterProvider.get().getForeignStateAsync(id);
+            const storedValue = await AdapterProvider.getState(id);
             // min  = 500, max = 1000
-            assert.equal(storedValue.val, 500, 'ioBroker.Value!');
+            assert.equal(storedValue, 500, 'ioBroker.Value!');
 
             assert.equal(response.context.properties[0].namespace, 'Alexa.PowerController', 'Properties Namespace!');
             assert.equal(response.context.properties[0].name, 'powerState', 'Properties Name!');
@@ -134,13 +134,13 @@ describe('AlexaSmartHomeV3 - PowerController', function () {
             const response = await deviceManager.handleAlexaEvent(event);
 
             let id = helpers.getConfigForName('SET', helpers.lightConfig());
-            let storedValue = await AdapterProvider.get().getForeignStateAsync(id);
-            assert.equal(storedValue.val, false, 'ioBroker.Value!');
+            let storedValue = await AdapterProvider.getState(id);
+            assert.equal(storedValue, false, 'ioBroker.Value!');
 
             id = helpers.getConfigForName('SET', helpers.dimmerConfig());
-            storedValue = await AdapterProvider.get().getForeignStateAsync(id);
+            storedValue = await AdapterProvider.getState(id);
             // min  = 500, max = 1000
-            assert.equal(storedValue.val, 500, 'ioBroker.Value!');
+            assert.equal(storedValue, 500, 'ioBroker.Value!');
 
             assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
             assert.equal(response.context.properties[0].namespace, 'Alexa.PowerController', 'Properties Namespace!');
@@ -161,8 +161,8 @@ describe('AlexaSmartHomeV3 - PowerController', function () {
             const event = await helpers.getSample('PowerController/PowerController.TurnOn.request.json');
             const response = await lightDevice.handle(event);
             let id = helpers.getConfigForName('SET', helpers.lightConfig());
-            let storedValue = await AdapterProvider.get().getForeignStateAsync(id);
-            assert.equal(storedValue.val, true, 'ioBroker.Value!');
+            let storedValue = await AdapterProvider.getState(id);
+            assert.equal(storedValue, true, 'ioBroker.Value!');
 
             assert.equal(response.context.properties[0].namespace, 'Alexa.PowerController', 'Properties Namespace!');
             assert.equal(response.context.properties[0].name, 'powerState', 'Properties Name!');
@@ -184,9 +184,9 @@ describe('AlexaSmartHomeV3 - PowerController', function () {
             const response = await dimmerDevice.handle(event);
 
             let id = helpers.getConfigForName('SET', helpers.dimmerConfig());
-            let storedValue = await AdapterProvider.get().getForeignStateAsync(id);
+            let storedValue = await AdapterProvider.getState(id);
             // min  = 500, max = 1000, 900 is 80% of the range
-            assert.equal(storedValue.val, 900, 'ioBroker.Value!');
+            assert.equal(storedValue, 900, 'ioBroker.Value!');
 
             assert.equal(response.context.properties[0].namespace, 'Alexa.PowerController', 'Properties Namespace!');
             assert.equal(response.context.properties[0].name, 'powerState', 'Properties Name!');
@@ -209,13 +209,13 @@ describe('AlexaSmartHomeV3 - PowerController', function () {
             const response = await deviceManager.handleAlexaEvent(event);
 
             let id = helpers.getConfigForName('SET', helpers.lightConfig());
-            let storedValue = await AdapterProvider.get().getForeignStateAsync(id);
-            assert.equal(storedValue.val, true, 'ioBroker.Value!');
+            let storedValue = await AdapterProvider.getState(id);
+            assert.equal(storedValue, true, 'ioBroker.Value!');
 
             id = helpers.getConfigForName('SET', helpers.dimmerConfig());
-            storedValue = await AdapterProvider.get().getForeignStateAsync(id);
+            storedValue = await AdapterProvider.getState(id);
             // min  = 500, max = 1000, 900 is 80% of the range
-            assert.equal(storedValue.val, 900, 'ioBroker.Value!');
+            assert.equal(storedValue, 900, 'ioBroker.Value!');
 
             assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
             assert.equal(response.context.properties[0].namespace, 'Alexa.PowerController', 'Properties Namespace!');
@@ -236,9 +236,9 @@ describe('AlexaSmartHomeV3 - PowerController', function () {
             const id = helpers.getConfigForName('SET', helpers.dimmerConfigWithStoredValue());
             const eventOn = await helpers.getSample('PowerController/PowerController.TurnOn.request.json');
             await dimmerDeviceWithStoredValue.handle(eventOn);
-            let storedValue = await AdapterProvider.get().getForeignStateAsync(id);
+            let storedValue = await AdapterProvider.getState(id);
             // min  = 500, max = 1000. If no stored value, the dimmer should go to max
-            assert.equal(storedValue.val, 1000, 'ioBroker.Value!');
+            assert.equal(storedValue, 1000, 'ioBroker.Value!');
 
             // now set the dimmer to 75%
             const eventDimmer = await helpers.getSample('BrightnessController/BrightnessController.SetBrightness.request.json');
@@ -247,14 +247,14 @@ describe('AlexaSmartHomeV3 - PowerController', function () {
             // and turn it off again
             const eventOff = await helpers.getSample('PowerController/PowerController.TurnOff.request.json');
             await dimmerDeviceWithStoredValue.handle(eventOff);
-            storedValue = await AdapterProvider.get().getForeignStateAsync(id);
-            assert.equal(storedValue.val, 500, 'ioBroker.Value!');
+            storedValue = await AdapterProvider.getState(id);
+            assert.equal(storedValue, 500, 'ioBroker.Value!');
 
             // now turn it on again - it should go to the stored value of 75%
             const response = await dimmerDeviceWithStoredValue.handle(eventOn);
-            storedValue = await AdapterProvider.get().getForeignStateAsync(id);
+            storedValue = await AdapterProvider.getState(id);
             // min  = 500, max = 1000, 900 is 80% of the range
-            assert.equal(storedValue.val, 875, 'ioBroker.Value!');
+            assert.equal(storedValue, 875, 'ioBroker.Value!');
 
             assert.equal(response.context.properties[0].namespace, 'Alexa.PowerController', 'Properties Namespace!');
             assert.equal(response.context.properties[0].name, 'powerState', 'Properties Name!');

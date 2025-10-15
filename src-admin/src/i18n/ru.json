@@ -230,6 +230,7 @@
     "no type": "Нет типа",
     "not activated": "не активирован",
     "omit value": "нет значения",
+    "rgb": "RGB(W) (отдельные состояния R,G,B,W)",
     "rgbSingle": "RGB (одно состояние)",
     "rgbwSingle": "RGBW (один штат)",
     "slider": "ползунок",

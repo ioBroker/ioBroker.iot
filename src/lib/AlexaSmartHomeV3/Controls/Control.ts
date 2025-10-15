@@ -25,6 +25,10 @@ export type StateName =
     | 'HUE'
     | 'RGB'
     | 'RGBW'
+    | 'RED'
+    | 'GREEN'
+    | 'BLUE'
+    | 'WHITE'
     | 'DIMMER'
     | 'BRIGHTNESS'
     | 'SATURATION'
@@ -47,6 +51,10 @@ export default class Control {
         'HUE',
         'RGB',
         'RGBW',
+        'RED',
+        'GREEN',
+        'BLUE',
+        'WHITE',
         'DIMMER',
         'BRIGHTNESS',
         'SATURATION',

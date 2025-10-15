@@ -12,7 +12,7 @@ let friendlyName;
 let deviceManager;
 let color;
 
-describe('AlexaSmartHomeV3 - ColorControllerSingleRgb', function () {
+describe('AlexaSmartHomeV3 - ColorControllerRgbw', function () {
     beforeEach(function () {
         RateLimiter.usage = new Map();
     });
@@ -24,7 +24,7 @@ describe('AlexaSmartHomeV3 - ColorControllerSingleRgb', function () {
         AdapterProvider.init(helpers.adapterMock());
         IotProxy.publishStateChange = event => (stateChange = event);
 
-        color = helpers.hueControl();
+        color = helpers.rgbwControl();
 
         deviceManager = new DeviceManager();
         deviceManager.addDevice(
@@ -94,14 +94,22 @@ describe('AlexaSmartHomeV3 - ColorControllerSingleRgb', function () {
                 'ColorController/ColorController.SetColor.request.json',
             );
             const response = await deviceManager.handleAlexaEvent(event);
+            const idRed = helpers.getConfigForName('RED', helpers.rgbwConfig());
+            const idGreen = helpers.getConfigForName('GREEN', helpers.rgbwConfig());
+            const idBlue = helpers.getConfigForName('BLUE', helpers.rgbwConfig());
+            const idWhite = helpers.getConfigForName('WHITE', helpers.rgbwConfig());
+            let storedValue = await AdapterProvider.getState(idRed);
+            // Hex #a63042ff = rgb(166,48,66) + white 255
+            assert.equal(storedValue, 166, 'ioBroker.Value!');
 
-            let id = helpers.getConfigForName('HUE', helpers.hueConfig());
-            let storedValue = await AdapterProvider.getState(id);
-            assert.equal(storedValue, 351, 'ioBroker.Value!');
+            storedValue = await AdapterProvider.getState(idGreen);
+            assert.equal(storedValue, 48, 'ioBroker.Value!');
 
-            id = helpers.getConfigForName('BRIGHTNESS', helpers.hueConfig());
-            storedValue = await AdapterProvider.getState(id);
-            assert.equal(storedValue, 0.65, 'ioBroker.Value!');
+            storedValue = await AdapterProvider.getState(idBlue);
+            assert.equal(storedValue, 66, 'ioBroker.Value!');
+
+            storedValue = await AdapterProvider.getState(idWhite);
+            assert.equal(storedValue, 255, 'ioBroker.Value!');
 
             assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
             assert.equal(
@@ -129,10 +137,9 @@ describe('AlexaSmartHomeV3 - ColorControllerSingleRgb', function () {
                 'PowerController/PowerController.TurnOff.request.json',
             );
             const response = await deviceManager.handleAlexaEvent(event);
-
-            let id = helpers.getConfigForName('BRIGHTNESS', helpers.hueConfig());
-            let storedValue = await AdapterProvider.getState(id);
-            assert.equal(storedValue, 0, 'ioBroker.Value!');
+            const id = helpers.getConfigForName('ON', helpers.rgbSingleConfig());
+            const storedValue = await AdapterProvider.getState(id);
+            assert.equal(storedValue, false, 'ioBroker.Value!');
 
             assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
             assert.equal(
@@ -158,10 +165,9 @@ describe('AlexaSmartHomeV3 - ColorControllerSingleRgb', function () {
                 'PowerController/PowerController.TurnOn.request.json',
             );
             const response = await deviceManager.handleAlexaEvent(event);
-
-            let id = helpers.getConfigForName('BRIGHTNESS', helpers.hueConfig());
-            let storedValue = await AdapterProvider.getState(id);
-            assert.equal(storedValue, 100, 'ioBroker.Value!');
+            const id = helpers.getConfigForName('ON', helpers.rgbSingleConfig());
+            const storedValue = await AdapterProvider.getState(id);
+            assert.equal(storedValue, true, 'ioBroker.Value!');
 
             assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
             assert.equal(
@@ -171,6 +177,34 @@ describe('AlexaSmartHomeV3 - ColorControllerSingleRgb', function () {
             );
             assert.equal(response.context.properties[0].name, 'powerState', 'Properties Name!');
             assert.equal(response.context.properties[0].value, 'ON', 'Value!');
+
+            assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
+            assert.equal(response.event.header.name, 'Response', 'Namespace!');
+            assert.equal(
+                response.event.header.correlationToken,
+                event.directive.header.correlationToken,
+                'Correlation Token!',
+            );
+            assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+        });
+
+        it('ColorController SetBrightness', async function () {
+            const event = await helpers.getSample(
+                'BrightnessController/BrightnessController.SetBrightness.request.json',
+            );
+            const response = await deviceManager.handleAlexaEvent(event);
+            const id = helpers.getConfigForName('BRIGHTNESS', helpers.rgbSingleConfig());
+            const storedValue = await AdapterProvider.getState(id);
+            assert.equal(storedValue, 75, 'ioBroker.Value!');
+
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+            assert.equal(
+                response.context.properties[0].namespace,
+                'Alexa.BrightnessController',
+                'Properties Namespace!',
+            );
+            assert.equal(response.context.properties[0].name, 'brightness', 'Properties Name!');
+            assert.equal(response.context.properties[0].value, 75, 'Value!');
 
             assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
             assert.equal(response.event.header.name, 'Response', 'Namespace!');

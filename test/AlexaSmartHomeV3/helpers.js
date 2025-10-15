@@ -199,6 +199,14 @@ const Helpers = {
         return new Controls.Hue(Helpers.hueConfig());
     },
 
+    rgbwConfig: function () {
+        return require('./Resources/rgbw.json');
+    },
+
+    rgbwControl: function () {
+        return new Controls.Rgb(Helpers.rgbwConfig());
+    },
+
     rgbwSingleConfig: function () {
         return require('./Resources/rgbwSingle.json');
     },

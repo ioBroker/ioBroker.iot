@@ -230,6 +230,7 @@
     "no type": "No type",
     "not activated": "not activated",
     "omit value": "omit value",
+    "rgb": "RGB(W) (individual R,G,B,W states)",
     "rgbSingle": "RGB (one state)",
     "rgbwSingle": "RGBW (one state)",
     "slider": "slider",

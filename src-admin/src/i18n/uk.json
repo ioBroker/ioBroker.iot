@@ -230,6 +230,7 @@
     "no type": "Без типу",
     "not activated": "не активовано",
     "omit value": "не має значення",
+    "rgb": "RGB(W) (окремі стани R, G, B, W)",
     "rgbSingle": "RGB (один стан)",
     "rgbwSingle": "RGBW (один стан)",
     "slider": "повзунок",

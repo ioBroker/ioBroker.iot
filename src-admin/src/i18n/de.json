@@ -230,6 +230,7 @@
     "no type": "Kein Typ",
     "not activated": "nicht aktiviert",
     "omit value": "kein Wert",
+    "rgb": "RGB(W) (einzelne R,G,B,W-Zustände)",
     "rgbSingle": "RGB (ein Zustand)",
     "rgbwSingle": "RGBW (ein Zustand)",
     "slider": "Schieberegler",
