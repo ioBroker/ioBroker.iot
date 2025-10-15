@@ -14,14 +14,31 @@ export type ControlStateInitObject = {
 
     // Extra for Hue control
     hal?: {
-        hue: string;
-        saturation?: string;
-        brightness?: string;
+        hue: IotExternalDetectorState;
+        saturation?: IotExternalDetectorState;
+        brightness?: IotExternalDetectorState;
     };
 
     // Extra for Mode control
     supportedModes?: any[];
     instance?: string;
+
+    // Extra for rgb(w) control
+    rgbw?:
+        | IotExternalDetectorState
+        | {
+              red: IotExternalDetectorState;
+              green: IotExternalDetectorState;
+              blue: IotExternalDetectorState;
+              white: IotExternalDetectorState;
+          };
+    rgb?:
+        | IotExternalDetectorState
+        | {
+              red: IotExternalDetectorState;
+              green: IotExternalDetectorState;
+              blue: IotExternalDetectorState;
+          };
 };
 
 export class Base {

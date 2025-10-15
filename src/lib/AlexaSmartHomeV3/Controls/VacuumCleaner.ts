@@ -1,6 +1,6 @@
 import type { AlexaV3Category, IotExternalPatternControl } from '../types';
 import Capabilities from '../Alexa/Capabilities';
-import Control from './Control';
+import Control, { type StateName } from './Control';
 
 export default class VacuumCleaner extends Control {
     constructor(detectedControl: IotExternalPatternControl) {
@@ -15,8 +15,8 @@ export default class VacuumCleaner extends Control {
     }
 
     get statesMap(): {
-        set: string;
-        actual?: string;
+        set: StateName;
+        actual?: StateName;
     } {
         return {
             set: 'POWER',

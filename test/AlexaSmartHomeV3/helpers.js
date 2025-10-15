@@ -20,10 +20,16 @@ class AdapterMock {
             functionFirst: false,
             concatWord: '',
         };
+        this.states = {};
     }
 
     nop() {
         // left blank intentionally
+    }
+
+    /** Used during tests */
+    resetStates() {
+        this.states = {};
     }
 
     get namespace() {
@@ -34,19 +40,24 @@ class AdapterMock {
         return { rows: [] };
     }
 
-    async setStateAsync() {
-        return {};
-    }
-
-    async setForeignStateAsync() {
-        return {};
-    }
-
-    async setState() {
-        return {};
+    async setForeignStateAsync(id, state) {
+        if (typeof state === 'object') {
+            this.states[id] = state;
+            this.states[id].ts = Date.now();
+            this.states[id].ack = !!state.ack;
+        } else {
+            this.states[id] = {
+                val: state,
+                ack: false,
+                ts: Date.now(),
+            }
+        }
     }
 
     async getForeignStateAsync(id) {
+        if (this.states[id]) {
+            return this.states[id];
+        }
         if (id.includes('Lampe')) {
             return { val: true };
         }
@@ -130,6 +141,11 @@ class AdapterMock {
         }
     }
 
+    // used in informAboutStatesChange
+    async setStateAsync() {
+        return;
+    }
+
     async subscribeForeignStatesAsync(id) {
         return;
     }
@@ -139,7 +155,15 @@ class AdapterMock {
     }
 }
 
-module.exports = {
+const Helpers = {
+    getConfigForName(name, config) {
+        const pos = config.states.findIndex(i => i.name === name);
+        if (pos !== -1) {
+            return config.states[pos].id;
+        }
+        return null;
+    },
+
     resetCurrentValues: function (deviceManager) {
         deviceManager.endpoints
             .flatMap(e => e.controls)
@@ -165,12 +189,28 @@ module.exports = {
         return new Controls.AirCondition(require('./Resources/airCondition.json'));
     },
 
+    hueConfig: function () {
+        return require('./Resources/hue.json');
+    },
+
     hueControl: function () {
-        return new Controls.Hue(require('./Resources/hue.json'));
+        return new Controls.Hue(Helpers.hueConfig());
+    },
+
+    rgbwSingleConfig: function () {
+        return require('./Resources/rgbwSingle.json');
+    },
+
+    rgbwSingleControl: function () {
+        return new Controls.RgbwSingle(Helpers.rgbwSingleConfig());
+    },
+
+    rgbSingleConfig: function () {
+        return require('./Resources/rgbSingle.json');
     },
 
     rgbSingleControl: function () {
-        return new Controls.RgbSingle(require('./Resources/rgbSingle.json'));
+        return new Controls.RgbSingle(Helpers.rgbSingleConfig());
     },
 
     powerControl: function () {
@@ -339,3 +379,5 @@ module.exports = {
         return null;
     },
 };
+
+module.exports = Helpers

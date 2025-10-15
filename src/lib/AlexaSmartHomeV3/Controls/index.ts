@@ -70,6 +70,9 @@ export default {
         if (item.type === RgbSingle.type) {
             return new RgbSingle(item);
         }
+        if (item.type === RgbwSingle.type) {
+            return new RgbwSingle(item);
+        }
         if (item.type === Button.type) {
             return new Button(item);
         }

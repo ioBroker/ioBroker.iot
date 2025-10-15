@@ -2,7 +2,13 @@ import Capabilities from '../Alexa/Capabilities';
 import type PowerController from '../Alexa/Capabilities/PowerController';
 import type BrightnessController from '../Alexa/Capabilities/BrightnessController';
 import type ColorTemperatureController from '../Alexa/Capabilities/ColorTemperatureController';
-import { configuredRangeOrDefault, denormalize_0_100, normalize_0_100, closestFromList } from '../Helpers/Utils';
+import {
+    configuredRangeOrDefault,
+    denormalize_0_100,
+    normalize_0_100,
+    closestFromList,
+    rgb2hal,
+} from '../Helpers/Utils';
 import Properties from '../Alexa/Properties';
 import PowerState from '../Alexa/Properties/PowerState';
 import Brightness from '../Alexa/Properties/Brightness';
@@ -71,8 +77,8 @@ export default class Hue extends AdjustableControl {
                 // @ts-expect-error special case for Hue property
                 property.currentValue = {
                     hue: property.currentValue,
-                    saturation: property.hal.saturation,
-                    brightness: property.hal.brightness,
+                    saturation: property.hal!.saturation,
+                    brightness: property.hal!.brightness,
                 };
             }
         }
@@ -128,10 +134,13 @@ export default class Hue extends AdjustableControl {
             property.currentValue = value;
         } else if (property.propertyName === Color.propertyName) {
             const colorProperty = property as Color;
-            const hueValue = value as unknown as { hue: number; saturation: number };
-            await AdapterProvider.setState(colorProperty.hal.hue, hueValue.hue);
-            if (colorProperty.hal.saturation) {
-                await AdapterProvider.setState(colorProperty.hal.saturation, hueValue.saturation);
+            const hueValue = rgb2hal(value as string);
+            await AdapterProvider.setState(colorProperty.hal!.hue, hueValue.hue);
+            if (colorProperty.hal!.saturation) {
+                await AdapterProvider.setState(colorProperty.hal!.saturation, hueValue.saturation);
+            }
+            if (colorProperty.hal!.brightness) {
+                await AdapterProvider.setState(colorProperty.hal!.brightness, hueValue.brightness);
             }
 
             // do not set brightness
@@ -206,9 +215,9 @@ export default class Hue extends AdjustableControl {
         const map = this.statesMap;
         return {
             hal: {
-                hue: this.states[map.hue]!.id,
-                saturation: this.states[map.saturation]?.id,
-                brightness: (this.states[map.dimmer] || this.states[map.brightness])?.id,
+                hue: this.states[map.hue]!,
+                saturation: this.states[map.saturation],
+                brightness: this.states[map.dimmer] || this.states[map.brightness],
             },
         };
     }

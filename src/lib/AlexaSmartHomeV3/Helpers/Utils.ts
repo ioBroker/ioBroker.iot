@@ -976,9 +976,9 @@ export function rgbw2hal(rgbw: string): { hue: number; saturation: number; brigh
     }
 
     // remove white from RGB
-    r = Math.max(0, r - w);
-    g = Math.max(0, g - w);
-    b = Math.max(0, b - w);
+    // r = Math.max(0, r - w);
+    // g = Math.max(0, g - w);
+    // b = Math.max(0, b - w);
 
     r /= 255;
     g /= 255;

@@ -1,5 +1,5 @@
 import Capabilities from '../Alexa/Capabilities';
-import Control from './Control';
+import Control, { type StateName } from './Control';
 import type {
     AlexaV3Category,
     AlexaV3DirectiveValue,
@@ -26,8 +26,8 @@ export default class Light extends Control {
     }
 
     get statesMap(): {
-        set: string;
-        actual: string;
+        set: StateName;
+        actual: StateName;
     } {
         return {
             set: 'SET',

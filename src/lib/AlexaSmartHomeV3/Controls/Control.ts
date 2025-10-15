@@ -15,12 +15,29 @@ import type {
 } from '../types';
 import type { Base as CapabilitiesBase } from '../Alexa/Capabilities/Base';
 
+export type StateName =
+    | 'SET'
+    | 'ACTUAL'
+    | 'ON_SET'
+    | 'ON_ACTUAL'
+    | 'POWER'
+    | 'MODE'
+    | 'HUE'
+    | 'RGB'
+    | 'RGBW'
+    | 'DIMMER'
+    | 'BRIGHTNESS'
+    | 'SATURATION'
+    | 'TEMPERATURE'
+    | 'ON'
+    | 'MUTE';
+
 /**
  * Represents the base functionality for a control in a smart device. A smart device has at least one control.
  * The specific functionality, natively supported capabilities, etc. are defined in derived classes.
  */
 export default class Control {
-    static stateKeys = [
+    static stateKeys: StateName[] = [
         'SET',
         'ACTUAL',
         'ON_SET',
@@ -298,8 +315,8 @@ export default class Control {
         return this._states;
     }
 
-    get statesMap(): Record<string, string> {
-        const map: Record<string, string> = {};
+    get statesMap(): Record<string, StateName> {
+        const map: Record<string, StateName> = {};
         for (const stateKey of Control.stateKeys) {
             map[stateKey.toLowerCase()] = stateKey;
         }

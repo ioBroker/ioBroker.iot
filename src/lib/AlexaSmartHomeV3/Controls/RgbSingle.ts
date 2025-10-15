@@ -1,11 +1,5 @@
 import Capabilities from '../Alexa/Capabilities';
-import {
-    configuredRangeOrDefault,
-    denormalize_0_100,
-    normalize_0_100,
-    closestFromList,
-    hal2rgb,
-} from '../Helpers/Utils';
+import { configuredRangeOrDefault, denormalize_0_100, normalize_0_100, closestFromList } from '../Helpers/Utils';
 import AdapterProvider from '../Helpers/AdapterProvider';
 import type { Base as PropertiesBase } from '../Alexa/Properties/Base';
 import AdjustableControl from './AdjustableControl';
@@ -141,11 +135,8 @@ export default class RgbSingle extends AdjustableControl {
             }
         } else if (property.propertyName === Color.propertyName) {
             // For Color property, convert HAL format to RGB hex string
-            if (typeof value === 'object' && value !== null) {
-                const rgbHex = hal2rgb(value as { hue: number; saturation: number; brightness: number });
-                await AdapterProvider.setState(this.states[map.rgb]!.id, rgbHex);
-                property.currentValue = rgbHex;
-            }
+            await AdapterProvider.setState(this.states[map.rgb]!.id, value);
+            property.currentValue = value;
         } else if (
             property.propertyName === Brightness.propertyName ||
             property.propertyName === ColorTemperatureInKelvin.propertyName
@@ -173,21 +164,19 @@ export default class RgbSingle extends AdjustableControl {
         getState?: IotExternalDetectorState;
         alexaSetter?: (alexaValue: AlexaV3DirectiveValue) => ioBroker.StateValue | undefined;
         alexaGetter?: (value: ioBroker.StateValue | undefined) => AlexaV3DirectiveValue;
-        hal?: {
-            hue: string;
-            saturation?: string;
-            brightness?: string;
-        };
+        rgb?:
+            | IotExternalDetectorState
+            | {
+                  red: IotExternalDetectorState;
+                  green: IotExternalDetectorState;
+                  blue: IotExternalDetectorState;
+              };
     } {
         const map = this.statesMap;
-        // For RgbSingle, use the same RGB state for all hal components
-        // The conversion between RGB and HAL formats happens in getOrRetrieveCurrentValue and setState
         return {
-            hal: {
-                hue: this.states[map.rgb]!.id,
-                saturation: this.states[map.rgb]!.id,
-                brightness: this.states[map.rgb]!.id,
-            },
+            setState: this.states[map.rgb]!,
+            getState: this.states[map.rgb]!,
+            rgb: this.states[map.rgb]!,
         };
     }
 

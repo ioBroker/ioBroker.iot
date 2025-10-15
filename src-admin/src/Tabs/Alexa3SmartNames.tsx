@@ -105,6 +105,7 @@ const SMART_TYPES: string[] = [
     'lock',
     'hue',
     'rgbSingle',
+    'rgbwSingle',
     'ct',
     'motion',
     'levelSlider',

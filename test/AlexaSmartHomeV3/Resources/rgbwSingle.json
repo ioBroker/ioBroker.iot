@@ -1,0 +1,32 @@
+{
+    "states": [
+        {
+            "name": "RGBW",
+            "defaultRole": "level.color.rgbw",
+            "id": "alias.0.Wohnzimmer.RgbLamp.RGBW"
+        },
+        {
+            "name": "BRIGHTNESS",
+            "defaultRole": "level.brightness",
+            "defaultUnit": "%",
+            "id": "alias.0.Wohnzimmer.RgbLamp.BRIGHTNESS"
+        },
+        {
+            "name": "TEMPERATURE",
+            "defaultRole": "level.color.temperature",
+            "defaultUnit": "°K",
+            "id": "alias.0.Wohnzimmer.RgbLamp.TEMPERATURE"
+        },
+        {
+            "name": "ON",
+            "defaultRole": "switch",
+            "id": "alias.0.Wohnzimmer.RgbLamp.ON"
+        },
+        {
+            "name": "ON_ACTUAL",
+            "defaultRole": "state.switch",
+            "id": "alias.0.Wohnzimmer.RgbLamp.ACTUAL"
+        }
+    ],
+    "type": "rgbSingle"
+}

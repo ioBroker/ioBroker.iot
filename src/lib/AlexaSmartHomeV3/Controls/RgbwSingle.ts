@@ -169,11 +169,20 @@ export default class RgbwSingle extends AdjustableControl {
         getState: IotExternalDetectorState;
         alexaSetter?: (alexaValue: AlexaV3DirectiveValue) => ioBroker.StateValue | undefined;
         alexaGetter?: (value: ioBroker.StateValue | undefined) => AlexaV3DirectiveValue;
+        rgbw:
+            | IotExternalDetectorState
+            | {
+                  red: IotExternalDetectorState;
+                  green: IotExternalDetectorState;
+                  blue: IotExternalDetectorState;
+                  white: IotExternalDetectorState;
+              };
     } {
         const map = this.statesMap;
+
         return {
-            setState: this.states[map.RGBW]!,
-            getState: this.states[map.RGBW]!,
+            setState: this.states[map.rgbw]!,
+            getState: this.states[map.rgbw]!,
             alexaSetter: function (this: PropertiesBase, alexaValue: AlexaV3DirectiveValue): ioBroker.StateValue {
                 // Convert  {
                 //   "hue": 350.5,
@@ -189,6 +198,7 @@ export default class RgbwSingle extends AdjustableControl {
             alexaGetter: function (value: ioBroker.StateValue | undefined): AlexaV3DirectiveValue {
                 return rgbw2hal(rgbwToHex(value as string));
             },
+            rgbw: this.states[map.rgbw]!,
         };
     }
 
