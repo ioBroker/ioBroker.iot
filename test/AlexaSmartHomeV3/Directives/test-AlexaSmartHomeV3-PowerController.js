@@ -12,8 +12,8 @@ let friendlyName;
 let deviceManager;
 let dimmer;
 let light;
-let light_device;
-let dimmer_device;
+let lightDevice;
+let dimmerDevice;
 
 describe('AlexaSmartHomeV3 - PowerController', function () {
     beforeEach(function () {
@@ -30,16 +30,16 @@ describe('AlexaSmartHomeV3 - PowerController', function () {
         light = helpers.lightControl();
         dimmer = helpers.dimmerControl();
 
-        light_device = new Device({
+        lightDevice = new Device({
             id: 'endpoint-002',
-            friendlyName: friendlyName,
+            friendlyName,
             displayCategories: ['LIGHT'],
             controls: [light],
         });
 
-        dimmer_device = new Device({
+        dimmerDevice = new Device({
             id: 'endpoint-003',
-            friendlyName: friendlyName,
+            friendlyName,
             displayCategories: ['LIGHT'],
             controls: [dimmer],
         });
@@ -48,7 +48,7 @@ describe('AlexaSmartHomeV3 - PowerController', function () {
         deviceManager.addDevice(
             new Device({
                 id: endpointId,
-                friendlyName: friendlyName,
+                friendlyName,
                 displayCategories: ['LIGHT'],
                 controls: [light, dimmer],
             }),
@@ -72,7 +72,7 @@ describe('AlexaSmartHomeV3 - PowerController', function () {
     describe('Handling', async function () {
         it('PowerController TurnOff for a light', async function () {
             const event = await helpers.getSample('PowerController/PowerController.TurnOff.request.json');
-            const response = await light_device.handle(event);
+            const response = await lightDevice.handle(event);
             assert.equal(response.context.properties[0].namespace, 'Alexa.PowerController', 'Properties Namespace!');
             assert.equal(response.context.properties[0].name, 'powerState', 'Properties Name!');
             assert.equal(response.context.properties[0].value, 'OFF', 'Value!');
@@ -86,12 +86,12 @@ describe('AlexaSmartHomeV3 - PowerController', function () {
             );
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
 
-            assert.equal(light_device.controls[0].supported[0].properties[0].currentValue, false);
+            assert.equal(lightDevice.controls[0].supported[0].properties[0].currentValue, false);
         });
 
         it('PowerController TurnOff for a dimmer', async function () {
             const event = await helpers.getSample('PowerController/PowerController.TurnOff.request.json');
-            const response = await dimmer_device.handle(event);
+            const response = await dimmerDevice.handle(event);
             assert.equal(response.context.properties[0].namespace, 'Alexa.PowerController', 'Properties Namespace!');
             assert.equal(response.context.properties[0].name, 'powerState', 'Properties Name!');
             assert.equal(response.context.properties[0].value, 'OFF', 'Value!');
@@ -105,7 +105,7 @@ describe('AlexaSmartHomeV3 - PowerController', function () {
             );
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
 
-            assert.equal(dimmer_device.controls[0].supported[0].properties[0].currentValue, 0);
+            assert.equal(dimmerDevice.controls[0].supported[0].properties[0].currentValue, 0);
         });
 
         it('PowerController TurnOff for a light+dimmer', async function () {
@@ -127,7 +127,7 @@ describe('AlexaSmartHomeV3 - PowerController', function () {
 
         it('PowerController TurnOn Light', async function () {
             const event = await helpers.getSample('PowerController/PowerController.TurnOn.request.json');
-            const response = await light_device.handle(event);
+            const response = await lightDevice.handle(event);
             assert.equal(response.context.properties[0].namespace, 'Alexa.PowerController', 'Properties Namespace!');
             assert.equal(response.context.properties[0].name, 'powerState', 'Properties Name!');
             assert.equal(response.context.properties[0].value, 'ON', 'Value!');
@@ -140,12 +140,12 @@ describe('AlexaSmartHomeV3 - PowerController', function () {
                 'Correlation Token!',
             );
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
-            assert.equal(light_device.controls[0].supported[0].properties[0].currentValue, true);
+            assert.equal(lightDevice.controls[0].supported[0].properties[0].currentValue, true);
         });
 
         it('PowerController TurnOn for a dimmer', async function () {
             const event = await helpers.getSample('PowerController/PowerController.TurnOn.request.json');
-            const response = await dimmer_device.handle(event);
+            const response = await dimmerDevice.handle(event);
             assert.equal(response.context.properties[0].namespace, 'Alexa.PowerController', 'Properties Namespace!');
             assert.equal(response.context.properties[0].name, 'powerState', 'Properties Name!');
             assert.equal(response.context.properties[0].value, 'ON', 'Value!');
@@ -158,8 +158,8 @@ describe('AlexaSmartHomeV3 - PowerController', function () {
                 'Correlation Token!',
             );
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
-            assert.equal(dimmer_device.controls[0].supported[0].properties[0].currentValue, true);
-            assert.equal(dimmer_device.controls[0].supported[1].properties[0].currentValue, 80);
+            assert.equal(dimmerDevice.controls[0].supported[0].properties[0].currentValue, true);
+            assert.equal(dimmerDevice.controls[0].supported[1].properties[0].currentValue, 80);
         });
 
         it('PowerController TurnOn for a light+dimmer', async function () {

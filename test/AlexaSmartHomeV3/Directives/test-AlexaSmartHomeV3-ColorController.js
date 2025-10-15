@@ -10,10 +10,9 @@ let stateChange;
 let endpointId;
 let friendlyName;
 let deviceManager;
-let dimmer;
-let light;
+let color;
 
-describe('AlexaSmartHomeV3 - BrightnessController', function () {
+describe('AlexaSmartHomeV3 - ColorController', function () {
     beforeEach(function () {
         RateLimiter.usage = new Map();
     });
@@ -25,8 +24,7 @@ describe('AlexaSmartHomeV3 - BrightnessController', function () {
         AdapterProvider.init(helpers.adapterMock());
         IotProxy.publishStateChange = event => (stateChange = event);
 
-        light = helpers.lightControl();
-        dimmer = helpers.dimmerControl();
+        color = helpers.rgbSingleControl();
 
         deviceManager = new DeviceManager();
         deviceManager.addDevice(
@@ -34,27 +32,55 @@ describe('AlexaSmartHomeV3 - BrightnessController', function () {
                 id: endpointId,
                 friendlyName,
                 displayCategories: ['LIGHT'],
-                controls: [light, dimmer],
+                controls: [color],
             }),
         );
     });
 
     describe('Matching', async function () {
-        it('BrightnessController AdjustBrightness', async function () {
+        it('ColorController SetColor', async function () {
+            const event = await helpers.getSample(
+                'ColorController/ColorController.SetColor.request.json',
+            );
+            assert.equal(color.supports(event), true);
+        });
+        it('ColorController TurnOff', async function () {
+            const event = await helpers.getSample('PowerController/PowerController.TurnOff.request.json');
+            assert.equal(color.supports(event), true);
+        });
+        it('ColorController TurnOn', async function () {
+            const event = await helpers.getSample('PowerController/PowerController.TurnOn.request.json');
+            assert.equal(color.supports(event), true);
+        });
+        it('ColorController AdjustBrightness', async function () {
             const event = await helpers.getSample(
                 'BrightnessController/BrightnessController.AdjustBrightness.request.json',
             );
-            assert.equal(light.supports(event), false);
-            assert.equal(light.canHandle(event), true);
-            assert.equal(dimmer.supports(event), true);
+            assert.equal(color.supports(event), true);
         });
-        it('BrightnessController SetBrightness', async function () {
+        it('ColorController SetBrightness', async function () {
             const event = await helpers.getSample(
                 'BrightnessController/BrightnessController.SetBrightness.request.json',
             );
-            assert.equal(light.supports(event), false);
-            assert.equal(light.canHandle(event), true);
-            assert.equal(dimmer.supports(event), true);
+            assert.equal(color.supports(event), true);
+        });
+        it('ColorController SetColorTemperature', async function () {
+            const event = await helpers.getSample(
+                'ColorTemperatureController/ColorTemperatureController.SetColorTemperature.request.json',
+            );
+            assert.equal(color.supports(event), true);
+        });
+        it('ColorController IncreaseColorTemperature', async function () {
+            const event = await helpers.getSample(
+                'ColorTemperatureController/ColorTemperatureController.IncreaseColorTemperature.request.json',
+            );
+            assert.equal(color.supports(event), true);
+        });
+        it('ColorController DecreaseColorTemperature', async function () {
+            const event = await helpers.getSample(
+                'ColorTemperatureController/ColorTemperatureController.DecreaseColorTemperature.request.json',
+            );
+            assert.equal(color.supports(event), true);
         });
     });
 
@@ -63,18 +89,20 @@ describe('AlexaSmartHomeV3 - BrightnessController', function () {
             helpers.resetCurrentValues(deviceManager);
         });
 
-        it('BrightnessController AdjustBrightness', async function () {
+        it('ColorController SetColor', async function () {
             const event = await helpers.getSample(
-                'BrightnessController/BrightnessController.AdjustBrightness.request.json',
+                'ColorController/ColorController.SetColor.request.json',
             );
             const response = await deviceManager.handleAlexaEvent(event);
             assert.equal(
                 response.context.properties[0].namespace,
-                'Alexa.BrightnessController',
+                'Alexa.ColorController',
                 'Properties Namespace!',
             );
-            assert.equal(response.context.properties[0].name, 'brightness', 'Properties Name!');
-            assert.equal(response.context.properties[0].value, 50, 'Value!');
+            assert.equal(response.context.properties[0].name, 'color', 'Properties Name!');
+            assert.equal(response.context.properties[0].value.hue, 351, 'Value.hue!');
+            assert.equal(response.context.properties[0].value.saturation, 0.71, 'Value.saturation!');
+            assert.equal(response.context.properties[0].value.brightness, 0.65, 'Value.brightness!');
 
             assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
             assert.equal(response.event.header.name, 'Response', 'Namespace!');
@@ -85,19 +113,18 @@ describe('AlexaSmartHomeV3 - BrightnessController', function () {
             );
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
         });
-
-        it('BrightnessController SetBrightness for a light', async function () {
+        it('ColorController TurnOff', async function () {
             const event = await helpers.getSample(
-                'BrightnessController/BrightnessController.SetBrightness.request.json',
+                'PowerController/PowerController.TurnOff.request.json',
             );
             const response = await deviceManager.handleAlexaEvent(event);
             assert.equal(
                 response.context.properties[0].namespace,
-                'Alexa.BrightnessController',
+                'Alexa.PowerController',
                 'Properties Namespace!',
             );
-            assert.equal(response.context.properties[0].name, 'brightness', 'Properties Name!');
-            assert.equal(response.context.properties[0].value, 75, 'Value!');
+            assert.equal(response.context.properties[0].name, 'powerState', 'Properties Name!');
+            assert.equal(response.context.properties[0].value, 'OFF', 'Value!');
 
             assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
             assert.equal(response.event.header.name, 'Response', 'Namespace!');
@@ -107,10 +134,6 @@ describe('AlexaSmartHomeV3 - BrightnessController', function () {
                 'Correlation Token!',
             );
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
-            assert.equal(
-                deviceManager.endpointById(endpointId).controls[0].enforced[0].properties[0].currentValue,
-                true,
-            );
         });
     });
 });

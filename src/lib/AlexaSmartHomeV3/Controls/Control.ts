@@ -183,7 +183,7 @@ export default class Control {
         const alexaValue = property.alexaDirectiveValue(event);
 
         // convert alexa value to iobroker value
-        let value = property.value(alexaValue);
+        let value: ioBroker.StateValue | undefined = property.value(alexaValue);
 
         // if set, the device could support toggle
         if (event.currentState) {

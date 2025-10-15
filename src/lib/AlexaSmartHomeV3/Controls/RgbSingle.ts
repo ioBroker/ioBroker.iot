@@ -4,13 +4,11 @@ import {
     denormalize_0_100,
     normalize_0_100,
     closestFromList,
-    rgbwToHex,
     hal2rgb,
-    rgb2hal,
 } from '../Helpers/Utils';
 import AdapterProvider from '../Helpers/AdapterProvider';
-import AdjustableControl from './AdjustableControl';
 import type { Base as PropertiesBase } from '../Alexa/Properties/Base';
+import AdjustableControl from './AdjustableControl';
 import type BrightnessController from '../Alexa/Capabilities/BrightnessController';
 import Brightness from '../Alexa/Properties/Brightness';
 import ColorTemperatureInKelvin from '../Alexa/Properties/ColorTemperatureInKelvin';
@@ -91,14 +89,6 @@ export default class RgbSingle extends AdjustableControl {
             if (property.propertyName === PowerState.propertyName && !this.states[map.on]) {
                 property.currentValue = property.currentValue !== 0;
             }
-
-            // For Color property, convert RGB hex string to HAL format
-            if (property.propertyName === 'color') {
-                const rgbValue = await AdapterProvider.getState(this.states[map.rgb]!.id);
-                const halValue = rgb2hal(rgbwToHex(rgbValue as string));
-                // @ts-expect-error HAL value is a special object format for color
-                property.currentValue = halValue;
-            }
         }
 
         if (property.currentValue === undefined) {
@@ -149,16 +139,15 @@ export default class RgbSingle extends AdjustableControl {
                     this._powerState.currentValue = false;
                 }
             }
-        } else if (property.propertyName === 'color') {
+        } else if (property.propertyName === Color.propertyName) {
             // For Color property, convert HAL format to RGB hex string
             if (typeof value === 'object' && value !== null) {
                 const rgbHex = hal2rgb(value as { hue: number; saturation: number; brightness: number });
                 await AdapterProvider.setState(this.states[map.rgb]!.id, rgbHex);
-                property.currentValue = value;
+                property.currentValue = rgbHex;
             }
         } else if (
             property.propertyName === Brightness.propertyName ||
-            property.propertyName === Color.propertyName ||
             property.propertyName === ColorTemperatureInKelvin.propertyName
         ) {
             await AdapterProvider.setState(property.setId, value);

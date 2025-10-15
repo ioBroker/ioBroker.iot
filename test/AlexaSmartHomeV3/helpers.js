@@ -158,6 +158,10 @@ module.exports = {
         return new Controls.RgbSingle(require('./Resources/rgbSingle.json'));
     },
 
+    powerControl: function () {
+        return new Controls.Socket(require('./Resources/power.json'));
+    },
+
     dimmerControl: function () {
         return new Controls.Dimmer(require('./Resources/dimmer.json'));
     },
@@ -222,7 +226,7 @@ module.exports = {
         let options = {
             hostname: 'raw.githubusercontent.com',
             port: 443,
-            path: '/alexa/alexa-smarthome/master/sample_messages/' + sample_json_name,
+            path: `/alexa/alexa-smarthome/master/sample_messages/${sample_json_name}`,
             headers: { 'Content-Type': 'application/json' },
         };
 

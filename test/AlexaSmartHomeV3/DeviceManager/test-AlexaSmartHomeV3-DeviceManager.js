@@ -29,7 +29,7 @@ describe('AlexaSmartHomeV3 - DeviceManager', function () {
         deviceManager.addDevice(
             new Device({
                 id: endpointId,
-                friendlyName: friendlyName,
+                friendlyName,
                 displayCategories: ['LIGHT'],
                 controls: [dimmer],
             }),

@@ -29,7 +29,7 @@ describe('AlexaSmartHomeV3 - Speaker', function () {
         deviceManager.addDevice(
             new Device({
                 id: endpointId,
-                friendlyName: friendlyName,
+                friendlyName,
                 controls: [volume],
             }),
         );

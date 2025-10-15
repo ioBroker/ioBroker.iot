@@ -23,7 +23,7 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
             deviceManager.addDevice(
                 new Device({
                     id: endpointId,
-                    friendlyName: friendlyName,
+                    friendlyName,
                     displayCategories: ['LIGHT'],
                     controls: [helpers.lightControl(), helpers.dimmerControl()],
                 }),
@@ -41,7 +41,7 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
             deviceManager.addDevice(
                 new Device({
                     id: endpointId,
-                    friendlyName: friendlyName,
+                    friendlyName,
                     displayCategories: ['TEMPERATURE_SENSOR'],
                     controls: [helpers.temperatureControl()],
                 }),
@@ -68,7 +68,7 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
             deviceManager.addDevice(
                 new Device({
                     id: endpointId,
-                    friendlyName: friendlyName,
+                    friendlyName,
                     displayCategories: ['TEMPERATURE_SENSOR', 'THERMOSTAT'],
                     controls: [helpers.thermostatControl()],
                 }),
@@ -109,7 +109,7 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
             deviceManager.addDevice(
                 new Device({
                     id: endpointId,
-                    friendlyName: friendlyName,
+                    friendlyName,
                     displayCategories: ['MOTION_SENSOR'],
                     controls: [helpers.motionControl()],
                 }),
@@ -135,7 +135,7 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
             deviceManager.addDevice(
                 new Device({
                     id: endpointId,
-                    friendlyName: friendlyName,
+                    friendlyName,
                     displayCategories: ['SMARTLOCK'],
                     controls: [helpers.lockControl()],
                 }),
@@ -161,7 +161,7 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
             deviceManager.addDevice(
                 new Device({
                     id: endpointId,
-                    friendlyName: friendlyName,
+                    friendlyName,
                     displayCategories: ['CONTACT_SENSOR'],
                     controls: [helpers.doorControl()],
                 }),
@@ -187,7 +187,7 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
             deviceManager.addDevice(
                 new Device({
                     id: endpointId,
-                    friendlyName: friendlyName,
+                    friendlyName,
                     controls: [helpers.gateControl()],
                 }),
             );
@@ -212,7 +212,7 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
             deviceManager.addDevice(
                 new Device({
                     id: endpointId,
-                    friendlyName: friendlyName,
+                    friendlyName,
                     controls: [helpers.volumeControl()],
                 }),
             );

@@ -490,5 +490,34 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
                 'Gate.Position.Closed',
             );
         });
+
+        it('Discovery of a color', async function () {
+            const event = await helpers.getSample('Discovery/Discovery.request.json');
+
+            const deviceManager = new DeviceManager();
+            deviceManager.addDevice(
+                new Device({
+                    id: endpointId,
+                    friendlyName,
+                    controls: [helpers.rgbSingleControl()],
+                }),
+            );
+
+            const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(response.event.header.namespace, 'Alexa.Discovery', 'Namespace!');
+            assert.equal(response.event.header.name, 'Discover.Response', 'Name!');
+            assert.equal(response.event.payload.endpoints[0].endpointId, endpointId, 'Endpoint Id!');
+            assert.equal(response.event.payload.endpoints[0].friendlyName, friendlyName, 'Friendly Name!');
+            assert.equal(response.event.payload.endpoints[0].displayCategories.includes('LIGHT'), true);
+            assert.equal(response.event.payload.endpoints[0].displayCategories.length, 1);
+
+            assert.equal(response.event.payload.endpoints[0].capabilities.length, 5);
+            assert.equal(response.event.payload.endpoints[0].capabilities[0].type, 'AlexaInterface');
+            assert.equal(response.event.payload.endpoints[0].capabilities[0].interface, 'Alexa');
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].interface, 'Alexa.ColorController');
+
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].properties.supported.length, 1);
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].properties.supported[0].name, 'color');
+        });
     });
 });

@@ -21,7 +21,7 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
         deviceManager.addDevice(
             new Device({
                 id: endpointId,
-                friendlyName: friendlyName,
+                friendlyName,
                 displayCategories: ['LIGHT'],
                 controls: [helpers.dimmerControl(), helpers.temperatureControl()],
             }),
@@ -101,7 +101,7 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
             deviceManager.addDevice(
                 new Device({
                     id: endpointId,
-                    friendlyName: friendlyName,
+                    friendlyName,
                     displayCategories: ['THERMOSTAT'],
                     controls: [helpers.thermostatControl()],
                 }),
@@ -142,7 +142,7 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
             deviceManager.addDevice(
                 new Device({
                     id: endpointId,
-                    friendlyName: friendlyName,
+                    friendlyName,
                     displayCategories: ['MOTION_SENSOR'],
                     controls: [helpers.motionControl()],
                 }),
@@ -169,7 +169,7 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
             deviceManager.addDevice(
                 new Device({
                     id: endpointId,
-                    friendlyName: friendlyName,
+                    friendlyName,
                     displayCategories: ['SMARTLOCK'],
                     controls: [helpers.lockControl()],
                 }),
@@ -196,7 +196,7 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
             deviceManager.addDevice(
                 new Device({
                     id: endpointId,
-                    friendlyName: friendlyName,
+                    friendlyName,
                     displayCategories: ['CONTACT_SENSOR'],
                     controls: [helpers.doorControl()],
                 }),
@@ -223,7 +223,7 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
             deviceManager.addDevice(
                 new Device({
                     id: endpointId,
-                    friendlyName: friendlyName,
+                    friendlyName,
                     controls: [helpers.gateControl()],
                 }),
             );
@@ -250,7 +250,7 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
             deviceManager.addDevice(
                 new Device({
                     id: endpointId,
-                    friendlyName: friendlyName,
+                    friendlyName,
                     controls: [helpers.volumeControl()],
                 }),
             );
@@ -276,7 +276,7 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
             deviceManager.addDevice(
                 new Device({
                     id: endpointId,
-                    friendlyName: friendlyName,
+                    friendlyName,
                     controls: [helpers.volumeControl()],
                 }),
             );

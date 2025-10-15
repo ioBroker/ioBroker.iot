@@ -29,7 +29,7 @@ describe('AlexaSmartHomeV3 - PercentageController', function () {
         deviceManager.addDevice(
             new Device({
                 id: endpointId,
-                friendlyName: friendlyName,
+                friendlyName,
                 displayCategories: ['INTERIOR_BLIND'],
                 controls: [blinds],
             }),

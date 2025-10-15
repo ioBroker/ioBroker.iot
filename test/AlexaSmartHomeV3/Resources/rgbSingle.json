@@ -16,6 +16,16 @@
             "defaultRole": "level.color.temperature",
             "defaultUnit": "°K",
             "id": "alias.0.Wohnzimmer.RgbLamp.TEMPERATURE"
+        },
+        {
+            "name": "ON",
+            "defaultRole": "switch",
+            "id": "alias.0.Wohnzimmer.RgbLamp.ON"
+        },
+        {
+            "name": "ON_ACTUAL",
+            "defaultRole": "state.switch",
+            "id": "alias.0.Wohnzimmer.RgbLamp.ACTUAL"
         }
     ],
     "type": "rgbSingle"

@@ -20,7 +20,7 @@ describe('AlexaSmartHomeV3 - Controls', function () {
             lightDeviceManager.addDevice(
                 new Device({
                     id: endpointId,
-                    friendlyName: friendlyName,
+                    friendlyName,
                     displayCategories: ['LIGHT'],
                     controls: [light],
                 }),
@@ -30,7 +30,7 @@ describe('AlexaSmartHomeV3 - Controls', function () {
             dimmerDeviceManager.addDevice(
                 new Device({
                     id: endpointId,
-                    friendlyName: friendlyName,
+                    friendlyName,
                     displayCategories: ['LIGHT'],
                     controls: [dimmer],
                 }),
@@ -110,7 +110,7 @@ describe('AlexaSmartHomeV3 - Controls', function () {
             deviceManager.addDevice(
                 new Device({
                     id: endpointId,
-                    friendlyName: friendlyName,
+                    friendlyName,
                     controls: [helpers.airConditionControl()],
                 }),
             );
@@ -187,7 +187,7 @@ describe('AlexaSmartHomeV3 - Controls', function () {
             deviceManager.addDevice(
                 new Device({
                     id: endpointId,
-                    friendlyName: friendlyName,
+                    friendlyName,
                     controls: [helpers.hueControl()],
                 }),
             );
@@ -311,7 +311,7 @@ describe('AlexaSmartHomeV3 - Controls', function () {
             deviceManager.addDevice(
                 new Device({
                     id: endpointId,
-                    friendlyName: friendlyName,
+                    friendlyName,
                     controls: [helpers.rgbSingleControl()],
                 }),
             );

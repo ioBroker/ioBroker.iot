@@ -30,7 +30,7 @@ describe.only('AlexaSmartHomeV3 - SceneController', function () {
         deviceManager.addDevice(
             new Device({
                 id: endpointId,
-                friendlyName: friendlyName,
+                friendlyName,
                 displayCategories: ['SCENE_TRIGGER'],
                 controls: [scene],
             }),

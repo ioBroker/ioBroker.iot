@@ -29,7 +29,7 @@ describe('AlexaSmartHomeV3 - ThermostatController', function () {
         deviceManager.addDevice(
             new Device({
                 id: endpointId,
-                friendlyName: friendlyName,
+                friendlyName,
                 displayCategories: ['THERMOSTAT'],
                 controls: [thermostat],
             }),

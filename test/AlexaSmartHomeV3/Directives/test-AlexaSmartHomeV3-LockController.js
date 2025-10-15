@@ -30,7 +30,7 @@ describe('AlexaSmartHomeV3 - LockController', function () {
         deviceManager.addDevice(
             new Device({
                 id: endpointId,
-                friendlyName: friendlyName,
+                friendlyName,
                 displayCategories: ['SMARTLOCK'],
                 controls: [lock],
             }),

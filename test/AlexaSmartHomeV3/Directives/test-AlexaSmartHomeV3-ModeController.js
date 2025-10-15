@@ -29,7 +29,7 @@ describe('AlexaSmartHomeV3 - ModeController', function () {
         deviceManager.addDevice(
             new Device({
                 id: endpointId,
-                friendlyName: friendlyName,
+                friendlyName,
                 controls: [gate],
             }),
         );
