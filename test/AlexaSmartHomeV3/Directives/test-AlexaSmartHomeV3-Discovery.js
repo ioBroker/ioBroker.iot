@@ -500,7 +500,7 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             );
             assert.equal(
                 response.event.payload.endpoints[0].capabilities[1].semantics.stateMappings[0].states[0],
-                'Alexa.States.Opened',
+                'Alexa.States.Open',
             );
             assert.equal(
                 response.event.payload.endpoints[0].capabilities[1].semantics.stateMappings[0].value,
@@ -512,7 +512,7 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             );
             assert.equal(
                 response.event.payload.endpoints[0].capabilities[1].semantics.stateMappings[1].states[0],
-                'Alexa.States.Closed',
+                'Alexa.States.Close',
             );
             assert.equal(
                 response.event.payload.endpoints[0].capabilities[1].semantics.stateMappings[1].value,

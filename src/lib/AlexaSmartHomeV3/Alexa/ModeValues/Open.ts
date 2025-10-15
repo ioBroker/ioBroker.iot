@@ -46,7 +46,7 @@ export default class Open extends Base {
         return [
             {
                 '@type': 'StatesToValue',
-                states: ['Alexa.States.Opened'],
+                states: ['Alexa.States.Open'],
                 value: this.value,
             },
         ];
