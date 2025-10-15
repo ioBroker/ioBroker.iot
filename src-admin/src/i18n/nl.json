@@ -230,6 +230,8 @@
     "no type": "Geen type",
     "not activated": "niet geactiveerd",
     "omit value": "geen waarde",
+    "rgbSingle": "RGB (één toestand)",
+    "rgbwSingle": "RGBW (één staat)",
     "slider": "schuifregelaar",
     "socket": "stopcontact",
     "temperature": "temperatuur",

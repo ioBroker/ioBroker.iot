@@ -12,7 +12,7 @@ let friendlyName;
 let deviceManager;
 let color;
 
-describe.only('AlexaSmartHomeV3 - ColorControllerSingleRgbw', function () {
+describe('AlexaSmartHomeV3 - ColorControllerSingleRgbw', function () {
     beforeEach(function () {
         RateLimiter.usage = new Map();
     });

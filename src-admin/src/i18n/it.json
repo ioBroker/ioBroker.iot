@@ -230,6 +230,8 @@
     "no type": "Nessun tipo",
     "not activated": "non attivato",
     "omit value": "nessun valore",
+    "rgbSingle": "RGB (uno stato)",
+    "rgbwSingle": "RGBW (uno stato)",
     "slider": "cursore",
     "socket": "PRESA",
     "temperature": "temperatura",

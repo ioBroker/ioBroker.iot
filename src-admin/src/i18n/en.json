@@ -230,6 +230,8 @@
     "no type": "No type",
     "not activated": "not activated",
     "omit value": "omit value",
+    "rgbSingle": "RGB (one state)",
+    "rgbwSingle": "RGBW (one state)",
     "slider": "slider",
     "socket": "socket",
     "temperature": "temperature",

@@ -230,6 +230,8 @@
     "no type": "Brak typu",
     "not activated": "nie aktywowany",
     "omit value": "brak wartości",
+    "rgbSingle": "RGB (jeden stan)",
+    "rgbwSingle": "RGBW (jeden stan)",
     "slider": "suwak",
     "socket": "gniazdo elektryczne",
     "temperature": "temperatura",

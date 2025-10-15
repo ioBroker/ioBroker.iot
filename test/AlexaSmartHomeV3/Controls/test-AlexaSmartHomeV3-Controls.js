@@ -395,7 +395,7 @@ describe('AlexaSmartHomeV3 - Controls', function () {
             assert.notEqual(d, undefined);
             assert.equal(d instanceof Device, true);
 
-            // set current temp to 2200
+            // set the current temp to 2200
             d.controls[0].supported[1].properties[0].currentValue = 2200;
 
             let response = await d.handle(event);
@@ -425,8 +425,8 @@ describe('AlexaSmartHomeV3 - Controls', function () {
             assert.notEqual(d, undefined);
             assert.equal(d instanceof Device, true);
 
-            // set current temp to 2200
-            d.controls[0].supported[1].properties[0].currentValue = 2200;
+            // set the current temp to 2200
+            d.controls[0].supported[1].properties[0].currentValue = 2700;
 
             let response = await d.handle(event);
             assert.equal(
@@ -493,17 +493,17 @@ describe('AlexaSmartHomeV3 - Controls', function () {
 
             assert.equal(response.context.properties[0].namespace, 'Alexa.ColorController');
             assert.equal(response.context.properties[0].name, 'color');
-            assert.equal(response.context.properties[0].value.hue, 332);
-            assert.equal(response.context.properties[0].value.saturation, 0.74);
-            assert.equal(response.context.properties[0].value.brightness, 0.66);
+            assert.equal(response.context.properties[0].value.hue, 351);
+            assert.equal(response.context.properties[0].value.saturation, 0.71);
+            assert.equal(response.context.properties[0].value.brightness, 0.65);
 
             assert.equal(response.context.properties[1].namespace, 'Alexa.ColorTemperatureController');
             assert.equal(response.context.properties[1].name, 'colorTemperatureInKelvin');
-            assert.equal(response.context.properties[1].value, 5000);
+            assert.equal(response.context.properties[1].value, 2200);
 
             assert.equal(response.context.properties[2].namespace, 'Alexa.BrightnessController');
             assert.equal(response.context.properties[2].name, 'brightness');
-            assert.equal(response.context.properties[2].value, 65);
+            assert.equal(response.context.properties[2].value, 75);
 
             assert.equal(response.context.properties[3].namespace, 'Alexa.PowerController');
             assert.equal(response.context.properties[3].name, 'powerState');

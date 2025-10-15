@@ -155,6 +155,8 @@ class AdapterMock {
     }
 }
 
+const commandsCache = {};
+
 const Helpers = {
     getConfigForName(name, config) {
         const pos = config.states.findIndex(i => i.name === name);
@@ -217,8 +219,20 @@ const Helpers = {
         return new Controls.Socket(require('./Resources/power.json'));
     },
 
+    dimmerConfig: function () {
+        return require('./Resources/dimmer.json');
+    },
+
     dimmerControl: function () {
-        return new Controls.Dimmer(require('./Resources/dimmer.json'));
+        return new Controls.Dimmer(Helpers.dimmerConfig());
+    },
+
+    dimmerConfigWithStoredValue: function () {
+        return require('./Resources/dimmerWithStoredValue.json');
+    },
+
+    dimmerControlWithStoredValue: function () {
+        return new Controls.Dimmer(Helpers.dimmerConfigWithStoredValue());
     },
 
     blindsControl: function () {
@@ -237,8 +251,12 @@ const Helpers = {
         return new Controls.VolumeGroup(require('./Resources/volumeGroup.json'));
     },
 
+    lightConfig: function () {
+        return require('./Resources/light.json');
+    },
+
     lightControl: function () {
-        return new Controls.Light(require('./Resources/light.json'));
+        return new Controls.Light(Helpers.lightConfig());
     },
 
     motionControl: function () {
@@ -277,11 +295,15 @@ const Helpers = {
         return require('./Resources/ModeController.SetGatePosition.request.json');
     },
 
-    getSample: async function (sample_json_name) {
+    getSample: async function (sampleJsonName) {
+        if (commandsCache[sampleJsonName]) {
+            return JSON.parse(JSON.stringify(commandsCache[sampleJsonName]));
+        }
+
         const options = {
             hostname: 'raw.githubusercontent.com',
             port: 443,
-            path: `/alexa/alexa-smarthome/master/sample_messages/${sample_json_name}`,
+            path: `/alexa/alexa-smarthome/master/sample_messages/${sampleJsonName}`,
             headers: { 'Content-Type': 'application/json' },
         };
 
@@ -294,6 +316,7 @@ const Helpers = {
                 });
 
                 res.on('end', () => {
+                    commandsCache[sampleJsonName] = JSON.parse(jsonString);
                     resolve(JSON.parse(jsonString));
                 });
 

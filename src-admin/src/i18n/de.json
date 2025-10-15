@@ -230,6 +230,8 @@
     "no type": "Kein Typ",
     "not activated": "nicht aktiviert",
     "omit value": "kein Wert",
+    "rgbSingle": "RGB (ein Zustand)",
+    "rgbwSingle": "RGBW (ein Zustand)",
     "slider": "Schieberegler",
     "socket": "Steckdose",
     "temperature": "Temperatur",

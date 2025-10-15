@@ -350,6 +350,9 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Implemented stored values for Alexa V3
+
 ### 4.1.3 (2025-10-15)
 - (@GermanBluefox) Fixed custom skill
 - (@GermanBluefox) Added RGB single and scene support

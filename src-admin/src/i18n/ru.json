@@ -230,6 +230,8 @@
     "no type": "Нет типа",
     "not activated": "не активирован",
     "omit value": "нет значения",
+    "rgbSingle": "RGB (одно состояние)",
+    "rgbwSingle": "RGBW (один штат)",
     "slider": "ползунок",
     "socket": "разъем",
     "temperature": "температура",

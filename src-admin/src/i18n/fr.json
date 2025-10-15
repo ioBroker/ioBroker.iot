@@ -230,6 +230,8 @@
     "no type": "Aucun type",
     "not activated": "non activé",
     "omit value": "aucune valeur",
+    "rgbSingle": "RVB (un état)",
+    "rgbwSingle": "RGBW (un état)",
     "slider": "glissière",
     "socket": "prise",
     "temperature": "température",

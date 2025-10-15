@@ -18,6 +18,8 @@ export default class Dimmer extends AdjustableControl {
     private readonly _powerState: PowerState;
     private readonly _brightnessCapability: BrightnessController;
     private readonly _brightness: Brightness;
+    private readonly _offValue: number;
+    private valueOn: number | null = null;
 
     constructor(detectedControl: IotExternalPatternControl) {
         super(detectedControl);
@@ -29,6 +31,10 @@ export default class Dimmer extends AdjustableControl {
         this._brightness = this._brightnessCapability.brightness;
 
         this._supported = [this._powerControllerCapability, this._brightnessCapability];
+
+        const valuesRange = configuredRangeOrDefault(this.states[this.statesMap.set]!);
+        const offValue = parseInt(AdapterProvider.get().config.deviceOffLevel as string, 10) || 30;
+        this._offValue = denormalize_0_100(offValue, valuesRange.min as number, valuesRange.max as number) as number;
     }
 
     get categories(): AlexaV3Category[] {
@@ -45,8 +51,12 @@ export default class Dimmer extends AdjustableControl {
         property.currentValue = value;
         const valuesRange = configuredRangeOrDefault(this.states[this.statesMap.set]!);
 
-        // todo: use adapter.config.deviceOffLevel
-        // If
+        if (property.propertyName === Brightness.propertyName) {
+            // remember last brightness > 0
+            if ((value as number) >= this._offValue) {
+                this.valueOn = value as number;
+            }
+        }
 
         if (property.propertyName === PowerState.propertyName) {
             // set brightness
@@ -57,12 +67,26 @@ export default class Dimmer extends AdjustableControl {
                     byOn = smartName.byON;
                 }
                 // set byOn to the configured value or 100 otherwise
-                byOn =
-                    byOn === undefined || byOn === null || isNaN(byOn as number)
-                        ? (valuesRange.max as number)
-                        : parseFloat(byOn as string);
-                await AdapterProvider.setState(this._brightness.setId, byOn);
-                this._brightness.currentValue = byOn;
+                if (byOn === undefined || byOn === null || isNaN(byOn as number)) {
+                    if (this.valueOn !== null && byOn === 'stored') {
+                        await AdapterProvider.setState(this._brightness.setId, this.valueOn);
+                        this._brightness.currentValue = this.valueOn;
+                    } else {
+                        this.valueOn = valuesRange.max as number;
+                        await AdapterProvider.setState(this._brightness.setId, valuesRange.max as number);
+                        this._brightness.currentValue = valuesRange.max as number;
+                    }
+                } else {
+                    // byOn is in percent, so convert it to the configured range
+                    byOn = denormalize_0_100(
+                        parseFloat(byOn as string),
+                        valuesRange.min as number,
+                        valuesRange.max as number,
+                    );
+                    this.valueOn = byOn as number;
+                    await AdapterProvider.setState(this._brightness.setId, byOn as number);
+                    this._brightness.currentValue = byOn;
+                }
             } else {
                 // set brightness to 0 on power OFF
                 await AdapterProvider.setState(this._brightness.setId, valuesRange.min);
@@ -70,7 +94,7 @@ export default class Dimmer extends AdjustableControl {
             }
         } else {
             // set power
-            const powerValue = value !== valuesRange.min;
+            const powerValue = ((value || 0) as number) > this._offValue;
 
             // only do this on different IDs for brightness and power
             if (this._brightness.setId !== this._powerState.setId) {
@@ -84,10 +108,9 @@ export default class Dimmer extends AdjustableControl {
         if (property.currentValue === undefined) {
             property.currentValue = await AdapterProvider.getState(property.getId);
 
-            const valuesRange = configuredRangeOrDefault(this.states[this.statesMap.set]!);
             // convert non-zero brightness to power = true
             if (property.propertyName === this._powerState.propertyName && property.getId === this._brightness.getId) {
-                property.currentValue = property.currentValue !== valuesRange.min;
+                property.currentValue = (property.currentValue as number) > this._offValue;
             }
         }
 
