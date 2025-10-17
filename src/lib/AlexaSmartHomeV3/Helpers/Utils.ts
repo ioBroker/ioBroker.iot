@@ -339,6 +339,10 @@ export async function controls(
     // every member of a function enumeration is added to the list of ids to inspect
     functionalities.forEach(functionEnumItem => {
         functionEnumItem.common.members?.forEach(id => {
+            if (!devicesObject[id]) {
+                // Enum has unknown member
+                return;
+            }
             const smartName = getSmartNameFromObj(
                 devicesObject[id],
                 adapter.namespace,
