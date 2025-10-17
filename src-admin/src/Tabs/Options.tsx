@@ -311,6 +311,7 @@ export default class Options extends Component<OptionsProps, OptionsState> {
                     <br />
                     {this.renderCheckbox('Amazon AlexaV3', 'amazonAlexaV3')}
                     {this.renderCheckbox('Amazon Alexa (deprecated)', 'amazonAlexa')}
+                    {this.renderCheckbox('Amazon Alexa Custom', 'amazonCustom')}
                     <FormControlLabel
                         key="googleHome"
                         style={{ ...styles.controlElement, marginTop: 5 }}

@@ -353,6 +353,7 @@ setState('iot.0.app.message', JSON.stringify({
 ### **WORK IN PROGRESS**
 - (@GermanBluefox) Implemented stored values for Alexa V3
 - (@GermanBluefox) Added RGB(W) with individual states to Alexa V3
+- (@GermanBluefox) Added dedicated checkbox for alexa custom skill
 
 ### 4.1.3 (2025-10-15)
 - (@GermanBluefox) Fixed custom skill

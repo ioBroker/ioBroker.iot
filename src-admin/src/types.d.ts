@@ -10,6 +10,7 @@ export interface IotAdapterConfig {
     iftttKey: string;
     replaces: string | string[] | null;
     amazonAlexa: boolean;
+    amazonCustom: boolean;
     amazonAlexaV3: boolean;
     amazonAlexaBlood: string;
     amazonAlexaBloodShortAnswer: boolean;

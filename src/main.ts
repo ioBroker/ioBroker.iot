@@ -1373,6 +1373,20 @@ export class IotAdapter extends Adapter {
             this.config.yandexAlisa = false;
         }
 
+        // Workaround for amazonCustom
+        if (this.config.amazonCustom === undefined) {
+            // get current config
+            const obj = await this.getForeignObjectAsync(`system.adapter.${this.namespace}`);
+            if (obj) {
+                this.log.info(
+                    `Migrating amazonCustom configuration to ${this.config.amazonAlexa || this.config.amazonAlexaV3}`,
+                );
+                obj.native.amazonCustom = this.config.amazonAlexa || this.config.amazonAlexaV3;
+                await this.setForeignObjectAsync(`system.adapter.${this.namespace}`, obj);
+                return;
+            }
+        }
+
         this.config.pingTimeout = parseInt(this.config.pingTimeout as string, 10) || 5000;
 
         if (this.config.pingTimeout < 3000) {
@@ -1531,7 +1545,7 @@ export class IotAdapter extends Adapter {
             await this.alexaSH3.updateDevices();
         }
 
-        if (this.config.amazonAlexa || this.config.amazonAlexaV3) {
+        if (this.config.amazonCustom) {
             this.alexaCustom = new AlexaCustom(this);
             this.alexaCustom.setLanguage(this.lang);
         }
