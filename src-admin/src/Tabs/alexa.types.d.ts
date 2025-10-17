@@ -1,5 +1,5 @@
 // we extend this type for our use
-import type { InternalDetectorState } from '@iobroker/type-detector/types';
+import type { InternalDetectorState, Types } from '@iobroker/type-detector/types';
 
 export type AlexaV3EndpointID = string;
 
@@ -385,7 +385,7 @@ export type AlexaV3StateMapping = {
 };
 
 export type SmartNameObject = { [lang in ioBroker.Languages]?: string } & {
-    smartType?: string | null;
+    smartType?: Types | null;
     byON?: string | null;
     toggle?: boolean;
 };

@@ -31,6 +31,7 @@ import {
     MdBlinds,
     MdOutlineSensors,
     MdOutlineThermostat,
+    MdPlayArrow,
 } from 'react-icons/md';
 
 import { FaLightbulb, FaPercentage as Percent, FaSnowflake, FaTemperatureLow } from 'react-icons/fa';
@@ -39,7 +40,7 @@ import { AiFillUnlock } from 'react-icons/ai';
 import { BsFillDoorOpenFill, BsFillVolumeUpFill } from 'react-icons/bs';
 import { GiElectricalSocket, GiGate, GiWindow } from 'react-icons/gi';
 import { HiLightBulb } from 'react-icons/hi';
-import { IoIosColorFilter } from 'react-icons/io';
+import { IoIosColorFilter, IoIosColorPalette } from 'react-icons/io';
 import { CgMenuMotion } from 'react-icons/cg';
 import { RxSlider } from 'react-icons/rx';
 import { TbVacuumCleaner } from 'react-icons/tb';
@@ -83,6 +84,7 @@ import type {
     IotExternalDetectorState,
     SmartNameObject,
 } from './alexa.types';
+import { Types } from '@iobroker/type-detector/types';
 
 const CHANGED_COLOR = '#e7000040';
 const DEFAULT_CHANNEL_COLOR_DARK = '#4f4f4f';
@@ -95,47 +97,43 @@ const LAST_CHANGED_COLOR_LIGHT = '#b4ffbe';
 const DEFAULT_STATE_COLOR_DARK = '#6e6e6e';
 const DEFAULT_STATE_COLOR_LIGHT = '#d0d0d0';
 
-const SMART_TYPES: string[] = [
-    'socket',
-    'light',
-    'dimmer',
-    'thermostat',
-    'blinds',
-    'gate',
-    'lock',
-    'hue',
-    'rgb',
-    'rgbSingle',
-    'rgbwSingle',
-    'ct',
-    'motion',
-    'levelSlider',
-    'temperature',
-    'button',
-    'window',
+const SMART_TYPES: Types[] = [
+    Types.socket,
+    Types.light,
+    Types.dimmer,
+    Types.thermostat,
+    Types.blind,
+    Types.gate,
+    Types.lock,
+    Types.hue,
+    Types.rgb,
+    Types.rgbSingle,
+    Types.rgbwSingle,
+    Types.ct,
+    Types.motion,
+    Types.slider,
+    Types.temperature,
+    Types.button,
+    Types.window,
 ];
 
-const SMART_TYPES_V2: Record<string, string> = {
-    LIGHT: 'light',
-    SWITCH: 'socket',
-    THERMOSTAT: 'thermostat',
-    SMARTPLUG: 'socket',
-    SMARTLOCK: 'lock',
-    CAMERA: 'camera',
+const SMART_TYPES_V2: Record<string, Types> = {
+    LIGHT: Types.light,
+    SWITCH: Types.socket,
+    THERMOSTAT: Types.thermostat,
+    SMARTPLUG: Types.socket,
+    SMARTLOCK: Types.lock,
+    CAMERA: Types.camera,
 };
 
 const CAPABILITIES: Record<string, { label: string; icon: IconType; color: string }> = {
     brightness: { label: 'Brightness', icon: Brightness5, color: '#c9b803' },
-    button: { label: 'Button/Scene', icon: Brightness5, color: '#c9b803' },
     color: { label: 'Color', icon: Palette, color: '#a20030' },
     colorTemperatureInKelvin: { label: 'Color temperature', icon: Gradient, color: '#019bb6' },
     detectionState: { label: 'Detection', icon: Notifications, color: '#913c01' },
     lockState: { label: 'Lock', icon: Lock, color: '#00519b' },
     mode: { label: 'Mode', icon: ModeStandby, color: '#112233' },
     muted: { label: 'Muted', icon: VolumeOff, color: '#9701af' },
-    rgb: { label: 'RGB(W)', icon: Percent, color: '#009870' },
-    rgbSingle: { label: 'RGB', icon: Percent, color: '#009870' },
-    rgbwSingle: { label: 'RGBW', icon: Percent, color: '#009870' },
     percentage: { label: 'Percentage', icon: Percent, color: '#009870' },
     powerState: { label: 'Power', icon: ToggleOn, color: '#70bd00' },
     targetSetpoint: { label: 'Set point', icon: Thermostat, color: '#813600' },
@@ -149,13 +147,6 @@ const DEVICES: Record<
     string,
     { label: string; icon: IconType; color: string; control?: string; controllable?: boolean }
 > = {
-    Light: {
-        label: 'Light',
-        icon: FaLightbulb,
-        color: '#c9b803',
-        control: 'switch',
-        controllable: true,
-    },
     AirCondition: {
         label: 'AirCondition',
         icon: FaSnowflake,
@@ -172,7 +163,7 @@ const DEVICES: Record<
     },
     Button: {
         label: 'Button/Scene',
-        icon: MdBlinds,
+        icon: MdPlayArrow,
         color: '#00a28f',
         control: 'button',
         controllable: true,
@@ -184,6 +175,7 @@ const DEVICES: Record<
         control: 'sensor',
         controllable: false,
     },
+    Ct: { label: 'Color temperature', icon: IoIosColorFilter, color: '#5a9600' },
     Dimmer: {
         label: 'Dimmer',
         icon: HiLightBulb,
@@ -210,12 +202,18 @@ const DEVICES: Record<
         color: '#007a96',
         control: 'color',
     },
-    Rgb: { label: 'RGB(W)', icon: IoIosColorFilter, color: '#5a9600' },
-    RgbSingle: { label: 'RGB single', icon: IoIosColorFilter, color: '#5a9600' },
-    RgbwSingle: { label: 'RGBW single', icon: IoIosColorFilter, color: '#5a9600' },
-    Ct: { label: 'Color temperature', icon: IoIosColorFilter, color: '#5a9600' },
+    Light: {
+        label: 'Light',
+        icon: FaLightbulb,
+        color: '#c9b803',
+        control: 'switch',
+        controllable: true,
+    },
     Lock: { label: 'Lock', icon: AiFillUnlock, color: '#c9030a' },
     Motion: { label: 'Motion', icon: CgMenuMotion, color: '#149100' },
+    Rgb: { label: 'RGB(W)', icon: IoIosColorPalette, color: '#5a9600' },
+    RgbSingle: { label: 'RGB single', icon: IoIosColorPalette, color: '#5a9600' },
+    RgbwSingle: { label: 'RGBW single', icon: IoIosColorPalette, color: '#5a9600' },
     Slider: { label: 'Slider', icon: RxSlider, color: '#029a7f' },
     Socket: { label: 'Socket', icon: GiElectricalSocket, color: '#834303' },
     Temperature: { label: 'Temperature', icon: FaTemperatureLow, color: '#8ca102' },
@@ -465,7 +463,7 @@ interface Alexa3SmartNamesProps {
 interface Alexa3SmartNamesState {
     edit: null | {
         id: string;
-        type: string | null;
+        type: Types | null;
         name: string;
         originalType: string | null;
         originalName: string;
@@ -1234,7 +1232,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
         );
     }
 
-    static renderSelectTypeSelector(type: false | string, onChange: (value: string) => void): React.JSX.Element | null {
+    static renderSelectTypeSelector(type: false | Types, onChange: (value: string) => void): React.JSX.Element | null {
         if (type !== false) {
             const items = [
                 <MenuItem
@@ -1256,8 +1254,8 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
             }
             // convert from AlexaV2 to AlexaV3
             if (type && !SMART_TYPES.includes(type)) {
-                if (SMART_TYPES.includes(type.toLowerCase())) {
-                    type = type.toLowerCase();
+                if (SMART_TYPES.includes((type as unknown as Types).toLowerCase() as Types)) {
+                    type = type.toLowerCase() as Types;
                 } else if (SMART_TYPES_V2[type]) {
                     type = SMART_TYPES_V2[type];
                 }

@@ -1,6 +1,13 @@
 import { createHash } from 'node:crypto';
 import AdapterProvider from './AdapterProvider';
 import ChannelDetector, { type DetectOptions, Types } from '@iobroker/type-detector';
+import {
+    roleOrEnumLight,
+    roleOrEnumBlind,
+    roleOrEnumWindow,
+    roleOrEnumDoor,
+    roleOrEnumGate,
+} from '@iobroker/type-detector/roleEnumUtils';
 import type {
     AlexaV3EndpointID,
     IotExternalDetectorState,
@@ -58,13 +65,13 @@ async function allObjects(adapter: ioBroker.Adapter): Promise<Record<string, ioB
         );
 }
 
-const SMART_TYPES: { [name: string]: string } = {
-    LIGHT: 'light',
-    SWITCH: 'socket',
-    THERMOSTAT: 'thermostat',
-    SMARTPLUG: 'socket',
-    SMARTLOCK: 'lock',
-    CAMERA: 'camera',
+const SMART_TYPES: { [name: string]: Types } = {
+    LIGHT: Types.light,
+    SWITCH: Types.socket,
+    THERMOSTAT: Types.thermostat,
+    SMARTPLUG: Types.socket,
+    SMARTLOCK: Types.lock,
+    CAMERA: Types.camera,
 };
 
 function getSmartNameFromObj(
@@ -122,13 +129,13 @@ async function functionalitiesAndRooms(
 }
 
 function getChannelId(id: string, objects: Record<string, ioBroker.Object>): string | null | undefined {
-    if (objects[id] && objects[id].type === 'channel') {
+    if (objects[id]?.type === 'channel') {
         return id;
     }
 
-    if (objects[id] && objects[id].type === 'state') {
+    if (objects[id]?.type === 'state') {
         const channelId = parentOf(id);
-        if (objects[channelId] && objects[channelId].type === 'channel') {
+        if (objects[channelId]?.type === 'channel') {
             return channelId;
         }
         return null;
@@ -414,6 +421,19 @@ export async function controls(
     const detector = new ChannelDetector();
 
     const patterns = ChannelDetector.getPatterns();
+    const usedIds: string[] = [];
+    const ignoreIndicators = ['UNREACH_STICKY']; // Ignore indicators by name
+    const excludedTypes = [Types.info];
+    // initialize iobroker type detector
+    const options: DetectOptions = {
+        objects: devicesObject,
+        _keysOptional: keys,
+        _usedIdsOptional: usedIds,
+        ignoreIndicators,
+        excludedTypes,
+        id: '', // this will be set for each id in the list
+    };
+
     // process states with defined smartName
     for (let s = 0; s < idsWithSmartName.length; s++) {
         const id = idsWithSmartName[s];
@@ -432,24 +452,105 @@ export async function controls(
         //  }
         if (!smartName.smartType) {
             // by default,
-            // all booleans are sockets
-            // all numbers are dimmer
-            // string is not possible to control
-            if (common.type === 'boolean' || common.type === 'mixed') {
-                // we will write boolean
-                smartName.smartType = 'socket';
-            } else if (common.type === 'number') {
-                smartName.smartType = 'dimmer';
+            // Try to detect with typeDetector
+            options.id = id;
+            const controls = detector.detect(options);
+            if (controls && controls.length > 0) {
+                // take the first detected control
+                smartName.smartType = controls[0].type;
             } else {
-                smartName.smartType = 'socket';
+                // if the upper object is channel or device, try to detect there
+                const channelId = getChannelId(id, devicesObject);
+                const deviceId = getDeviceId(id, devicesObject);
+                const enums: string[] = [];
+                for (let f = 0; f < functionalities.length; f++) {
+                    const functionEnumItem = functionalities[f];
+                    const members = functionEnumItem.common.members || [];
+                    if (
+                        members.includes(id) ||
+                        (channelId && members.includes(channelId)) ||
+                        (deviceId && members.includes(deviceId))
+                    ) {
+                        enums.push(functionEnumItem._id);
+                    }
+                }
+                // Is it light related?
+                if (
+                    roleOrEnumLight(devicesObject[id], enums) ||
+                    (channelId && roleOrEnumLight(devicesObject[channelId], enums)) ||
+                    (deviceId && roleOrEnumLight(devicesObject[deviceId], enums))
+                ) {
+                    // we will write light
+                    if (common.type === 'boolean') {
+                        smartName.smartType = Types.light;
+                    } else if (common.type === 'number') {
+                        smartName.smartType = Types.dimmer;
+                    }
+                } else if (
+                    common.type === 'number' &&
+                    (roleOrEnumBlind(devicesObject[id], enums) ||
+                        (channelId && roleOrEnumBlind(devicesObject[channelId], enums)) ||
+                        (deviceId && roleOrEnumBlind(devicesObject[deviceId], enums)))
+                ) {
+                    // we will write blind
+                    smartName.smartType = Types.blind;
+                } else if (
+                    common.type === 'number' &&
+                    (roleOrEnumWindow(devicesObject[id], enums) ||
+                        (channelId && roleOrEnumWindow(devicesObject[channelId], enums)) ||
+                        (deviceId && roleOrEnumWindow(devicesObject[deviceId], enums)))
+                ) {
+                    // we will write window
+                    if (common.type === 'number' && !common.states) {
+                        smartName.smartType = Types.blind;
+                    } else if (common.states) {
+                        smartName.smartType = Types.windowTilt; // fallback
+                    } else {
+                        smartName.smartType = Types.window;
+                    }
+                } else if (
+                    common.type === 'boolean' &&
+                    (roleOrEnumDoor(devicesObject[id], enums) ||
+                        (channelId && roleOrEnumDoor(devicesObject[channelId], enums)) ||
+                        (deviceId && roleOrEnumDoor(devicesObject[deviceId], enums)))
+                ) {
+                    // we will write door
+                    smartName.smartType = Types.door;
+                } else if (
+                    common.type === 'boolean' &&
+                    (roleOrEnumGate(devicesObject[id], enums) ||
+                        (channelId && roleOrEnumGate(devicesObject[channelId], enums)) ||
+                        (deviceId && roleOrEnumGate(devicesObject[deviceId], enums)))
+                ) {
+                    // we will write gate
+                    smartName.smartType = Types.gate;
+                } else {
+                    // all booleans are sockets
+                    // all numbers are dimmer
+                    // string is not possible to control
+                    if (common.type === 'boolean' || common.type === 'mixed') {
+                        // Try to find out if it in a category with light, lights or lamp, and so on
+                        if (common.read === false) {
+                            // write socket if writable, but not readable
+                            smartName.smartType = Types.button;
+                        } else {
+                            // we will write boolean
+                            smartName.smartType = Types.socket;
+                        }
+                    } else if (common.type === 'number') {
+                        smartName.smartType = Types.slider;
+                    } else {
+                        smartName.smartType = Types.socket; // fallback
+                    }
+                }
             }
         }
         // convert alexa2 smartType to alexa 3
-        if (SMART_TYPES[smartName.smartType]) {
+        if (smartName.smartType && SMART_TYPES[smartName.smartType]) {
             smartName.smartType = SMART_TYPES[smartName.smartType];
         }
         // try to simulate typeDetector format
-        if (patterns[smartName.smartType]) {
+        if (smartName.smartType && patterns[smartName.smartType]) {
             const control: IotExternalPatternControl = JSON.parse(JSON.stringify(patterns[smartName.smartType]));
             // find first required
             const state = control.states.find(state => state.required);
@@ -517,19 +618,6 @@ export async function controls(
             );
         }
     }
-
-    // initialize iobroker type detector
-    const usedIds: string[] = [];
-    const ignoreIndicators = ['UNREACH_STICKY']; // Ignore indicators by name
-    const excludedTypes = [Types.info];
-    const options: DetectOptions = {
-        objects: devicesObject,
-        _keysOptional: keys,
-        _usedIdsOptional: usedIds,
-        ignoreIndicators,
-        excludedTypes,
-        id: '', // this will be set for each id in the list
-    };
 
     // go other the list of IDs to inspect and collect the detected controls
     list.forEach(id => {

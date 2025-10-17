@@ -350,6 +350,9 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Better handling of color temperatures
+
 ### 4.1.4 (2025-10-17)
 - (@GermanBluefox) Implemented stored values for Alexa V3
 - (@GermanBluefox) Added RGB(W) with individual states to Alexa V3

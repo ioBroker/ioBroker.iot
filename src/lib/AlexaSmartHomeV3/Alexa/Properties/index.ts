@@ -1,5 +1,4 @@
 import Base from './Base';
-import AdjustableProperty from './AdjustableProperty';
 import Brightness from './Brightness';
 import Color from './Color';
 import ColorTemperatureInKelvin from './ColorTemperatureInKelvin';
@@ -16,7 +15,6 @@ import Volume from './Volume';
 
 export default {
     Base,
-    AdjustableProperty,
     Brightness,
     Color,
     ColorTemperatureInKelvin,

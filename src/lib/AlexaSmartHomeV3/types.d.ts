@@ -441,7 +441,7 @@ export type AlexaV3StateMapping = {
 };
 
 export type SmartNameObject = { [lang in ioBroker.Languages]?: string } & {
-    smartType?: string | null;
+    smartType?: Types | null;
     byON?: string | null; // it could be 'stored' or percent as string
     toggle?: boolean;
 };
