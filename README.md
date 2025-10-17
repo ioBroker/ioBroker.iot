@@ -350,7 +350,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 4.1.4 (2025-10-17)
 - (@GermanBluefox) Implemented stored values for Alexa V3
 - (@GermanBluefox) Added RGB(W) with individual states to Alexa V3
 - (@GermanBluefox) Added dedicated checkbox for alexa custom skill
@@ -370,9 +370,6 @@ setState('iot.0.app.message', JSON.stringify({
 ### 4.0.2 (2025-08-26)
 - (@GermanBluefox) Some files were rewritten in TypeScript
 - (@GermanBluefox) Improvement of Alexa V3
-
-### 3.6.0 (2025-07-02)
--   (@foxriver76) new features for upcoming Visu App 1.4.0
 
 ## License
 

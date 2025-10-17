@@ -511,6 +511,9 @@
 ### 0.1.4 (2018-09-26)
 
 -   (bluefox) Initial commit
+## 3.6.0 (2025-07-02)
+-   (@foxriver76) new features for upcoming Visu App 1.4.0
+
 ## 3.5.2 (2025-06-04)
 -   (@GermanBluefox) Corrected error in back-end
 

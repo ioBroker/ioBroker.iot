@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "4.1.3",
+    "version": "4.1.4",
     "news": {
+      "4.1.4": {
+        "en": "Implemented stored values for Alexa V3\nAdded RGB(W) with individual states to Alexa V3\nAdded dedicated checkbox for alexa custom skill",
+        "de": "Ergänzte gespeicherte Werte für Alexa V3\nHinzugefügt RGB(W) mit einzelnen Zuständen zu Alexa V3\nHinzugefügt dedizierte Checkbox für alexa benutzerdefinierte Fähigkeiten",
+        "ru": "Внедренные сохраненные значения для Alexa V3\nДобавлен RGB (W) с отдельными состояниями в Alexa V3\nДобавлен специальный флажок для пользовательского мастерства alexa",
+        "pt": "Valores armazenados implementados para Alexa V3\nAdicionado RGB (W) com estados individuais para Alexa V3\nAdicionado caixa de seleção dedicada para a habilidade personalizada Alexa",
+        "nl": "Geïmplementeerde opgeslagen waarden voor Alexa V3\nToegevoegd RGB(W) met individuele staten aan Alexa V3\nDedicated checkbox toegevoegd voor alexa aangepaste vaardigheden",
+        "fr": "Valeurs stockées implémentées pour Alexa V3\nAjout de RGB(W) avec états individuels à Alexa V3\nAjout d'une case à cocher dédiée pour les compétences personnalisées alexa",
+        "it": "Valori memorizzati per Alexa V3\nAggiunto RGB(W) con singoli stati ad Alexa V3\nAggiunto checkbox dedicato per alexa abilità personalizzata",
+        "es": "Valores almacenados implementados para Alexa V3\nAñadido RGB(W) con estados individuales a Alexa V3\nAñadido casilla de verificación dedicada para alexa habilidad personalizada",
+        "pl": "Wdrożone wartości zapisane dla Alexa V3\nDodano RGB (W) z poszczególnymi stanami do Alexa V3\nDodano dedykowaną opcję dla umiejętności Alexa",
+        "uk": "Реалізовано збережені значення для Alexa V3\nДодано RGB(W) з окремими державами до Alexa V3\nДодано виділену прапорець для спеціальної майстерності alexa",
+        "zh-cn": "已执行的Alexa V3存储值\n添加有单个状态的 RGB( W) 到 Alexa V3\n添加了Alexa 自定义技能的专用复选框"
+      },
       "4.1.3": {
         "en": "Fixed custom skill\nAdded RGB single and scene support",
         "de": "Benutzerdefinierte Fähigkeiten behoben\nRGB Single und Szenenunterstützung hinzugefügt",
@@ -80,19 +93,6 @@
         "pl": "nowe funkcje dla nadchodzącej aplikacji Visu 1.4.0",
         "uk": "нові можливості для майбутнього додатка Visu 1.4.0",
         "zh-cn": "即将到来的 Visu App 1.4.0 的新功能"
-      },
-      "3.5.2": {
-        "en": "Corrected error in back-end",
-        "de": "Fehler im Back-End behoben",
-        "ru": "Исправленная ошибка в back-end",
-        "pt": "Erro corrigido no back-end",
-        "nl": "Fout in back-end gecorrigeerd",
-        "fr": "Erreur corrigée dans le back-end",
-        "it": "Errore corretto in back-end",
-        "es": "Error corregido en back-end",
-        "pl": "Poprawiony błąd w back- endzie",
-        "uk": "Виправлена помилка в спині",
-        "zh-cn": "后端更正错误"
       }
     },
     "titleLang": {
