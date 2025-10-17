@@ -267,6 +267,14 @@ const Helpers = {
         return new Controls.Light(Helpers.lightConfig());
     },
 
+    lightConfig10_100: function () {
+        return require('./Resources/light10_100.json');
+    },
+
+    lightControl10_100: function () {
+        return new Controls.Light(Helpers.lightConfig10_100());
+    },
+
     motionControl: function () {
         return new Controls.Motion(require('./Resources/motion.json'));
     },

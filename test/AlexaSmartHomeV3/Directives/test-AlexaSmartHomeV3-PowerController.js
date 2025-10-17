@@ -12,10 +12,12 @@ let friendlyName;
 let deviceManager;
 let dimmer;
 let light;
+let light10_100;
 let dimmerWithStoredValueDevice;
 let lightDevice;
 let dimmerDevice;
 let dimmerDeviceWithStoredValue;
+let lightDevice10_100;
 
 describe('AlexaSmartHomeV3 - PowerController', function () {
     beforeEach(function () {
@@ -32,6 +34,7 @@ describe('AlexaSmartHomeV3 - PowerController', function () {
         light = helpers.lightControl();
         dimmer = helpers.dimmerControl();
         dimmerWithStoredValueDevice = helpers.dimmerControlWithStoredValue();
+        light10_100 = helpers.lightControl10_100();
 
         lightDevice = new Device({
             id: 'endpoint-002',
@@ -52,6 +55,13 @@ describe('AlexaSmartHomeV3 - PowerController', function () {
             friendlyName,
             displayCategories: ['LIGHT'],
             controls: [dimmerWithStoredValueDevice],
+        });
+
+        lightDevice10_100 = new Device({
+            id: 'endpoint-005',
+            friendlyName,
+            displayCategories: ['LIGHT'],
+            controls: [light10_100],
         });
 
         deviceManager = new DeviceManager();
@@ -270,6 +280,35 @@ describe('AlexaSmartHomeV3 - PowerController', function () {
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
             assert.equal(dimmerDeviceWithStoredValue.controls[0].supported[0].properties[0].currentValue, true);
             assert.equal(dimmerDeviceWithStoredValue.controls[0].supported[1].properties[0].currentValue, 875);
+        });
+
+        it('PowerController TurnOn/Off for a light with number values', async function () {
+            const id = helpers.getConfigForName('SET', helpers.lightConfig10_100());
+            const eventOn = await helpers.getSample('PowerController/PowerController.TurnOn.request.json');
+            await lightDevice10_100.handle(eventOn);
+            let storedValue = await AdapterProvider.getState(id);
+            // min  = 500, max = 1000. If no stored value, the dimmer should go to max
+            assert.equal(storedValue, 100, 'ioBroker.Value!');
+
+            // and turn it off
+            const eventOff = await helpers.getSample('PowerController/PowerController.TurnOff.request.json');
+            const response = await lightDevice10_100.handle(eventOff);
+            storedValue = await AdapterProvider.getState(id);
+            assert.equal(storedValue, 10, 'ioBroker.Value!');
+
+            assert.equal(response.context.properties[0].namespace, 'Alexa.PowerController', 'Properties Namespace!');
+            assert.equal(response.context.properties[0].name, 'powerState', 'Properties Name!');
+            assert.equal(response.context.properties[0].value, 'OFF', 'Value!');
+
+            assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
+            assert.equal(response.event.header.name, 'Response', 'Namespace!');
+            assert.equal(
+                response.event.header.correlationToken,
+                eventOn.directive.header.correlationToken,
+                'Correlation Token!',
+            );
+            assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+            assert.equal(lightDevice10_100.controls[0].supported[0].properties[0].currentValue, 10);
         });
     });
 });

@@ -1,0 +1,18 @@
+{
+    "states": [
+        {
+            "name": "SET",
+            "defaultRole": "switch.light",
+            "id": "alias.0.Wohnzimmer.Lampe.NUMBER",
+            "common": {
+                "min": 10,
+                "max": 100,
+                "type": "number"
+            },
+            "smartName": {
+                "smartType": "LIGHT"
+            }
+        }
+    ],
+    "type": "light"
+}

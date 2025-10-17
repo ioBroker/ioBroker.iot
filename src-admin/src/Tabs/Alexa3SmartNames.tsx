@@ -126,14 +126,18 @@ const SMART_TYPES_V2: Record<string, string> = {
 
 const CAPABILITIES: Record<string, { label: string; icon: IconType; color: string }> = {
     brightness: { label: 'Brightness', icon: Brightness5, color: '#c9b803' },
-    powerState: { label: 'Power', icon: ToggleOn, color: '#70bd00' },
-    colorTemperatureInKelvin: { label: 'Color temperature', icon: Gradient, color: '#019bb6' },
+    button: { label: 'Button/Scene', icon: Brightness5, color: '#c9b803' },
     color: { label: 'Color', icon: Palette, color: '#a20030' },
+    colorTemperatureInKelvin: { label: 'Color temperature', icon: Gradient, color: '#019bb6' },
     detectionState: { label: 'Detection', icon: Notifications, color: '#913c01' },
     lockState: { label: 'Lock', icon: Lock, color: '#00519b' },
     mode: { label: 'Mode', icon: ModeStandby, color: '#112233' },
     muted: { label: 'Muted', icon: VolumeOff, color: '#9701af' },
+    rgb: { label: 'RGB(W)', icon: Percent, color: '#009870' },
+    rgbSingle: { label: 'RGB', icon: Percent, color: '#009870' },
+    rgbwSingle: { label: 'RGBW', icon: Percent, color: '#009870' },
     percentage: { label: 'Percentage', icon: Percent, color: '#009870' },
+    powerState: { label: 'Power', icon: ToggleOn, color: '#70bd00' },
     targetSetpoint: { label: 'Set point', icon: Thermostat, color: '#813600' },
     temperature: { label: 'Temperature', icon: DeviceThermostat, color: '#9f1300' },
     thermostatMode: { label: 'Thermostat mode', icon: ThermostatAuto, color: '#800048' },
@@ -164,6 +168,13 @@ const DEVICES: Record<
         icon: MdBlinds,
         color: '#00a28f',
         control: 'blinds',
+        controllable: true,
+    },
+    Button: {
+        label: 'Button/Scene',
+        icon: MdBlinds,
+        color: '#00a28f',
+        control: 'button',
         controllable: true,
     },
     ContactSensor: {
@@ -199,6 +210,9 @@ const DEVICES: Record<
         color: '#007a96',
         control: 'color',
     },
+    Rgb: { label: 'RGB(W)', icon: IoIosColorFilter, color: '#5a9600' },
+    RgbSingle: { label: 'RGB single', icon: IoIosColorFilter, color: '#5a9600' },
+    RgbwSingle: { label: 'RGBW single', icon: IoIosColorFilter, color: '#5a9600' },
     Ct: { label: 'Color temperature', icon: IoIosColorFilter, color: '#5a9600' },
     Lock: { label: 'Lock', icon: AiFillUnlock, color: '#c9030a' },
     Motion: { label: 'Motion', icon: CgMenuMotion, color: '#149100' },
@@ -956,12 +970,12 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                         title={CAPABILITIES[action].label + stateValue}
                         style={styles.actionSpan}
                     >
-                        <Icon style={{ ...style, color: CAPABILITIES[action].color, backgroundColor: valueColor }} />
+                        <Icon style={{ ...style, color: CAPABILITIES[action]?.color, backgroundColor: valueColor }} />
                         {valuePercent !== null ? (
-                            <span style={{ color: DEVICES[control.type].color }}>{valuePercent}</span>
+                            <span style={{ color: DEVICES[control.type]?.color }}>{valuePercent}</span>
                         ) : null}
                         {valueBrightness !== null ? (
-                            <span style={{ color: DEVICES[control.type].color }}>{valueBrightness}</span>
+                            <span style={{ color: DEVICES[control.type]?.color }}>{valueBrightness}</span>
                         ) : null}
                     </span>,
                 );
@@ -1487,7 +1501,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                     >
                         <ChevronRight style={expanded ? styles.devSubLineExpanded : undefined} />
                     </IconButton>
-                    {Icon ? <Icon style={{ ...styles.deviceSmallIcon, color: DEVICES[control.type].color }} /> : null}
+                    {Icon ? <Icon style={{ ...styles.deviceSmallIcon, color: DEVICES[control.type]?.color }} /> : null}
                     <div style={styles.devSubLineName}>
                         <div style={styles.devSubLineName1}>{I18n.t(control.type)}</div>
                         <div style={styles.devSubLineName2}>

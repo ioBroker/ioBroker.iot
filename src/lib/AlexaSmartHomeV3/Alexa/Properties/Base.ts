@@ -46,6 +46,7 @@ export class Base {
     protected _setId: string = '';
     protected _getId: string = '';
     #valuesRange: { min: number | boolean; max: number | boolean } = { min: 0, max: 100 };
+    protected _stateType: ioBroker.CommonType | undefined;
     #currentValue: ioBroker.StateValue | undefined;
     protected _alexaSetter?: (value: AlexaV3DirectiveValue) => ioBroker.StateValue | undefined;
     protected _alexaGetter?: (value: ioBroker.StateValue | undefined) => AlexaV3DirectiveValue;
@@ -68,6 +69,7 @@ export class Base {
             this.#setState = opts.setState;
             this._setId = opts.setState.id;
             this._getId = opts.getState?.id || this._setId;
+            this._stateType = opts.setState.common?.type;
             this.#valuesRange = configuredRangeOrDefault(this.#setState);
             this.#instance = opts.instance;
         }
