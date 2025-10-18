@@ -103,6 +103,12 @@ function getSmartNameFromObj(
             en: result,
         };
     }
+    // @ts-expect-error backwards compatibility
+    if (result === true) {
+        // Bug??
+        return undefined;
+    }
+
     return result;
 }
 
@@ -448,6 +454,9 @@ export async function controls(
             (adapter.config as IotAdapterConfig).noCommon,
         ) as SmartNameObject;
 
+        if (!smartName) {
+            continue;
+        }
         // try to convert the state to typeDetector format
         // "smartName": {
         //    "de": "Rote Lampe",
@@ -549,6 +558,7 @@ export async function controls(
                 }
             }
         }
+
         // convert alexa2 smartType to alexa 3
         if (smartName.smartType && SMART_TYPES[smartName.smartType]) {
             smartName.smartType = SMART_TYPES[smartName.smartType];
