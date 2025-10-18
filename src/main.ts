@@ -229,12 +229,12 @@ export class IotAdapter extends Adapter {
                             // Restart adapter after change - or we also add a set message to the config
                             if (obj.callback) {
                                 this.log.info('Request Alexa Custom known devices');
-                                if (this.alexaCustom) {
-                                    const devices = this.alexaCustom.getKnownDevices();
-                                    this.sendTo(obj.from, obj.command, devices, obj.callback);
-                                } else {
-                                    this.sendTo(obj.from, obj.command, { error: 'not activated' }, obj.callback);
-                                }
+                                this.sendTo(
+                                    obj.from,
+                                    obj.command,
+                                    this.alexaCustom ? this.alexaCustom.getKnownDevices() : { error: 'not activated' },
+                                    obj.callback,
+                                );
                             }
                             break;
 
@@ -244,12 +244,12 @@ export class IotAdapter extends Adapter {
                             // Restart adapter after change - or we also add a set message to the config
                             if (obj.callback) {
                                 this.log.info('Request Alexa Custom known users');
-                                if (this.alexaCustom) {
-                                    const users = this.alexaCustom.getKnownUsers();
-                                    this.sendTo(obj.from, obj.command, users, obj.callback);
-                                } else {
-                                    this.sendTo(obj.from, obj.command, { error: 'not activated' }, obj.callback);
-                                }
+                                this.sendTo(
+                                    obj.from,
+                                    obj.command,
+                                    this.alexaCustom ? this.alexaCustom.getKnownUsers() : { error: 'not activated' },
+                                    obj.callback,
+                                );
                             }
                             break;
 
@@ -941,7 +941,7 @@ export class IotAdapter extends Adapter {
                 this.log.error(`Error from Alexa events cloud: ${request.error}`);
             } else if (request && !request.header) {
                 if (this.alexaCustom) {
-                    return this.alexaCustom.process(request, this.config.amazonAlexa);
+                    return this.alexaCustom.process(request, this.config.amazonCustom);
                 }
                 return { error: 'Service is disabled' };
             } else {
@@ -1381,7 +1381,7 @@ export class IotAdapter extends Adapter {
                 this.log.info(
                     `Migrating amazonCustom configuration to ${this.config.amazonAlexa || this.config.amazonAlexaV3}`,
                 );
-                obj.native.amazonCustom = this.config.amazonAlexa || this.config.amazonAlexaV3;
+                obj.native.amazonCustom = !!(this.config.amazonAlexa || this.config.amazonAlexaV3);
                 await this.setForeignObjectAsync(`system.adapter.${this.namespace}`, obj);
                 return;
             }
