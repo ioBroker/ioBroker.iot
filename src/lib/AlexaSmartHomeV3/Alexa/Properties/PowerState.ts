@@ -2,12 +2,13 @@ import Base from './Base';
 import type { AlexaV3DirectiveName, AlexaV3DirectiveValue, AlexaV3Request } from '../../types';
 
 export default class PowerState extends Base {
-    static matches(event: AlexaV3Request): boolean {
-        return event?.directive?.header?.namespace === 'Alexa.PowerController';
-    }
-
     matches(event: AlexaV3Request): boolean {
-        return PowerState.matches(event);
+        const namespace = event?.directive?.header?.namespace;
+        return (
+            namespace === 'Alexa.PowerController' ||
+            (this._multiPurposeProperty && namespace === 'Alexa.PercentageController') ||
+            (this._multiPurposeProperty && namespace === 'Alexa.BrightnessController')
+        );
     }
 
     static get ON(): AlexaV3DirectiveName {
@@ -19,6 +20,26 @@ export default class PowerState extends Base {
     }
 
     alexaDirectiveValue(event: AlexaV3Request): AlexaV3DirectiveValue {
+        if (this._multiPurposeProperty && event.directive.header.namespace === 'Alexa.PercentageController') {
+            const percentage = event.directive.payload.percentage as number;
+            const min = this.valuesRangeMin as number;
+            const max = this.valuesRangeMax as number;
+            if (min === undefined || max === undefined) {
+                return percentage > 0 ? PowerState.ON : PowerState.OFF;
+            }
+            if (percentage > min) {
+                return PowerState.ON;
+            }
+            return PowerState.OFF;
+        }
+        if (this._multiPurposeProperty && event.directive.header.namespace === 'Alexa.BrightnessController') {
+            const percentage = event.directive.payload.brightness as number;
+            if (percentage) {
+                return PowerState.ON;
+            }
+            return PowerState.OFF;
+        }
+
         return event.directive.header.name === 'TurnOn' ? PowerState.ON : PowerState.OFF;
     }
 

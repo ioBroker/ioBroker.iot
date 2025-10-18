@@ -350,6 +350,9 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Better handling of dimmer in alexa v3
+
 ### 4.1.5 (2025-10-18)
 - (@GermanBluefox) Better handling of color temperatures
 

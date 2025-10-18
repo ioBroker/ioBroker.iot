@@ -4,7 +4,6 @@ const Device = require('../../../build/lib/AlexaSmartHomeV3/Device').default;
 const DeviceManager = require('../../../build/lib/AlexaSmartHomeV3/DeviceManager').default;
 const AdapterProvider = require('../../../build/lib/AlexaSmartHomeV3/Helpers/AdapterProvider').default;
 
-
 let deviceManager;
 let dimmerDeviceManager;
 let lightDeviceManager;
@@ -13,12 +12,12 @@ let light;
 let endpointId;
 let friendlyName;
 
-describe('AlexaSmartHomeV3 - Controls', function () {
+describe.only('AlexaSmartHomeV3 - Controls', function () {
     before(async function () {
         AdapterProvider.init(helpers.adapterMock());
     });
 
-    describe('Light', async function () {
+    describe.only('Light', async function () {
         before(function () {
             dimmer = helpers.dimmerControl();
             light = helpers.lightControl();
@@ -64,7 +63,7 @@ describe('AlexaSmartHomeV3 - Controls', function () {
         });
     });
 
-    describe('Dimmer', async function () {
+    describe.only('Dimmer', async function () {
         it('Dimmer respects values range on setting brightness', async function () {
             const event = await helpers.getSample(
                 'BrightnessController/BrightnessController.SetBrightness.request.json',
@@ -73,13 +72,18 @@ describe('AlexaSmartHomeV3 - Controls', function () {
             assert.notEqual(d, undefined);
             assert.equal(d instanceof Device, true);
             const response = await d.handle(event);
+            const idDimmer = helpers.getConfigForName('SET', helpers.dimmerConfig());
+            const stateValue = await AdapterProvider.getState(idDimmer);
+            assert.equal(stateValue, 875);
             assert.equal(
                 response.context.properties[0].namespace,
                 'Alexa.BrightnessController',
                 'Properties Namespace!',
             );
-            assert.equal(response.context.properties[0].name, 'brightness', 'Properties Name!');
-            assert.equal(response.context.properties[0].value, 75, 'Value!');
+            assert.equal(response.context.properties[0].name, 'powerState', 'Properties Name!');
+            assert.equal(response.context.properties[0].value, 'ON', 'Value!');
+            assert.equal(response.context.properties[1].name, 'brightness', 'Properties Name!');
+            assert.equal(response.context.properties[1].value, 75, 'Value!');
 
             // (1000 - 500) * 0,75 + 500 = 875
             assert.equal(d.controls[0].supported[1].properties[0].currentValue, 875);
@@ -112,6 +116,76 @@ describe('AlexaSmartHomeV3 - Controls', function () {
             assert.equal(response.context.properties[1].namespace, 'Alexa.BrightnessController');
             assert.equal(response.context.properties[1].name, 'brightness');
             assert.equal(response.context.properties[1].value, 75);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+        });
+
+        it('Dimmer could process turn off event', async function () {
+            const event = await helpers.getSample(
+                'PowerController/PowerController.TurnOff.request.json',
+            );
+            const d = dimmerDeviceManager.endpointById(event.directive.endpoint.endpointId);
+            assert.notEqual(d, undefined);
+            assert.equal(d instanceof Device, true);
+            const response = await d.handle(event);
+            const idDimmer = helpers.getConfigForName('SET', helpers.dimmerConfig());
+            const stateValue = await AdapterProvider.getState(idDimmer);
+            assert.equal(stateValue, 500);
+            assert.equal(
+                response.context.properties[0].namespace,
+                'Alexa.PowerController',
+                'Properties Namespace!',
+            );
+            assert.equal(response.context.properties[0].name, 'powerState', 'Properties Name!');
+            assert.equal(response.context.properties[0].value, 'OFF', 'Value!');
+            assert.equal(response.context.properties[1].name, 'brightness', 'Properties Name!');
+            assert.equal(response.context.properties[1].value, 0, 'Value!');
+
+            // (1000 - 500) * 0,75 + 500 = 875
+            assert.equal(d.controls[0].supported[1].properties[0].currentValue, 500);
+
+            assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
+            assert.equal(response.event.header.name, 'Response', 'Namespace!');
+            assert.equal(
+                response.event.header.correlationToken,
+                event.directive.header.correlationToken,
+                'Correlation Token!',
+            );
+            assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+        });
+
+        it('Dimmer could process turn on event', async function () {
+            const event = await helpers.getSample(
+                'PowerController/PowerController.TurnOn.request.json',
+            );
+            const d = dimmerDeviceManager.endpointById(event.directive.endpoint.endpointId);
+            assert.notEqual(d, undefined);
+            assert.equal(d instanceof Device, true);
+            const response = await d.handle(event);
+            const idDimmer = helpers.getConfigForName('SET', helpers.dimmerConfig());
+            const stateValue = await AdapterProvider.getState(idDimmer);
+            assert.equal(stateValue, 900);
+            assert.equal(
+                response.context.properties[0].namespace,
+                'Alexa.PowerController',
+                'Properties Namespace!',
+            );
+            assert.equal(response.context.properties[0].name, 'powerState', 'Properties Name!');
+            assert.equal(response.context.properties[0].value, 'ON', 'Value!');
+            assert.equal(response.context.properties[1].name, 'brightness', 'Properties Name!');
+            assert.equal(response.context.properties[1].value, 80, 'Value!');
+
+            // (1000 - 500) * 0,75 + 500 = 875
+            assert.equal(d.controls[0].supported[1].properties[0].currentValue, 900);
+
+            assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
+            assert.equal(response.event.header.name, 'Response', 'Namespace!');
+            assert.equal(
+                response.event.header.correlationToken,
+                event.directive.header.correlationToken,
+                'Correlation Token!',
+            );
+            assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
             assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
         });
     });
@@ -969,6 +1043,190 @@ describe('AlexaSmartHomeV3 - Controls', function () {
             assert.equal(response.context.properties[3].namespace, 'Alexa.PowerController');
             assert.equal(response.context.properties[3].name, 'powerState');
             assert.equal(response.context.properties[3].value, 'ON');
+        });
+    });
+
+    describe('Dimmer with power', async function () {
+        before(async function () {
+            endpointId = 'endpoint-001';
+            friendlyName = 'some-friendly-name';
+            const idLevel = helpers.getConfigForName('SET', helpers.dimmerWithPowerConfig());
+            const idPower = helpers.getConfigForName('ON_SET', helpers.dimmerWithPowerConfig());
+            await AdapterProvider.setState(idPower, false, true);
+            await AdapterProvider.setState(idLevel, 510, true);
+
+            deviceManager = new DeviceManager();
+            deviceManager.addDevice(
+                new Device({
+                    id: endpointId,
+                    friendlyName,
+                    controls: [helpers.dimmerWithPowerControl()],
+                }),
+            );
+        });
+
+        it('Dimmer with power reports state', async function () {
+            const event = await helpers.getSample('StateReport/ReportState.json');
+            const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+            assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
+            assert.equal(response.event.header.name, 'StateReport', 'Name!');
+            assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, 'Name!');
+            assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+
+            assert.equal(response.context.properties.length, 2);
+
+            assert.equal(response.context.properties[0].namespace, 'Alexa.PowerController');
+            assert.equal(response.context.properties[0].name, 'powerState');
+            //
+            assert.equal(response.context.properties[0].value, 'OFF');
+
+            assert.equal(response.context.properties[1].namespace, 'Alexa.BrightnessController');
+            assert.equal(response.context.properties[1].name, 'brightness');
+            assert.equal(response.context.properties[1].value, 2);
+        });
+
+        it('Dimmer with power goes ON if brightness is set to non zero value', async function () {
+            const event = await helpers.getSample(
+                'BrightnessController/BrightnessController.SetBrightness.request.json',
+            );
+            const d = deviceManager.endpointById(event.directive.endpoint.endpointId);
+            assert.notEqual(d, undefined);
+            assert.equal(d instanceof Device, true);
+            let response = await d.handle(event);
+            const idLevel = helpers.getConfigForName('SET', helpers.dimmerWithPowerConfig());
+            const idPower = helpers.getConfigForName('ON_SET', helpers.dimmerWithPowerConfig());
+            let valueState = await AdapterProvider.getState(idPower);
+            assert.equal(valueState, true, 'Value!');
+            valueState = await AdapterProvider.getState(idLevel);
+            assert.equal(valueState, 875, 'Value!');
+
+            assert.equal(
+                response.context.properties[0].namespace,
+                'Alexa.BrightnessController',
+                'Properties Namespace!',
+            );
+            assert.equal(response.context.properties[0].name, 'powerState', 'Properties Name!');
+            assert.equal(response.context.properties[0].value, 'ON', 'Value!');
+            assert.equal(response.context.properties[1].name, 'brightness', 'Properties Name!');
+            assert.equal(response.context.properties[1].value, 75, 'Value!');
+
+            assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
+            assert.equal(response.event.header.name, 'Response', 'Namespace!');
+            assert.equal(
+                response.event.header.correlationToken,
+                event.directive.header.correlationToken,
+                'Correlation Token!',
+            );
+            assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+        });
+
+        it('Dimmer with power goes OFF if brightness is set to zero value', async function () {
+            const event = await helpers.getSample(
+                'BrightnessController/BrightnessController.SetBrightness.request.json',
+            );
+            event.directive.payload.brightness = 0;
+            const d = deviceManager.endpointById(event.directive.endpoint.endpointId);
+            assert.notEqual(d, undefined);
+            assert.equal(d instanceof Device, true);
+            let response = await d.handle(event);
+            const idLevel = helpers.getConfigForName('SET', helpers.dimmerWithPowerConfig());
+            const idPower = helpers.getConfigForName('ON_SET', helpers.dimmerWithPowerConfig());
+            let valueState = await AdapterProvider.getState(idPower);
+            assert.equal(valueState, false, 'Value!');
+            valueState = await AdapterProvider.getState(idLevel);
+            assert.equal(valueState, 500, 'Value!');
+
+            assert.equal(
+                response.context.properties[0].namespace,
+                'Alexa.BrightnessController',
+                'Properties Namespace!',
+            );
+            assert.equal(response.context.properties[0].name, 'powerState', 'Properties Name!');
+            assert.equal(response.context.properties[0].value, 'OFF', 'Value!');
+            assert.equal(response.context.properties[1].name, 'brightness', 'Properties Name!');
+            assert.equal(response.context.properties[1].value, 0, 'Value!');
+
+            assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
+            assert.equal(response.event.header.name, 'Response', 'Namespace!');
+            assert.equal(
+                response.event.header.correlationToken,
+                event.directive.header.correlationToken,
+                'Correlation Token!',
+            );
+            assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+        });
+
+        it('Brightness in dimmer with power goes ON if dimmer is turned on', async function () {
+            const event = await helpers.getSample(
+                'PowerController/PowerController.TurnOn.request.json',
+            );
+            const d = deviceManager.endpointById(event.directive.endpoint.endpointId);
+            assert.notEqual(d, undefined);
+            assert.equal(d instanceof Device, true);
+            let response = await d.handle(event);
+            const idLevel = helpers.getConfigForName('SET', helpers.dimmerWithPowerConfig());
+            const idPower = helpers.getConfigForName('ON_SET', helpers.dimmerWithPowerConfig());
+            let valueState = await AdapterProvider.getState(idPower);
+            assert.equal(valueState, true, 'Value!');
+            valueState = await AdapterProvider.getState(idLevel);
+            // 80% of 1023 = 818.4 ~ 900
+            assert.equal(valueState, 900, 'Value!');
+
+            assert.equal(
+                response.context.properties[0].namespace,
+                'Alexa.PowerController',
+                'Properties Namespace!',
+            );
+            assert.equal(response.context.properties[0].name, 'powerState', 'Properties Name!');
+            assert.equal(response.context.properties[0].value, 'ON', 'Value!');
+            assert.equal(response.context.properties[1].name, 'brightness', 'Properties Name!');
+            assert.equal(response.context.properties[1].value, 80, 'Value!');
+
+            assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
+            assert.equal(response.event.header.name, 'Response', 'Namespace!');
+            assert.equal(
+                response.event.header.correlationToken,
+                event.directive.header.correlationToken,
+                'Correlation Token!',
+            );
+            assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+        });
+
+        it('Brightness in dimmer with power goes OFF if dimmer is turned off', async function () {
+            const event = await helpers.getSample(
+                'PowerController/PowerController.TurnOff.request.json',
+            );
+            const d = deviceManager.endpointById(event.directive.endpoint.endpointId);
+            assert.notEqual(d, undefined);
+            assert.equal(d instanceof Device, true);
+            let response = await d.handle(event);
+            const idLevel = helpers.getConfigForName('SET', helpers.dimmerWithPowerConfig());
+            const idPower = helpers.getConfigForName('ON_SET', helpers.dimmerWithPowerConfig());
+            let valueState = await AdapterProvider.getState(idPower);
+            assert.equal(valueState, false, 'Value!');
+            valueState = await AdapterProvider.getState(idLevel);
+            // 80% of 1023 = 818.4 ~ 900
+            assert.equal(valueState, 500, 'Value!');
+
+            assert.equal(
+                response.context.properties[0].namespace,
+                'Alexa.PowerController',
+                'Properties Namespace!',
+            );
+            assert.equal(response.context.properties[0].name, 'powerState', 'Properties Name!');
+            assert.equal(response.context.properties[0].value, 'OFF', 'Value!');
+            assert.equal(response.context.properties[1].name, 'brightness', 'Properties Name!');
+            assert.equal(response.context.properties[1].value, 0, 'Value!');
+
+            assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
+            assert.equal(response.event.header.name, 'Response', 'Namespace!');
+            assert.equal(
+                response.event.header.correlationToken,
+                event.directive.header.correlationToken,
+                'Correlation Token!',
+            );
+            assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
         });
     });
 });

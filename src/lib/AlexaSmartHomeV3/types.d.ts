@@ -116,16 +116,20 @@ export type AlexaV3DirectiveType =
 
 export type AlexaV3Namespace =
     | 'Alexa'
-    | 'Alexa.TemperatureSensor'
-    | 'Alexa.ThermostatController'
+    | 'Alexa.BrightnessController'
+    | 'Alexa.ColorController'
     | 'Alexa.ColorTemperatureController'
-    | 'Alexa.PowerController'
-    | 'Alexa.MotionSensor'
-    | 'Alexa.LockController'
-    | 'Alexa.Speaker'
-    | 'Alexa.EndpointHealth'
     | 'Alexa.ContactSensor'
-    | 'Alexa.SceneController';
+    | 'Alexa.EndpointHealth'
+    | 'Alexa.LockController'
+    | 'Alexa.ModeController'
+    | 'Alexa.MotionSensor'
+    | 'Alexa.PercentageController'
+    | 'Alexa.PowerController'
+    | 'Alexa.SceneController'
+    | 'Alexa.Speaker'
+    | 'Alexa.TemperatureSensor'
+    | 'Alexa.ThermostatController';
 
 // Basis Header
 export interface AlexaV3Header {
@@ -160,6 +164,7 @@ type AlexaV3Payload = {
         brightness: number;
     };
     brightness?: number;
+    brightnessDelta?: number;
     colorTemperatureInKelvin?: number;
     mode?: string; // e.g. "WashCycle.Normal" or "Washer.WashTemperature"
     modeDelta?: number;
@@ -193,7 +198,6 @@ type AlexaV3Payload = {
         value: number;
         scale: 'CELSIUS' | 'FAHRENHEIT';
     };
-    brightnessDelta?: number;
     change?: {
         cause: {
             type:

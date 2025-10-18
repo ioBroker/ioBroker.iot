@@ -137,11 +137,13 @@ export default class Control {
         this.log.debug(`handling Alexa event`);
         this.log.silly(`${JSON.stringify(event)}`);
 
-        const property = this.allCapabilities
+        const properties = this.allCapabilities
             .flatMap(item => item.properties)
-            .find(property => property.matches(event));
+            .filter(property => property.matches(event));
 
-        if (property) {
+        let response: AlexaResponse | null = null;
+
+        for (const property of properties) {
             let alexaValue: AlexaV3DirectiveValue;
             try {
                 const setter = this.valueSetter(event);
@@ -170,18 +172,27 @@ export default class Control {
                 );
             }
 
-            const response = AlexaResponse.handled(
-                event,
-                property.propertyName,
-                property.reportValue(alexaValue),
-                property.instance,
-            );
+            if (!response) {
+                response = AlexaResponse.handled(
+                    event,
+                    property.propertyName,
+                    property.reportValue(alexaValue),
+                    property.instance,
+                );
+            } else {
+                response.addContextProperty({
+                    namespace: event?.directive?.header?.namespace,
+                    name: property.propertyName,
+                    instance: property.instance,
+                    value: property.reportValue(alexaValue),
+                });
+            }
 
             // though the processed directive required to change a single value, the response must contain values of all "relevant" properties
             // Please refer to this for details: https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-thermostatcontroller.html#settargettemperature-response-event
+        }
 
-            // TODO: add values of relevant properties to response
-
+        if (response) {
             this.log.silly(`${JSON.stringify(response.get())}`);
             return response.get();
         }

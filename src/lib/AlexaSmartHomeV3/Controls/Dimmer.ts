@@ -5,13 +5,8 @@ import { configuredRangeOrDefault, denormalize_0_100, normalize_0_100 } from '..
 import PowerState from '../Alexa/Properties/PowerState';
 import Brightness from '../Alexa/Properties/Brightness';
 import AdapterProvider from '../Helpers/AdapterProvider';
-import type {
-    AlexaV3Category,
-    AlexaV3DirectiveValue,
-    IotExternalDetectorState,
-    IotExternalPatternControl,
-} from '../types';
-import type { Base as PropertiesBase } from '../Alexa/Properties/Base';
+import type { AlexaV3Category, AlexaV3DirectiveValue, IotExternalPatternControl } from '../types';
+import type { Base as PropertiesBase, ControlStateInitObject } from '../Alexa/Properties/Base';
 
 export default class Dimmer extends AdjustableControl {
     private readonly _powerControllerCapability: PowerController;
@@ -19,7 +14,6 @@ export default class Dimmer extends AdjustableControl {
     private readonly _brightnessCapability: BrightnessController;
     private readonly _brightness: Brightness;
     private readonly _offValue: number;
-    private valueOn: number | null = null;
 
     constructor(detectedControl: IotExternalPatternControl) {
         super(detectedControl);
@@ -49,59 +43,6 @@ export default class Dimmer extends AdjustableControl {
         // set the property itself
         await AdapterProvider.setState(property.setId, value);
         property.currentValue = value;
-        const valuesRange = configuredRangeOrDefault(this.states[this.statesMap.set]!);
-
-        if (property.propertyName === Brightness.propertyName) {
-            // remember last brightness > 0
-            if ((value as number) >= this._offValue) {
-                this.valueOn = value as number;
-            }
-        }
-
-        if (property.propertyName === PowerState.propertyName) {
-            // set brightness
-            if (value) {
-                const smartName = this.states[this.statesMap.set]!.smartName;
-                let byOn: string | number | undefined | null;
-                if (smartName && typeof smartName === 'object') {
-                    byOn = smartName.byON;
-                }
-                // set byOn to the configured value or 100 otherwise
-                if (byOn === undefined || byOn === null || isNaN(byOn as number)) {
-                    if (this.valueOn !== null && byOn === 'stored') {
-                        await AdapterProvider.setState(this._brightness.setId, this.valueOn);
-                        this._brightness.currentValue = this.valueOn;
-                    } else {
-                        this.valueOn = valuesRange.max as number;
-                        await AdapterProvider.setState(this._brightness.setId, valuesRange.max as number);
-                        this._brightness.currentValue = valuesRange.max as number;
-                    }
-                } else {
-                    // byOn is in percent, so convert it to the configured range
-                    byOn = denormalize_0_100(
-                        parseFloat(byOn as string),
-                        valuesRange.min as number,
-                        valuesRange.max as number,
-                    );
-                    this.valueOn = byOn as number;
-                    await AdapterProvider.setState(this._brightness.setId, byOn as number);
-                    this._brightness.currentValue = byOn;
-                }
-            } else {
-                // set brightness to 0 on power OFF
-                await AdapterProvider.setState(this._brightness.setId, valuesRange.min);
-                this._brightness.currentValue = valuesRange.min;
-            }
-        } else {
-            // set power
-            const powerValue = ((value || 0) as number) > this._offValue;
-
-            // only do this on different IDs for brightness and power
-            if (this._brightness.setId !== this._powerState.setId) {
-                await AdapterProvider.setState(this._powerState.setId, powerValue);
-            }
-            this._powerState.currentValue = powerValue;
-        }
     }
 
     async getOrRetrieveCurrentValue(property: PropertiesBase): Promise<ioBroker.StateValue> {
@@ -121,12 +62,7 @@ export default class Dimmer extends AdjustableControl {
         return property.currentValue;
     }
 
-    private composeInitObjectPowerState(): {
-        setState: IotExternalDetectorState;
-        getState: IotExternalDetectorState;
-        alexaSetter?: (alexaValue: AlexaV3DirectiveValue) => ioBroker.StateValue | undefined;
-        alexaGetter?: (value: ioBroker.StateValue | undefined) => AlexaV3DirectiveValue;
-    } {
+    private composeInitObjectPowerState(): ControlStateInitObject {
         const map = this.statesMap;
         return {
             setState: this.states[map.on_set] || this.states[map.set]!,
@@ -137,15 +73,11 @@ export default class Dimmer extends AdjustableControl {
             alexaGetter: function (value: ioBroker.StateValue | undefined): AlexaV3DirectiveValue {
                 return value ? PowerState.ON : PowerState.OFF;
             },
+            multiPurposeProperty: true, // Could handle brightness events
         };
     }
 
-    private composeInitObjectBrightness(): {
-        setState: IotExternalDetectorState;
-        getState: IotExternalDetectorState;
-        alexaSetter?: (alexaValue: AlexaV3DirectiveValue) => ioBroker.StateValue | undefined;
-        alexaGetter?: (value: ioBroker.StateValue | undefined) => AlexaV3DirectiveValue;
-    } {
+    private composeInitObjectBrightness(): ControlStateInitObject {
         /*
             Device of type 'dimmer' can be switched 'ON'/'OFF' and its brightness can be set to a value between 0 and 100.
 
@@ -173,6 +105,8 @@ export default class Dimmer extends AdjustableControl {
             ): AlexaV3DirectiveValue {
                 return normalize_0_100(value as number, this.valuesRangeMin as number, this.valuesRangeMax as number);
             },
+            multiPurposeProperty: true, // Could handle powerState events
+            offValue: parseInt(AdapterProvider.get().config.deviceOffLevel as string, 10) || 30,
         };
     }
 }

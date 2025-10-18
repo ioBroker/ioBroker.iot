@@ -344,7 +344,7 @@ export async function controls(
 
     // every member of a function enumeration is added to the list of ids to inspect
     functionalities.forEach(functionEnumItem => {
-        functionEnumItem.common.members?.forEach(id => {
+        functionEnumItem?.common?.members?.forEach(id => {
             if (!devicesObject[id]) {
                 // Enum has unknown member
                 return;
@@ -357,12 +357,26 @@ export async function controls(
 
             const objType = devicesObject[id].type;
             if (
-                devicesObject[id]?.common &&
+                devicesObject[id].common &&
                 (objType === 'state' || objType === 'channel' || objType === 'device') &&
                 !list.includes(id) &&
                 smartName !== false // if the device is not disabled
             ) {
-                list.push(id);
+                const channelId = getChannelId(id, devicesObject);
+                if (channelId) {
+                    if (!list.includes(channelId)) {
+                        const deviceId = getDeviceId(id, devicesObject);
+                        if (deviceId) {
+                            if (!list.includes(deviceId)) {
+                                list.push(id);
+                            }
+                        } else {
+                            list.push(id);
+                        }
+                    }
+                } else {
+                    list.push(id);
+                }
             }
         });
     });
@@ -380,7 +394,7 @@ export async function controls(
             );
             const objType = devicesObject[id].type;
             if (
-                devicesObject[id]?.common &&
+                devicesObject[id].common &&
                 (objType === 'state' || objType === 'channel' || objType === 'device') &&
                 !list.includes(id) &&
                 smartName !== false // if the device is not disabled
@@ -441,6 +455,7 @@ export async function controls(
         _usedIdsOptional: usedIds,
         ignoreIndicators,
         excludedTypes,
+        detectParent: true,
         id: '', // this will be set for each id in the list
     };
 

@@ -227,6 +227,14 @@ const Helpers = {
         return new Controls.Socket(require('./Resources/power.json'));
     },
 
+    dimmerWithPowerConfig: function () {
+        return require('./Resources/dimmerWithPower.json');
+    },
+
+    dimmerWithPowerControl: function () {
+        return new Controls.Dimmer(Helpers.dimmerWithPowerConfig());
+    },
+
     dimmerConfig: function () {
         return require('./Resources/dimmer.json');
     },

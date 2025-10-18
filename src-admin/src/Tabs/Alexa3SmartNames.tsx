@@ -953,14 +953,14 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                             style = { ...style, ...styles.deviceOff };
                         }
                     } else if (state?.name === 'percentage') {
-                        valuePercent = `${state.value === null ? '--' : state.value}%`;
+                        valuePercent = `${state.value === null ? '--' : Math.round(state.value * 100) / 100}%`;
                     } else if (state?.name === 'brightness') {
-                        valueBrightness = state.value === null ? '--' : state.value;
+                        valueBrightness = state.value === null ? '--' : Math.round(state.value * 100) / 100;
                     } else if (state?.name === 'color') {
                         valueColor = `hsl(${state.value}, 50%, 50%)`;
                     }
                     if (state?.value && typeof state.value === 'object') {
-                        state.value = `${state.value.value} ${state.value.scale === 'CELSIUS' ? '°C' : state.value.scale}`;
+                        state.value = `${Math.round(state.value.value * 100) / 100} ${state.value.scale === 'CELSIUS' ? '°C' : state.value.scale}`;
                     }
                 }
                 const stateValue = state
@@ -1057,14 +1057,14 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                                 style = { ...style, ...styles.deviceOff };
                             }
                         } else if (state?.name === 'percentage') {
-                            valuePercent = `${state.value === null ? '--' : state.value}%`;
+                            valuePercent = `${state.value === null ? '--' : Math.round(state.value * 100) / 100}%`;
                         } else if (state?.name === 'brightness') {
-                            valueBrightness = state.value === null ? '--' : state.value;
+                            valueBrightness = state.value === null ? '--' : Math.round(state.value * 100) / 100;
                         } else if (state?.name === 'color') {
                             valueColor = `hsl(${state.value}, 100%, 50%)`;
                         }
                         if (state?.value && typeof state.value === 'object') {
-                            state.value = `${state.value.value} ${state.value.scale === 'CELSIUS' ? '°C' : state.value.scale}`;
+                            state.value = `${Math.round(state.value.value * 100) / 100}} ${state.value.scale === 'CELSIUS' ? '°C' : state.value.scale}`;
                         }
                     }
                     const stateValue = state
@@ -1152,7 +1152,9 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
             const state = Object.values(control.states)[0];
             // get first id
             const byON =
-                state?.smartName === 'object' ? (state?.smartName as SmartNameObject)?.byON || undefined : undefined;
+                typeof state?.smartName === 'object'
+                    ? (state.smartName as SmartNameObject)?.byON || undefined
+                    : undefined;
             // type = '-', 'stored', false or number [5-100]
             const items = [
                 <MenuItem
@@ -1341,7 +1343,11 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                             valueStr = (
                                 <span>
                                     <span style={stateValue.ack ? styles.stateValueAck : styles.stateValueNoAck}>
-                                        {String(stateValue.val)}
+                                        {String(
+                                            typeof stateValue.val === 'number'
+                                                ? Math.round(stateValue.val * 1000) / 1000
+                                                : stateValue.val,
+                                        )}
                                     </span>
                                     <span style={{ opacity: 0.7, fontSize: 'smaller' }}>{unit}</span>
                                 </span>
@@ -1349,7 +1355,11 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                         } else {
                             valueStr = (
                                 <span style={stateValue.ack ? styles.stateValueAck : styles.stateValueNoAck}>
-                                    {String(stateValue.val)}{' '}
+                                    {String(
+                                        typeof stateValue.val === 'number'
+                                            ? Math.round(stateValue.val * 1000) / 1000
+                                            : stateValue.val,
+                                    )}
                                 </span>
                             );
                         }

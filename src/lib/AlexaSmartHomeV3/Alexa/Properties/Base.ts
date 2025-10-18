@@ -11,6 +11,9 @@ export type ControlStateInitObject = {
     getState?: IotExternalDetectorState;
     alexaSetter?: (alexaValue: AlexaV3DirectiveValue) => ioBroker.StateValue | undefined;
     alexaGetter?: (value: ioBroker.StateValue | undefined) => AlexaV3DirectiveValue;
+    multiPurposeProperty?: boolean;
+    // Level below which the dimmer or percent based control means "off"
+    offValue?: number;
 
     // Extra for Hue control
     hal?: {
@@ -52,6 +55,8 @@ export class Base {
     protected _alexaGetter?: (value: ioBroker.StateValue | undefined) => AlexaV3DirectiveValue;
     #instance?: string;
     protected _supportedModesAsEnum: Record<string, number | string> = {};
+    protected _multiPurposeProperty: boolean = false;
+    protected _offValue: number = 30;
 
     /**
      * @param opts The object to initialize the corresponding ioBroker state.
@@ -66,7 +71,9 @@ export class Base {
             if (!opts.setState) {
                 throw new Error(`missing setState in ${this.constructor.name}`);
             }
+            this._multiPurposeProperty = !!opts.multiPurposeProperty;
             this.#setState = opts.setState;
+            this._offValue = opts.offValue || 30;
             this._setId = opts.setState.id;
             this._getId = opts.getState?.id || this._setId;
             this._stateType = opts.setState.common?.type;
@@ -84,6 +91,10 @@ export class Base {
 
     get instance(): string | undefined {
         return this.#instance;
+    }
+
+    getSetState(): IotExternalDetectorState | null {
+        return this.#setState;
     }
 
     get propertyName(): string {
