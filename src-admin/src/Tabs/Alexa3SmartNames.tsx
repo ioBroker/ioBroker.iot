@@ -468,6 +468,7 @@ interface Alexa3SmartNamesState {
         originalType: string | null;
         originalName: string;
         objectName: string;
+        isAfterAdd: boolean;
     };
     deleteId: string;
 
@@ -847,6 +848,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
     }
 
     onEdit(id: string, devices?: AlexaSH3DeviceDescription[]): boolean {
+        const isAfterAdd = !!devices;
         devices ||= this.state.devices;
         const device = devices.find(dev =>
             dev.controls.find(control =>
@@ -875,6 +877,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                             originalType: null,
                             originalName: this.editedSmartName,
                             objectName: Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() }),
+                            isAfterAdd,
                         },
                     });
                 }
@@ -960,7 +963,9 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                         state.value = `${state.value.value} ${state.value.scale === 'CELSIUS' ? '°C' : state.value.scale}`;
                     }
                 }
-                const stateValue = state ? ` - ${state.value === null ? '--' : state.value}` : '';
+                const stateValue = state
+                    ? ` - ${state.value === null || state.value === undefined ? '--' : state.value}`
+                    : '';
 
                 actions.push(
                     <span
@@ -1034,7 +1039,6 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
         dev.controls.forEach((control, i) => {
             if (!usedTypes.includes(control.type)) {
                 usedTypes.push(control.type);
-
                 if (DEVICES[control.type]) {
                     const Icon = DEVICES[control.type].icon;
                     let style = styles.actionSpan;
@@ -1063,7 +1067,9 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                             state.value = `${state.value.value} ${state.value.scale === 'CELSIUS' ? '°C' : state.value.scale}`;
                         }
                     }
-                    const stateValue = state ? ` - ${state.value === null ? '--' : state.value}` : '';
+                    const stateValue = state
+                        ? ` - ${state.value === null || state.value === undefined ? '--' : state.value}`
+                        : '';
 
                     const currentType = (
                         <span
@@ -1711,6 +1717,11 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                 aria-describedby="message-dialog-description"
             >
                 <DialogTitle id="message-dialog-title">
+                    {this.state.edit.isAfterAdd ? (
+                        <div>
+                            {I18n.t('The device was added. You can set a smart name now or just keep the current.')}
+                        </div>
+                    ) : null}
                     {this.props.title || I18n.t('Smart name for %s', this.state.edit.objectName)}
                 </DialogTitle>
                 <DialogContent>
@@ -1760,7 +1771,10 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                         startIcon={<IconClose />}
                         color="grey"
                     >
-                        {I18n.t('Cancel')}
+                        {this.state.edit.originalName === this.state.edit.name &&
+                        (this.state.edit.type || null) === (this.state.edit.originalType || null)
+                            ? I18n.t('Close')
+                            : I18n.t('Cancel')}
                     </Button>
                 </DialogActions>
             </Dialog>

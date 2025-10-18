@@ -15,12 +15,20 @@ import PowerState from '../Alexa/Properties/PowerState';
 import type { Base as PropertiesBase } from '../Alexa/Properties/Base';
 
 export default class Thermostat extends AdjustableControl {
+    private readonly _temperatureSensor: TemperatureSensor | null = null;
+
     constructor(detectedControl: IotExternalPatternControl) {
         super(detectedControl);
+
+        const temperatureSensorConfig = this.composeInitObjectTemperature();
         this._supported = [
-            new TemperatureSensor(this.composeInitObjectTemperature()),
             new ThermostatController(this.composeInitObjectThermostatMode(), this.composeInitObjectTargetSetpoint()),
         ];
+        if (temperatureSensorConfig) {
+            this._temperatureSensor = new TemperatureSensor(temperatureSensorConfig);
+            this._supported.push(this._temperatureSensor);
+        }
+
         const map = this.statesMap;
 
         // if the state POWER is present, then we can switch it ON/OFF
@@ -30,7 +38,10 @@ export default class Thermostat extends AdjustableControl {
     }
 
     get categories(): AlexaV3Category[] {
-        return ['THERMOSTAT', 'TEMPERATURE_SENSOR'];
+        if (this._temperatureSensor) {
+            return ['THERMOSTAT', 'TEMPERATURE_SENSOR'];
+        }
+        return ['THERMOSTAT'];
     }
 
     adjustableProperties(): (typeof PropertiesBase)[] {
@@ -62,11 +73,15 @@ export default class Thermostat extends AdjustableControl {
         getState: IotExternalDetectorState;
         alexaSetter?: (alexaValue: AlexaV3DirectiveValue) => ioBroker.StateValue | undefined;
         alexaGetter?: (value: ioBroker.StateValue | undefined) => AlexaV3DirectiveValue;
-    } {
+    } | null {
         const map = this.statesMap;
+        const detectorState = this.states[map.actual];
+        if (!detectorState) {
+            return null;
+        }
         return {
-            setState: this.states[map.set]!,
-            getState: this.states[map.actual] || this.states[map.set]!,
+            setState: detectorState,
+            getState: detectorState,
         };
     }
 
@@ -79,7 +94,7 @@ export default class Thermostat extends AdjustableControl {
         const map = this.statesMap;
         return {
             setState: this.states[map.set]!,
-            getState: this.states[map.actual] || this.states[map.set]!,
+            getState: this.states[map.set]!,
             alexaSetter: function (this: PropertiesBase, alexaValue: AlexaV3DirectiveValue): ioBroker.StateValue {
                 return ensureValueInRange(
                     alexaValue as number,

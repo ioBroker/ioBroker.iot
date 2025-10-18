@@ -228,44 +228,39 @@ export default class DeviceManager {
                     .filter(id => id),
             );
             this.log.debug(`registering for updates of total ${stateIds.size} states`);
-            const promises = [];
             const newSubscribed = Array.from(stateIds);
-            // subscribe to updates
+            const subscribe: string[] = [];
             for (const id of newSubscribed) {
                 this.log.silly(`subscribing to updates of ${id}`);
                 if (!this.subscribed.includes(id)) {
                     this.subscribed.push(id);
-                    promises.push(AdapterProvider.subscribe(id));
+                    if (!subscribe.includes(id)) {
+                        subscribe.push(id);
+                    }
                 }
             }
 
             this.subscribed.sort();
 
             // wait till all promises are settled
-            const results = await Promise.allSettled(promises);
+            if (subscribe.length) {
+                await AdapterProvider.subscribe(subscribe);
+            }
 
             // unsubscribe from unused states
+            const unsubscribe: string[] = [];
             for (let i = this.subscribed.length - 1; i >= 0; i--) {
                 const id = this.subscribed[i];
                 if (!newSubscribed.includes(id)) {
                     this.log.silly(`unsubscribing from updates of ${id}`);
                     this.subscribed.splice(i, 1);
-                    await AdapterProvider.unsubscribe(id);
+                    if (!unsubscribe.includes(id)) {
+                        unsubscribe.push(id);
+                    }
                 }
             }
-
-            const failedReasons = results.filter(item => item.status !== 'fulfilled').flatMap(item => item.reason);
-            if (failedReasons.length) {
-                this.log.debug(`failed to subscribe for updates of ${failedReasons.length} states`);
-                try {
-                    for (const reason of failedReasons) {
-                        this.log.silly(
-                            `failed subscribing: ${typeof reason === 'string' ? reason : JSON.stringify(reason)}`,
-                        );
-                    }
-                } catch {
-                    // nop
-                }
+            if (unsubscribe.length) {
+                await AdapterProvider.unsubscribe(unsubscribe);
             }
         } catch (e) {
             this.log.error(`failed to collect devices: ${e}`);

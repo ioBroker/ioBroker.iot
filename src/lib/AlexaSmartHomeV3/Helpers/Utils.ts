@@ -457,6 +457,10 @@ export async function controls(
         if (!smartName) {
             continue;
         }
+        options.id = id;
+        // Try to detect with typeDetector
+        let controls = detector.detect(options);
+
         // try to convert the state to typeDetector format
         // "smartName": {
         //    "de": "Rote Lampe",
@@ -465,9 +469,6 @@ export async function controls(
         //  }
         if (!smartName.smartType) {
             // by default,
-            // Try to detect with typeDetector
-            options.id = id;
-            const controls = detector.detect(options);
             if (controls && controls.length > 0) {
                 // take the first detected control
                 smartName.smartType = controls[0].type;
@@ -557,19 +558,28 @@ export async function controls(
                     }
                 }
             }
+        } else if (controls?.length && controls[0].type !== smartName.smartType) {
+            // If the user specified a different type, prefer it
+            controls = null;
         }
 
         // convert alexa2 smartType to alexa 3
         if (smartName.smartType && SMART_TYPES[smartName.smartType]) {
             smartName.smartType = SMART_TYPES[smartName.smartType];
         }
+        const pattern =
+            smartName.smartType && Object.keys(patterns).find(p => patterns[p].type === smartName.smartType);
+
         // try to simulate typeDetector format
-        if (smartName.smartType && patterns[smartName.smartType]) {
-            const control: IotExternalPatternControl = JSON.parse(JSON.stringify(patterns[smartName.smartType]));
+        if (smartName.smartType && pattern) {
+            const control: IotExternalPatternControl = controls?.[0] || JSON.parse(JSON.stringify(patterns[pattern]));
+
             // find first required
             const state = control.states.find(state => state.required);
             if (state) {
-                state.id = id;
+                if (!controls?.[0]) {
+                    state.id = id;
+                }
                 // process control
                 // remove all unassigned control register
                 control.states = control.states.filter(s => s.id);

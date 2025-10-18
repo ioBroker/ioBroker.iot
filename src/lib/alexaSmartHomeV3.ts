@@ -34,7 +34,10 @@ export default class AlexaSH3 {
     }
 
     async getDevices(): Promise<AlexaSH3DeviceDescription[]> {
-        const endpoints = this.deviceManager ? this.deviceManager.endpoints : [];
+        if (this.deviceManager) {
+            await this.deviceManager.collectEndpoints();
+        }
+        const endpoints = this.deviceManager?.endpoints || [];
 
         const result: AlexaSH3DeviceDescription[] = [];
 

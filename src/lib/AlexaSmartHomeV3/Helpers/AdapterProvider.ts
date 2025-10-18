@@ -34,11 +34,11 @@ export default class AdapterProvider {
         return state ? (state.val === undefined ? null : state.val) : undefined;
     }
 
-    static async subscribe(id: string): Promise<void> {
+    static async subscribe(id: string | string[]): Promise<void> {
         await AdapterProvider.get().subscribeForeignStatesAsync(id);
     }
 
-    static async unsubscribe(id: string): Promise<void> {
+    static async unsubscribe(id: string | string[]): Promise<void> {
         await AdapterProvider.get().unsubscribeForeignStatesAsync(id);
     }
 }
