@@ -511,6 +511,9 @@
 ### 0.1.4 (2018-09-26)
 
 -   (bluefox) Initial commit
+## 4.0.3 (2025-08-27)
+- (@GermanBluefox) Added response ID to custom skill responses
+
 ## 4.0.2 (2025-08-26)
 - (@GermanBluefox) Some files were rewritten in TypeScript
 - (@GermanBluefox) Improvement of Alexa V3

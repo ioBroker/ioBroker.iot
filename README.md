@@ -350,7 +350,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 4.1.6 (2025-10-18)
 - (@GermanBluefox) Better handling of dimmer in alexa v3
 
 ### 4.1.5 (2025-10-18)
@@ -369,9 +369,6 @@ setState('iot.0.app.message', JSON.stringify({
 - (@GermanBluefox) Made Alexa V3 default
 - (@GermanBluefox) Updated packages
 - (@GermanBluefox) Corrected Alexa V3 engine
-
-### 4.0.3 (2025-08-27)
-- (@GermanBluefox) Added response ID to custom skill responses
 
 ## License
 

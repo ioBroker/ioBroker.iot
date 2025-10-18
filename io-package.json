@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "4.1.5",
+    "version": "4.1.6",
     "news": {
+      "4.1.6": {
+        "en": "Better handling of dimmer in alexa v3",
+        "de": "Bessere Handhabung von Dimmer in alexa v3",
+        "ru": "Лучшее управление диммером в alexa v3",
+        "pt": "Melhor manuseio de dimmer em alexa v3",
+        "nl": "Betere behandeling van dimmer in alexa v3",
+        "fr": "Meilleure manipulation du variateur en alexa v3",
+        "it": "Migliore gestione del dimmer in alexa v3",
+        "es": "Mejor manejo de martillo en alexa v3",
+        "pl": "Lepsza obsługa ściemniacza w alexa v3",
+        "uk": "Краще обслуговування занурення в alexa v3",
+        "zh-cn": "在Alexa v3中更好地处理沉淀"
+      },
       "4.1.5": {
         "en": "Better handling of color temperatures",
         "de": "Bessere Handhabung von Farbtemperaturen",
@@ -80,19 +93,6 @@
         "pl": "Dodano ID odpowiedzi do własnych odpowiedzi umiejętności",
         "uk": "Додано ідентифікатор відповіді на користувацькі відповіді",
         "zh-cn": "添加自定义技能响应的响应 ID"
-      },
-      "4.0.2": {
-        "en": "Some files were rewritten in TypeScript\nImprovement of Alexa V3",
-        "de": "Einige Dateien wurden in TypeScript neu geschrieben\nVerbesserung von Alexa V3",
-        "ru": "Некоторые файлы были переписаны в TypeScript\nУлучшение Alexa V3",
-        "pt": "Alguns arquivos foram reescritos no TypeScript\nMelhoria da Alexa V3",
-        "nl": "Sommige bestanden zijn herschreven in TypeScript\nVerbetering van Alexa V3",
-        "fr": "Certains fichiers ont été réécrits dans TypeScript\nAmélioration de Alexa V3",
-        "it": "Alcuni file sono stati riscritti in TypeScript\nMiglioramento di Alexa V3",
-        "es": "Algunos archivos fueron reescritos en TipoScript\nMejora de Alexa V3",
-        "pl": "Niektóre pliki zostały zmienione w TypeScript\nPoprawa jakości Alexa V3",
-        "uk": "Деякі файли були записані у TypeScript\nУдосконалення Alexa V3",
-        "zh-cn": "一些文件在 TypeScript 中重写\n改进Alexa V3"
       }
     },
     "titleLang": {
