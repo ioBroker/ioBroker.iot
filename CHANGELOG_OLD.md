@@ -511,6 +511,10 @@
 ### 0.1.4 (2018-09-26)
 
 -   (bluefox) Initial commit
+## 4.0.2 (2025-08-26)
+- (@GermanBluefox) Some files were rewritten in TypeScript
+- (@GermanBluefox) Improvement of Alexa V3
+
 ## 3.6.0 (2025-07-02)
 -   (@foxriver76) new features for upcoming Visu App 1.4.0
 

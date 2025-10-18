@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "4.1.4",
+    "version": "4.1.5",
     "news": {
+      "4.1.5": {
+        "en": "Better handling of color temperatures",
+        "de": "Bessere Handhabung von Farbtemperaturen",
+        "ru": "Лучшая обработка цветовых температур",
+        "pt": "Melhor manuseio das temperaturas de cor",
+        "nl": "Beter omgaan met kleurtemperaturen",
+        "fr": "Meilleure manipulation des températures de couleur",
+        "it": "Migliore gestione delle temperature di colore",
+        "es": "Mejor manejo de temperaturas de color",
+        "pl": "Lepsza obsługa temperatur kolorów",
+        "uk": "Краще обслуговування колірних температур",
+        "zh-cn": "更好地处理颜色温度"
+      },
       "4.1.4": {
         "en": "Implemented stored values for Alexa V3\nAdded RGB(W) with individual states to Alexa V3\nAdded dedicated checkbox for alexa custom skill",
         "de": "Ergänzte gespeicherte Werte für Alexa V3\nHinzugefügt RGB(W) mit einzelnen Zuständen zu Alexa V3\nHinzugefügt dedizierte Checkbox für alexa benutzerdefinierte Fähigkeiten",
@@ -80,19 +93,6 @@
         "pl": "Niektóre pliki zostały zmienione w TypeScript\nPoprawa jakości Alexa V3",
         "uk": "Деякі файли були записані у TypeScript\nУдосконалення Alexa V3",
         "zh-cn": "一些文件在 TypeScript 中重写\n改进Alexa V3"
-      },
-      "3.6.0": {
-        "en": "new features for upcoming Visu App 1.4.0",
-        "de": "neue Features für die kommende Visu App 1.4.0",
-        "ru": "новые возможности для Visu App 1.4.0",
-        "pt": "novas funcionalidades para a próxima aplicação Visu 1.4.0",
-        "nl": "nieuwe functies voor Visu App 1.4.0",
-        "fr": "nouvelles fonctionnalités pour Visu App à venir 1.4.0",
-        "it": "nuove funzionalità per il prossimo Visu App 1.4.0",
-        "es": "nuevas características para la próxima aplicación Visu 1.4.0",
-        "pl": "nowe funkcje dla nadchodzącej aplikacji Visu 1.4.0",
-        "uk": "нові можливості для майбутнього додатка Visu 1.4.0",
-        "zh-cn": "即将到来的 Visu App 1.4.0 的新功能"
       }
     },
     "titleLang": {

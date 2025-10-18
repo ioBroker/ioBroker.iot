@@ -350,7 +350,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 4.1.5 (2025-10-18)
 - (@GermanBluefox) Better handling of color temperatures
 
 ### 4.1.4 (2025-10-17)
@@ -369,10 +369,6 @@ setState('iot.0.app.message', JSON.stringify({
 
 ### 4.0.3 (2025-08-27)
 - (@GermanBluefox) Added response ID to custom skill responses
-
-### 4.0.2 (2025-08-26)
-- (@GermanBluefox) Some files were rewritten in TypeScript
-- (@GermanBluefox) Improvement of Alexa V3
 
 ## License
 
