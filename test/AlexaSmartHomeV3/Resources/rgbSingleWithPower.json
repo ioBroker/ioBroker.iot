@@ -1,0 +1,57 @@
+{
+    "states": [
+        {
+            "name": "RGB",
+            "defaultRole": "level.dimmer",
+            "defaultUnit": "%",
+            "id": "nanoleaf-lightpanels.3.Shapes.colorRGB",
+            "smartName": {
+                "byON": "80"
+            }
+        },
+        {
+            "name": "DIMMER",
+            "defaultRole": "level.dimmer",
+            "defaultUnit": "%",
+            "id": "nanoleaf-lightpanels.3.Shapes.brightness",
+            "common": {
+                "max": 100,
+                "min": 0
+            }
+        },
+        {
+            "name": "TEMPERATURE",
+            "defaultRole": "level.color.temperature",
+            "defaultUnit": "°K",
+            "id": "nanoleaf-lightpanels.3.Shapes.colorTemp",
+            "common": {
+                "max": 6000,
+                "min": 2200
+            }
+        },
+        {
+            "name": "ON_SET",
+            "defaultRole": "switch.light",
+            "id": "nanoleaf-lightpanels.3.Shapes.state"
+        }
+    ],
+    "type": "rgbSingle",
+    "object": {
+        "id": "nanoleaf-lightpanels.3.Shapes",
+        "common": {
+            "name": {
+                "de": "RGB Lamp"
+            },
+            "role": "rgbSingle"
+        }
+    },
+    "room": {
+        "id": "enum.rooms.living_room",
+        "common": {
+            "name": {
+                "en": "Living Room"
+            },
+            "members": ["nanoleaf-lightpanels.3.Shapes", "alias.0.Wohnzimmer.Lampe"]
+        }
+    }
+}

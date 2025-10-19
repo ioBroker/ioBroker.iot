@@ -12,7 +12,7 @@ import { ensureValueInRange } from '../Helpers/Utils';
 import ThermostatMode from '../Alexa/Properties/ThermostatMode';
 import TargetSetpoint from '../Alexa/Properties/TargetSetpoint';
 import PowerState from '../Alexa/Properties/PowerState';
-import type { Base as PropertiesBase } from '../Alexa/Properties/Base';
+import type { Base as PropertiesBase, ControlStateInitObject } from '../Alexa/Properties/Base';
 
 export default class Thermostat extends AdjustableControl {
     private readonly _temperatureSensor: TemperatureSensor | null = null;
@@ -48,12 +48,7 @@ export default class Thermostat extends AdjustableControl {
         return [TargetSetpoint];
     }
 
-    private composeInitObjectPowerState(): {
-        setState: IotExternalDetectorState;
-        getState: IotExternalDetectorState;
-        alexaSetter?: (alexaValue: AlexaV3DirectiveValue) => ioBroker.StateValue | undefined;
-        alexaGetter?: (value: ioBroker.StateValue | undefined) => AlexaV3DirectiveValue;
-    } {
+    private composeInitObjectPowerState(): ControlStateInitObject {
         const map = this.statesMap;
 
         return {
@@ -68,12 +63,7 @@ export default class Thermostat extends AdjustableControl {
         };
     }
 
-    private composeInitObjectTemperature(): {
-        setState: IotExternalDetectorState;
-        getState: IotExternalDetectorState;
-        alexaSetter?: (alexaValue: AlexaV3DirectiveValue) => ioBroker.StateValue | undefined;
-        alexaGetter?: (value: ioBroker.StateValue | undefined) => AlexaV3DirectiveValue;
-    } | null {
+    private composeInitObjectTemperature(): ControlStateInitObject | null {
         const map = this.statesMap;
         const detectorState = this.states[map.actual];
         if (!detectorState) {
@@ -85,12 +75,7 @@ export default class Thermostat extends AdjustableControl {
         };
     }
 
-    private composeInitObjectTargetSetpoint(): {
-        setState: IotExternalDetectorState;
-        getState: IotExternalDetectorState;
-        alexaSetter?: (alexaValue: AlexaV3DirectiveValue) => ioBroker.StateValue | undefined;
-        alexaGetter?: (value: ioBroker.StateValue | undefined) => AlexaV3DirectiveValue;
-    } {
+    private composeInitObjectTargetSetpoint(): ControlStateInitObject {
         const map = this.statesMap;
         return {
             setState: this.states[map.set]!,
@@ -108,13 +93,7 @@ export default class Thermostat extends AdjustableControl {
         };
     }
 
-    private composeInitObjectThermostatMode(): {
-        setState: IotExternalDetectorState;
-        getState: IotExternalDetectorState;
-        alexaSetter?: (alexaValue: AlexaV3DirectiveValue) => ioBroker.StateValue | undefined;
-        alexaGetter?: (value: ioBroker.StateValue | undefined) => AlexaV3DirectiveValue;
-        supportedModes?: string[];
-    } {
+    private composeInitObjectThermostatMode(): ControlStateInitObject {
         const map = this.statesMap;
         return {
             setState: this.states[map.mode] || ({ id: undefined } as unknown as IotExternalDetectorState),

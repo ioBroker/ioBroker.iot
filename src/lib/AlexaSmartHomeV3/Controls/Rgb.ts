@@ -1,7 +1,7 @@
 import Capabilities from '../Alexa/Capabilities';
 import { configuredRangeOrDefault, denormalize_0_100, normalize_0_100, closestFromList } from '../Helpers/Utils';
 import AdapterProvider from '../Helpers/AdapterProvider';
-import type { Base as PropertiesBase } from '../Alexa/Properties/Base';
+import type { Base as PropertiesBase, ControlStateInitObject } from '../Alexa/Properties/Base';
 import AdjustableControl from './AdjustableControl';
 import type BrightnessController from '../Alexa/Capabilities/BrightnessController';
 import Brightness from '../Alexa/Properties/Brightness';
@@ -13,7 +13,6 @@ import type {
     AlexaV3Category,
     AlexaV3DirectiveValue,
     AlexaV3Request,
-    IotExternalDetectorState,
     IotExternalPatternControl,
 } from '../types';
 import Color from '../Alexa/Properties/Color';
@@ -255,23 +254,7 @@ export default class Rgb extends AdjustableControl {
         return value as AlexaV3DirectiveValue;
     }
 
-    protected composeInitObjectColor(): {
-        rgbw?:
-            | IotExternalDetectorState
-            | {
-                  red: IotExternalDetectorState;
-                  green: IotExternalDetectorState;
-                  blue: IotExternalDetectorState;
-                  white: IotExternalDetectorState;
-              };
-        rgb?:
-            | IotExternalDetectorState
-            | {
-                  red: IotExternalDetectorState;
-                  green: IotExternalDetectorState;
-                  blue: IotExternalDetectorState;
-              };
-    } {
+    protected composeInitObjectColor(): ControlStateInitObject {
         const map = this.statesMap;
 
         // Set default min max to 0 255 for colors
@@ -305,12 +288,7 @@ export default class Rgb extends AdjustableControl {
         };
     }
 
-    protected composeInitObjectPowerState(): {
-        setState: IotExternalDetectorState;
-        getState: IotExternalDetectorState;
-        alexaSetter?: (alexaValue: AlexaV3DirectiveValue) => ioBroker.StateValue | undefined;
-        alexaGetter?: (value: ioBroker.StateValue | undefined) => AlexaV3DirectiveValue;
-    } {
+    protected composeInitObjectPowerState(): ControlStateInitObject {
         const map = this.statesMap;
         return {
             setState: this.states[map.on] || this.states[map.dimmer] || this.states[map.brightness]!,
@@ -324,12 +302,7 @@ export default class Rgb extends AdjustableControl {
         };
     }
 
-    protected composeInitObjectBrightness(): {
-        setState: IotExternalDetectorState;
-        getState: IotExternalDetectorState;
-        alexaSetter?: (alexaValue: AlexaV3DirectiveValue) => ioBroker.StateValue | undefined;
-        alexaGetter?: (value: ioBroker.StateValue | undefined) => AlexaV3DirectiveValue;
-    } {
+    protected composeInitObjectBrightness(): ControlStateInitObject {
         const map = this.statesMap;
         return {
             setState: this.states[map.dimmer] || this.states[map.brightness]!,
@@ -352,12 +325,7 @@ export default class Rgb extends AdjustableControl {
         };
     }
 
-    protected composeInitObjectColorTemperature(): {
-        setState: IotExternalDetectorState;
-        getState: IotExternalDetectorState;
-        alexaSetter?: (alexaValue: AlexaV3DirectiveValue) => ioBroker.StateValue | undefined;
-        alexaGetter?: (value: ioBroker.StateValue | undefined) => AlexaV3DirectiveValue;
-    } {
+    protected composeInitObjectColorTemperature(): ControlStateInitObject {
         const map = this.statesMap;
         return {
             setState: this.states[map.temperature]!,

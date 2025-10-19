@@ -449,6 +449,77 @@ function getObjectIcon(obj: ioBroker.Object, id: string, imagePrefix: string, la
     return src || null;
 }
 
+function toHex(x: number): string {
+    return x.toString(16).padStart(2, '0');
+}
+function to255(x: number): number {
+    return Math.round(x * 255);
+}
+
+/**
+ * Converts a color from HAL (Hue, Saturation, Brightness) to RGB hex string
+ *
+ * @param hal The color in HAL format
+ * @param hal.hue The hue (0-360)
+ * @param hal.saturation The saturation (0-1)
+ * @param hal.brightness The brightness (0-1)
+ * @returns The color in RGB hex format (e.g. #ff0000 for red)
+ */
+export function hal2rgb(hal: { hue: number; saturation: number; brightness: number }): string {
+    const hue = hal.hue;
+    const saturation = hal.saturation;
+    const brightness = hal.brightness;
+
+    let r: number;
+    let g: number;
+    let b: number;
+
+    const i = Math.floor(hue / 60) % 6;
+    const f = hue / 60 - i;
+    const p = brightness * (1 - saturation);
+    const q = brightness * (1 - f * saturation);
+    const t = brightness * (1 - (1 - f) * saturation);
+
+    switch (i) {
+        case 0:
+            r = brightness;
+            g = t;
+            b = p;
+            break;
+        case 1:
+            r = q;
+            g = brightness;
+            b = p;
+            break;
+        case 2:
+            r = p;
+            g = brightness;
+            b = t;
+            break;
+        case 3:
+            r = p;
+            g = q;
+            b = brightness;
+            break;
+        case 4:
+            r = t;
+            g = p;
+            b = brightness;
+            break;
+        case 5:
+            r = brightness;
+            g = p;
+            b = q;
+            break;
+        default:
+            r = 0;
+            g = 0;
+            b = 0;
+    }
+
+    return `#${toHex(to255(r))}${toHex(to255(g))}${toHex(to255(b))}`;
+}
+
 interface Alexa3SmartNamesProps {
     socket: AdminConnection;
     adapterName: string;
@@ -944,7 +1015,16 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                 let valueColor = null;
                 if (control.state) {
                     state = control.state.find(st => action === st.name);
-                    if (state?.name === 'powerState') {
+                    if (state?.name === 'color' && state?.value && typeof state.value === 'object') {
+                        // the object is HAL {
+                        //     "hue": 0,
+                        //     "saturation": 0,
+                        //     "brightness": 0
+                        // }
+                        // So convert it to RGB
+                        state.value = hal2rgb(state.value);
+                        valueColor = state.value;
+                    } else if (state?.name === 'powerState') {
                         if (state?.value === 'OFF' || state?.value === false) {
                             style = { ...style, ...styles.deviceOff };
                         }
@@ -956,10 +1036,9 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                         valuePercent = `${state.value === null ? '--' : Math.round(state.value * 100) / 100}%`;
                     } else if (state?.name === 'brightness') {
                         valueBrightness = state.value === null ? '--' : Math.round(state.value * 100) / 100;
-                    } else if (state?.name === 'color') {
-                        valueColor = `hsl(${state.value}, 50%, 50%)`;
                     }
-                    if (state?.value && typeof state.value === 'object') {
+
+                    if (state?.value && typeof state.value === 'object' && state.value.value !== undefined) {
                         state.value = `${Math.round(state.value.value * 100) / 100} ${state.value.scale === 'CELSIUS' ? '°C' : state.value.scale}`;
                     }
                 }
@@ -1048,7 +1127,16 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                     let state;
                     if (dev.state) {
                         state = dev.state.find(st => control.supported.includes(st.name));
-                        if (state?.name === 'powerState') {
+                        if (state?.name === 'color' && state?.value && typeof state.value === 'object') {
+                            // the object is HAL {
+                            //     "hue": 0,
+                            //     "saturation": 0,
+                            //     "brightness": 0
+                            // }
+                            // So convert it to RGB
+                            valueColor = hal2rgb(state.value);
+                            state.value = valueColor;
+                        } else if (state?.name === 'powerState') {
                             if (state?.value === 'OFF' || state?.value === false) {
                                 style = { ...style, ...styles.deviceOff };
                             }
@@ -1060,10 +1148,8 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                             valuePercent = `${state.value === null ? '--' : Math.round(state.value * 100) / 100}%`;
                         } else if (state?.name === 'brightness') {
                             valueBrightness = state.value === null ? '--' : Math.round(state.value * 100) / 100;
-                        } else if (state?.name === 'color') {
-                            valueColor = `hsl(${state.value}, 100%, 50%)`;
                         }
-                        if (state?.value && typeof state.value === 'object') {
+                        if (state?.value && typeof state.value === 'object' && state.value.value !== undefined) {
                             state.value = `${Math.round(state.value.value * 100) / 100}} ${state.value.scale === 'CELSIUS' ? '°C' : state.value.scale}`;
                         }
                     }

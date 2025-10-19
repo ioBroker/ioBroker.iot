@@ -1,11 +1,8 @@
 import Capabilities from '../Alexa/Capabilities';
 import Control, { type StateName } from './Control';
-import type {
-    AlexaV3Category,
-    AlexaV3DirectiveValue,
-    IotExternalDetectorState,
-    IotExternalPatternControl,
-} from '../types';
+import type { AlexaV3Category, AlexaV3DirectiveValue, IotExternalPatternControl } from '../types';
+import type { ControlStateInitObject } from '../Alexa/Properties/Base';
+import PowerState from '../Alexa/Properties/PowerState';
 
 export default class Light extends Control {
     constructor(detectedControl: IotExternalPatternControl) {
@@ -35,12 +32,24 @@ export default class Light extends Control {
         };
     }
 
-    private brightnessInitObject(): {
-        setState: IotExternalDetectorState;
-        getState: IotExternalDetectorState;
-        alexaSetter?: (alexaValue: AlexaV3DirectiveValue) => ioBroker.StateValue | undefined;
-        alexaGetter?: (value: ioBroker.StateValue | undefined) => AlexaV3DirectiveValue;
-    } {
+    protected powerStateInitObject(): ControlStateInitObject {
+        // const states = this.initStates(ctrl);
+        const map = this.statesMap;
+
+        return {
+            setState: this.states[map.set]!,
+            getState: this.states[map.actual]!,
+            alexaSetter: function (alexaValue) {
+                return alexaValue === PowerState.ON;
+            },
+            alexaGetter: function (value) {
+                return value ? PowerState.ON : PowerState.OFF;
+            },
+            multiPurposeProperty: true,
+        };
+    }
+
+    private brightnessInitObject(): ControlStateInitObject {
         const map = this.statesMap;
 
         return {

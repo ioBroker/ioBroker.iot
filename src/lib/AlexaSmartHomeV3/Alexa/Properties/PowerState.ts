@@ -4,10 +4,15 @@ import type { AlexaV3DirectiveName, AlexaV3DirectiveValue, AlexaV3Request } from
 export default class PowerState extends Base {
     matches(event: AlexaV3Request): boolean {
         const namespace = event?.directive?.header?.namespace;
+        const eventName = event?.directive?.header?.name || '';
         return (
             namespace === 'Alexa.PowerController' ||
-            (this._multiPurposeProperty && namespace === 'Alexa.PercentageController') ||
-            (this._multiPurposeProperty && namespace === 'Alexa.BrightnessController')
+            ((this._multiPurposeProperty || this._handleSimilarEvents) &&
+                namespace === 'Alexa.PercentageController' &&
+                !eventName.includes('Adjust')) ||
+            ((this._multiPurposeProperty || this._handleSimilarEvents) &&
+                namespace === 'Alexa.BrightnessController' &&
+                !eventName.includes('Adjust'))
         );
     }
 
@@ -20,24 +25,47 @@ export default class PowerState extends Base {
     }
 
     alexaDirectiveValue(event: AlexaV3Request): AlexaV3DirectiveValue {
-        if (this._multiPurposeProperty && event.directive.header.namespace === 'Alexa.PercentageController') {
+        // Case when we are in dimmer or rgb lamp, and it does not have a dedicated power switch
+        if (
+            this._multiPurposeProperty &&
+            !this._handleSimilarEvents &&
+            event.directive.header.namespace === 'Alexa.PercentageController'
+        ) {
             const percentage = event.directive.payload.percentage as number;
-            const min = this.valuesRangeMin as number;
-            const max = this.valuesRangeMax as number;
-            if (min === undefined || max === undefined) {
-                return percentage > 0 ? PowerState.ON : PowerState.OFF;
-            }
-            if (percentage > min) {
-                return PowerState.ON;
-            }
-            return PowerState.OFF;
-        }
-        if (this._multiPurposeProperty && event.directive.header.namespace === 'Alexa.BrightnessController') {
-            const percentage = event.directive.payload.brightness as number;
             if (percentage) {
                 return PowerState.ON;
             }
             return PowerState.OFF;
+        }
+
+        if (this._handleSimilarEvents && event.directive.header.namespace === 'Alexa.PercentageController') {
+            const percentage = event.directive.payload.percentage as number;
+            if (percentage && !this.currentValue) {
+                return PowerState.ON;
+            }
+            return undefined;
+        }
+
+        // Case when we are in dimmer or rgb lamp, and it does not have a dedicated power switch
+        if (
+            this._multiPurposeProperty &&
+            !this._handleSimilarEvents &&
+            event.directive.header.namespace === 'Alexa.BrightnessController'
+        ) {
+            const brightness = event.directive.payload.brightness as number;
+            if (brightness) {
+                return PowerState.ON;
+            }
+            return PowerState.OFF;
+        }
+
+        // Case when we are in dimmer or rgb lamp, and it the device has a dedicated power switch
+        if (this._handleSimilarEvents && event.directive.header.namespace === 'Alexa.BrightnessController') {
+            const brightness = event.directive.payload.brightness as number;
+            if (brightness && !this.currentValue) {
+                return PowerState.ON;
+            }
+            return undefined;
         }
 
         return event.directive.header.name === 'TurnOn' ? PowerState.ON : PowerState.OFF;

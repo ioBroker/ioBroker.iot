@@ -83,27 +83,20 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
             assert.equal(response.event.header.name, 'StateReport', 'Name!');
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
 
-            assert.equal(response.context.properties.length, 3);
+            assert.equal(response.context.properties.length, 2);
             assert.equal(response.context.properties[0].hasOwnProperty('instance'), false);
             assert.equal(response.context.properties[1].hasOwnProperty('instance'), false);
-            assert.equal(response.context.properties[2].hasOwnProperty('instance'), false);
 
-            assert.equal(response.context.properties[0].namespace, 'Alexa.TemperatureSensor');
-            assert.equal(response.context.properties[0].name, 'temperature');
+            assert.equal(response.context.properties[0].namespace, 'Alexa.ThermostatController');
+            assert.equal(response.context.properties[0].name, 'targetSetpoint');
             assert.equal(response.context.properties[0].value.value, 23.5);
             assert.equal(response.context.properties[0].value.scale, 'CELSIUS');
             assert.equal(response.context.properties[0].uncertaintyInMilliseconds, 0);
 
             assert.equal(response.context.properties[1].namespace, 'Alexa.ThermostatController');
-            assert.equal(response.context.properties[1].name, 'targetSetpoint');
-            assert.equal(response.context.properties[1].value.value, 23.5);
-            assert.equal(response.context.properties[1].value.scale, 'CELSIUS');
+            assert.equal(response.context.properties[1].name, 'thermostatMode');
+            assert.equal(response.context.properties[1].value, 'AUTO');
             assert.equal(response.context.properties[1].uncertaintyInMilliseconds, 0);
-
-            assert.equal(response.context.properties[2].namespace, 'Alexa.ThermostatController');
-            assert.equal(response.context.properties[2].name, 'thermostatMode');
-            assert.equal(response.context.properties[2].value, 'AUTO');
-            assert.equal(response.context.properties[2].uncertaintyInMilliseconds, 0);
         });
 
         it('Report state for a motion sensor', async function () {

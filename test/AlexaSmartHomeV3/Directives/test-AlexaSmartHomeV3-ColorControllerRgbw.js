@@ -137,7 +137,7 @@ describe('AlexaSmartHomeV3 - ColorControllerRgbw', function () {
                 'PowerController/PowerController.TurnOff.request.json',
             );
             const response = await deviceManager.handleAlexaEvent(event);
-            const id = helpers.getConfigForName('ON', helpers.rgbSingleConfig());
+            const id = helpers.getConfigForName('ON_SET', helpers.rgbSingleConfig());
             const storedValue = await AdapterProvider.getState(id);
             assert.equal(storedValue, false, 'ioBroker.Value!');
 
@@ -165,7 +165,7 @@ describe('AlexaSmartHomeV3 - ColorControllerRgbw', function () {
                 'PowerController/PowerController.TurnOn.request.json',
             );
             const response = await deviceManager.handleAlexaEvent(event);
-            const id = helpers.getConfigForName('ON', helpers.rgbSingleConfig());
+            const id = helpers.getConfigForName('ON_SET', helpers.rgbSingleConfig());
             const storedValue = await AdapterProvider.getState(id);
             assert.equal(storedValue, true, 'ioBroker.Value!');
 

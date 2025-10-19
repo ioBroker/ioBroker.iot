@@ -1,12 +1,8 @@
 import Capabilities from '../Alexa/Capabilities';
 import Properties from '../Alexa/Properties';
 import Control from './Control';
-import type {
-    AlexaV3Category,
-    AlexaV3DirectiveValue,
-    IotExternalDetectorState,
-    IotExternalPatternControl,
-} from '../types';
+import type { AlexaV3Category, IotExternalPatternControl } from '../types';
+import type { ControlStateInitObject } from '../Alexa/Properties/Base';
 
 export default class Lock extends Control {
     constructor(detectedControl: IotExternalPatternControl) {
@@ -20,12 +16,7 @@ export default class Lock extends Control {
         return ['SMARTLOCK'];
     }
 
-    private lockStateInitObject(): {
-        setState: IotExternalDetectorState;
-        getState: IotExternalDetectorState;
-        alexaSetter?: (alexaValue: AlexaV3DirectiveValue) => ioBroker.StateValue | undefined;
-        alexaGetter?: (value: ioBroker.StateValue | undefined) => AlexaV3DirectiveValue;
-    } {
+    private lockStateInitObject(): ControlStateInitObject {
         const map = this.statesMap;
         return {
             setState: this.states[map.set]!,

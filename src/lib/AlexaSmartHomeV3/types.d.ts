@@ -171,8 +171,8 @@ type AlexaV3Payload = {
     mute?: boolean;
     volume?: number;
     volumeDefault?: boolean;
-    percentageDelta?: number;
     percentage?: number;
+    percentageDelta?: number;
     targetSetpoint?: {
         value: number;
         scale: 'CELSIUS' | 'FAHRENHEIT';

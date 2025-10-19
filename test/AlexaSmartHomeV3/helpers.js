@@ -227,6 +227,15 @@ const Helpers = {
         return new Controls.Socket(require('./Resources/power.json'));
     },
 
+    rgbSingleWithPowerConfig: function () {
+        return require('./Resources/rgbSingleWithPower.json');
+    },
+
+    rgbSingleWithPowerControl: function () {
+        return new Controls.RgbSingle(Helpers.rgbSingleWithPowerConfig());
+    },
+
+
     dimmerWithPowerConfig: function () {
         return require('./Resources/dimmerWithPower.json');
     },

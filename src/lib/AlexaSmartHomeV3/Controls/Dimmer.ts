@@ -39,12 +39,6 @@ export default class Dimmer extends AdjustableControl {
         return [Brightness];
     }
 
-    async setState(property: PropertiesBase, value: ioBroker.StateValue): Promise<void> {
-        // set the property itself
-        await AdapterProvider.setState(property.setId, value);
-        property.currentValue = value;
-    }
-
     async getOrRetrieveCurrentValue(property: PropertiesBase): Promise<ioBroker.StateValue> {
         if (property.currentValue === undefined) {
             property.currentValue = await AdapterProvider.getState(property.getId);
@@ -73,7 +67,8 @@ export default class Dimmer extends AdjustableControl {
             alexaGetter: function (value: ioBroker.StateValue | undefined): AlexaV3DirectiveValue {
                 return value ? PowerState.ON : PowerState.OFF;
             },
-            multiPurposeProperty: true, // Could handle brightness events
+            multiPurposeProperty: !this.states[map.on_set], // Could handle brightness events
+            handleSimilarEvents: true, // If brightness set to non-zero value and power is off, turn the lamp on
         };
     }
 
@@ -105,7 +100,8 @@ export default class Dimmer extends AdjustableControl {
             ): AlexaV3DirectiveValue {
                 return normalize_0_100(value as number, this.valuesRangeMin as number, this.valuesRangeMax as number);
             },
-            multiPurposeProperty: true, // Could handle powerState events
+            multiPurposeProperty: !this.states[map.on_set], // Could handle powerState events
+            handleSimilarEvents: true, // If power set ON and brightness is 0, set to non zero value
             offValue: parseInt(AdapterProvider.get().config.deviceOffLevel as string, 10) || 30,
         };
     }

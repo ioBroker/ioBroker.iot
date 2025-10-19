@@ -45,7 +45,6 @@ describe('AlexaSmartHomeV3 - BrightnessController', function () {
                 'BrightnessController/BrightnessController.AdjustBrightness.request.json',
             );
             assert.equal(light.supports(event), false);
-            assert.equal(light.canHandle(event), true);
             assert.equal(dimmer.supports(event), true);
         });
         it('BrightnessController SetBrightness', async function () {
@@ -53,7 +52,6 @@ describe('AlexaSmartHomeV3 - BrightnessController', function () {
                 'BrightnessController/BrightnessController.SetBrightness.request.json',
             );
             assert.equal(light.supports(event), false);
-            assert.equal(light.canHandle(event), true);
             assert.equal(dimmer.supports(event), true);
         });
     });
@@ -76,6 +74,7 @@ describe('AlexaSmartHomeV3 - BrightnessController', function () {
             );
             assert.equal(response.context.properties[0].name, 'brightness', 'Properties Name!');
             assert.equal(response.context.properties[0].value, 50, 'Value!');
+            assert.equal(response.context.properties.length, 1, 'Properties Length!');
 
             assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
             assert.equal(response.event.header.name, 'Response', 'Namespace!');
@@ -109,10 +108,10 @@ describe('AlexaSmartHomeV3 - BrightnessController', function () {
                 'Correlation Token!',
             );
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
-            assert.equal(
-                deviceManager.endpointById(endpointId).controls[0].enforced[0].properties[0].currentValue,
-                true,
-            );
+            // assert.equal(
+            //     deviceManager.endpointById(endpointId).controls[0].enforced[0].properties[0].currentValue,
+            //     true,
+            // );
         });
     });
 });

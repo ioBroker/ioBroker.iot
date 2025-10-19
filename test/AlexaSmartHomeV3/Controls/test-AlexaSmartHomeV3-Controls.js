@@ -12,12 +12,12 @@ let light;
 let endpointId;
 let friendlyName;
 
-describe.only('AlexaSmartHomeV3 - Controls', function () {
+describe('AlexaSmartHomeV3 - Controls', function () {
     before(async function () {
         AdapterProvider.init(helpers.adapterMock());
     });
 
-    describe.only('Light', async function () {
+    describe('Light', async function () {
         before(function () {
             dimmer = helpers.dimmerControl();
             light = helpers.lightControl();
@@ -63,7 +63,7 @@ describe.only('AlexaSmartHomeV3 - Controls', function () {
         });
     });
 
-    describe.only('Dimmer', async function () {
+    describe('Dimmer', async function () {
         it('Dimmer respects values range on setting brightness', async function () {
             const event = await helpers.getSample(
                 'BrightnessController/BrightnessController.SetBrightness.request.json',
@@ -1121,7 +1121,7 @@ describe.only('AlexaSmartHomeV3 - Controls', function () {
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
         });
 
-        it('Dimmer with power goes OFF if brightness is set to zero value', async function () {
+        it('Dimmer with power does not go OFF if brightness is set to zero value', async function () {
             const event = await helpers.getSample(
                 'BrightnessController/BrightnessController.SetBrightness.request.json',
             );
@@ -1133,7 +1133,7 @@ describe.only('AlexaSmartHomeV3 - Controls', function () {
             const idLevel = helpers.getConfigForName('SET', helpers.dimmerWithPowerConfig());
             const idPower = helpers.getConfigForName('ON_SET', helpers.dimmerWithPowerConfig());
             let valueState = await AdapterProvider.getState(idPower);
-            assert.equal(valueState, false, 'Value!');
+            assert.equal(valueState, true, 'Value!');
             valueState = await AdapterProvider.getState(idLevel);
             assert.equal(valueState, 500, 'Value!');
 
@@ -1142,10 +1142,9 @@ describe.only('AlexaSmartHomeV3 - Controls', function () {
                 'Alexa.BrightnessController',
                 'Properties Namespace!',
             );
-            assert.equal(response.context.properties[0].name, 'powerState', 'Properties Name!');
-            assert.equal(response.context.properties[0].value, 'OFF', 'Value!');
-            assert.equal(response.context.properties[1].name, 'brightness', 'Properties Name!');
-            assert.equal(response.context.properties[1].value, 0, 'Value!');
+            assert.equal(response.context.properties.length, 1, 'Properties Length!');
+            assert.equal(response.context.properties[0].name, 'brightness', 'Properties Name!');
+            assert.equal(response.context.properties[0].value, 0, 'Value!');
 
             assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
             assert.equal(response.event.header.name, 'Response', 'Namespace!');
@@ -1193,7 +1192,7 @@ describe.only('AlexaSmartHomeV3 - Controls', function () {
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
         });
 
-        it('Brightness in dimmer with power goes OFF if dimmer is turned off', async function () {
+        it('Brightness in dimmer with power does not go OFF if dimmer is turned off', async function () {
             const event = await helpers.getSample(
                 'PowerController/PowerController.TurnOff.request.json',
             );
@@ -1207,7 +1206,7 @@ describe.only('AlexaSmartHomeV3 - Controls', function () {
             assert.equal(valueState, false, 'Value!');
             valueState = await AdapterProvider.getState(idLevel);
             // 80% of 1023 = 818.4 ~ 900
-            assert.equal(valueState, 500, 'Value!');
+            assert.equal(valueState, 900, 'Value!');
 
             assert.equal(
                 response.context.properties[0].namespace,
@@ -1216,8 +1215,394 @@ describe.only('AlexaSmartHomeV3 - Controls', function () {
             );
             assert.equal(response.context.properties[0].name, 'powerState', 'Properties Name!');
             assert.equal(response.context.properties[0].value, 'OFF', 'Value!');
-            assert.equal(response.context.properties[1].name, 'brightness', 'Properties Name!');
-            assert.equal(response.context.properties[1].value, 0, 'Value!');
+            assert.equal(response.context.properties.length, 1, 'Properties Length!');
+
+            assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
+            assert.equal(response.event.header.name, 'Response', 'Namespace!');
+            assert.equal(
+                response.event.header.correlationToken,
+                event.directive.header.correlationToken,
+                'Correlation Token!',
+            );
+            assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+        });
+    });
+
+    describe('RgbSingle with power', async function () {
+        before(function () {
+            endpointId = 'endpoint-001';
+            friendlyName = 'some-friendly-name';
+
+            deviceManager = new DeviceManager();
+            deviceManager.addDevice(
+                new Device({
+                    id: endpointId,
+                    friendlyName,
+                    controls: [helpers.rgbSingleWithPowerControl()],
+                }),
+            );
+        });
+
+        it('RgbSingle with power allows to change color', async function () {
+            const event = await helpers.getSample('ColorController/ColorController.SetColor.request.json');
+            const d = deviceManager.endpointById(event.directive.endpoint.endpointId);
+            assert.notEqual(d, undefined);
+            assert.equal(d instanceof Device, true);
+            let response = await d.handle(event);
+            assert.equal(response.context.properties[0].namespace, 'Alexa.ColorController', 'Properties Namespace!');
+            assert.equal(response.context.properties[0].name, 'color', 'Properties Name!');
+            assert.equal(response.context.properties[0].value.hue, 351);
+            assert.equal(response.context.properties[0].value.saturation, 0.71);
+            assert.equal(response.context.properties[0].value.brightness, 0.65);
+
+            assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
+            assert.equal(response.event.header.name, 'Response', 'Namespace!');
+            assert.equal(
+                response.event.header.correlationToken,
+                event.directive.header.correlationToken,
+                'Correlation Token!',
+            );
+            assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+        });
+
+        it('RgbSingle with power allows to set color temperature', async function () {
+            const event = await helpers.getSample(
+                'ColorTemperatureController/ColorTemperatureController.SetColorTemperature.request.json',
+            );
+            const d = deviceManager.endpointById(event.directive.endpoint.endpointId);
+            assert.notEqual(d, undefined);
+            assert.equal(d instanceof Device, true);
+            let response = await d.handle(event);
+            assert.equal(
+                response.context.properties[0].namespace,
+                'Alexa.ColorTemperatureController',
+                'Properties Namespace!',
+            );
+            assert.equal(response.context.properties[0].name, 'colorTemperatureInKelvin', 'Properties Name!');
+            assert.equal(response.context.properties[0].value, 5000);
+
+            assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
+            assert.equal(response.event.header.name, 'Response', 'Namespace!');
+            assert.equal(
+                response.event.header.correlationToken,
+                event.directive.header.correlationToken,
+                'Correlation Token!',
+            );
+            assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+        });
+
+        it('RgbSingle with power allows to increase color temperature', async function () {
+            const event = await helpers.getSample(
+                'ColorTemperatureController/ColorTemperatureController.IncreaseColorTemperature.request.json',
+            );
+            const d = deviceManager.endpointById(event.directive.endpoint.endpointId);
+            assert.notEqual(d, undefined);
+            assert.equal(d instanceof Device, true);
+
+            // set the current temp to 2200
+            d.controls[0].supported[1].properties[0].currentValue = 2200;
+
+            let response = await d.handle(event);
+            assert.equal(
+                response.context.properties[0].namespace,
+                'Alexa.ColorTemperatureController',
+                'Properties Namespace!',
+            );
+            assert.equal(response.context.properties[0].name, 'colorTemperatureInKelvin', 'Properties Name!');
+            assert.equal(response.context.properties[0].value, 2700);
+
+            assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
+            assert.equal(response.event.header.name, 'Response', 'Namespace!');
+            assert.equal(
+                response.event.header.correlationToken,
+                event.directive.header.correlationToken,
+                'Correlation Token!',
+            );
+            assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+        });
+
+        it('RgbSingle with power allows to decrease color temperature', async function () {
+            const event = await helpers.getSample(
+                'ColorTemperatureController/ColorTemperatureController.DecreaseColorTemperature.request.json',
+            );
+            const d = deviceManager.endpointById(event.directive.endpoint.endpointId);
+            assert.notEqual(d, undefined);
+            assert.equal(d instanceof Device, true);
+
+            // set the current temp to 2200
+            d.controls[0].supported[1].properties[0].currentValue = 2700;
+
+            let response = await d.handle(event);
+            assert.equal(
+                response.context.properties[0].namespace,
+                'Alexa.ColorTemperatureController',
+                'Properties Namespace!',
+            );
+            assert.equal(response.context.properties[0].name, 'colorTemperatureInKelvin', 'Properties Name!');
+            assert.equal(response.context.properties[0].value, 2200);
+
+            assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
+            assert.equal(response.event.header.name, 'Response', 'Namespace!');
+            assert.equal(
+                response.event.header.correlationToken,
+                event.directive.header.correlationToken,
+                'Correlation Token!',
+            );
+            assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+        });
+
+        it('RgbSingle with power allows to set brightness', async function () {
+            const event = await helpers.getSample(
+                'BrightnessController/BrightnessController.SetBrightness.request.json',
+            );
+            const d = deviceManager.endpointById(event.directive.endpoint.endpointId);
+            assert.notEqual(d, undefined);
+            assert.equal(d instanceof Device, true);
+            let response = await d.handle(event);
+            assert.equal(
+                response.context.properties[0].namespace,
+                'Alexa.BrightnessController',
+                'Properties Namespace!',
+            );
+            assert.equal(response.context.properties[0].name, 'brightness', 'Properties Name!');
+            assert.equal(response.context.properties[0].value, 75, 'Value!');
+
+            assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
+            assert.equal(response.event.header.name, 'Response', 'Namespace!');
+            assert.equal(
+                response.event.header.correlationToken,
+                event.directive.header.correlationToken,
+                'Correlation Token!',
+            );
+            assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+        });
+
+        it('RgbSingle with power reports state', async function () {
+            // Reset current values to force fresh retrieval from mock adapter
+            deviceManager.endpoints
+                .flatMap(e => e.controls)
+                .flatMap(c => c.allCapabilities)
+                .flatMap(c => c.properties)
+                .forEach(p => (p.currentValue = undefined));
+
+            const event = await helpers.getSample('StateReport/ReportState.json');
+            const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+            assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
+            assert.equal(response.event.header.name, 'StateReport', 'Name!');
+            assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, 'Name!');
+            assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+
+            assert.equal(response.context.properties.length, 4);
+
+            assert.equal(response.context.properties[0].namespace, 'Alexa.ColorController');
+            assert.equal(response.context.properties[0].name, 'color');
+            assert.equal(response.context.properties[0].value.hue, 351);
+            assert.equal(response.context.properties[0].value.saturation, 0.71);
+            assert.equal(response.context.properties[0].value.brightness, 0.65);
+
+            assert.equal(response.context.properties[1].namespace, 'Alexa.ColorTemperatureController');
+            assert.equal(response.context.properties[1].name, 'colorTemperatureInKelvin');
+            assert.equal(response.context.properties[1].value, 2200);
+
+            assert.equal(response.context.properties[2].namespace, 'Alexa.BrightnessController');
+            assert.equal(response.context.properties[2].name, 'brightness');
+            assert.equal(response.context.properties[2].value, 75);
+
+            assert.equal(response.context.properties[3].namespace, 'Alexa.PowerController');
+            assert.equal(response.context.properties[3].name, 'powerState');
+            assert.equal(response.context.properties[3].value, 'ON');
+        });
+
+        it('RgbSingle with power goes ON if brightness is set to non-zero', async function () {
+            // Turn the lamp OFF
+            const powerOff = await helpers.getSample(
+                'PowerController/PowerController.TurnOff.request.json',
+            );
+            const d = deviceManager.endpointById(powerOff.directive.endpoint.endpointId);
+
+            let response = await d.handle(powerOff);
+
+            assert.equal(
+                response.context.properties[0].namespace,
+                'Alexa.PowerController',
+                'Properties Namespace!',
+            );
+            assert.equal(response.context.properties.length, 1);
+            assert.equal(response.context.properties[0].name, 'powerState', 'Properties Name!');
+            assert.equal(response.context.properties[0].value, 'OFF', 'Value!');
+
+            const idLevel = helpers.getConfigForName('DIMMER', helpers.rgbSingleWithPowerConfig());
+            const idPower = helpers.getConfigForName('ON_SET', helpers.rgbSingleWithPowerConfig());
+            let valueState = await AdapterProvider.getState(idPower);
+            assert.equal(valueState, false, 'Value!');
+
+            // Set the brightness to 75
+            const event = await helpers.getSample(
+                'BrightnessController/BrightnessController.SetBrightness.request.json',
+            );
+            assert.notEqual(d, undefined);
+            assert.equal(d instanceof Device, true);
+            response = await d.handle(event);
+            valueState = await AdapterProvider.getState(idPower);
+            assert.equal(valueState, true, 'Value!');
+            valueState = await AdapterProvider.getState(idLevel);
+            assert.equal(valueState, 75, 'Value!');
+
+            assert.equal(
+                response.context.properties[0].namespace,
+                'Alexa.BrightnessController',
+                'Properties Namespace!',
+            );
+            assert.equal(response.context.properties[1].name, 'powerState', 'Properties Name!');
+            assert.equal(response.context.properties[1].value, 'ON', 'Value!');
+            assert.equal(response.context.properties[0].name, 'brightness', 'Properties Name!');
+            assert.equal(response.context.properties[0].value, 75, 'Value!');
+
+            assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
+            assert.equal(response.event.header.name, 'Response', 'Namespace!');
+
+            // Set the brightness to 85
+            event.directive.payload.brightness = 85;
+            assert.notEqual(d, undefined);
+            assert.equal(d instanceof Device, true);
+            response = await d.handle(event);
+            valueState = await AdapterProvider.getState(idPower);
+            assert.equal(valueState, true, 'Value!');
+            valueState = await AdapterProvider.getState(idLevel);
+            assert.equal(valueState, 85, 'Value!');
+
+            assert.equal(
+                response.context.properties[0].namespace,
+                'Alexa.BrightnessController',
+                'Properties Namespace!',
+            );
+            // Power state should state ON and must not be reported
+            assert.equal(response.context.properties.length, 1, 'Properties Length!');
+            assert.equal(response.context.properties[0].name, 'brightness', 'Properties Name!');
+            assert.equal(response.context.properties[0].value, 85, 'Value!');
+
+            assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
+            assert.equal(response.event.header.name, 'Response', 'Namespace!');
+
+            // Set the lamp off again
+            response = await d.handle(powerOff);
+
+            assert.equal(
+                response.context.properties[0].namespace,
+                'Alexa.PowerController',
+                'Properties Namespace!',
+            );
+            assert.equal(response.context.properties.length, 1);
+            assert.equal(response.context.properties[0].name, 'powerState', 'Properties Name!');
+            assert.equal(response.context.properties[0].value, 'OFF', 'Value!');
+
+            valueState = await AdapterProvider.getState(idPower);
+            assert.equal(valueState, false, 'Value!');
+
+            valueState = await AdapterProvider.getState(idLevel);
+            assert.equal(valueState, 85, 'Value!');
+        });
+
+        it('RgbSingle with power does not goes OFF if brightness is set to zero', async function () {
+            const idLevel = helpers.getConfigForName('DIMMER', helpers.rgbSingleWithPowerConfig());
+            const idPower = helpers.getConfigForName('ON_SET', helpers.rgbSingleWithPowerConfig());
+            // Turn ON
+            const powerOnEvent = await helpers.getSample(
+                'PowerController/PowerController.TurnOn.request.json',
+            );
+            const d = deviceManager.endpointById(powerOnEvent.directive.endpoint.endpointId);
+            let response = await d.handle(powerOnEvent);
+
+            const event = await helpers.getSample(
+                'BrightnessController/BrightnessController.SetBrightness.request.json',
+            );
+            event.directive.payload.brightness = 0;
+            assert.notEqual(d, undefined);
+            assert.equal(d instanceof Device, true);
+            response = await d.handle(event);
+            let valueState = await AdapterProvider.getState(idPower);
+            assert.equal(valueState, true, 'Value!');
+            valueState = await AdapterProvider.getState(idLevel);
+            assert.equal(valueState, 0, 'Value!');
+
+            assert.equal(
+                response.context.properties[0].namespace,
+                'Alexa.BrightnessController',
+                'Properties Namespace!',
+            );
+            assert.equal(response.context.properties.length, 1, 'Properties Length!');
+            assert.equal(response.context.properties[0].name, 'brightness', 'Properties Name!');
+            assert.equal(response.context.properties[0].value, 0, 'Value!');
+
+            assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
+            assert.equal(response.event.header.name, 'Response', 'Namespace!');
+            assert.equal(
+                response.event.header.correlationToken,
+                event.directive.header.correlationToken,
+                'Correlation Token!',
+            );
+            assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+        });
+
+        it('Brightness in RgbSingle with power goes ON if dimmer is turned on', async function () {
+            const event = await helpers.getSample(
+                'PowerController/PowerController.TurnOn.request.json',
+            );
+            const d = deviceManager.endpointById(event.directive.endpoint.endpointId);
+            assert.notEqual(d, undefined);
+            assert.equal(d instanceof Device, true);
+            let response = await d.handle(event);
+            const idLevel = helpers.getConfigForName('DIMMER', helpers.rgbSingleWithPowerConfig());
+            const idPower = helpers.getConfigForName('ON_SET', helpers.rgbSingleWithPowerConfig());
+            let valueState = await AdapterProvider.getState(idPower);
+            assert.equal(valueState, true, 'Value!');
+            valueState = await AdapterProvider.getState(idLevel);
+            assert.equal(valueState, 100, 'Value!');
+
+            assert.equal(
+                response.context.properties[0].namespace,
+                'Alexa.PowerController',
+                'Properties Namespace!',
+            );
+            assert.equal(response.context.properties[1].name, 'powerState', 'Properties Name!');
+            assert.equal(response.context.properties[1].value, 'ON', 'Value!');
+            assert.equal(response.context.properties[0].name, 'brightness', 'Properties Name!');
+            assert.equal(response.context.properties[0].value, 100, 'Value!');
+
+            assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
+            assert.equal(response.event.header.name, 'Response', 'Namespace!');
+            assert.equal(
+                response.event.header.correlationToken,
+                event.directive.header.correlationToken,
+                'Correlation Token!',
+            );
+            assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+        });
+
+        it('Brightness in RgbSingle with power does not go to 0 if dimmer is turned off', async function () {
+            const event = await helpers.getSample(
+                'PowerController/PowerController.TurnOff.request.json',
+            );
+            const d = deviceManager.endpointById(event.directive.endpoint.endpointId);
+            assert.notEqual(d, undefined);
+            assert.equal(d instanceof Device, true);
+            let response = await d.handle(event);
+            const idLevel = helpers.getConfigForName('DIMMER', helpers.rgbSingleWithPowerConfig());
+            const idPower = helpers.getConfigForName('ON_SET', helpers.rgbSingleWithPowerConfig());
+            let valueState = await AdapterProvider.getState(idPower);
+            assert.equal(valueState, false, 'Value!');
+            valueState = await AdapterProvider.getState(idLevel);
+            assert.equal(valueState, 100, 'Value!');
+
+            assert.equal(
+                response.context.properties[0].namespace,
+                'Alexa.PowerController',
+                'Properties Namespace!',
+            );
+            assert.equal(response.context.properties[0].name, 'powerState', 'Properties Name!');
+            assert.equal(response.context.properties[0].value, 'OFF', 'Value!');
+            assert.equal(response.context.properties.length, 1, 'Properties Length!');
 
             assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
             assert.equal(response.event.header.name, 'Response', 'Namespace!');

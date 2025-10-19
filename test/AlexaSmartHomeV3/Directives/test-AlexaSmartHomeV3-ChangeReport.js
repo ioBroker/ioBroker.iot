@@ -125,17 +125,11 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
             assert.equal(response.event.payload.change.properties[0].uncertaintyInMilliseconds, 0);
 
             // unchanged properties
-            assert.equal(response.context.properties.length, 2);
-            assert.equal(response.context.properties[0].namespace, 'Alexa.TemperatureSensor');
-            assert.equal(response.context.properties[0].name, 'temperature');
-            assert.equal(response.context.properties[0].value.value, 23.5);
-            assert.equal(response.context.properties[0].value.scale, 'CELSIUS');
+            assert.equal(response.context.properties.length, 1);
+            assert.equal(response.context.properties[0].namespace, 'Alexa.ThermostatController');
+            assert.equal(response.context.properties[0].name, 'thermostatMode');
+            assert.equal(response.context.properties[0].value, 'AUTO');
             assert.equal(response.context.properties[0].uncertaintyInMilliseconds, 0);
-
-            assert.equal(response.context.properties[1].namespace, 'Alexa.ThermostatController');
-            assert.equal(response.context.properties[1].name, 'thermostatMode');
-            assert.equal(response.context.properties[1].value, 'AUTO');
-            assert.equal(response.context.properties[1].uncertaintyInMilliseconds, 0);
         });
 
         it('ChangeReport for a motion sensor', async function () {

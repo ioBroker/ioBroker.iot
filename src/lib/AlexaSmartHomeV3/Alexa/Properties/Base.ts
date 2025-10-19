@@ -12,6 +12,8 @@ export type ControlStateInitObject = {
     alexaSetter?: (alexaValue: AlexaV3DirectiveValue) => ioBroker.StateValue | undefined;
     alexaGetter?: (value: ioBroker.StateValue | undefined) => AlexaV3DirectiveValue;
     multiPurposeProperty?: boolean;
+    // If brightness set to non-zero value and power is off, turn the lamp on
+    handleSimilarEvents?: boolean;
     // Level below which the dimmer or percent based control means "off"
     offValue?: number;
 
@@ -56,6 +58,7 @@ export class Base {
     #instance?: string;
     protected _supportedModesAsEnum: Record<string, number | string> = {};
     protected _multiPurposeProperty: boolean = false;
+    protected _handleSimilarEvents: boolean = false;
     protected _offValue: number = 30;
 
     /**
@@ -72,6 +75,7 @@ export class Base {
                 throw new Error(`missing setState in ${this.constructor.name}`);
             }
             this._multiPurposeProperty = !!opts.multiPurposeProperty;
+            this._handleSimilarEvents = !!opts.handleSimilarEvents;
             this.#setState = opts.setState;
             this._offValue = opts.offValue || 30;
             this._setId = opts.setState.id;
@@ -172,6 +176,9 @@ export class Base {
         }
         if (this.propertyName === 'brightness') {
             return event.directive.payload.brightness;
+        }
+        if (this.propertyName === 'percentage') {
+            return event.directive.payload.percentage;
         }
         // @ts-expect-error fix later
         return event.directive.payload[this.propertyName];

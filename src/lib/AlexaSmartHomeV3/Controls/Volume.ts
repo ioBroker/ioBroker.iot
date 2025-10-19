@@ -1,16 +1,11 @@
 import Speaker from '../Alexa/Capabilities/Speaker';
 import Properties from '../Alexa/Properties';
-import type { Base as PropertiesBase } from '../Alexa/Properties/Base';
+import type { Base as PropertiesBase, ControlStateInitObject } from '../Alexa/Properties/Base';
 import { Volume as PropertiesVolume } from '../Alexa/Properties/Volume';
 import AdapterProvider from '../Helpers/AdapterProvider';
 import { denormalize_0_100, normalize_0_100 } from '../Helpers/Utils';
 import AdjustableControl from './AdjustableControl';
-import type {
-    AlexaV3Category,
-    AlexaV3DirectiveValue,
-    IotExternalDetectorState,
-    IotExternalPatternControl,
-} from '../types';
+import type { AlexaV3Category, AlexaV3DirectiveValue, IotExternalPatternControl } from '../types';
 
 export default class Volume extends AdjustableControl {
     private readonly _speaker: Speaker;
@@ -96,12 +91,7 @@ export default class Volume extends AdjustableControl {
         return property.currentValue;
     }
 
-    private composeInitObjectVolume(): {
-        setState: IotExternalDetectorState;
-        getState: IotExternalDetectorState;
-        alexaSetter?: (alexaValue: AlexaV3DirectiveValue) => ioBroker.StateValue | undefined;
-        alexaGetter?: (value: ioBroker.StateValue | undefined) => AlexaV3DirectiveValue;
-    } {
+    private composeInitObjectVolume(): ControlStateInitObject {
         const map = this.statesMap;
 
         return {
@@ -126,12 +116,7 @@ export default class Volume extends AdjustableControl {
         };
     }
 
-    private composeInitObjectMuted(): {
-        setState: IotExternalDetectorState;
-        getState: IotExternalDetectorState;
-        alexaSetter?: (alexaValue: AlexaV3DirectiveValue) => ioBroker.StateValue | undefined;
-        alexaGetter?: (value: ioBroker.StateValue | undefined) => AlexaV3DirectiveValue;
-    } {
+    private composeInitObjectMuted(): ControlStateInitObject {
         const map = this.statesMap;
 
         return {

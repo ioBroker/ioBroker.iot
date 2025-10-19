@@ -1,13 +1,8 @@
 import Capabilities from '../Alexa/Capabilities';
 import Modes from '../Alexa/ModeValues';
 import Control from './Control';
-import type { Base as ModeBase } from '../Alexa/ModeValues/Base';
-import type {
-    AlexaV3Category,
-    AlexaV3DirectiveValue,
-    IotExternalDetectorState,
-    IotExternalPatternControl,
-} from '../types';
+import type { AlexaV3Category, IotExternalPatternControl } from '../types';
+import type { ControlStateInitObject } from '../Alexa/Properties/Base';
 
 export default class Gate extends Control {
     constructor(detectedControl: IotExternalPatternControl) {
@@ -20,14 +15,7 @@ export default class Gate extends Control {
         return ['GARAGE_DOOR'];
     }
 
-    private modeInitObject(): {
-        setState: IotExternalDetectorState;
-        getState: IotExternalDetectorState;
-        alexaSetter?: (alexaValue: AlexaV3DirectiveValue) => ioBroker.StateValue | undefined;
-        alexaGetter?: (value: ioBroker.StateValue | undefined) => AlexaV3DirectiveValue;
-        instance?: string;
-        supportedModes?: ModeBase[];
-    } {
+    private modeInitObject(): ControlStateInitObject {
         const map = this.statesMap;
         const mode = 'Gate.Position';
 

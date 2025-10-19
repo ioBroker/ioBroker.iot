@@ -172,20 +172,22 @@ export default class Control {
                 );
             }
 
-            if (!response) {
-                response = AlexaResponse.handled(
-                    event,
-                    property.propertyName,
-                    property.reportValue(alexaValue),
-                    property.instance,
-                );
-            } else {
-                response.addContextProperty({
-                    namespace: event?.directive?.header?.namespace,
-                    name: property.propertyName,
-                    instance: property.instance,
-                    value: property.reportValue(alexaValue),
-                });
+            if (alexaValue !== undefined) {
+                if (!response) {
+                    response = AlexaResponse.handled(
+                        event,
+                        property.propertyName,
+                        property.reportValue(alexaValue),
+                        property.instance,
+                    );
+                } else {
+                    response.addContextProperty({
+                        namespace: event?.directive?.header?.namespace,
+                        name: property.propertyName,
+                        instance: property.instance,
+                        value: property.reportValue(alexaValue),
+                    });
+                }
             }
 
             // though the processed directive required to change a single value, the response must contain values of all "relevant" properties
@@ -243,11 +245,13 @@ export default class Control {
         }
 
         // set iobroker state
-        await this.setState(property, value!);
-
-        property.currentValue = value;
-        // return value as expected by Alexa
-        return property.alexaValue(value);
+        if (value !== undefined) {
+            await this.setState(property, value);
+            property.currentValue = value;
+            // return value as expected by Alexa
+            return property.alexaValue(value);
+        }
+        return undefined;
     }
 
     async adjustValue(event: AlexaV3Request, property: PropertiesBase): Promise<AlexaV3DirectiveValue> {

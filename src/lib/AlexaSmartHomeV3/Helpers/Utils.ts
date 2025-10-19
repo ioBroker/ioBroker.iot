@@ -588,6 +588,7 @@ export async function controls(
         // try to simulate typeDetector format
         if (smartName.smartType && pattern) {
             const control: IotExternalPatternControl = controls?.[0] || JSON.parse(JSON.stringify(patterns[pattern]));
+            control.states = control.states.filter(state => !!state.id);
 
             // find first required
             const state = control.states.find(state => state.required);
