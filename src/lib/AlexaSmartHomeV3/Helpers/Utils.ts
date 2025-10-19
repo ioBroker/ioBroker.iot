@@ -72,6 +72,7 @@ const SMART_TYPES: { [name: string]: Types } = {
     SMARTPLUG: Types.socket,
     SMARTLOCK: Types.lock,
     CAMERA: Types.camera,
+    blinds: Types.blind, // error in the GUI
 };
 
 function getSmartNameFromObj(
@@ -473,8 +474,14 @@ export async function controls(
             continue;
         }
         options.id = id;
+
         // Try to detect with typeDetector
         let controls = detector.detect(options);
+
+        // Fix GUI error
+        if ((smartName.smartType as string) === 'blinds') {
+            smartName.smartType = Types.blind;
+        }
 
         // try to convert the state to typeDetector format
         // "smartName": {
@@ -588,7 +595,6 @@ export async function controls(
         // try to simulate typeDetector format
         if (smartName.smartType && pattern) {
             const control: IotExternalPatternControl = controls?.[0] || JSON.parse(JSON.stringify(patterns[pattern]));
-            control.states = control.states.filter(state => !!state.id);
 
             // find first required
             const state = control.states.find(state => state.required);

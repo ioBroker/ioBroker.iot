@@ -143,36 +143,29 @@ const CAPABILITIES: Record<string, { label: string; icon: IconType; color: strin
 };
 let capabilitiesTranslated = false;
 
-const DEVICES: Record<
-    string,
-    { label: string; icon: IconType; color: string; control?: string; controllable?: boolean }
-> = {
+const DEVICES: Record<string, { label: string; icon: IconType; color: string; controllable?: boolean }> = {
     AirCondition: {
         label: 'AirCondition',
         icon: FaSnowflake,
         color: '#001fb9',
-        control: 'switch',
         controllable: true,
     },
     Blind: {
         label: 'Blinds',
         icon: MdBlinds,
         color: '#00a28f',
-        control: 'blinds',
         controllable: true,
     },
     Button: {
         label: 'Button/Scene',
         icon: MdPlayArrow,
         color: '#00a28f',
-        control: 'button',
         controllable: true,
     },
     ContactSensor: {
         label: 'Sensor',
         icon: MdOutlineSensors,
         color: '#c9b803',
-        control: 'sensor',
         controllable: false,
     },
     Ct: { label: 'Color temperature', icon: IoIosColorFilter, color: '#5a9600' },
@@ -180,33 +173,28 @@ const DEVICES: Record<
         label: 'Dimmer',
         icon: HiLightBulb,
         color: '#cb8500',
-        control: 'slider',
         controllable: true,
     },
     Door: {
         label: 'Door sensor',
         icon: BsFillDoorOpenFill,
         color: '#ad002a',
-        control: 'doorSensor',
         controllable: false,
     },
     Gate: {
         label: 'Gate',
         icon: GiGate,
         color: '#9d02af',
-        control: 'gate',
     },
     Hue: {
         label: 'Color HUE',
         icon: IoIosColorFilter,
         color: '#007a96',
-        control: 'color',
     },
     Light: {
         label: 'Light',
         icon: FaLightbulb,
         color: '#c9b803',
-        control: 'switch',
         controllable: true,
     },
     Lock: { label: 'Lock', icon: AiFillUnlock, color: '#c9030a' },
