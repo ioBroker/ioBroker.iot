@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "4.1.6",
+    "version": "4.1.7",
     "news": {
+      "4.1.7": {
+        "en": "Better handling of dimmer in alexa v3",
+        "de": "Bessere Handhabung von Dimmer in alexa v3",
+        "ru": "Лучшее управление диммером в alexa v3",
+        "pt": "Melhor manuseio de dimmer em alexa v3",
+        "nl": "Betere behandeling van dimmer in alexa v3",
+        "fr": "Meilleure manipulation du variateur en alexa v3",
+        "it": "Migliore gestione del dimmer in alexa v3",
+        "es": "Mejor manejo de martillo en alexa v3",
+        "pl": "Lepsza obsługa ściemniacza w alexa v3",
+        "uk": "Краще обслуговування занурення в alexa v3",
+        "zh-cn": "在Alexa v3中更好地处理沉淀"
+      },
       "4.1.6": {
         "en": "Better handling of dimmer in alexa v3",
         "de": "Bessere Handhabung von Dimmer in alexa v3",
@@ -80,19 +93,6 @@
         "pl": "Domyślnie Alexa V3\nAktualizacja pakietów\nPoprawiony silnik Alexa V3",
         "uk": "Зроблено Alexa V3 за замовчуванням\nОновлені пакети\nВиправлений двигун Alexa V3",
         "zh-cn": "让 Alexa V3 默认\n更新软件包\n校正 Alexa V3 引擎"
-      },
-      "4.0.3": {
-        "en": "Added response ID to custom skill responses",
-        "de": "Antwort ID auf benutzerdefinierte Fähigkeiten Antworten hinzugefügt",
-        "ru": "Добавлен идентификатор ответа на пользовательские ответы навыков",
-        "pt": "ID de resposta adicionado às respostas personalizadas da habilidade",
-        "nl": "Reactie-ID toegevoegd aan aangepaste vaardigheidsresponsen",
-        "fr": "Ajout de l'ID de réponse aux réponses de compétence personnalisées",
-        "it": "Aggiunto ID risposta alle risposte di abilità personalizzate",
-        "es": "ID de respuesta adicional a respuestas de habilidad personalizadas",
-        "pl": "Dodano ID odpowiedzi do własnych odpowiedzi umiejętności",
-        "uk": "Додано ідентифікатор відповіді на користувацькі відповіді",
-        "zh-cn": "添加自定义技能响应的响应 ID"
       }
     },
     "titleLang": {
