@@ -511,6 +511,11 @@
 ### 0.1.4 (2018-09-26)
 
 -   (bluefox) Initial commit
+## 4.1.2 (2025-10-14)
+- (@GermanBluefox) Made Alexa V3 default
+- (@GermanBluefox) Updated packages
+- (@GermanBluefox) Corrected Alexa V3 engine
+
 ## 4.0.3 (2025-08-27)
 - (@GermanBluefox) Added response ID to custom skill responses
 

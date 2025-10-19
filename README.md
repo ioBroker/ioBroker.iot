@@ -350,7 +350,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 4.1.8 (2025-10-19)
 - (@GermanBluefox) Fixed detection of blinds
 
 ### 4.1.7 (2025-10-19)
@@ -367,11 +367,6 @@ setState('iot.0.app.message', JSON.stringify({
 ### 4.1.3 (2025-10-15)
 - (@GermanBluefox) Fixed custom skill
 - (@GermanBluefox) Added RGB single and scene support
-
-### 4.1.2 (2025-10-14)
-- (@GermanBluefox) Made Alexa V3 default
-- (@GermanBluefox) Updated packages
-- (@GermanBluefox) Corrected Alexa V3 engine
 
 ## License
 
