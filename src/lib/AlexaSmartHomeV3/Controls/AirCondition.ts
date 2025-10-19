@@ -8,7 +8,13 @@ import { ensureValueInRange } from '../Helpers/Utils';
 import TargetSetpoint from '../Alexa/Properties/TargetSetpoint';
 import type { Base as PropertiesBase, ControlStateInitObject } from '../Alexa/Properties/Base';
 import AdapterProvider from '../Helpers/AdapterProvider';
-import type { AlexaV3Category, AlexaV3DirectiveValue, IotExternalPatternControl } from '../types';
+import type {
+    AlexaV3Category,
+    AlexaV3DirectiveValue,
+    AlexaV3ThermostatMode,
+    IotExternalDetectorState,
+    IotExternalPatternControl,
+} from '../types';
 
 export default class AirCondition extends AdjustableControl {
     private readonly _thermostatController: ThermostatController;
@@ -21,8 +27,8 @@ export default class AirCondition extends AdjustableControl {
         super(detectedControl);
 
         this._thermostatController = new ThermostatController(
-            this.composeInitObjectThermostatMode(),
             this.composeInitObjectTargetSetpoint(),
+            this.composeInitObjectThermostatMode(),
         );
         this._thermostatMode = this._thermostatController.thermostatMode;
         this._powerController = new PowerController(this.composeInitObjectPowerState());
@@ -71,7 +77,7 @@ export default class AirCondition extends AdjustableControl {
             if (property.propertyName === ThermostatMode.propertyName) {
                 this._lastKnownMode = value as string;
                 if (!this.dedicatedOnOff) {
-                    this._powerState.currentValue = value !== ThermostatMode.OFF;
+                    this._powerState.currentValue = this._thermostatMode.alexaValue(value) !== ThermostatMode.OFF;
                 }
             }
         }
@@ -111,28 +117,60 @@ export default class AirCondition extends AdjustableControl {
 
     private composeInitObjectThermostatMode(): ControlStateInitObject {
         const map = this.statesMap;
+        // extract all modes
+        const modes = this.states[map.mode];
+        let states = modes?.common?.states || {};
+        const supportedModes: AlexaV3ThermostatMode[] = [];
+        if (states) {
+            if (Array.isArray(states)) {
+                const _states: { [modeValue: string]: string } = {};
+                states.forEach(state => {
+                    _states[state] = state.toUpperCase();
+                });
+                states = _states;
+            }
+            // Try map to known modes 'AUTO' | 'COOL' | 'HEAT' | 'OFF' | 'ECO' | 'EM_HEAT'
+            Object.keys(states).forEach(state => {
+                const mode = states[state].toUpperCase();
+                if (mode.includes('AUTO')) {
+                    supportedModes[parseInt(state, 10)] = 'AUTO';
+                    states[state] = 'AUTO';
+                } else if (mode.includes('COOL')) {
+                    supportedModes[parseInt(state, 10)] = 'COOL';
+                    states[state] = 'COOL';
+                } else if (mode.includes('HEAT')) {
+                    supportedModes[parseInt(state, 10)] = 'HEAT';
+                    states[state] = 'HEAT';
+                } else if (mode.includes('ECO')) {
+                    supportedModes[parseInt(state, 10)] = 'ECO';
+                    states[state] = 'ECO';
+                } else if (mode.includes('OFF')) {
+                    supportedModes[parseInt(state, 10)] = 'OFF';
+                    states[state] = 'OFF';
+                } else {
+                    states[state] = mode;
+                }
+            });
+        }
+        if (!supportedModes.length) {
+            supportedModes.push('AUTO');
+        }
+
         return {
-            setState: this.states[map.mode]!,
-            getState: this.states[map.mode]!,
-            alexaSetter: function (
-                this: PropertiesBase,
-                alexaValue: AlexaV3DirectiveValue,
-            ): ioBroker.StateValue | undefined {
-                return this.supportedModesAsEnum[alexaValue as string];
+            setState: this.states[map.mode] || ({ id: undefined } as unknown as IotExternalDetectorState),
+            getState: this.states[map.mode] || ({ id: undefined } as unknown as IotExternalDetectorState),
+            alexaSetter: function (this: PropertiesBase, alexaValue: AlexaV3DirectiveValue): ioBroker.StateValue {
+                // Convert 'AUTO' and so on into 0, 1
+                const pos = Object.keys(states).indexOf(alexaValue as AlexaV3ThermostatMode);
+                if (pos !== -1) {
+                    return Object.keys(states)[pos];
+                }
+                return 0;
             },
-            alexaGetter: function (
-                this: PropertiesBase,
-                value: ioBroker.StateValue | undefined,
-            ): AlexaV3DirectiveValue {
-                return this.supportedModesAsEnum[value as string];
+            alexaGetter: function (value: ioBroker.StateValue | undefined): AlexaV3DirectiveValue {
+                return (value !== undefined && states[value as number] !== undefined) || 'AUTO';
             },
-            supportedModes: [
-                ThermostatMode.AUTO,
-                ThermostatMode.COOL,
-                ThermostatMode.ECO,
-                ThermostatMode.HEAT,
-                ThermostatMode.OFF,
-            ],
+            supportedModes: supportedModes,
         };
     }
 

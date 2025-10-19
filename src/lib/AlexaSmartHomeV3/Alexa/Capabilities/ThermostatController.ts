@@ -1,14 +1,21 @@
 import ThermostatMode from '../Properties/ThermostatMode';
 import TargetSetpoint from '../Properties/TargetSetpoint';
 import Base from './Base';
-import type { AlexaV3ActionMapping, AlexaV3FriendlyName, AlexaV3Namespace, AlexaV3StateMapping } from '../../types';
+import type {
+    AlexaV3ActionMapping,
+    AlexaV3FriendlyName,
+    AlexaV3Namespace,
+    AlexaV3StateMapping,
+    AlexaV3ThermostatMode,
+} from '../../types';
 import type { ControlStateInitObject } from '../Properties/Base';
 
 export default class ThermostatController extends Base {
     private readonly _thermostatMode: ThermostatMode;
 
-    constructor(modeOpts: ControlStateInitObject, setPointOpts: ControlStateInitObject) {
+    constructor(setPointOpts: ControlStateInitObject, modeOpts: ControlStateInitObject) {
         super();
+
         this._thermostatMode = new ThermostatMode(modeOpts);
         this._properties = [new TargetSetpoint(setPointOpts), this._thermostatMode];
     }
@@ -32,7 +39,7 @@ export default class ThermostatController extends Base {
         };
         configuration?: {
             ordered: boolean;
-            supportedModes: any[];
+            supportedModes: AlexaV3ThermostatMode[];
             supportsScheduling?: boolean;
         };
         semantics?: {
@@ -53,12 +60,12 @@ export default class ThermostatController extends Base {
 
     get configuration(): {
         ordered: boolean;
-        supportedModes: string[];
+        supportedModes: AlexaV3ThermostatMode[];
         supportsScheduling?: boolean;
     } {
         return {
             ordered: false,
-            supportedModes: this._thermostatMode.supportedModes,
+            supportedModes: this._thermostatMode?.supportedModes || ['AUTO'],
         };
     }
 }

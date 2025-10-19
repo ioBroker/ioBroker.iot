@@ -221,6 +221,7 @@ describe('AlexaSmartHomeV3 - Controls', function () {
                     'Properties Namespace!',
                 );
                 assert.equal(response.context.properties[0].name, 'thermostatMode', 'Properties Name!');
+
                 assert.equal(response.context.properties[0].value, mode, 'Value!');
 
                 // check the powerState

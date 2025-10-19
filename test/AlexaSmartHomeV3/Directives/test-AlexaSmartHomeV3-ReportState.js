@@ -99,6 +99,59 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
             assert.equal(response.context.properties[1].uncertaintyInMilliseconds, 0);
         });
 
+        it('Report state for a thermostat with states', async function () {
+            const event = await helpers.getSample('StateReport/ReportState.json');
+
+            const deviceManager = new DeviceManager();
+            deviceManager.addDevice(
+                new Device({
+                    id: endpointId,
+                    friendlyName,
+                    displayCategories: ['TEMPERATURE_SENSOR', 'THERMOSTAT'],
+                    controls: [helpers.thermostatFullControl()],
+                }),
+            );
+            const powerId = helpers.getConfigForName('POWER', helpers.thermostatFullConfig());
+            await AdapterProvider.setState(powerId, true);
+            const actualTemperatureId = helpers.getConfigForName('ACTUAL', helpers.thermostatFullConfig());
+            await AdapterProvider.setState(actualTemperatureId, 25);
+
+            const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+
+            assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
+            assert.equal(response.event.header.name, 'StateReport', 'Name!');
+            assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+
+            assert.equal(response.context.properties.length, 4);
+            assert.equal(response.context.properties[0].hasOwnProperty('instance'), false);
+            assert.equal(response.context.properties[1].hasOwnProperty('instance'), false);
+            assert.equal(response.context.properties[2].hasOwnProperty('instance'), false);
+            assert.equal(response.context.properties[3].hasOwnProperty('instance'), false);
+
+            assert.equal(response.context.properties[0].namespace, 'Alexa.ThermostatController');
+            assert.equal(response.context.properties[0].name, 'targetSetpoint');
+            assert.equal(response.context.properties[0].value.value, 23.5);
+            assert.equal(response.context.properties[0].value.scale, 'CELSIUS');
+            assert.equal(response.context.properties[0].uncertaintyInMilliseconds, 0);
+
+            assert.equal(response.context.properties[1].namespace, 'Alexa.ThermostatController');
+            assert.equal(response.context.properties[1].name, 'thermostatMode');
+            assert.equal(response.context.properties[1].value, 'AUTO');
+            assert.equal(response.context.properties[1].uncertaintyInMilliseconds, 0);
+
+            assert.equal(response.context.properties[2].namespace, 'Alexa.TemperatureSensor');
+            assert.equal(response.context.properties[2].name, 'temperature');
+            assert.equal(response.context.properties[2].value.value, 25);
+            assert.equal(response.context.properties[2].uncertaintyInMilliseconds, 0);
+
+            assert.equal(response.context.properties[3].namespace, 'Alexa.PowerController');
+            assert.equal(response.context.properties[3].name, 'powerState');
+            assert.equal(response.context.properties[3].value, 'ON');
+            assert.equal(response.context.properties[3].uncertaintyInMilliseconds, 0);
+        });
+
+
         it('Report state for a motion sensor', async function () {
             const event = await helpers.getSample('StateReport/ReportState.json');
 

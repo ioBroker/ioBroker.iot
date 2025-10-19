@@ -1,4 +1,4 @@
-import type { AlexaV3DirectiveValue, AlexaV3Request } from '../../types';
+import { AlexaV3DirectiveValue, AlexaV3Request, AlexaV3ThermostatMode } from '../../types';
 
 import { asEnum } from '../../Helpers/Utils';
 import Base, { type ControlStateInitObject } from './Base';
@@ -19,6 +19,14 @@ export default class ThermostatMode extends Base {
 
     static matches(event: AlexaV3Request): boolean {
         return event?.directive?.header?.name === 'SetThermostatMode';
+    }
+
+    value(alexaValue: AlexaV3DirectiveValue): ioBroker.StateValue | undefined {
+        return this._supportedModesAsEnum[alexaValue as AlexaV3ThermostatMode] || 0;
+    }
+
+    alexaValue(value: ioBroker.StateValue | undefined): AlexaV3DirectiveValue {
+        return this._supportedModesAsEnum[parseInt(value as string, 10)] || 'AUTO';
     }
 
     matches(event: AlexaV3Request): boolean {
@@ -44,6 +52,9 @@ export default class ThermostatMode extends Base {
     }
     static get HEAT(): string {
         return 'HEAT';
+    }
+    static get EM_HEAT(): string {
+        return 'EM_HEAT';
     }
     static get OFF(): string {
         return 'OFF';

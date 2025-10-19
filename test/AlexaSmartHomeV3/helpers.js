@@ -50,7 +50,7 @@ class AdapterMock {
                 val: state,
                 ack: false,
                 ts: Date.now(),
-            }
+            };
         }
     }
 
@@ -183,6 +183,14 @@ const Helpers = {
         return new Controls.Temperature(require('./Resources/temperature.json'));
     },
 
+    thermostatFullConfig: function () {
+        return require('./Resources/thermostatWithStates.json');
+    },
+
+    thermostatFullControl: function () {
+        return new Controls.Thermostat(this.thermostatFullConfig());
+    },
+
     thermostatControl: function () {
         return new Controls.Thermostat(require('./Resources/thermostat.json'));
     },
@@ -234,7 +242,6 @@ const Helpers = {
     rgbSingleWithPowerControl: function () {
         return new Controls.RgbSingle(Helpers.rgbSingleWithPowerConfig());
     },
-
 
     dimmerWithPowerConfig: function () {
         return require('./Resources/dimmerWithPower.json');
@@ -436,4 +443,4 @@ const Helpers = {
     },
 };
 
-module.exports = Helpers
+module.exports = Helpers;

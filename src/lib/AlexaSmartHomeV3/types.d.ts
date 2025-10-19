@@ -3,6 +3,14 @@ import type { InternalDetectorState, Types } from '@iobroker/type-detector/types
 
 export type AlexaV3EndpointID = string;
 
+export type AlexaV3ThermostatMode =
+    | 'AUTO' // Automatic heating or cooling based on the current temperature and the setpoint.
+    | 'COOL' // Cooling mode.
+    | 'ECO' // Economy mode.
+    | 'EM_HEAT' // Emergency heating mode. This mode uses a backup heat source as an additional heat source. For example, a customer might use emergency heat when it's really cold or when the heat pump is broken. Customers can set this mode in device settings in the Alexa app.
+    | 'HEAT' // Heating mode.
+    | 'OFF'; // Heating and cooling are off, but the device might still have power.;
+
 export type AlexaV3DirectiveValue =
     | string
     | number
@@ -187,7 +195,7 @@ type AlexaV3Payload = {
     };
     temperatureScale?: 'CELSIUS' | 'FAHRENHEIT';
     thermostatMode?: {
-        value: 'COOL' | 'HEAT' | 'AUTO' | 'OFF' | 'ECO' | 'EM_HEAT';
+        value: AlexaV3ThermostatMode;
     };
 
     lowerSetpoint?: {

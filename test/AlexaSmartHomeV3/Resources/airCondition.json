@@ -11,8 +11,16 @@
         },
         {
             "name": "MODE",
-            "defaultRole": "level.mode.AirCondition",
-            "defaultUnit": "°C",
+            "defaultRole": "level.mode",
+            "common": {
+                "states": {
+                    "0": "AUTO",
+                    "1": "ECO",
+                    "2": "COOL",
+                    "3": "HEAT",
+                    "4": "OFF"
+                }
+            },
             "id": "alias.0.Wohnzimmer.AirCondition.MODE"
         }
     ],

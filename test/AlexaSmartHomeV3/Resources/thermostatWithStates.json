@@ -1,0 +1,53 @@
+{
+    "states": [
+        {
+            "name": "SET",
+            "defaultRole": "level.temperature",
+            "defaultUnit": "°C",
+            "id": "alias.0.Wohnzimmer.Thermostat.SET",
+            "smartName": {
+                "smartType": "Thermostat"
+            }
+        },
+        {
+            "name": "ACTUAL",
+            "defaultRole": "value.temperature",
+            "defaultUnit": "°C",
+            "id": "alias.0.Wohnzimmer.Thermostat.ACTUAL"
+        },
+        {
+            "name": "HUMIDITY",
+            "defaultRole": "value.humidity",
+            "defaultUnit": "%",
+            "id": "alias.0.Wohnzimmer.Thermostat.HUMIDITY"
+        },
+        {
+            "name": "POWER",
+            "defaultRole": "switch",
+            "defaultUnit": "%",
+            "id": "alias.0.Wohnzimmer.Thermostat.POWER"
+        },
+        {
+            "name": "MODE",
+            "defaultRole": "level.mode",
+            "common": {
+                "states": {
+                    "0": "AUTO",
+                    "1": "OFF",
+                    "2": "ECO"
+                }
+            },
+            "id": "alias.0.Wohnzimmer.Thermostat.MODE"
+        }
+    ],
+    "type": "thermostat",
+    "object": {
+        "id": "alias.0.Wohnzimmer.Thermostat",
+        "common": {
+            "name": {
+                "de": "Thermostat"
+            },
+            "role": "level.temperature"
+        }
+    }
+}
