@@ -20,3 +20,6 @@ package-lock.json
 .vscode
 /iobroker.iot-*.tgz
 .__mf__temp
+
+#ignore .commitinfo created by ioBroker release script
+.commitinfo
