@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "4.1.9",
+    "version": "4.1.10",
     "news": {
+      "4.1.10": {
+        "en": "Fixed detection of blinds\nFixed detection of sliders",
+        "de": "Feste Erkennung von Blinds\nFeste Erkennung von Schiebern",
+        "ru": "Фиксированное обнаружение жалюзи\nФиксированное обнаружение слайдеров",
+        "pt": "Detecção fixa de persianas\nDetecção fixa de barras deslizantes",
+        "nl": "Vaste detectie van blinden\nVaste detectie van sliders",
+        "fr": "Détection fixe des stores\nDétection fixe des curseurs",
+        "it": "Rilevamento fisso delle tende\nRilevamento fisso dei cursori",
+        "es": "Detección fija de persianas\nDetección fija de deslizadores",
+        "pl": "Stałe wykrywanie żaluzji\nStałe wykrywanie suwaków",
+        "uk": "Фіксоване виявлення жалюзі\nВиправлено виявлення слайдерів",
+        "zh-cn": "固定检测百叶窗\n固定检测滑动器"
+      },
       "4.1.7": {
         "en": "Better handling of dimmer in alexa v3",
         "de": "Bessere Handhabung von Dimmer in alexa v3",
