@@ -124,6 +124,8 @@ const SMART_TYPES_V2: Record<string, Types> = {
     SMARTPLUG: Types.socket,
     SMARTLOCK: Types.lock,
     CAMERA: Types.camera,
+    blinds: Types.blind,
+    levelSlider: Types.slider,
 };
 
 const CAPABILITIES: Record<string, { label: string; icon: IconType; color: string }> = {

@@ -73,6 +73,7 @@ const SMART_TYPES: { [name: string]: Types } = {
     SMARTLOCK: Types.lock,
     CAMERA: Types.camera,
     blinds: Types.blind, // error in the GUI
+    levelSlider: Types.slider, // error in the GUI
 };
 
 function getSmartNameFromObj(
@@ -481,6 +482,8 @@ export async function controls(
         // Fix GUI error
         if ((smartName.smartType as string) === 'blinds') {
             smartName.smartType = Types.blind;
+        } else if ((smartName.smartType as string) === 'levelSlider') {
+            smartName.smartType = Types.slider;
         }
 
         // try to convert the state to typeDetector format

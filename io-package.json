@@ -3,19 +3,6 @@
     "name": "iot",
     "version": "4.1.9",
     "news": {
-      "4.1.9": {
-        "en": "Fixed detection of blinds",
-        "de": "Feste Erkennung von Blinds",
-        "ru": "Фиксированное обнаружение жалюзи",
-        "pt": "Detecção fixa de persianas",
-        "nl": "Vaste detectie van blinden",
-        "fr": "Détection fixe des stores",
-        "it": "Rilevamento fisso delle tende",
-        "es": "Detección fija de persianas",
-        "pl": "Stałe wykrywanie żaluzji",
-        "uk": "Фіксоване виявлення жалюзі",
-        "zh-cn": "固定检测百叶窗"
-      },
       "4.1.7": {
         "en": "Better handling of dimmer in alexa v3",
         "de": "Bessere Handhabung von Dimmer in alexa v3",

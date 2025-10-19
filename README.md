@@ -350,8 +350,9 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 4.1.9 (2025-10-19)
+### **WORK IN PROGRESS**
 - (@GermanBluefox) Fixed detection of blinds
+- (@GermanBluefox) Fixed detection of sliders
 
 ### 4.1.7 (2025-10-19)
 - (@GermanBluefox) Better handling of dimmer in alexa v3
