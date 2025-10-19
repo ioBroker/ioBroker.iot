@@ -350,7 +350,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 4.1.8 (2025-10-19)
+### **WORK IN PROGRESS**
 - (@GermanBluefox) Fixed detection of blinds
 
 ### 4.1.7 (2025-10-19)
