@@ -1493,6 +1493,12 @@ export class IotAdapter extends Adapter {
             this.alexaSH2 = new AlexaSH2(this);
             this.alexaSH2.setLanguage(this.lang, this.translate);
             this.alexaSH2.updateDevices();
+        } else {
+            // Check that update result is empty
+            const state = await this.getStateAsync('smart.updatesResult');
+            if (state?.val) {
+                await this.setStateAsync('smart.updatesResult', '', true);
+            }
         }
 
         this.remote?.setLanguage(this.lang);
@@ -1543,6 +1549,12 @@ export class IotAdapter extends Adapter {
             });
             this.alexaSH3.setLanguage(this.lang);
             await this.alexaSH3.updateDevices();
+        } else {
+            // Check that update result is empty
+            const state = await this.getStateAsync('smart.updates3');
+            if (state?.val) {
+                await this.setStateAsync('smart.updates3', '', true);
+            }
         }
 
         if (this.config.amazonCustom) {
@@ -1552,9 +1564,21 @@ export class IotAdapter extends Adapter {
 
         if (this.config.googleHome) {
             this.googleHome = new GoogleHome(this, this.urlKey);
-        } // no else
+        } else {
+            // Check that update result is empty
+            const state = await this.getStateAsync('smart.updatesGH');
+            if (state?.val) {
+                await this.setStateAsync('smart.updatesGH', '', true);
+            }
+        }
         if (this.config.yandexAlisa) {
             this.yandexAlisa = new YandexAlisa(this, this.urlKey);
+        } else {
+            // Check that update result is empty
+            const state = await this.getStateAsync('smart.updatesYA');
+            if (state?.val) {
+                await this.setStateAsync('smart.updatesYA', '', true);
+            }
         }
 
         this.googleHome?.setLanguage(this.lang);

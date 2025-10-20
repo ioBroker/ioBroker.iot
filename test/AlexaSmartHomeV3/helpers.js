@@ -307,8 +307,12 @@ const Helpers = {
         return new Controls.Light(Helpers.lightConfig10_100());
     },
 
+    motionConfig: function () {
+        return require('./Resources/motion.json');
+    },
+
     motionControl: function () {
-        return new Controls.Motion(require('./Resources/motion.json'));
+        return new Controls.Motion(this.motionConfig());
     },
 
     doorControl: function () {

@@ -83,11 +83,17 @@ describe('AlexaSmartHomeV3 - Controls', function () {
             assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, 'Name!');
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
 
-            assert.equal(response.context.properties.length, 1);
+            assert.equal(response.context.properties.length, 2);
             assert.equal(response.context.properties[0].namespace, 'Alexa.TemperatureSensor');
             assert.equal(response.context.properties[0].name, 'temperature');
             assert.equal(response.context.properties[0].value.value, 21.5);
             assert.equal(response.context.properties[0].value.scale, 'CELSIUS');
+
+            assert.equal(response.context.properties[1].hasOwnProperty('instance'), false);
+            assert.equal(response.context.properties[1].namespace, 'Alexa.EndpointHealth');
+            assert.equal(response.context.properties[1].name, 'connectivity');
+            assert.equal(response.context.properties[1].value.value, 'OK');
+            assert.equal(response.context.properties[1].uncertaintyInMilliseconds, 0);
 
             assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
         });
@@ -113,10 +119,16 @@ describe('AlexaSmartHomeV3 - Controls', function () {
             assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, 'Name!');
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
 
-            assert.equal(response.context.properties.length, 1);
+            assert.equal(response.context.properties.length, 2);
             assert.equal(response.context.properties[0].namespace, 'Alexa.HumiditySensor');
             assert.equal(response.context.properties[0].name, 'relativeHumidity');
             assert.equal(response.context.properties[0].value, 81);
+
+            assert.equal(response.context.properties[1].hasOwnProperty('instance'), false);
+            assert.equal(response.context.properties[1].namespace, 'Alexa.EndpointHealth');
+            assert.equal(response.context.properties[1].name, 'connectivity');
+            assert.equal(response.context.properties[1].value.value, 'OK');
+            assert.equal(response.context.properties[1].uncertaintyInMilliseconds, 0);
 
             assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
         });

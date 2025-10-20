@@ -7,6 +7,11 @@
             "smartName": {
                 "smartType": "Motion Sensor"
             }
+        },
+        {
+            "name": "UNREACH",
+            "defaultRole": "indicator.maintenance.unreach",
+            "id": "alias.0.Wohnzimmer.Motion.UNREACH"
         }
     ],
     "type": "motion",

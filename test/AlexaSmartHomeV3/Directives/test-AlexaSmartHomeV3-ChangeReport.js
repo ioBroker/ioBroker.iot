@@ -54,7 +54,7 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
             assert.equal(response.event.payload.change.properties[0].uncertaintyInMilliseconds, 0);
 
             // unchanged properties
-            assert.equal(response.context.properties.length, 2);
+            assert.equal(response.context.properties.length, 3);
             assert.equal(response.context.properties[0].namespace, 'Alexa.BrightnessController');
             assert.equal(response.context.properties[0].name, 'brightness');
             assert.equal(response.context.properties[0].value, 75);
@@ -64,6 +64,12 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
             assert.equal(response.context.properties[1].name, 'temperature');
             assert.equal(response.context.properties[1].value.value, 21.5);
             assert.equal(response.context.properties[1].uncertaintyInMilliseconds, 0);
+
+            assert.equal(response.context.properties[2].hasOwnProperty('instance'), false);
+            assert.equal(response.context.properties[2].namespace, 'Alexa.EndpointHealth');
+            assert.equal(response.context.properties[2].name, 'connectivity');
+            assert.equal(response.context.properties[2].value.value, 'OK');
+            assert.equal(response.context.properties[2].uncertaintyInMilliseconds, 0);
         });
 
         it('ChangeReport for a temperature sensor', async function () {
@@ -84,7 +90,7 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
             assert.equal(response.event.payload.change.properties[0].uncertaintyInMilliseconds, 0);
 
             // unchanged properties
-            assert.equal(response.context.properties.length, 2);
+            assert.equal(response.context.properties.length, 3);
             assert.equal(response.context.properties[0].namespace, 'Alexa.PowerController');
             assert.equal(response.context.properties[0].name, 'powerState');
             assert.equal(response.context.properties[0].value, 'ON');
@@ -94,6 +100,12 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
             assert.equal(response.context.properties[1].name, 'brightness');
             assert.equal(response.context.properties[1].value, 75);
             assert.equal(response.context.properties[1].uncertaintyInMilliseconds, 0);
+
+            assert.equal(response.context.properties[2].hasOwnProperty('instance'), false);
+            assert.equal(response.context.properties[2].namespace, 'Alexa.EndpointHealth');
+            assert.equal(response.context.properties[2].name, 'connectivity');
+            assert.equal(response.context.properties[2].value.value, 'OK');
+            assert.equal(response.context.properties[2].uncertaintyInMilliseconds, 0);
         });
 
         it('ChangeReport for a thermostat', async function () {

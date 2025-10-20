@@ -283,10 +283,15 @@ export default class Control {
     protected async getOrRetrieveCurrentValue(property: PropertiesBase): Promise<ioBroker.StateValue> {
         if (property.currentValue === undefined) {
             const id = property.getId;
-            if (!id) {
-                throw new Error(`no ID defined for property "${property.propertyName}" of "${this.name}"`);
+            if (!id && property.propertyName === 'connectivity') {
+                // this is an exception
+                property.currentValue = false;
+            } else {
+                if (!id) {
+                    throw new Error(`no ID defined for property "${property.propertyName}" of "${this.name}"`);
+                }
+                property.currentValue = await AdapterProvider.getState(id);
             }
-            property.currentValue = await AdapterProvider.getState(id);
         }
 
         if (property.currentValue === undefined) {

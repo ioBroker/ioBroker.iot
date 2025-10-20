@@ -9,8 +9,4 @@ export default class RelativeHumidity extends Base {
     matches(event: AlexaV3Request): boolean {
         return RelativeHumidity.matches(event);
     }
-
-    reportValue(value: number): any {
-        return value;
-    }
 }

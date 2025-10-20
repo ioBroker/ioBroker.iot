@@ -451,6 +451,7 @@ function getObjectIcon(obj: ioBroker.Object, id: string, imagePrefix: string, la
 function toHex(x: number): string {
     return x.toString(16).padStart(2, '0');
 }
+
 function to255(x: number): number {
     return Math.round(x * 255);
 }
@@ -1340,17 +1341,34 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                 <MenuItem
                     key="_"
                     value="_"
+                    style={{ opacity: 0.5, fontStyle: 'normal' }}
                 >
                     <em>{I18n.t('no type')}</em>
                 </MenuItem>,
             ];
+            // get the mapping of device types
+            const mapping: { [key: string]: string } = {};
+            Object.keys(DEVICES).forEach(key => (mapping[key.toLowerCase()] = key));
+
             for (let i = 0; i < SMART_TYPES.length; i++) {
+                const deviceDescription = DEVICES[mapping[SMART_TYPES[i].toLowerCase()]];
+                const Icon = deviceDescription?.icon || null;
                 items.push(
                     <MenuItem
                         key={SMART_TYPES[i]}
                         value={SMART_TYPES[i]}
                     >
-                        <em>{I18n.t(SMART_TYPES[i])}</em>
+                        {Icon ? (
+                            <Icon
+                                style={{
+                                    width: 20,
+                                    height: 20,
+                                    marginRight: 4,
+                                    color: deviceDescription?.color,
+                                }}
+                            />
+                        ) : null}
+                        {I18n.t(SMART_TYPES[i])}
                     </MenuItem>,
                 );
             }

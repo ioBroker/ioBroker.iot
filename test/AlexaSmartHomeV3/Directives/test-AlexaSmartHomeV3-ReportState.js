@@ -54,13 +54,19 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
             assert.equal(response.event.header.name, 'StateReport', 'Name!');
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
 
-            assert.equal(response.context.properties.length, 1);
+            assert.equal(response.context.properties.length, 2);
             assert.equal(response.context.properties[0].hasOwnProperty('instance'), false);
             assert.equal(response.context.properties[0].namespace, 'Alexa.TemperatureSensor');
             assert.equal(response.context.properties[0].name, 'temperature');
             assert.equal(response.context.properties[0].value.value, 21.5);
             assert.equal(response.context.properties[0].value.scale, 'CELSIUS');
             assert.equal(response.context.properties[0].uncertaintyInMilliseconds, 0);
+
+            assert.equal(response.context.properties[1].hasOwnProperty('instance'), false);
+            assert.equal(response.context.properties[1].namespace, 'Alexa.EndpointHealth');
+            assert.equal(response.context.properties[1].name, 'connectivity');
+            assert.equal(response.context.properties[1].value.value, 'OK');
+            assert.equal(response.context.properties[1].uncertaintyInMilliseconds, 0);
         });
 
         it('Report state for a thermostat', async function () {
@@ -151,9 +157,12 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
             assert.equal(response.context.properties[3].uncertaintyInMilliseconds, 0);
         });
 
-
         it('Report state for a motion sensor', async function () {
             const event = await helpers.getSample('StateReport/ReportState.json');
+
+            const unreachId = helpers.getConfigForName('UNREACH', helpers.motionConfig());
+            // set an error
+            await AdapterProvider.setState(unreachId, true);
 
             const deviceManager = new DeviceManager();
             deviceManager.addDevice(
@@ -172,12 +181,18 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
             assert.equal(response.event.header.name, 'StateReport', 'Name!');
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
 
-            assert.equal(response.context.properties.length, 1);
+            assert.equal(response.context.properties.length, 2);
             assert.equal(response.context.properties[0].hasOwnProperty('instance'), false);
             assert.equal(response.context.properties[0].namespace, 'Alexa.MotionSensor');
             assert.equal(response.context.properties[0].name, 'detectionState');
             assert.equal(response.context.properties[0].value, 'DETECTED');
             assert.equal(response.context.properties[0].uncertaintyInMilliseconds, 0);
+
+            assert.equal(response.context.properties[1].hasOwnProperty('instance'), false);
+            assert.equal(response.context.properties[1].namespace, 'Alexa.EndpointHealth');
+            assert.equal(response.context.properties[1].name, 'connectivity');
+            assert.equal(response.context.properties[1].value.value, 'UNREACHABLE');
+            assert.equal(response.context.properties[1].uncertaintyInMilliseconds, 0);
         });
 
         it('Report state for a smart lock', async function () {
@@ -228,12 +243,18 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
             assert.equal(response.event.header.name, 'StateReport', 'Name!');
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
 
-            assert.equal(response.context.properties.length, 1);
+            assert.equal(response.context.properties.length, 2);
             assert.equal(response.context.properties[0].hasOwnProperty('instance'), false);
             assert.equal(response.context.properties[0].namespace, 'Alexa.ContactSensor');
             assert.equal(response.context.properties[0].name, 'detectionState');
             assert.equal(response.context.properties[0].value, 'DETECTED');
             assert.equal(response.context.properties[0].uncertaintyInMilliseconds, 0);
+
+            assert.equal(response.context.properties[1].hasOwnProperty('instance'), false);
+            assert.equal(response.context.properties[1].namespace, 'Alexa.EndpointHealth');
+            assert.equal(response.context.properties[1].name, 'connectivity');
+            assert.equal(response.context.properties[1].value.value, 'OK');
+            assert.equal(response.context.properties[1].uncertaintyInMilliseconds, 0);
         });
 
         it('Report state for a gate', async function () {

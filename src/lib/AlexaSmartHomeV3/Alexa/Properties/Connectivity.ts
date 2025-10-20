@@ -14,7 +14,11 @@ export default class Connectivity extends Base {
         return Connectivity.matches(event);
     }
 
-    alexaValue(_value: ioBroker.StateValue | undefined): AlexaV3DirectiveValue {
-        return undefined;
+    reportValue(isError: AlexaV3DirectiveValue): any {
+        return isError ? { value: 'UNREACHABLE' } : { value: 'OK' };
+    }
+
+    alexaValue(isError: ioBroker.StateValue | undefined): AlexaV3DirectiveValue {
+        return isError as AlexaV3DirectiveValue;
     }
 }
