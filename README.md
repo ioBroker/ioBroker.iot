@@ -350,7 +350,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 4.1.11 (2025-10-20)
 - (@GermanBluefox) Added humidity sensor
 - (@GermanBluefox) Added unreach indicator
 - (@GermanBluefox) Corrected deletion of automatically detected devices
@@ -369,10 +369,6 @@ setState('iot.0.app.message', JSON.stringify({
 - (@GermanBluefox) Implemented stored values for Alexa V3
 - (@GermanBluefox) Added RGB(W) with individual states to Alexa V3
 - (@GermanBluefox) Added dedicated checkbox for alexa custom skill
-
-### 4.1.3 (2025-10-15)
-- (@GermanBluefox) Fixed custom skill
-- (@GermanBluefox) Added RGB single and scene support
 
 ## License
 

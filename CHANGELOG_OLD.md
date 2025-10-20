@@ -511,6 +511,10 @@
 ### 0.1.4 (2018-09-26)
 
 -   (bluefox) Initial commit
+## 4.1.3 (2025-10-15)
+- (@GermanBluefox) Fixed custom skill
+- (@GermanBluefox) Added RGB single and scene support
+
 ## 4.1.2 (2025-10-14)
 - (@GermanBluefox) Made Alexa V3 default
 - (@GermanBluefox) Updated packages

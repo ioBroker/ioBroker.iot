@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "4.1.10",
+    "version": "4.1.11",
     "news": {
+      "4.1.11": {
+        "en": "Added humidity sensor\nAdded unreach indicator\nCorrected deletion of automatically detected devices",
+        "de": "Zusätzlicher Feuchtigkeitssensor\nZusätzlicher unrichtiger Indikator\nKorrigiertes Löschen automatisch erkannter Geräte",
+        "ru": "Добавлен датчик влажности\nДобавлен индикатор недоступности\nИсправленное удаление автоматически обнаруженных устройств",
+        "pt": "Sensor de umidade adicionado\nIndicador de não acesso adicionado\nEliminação corrigida de dispositivos detectados automaticamente",
+        "nl": "Toegevoegde vochtigheidssensor\nOnbereikbare indicator toegevoegd\nGecorrigeerde verwijdering van automatisch gedetecteerde voorzieningen",
+        "fr": "Capteur d'humidité ajouté\nIndicateur non atteint ajouté\nSuppression corrigée des dispositifs détectés automatiquement",
+        "it": "Sensore di umidità aggiunto\nIndicatore di accesso aggiunto\nCancellazione corretta dei dispositivi rilevati automaticamente",
+        "es": "Sensor de humedad añadido\nIndicador de alcance\nEliminación corregida de dispositivos detectados automáticamente",
+        "pl": "Dodany czujnik wilgotności\nDodano wskaźnik niezasięgu\nSkorygowane usunięcie automatycznie wykrytych urządzeń",
+        "uk": "Додана датчик вологості\nДоданий індикатор невідходу\nВиправлено видалення автоматично виявлених пристроїв",
+        "zh-cn": "增加的湿度传感器\n添加未达到的指标\n更正自动检测设备的删除"
+      },
       "4.1.10": {
         "en": "Fixed detection of blinds\nFixed detection of sliders",
         "de": "Feste Erkennung von Blinds\nFeste Erkennung von Schiebern",
@@ -80,19 +93,6 @@
         "pl": "Naprawiono niestandardowe umiejętności\nDodano wsparcie RGB single i sceny",
         "uk": "Фіксована спеціальна майстерність\nДодано RGB єдиного і сцена підтримки",
         "zh-cn": "固定定制技能\n添加 RGB 单场和场景支持"
-      },
-      "4.1.2": {
-        "en": "Made Alexa V3 default\nUpdated packages\nCorrected Alexa V3 engine",
-        "de": "Made Alexa V3 default\nAktualisierte Pakete\nKorrektur Alexa V3 Motor",
-        "ru": "По умолчанию Alexa V3\nОбновленные пакеты\nИсправлен двигатель Alexa V3",
-        "pt": "Made Alexa V3 por omissão\nPacotes atualizados\nMotor Alexa V3 corrigido",
-        "nl": "Alexa V3 standaard gemaakt\nBijgewerkte pakketten\nGecorrigeerde Alexa V3-motor",
-        "fr": "A fait Alexa V3 par défaut\nPaquets mis à jour\nMoteur Alexa V3 corrigé",
-        "it": "Made Alexa V3 default\nPacchetti aggiornati\nMotore Alexa V3 corretto",
-        "es": "Fabricado Alexa V3 por defecto\nPaquetes actualizados\nMotor Alexa V3 corregido",
-        "pl": "Domyślnie Alexa V3\nAktualizacja pakietów\nPoprawiony silnik Alexa V3",
-        "uk": "Зроблено Alexa V3 за замовчуванням\nОновлені пакети\nВиправлений двигун Alexa V3",
-        "zh-cn": "让 Alexa V3 默认\n更新软件包\n校正 Alexa V3 引擎"
       }
     },
     "titleLang": {
