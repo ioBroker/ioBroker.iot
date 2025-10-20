@@ -60,7 +60,7 @@
     "Delete": "删除",
     "Detection": "检测",
     "Device %s was not added": "未添加设备%s",
-    "Device %s will be disabled.": "设备 %s 将被禁用。",
+    "Device %s will be disabled.": "设备“%s”将被禁用。",
     "Device will be deactivated.": "设备将被停用。",
     "Device will be disabled.": "设备将被禁用。",
     "Dimmer": "调光器",

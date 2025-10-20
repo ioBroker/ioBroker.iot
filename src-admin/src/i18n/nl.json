@@ -60,7 +60,7 @@
     "Delete": "Verwijderen",
     "Detection": "Detectie",
     "Device %s was not added": "Apparaat %s is niet toegevoegd",
-    "Device %s will be disabled.": "Apparaat %s wordt uitgeschakeld.",
+    "Device %s will be disabled.": "Apparaat \"%s\" wordt uitgeschakeld.",
     "Device will be deactivated.": "Apparaat wordt gedeactiveerd.",
     "Device will be disabled.": "Apparaat %s zal worden uitgeschakeld.",
     "Dimmer": "dimmer",

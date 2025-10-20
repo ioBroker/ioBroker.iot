@@ -60,7 +60,7 @@
     "Delete": "Удалить",
     "Detection": "Обнаружение",
     "Device %s was not added": "Устройство %s не было добавлено",
-    "Device %s will be disabled.": "Устройство %s будет отключено.",
+    "Device %s will be disabled.": "Устройство «%s» будет отключено.",
     "Device will be deactivated.": "Устройство будет недоступно для голосового управления.",
     "Device will be disabled.": "Устройство %s исчезнет из списка.",
     "Dimmer": "Диммер",

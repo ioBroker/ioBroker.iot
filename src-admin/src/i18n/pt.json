@@ -60,7 +60,7 @@
     "Delete": "Excluir",
     "Detection": "Detecção",
     "Device %s was not added": "O dispositivo %s não foi adicionado",
-    "Device %s will be disabled.": "O dispositivo %s será desabilitado.",
+    "Device %s will be disabled.": "O dispositivo \"%s\" será desabilitado.",
     "Device will be deactivated.": "O dispositivo será desativado.",
     "Device will be disabled.": "O dispositivo será desabilitado.",
     "Dimmer": "regulador de luz",

@@ -60,7 +60,7 @@
     "Delete": "Видалити",
     "Detection": "виявлення",
     "Device %s was not added": "Пристрій %s не додано",
-    "Device %s will be disabled.": "Пристрій %s буде вимкнено.",
+    "Device %s will be disabled.": "Пристрій \"%s\" буде вимкнено.",
     "Device will be deactivated.": "Пристрій буде деактивовано.",
     "Device will be disabled.": "Пристрій %s буде вимкнено.",
     "Dimmer": "Диммер",

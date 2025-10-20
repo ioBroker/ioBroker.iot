@@ -60,7 +60,7 @@
     "Delete": "Löschen",
     "Detection": "Erkennung",
     "Device %s was not added": "Gerät %s wurde nicht hinzugefügt",
-    "Device %s will be disabled.": "Gerät %s wird deaktiviert.",
+    "Device %s will be disabled.": "Gerät „%s“ wird deaktiviert.",
     "Device will be deactivated.": "Gerät wird für die Sprachsteuerung deaktiviert.",
     "Device will be disabled.": "Gerät %s wird aus der Liste entfernt.",
     "Dimmer": "Dimmer",

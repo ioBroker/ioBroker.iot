@@ -60,7 +60,7 @@
     "Delete": "Delete",
     "Detection": "Detection",
     "Device %s was not added": "Device %s was not added",
-    "Device %s will be disabled.": "Device %s will be disabled.",
+    "Device %s will be disabled.": "Device \"%s\" will be disabled.",
     "Device will be deactivated.": "Device will be deactivated.",
     "Device will be disabled.": "Device %s will be disabled.",
     "Dimmer": "Dimmer",

@@ -353,6 +353,7 @@ setState('iot.0.app.message', JSON.stringify({
 ### **WORK IN PROGRESS**
 - (@GermanBluefox) Added humidity sensor
 - (@GermanBluefox) Added unreach indicator
+- (@GermanBluefox) Corrected deletion of automatically detected devices
 
 ### 4.1.10 (2025-10-19)
 - (@GermanBluefox) Fixed detection of blinds

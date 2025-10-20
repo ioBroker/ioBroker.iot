@@ -60,7 +60,7 @@
     "Delete": "Borrar",
     "Detection": "Detección",
     "Device %s was not added": "El dispositivo %s no fue agregado",
-    "Device %s will be disabled.": "El dispositivo %s se desactivará.",
+    "Device %s will be disabled.": "El dispositivo \"%s\" se deshabilitará.",
     "Device will be deactivated.": "El dispositivo se desactivará.",
     "Device will be disabled.": "El dispositivo %s estará deshabilitado.",
     "Dimmer": "Regulador de intensidad",

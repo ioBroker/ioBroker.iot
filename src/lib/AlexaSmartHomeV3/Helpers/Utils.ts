@@ -486,10 +486,6 @@ export async function controls(
             smartName.smartType = Types.slider;
         }
 
-        if (id.includes('000EDBE9992D89')) {
-            console.log('A')
-        }
-
         // try to convert the state to typeDetector format
         // "smartName": {
         //    "de": "Rote Lampe",
@@ -686,6 +682,7 @@ export async function controls(
                 // remove all unassigned control register
                 iotControl.states = iotControl.states.filter(s => s.id);
 
+                let smartDisabled = false;
                 // take all smartNames if any
                 iotControl.states.forEach(s => {
                     s.smartName = getSmartNameFromObj(
@@ -693,6 +690,12 @@ export async function controls(
                         adapter.namespace,
                         (adapter.config as IotAdapterConfig).noCommon,
                     );
+                    if (s.smartName === false) {
+                        smartDisabled = true;
+                        adapter.log.debug(`[ALEXA3] Ignored control ${id} with type ${iotControl.type} as disabled`);
+                        return;
+                    }
+
                     s.common = {
                         min: devicesObject[s.id]?.common?.min,
                         max: devicesObject[s.id]?.common?.max,
@@ -702,6 +705,10 @@ export async function controls(
                         name: devicesObject[s.id]?.common?.name,
                     };
                 });
+                if (smartDisabled) {
+                    // This control is disabled
+                    return;
+                }
 
                 // find out the room the found control is in
                 const room = rooms.find(room => room?.common?.members?.includes(id));
