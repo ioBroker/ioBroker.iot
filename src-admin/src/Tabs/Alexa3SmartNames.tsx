@@ -2,68 +2,69 @@ import React, { Component } from 'react';
 import SVG from 'react-inlinesvg';
 
 import {
-    TextField,
-    Button,
-    IconButton,
-    Fab,
-    CircularProgress,
     Badge,
-    Select,
-    MenuItem,
-    FormHelperText,
-    FormControl,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    Dialog,
     Box,
+    Button,
+    CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Fab,
+    FormControl,
+    FormHelperText,
+    IconButton,
+    MenuItem,
+    Select,
+    TextField,
 } from '@mui/material';
 
 import {
-    MdEdit as IconEdit,
     MdAdd as IconAdd,
-    MdRefresh as IconRefresh,
+    MdBlinds,
     MdClear as IconClear,
     MdDelete as IconDelete,
-    MdFormatAlignJustify as IconExpand,
     MdDragHandle as IconCollapse,
+    MdEdit as IconEdit,
+    MdFormatAlignJustify as IconExpand,
     MdList as IconList,
-    MdBlinds,
     MdOutlineSensors,
     MdOutlineThermostat,
     MdPlayArrow,
+    MdRefresh as IconRefresh,
 } from 'react-icons/md';
-
-import { FaLightbulb, FaPercentage as Percent, FaSnowflake, FaTemperatureLow } from 'react-icons/fa';
 
 import { AiFillUnlock } from 'react-icons/ai';
 import { BsFillDoorOpenFill, BsFillVolumeUpFill } from 'react-icons/bs';
+import { CgMenuMotion } from 'react-icons/cg';
+import { FaLightbulb, FaPercentage as Percent, FaSnowflake, FaTemperatureLow } from 'react-icons/fa';
 import { GiElectricalSocket, GiGate, GiWindow } from 'react-icons/gi';
 import { HiLightBulb } from 'react-icons/hi';
 import { IoIosColorFilter, IoIosColorPalette } from 'react-icons/io';
-import { CgMenuMotion } from 'react-icons/cg';
 import { RxSlider } from 'react-icons/rx';
 import { TbVacuumCleaner } from 'react-icons/tb';
+import { WiHumidity } from 'react-icons/wi';
 
 import {
-    FileCopy as IconCopy,
-    Close as IconClose,
-    Check as IconCheck,
     Brightness5,
-    ToggleOn,
-    Palette,
+    Check as IconCheck,
+    ChevronRight,
+    Close as IconClose,
+    DeviceThermostat,
+    FileCopy as IconCopy,
     Gradient,
-    Notifications,
     Lock,
     ModeStandby,
-    VolumeOff,
+    Notifications,
+    Palette,
+    SignalWifiStatusbarNullTwoTone,
     Thermostat,
     ThermostatAuto,
-    VolumeUp,
-    DeviceThermostat,
-    ChevronRight,
-    UnfoldMore,
+    ToggleOn,
     UnfoldLess,
+    UnfoldMore,
+    VolumeOff,
+    VolumeUp,
 } from '@mui/icons-material';
 
 import {
@@ -113,6 +114,7 @@ const SMART_TYPES: Types[] = [
     Types.motion,
     Types.slider,
     Types.temperature,
+    Types.humidity,
     Types.button,
     Types.window,
 ];
@@ -128,8 +130,13 @@ const SMART_TYPES_V2: Record<string, Types> = {
     levelSlider: Types.slider,
 };
 
-const CAPABILITIES: Record<string, { label: string; icon: IconType; color: string }> = {
+const CAPABILITIES: Record<string, { label: string; icon: IconType; color: string; style?: React.CSSProperties }> = {
     brightness: { label: 'Brightness', icon: Brightness5, color: '#c9b803' },
+    connectivity: {
+        label: 'Connectivity',
+        icon: SignalWifiStatusbarNullTwoTone,
+        color: '#989898',
+    },
     color: { label: 'Color', icon: Palette, color: '#a20030' },
     colorTemperatureInKelvin: { label: 'Color temperature', icon: Gradient, color: '#019bb6' },
     detectionState: { label: 'Detection', icon: Notifications, color: '#913c01' },
@@ -138,6 +145,7 @@ const CAPABILITIES: Record<string, { label: string; icon: IconType; color: strin
     muted: { label: 'Muted', icon: VolumeOff, color: '#9701af' },
     percentage: { label: 'Percentage', icon: Percent, color: '#009870' },
     powerState: { label: 'Power', icon: ToggleOn, color: '#70bd00' },
+    relativeHumidity: { label: 'Humidity', icon: WiHumidity, color: '#3c58ca', style: { width: 24, height: 24 } },
     targetSetpoint: { label: 'Set point', icon: Thermostat, color: '#813600' },
     temperature: { label: 'Temperature', icon: DeviceThermostat, color: '#9f1300' },
     thermostatMode: { label: 'Thermostat mode', icon: ThermostatAuto, color: '#800048' },
@@ -188,6 +196,7 @@ const DEVICES: Record<string, { label: string; icon: IconType; color: string; co
         icon: GiGate,
         color: '#9d02af',
     },
+    Humidity: { label: 'Humidity', icon: WiHumidity, color: '#8ca102' },
     Hue: {
         label: 'Color HUE',
         icon: IoIosColorFilter,
@@ -993,15 +1002,11 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
         const actions: React.JSX.Element[] = [];
 
         Object.keys(CAPABILITIES).forEach(action => {
-            if (action === 'translated') {
-                return;
-            }
             if (control.supported.includes(action)) {
                 let state;
                 const Icon = CAPABILITIES[action].icon;
                 let style = styles.actionIcon;
-                let valuePercent = null;
-                let valueBrightness = null;
+                let valueString = null;
                 let valueColor = null;
                 if (control.state) {
                     state = control.state.find(st => action === st.name);
@@ -1022,10 +1027,19 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                         if (state?.value === 'NOT_DETECTED') {
                             style = { ...style, ...styles.deviceOff };
                         }
-                    } else if (state?.name === 'percentage') {
-                        valuePercent = `${state.value === null ? '--' : Math.round(state.value * 100) / 100}%`;
+                    } else if (state?.name === 'percentage' || state?.name === 'relativeHumidity') {
+                        valueString = `${state.value === null ? '--' : Math.round(state.value * 100) / 100}%`;
                     } else if (state?.name === 'brightness') {
-                        valueBrightness = state.value === null ? '--' : Math.round(state.value * 100) / 100;
+                        valueString = state.value === null ? '--' : Math.round(state.value * 100) / 100;
+                    } else if (state?.name === 'temperature') {
+                        if (typeof state.value === 'object') {
+                            const val = state.value?.value;
+                            valueString =
+                                (val === null || val === undefined ? '--' : Math.round(val * 100) / 100) +
+                                (state.value?.scale === 'CELSIUS' ? '°C' : state.value.scale);
+                        } else {
+                            valueString = state.value;
+                        }
                     }
 
                     if (state?.value && typeof state.value === 'object' && state.value.value !== undefined) {
@@ -1042,12 +1056,16 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                         title={CAPABILITIES[action].label + stateValue}
                         style={styles.actionSpan}
                     >
-                        <Icon style={{ ...style, color: CAPABILITIES[action]?.color, backgroundColor: valueColor }} />
-                        {valuePercent !== null ? (
-                            <span style={{ color: DEVICES[control.type]?.color }}>{valuePercent}</span>
-                        ) : null}
-                        {valueBrightness !== null ? (
-                            <span style={{ color: DEVICES[control.type]?.color }}>{valueBrightness}</span>
+                        <Icon
+                            style={{
+                                ...style,
+                                ...CAPABILITIES[action]?.style,
+                                color: CAPABILITIES[action]?.color,
+                                backgroundColor: valueColor,
+                            }}
+                        />
+                        {valueString !== null ? (
+                            <span style={{ color: DEVICES[control.type]?.color }}>{valueString}</span>
                         ) : null}
                     </span>,
                 );

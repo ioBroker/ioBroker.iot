@@ -3,6 +3,7 @@ import Properties from '../Alexa/Properties';
 import Control from './Control';
 import type { AlexaV3Category, IotExternalPatternControl } from '../types';
 import type { ControlStateInitObject } from '../Alexa/Properties/Base';
+import EndpointHealth from '../Alexa/Capabilities/EndpointHealth';
 
 export default class Lock extends Control {
     constructor(detectedControl: IotExternalPatternControl) {
@@ -10,6 +11,11 @@ export default class Lock extends Control {
 
         const lockController = new Capabilities.LockController(this.lockStateInitObject());
         this._supported = [lockController];
+
+        const health = this.connectivityInitObject();
+        if (health) {
+            this._supported.push(new EndpointHealth(health));
+        }
     }
 
     get categories(): AlexaV3Category[] {

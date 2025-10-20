@@ -63,6 +63,65 @@ describe('AlexaSmartHomeV3 - Controls', function () {
         });
     });
 
+    describe('Temperature', async function () {
+        it('Temperature reports state', async function () {
+            const devManager = new DeviceManager();
+            const temperature = helpers.temperatureControl();
+            devManager.addDevice(
+                new Device({
+                    id: endpointId,
+                    friendlyName,
+                    displayCategories: ['TEMPERATURE_SENSOR'],
+                    controls: [temperature],
+                }),
+            );
+            const event = await helpers.getSample('StateReport/ReportState.json');
+            const response = await devManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+            assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
+            assert.equal(response.event.header.name, 'StateReport', 'Name!');
+            assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, 'Name!');
+            assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+
+            assert.equal(response.context.properties.length, 1);
+            assert.equal(response.context.properties[0].namespace, 'Alexa.TemperatureSensor');
+            assert.equal(response.context.properties[0].name, 'temperature');
+            assert.equal(response.context.properties[0].value.value, 21.5);
+            assert.equal(response.context.properties[0].value.scale, 'CELSIUS');
+
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+        });
+    });
+
+    describe('Humidity', async function () {
+        it('Humidity reports state', async function () {
+            const devManager = new DeviceManager();
+            const humidity = helpers.humidityControl();
+            devManager.addDevice(
+                new Device({
+                    id: endpointId,
+                    friendlyName,
+                    displayCategories: ['TEMPERATURE_SENSOR'],
+                    controls: [humidity],
+                }),
+            );
+            const event = await helpers.getSample('StateReport/ReportState.json');
+            const response = await devManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+            assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
+            assert.equal(response.event.header.name, 'StateReport', 'Name!');
+            assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, 'Name!');
+            assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+
+            assert.equal(response.context.properties.length, 1);
+            assert.equal(response.context.properties[0].namespace, 'Alexa.HumiditySensor');
+            assert.equal(response.context.properties[0].name, 'relativeHumidity');
+            assert.equal(response.context.properties[0].value, 81);
+
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+        });
+    });
+
     describe('Dimmer', async function () {
         it('Dimmer respects values range on setting brightness', async function () {
             const event = await helpers.getSample(

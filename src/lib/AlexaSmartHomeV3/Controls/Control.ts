@@ -1,3 +1,5 @@
+import type { Types } from '@iobroker/type-detector';
+
 import AlexaResponse from '../Alexa/AlexaResponse';
 import { firstLower, className, ensureValueInRange_0_100, denormalize_0_100, normalize_0_100 } from '../Helpers/Utils';
 import Logger from '../Helpers/Logger';
@@ -16,25 +18,27 @@ import type {
 import type { Base as CapabilitiesBase } from '../Alexa/Capabilities/Base';
 
 export type StateName =
-    | 'SET'
     | 'ACTUAL'
-    | 'ON_SET'
-    | 'ON_ACTUAL'
-    | 'POWER'
-    | 'MODE'
+    | 'BLUE'
+    | 'BRIGHTNESS'
+    | 'DIMMER'
+    | 'GREEN'
     | 'HUE'
+    | 'MODE'
+    | 'MUTE'
+    | 'ON'
+    | 'ON_ACTUAL'
+    | 'ON_SET'
+    | 'POWER'
+    | 'RED'
     | 'RGB'
     | 'RGBW'
-    | 'RED'
-    | 'GREEN'
-    | 'BLUE'
-    | 'WHITE'
-    | 'DIMMER'
-    | 'BRIGHTNESS'
     | 'SATURATION'
+    | 'SECOND'
+    | 'SET'
     | 'TEMPERATURE'
-    | 'ON'
-    | 'MUTE';
+    | 'UNREACH'
+    | 'WHITE';
 
 /**
  * Represents the base functionality for a control in a smart device. A smart device has at least one control.
@@ -42,25 +46,27 @@ export type StateName =
  */
 export default class Control {
     static stateKeys: StateName[] = [
-        'SET',
         'ACTUAL',
-        'ON_SET',
-        'ON_ACTUAL',
-        'POWER',
-        'MODE',
+        'BLUE',
+        'BRIGHTNESS',
+        'DIMMER',
+        'GREEN',
         'HUE',
+        'MODE',
+        'MUTE',
+        'ON',
+        'ON_ACTUAL',
+        'ON_SET',
+        'POWER',
+        'RED',
         'RGB',
         'RGBW',
-        'RED',
-        'GREEN',
-        'BLUE',
-        'WHITE',
-        'DIMMER',
-        'BRIGHTNESS',
         'SATURATION',
+        'SECOND',
+        'SET',
         'TEMPERATURE',
-        'ON',
-        'MUTE',
+        'UNREACH',
+        'WHITE',
     ];
     public readonly log: Logger;
     protected _supported: CapabilitiesBase[];
@@ -83,8 +89,8 @@ export default class Control {
         return this.supported.concat(this.enforced);
     }
 
-    static get type(): string {
-        return firstLower(className(this.toString()));
+    static get type(): Types {
+        return firstLower(className(this.toString())) as Types;
     }
     /**
      * Getter for Alexa categories
@@ -338,8 +344,8 @@ export default class Control {
         return this._states;
     }
 
-    get statesMap(): Record<string, StateName> {
-        const map: Record<string, StateName> = {};
+    get statesMap(): { [lowCaseName: string]: StateName } {
+        const map: { [lowCaseName: string]: StateName } = {};
         for (const stateKey of Control.stateKeys) {
             map[stateKey.toLowerCase()] = stateKey;
         }
@@ -361,6 +367,23 @@ export default class Control {
         return {
             setState: this.states[map.actual]!,
             getState: this.states[map.actual]!,
+        };
+    }
+
+    protected connectivityInitObject(alwaysReturn?: boolean): ControlStateInitObject | null {
+        const map = this.statesMap;
+        if (!this.states[map.unreach]) {
+            if (alwaysReturn) {
+                return {
+                    getState: { id: '', smartName: '', common: {}, name: 'UNREACH' },
+                    setState: { id: '', smartName: '', common: {}, name: 'UNREACH' },
+                };
+            }
+            return null;
+        }
+        return {
+            setState: this.states[map.unreach],
+            getState: this.states[map.unreach],
         };
     }
 

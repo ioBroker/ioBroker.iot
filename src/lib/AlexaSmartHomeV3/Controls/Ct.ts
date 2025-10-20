@@ -8,12 +8,8 @@ import Brightness from '../Alexa/Properties/Brightness';
 import ColorTemperatureInKelvin from '../Alexa/Properties/ColorTemperatureInKelvin';
 import type PowerController from '../Alexa/Capabilities/PowerController';
 import PowerState from '../Alexa/Properties/PowerState';
-import type {
-    AlexaV3Category,
-    AlexaV3DirectiveValue,
-    AlexaV3Request,
-    IotExternalPatternControl,
-} from '../types';
+import type { AlexaV3Category, AlexaV3DirectiveValue, AlexaV3Request, IotExternalPatternControl } from '../types';
+import EndpointHealth from '../Alexa/Capabilities/EndpointHealth';
 
 export default class Ct extends AdjustableControl {
     private readonly _brightnessCapability: BrightnessController | undefined;
@@ -39,6 +35,10 @@ export default class Ct extends AdjustableControl {
             this._powerControllerCapability = new Capabilities.PowerController(this.composeInitObjectPowerState());
             this._powerState = this._powerControllerCapability.powerState;
             this._supported.push(this._powerControllerCapability);
+        }
+        const health = this.connectivityInitObject();
+        if (health) {
+            this._supported.push(new EndpointHealth(health));
         }
     }
 

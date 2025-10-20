@@ -18,6 +18,7 @@ import type { Base as PropertiesBase, ControlStateInitObject } from '../Alexa/Pr
 import type { AlexaV3Category, AlexaV3DirectiveValue, AlexaV3Request, IotExternalPatternControl } from '../types';
 import Color from '../Alexa/Properties/Color';
 import ColorTemperatureInKelvin from '../Alexa/Properties/ColorTemperatureInKelvin';
+import EndpointHealth from '../Alexa/Capabilities/EndpointHealth';
 
 export default class Hue extends AdjustableControl {
     private readonly _powerControllerCapability: PowerController | undefined;
@@ -52,6 +53,11 @@ export default class Hue extends AdjustableControl {
             this._powerControllerCapability = new Capabilities.PowerController(this.composeInitObjectPowerState());
             this._powerState = this._powerControllerCapability.powerState;
             this._supported.push(this._powerControllerCapability);
+        }
+
+        const health = this.connectivityInitObject();
+        if (health) {
+            this._supported.push(new EndpointHealth(health));
         }
     }
 

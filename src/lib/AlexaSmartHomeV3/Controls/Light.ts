@@ -3,6 +3,7 @@ import Control, { type StateName } from './Control';
 import type { AlexaV3Category, AlexaV3DirectiveValue, IotExternalPatternControl } from '../types';
 import type { ControlStateInitObject } from '../Alexa/Properties/Base';
 import PowerState from '../Alexa/Properties/PowerState';
+import EndpointHealth from '../Alexa/Capabilities/EndpointHealth';
 
 export default class Light extends Control {
     constructor(detectedControl: IotExternalPatternControl) {
@@ -16,6 +17,11 @@ export default class Light extends Control {
         // Init capabilities
         const powerController = new Capabilities.PowerController(this.powerStateInitObject());
         this._supported = [powerController];
+
+        const health = this.connectivityInitObject();
+        if (health) {
+            this._supported.push(new EndpointHealth(health));
+        }
     }
 
     get categories(): AlexaV3Category[] {

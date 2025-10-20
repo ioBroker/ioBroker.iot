@@ -8,6 +8,7 @@ import Ct from './Ct';
 import Dimmer from './Dimmer';
 import Door from './Door';
 import Gate from './Gate';
+import Humidity from './Humidity';
 import Hue from './Hue';
 import Light from './Light';
 import Lock from './Lock';
@@ -29,9 +30,6 @@ import type { IotExternalPatternControl } from '../types';
 
 export default {
     factory: (item: IotExternalPatternControl): Control | null => {
-        // if (item.type === AdjustableControl.type) {
-        //     return new AdjustableControl(item);
-        // }
         if (item.type === AdjustablePercentageControl.type) {
             return new AdjustablePercentageControl(item);
         }
@@ -58,6 +56,9 @@ export default {
         }
         if (item.type === Hue.type) {
             return new Hue(item);
+        }
+        if (item.type === Humidity.type) {
+            return new Humidity(item);
         }
         if (item.type === Light.type) {
             return new Light(item);
@@ -115,6 +116,7 @@ export default {
     Dimmer,
     Door,
     Gate,
+    Humidity,
     Hue,
     Light,
     Lock,

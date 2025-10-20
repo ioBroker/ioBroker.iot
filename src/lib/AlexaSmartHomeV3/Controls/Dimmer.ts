@@ -7,6 +7,7 @@ import Brightness from '../Alexa/Properties/Brightness';
 import AdapterProvider from '../Helpers/AdapterProvider';
 import type { AlexaV3Category, AlexaV3DirectiveValue, IotExternalPatternControl } from '../types';
 import type { Base as PropertiesBase, ControlStateInitObject } from '../Alexa/Properties/Base';
+import EndpointHealth from '../Alexa/Capabilities/EndpointHealth';
 
 export default class Dimmer extends AdjustableControl {
     private readonly _powerControllerCapability: PowerController;
@@ -29,6 +30,11 @@ export default class Dimmer extends AdjustableControl {
         const valuesRange = configuredRangeOrDefault(this.states[this.statesMap.set]!);
         const offValue = parseInt(AdapterProvider.get().config.deviceOffLevel as string, 10) || 30;
         this._offValue = denormalize_0_100(offValue, valuesRange.min as number, valuesRange.max as number) as number;
+
+        const health = this.connectivityInitObject();
+        if (health) {
+            this._supported.push(new EndpointHealth(health));
+        }
     }
 
     get categories(): AlexaV3Category[] {

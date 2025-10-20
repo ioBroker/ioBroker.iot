@@ -6,6 +6,7 @@ import AdapterProvider from '../Helpers/AdapterProvider';
 import { denormalize_0_100, normalize_0_100 } from '../Helpers/Utils';
 import AdjustableControl from './AdjustableControl';
 import type { AlexaV3Category, AlexaV3DirectiveValue, IotExternalPatternControl } from '../types';
+import EndpointHealth from '../Alexa/Capabilities/EndpointHealth';
 
 export default class Volume extends AdjustableControl {
     private readonly _speaker: Speaker;
@@ -16,6 +17,11 @@ export default class Volume extends AdjustableControl {
 
         this._speaker = new Speaker(this.composeInitObjectVolume(), this.composeInitObjectMuted());
         this._supported = [this._speaker];
+
+        const health = this.connectivityInitObject();
+        if (health) {
+            this._supported.push(new EndpointHealth(health));
+        }
     }
 
     get categories(): AlexaV3Category[] {

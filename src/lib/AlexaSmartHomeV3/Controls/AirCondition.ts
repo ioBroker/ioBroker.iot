@@ -15,6 +15,8 @@ import type {
     IotExternalDetectorState,
     IotExternalPatternControl,
 } from '../types';
+import Connectivity from '../Alexa/Properties/Connectivity';
+import EndpointHealth from '../Alexa/Capabilities/EndpointHealth';
 
 export default class AirCondition extends AdjustableControl {
     private readonly _thermostatController: ThermostatController;
@@ -39,6 +41,10 @@ export default class AirCondition extends AdjustableControl {
             this._thermostatController,
             this._powerController,
         ];
+        const health = this.connectivityInitObject();
+        if (health) {
+            this._supported.push(new EndpointHealth(health));
+        }
     }
 
     get categories(): AlexaV3Category[] {

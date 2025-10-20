@@ -3,12 +3,18 @@ import Modes from '../Alexa/ModeValues';
 import Control from './Control';
 import type { AlexaV3Category, IotExternalPatternControl } from '../types';
 import type { ControlStateInitObject } from '../Alexa/Properties/Base';
+import EndpointHealth from '../Alexa/Capabilities/EndpointHealth';
 
 export default class Gate extends Control {
     constructor(detectedControl: IotExternalPatternControl) {
         super(detectedControl);
         const modeController = new Capabilities.ModeController(this.modeInitObject());
         this._supported = [modeController];
+
+        const health = this.connectivityInitObject();
+        if (health) {
+            this._supported.push(new EndpointHealth(health));
+        }
     }
 
     get categories(): AlexaV3Category[] {

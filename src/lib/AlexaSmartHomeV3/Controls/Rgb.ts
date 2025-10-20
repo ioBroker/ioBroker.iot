@@ -16,6 +16,7 @@ import type {
     IotExternalPatternControl,
 } from '../types';
 import Color from '../Alexa/Properties/Color';
+import EndpointHealth from '../Alexa/Capabilities/EndpointHealth';
 
 // ### RGB(W) Light with different states for every color [rgb]
 //
@@ -66,6 +67,11 @@ export default class Rgb extends AdjustableControl {
             this._powerControllerCapability = new Capabilities.PowerController(this.composeInitObjectPowerState());
             this._powerState = this._powerControllerCapability.powerState;
             this._supported.push(this._powerControllerCapability);
+        }
+
+        const health = this.connectivityInitObject();
+        if (health) {
+            this._supported.push(new EndpointHealth(health));
         }
     }
 

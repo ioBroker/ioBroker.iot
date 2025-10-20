@@ -1,8 +1,11 @@
+import { Types } from '@iobroker/type-detector';
+
 import type { AlexaV3Category, AlexaV3Request, IotExternalPatternControl } from '../types';
 import SceneController from '../Alexa/Capabilities/SceneController';
 import Control from './Control';
 import AlexaResponse from '../Alexa/AlexaResponse';
 import AdapterProvider from '../Helpers/AdapterProvider';
+import EndpointHealth from '../Alexa/Capabilities/EndpointHealth';
 
 export default class Button extends Control {
     constructor(detectedControl: IotExternalPatternControl) {
@@ -10,6 +13,10 @@ export default class Button extends Control {
 
         const sceneController = new SceneController();
         this._supported = [sceneController];
+        const health = this.connectivityInitObject();
+        if (health) {
+            this._supported.push(new EndpointHealth(health));
+        }
     }
 
     get categories(): AlexaV3Category[] {
@@ -19,8 +26,8 @@ export default class Button extends Control {
     /**
      * Scenes use button type from type-detector
      */
-    static get type(): string {
-        return 'button';
+    static get type(): Types {
+        return Types.button;
     }
 
     /**

@@ -71,6 +71,10 @@ class AdapterMock {
             return { val: 25 };
         }
 
+        if (id.toLowerCase().includes('humidity')) {
+            return { val: 81 };
+        }
+
         if (id.includes('Temperature')) {
             return { val: 21.5 };
         }
@@ -177,6 +181,10 @@ const Helpers = {
 
     adapterMock: function () {
         return new AdapterMock();
+    },
+
+    humidityControl: function () {
+        return new Controls.Humidity(require('./Resources/humidity.json'));
     },
 
     temperatureControl: function () {

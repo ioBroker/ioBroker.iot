@@ -350,6 +350,9 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Added humidity sensor
+
 ### 4.1.10 (2025-10-19)
 - (@GermanBluefox) Fixed detection of blinds
 - (@GermanBluefox) Fixed detection of sliders

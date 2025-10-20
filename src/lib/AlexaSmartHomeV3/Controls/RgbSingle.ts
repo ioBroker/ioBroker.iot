@@ -10,6 +10,7 @@ import type ColorTemperatureController from '../Alexa/Capabilities/ColorTemperat
 import type PowerController from '../Alexa/Capabilities/PowerController';
 import PowerState from '../Alexa/Properties/PowerState';
 import type { AlexaV3Category, AlexaV3DirectiveValue, AlexaV3Request, IotExternalPatternControl } from '../types';
+import EndpointHealth from '../Alexa/Capabilities/EndpointHealth';
 
 // ### RGB Light Single [rgbSingle]
 //
@@ -56,6 +57,11 @@ export default class RgbSingle extends AdjustableControl {
             this._powerControllerCapability = new Capabilities.PowerController(this.composeInitObjectPowerState());
             this._powerState = this._powerControllerCapability.powerState;
             this._supported.push(this._powerControllerCapability);
+        }
+
+        const health = this.connectivityInitObject();
+        if (health) {
+            this._supported.push(new EndpointHealth(health));
         }
     }
 

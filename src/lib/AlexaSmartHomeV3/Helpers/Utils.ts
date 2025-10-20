@@ -486,6 +486,10 @@ export async function controls(
             smartName.smartType = Types.slider;
         }
 
+        if (id.includes('000EDBE9992D89')) {
+            console.log('A')
+        }
+
         // try to convert the state to typeDetector format
         // "smartName": {
         //    "de": "Rote Lampe",

@@ -129,6 +129,7 @@ export type AlexaV3Namespace =
     | 'Alexa.ColorTemperatureController'
     | 'Alexa.ContactSensor'
     | 'Alexa.EndpointHealth'
+    | 'Alexa.HumiditySensor'
     | 'Alexa.LockController'
     | 'Alexa.ModeController'
     | 'Alexa.MotionSensor'

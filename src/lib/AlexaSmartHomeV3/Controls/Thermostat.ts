@@ -13,6 +13,7 @@ import { ensureValueInRange } from '../Helpers/Utils';
 import TargetSetpoint from '../Alexa/Properties/TargetSetpoint';
 import PowerState from '../Alexa/Properties/PowerState';
 import type { Base as PropertiesBase, ControlStateInitObject } from '../Alexa/Properties/Base';
+import EndpointHealth from '../Alexa/Capabilities/EndpointHealth';
 
 export default class Thermostat extends AdjustableControl {
     private readonly _temperatureSensor: TemperatureSensor | null = null;
@@ -34,6 +35,11 @@ export default class Thermostat extends AdjustableControl {
         // if the state POWER is present, then we can switch it ON/OFF
         if (this.states[map.power]) {
             this._supported.push(new PowerController(this.composeInitObjectPowerState()));
+        }
+
+        const health = this.connectivityInitObject();
+        if (health) {
+            this._supported.push(new EndpointHealth(health));
         }
     }
 
