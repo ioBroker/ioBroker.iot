@@ -17,6 +17,7 @@ import {
     MenuItem,
     Select,
     TextField,
+    Tooltip,
 } from '@mui/material';
 
 import {
@@ -535,6 +536,7 @@ interface Alexa3SmartNamesState {
     edit: null | {
         id: string;
         type: Types | null;
+        typeWasDetected: boolean;
         name: string;
         originalType: string | null;
         originalName: string;
@@ -945,6 +947,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                             id,
                             type: null,
                             name: this.editedSmartName,
+                            typeWasDetected: false,
                             originalType: null,
                             originalName: this.editedSmartName,
                             objectName: Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() }),
@@ -1244,7 +1247,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
             (allCapabilities.includes('brightness') && allCapabilities.includes('powerState')) ||
             (allCapabilities.includes('percentage') && allCapabilities.includes('powerState'))
         ) {
-            const state = Object.values(control.states)[0];
+            const state = Alexa3SmartNames.takeIdForSmartName(control);
             // get first id
             const byON =
                 typeof state?.smartName === 'object'
@@ -1335,7 +1338,11 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
         );
     }
 
-    static renderSelectTypeSelector(type: false | Types, onChange: (value: string) => void): React.JSX.Element | null {
+    static renderSelectTypeSelector(
+        type: false | Types,
+        detected: boolean | undefined,
+        onChange: (value: string) => void,
+    ): React.JSX.Element | null {
         if (type !== false) {
             const items = [
                 <MenuItem
@@ -1343,7 +1350,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                     value="_"
                     style={{ opacity: 0.5, fontStyle: 'normal' }}
                 >
-                    <em>{I18n.t('no type')}</em>
+                    <em>{I18n.t('Auto-detection')}</em>
                 </MenuItem>,
             ];
             // get the mapping of device types
@@ -1369,6 +1376,9 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                             />
                         ) : null}
                         {I18n.t(SMART_TYPES[i])}
+                        {detected && type === SMART_TYPES[i] ? (
+                            <span style={{ marginLeft: 4, color: 'orange' }}>(Auto)</span>
+                        ) : null}
                     </MenuItem>,
                 );
             }
@@ -1401,15 +1411,28 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
         return null;
     }
 
+    static takeIdForSmartName(control: AlexaSH3ControlDescription): IotExternalDetectorState {
+        // The states are sorted and the state which initially was with smart name could stay not on the first place
+        const state = Object.values(control.states).find(state => {
+            const smartName = (state?.smartName as SmartNameObject) || false;
+            return !!smartName;
+        });
+        if (state) {
+            return state;
+        }
+        return Object.values(control.states)[0]!;
+    }
+
     renderSelectType(control: AlexaSH3ControlDescription, dev: AlexaSH3DeviceDescription): React.JSX.Element | null {
         if (dev.autoDetected) {
             return <div style={styles.selectType} />;
         }
         // get first id
-        const state = Object.values(control.states)[0]!;
+        const state = Alexa3SmartNames.takeIdForSmartName(control);
         const type = (state?.smartName as SmartNameObject)?.smartType || false;
+        const detected = (state?.smartName as SmartNameObject)?.detected;
 
-        return Alexa3SmartNames.renderSelectTypeSelector(type, value =>
+        return Alexa3SmartNames.renderSelectTypeSelector(type, detected, value =>
             this.onParamsChange(state.id, undefined, value),
         );
     }
@@ -1479,6 +1502,35 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                         valueStr = <span>--{unit}</span>;
                     }
 
+                    let smartName: React.JSX.Element | null = null;
+                    if (this.objects[stateId]?.common) {
+                        let smartNameValue = Utils.getSmartNameFromObj(
+                            this.objects[stateId] as ioBroker.StateObject,
+                            `${this.props.adapterName}.${this.props.instance}`,
+                            this.props.native.noCommon,
+                        );
+                        if (typeof smartNameValue !== 'object' && smartNameValue) {
+                            smartNameValue = {
+                                [this.language]: smartName,
+                            };
+                        }
+                        if (smartNameValue) {
+                            smartName = (
+                                <div>
+                                    <div style={{ fontWeight: 'bold' }}>
+                                        {I18n.t('Content of the smart name structure (for debug)')}
+                                    </div>
+                                    {Object.keys(smartNameValue).map(name => (
+                                        <div key={name}>
+                                            <span style={{ fontWeight: 'bold' }}>{name}:</span>{' '}
+                                            {(smartNameValue as Record<string, string>)[name].toString()}
+                                        </div>
+                                    ))}
+                                </div>
+                            );
+                        }
+                    }
+
                     return (
                         <div
                             key={c}
@@ -1500,7 +1552,16 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                             }}
                         >
                             <div style={styles.devSubSubLineName}>
-                                <div style={styles.devSubSubLineStateName}>{name}:</div>
+                                {smartName ? (
+                                    <Tooltip title={smartName}>
+                                        <div style={styles.devSubSubLineStateName}>
+                                            {name}
+                                            {' *'}:
+                                        </div>
+                                    </Tooltip>
+                                ) : (
+                                    <div style={styles.devSubSubLineStateName}>{name}</div>
+                                )}
                                 <span style={styles.devSubSubLineStateId}>{stateId}</span>
                             </div>
                             <div>{valueStr}</div>
@@ -1558,7 +1619,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
         icon?: string | null;
     } {
         // get first state
-        const stateId = Object.values(control.states)[0]!.id;
+        const stateId = Alexa3SmartNames.takeIdForSmartName(control).id;
         if (this.state.objects[stateId] === undefined && !this.requesting[stateId]) {
             this.requesting[stateId] = true;
             // try to find the device
@@ -1592,7 +1653,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
             if (!control.states || !Object.keys(control.states).length) {
                 return null;
             }
-            const id: string = Object.values(control.states)[0]!.id;
+            const id: string = Alexa3SmartNames.takeIdForSmartName(control).id;
 
             let background = this.state.changed.includes(id)
                 ? CHANGED_COLOR
@@ -1829,6 +1890,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
         if (!this.state.edit) {
             return null;
         }
+
         return (
             <Dialog
                 open={!0}
@@ -1866,11 +1928,15 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                         margin="normal"
                     />
                     {this.state.edit.type !== null
-                        ? Alexa3SmartNames.renderSelectTypeSelector(this.state.edit.type, value => {
-                              const edit = JSON.parse(JSON.stringify(this.state.edit));
-                              edit.type = value;
-                              this.setState({ edit });
-                          })
+                        ? Alexa3SmartNames.renderSelectTypeSelector(
+                              this.state.edit.type,
+                              this.state.edit.typeWasDetected,
+                              value => {
+                                  const edit = JSON.parse(JSON.stringify(this.state.edit));
+                                  edit.type = value;
+                                  this.setState({ edit });
+                              },
+                          )
                         : null}
                 </DialogContent>
                 <DialogActions>

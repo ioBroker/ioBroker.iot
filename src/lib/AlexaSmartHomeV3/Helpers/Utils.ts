@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import AdapterProvider from './AdapterProvider';
-import ChannelDetector, { type DetectOptions, Types } from '@iobroker/type-detector';
+import ChannelDetector, { type DetectOptions, type PatternControl, Types } from '@iobroker/type-detector';
 import {
     roleOrEnumLight,
     roleOrEnumBlind,
@@ -486,6 +486,10 @@ export async function controls(
             smartName.smartType = Types.slider;
         }
 
+        if (id.includes('hue.0.Hue_Küche_Küchezeile')) {
+            console.log('A');
+        }
+
         // try to convert the state to typeDetector format
         // "smartName": {
         //    "de": "Rote Lampe",
@@ -493,11 +497,18 @@ export async function controls(
         //    "byON": 80            // optional
         //  }
         if (!smartName.smartType) {
+            smartName.detected = true;
             // by default,
             if (controls && controls.length > 0) {
-                // take the first detected control
-                smartName.smartType = controls[0].type;
-            } else {
+                // take the first detected control that has initial ID
+                const control: PatternControl | undefined = controls.find(c => c.states.find(s => s.id === id));
+                if (control) {
+                    smartName.smartType = control.type;
+                    controls = [control];
+                }
+            }
+
+            if (!smartName.smartType) {
                 // if the upper object is channel or device, try to detect there
                 const channelId = getChannelId(id, devicesObject);
                 const deviceId = getDeviceId(id, devicesObject);
@@ -583,9 +594,15 @@ export async function controls(
                     }
                 }
             }
-        } else if (controls?.length && controls[0].type !== smartName.smartType) {
-            // If the user specified a different type, prefer it
-            controls = null;
+        } else if (controls?.length) {
+            // Try to find suitable control
+            const control = controls.find(c => c.type === smartName.smartType);
+            if (control) {
+                controls = [control];
+            } else {
+                // If the user specified a different type, prefer it
+                controls = null;
+            }
         }
 
         // convert alexa2 smartType to alexa 3

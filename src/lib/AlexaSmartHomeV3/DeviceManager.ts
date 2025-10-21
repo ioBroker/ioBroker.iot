@@ -92,7 +92,7 @@ export default class DeviceManager {
             }
         });
 
-        if (controls.length === 0) {
+        if (!controls.length) {
             // the controls are not supported yet...
             return;
         }

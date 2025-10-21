@@ -350,6 +350,9 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Added humidity sensor
+
 ### 4.1.11 (2025-10-20)
 - (@GermanBluefox) Added humidity sensor
 - (@GermanBluefox) Added unreach indicator
