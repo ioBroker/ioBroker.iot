@@ -11,6 +11,18 @@ export default class AdapterProvider {
         return AdapterProvider.adapterInstance;
     }
 
+    static deviceOffLevel(): number {
+        if (
+            AdapterProvider.get().config.deviceOffLevel === undefined ||
+            AdapterProvider.get().config.deviceOffLevel === '' ||
+            AdapterProvider.get().config.deviceOffLevel === null
+        ) {
+            return 30;
+        }
+        const deviceOffLevel = parseInt(AdapterProvider.get().config.deviceOffLevel as string, 10);
+        return isNaN(deviceOffLevel) ? 30 : deviceOffLevel;
+    }
+
     /**
      * Sets iobroker state to the passed on value
      *

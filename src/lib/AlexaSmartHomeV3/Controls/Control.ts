@@ -14,6 +14,7 @@ import type {
     AlexaV3Request,
     IotExternalDetectorState,
     IotExternalPatternControl,
+    SmartName,
 } from '../types';
 import type { Base as CapabilitiesBase } from '../Alexa/Capabilities/Base';
 
@@ -72,6 +73,7 @@ export default class Control {
     protected _supported: CapabilitiesBase[];
     protected _enforced: CapabilitiesBase[];
     protected readonly _states: Record<string, IotExternalDetectorState | undefined> = {};
+    protected smartName: SmartName | undefined;
 
     /**
      * @param detectedControl - The detected control in terms of iobroker type detector.
@@ -79,6 +81,9 @@ export default class Control {
     constructor(detectedControl: IotExternalPatternControl) {
         this.log = new Logger(this);
         this.log.silly(`created instance`);
+        // find smartName
+        const stateWithSmartName = detectedControl.states.find(s => s.smartName);
+        this.smartName = stateWithSmartName?.smartName;
 
         this.initStates(detectedControl);
         this._supported = [];

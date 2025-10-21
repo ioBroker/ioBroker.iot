@@ -3,7 +3,11 @@
         {
             "name": "HUE",
             "defaultRole": "level.color.hue",
-            "id": "alias.0.Wohnzimmer.Lamp.HUE"
+            "id": "alias.0.Wohnzimmer.Lamp.HUE",
+            "smartName": {
+                "de": "Farbton",
+                "byON": "60"
+            }
         },
         {
             "name": "BRIGHTNESS",

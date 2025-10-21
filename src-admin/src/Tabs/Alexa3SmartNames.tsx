@@ -1276,7 +1276,14 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                     {I18n.t('omit value')}
                 </MenuItem>,
             ];
-            for (let i = 5; i <= 100; i += 5) {
+            // Do not allow to set ON less than config.deviceOffLevel
+            let min = this.props.native.deviceOffLevel ? parseInt(this.props.native.deviceOffLevel as string, 10) : 0;
+            if (min < 5) {
+                min = 5;
+            }
+            min = Math.ceil(min / 5) * 5;
+
+            for (let i = min; i <= 100; i += 5) {
                 items.push(
                     <MenuItem
                         key={i.toString()}

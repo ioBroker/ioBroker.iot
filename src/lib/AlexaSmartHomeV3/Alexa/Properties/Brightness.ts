@@ -22,27 +22,29 @@ export default class Brightness extends AdjustableProperty {
                     this._multiPurposeProperty ||
                     // Or current value is 0 and the lamp is turned ON
                     (this._handleSimilarEvents &&
-                        (this.currentValue === undefined ||
+                        (typeof this._onValueInPercent === 'number' ||
+                            this.currentValue === undefined ||
                             this.currentValue === null ||
                             this.currentValue <= this.valuesRangeMin))
                 ) {
                     // Assume full brightness on TurnOn
-                    const smartName = this.getSetState()!.smartName;
-                    let byOn: string | number | undefined | null;
-                    if (smartName && typeof smartName === 'object') {
-                        byOn = smartName.byON;
-                    }
                     // set byOn to the configured value or 100 otherwise
-                    if (byOn === undefined || byOn === null || isNaN(byOn as number)) {
-                        if (this.#valueOn === null || byOn !== 'stored') {
-                            this.#valueOn = 100;
+                    if (this._onValueInPercent !== undefined) {
+                        if (this._onValueInPercent === 'stored') {
+                            this.#valueOn ||= 100;
+                        } else if (this._onValueInPercent === 'omit') {
+                            // Do not change brightness on TurnOn
+                            return undefined;
+                        } else {
+                            this.#valueOn = this._onValueInPercent;
                         }
+
+                        return this.#valueOn < this._offValue ? 100 : this.#valueOn;
+                    }
+                    if (this.#valueOn && this.#valueOn > this._offValue) {
                         return this.#valueOn;
                     }
-
-                    // byOn is in percent, so convert it to the configured range
-                    this.#valueOn = parseFloat(byOn as string);
-                    return this.#valueOn;
+                    return 100;
                 }
             } else if (event?.directive?.header.name === 'TurnOff') {
                 // If we have a dedicated power state, we do not change brightness on TurnOff

@@ -30,7 +30,7 @@
             }
         },
         {
-            "name": "ON_SET",
+            "name": "ON",
             "defaultRole": "switch.light",
             "id": "nanoleaf-lightpanels.3.Shapes.state"
         }

@@ -350,9 +350,10 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 4.1.12 (2025-10-21)
+### **WORK IN PROGRESS**
 - (@GermanBluefox) Added debug information
 - (@GermanBluefox) Better handling of HUE devices
+- (@GermanBluefox) Updated type detector
 
 ### 4.1.11 (2025-10-20)
 - (@GermanBluefox) Added humidity sensor

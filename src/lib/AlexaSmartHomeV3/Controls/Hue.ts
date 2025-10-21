@@ -1,14 +1,7 @@
 import Capabilities from '../Alexa/Capabilities';
-import type PowerController from '../Alexa/Capabilities/PowerController';
 import type BrightnessController from '../Alexa/Capabilities/BrightnessController';
 import type ColorTemperatureController from '../Alexa/Capabilities/ColorTemperatureController';
-import {
-    configuredRangeOrDefault,
-    denormalize_0_100,
-    normalize_0_100,
-    closestFromList,
-    rgb2hal,
-} from '../Helpers/Utils';
+import { denormalize_0_100, normalize_0_100, closestFromList, rgb2hal } from '../Helpers/Utils';
 import Properties from '../Alexa/Properties';
 import PowerState from '../Alexa/Properties/PowerState';
 import Brightness from '../Alexa/Properties/Brightness';
@@ -21,11 +14,10 @@ import ColorTemperatureInKelvin from '../Alexa/Properties/ColorTemperatureInKelv
 import EndpointHealth from '../Alexa/Capabilities/EndpointHealth';
 
 export default class Hue extends AdjustableControl {
-    private readonly _powerControllerCapability: PowerController | undefined;
-    private readonly _powerState: PowerState | undefined;
     private readonly _brightnessCapability: BrightnessController | undefined;
     private readonly _brightness: Brightness | undefined;
     private readonly _colorTemperatureCapability: ColorTemperatureController | undefined;
+    private readonly _offValue: number = 0;
 
     constructor(detectedControl: IotExternalPatternControl) {
         super(detectedControl);
@@ -50,9 +42,14 @@ export default class Hue extends AdjustableControl {
 
         // if the state ON, DIMMER or BRIGHTNESS configured
         if (this.states[map.on] || this._brightness) {
-            this._powerControllerCapability = new Capabilities.PowerController(this.composeInitObjectPowerState());
-            this._powerState = this._powerControllerCapability.powerState;
-            this._supported.push(this._powerControllerCapability);
+            if (!this.states[map.on]) {
+                this._offValue = denormalize_0_100(
+                    AdapterProvider.deviceOffLevel(),
+                    this._brightness!.valuesRangeMin as number,
+                    (this._brightness!.valuesRangeMin as number) || 100,
+                ) as number;
+            }
+            this._supported.push(new Capabilities.PowerController(this.composeInitObjectPowerState()));
         }
 
         const health = this.connectivityInitObject();
@@ -76,7 +73,7 @@ export default class Hue extends AdjustableControl {
             property.currentValue = await AdapterProvider.getState(property.getId);
             // convert the non-zero brightness to power = true
             if (property.propertyName === Properties.PowerState.propertyName && !this.states[map.on]) {
-                property.currentValue = property.currentValue !== 0;
+                property.currentValue = (property.currentValue as number) > this._offValue;
             }
 
             if (property.propertyName === Properties.Color.propertyName) {
@@ -97,43 +94,12 @@ export default class Hue extends AdjustableControl {
     }
 
     async setState(property: PropertiesBase, value: ioBroker.StateValue | undefined): Promise<void> {
-        const map = this.statesMap;
-
         if (property.propertyName === PowerState.propertyName) {
-            if (this.states[map.on]) {
+            if (this.states[this.statesMap.on]) {
                 await AdapterProvider.setState(property.setId, value ?? false);
                 property.currentValue = value;
             } else {
-                if (value) {
-                    // set brightness
-                    // set byOn to the configured value or range.max otherwise
-                    const range = configuredRangeOrDefault(this.states[map.dimmer] || this.states[map.brightness]!);
-                    const smartName = (this.states[map.dimmer] || this.states[map.brightness])?.smartName;
-                    let byOn: string | number | undefined | null;
-                    if (smartName && typeof smartName === 'object') {
-                        byOn = smartName.byON;
-                    }
-                    byOn =
-                        byOn === null || byOn === undefined || isNaN(byOn as number)
-                            ? (range.max as number)
-                            : parseFloat(byOn as string);
-                    if (this._brightness) {
-                        await AdapterProvider.setState(this._brightness.setId, byOn);
-                        this._brightness.currentValue = byOn;
-                    }
-                    if (this._powerState) {
-                        this._powerState.currentValue = true;
-                    }
-                } else {
-                    if (this._brightness) {
-                        // set brightness to 0 on power OFF
-                        await AdapterProvider.setState(this._brightness.setId, 0);
-                        this._brightness.currentValue = 0;
-                    }
-                    if (this._powerState) {
-                        this._powerState.currentValue = false;
-                    }
-                }
+                // this will be processed in Brightness property
             }
         } else if (property.propertyName === Brightness.propertyName) {
             await AdapterProvider.setState(property.setId, value ?? 0);
@@ -181,7 +147,11 @@ export default class Hue extends AdjustableControl {
         const map = this.statesMap;
         return {
             setState: this.states[map.on] || this.states[map.dimmer] || this.states[map.brightness]!,
-            getState: this.states[map.on] || this.states[map.dimmer] || this.states[map.brightness]!,
+            getState:
+                this.states[map.on_actual] ||
+                this.states[map.on] ||
+                this.states[map.dimmer] ||
+                this.states[map.brightness]!,
             alexaSetter: function (this: PropertiesBase, alexaValue: AlexaV3DirectiveValue): ioBroker.StateValue {
                 return alexaValue === PowerState.ON;
             },
@@ -191,11 +161,27 @@ export default class Hue extends AdjustableControl {
             ): AlexaV3DirectiveValue {
                 return value ? PowerState.ON : PowerState.OFF;
             },
+            multiPurposeProperty: !this.states[map.on], // Could handle brightness events
+            handleSimilarEvents: true, // If brightness set to non-zero value and power is off, turn the lamp on
         };
     }
 
     private composeInitObjectBrightness(): ControlStateInitObject {
         const map = this.statesMap;
+        let onValue: number | 'stored' | 'omit' | undefined = undefined;
+        const offValue = AdapterProvider.deviceOffLevel();
+        if (this.smartName && typeof this.smartName === 'object') {
+            const byOn = this.smartName.byON;
+            if (byOn !== null && byOn !== undefined && !isNaN(byOn as unknown as number)) {
+                onValue = parseFloat(byOn as any);
+                if (onValue < offValue) {
+                    onValue = offValue;
+                }
+            } else if (byOn === 'stored' || byOn === 'omit') {
+                onValue = byOn;
+            }
+        }
+
         return {
             setState: this.states[map.dimmer] || this.states[map.brightness]!,
             getState: this.states[map.dimmer] || this.states[map.brightness]!,
@@ -214,6 +200,10 @@ export default class Hue extends AdjustableControl {
             ): AlexaV3DirectiveValue {
                 return normalize_0_100(value as number, this.valuesRangeMin as number, this.valuesRangeMax as number);
             },
+            multiPurposeProperty: !this.states[map.on], // Could handle powerState events
+            handleSimilarEvents: true, // If power set ON and brightness is 0, set to non-zero value
+            offValue,
+            onValue,
         };
     }
 

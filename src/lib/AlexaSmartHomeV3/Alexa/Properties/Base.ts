@@ -16,6 +16,8 @@ export type ControlStateInitObject = {
     handleSimilarEvents?: boolean;
     // Level below which the dimmer or percent based control means "off"
     offValue?: number;
+    // Percent value to set the brightness when turning on the device
+    onValue?: number | 'stored' | 'omit';
 
     // Extra for Hue control
     hal?: {
@@ -60,6 +62,7 @@ export class Base {
     protected _multiPurposeProperty: boolean = false;
     protected _handleSimilarEvents: boolean = false;
     protected _offValue: number = 30;
+    protected _onValueInPercent: number | undefined | 'stored' | 'omit';
 
     /**
      * @param opts The object to initialize the corresponding ioBroker state.
@@ -83,6 +86,7 @@ export class Base {
             this._stateType = opts.setState.common?.type;
             this.#valuesRange = configuredRangeOrDefault(this.#setState);
             this.#instance = opts.instance;
+            this._onValueInPercent = opts.onValue;
         }
 
         if (opts.alexaSetter) {

@@ -4,13 +4,13 @@ import AdapterProvider from '../Helpers/AdapterProvider';
 import type { Base as PropertiesBase, ControlStateInitObject } from '../Alexa/Properties/Base';
 import AdjustableControl from './AdjustableControl';
 import type BrightnessController from '../Alexa/Capabilities/BrightnessController';
-import type Brightness from '../Alexa/Properties/Brightness';
+import Brightness from '../Alexa/Properties/Brightness';
 import ColorTemperatureInKelvin from '../Alexa/Properties/ColorTemperatureInKelvin';
 import type ColorTemperatureController from '../Alexa/Capabilities/ColorTemperatureController';
-import type PowerController from '../Alexa/Capabilities/PowerController';
 import PowerState from '../Alexa/Properties/PowerState';
 import type { AlexaV3Category, AlexaV3DirectiveValue, AlexaV3Request, IotExternalPatternControl } from '../types';
 import EndpointHealth from '../Alexa/Capabilities/EndpointHealth';
+import Color from '../Alexa/Properties/Color';
 
 // ### RGB Light Single [rgbSingle]
 //
@@ -29,8 +29,7 @@ export default class RgbSingle extends AdjustableControl {
     private readonly _brightnessCapability: BrightnessController | undefined;
     private readonly _brightness: Brightness | undefined;
     private readonly _colorTemperatureCapability: ColorTemperatureController | undefined;
-    private readonly _powerControllerCapability: PowerController | undefined;
-    private readonly _powerState: PowerState | undefined;
+    private readonly _offValue: number = 0;
 
     constructor(detectedControl: IotExternalPatternControl) {
         super(detectedControl);
@@ -54,9 +53,14 @@ export default class RgbSingle extends AdjustableControl {
 
         // if the state ON, DIMMER or BRIGHTNESS configured
         if (this.states[map.on] || this._brightness) {
-            this._powerControllerCapability = new Capabilities.PowerController(this.composeInitObjectPowerState());
-            this._powerState = this._powerControllerCapability.powerState;
-            this._supported.push(this._powerControllerCapability);
+            if (!this.states[map.on]) {
+                this._offValue = denormalize_0_100(
+                    AdapterProvider.deviceOffLevel(),
+                    this._brightness!.valuesRangeMin as number,
+                    (this._brightness!.valuesRangeMin as number) || 100,
+                ) as number;
+            }
+            this._supported.push(new Capabilities.PowerController(this.composeInitObjectPowerState()));
         }
 
         const health = this.connectivityInitObject();
@@ -80,7 +84,7 @@ export default class RgbSingle extends AdjustableControl {
             property.currentValue = await AdapterProvider.getState(property.getId);
             // convert the non-zero brightness to power = true
             if (property.propertyName === PowerState.propertyName && !this.states[map.on]) {
-                property.currentValue = property.currentValue !== 0;
+                property.currentValue = (property.currentValue as number) > this._offValue;
             }
         }
 
@@ -89,6 +93,26 @@ export default class RgbSingle extends AdjustableControl {
         }
 
         return property.currentValue;
+    }
+
+    async setState(property: PropertiesBase, value: ioBroker.StateValue): Promise<void> {
+        if (property.propertyName === PowerState.propertyName) {
+            if (this.states[this.statesMap.on]) {
+                await AdapterProvider.setState(property.setId, value ?? false);
+                property.currentValue = value;
+            } else {
+                // this will be processed in Brightness property
+            }
+        } else if (property.propertyName === Color.propertyName) {
+            await AdapterProvider.setState(property.setId, value ?? '#000000');
+            property.currentValue = value;
+        } else if (
+            property.propertyName === Brightness.propertyName ||
+            property.propertyName === ColorTemperatureInKelvin.propertyName
+        ) {
+            await AdapterProvider.setState(property.setId, value);
+            property.currentValue = value;
+        }
     }
 
     async adjustValue(event: AlexaV3Request, property: PropertiesBase): Promise<AlexaV3DirectiveValue> {
@@ -116,10 +140,10 @@ export default class RgbSingle extends AdjustableControl {
     protected composeInitObjectPowerState(): ControlStateInitObject {
         const map = this.statesMap;
         return {
-            setState: this.states[map.on_set] || this.states[map.dimmer] || this.states[map.brightness]!,
+            setState: this.states[map.on] || this.states[map.dimmer] || this.states[map.brightness]!,
             getState:
                 this.states[map.on_actual] ||
-                this.states[map.on_set] ||
+                this.states[map.on] ||
                 this.states[map.dimmer] ||
                 this.states[map.brightness]!,
             alexaSetter: function (this: PropertiesBase, alexaValue: AlexaV3DirectiveValue): ioBroker.StateValue {
@@ -128,13 +152,27 @@ export default class RgbSingle extends AdjustableControl {
             alexaGetter: function (value: ioBroker.StateValue | undefined): AlexaV3DirectiveValue {
                 return value ? PowerState.ON : PowerState.OFF;
             },
-            multiPurposeProperty: !this.states[map.on_set],
+            multiPurposeProperty: !this.states[map.on],
             handleSimilarEvents: true, // If brightness set to non-zero value and power is off, turn the lamp on
         };
     }
 
     protected composeInitObjectBrightness(): ControlStateInitObject {
         const map = this.statesMap;
+        let onValue: number | 'stored' | 'omit' | undefined = undefined;
+        const offValue = AdapterProvider.deviceOffLevel();
+        if (this.smartName && typeof this.smartName === 'object') {
+            const byOn = this.smartName.byON;
+            if (byOn !== null && byOn !== undefined && !isNaN(byOn as unknown as number)) {
+                onValue = parseFloat(byOn as any);
+                if (onValue < offValue) {
+                    onValue = offValue;
+                }
+            } else if (byOn === 'stored' || byOn === 'omit') {
+                onValue = byOn;
+            }
+        }
+
         return {
             setState: this.states[map.dimmer] || this.states[map.brightness]!,
             getState: this.states[map.dimmer] || this.states[map.brightness]!,
@@ -153,8 +191,10 @@ export default class RgbSingle extends AdjustableControl {
             ): AlexaV3DirectiveValue {
                 return normalize_0_100(value as number, this.valuesRangeMin as number, this.valuesRangeMax as number);
             },
-            multiPurposeProperty: !this.states[map.on_set],
-            handleSimilarEvents: true, // Set brightness to non-zero value if the lamp turned ON.
+            multiPurposeProperty: !this.states[map.on], // Could handle powerState events
+            handleSimilarEvents: true, // If power set ON and brightness is 0, set to non-zero value
+            offValue,
+            onValue,
         };
     }
 

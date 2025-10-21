@@ -140,8 +140,11 @@ describe('AlexaSmartHomeV3 - ColorControllerSingleRgb', function () {
                 'Alexa.PowerController',
                 'Properties Namespace!',
             );
-            assert.equal(response.context.properties[0].name, 'powerState', 'Properties Name!');
-            assert.equal(response.context.properties[0].value, 'OFF', 'Value!');
+            assert.equal(response.context.properties[0].name, 'brightness', 'Properties Name!');
+            assert.equal(response.context.properties[0].value, 0, 'Value!');
+
+            assert.equal(response.context.properties[1].name, 'powerState', 'Properties Name!');
+            assert.equal(response.context.properties[1].value, 'OFF', 'Value!');
 
             assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
             assert.equal(response.event.header.name, 'Response', 'Namespace!');
@@ -161,7 +164,7 @@ describe('AlexaSmartHomeV3 - ColorControllerSingleRgb', function () {
 
             let id = helpers.getConfigForName('BRIGHTNESS', helpers.hueConfig());
             let storedValue = await AdapterProvider.getState(id);
-            assert.equal(storedValue, 100, 'ioBroker.Value!');
+            assert.equal(storedValue, 60, 'ioBroker.Value!');
 
             assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
             assert.equal(
@@ -169,8 +172,10 @@ describe('AlexaSmartHomeV3 - ColorControllerSingleRgb', function () {
                 'Alexa.PowerController',
                 'Properties Namespace!',
             );
-            assert.equal(response.context.properties[0].name, 'powerState', 'Properties Name!');
-            assert.equal(response.context.properties[0].value, 'ON', 'Value!');
+            assert.equal(response.context.properties[0].name, 'brightness', 'Properties Name!');
+            assert.equal(response.context.properties[0].value, 60, 'Value!');
+            assert.equal(response.context.properties[1].name, 'powerState', 'Properties Name!');
+            assert.equal(response.context.properties[1].value, 'ON', 'Value!');
 
             assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
             assert.equal(response.event.header.name, 'Response', 'Namespace!');

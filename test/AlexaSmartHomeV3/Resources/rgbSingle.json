@@ -18,7 +18,7 @@
             "id": "alias.0.Wohnzimmer.RgbLamp.TEMPERATURE"
         },
         {
-            "name": "ON_SET",
+            "name": "ON",
             "defaultRole": "switch",
             "id": "alias.0.Wohnzimmer.RgbLamp.ON"
         },

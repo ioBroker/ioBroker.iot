@@ -1505,7 +1505,7 @@ describe('AlexaSmartHomeV3 - Controls', function () {
             assert.equal(response.context.properties[0].value, 'OFF', 'Value!');
 
             const idLevel = helpers.getConfigForName('DIMMER', helpers.rgbSingleWithPowerConfig());
-            const idPower = helpers.getConfigForName('ON_SET', helpers.rgbSingleWithPowerConfig());
+            const idPower = helpers.getConfigForName('ON', helpers.rgbSingleWithPowerConfig());
             let valueState = await AdapterProvider.getState(idPower);
             assert.equal(valueState, false, 'Value!');
 
@@ -1578,7 +1578,7 @@ describe('AlexaSmartHomeV3 - Controls', function () {
 
         it('RgbSingle with power does not goes OFF if brightness is set to zero', async function () {
             const idLevel = helpers.getConfigForName('DIMMER', helpers.rgbSingleWithPowerConfig());
-            const idPower = helpers.getConfigForName('ON_SET', helpers.rgbSingleWithPowerConfig());
+            const idPower = helpers.getConfigForName('ON', helpers.rgbSingleWithPowerConfig());
             // Turn ON
             const powerOnEvent = await helpers.getSample(
                 'PowerController/PowerController.TurnOn.request.json',
@@ -1626,11 +1626,11 @@ describe('AlexaSmartHomeV3 - Controls', function () {
             assert.equal(d instanceof Device, true);
             let response = await d.handle(event);
             const idLevel = helpers.getConfigForName('DIMMER', helpers.rgbSingleWithPowerConfig());
-            const idPower = helpers.getConfigForName('ON_SET', helpers.rgbSingleWithPowerConfig());
+            const idPower = helpers.getConfigForName('ON', helpers.rgbSingleWithPowerConfig());
             let valueState = await AdapterProvider.getState(idPower);
             assert.equal(valueState, true, 'Value!');
             valueState = await AdapterProvider.getState(idLevel);
-            assert.equal(valueState, 100, 'Value!');
+            assert.equal(valueState, 80, 'Value!');
 
             assert.equal(
                 response.context.properties[0].namespace,
@@ -1640,7 +1640,8 @@ describe('AlexaSmartHomeV3 - Controls', function () {
             assert.equal(response.context.properties[1].name, 'powerState', 'Properties Name!');
             assert.equal(response.context.properties[1].value, 'ON', 'Value!');
             assert.equal(response.context.properties[0].name, 'brightness', 'Properties Name!');
-            assert.equal(response.context.properties[0].value, 100, 'Value!');
+            // we set byON to 80%
+            assert.equal(response.context.properties[0].value, 80, 'Value!');
 
             assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
             assert.equal(response.event.header.name, 'Response', 'Namespace!');
@@ -1661,11 +1662,11 @@ describe('AlexaSmartHomeV3 - Controls', function () {
             assert.equal(d instanceof Device, true);
             let response = await d.handle(event);
             const idLevel = helpers.getConfigForName('DIMMER', helpers.rgbSingleWithPowerConfig());
-            const idPower = helpers.getConfigForName('ON_SET', helpers.rgbSingleWithPowerConfig());
+            const idPower = helpers.getConfigForName('ON', helpers.rgbSingleWithPowerConfig());
             let valueState = await AdapterProvider.getState(idPower);
             assert.equal(valueState, false, 'Value!');
             valueState = await AdapterProvider.getState(idLevel);
-            assert.equal(valueState, 100, 'Value!');
+            assert.equal(valueState, 80, 'Value!');
 
             assert.equal(
                 response.context.properties[0].namespace,
