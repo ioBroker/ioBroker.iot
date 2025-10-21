@@ -1,0 +1,476 @@
+{
+  "hue.0.Hue_Küche_Küchezeile": {
+    "_id": "hue.0.Hue_Küche_Küchezeile",
+    "type": "channel",
+    "common": {
+      "name": "Hue Küche Küchezeile",
+      "role": "light.color"
+    },
+    "native": {
+    },
+    "from": "system.adapter.hue.0",
+    "user": "system.user.admin",
+    "ts": 1760805025893,
+    "acl": {
+      "object": 1636,
+      "owner": "system.user.admin",
+      "ownerGroup": "system.group.administrator"
+    }
+  },
+  "hue.0.Hue_Küche_Küchezeile.alert": {
+    "_id": "hue.0.Hue_Küche_Küchezeile.alert",
+    "type": "state",
+    "common": {
+      "type": "string",
+      "name": "Hue Küche Küchezeile.alert",
+      "read": true,
+      "write": true,
+      "role": "text",
+      "def": "select"
+    },
+    "native": {
+    }
+  },
+  "hue.0.Hue_Küche_Küchezeile.b": {
+    "_id": "hue.0.Hue_Küche_Küchezeile.b",
+    "type": "state",
+    "common": {
+      "type": "number",
+      "name": "Hue Küche Küchezeile.b",
+      "read": true,
+      "write": true,
+      "role": "level.color.blue",
+      "min": 0,
+      "max": 255,
+      "def": 0
+    },
+    "native": {
+    }
+  },
+  "hue.0.Hue_Küche_Küchezeile.bri": {
+    "_id": "hue.0.Hue_Küche_Küchezeile.bri",
+    "type": "state",
+    "common": {
+      "type": "number",
+      "name": "Hue Küche Küchezeile.bri",
+      "read": true,
+      "write": true,
+      "role": "level.dimmer",
+      "min": 0,
+      "max": 254,
+      "def": 254,
+      "smartName": {
+        "de": "Licht Hue Küchenzeile",
+        "smartType": "dimmer",
+        "byON": "100"
+      }
+    },
+    "native": {
+      "id": "14"
+    },
+    "acl": {
+      "object": 1636,
+      "state": 1636,
+      "owner": "system.user.admin",
+      "ownerGroup": "system.group.administrator"
+    },
+    "from": "system.adapter.admin.0",
+    "user": "system.user.admin",
+    "ts": 1760951108033,
+    "val": 0,
+    "ack": true
+  },
+  "hue.0.Hue_Küche_Küchezeile.colormode": {
+    "_id": "hue.0.Hue_Küche_Küchezeile.colormode",
+    "type": "state",
+    "common": {
+      "type": "string",
+      "name": "Hue Küche Küchezeile.colormode",
+      "read": true,
+      "write": false,
+      "role": "colormode",
+      "def": "ct"
+    },
+    "native": {
+      "id": "14"
+    },
+    "from": "system.adapter.hue.0",
+    "user": "system.user.admin",
+    "ts": 1760805025874,
+    "acl": {
+      "object": 1636,
+      "state": 1636,
+      "owner": "system.user.admin",
+      "ownerGroup": "system.group.administrator"
+    },
+    "val": "ct",
+    "ack": true
+  },
+  "hue.0.Hue_Küche_Küchezeile.command": {
+    "_id": "hue.0.Hue_Küche_Küchezeile.command",
+    "type": "state",
+    "common": {
+      "type": "string",
+      "name": "Hue Küche Küchezeile.command",
+      "read": true,
+      "write": true,
+      "role": "command",
+      "def": "{}"
+    },
+    "native": {
+      "id": "14"
+    },
+    "from": "system.adapter.hue.0",
+    "user": "system.user.admin",
+    "ts": 1760805025890,
+    "acl": {
+      "object": 1636,
+      "state": 1636,
+      "owner": "system.user.admin",
+      "ownerGroup": "system.group.administrator"
+    },
+    "val": "{}",
+    "ack": true
+  },
+  "hue.0.Hue_Küche_Küchezeile.ct": {
+    "_id": "hue.0.Hue_Küche_Küchezeile.ct",
+    "type": "state",
+    "common": {
+      "type": "number",
+      "name": "Hue Küche Küchezeile.ct",
+      "read": true,
+      "write": true,
+      "role": "level.color.temperature",
+      "unit": "°K",
+      "min": 2000,
+      "max": 6536,
+      "def": 2703,
+      "smartName": {
+        "de": "Licht Hue Küchenzeile",
+        "smartType": "ct"
+      }
+    },
+    "native": {
+      "id": "14"
+    },
+    "acl": {
+      "object": 1636,
+      "state": 1636,
+      "owner": "system.user.admin",
+      "ownerGroup": "system.group.administrator"
+    },
+    "from": "system.adapter.admin.0",
+    "user": "system.user.admin",
+    "ts": 1760950350919,
+    "val": 6494,
+    "ack": true
+  },
+  "hue.0.Hue_Küche_Küchezeile.effect": {
+    "_id": "hue.0.Hue_Küche_Küchezeile.effect",
+    "type": "state",
+    "common": {
+      "type": "string",
+      "name": "Hue Küche Küchezeile.effect",
+      "read": true,
+      "write": true,
+      "role": "text",
+      "def": "none"
+    },
+    "native": {
+      "id": "14"
+    },
+    "from": "system.adapter.hue.0",
+    "user": "system.user.admin",
+    "ts": 1760805025866,
+    "acl": {
+      "object": 1636,
+      "state": 1636,
+      "owner": "system.user.admin",
+      "ownerGroup": "system.group.administrator"
+    },
+    "val": "none",
+    "ack": true
+  },
+  "hue.0.Hue_Küche_Küchezeile.g": {
+    "_id": "hue.0.Hue_Küche_Küchezeile.g",
+    "type": "state",
+    "common": {
+      "type": "number",
+      "name": "Hue Küche Küchezeile.g",
+      "read": true,
+      "write": true,
+      "role": "level.color.green",
+      "min": 0,
+      "max": 255,
+      "def": 0
+    },
+    "native": {
+      "id": "14"
+    },
+    "from": "system.adapter.hue.0",
+    "user": "system.user.admin",
+    "ts": 1760805025886,
+    "acl": {
+      "object": 1636,
+      "state": 1636,
+      "owner": "system.user.admin",
+      "ownerGroup": "system.group.administrator"
+    },
+    "val": 253,
+    "ack": true
+  },
+  "hue.0.Hue_Küche_Küchezeile.hue": {
+    "_id": "hue.0.Hue_Küche_Küchezeile.hue",
+    "type": "state",
+    "common": {
+      "type": "number",
+      "name": "Hue Küche Küchezeile.hue",
+      "read": true,
+      "write": true,
+      "role": "level.color.hue",
+      "unit": "°",
+      "min": 0,
+      "max": 360,
+      "def": 46,
+      "smartName": {
+        "de": "Licht Hue Küchenzeile",
+        "smartType": "hue"
+      }
+    },
+    "native": {
+      "id": "14"
+    },
+    "acl": {
+      "object": 1636,
+      "state": 1636,
+      "owner": "system.user.admin",
+      "ownerGroup": "system.group.administrator"
+    },
+    "from": "system.adapter.admin.0",
+    "user": "system.user.admin",
+    "ts": 1760950355804,
+    "val": 228,
+    "ack": true
+  },
+  "hue.0.Hue_Küche_Küchezeile.level": {
+    "_id": "hue.0.Hue_Küche_Küchezeile.level",
+    "type": "state",
+    "common": {
+      "type": "number",
+      "name": "Hue Küche Küchezeile.level",
+      "read": true,
+      "write": true,
+      "role": "level.dimmer",
+      "min": 0,
+      "max": 100,
+      "def": 0
+    },
+    "native": {
+      "id": "14"
+    },
+    "from": "system.adapter.hue.0",
+    "user": "system.user.admin",
+    "ts": 1760805025892,
+    "acl": {
+      "object": 1636,
+      "state": 1636,
+      "owner": "system.user.admin",
+      "ownerGroup": "system.group.administrator"
+    },
+    "val": 0,
+    "ack": true
+  },
+  "hue.0.Hue_Küche_Küchezeile.mode": {
+    "_id": "hue.0.Hue_Küche_Küchezeile.mode",
+    "type": "state",
+    "common": {
+      "type": "string",
+      "name": "Hue Küche Küchezeile.mode",
+      "read": true,
+      "write": true,
+      "role": "text",
+      "def": "homeautomation"
+    },
+    "native": {
+      "id": "14"
+    },
+    "from": "system.adapter.hue.0",
+    "user": "system.user.admin",
+    "ts": 1760805025876,
+    "acl": {
+      "object": 1636,
+      "state": 1636,
+      "owner": "system.user.admin",
+      "ownerGroup": "system.group.administrator"
+    },
+    "val": "homeautomation",
+    "ack": true
+  },
+  "hue.0.Hue_Küche_Küchezeile.on": {
+    "_id": "hue.0.Hue_Küche_Küchezeile.on",
+    "type": "state",
+    "common": {
+      "type": "boolean",
+      "name": "Hue Küche Küchezeile.on",
+      "read": true,
+      "write": true,
+      "role": "switch.light",
+      "def": false,
+      "smartName": {
+        "de": "Licht Hue Küchenzeile",
+        "byON": "100"
+      }
+    },
+    "native": {
+      "id": "14"
+    },
+    "acl": {
+      "object": 1636,
+      "state": 1636,
+      "owner": "system.user.admin",
+      "ownerGroup": "system.group.administrator"
+    },
+    "from": "system.adapter.admin.0",
+    "user": "system.user.admin",
+    "ts": 1760951100567,
+    "val": false,
+    "ack": true
+  },
+  "hue.0.Hue_Küche_Küchezeile.r": {
+    "_id": "hue.0.Hue_Küche_Küchezeile.r",
+    "type": "state",
+    "common": {
+      "type": "number",
+      "name": "Hue Küche Küchezeile.r",
+      "read": true,
+      "write": true,
+      "role": "level.color.red",
+      "min": 0,
+      "max": 255,
+      "def": 0
+    },
+    "native": {
+      "id": "14"
+    },
+    "from": "system.adapter.hue.0",
+    "user": "system.user.admin",
+    "ts": 1760805025881,
+    "acl": {
+      "object": 1636,
+      "state": 1636,
+      "owner": "system.user.admin",
+      "ownerGroup": "system.group.administrator"
+    },
+    "val": 244,
+    "ack": true
+  },
+  "hue.0.Hue_Küche_Küchezeile.reachable": {
+    "_id": "hue.0.Hue_Küche_Küchezeile.reachable",
+    "type": "state",
+    "common": {
+      "type": "boolean",
+      "name": "Hue Küche Küchezeile.reachable",
+      "read": true,
+      "write": false,
+      "role": "indicator.reachable",
+      "def": true
+    },
+    "native": {
+      "id": "14"
+    },
+    "from": "system.adapter.hue.0",
+    "user": "system.user.admin",
+    "ts": 1760805025879,
+    "acl": {
+      "object": 1636,
+      "state": 1636,
+      "owner": "system.user.admin",
+      "ownerGroup": "system.group.administrator"
+    },
+    "val": true,
+    "ack": true
+  },
+  "hue.0.Hue_Küche_Küchezeile.sat": {
+    "_id": "hue.0.Hue_Küche_Küchezeile.sat",
+    "type": "state",
+    "common": {
+      "name": "Hue Küche Küchezeile.sat",
+      "read": true,
+      "write": true,
+      "type": "number",
+      "role": "level.color.saturation",
+      "min": 0,
+      "max": 254,
+      "def": 143,
+      "smartName": {
+        "de": "Licht Hue Küchenzeile"
+      }
+    },
+    "native": {
+      "id": "14"
+    },
+    "acl": {
+      "object": 1636,
+      "state": 1636,
+      "owner": "system.user.admin",
+      "ownerGroup": "system.group.administrator"
+    },
+    "from": "system.adapter.admin.0",
+    "user": "system.user.admin",
+    "ts": 1760950374285,
+    "val": 77,
+    "ack": true
+  },
+  "hue.0.Hue_Küche_Küchezeile.updateable": {
+    "_id": "hue.0.Hue_Küche_Küchezeile.updateable",
+    "type": "state",
+    "common": {
+      "name": "Hue Küche Küchezeile.updateable",
+      "read": true,
+      "write": false,
+      "type": "string",
+      "role": "indicator.update",
+      "def": "noupdates"
+    },
+    "native": {
+      "id": "14"
+    },
+    "from": "system.adapter.hue.0",
+    "user": "system.user.admin",
+    "ts": 1760805025855,
+    "acl": {
+      "object": 1636,
+      "state": 1636,
+      "owner": "system.user.admin",
+      "ownerGroup": "system.group.administrator"
+    },
+    "val": "noupdates",
+    "ack": true
+  },
+  "hue.0.Hue_Küche_Küchezeile.xy": {
+    "_id": "hue.0.Hue_Küche_Küchezeile.xy",
+    "type": "state",
+    "common": {
+      "type": "string",
+      "name": "Hue Küche Küchezeile.xy",
+      "read": true,
+      "write": true,
+      "role": "level.color.xy",
+      "def": "[0.4596,0.4105]"
+    },
+    "native": {
+      "id": "14"
+    },
+    "from": "system.adapter.hue.0",
+    "user": "system.user.admin",
+    "ts": 1760805025868,
+    "acl": {
+      "object": 1636,
+      "state": 1636,
+      "owner": "system.user.admin",
+      "ownerGroup": "system.group.administrator"
+    },
+    "val": "0.3129,0.3288",
+    "ack": true
+  }
+}

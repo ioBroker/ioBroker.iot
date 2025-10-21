@@ -123,4 +123,38 @@ describe('AlexaSmartHomeV3 - DeviceManager', function () {
             assert.equal(stateChange, null);
         });
     });
+
+    describe('creates devices...', async function () {
+        it('must create HUE device from combined states', async function () {
+            const objects = require('../Resources/hue-combined.json');
+            AdapterProvider.init(helpers.adapterMock(objects));
+            deviceManager = new DeviceManager();
+            await deviceManager.collectEndpoints();
+            const endpoints = deviceManager.endpoints || [];
+            assert.equal(endpoints.length, 1);
+
+            const event = await helpers.getSample('Discovery/Discovery.request.json');
+
+            const response = await deviceManager.handleAlexaEvent(event);
+
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+
+            assert.equal(response.event.header.namespace, 'Alexa.Discovery', 'Namespace!');
+            assert.equal(response.event.header.name, 'Discover.Response', 'Name!');
+            assert.equal(response.event.payload.endpoints[0].friendlyName, 'Licht Hue Küchenzeile', 'Friendly Name!');
+
+            assert.equal(response.event.payload.endpoints[0].capabilities.length, 6);
+            assert.equal(response.event.payload.endpoints[0].capabilities[0].type, 'AlexaInterface');
+            assert.equal(response.event.payload.endpoints[0].capabilities[0].interface, 'Alexa');
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].interface, 'Alexa.PowerController');
+            assert.equal(response.event.payload.endpoints[0].capabilities[2].interface, 'Alexa.BrightnessController');
+            assert.equal(response.event.payload.endpoints[0].capabilities[3].interface, 'Alexa.ColorTemperatureController');
+            assert.equal(response.event.payload.endpoints[0].capabilities[4].interface, 'Alexa.ColorController');
+            assert.equal(response.event.payload.endpoints[0].capabilities[5].interface, 'Alexa.PercentageController');
+            assert.equal(
+                response.event.payload.endpoints[0].capabilities[1].properties.supported[0].name,
+                'powerState',
+            );
+        });
+    });
 });

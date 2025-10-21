@@ -486,10 +486,6 @@ export async function controls(
             smartName.smartType = Types.slider;
         }
 
-        if (id.includes('hue.0.Hue_Küche_Küchezeile')) {
-            console.log('A');
-        }
-
         // try to convert the state to typeDetector format
         // "smartName": {
         //    "de": "Rote Lampe",

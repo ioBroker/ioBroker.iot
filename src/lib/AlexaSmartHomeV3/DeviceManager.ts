@@ -197,7 +197,7 @@ export default class DeviceManager {
                     this.log.debug(`Control of type [${control.type}] has neither room no smart name. Skipped.`);
                 }
 
-                if (processedControls.length === 0) {
+                if (!processedControls.length) {
                     processedControls = [control];
                 }
 

@@ -8,7 +8,7 @@ addFormats(ajv);
 let schema;
 
 class AdapterMock {
-    constructor() {
+    constructor(objects) {
         this.log = {
             silly: this.nop,
             debug: this.nop,
@@ -20,7 +20,24 @@ class AdapterMock {
             functionFirst: false,
             concatWord: '',
         };
+        this.objects = {};
         this.states = {};
+        if (objects) {
+            Object.keys(objects).forEach(key => {
+                this.objects[key] = {
+                    _id: key,
+                    common: objects[key].common,
+                    type: objects[key].type,
+                    native: {},
+                };
+                if (objects[key].val !== undefined) {
+                    this.states[key] = {
+                        val: objects[key].val,
+                        ack: !!objects[key].ack,
+                    };
+                }
+            });
+        }
     }
 
     nop() {
@@ -36,8 +53,17 @@ class AdapterMock {
         return 'iot.0';
     }
 
-    async getObjectViewAsync() {
-        return { rows: [] };
+    async getObjectViewAsync(system, type) {
+        const result = { rows: []};
+        Object.keys(this.objects).forEach(key => {
+            if (this.objects[key].type === type) {
+                result.rows.push({
+                    id: key,
+                    value: this.objects[key],
+                })
+            }
+        })
+        return result;
     }
 
     async setForeignStateAsync(id, state) {
@@ -179,8 +205,8 @@ const Helpers = {
             .forEach(v => (v = undefined));
     },
 
-    adapterMock: function () {
-        return new AdapterMock();
+    adapterMock: function (objects) {
+        return new AdapterMock(objects);
     },
 
     humidityControl: function () {
