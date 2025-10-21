@@ -350,7 +350,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 4.1.12 (2025-10-21)
 - (@GermanBluefox) Added debug information
 - (@GermanBluefox) Better handling of HUE devices
 
@@ -368,11 +368,6 @@ setState('iot.0.app.message', JSON.stringify({
 
 ### 4.1.5 (2025-10-18)
 - (@GermanBluefox) Better handling of color temperatures
-
-### 4.1.4 (2025-10-17)
-- (@GermanBluefox) Implemented stored values for Alexa V3
-- (@GermanBluefox) Added RGB(W) with individual states to Alexa V3
-- (@GermanBluefox) Added dedicated checkbox for alexa custom skill
 
 ## License
 

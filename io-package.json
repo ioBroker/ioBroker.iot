@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "4.1.11",
+    "version": "4.1.12",
     "news": {
+      "4.1.12": {
+        "en": "Added debug information\nBetter handling of HUE devices",
+        "de": "Zusätzliche Informationen\nBessere Handhabung von HUE-Geräten",
+        "ru": "Добавлена информация об отладке\nЛучшая обработка HUE устройств",
+        "pt": "Adicionado informação de depuração\nMelhor manuseio de dispositivos HUE",
+        "nl": "Debug-informatie toegevoegd\nBetere behandeling van HUE-apparaten",
+        "fr": "Ajout des informations de débogage\nMeilleure manipulation des appareils HUE",
+        "it": "Informazioni sul debug\nMigliore gestione dei dispositivi HUE",
+        "es": "Información adicional de depuración\nMejor manejo de dispositivos HUE",
+        "pl": "Dodano informacje o debugowaniu\nLepsza obsługa urządzeń HUE",
+        "uk": "Додана інформація\nКраще обслуговування пристроїв HUE",
+        "zh-cn": "添加调试信息\n更好地处理HUE设备"
+      },
       "4.1.11": {
         "en": "Added humidity sensor\nAdded unreach indicator\nCorrected deletion of automatically detected devices",
         "de": "Zusätzlicher Feuchtigkeitssensor\nZusätzlicher unrichtiger Indikator\nKorrigiertes Löschen automatisch erkannter Geräte",
@@ -80,19 +93,6 @@
         "pl": "Wdrożone wartości zapisane dla Alexa V3\nDodano RGB (W) z poszczególnymi stanami do Alexa V3\nDodano dedykowaną opcję dla umiejętności Alexa",
         "uk": "Реалізовано збережені значення для Alexa V3\nДодано RGB(W) з окремими державами до Alexa V3\nДодано виділену прапорець для спеціальної майстерності alexa",
         "zh-cn": "已执行的Alexa V3存储值\n添加有单个状态的 RGB( W) 到 Alexa V3\n添加了Alexa 自定义技能的专用复选框"
-      },
-      "4.1.3": {
-        "en": "Fixed custom skill\nAdded RGB single and scene support",
-        "de": "Benutzerdefinierte Fähigkeiten behoben\nRGB Single und Szenenunterstützung hinzugefügt",
-        "ru": "Фиксированный пользовательский навык\nДобавлена поддержка RGB одиночных и сцен",
-        "pt": "Habilidade personalizada fixa\nAdicionado suporte RGB single e cena",
-        "nl": "Vaste aangepaste vaardigheden\nToegevoegd RGB enkele en scène ondersteuning",
-        "fr": "Compétence personnalisée fixe\nAjout d'un seul RGB et d'un support de scène",
-        "it": "Abilità personalizzata fissa\nAggiunto supporto RGB singolo e scena",
-        "es": "Habilidad personalizada fija\nAñadido RGB single y soporte de escena",
-        "pl": "Naprawiono niestandardowe umiejętności\nDodano wsparcie RGB single i sceny",
-        "uk": "Фіксована спеціальна майстерність\nДодано RGB єдиного і сцена підтримки",
-        "zh-cn": "固定定制技能\n添加 RGB 单场和场景支持"
       }
     },
     "titleLang": {

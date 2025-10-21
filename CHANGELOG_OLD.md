@@ -511,6 +511,11 @@
 ### 0.1.4 (2018-09-26)
 
 -   (bluefox) Initial commit
+## 4.1.4 (2025-10-17)
+- (@GermanBluefox) Implemented stored values for Alexa V3
+- (@GermanBluefox) Added RGB(W) with individual states to Alexa V3
+- (@GermanBluefox) Added dedicated checkbox for alexa custom skill
+
 ## 4.1.3 (2025-10-15)
 - (@GermanBluefox) Fixed custom skill
 - (@GermanBluefox) Added RGB single and scene support
