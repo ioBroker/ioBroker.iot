@@ -15,6 +15,7 @@ import ChangeReport from './Alexa/Directives/ChangeReport';
 import Discovery from './Alexa/Directives/Discovery';
 import ReportState from './Alexa/Directives/ReportState';
 import { randomUUID } from 'node:crypto';
+import type { Types } from '@iobroker/type-detector';
 
 export default class DeviceManager {
     private lang: ioBroker.Languages = 'en';
@@ -69,23 +70,25 @@ export default class DeviceManager {
         this.devices.push(device);
     }
 
-    toDevice(
-        detectedControls: IotExternalPatternControl[],
-        friendlyName: string,
-        autoDetected: boolean,
-        roomName: string | undefined,
-        funcName: string | undefined,
-        toggle?: boolean,
-    ): Device | undefined {
+    toDevice(options: {
+        detectedControls: IotExternalPatternControl[];
+        friendlyName: string;
+        autoDetected: boolean;
+        roomName?: string;
+        funcName?: string;
+        toggle?: boolean;
+        possibleTypes: Types[];
+        typeWasDetected: boolean;
+    }): Device | undefined {
         const controls: Control[] = [];
 
-        this.log.debug(`merging controls to a device with name ${friendlyName}`);
+        this.log.debug(`merging controls to a device with name ${options.friendlyName}`);
 
-        detectedControls.forEach(item => {
+        options.detectedControls.forEach(item => {
             this.log.silly(`processing control: ${JSON.stringify(item)}`);
             const control = Controls.factory(item);
             if (control) {
-                this.log.debug(`"${item.type}" added to "${friendlyName}"`);
+                this.log.debug(`"${item.type}" added to "${options.friendlyName}"`);
                 controls.push(control);
             } else {
                 this.log.debug(`control of type "${item.type}" not supported yet. Skipped.`);
@@ -100,13 +103,15 @@ export default class DeviceManager {
         // create and add a new device to the collected devices
         this.addDevice(
             new Device({
-                id: friendlyName,
-                friendlyName,
+                id: options.friendlyName,
+                friendlyName: options.friendlyName,
                 controls,
-                autoDetected,
-                roomName,
-                funcName,
-                toggle,
+                autoDetected: options.autoDetected,
+                roomName: options.roomName,
+                funcName: options.funcName,
+                toggle: options.toggle,
+                possibleTypes: options.possibleTypes,
+                typeWasDetected: options.typeWasDetected,
             }),
         );
     }
@@ -163,14 +168,16 @@ export default class DeviceManager {
                                 control.functionality &&
                                 item.functionality?.id === control.functionality.id,
                         );
-                        this.toDevice(
-                            processedControls,
-                            Utils.friendlyNameByRoomAndFunctionName(control, this.lang),
-                            true,
-                            this.getName(control.room?.common?.name),
-                            this.getName(control.functionality?.common?.name),
-                            processedControls[0].object?.toggle ?? defaultToggle,
-                        );
+                        this.toDevice({
+                            detectedControls: processedControls,
+                            friendlyName: Utils.friendlyNameByRoomAndFunctionName(control, this.lang),
+                            autoDetected: true,
+                            roomName: this.getName(control.room?.common?.name),
+                            funcName: this.getName(control.functionality?.common?.name),
+                            toggle: processedControls[0].object?.toggle ?? defaultToggle,
+                            possibleTypes: processedControls[0].object?.possibleTypes || [],
+                            typeWasDetected: processedControls[0].object?.typeWasDetected || false,
+                        });
                     } else {
                         this.log.debug(
                             `Control of type [${control.type}] assigned to room [${this.getName(control.room.common.name)}] has no function. Skipped.`,
@@ -182,14 +189,14 @@ export default class DeviceManager {
                         if (!createdGroups.includes(groupName)) {
                             createdGroups.push(groupName);
                             processedControls = detectedControls.filter(item => item.groupNames?.includes(groupName));
-                            this.toDevice(
-                                processedControls,
-                                this.getName(groupName),
-                                false,
-                                undefined,
-                                undefined,
-                                processedControls[0].object?.toggle ?? defaultToggle,
-                            );
+                            this.toDevice({
+                                detectedControls: processedControls,
+                                friendlyName: this.getName(groupName),
+                                autoDetected: false,
+                                toggle: processedControls[0].object?.toggle ?? defaultToggle,
+                                possibleTypes: processedControls[0].object?.possibleTypes || [],
+                                typeWasDetected: processedControls[0].object?.typeWasDetected || false,
+                            });
                         }
                     });
                 } else {

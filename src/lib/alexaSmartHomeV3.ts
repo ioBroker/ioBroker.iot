@@ -81,6 +81,8 @@ export default class AlexaSH3 {
                 controls,
                 friendlyName: endpoint.friendlyName,
                 autoDetected: endpoint.autoDetected,
+                possibleTypes: endpoint.possibleTypes,
+                typeWasDetected: endpoint.typeWasDetected,
                 funcName: endpoint.funcName,
                 roomName: endpoint.roomName,
                 id: endpoint.id,

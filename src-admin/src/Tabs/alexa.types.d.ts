@@ -3,6 +3,14 @@ import type { InternalDetectorState, Types } from '@iobroker/type-detector/types
 
 export type AlexaV3EndpointID = string;
 
+export type AlexaV3ThermostatMode =
+    | 'AUTO' // Automatic heating or cooling based on the current temperature and the setpoint.
+    | 'COOL' // Cooling mode.
+    | 'ECO' // Economy mode.
+    | 'EM_HEAT' // Emergency heating mode. This mode uses a backup heat source as an additional heat source. For example, a customer might use emergency heat when it's really cold or when the heat pump is broken. Customers can set this mode in device settings in the Alexa app.
+    | 'HEAT' // Heating mode.
+    | 'OFF'; // Heating and cooling are off, but the device might still have power.;
+
 export type AlexaV3DirectiveValue =
     | string
     | number
@@ -26,21 +34,65 @@ export type AlexaV3DirectiveName =
     | 'OFF'
     | 'LOCKED';
 
+// https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-discovery.html#display-categories
 export type AlexaV3Category =
+    | 'ACTIVITY_TRIGGER'
     | 'AIR_CONDITIONER'
+    | 'AIR_FRESHENER'
+    | 'AIR_PURIFIER'
+    | 'AIR_QUALITY_MONITOR'
+    | 'ALEXA_VOICE_ENABLED'
+    | 'AUTO_ACCESSORY'
+    | 'BLUETOOTH_SPEAKER'
+    | 'CAMERA'
+    | 'CHRISTMAS_TREE'
+    | 'COFFEE_MAKER'
+    | 'COMPUTER'
     | 'CONTACT_SENSOR'
+    | 'DISHWASHER'
+    | 'DOOR'
+    | 'DOORBELL'
+    | 'DRYER'
+    | 'EXTERIOR_BLIND'
+    | 'FAN'
+    | 'GAME_CONSOLE'
     | 'GARAGE_DOOR'
+    | 'HEADPHONES'
+    | 'HUB'
     | 'INTERIOR_BLIND'
+    | 'LAPTOP'
     | 'LIGHT'
+    | 'MICROWAVE'
+    | 'MOBILE_PHONE'
     | 'MOTION_SENSOR'
+    | 'MUSIC_SYSTEM'
+    | 'NETWORK_HARDWARE'
     | 'OTHER'
+    | 'OVEN'
+    | 'PHONE'
+    | 'PRINTER'
+    | 'REMOTE'
+    | 'ROUTER'
     | 'SCENE_TRIGGER'
+    | 'SCREEN'
+    | 'SECURITY_PANEL'
+    | 'SECURITY_SYSTEM'
+    | 'SLOW_COOKER'
     | 'SMARTLOCK'
     | 'SMARTPLUG'
     | 'SPEAKER'
+    | 'STREAMING_DEVICE'
+    | 'SWITCH'
+    | 'TABLET'
     | 'TEMPERATURE_SENSOR'
     | 'THERMOSTAT'
-    | 'VACUUM_CLEANER';
+    | 'TV'
+    | 'VACUUM_CLEANER'
+    | 'VACUUM'
+    | 'VEHICLE'
+    | 'WASHER'
+    | 'WATER_HEATER'
+    | 'WEARABLE';
 
 export type AlexaV3DirectiveType =
     | 'SetTargetTemperature'
@@ -72,16 +124,21 @@ export type AlexaV3DirectiveType =
 
 export type AlexaV3Namespace =
     | 'Alexa'
-    | 'Alexa.TemperatureSensor'
-    | 'Alexa.ThermostatController'
+    | 'Alexa.BrightnessController'
+    | 'Alexa.ColorController'
     | 'Alexa.ColorTemperatureController'
-    | 'Alexa.PowerController'
-    | 'Alexa.MotionSensor'
-    | 'Alexa.LockController'
-    | 'Alexa.Speaker'
-    | 'Alexa.EndpointHealth'
     | 'Alexa.ContactSensor'
-    | 'Alexa.SceneController';
+    | 'Alexa.EndpointHealth'
+    | 'Alexa.HumiditySensor'
+    | 'Alexa.LockController'
+    | 'Alexa.ModeController'
+    | 'Alexa.MotionSensor'
+    | 'Alexa.PercentageController'
+    | 'Alexa.PowerController'
+    | 'Alexa.SceneController'
+    | 'Alexa.Speaker'
+    | 'Alexa.TemperatureSensor'
+    | 'Alexa.ThermostatController';
 
 // Basis Header
 export interface AlexaV3Header {
@@ -90,7 +147,7 @@ export interface AlexaV3Header {
     messageId: string;
     correlationToken?: string;
     payloadVersion: '3';
-    // Name of the mode, for example Washer.WashCycle or Washer.WashTemperature.
+    // Name of the mode, for example, Washer.WashCycle or Washer.WashTemperature.
     instance?: string;
     physicalInteraction?: boolean;
     propertyName?: string;
@@ -116,14 +173,15 @@ type AlexaV3Payload = {
         brightness: number;
     };
     brightness?: number;
+    brightnessDelta?: number;
     colorTemperatureInKelvin?: number;
     mode?: string; // e.g. "WashCycle.Normal" or "Washer.WashTemperature"
     modeDelta?: number;
     mute?: boolean;
     volume?: number;
     volumeDefault?: boolean;
-    percentageDelta?: number;
     percentage?: number;
+    percentageDelta?: number;
     targetSetpoint?: {
         value: number;
         scale: 'CELSIUS' | 'FAHRENHEIT';
@@ -138,7 +196,7 @@ type AlexaV3Payload = {
     };
     temperatureScale?: 'CELSIUS' | 'FAHRENHEIT';
     thermostatMode?: {
-        value: 'COOL' | 'HEAT' | 'AUTO' | 'OFF' | 'ECO' | 'EM_HEAT';
+        value: AlexaV3ThermostatMode;
     };
 
     lowerSetpoint?: {
@@ -149,7 +207,6 @@ type AlexaV3Payload = {
         value: number;
         scale: 'CELSIUS' | 'FAHRENHEIT';
     };
-    brightnessDelta?: number;
     change?: {
         cause: {
             type:
@@ -163,6 +220,18 @@ type AlexaV3Payload = {
                 | 'HANGUP';
         };
         properties: any[];
+    };
+    timestamp?: string; // ISO 8601
+    cause?: {
+        type:
+            | 'PHYSICAL_INTERACTION'
+            | 'VOICE_INTERACTION'
+            | 'APP_INTERACTION'
+            | 'PERIODIC_POLL'
+            | 'RULE_TRIGGER'
+            | 'TIMER_EXPIRED'
+            | 'ALARM_CLOCK'
+            | 'HANGUP'; // forward-compat
     };
     endpoints?: AlexaV3DiscoverAppliance[];
 };
@@ -188,7 +257,6 @@ export interface AlexaV3ContextProperty {
     uncertaintyInMilliseconds?: number;
     instance?: string;
 }
-
 // StateReport Response
 export interface AlexaV3StateReportResponse {
     event: {
@@ -197,11 +265,11 @@ export interface AlexaV3StateReportResponse {
         payload: Record<string, any>;
     };
     context?: {
-        properties: ContextProperty[];
+        properties: AlexaV3ContextProperty[];
     };
 }
 
-// Fehlerantwort
+// Error answer
 export interface AlexaV3ErrorResponse {
     event: {
         header: AlexaV3Header & { namespace: 'Alexa'; name: string };
@@ -284,6 +352,7 @@ export interface AlexaV3DiscoverResponse {
         };
     };
 }
+
 // alexa-change-report.d.ts
 export interface AlexaV3ReportedState {
     namespace: AlexaV3Namespace;
@@ -309,6 +378,8 @@ export type AlexaSH3DeviceDescription = {
     id: string;
     type: string;
     state: AlexaV3ReportedState[];
+    possibleTypes: Types[];
+    typeWasDetected: boolean;
 };
 export interface AlexaV3ChangeReportResponse {
     event: AlexaV3ChangeReportEvent;
@@ -386,9 +457,8 @@ export type AlexaV3StateMapping = {
 
 export type SmartNameObject = { [lang in ioBroker.Languages]?: string } & {
     smartType?: Types | null;
-    byON?: string | null;
+    byON?: string | null; // it could be 'stored' or percent as string
     toggle?: boolean;
-    detected?: boolean; // If the smartType was detected by engine
 };
 export type SmartName = null | false | string | SmartNameObject;
 
@@ -420,9 +490,11 @@ export interface IotExternalPatternControl {
         id: string;
         type: ioBroker.ObjectType;
         common: ioBroker.StateCommon | ioBroker.ChannelCommon | ioBroker.DeviceCommon;
-        autoDetected: boolean;
+        autoDetected: boolean; // If the object was taken from enum
         toggle?: boolean;
         smartName?: SmartName;
+        possibleTypes: Types[];
+        typeWasDetected: boolean; // If the smartType was detected by engine
     };
     groupNames: string[];
     room?: {

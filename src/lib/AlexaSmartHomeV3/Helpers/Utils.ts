@@ -457,7 +457,8 @@ export async function controls(
         _usedIdsOptional: usedIds,
         ignoreIndicators,
         excludedTypes,
-        detectParent: true,
+        detectOnlyChannel: true,
+        detectAllPossibleDevices: true,
         id: '', // this will be set for each id in the list
     };
 
@@ -475,6 +476,12 @@ export async function controls(
             continue;
         }
         options.id = id;
+        // If ID is hue, prioritize hue
+        if (devicesObject[id].common.role?.includes('.hue')) {
+            options.prioritizedTypes = [[Types.hue, Types.rgb]];
+        } else if (options.prioritizedTypes) {
+            delete options.prioritizedTypes;
+        }
 
         // Try to detect with typeDetector
         let controls = detector.detect(options);
@@ -486,6 +493,8 @@ export async function controls(
             smartName.smartType = Types.slider;
         }
 
+        const possibleTypes: Types[] = controls?.map(c => c.type) || [];
+        const typeWasDetected = !smartName.smartType;
         // try to convert the state to typeDetector format
         // "smartName": {
         //    "de": "Rote Lampe",
@@ -493,7 +502,6 @@ export async function controls(
         //    "byON": 80            // optional
         //  }
         if (!smartName.smartType) {
-            smartName.detected = true;
             // by default,
             if (controls && controls.length > 0) {
                 // take the first detected control that has initial ID
@@ -647,6 +655,8 @@ export async function controls(
                     common: devicesObject[id].common,
                     autoDetected: false,
                     toggle: smartName?.toggle,
+                    typeWasDetected,
+                    possibleTypes,
                 };
 
                 // remove id from the groups
@@ -685,6 +695,8 @@ export async function controls(
     list.forEach(id => {
         options.id = id;
         const controls = detector.detect(options);
+        const possibleTypes = controls?.map(c => c.type) || [];
+
         controls?.forEach(control => {
             const iotControl: IotExternalPatternControl = control as IotExternalPatternControl;
 
@@ -750,6 +762,8 @@ export async function controls(
                     },
                     autoDetected: true,
                     toggle: smartName && typeof smartName === 'object' ? smartName.toggle : undefined,
+                    possibleTypes,
+                    typeWasDetected: true,
                 };
 
                 iotControl.room = room

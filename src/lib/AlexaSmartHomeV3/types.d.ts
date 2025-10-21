@@ -378,6 +378,8 @@ export type AlexaSH3DeviceDescription = {
     id: string;
     type: string;
     state: AlexaV3ReportedState[];
+    possibleTypes: Types[];
+    typeWasDetected: boolean;
 };
 export interface AlexaV3ChangeReportResponse {
     event: AlexaV3ChangeReportEvent;
@@ -457,7 +459,6 @@ export type SmartNameObject = { [lang in ioBroker.Languages]?: string } & {
     smartType?: Types | null;
     byON?: string | null; // it could be 'stored' or percent as string
     toggle?: boolean;
-    detected?: boolean; // If the smartType was detected by engine
 };
 export type SmartName = null | false | string | SmartNameObject;
 
@@ -472,6 +473,8 @@ export interface IotInternalDetectorState extends InternalDetectorState {
         role?: string;
         name?: ioBroker.StringOrTranslated;
     };
+    // Used by GUI
+    subscribed?: boolean;
 }
 
 export interface IotExternalDetectorState extends Omit<IotInternalDetectorState, 'enums' | 'role'> {
@@ -487,9 +490,11 @@ export interface IotExternalPatternControl {
         id: string;
         type: ioBroker.ObjectType;
         common: ioBroker.StateCommon | ioBroker.ChannelCommon | ioBroker.DeviceCommon;
-        autoDetected: boolean;
+        autoDetected: boolean; // If the object was taken from enum
         toggle?: boolean;
         smartName?: SmartName;
+        possibleTypes: Types[];
+        typeWasDetected: boolean; // If the smartType was detected by engine
     };
     groupNames: string[];
     room?: {

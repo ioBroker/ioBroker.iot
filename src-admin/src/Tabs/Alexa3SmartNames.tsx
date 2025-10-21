@@ -537,6 +537,7 @@ interface Alexa3SmartNamesState {
         id: string;
         type: Types | null;
         typeWasDetected: boolean;
+        possibleTypes: Types[];
         name: string;
         originalType: string | null;
         originalName: string;
@@ -947,7 +948,8 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                             id,
                             type: null,
                             name: this.editedSmartName,
-                            typeWasDetected: false,
+                            typeWasDetected: device.typeWasDetected,
+                            possibleTypes: device.possibleTypes,
                             originalType: null,
                             originalName: this.editedSmartName,
                             objectName: Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() }),
@@ -1340,7 +1342,8 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
 
     static renderSelectTypeSelector(
         type: false | Types,
-        detected: boolean | undefined,
+        detected: boolean,
+        possibleTypes: Types[],
         onChange: (value: string) => void,
     ): React.JSX.Element | null {
         if (type !== false) {
@@ -1353,17 +1356,20 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                     <em>{I18n.t('Auto-detection')}</em>
                 </MenuItem>,
             ];
+            if (!possibleTypes.length) {
+                possibleTypes = SMART_TYPES;
+            }
             // get the mapping of device types
             const mapping: { [key: string]: string } = {};
             Object.keys(DEVICES).forEach(key => (mapping[key.toLowerCase()] = key));
 
-            for (let i = 0; i < SMART_TYPES.length; i++) {
-                const deviceDescription = DEVICES[mapping[SMART_TYPES[i].toLowerCase()]];
+            for (let i = 0; i < possibleTypes.length; i++) {
+                const deviceDescription = DEVICES[mapping[possibleTypes[i].toLowerCase()]];
                 const Icon = deviceDescription?.icon || null;
                 items.push(
                     <MenuItem
-                        key={SMART_TYPES[i]}
-                        value={SMART_TYPES[i]}
+                        key={possibleTypes[i]}
+                        value={possibleTypes[i]}
                     >
                         {Icon ? (
                             <Icon
@@ -1375,8 +1381,8 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                                 }}
                             />
                         ) : null}
-                        {I18n.t(SMART_TYPES[i])}
-                        {detected && type === SMART_TYPES[i] ? (
+                        {I18n.t(possibleTypes[i])}
+                        {detected && type === possibleTypes[i] ? (
                             <span style={{ marginLeft: 4, color: 'orange' }}>(Auto)</span>
                         ) : null}
                     </MenuItem>,
@@ -1430,9 +1436,8 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
         // get first id
         const state = Alexa3SmartNames.takeIdForSmartName(control);
         const type = (state?.smartName as SmartNameObject)?.smartType || false;
-        const detected = (state?.smartName as SmartNameObject)?.detected;
 
-        return Alexa3SmartNames.renderSelectTypeSelector(type, detected, value =>
+        return Alexa3SmartNames.renderSelectTypeSelector(type, dev.typeWasDetected, dev.possibleTypes, value =>
             this.onParamsChange(state.id, undefined, value),
         );
     }
@@ -1726,25 +1731,13 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                     ) : (
                         <div style={styles.devLineEdit} />
                     )}
-                    {!dev.autoDetected ? (
-                        <IconButton
-                            aria-label="Delete"
-                            style={styles.devLineDelete}
-                            onClick={() => this.onAskDelete(id)}
-                        >
-                            <IconDelete fontSize="middle" />
-                        </IconButton>
-                    ) : dev.controls.length > 1 ? (
-                        <IconButton
-                            aria-label="Delete"
-                            style={styles.devSubLineDelete}
-                            onClick={() => this.onAskDelete(id)}
-                        >
-                            <IconDelete fontSize="middle" />
-                        </IconButton>
-                    ) : (
-                        <div style={styles.devLineDelete} />
-                    )}
+                    <IconButton
+                        aria-label="Delete"
+                        style={dev.autoDetected ? styles.devLineDelete : styles.devSubLineDelete}
+                        onClick={() => this.onAskDelete(id)}
+                    >
+                        <IconDelete fontSize="middle" />
+                    </IconButton>
                 </div>,
                 expanded ? this.renderStates(control, background) : null,
                 dev.controls.length - 1 === c ? (
@@ -1931,6 +1924,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                         ? Alexa3SmartNames.renderSelectTypeSelector(
                               this.state.edit.type,
                               this.state.edit.typeWasDetected,
+                              this.state.edit.possibleTypes,
                               value => {
                                   const edit = JSON.parse(JSON.stringify(this.state.edit));
                                   edit.type = value;

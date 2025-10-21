@@ -1,4 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
+import type { Types } from '@iobroker/type-detector';
+
 import { endpointId, defaultIfNullOrEmpty, distinctByPropertyName } from './Helpers/Utils';
 import Logger from './Helpers/Logger';
 import type { AlexaV3Category, AlexaV3Namespace, AlexaV3ReportedState, AlexaV3Request } from './types';
@@ -21,6 +23,8 @@ export default class Device {
     public friendlyName: string;
     public controls: Control[];
     public autoDetected: boolean;
+    public possibleTypes: Types[];
+    public typeWasDetected: boolean;
     public roomName?: string;
     public funcName?: string;
     public toggle?: boolean;
@@ -35,7 +39,11 @@ export default class Device {
         roomName?: string;
         funcName?: string;
         toggle?: boolean;
+        typeWasDetected: boolean;
+        possibleTypes: Types[];
     }) {
+        this.typeWasDetected = opts.typeWasDetected;
+        this.possibleTypes = opts.possibleTypes;
         this.log = new Logger(this);
         this.id = defaultIfNullOrEmpty<string>(endpointId(opts.id), uuidv4());
         this.friendlyName = defaultIfNullOrEmpty<string>(opts.friendlyName, uuidv4());
