@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "4.1.12",
+    "version": "4.2.0",
     "news": {
+      "4.2.0": {
+        "en": "Added debug information\nBetter handling of HUE devices\nUpdated type detector",
+        "de": "Zusätzliche Informationen\nBessere Handhabung von HUE-Geräten\nAktualisierter Typdetektor",
+        "ru": "Добавлена информация об отладке\nЛучшая обработка HUE устройств\nОбновленный детектор типов",
+        "pt": "Adicionado informação de depuração\nMelhor manuseio de dispositivos HUE\nDetector de tipo actualizado",
+        "nl": "Debug-informatie toegevoegd\nBetere behandeling van HUE-apparaten\nBijgewerkt type detector",
+        "fr": "Ajout des informations de débogage\nMeilleure manipulation des appareils HUE\nDétecteur de type actualisé",
+        "it": "Informazioni sul debug\nMigliore gestione dei dispositivi HUE\nRilevatore di tipo aggiornato",
+        "es": "Información adicional de depuración\nMejor manejo de dispositivos HUE\nDetector de tipo actualizado",
+        "pl": "Dodano informacje o debugowaniu\nLepsza obsługa urządzeń HUE\nAktualizacja czujnika typu",
+        "uk": "Додана інформація\nКраще обслуговування пристроїв HUE\nОновлений детектор типу",
+        "zh-cn": "添加调试信息\n更好地处理HUE设备\n更新类型检测器"
+      },
       "4.1.12": {
         "en": "Added debug information\nBetter handling of HUE devices",
         "de": "Zusätzliche Informationen\nBessere Handhabung von HUE-Geräten",
@@ -80,19 +93,6 @@
         "pl": "Lepsza obsługa temperatur kolorów",
         "uk": "Краще обслуговування колірних температур",
         "zh-cn": "更好地处理颜色温度"
-      },
-      "4.1.4": {
-        "en": "Implemented stored values for Alexa V3\nAdded RGB(W) with individual states to Alexa V3\nAdded dedicated checkbox for alexa custom skill",
-        "de": "Ergänzte gespeicherte Werte für Alexa V3\nHinzugefügt RGB(W) mit einzelnen Zuständen zu Alexa V3\nHinzugefügt dedizierte Checkbox für alexa benutzerdefinierte Fähigkeiten",
-        "ru": "Внедренные сохраненные значения для Alexa V3\nДобавлен RGB (W) с отдельными состояниями в Alexa V3\nДобавлен специальный флажок для пользовательского мастерства alexa",
-        "pt": "Valores armazenados implementados para Alexa V3\nAdicionado RGB (W) com estados individuais para Alexa V3\nAdicionado caixa de seleção dedicada para a habilidade personalizada Alexa",
-        "nl": "Geïmplementeerde opgeslagen waarden voor Alexa V3\nToegevoegd RGB(W) met individuele staten aan Alexa V3\nDedicated checkbox toegevoegd voor alexa aangepaste vaardigheden",
-        "fr": "Valeurs stockées implémentées pour Alexa V3\nAjout de RGB(W) avec états individuels à Alexa V3\nAjout d'une case à cocher dédiée pour les compétences personnalisées alexa",
-        "it": "Valori memorizzati per Alexa V3\nAggiunto RGB(W) con singoli stati ad Alexa V3\nAggiunto checkbox dedicato per alexa abilità personalizzata",
-        "es": "Valores almacenados implementados para Alexa V3\nAñadido RGB(W) con estados individuales a Alexa V3\nAñadido casilla de verificación dedicada para alexa habilidad personalizada",
-        "pl": "Wdrożone wartości zapisane dla Alexa V3\nDodano RGB (W) z poszczególnymi stanami do Alexa V3\nDodano dedykowaną opcję dla umiejętności Alexa",
-        "uk": "Реалізовано збережені значення для Alexa V3\nДодано RGB(W) з окремими державами до Alexa V3\nДодано виділену прапорець для спеціальної майстерності alexa",
-        "zh-cn": "已执行的Alexa V3存储值\n添加有单个状态的 RGB( W) 到 Alexa V3\n添加了Alexa 自定义技能的专用复选框"
       }
     },
     "titleLang": {
