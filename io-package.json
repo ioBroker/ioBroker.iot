@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "4.2.1",
+    "version": "4.2.2",
     "news": {
+      "4.2.2": {
+        "en": "Use only channel or devices for automatic detection",
+        "de": "Verwenden Sie nur Kanal oder Geräte für automatische Erkennung",
+        "ru": "Используйте только каналы или устройства для автоматического обнаружения",
+        "pt": "Usar apenas canal ou dispositivos para detecção automática",
+        "nl": "Gebruik alleen kanaal of apparaten voor automatische detectie",
+        "fr": "Utiliser uniquement un canal ou des dispositifs de détection automatique",
+        "it": "Utilizzare solo canale o dispositivi per il rilevamento automatico",
+        "es": "Utilice sólo el canal o los dispositivos para la detección automática",
+        "pl": "Używanie wyłącznie kanału lub urządzeń do automatycznego wykrywania",
+        "uk": "Використовуйте тільки канал або пристрої для автоматичного виявлення",
+        "zh-cn": "只使用频道或设备进行自动检测"
+      },
       "4.2.1": {
         "en": "Added reset smart names dialog",
         "de": "Hinzugefügt Zurücksetzen Smart Name Dialog",
@@ -69,19 +82,6 @@
         "zh-cn": "固定检测百叶窗\n固定检测滑动器"
       },
       "4.1.7": {
-        "en": "Better handling of dimmer in alexa v3",
-        "de": "Bessere Handhabung von Dimmer in alexa v3",
-        "ru": "Лучшее управление диммером в alexa v3",
-        "pt": "Melhor manuseio de dimmer em alexa v3",
-        "nl": "Betere behandeling van dimmer in alexa v3",
-        "fr": "Meilleure manipulation du variateur en alexa v3",
-        "it": "Migliore gestione del dimmer in alexa v3",
-        "es": "Mejor manejo de martillo en alexa v3",
-        "pl": "Lepsza obsługa ściemniacza w alexa v3",
-        "uk": "Краще обслуговування занурення в alexa v3",
-        "zh-cn": "在Alexa v3中更好地处理沉淀"
-      },
-      "4.1.6": {
         "en": "Better handling of dimmer in alexa v3",
         "de": "Bessere Handhabung von Dimmer in alexa v3",
         "ru": "Лучшее управление диммером в alexa v3",

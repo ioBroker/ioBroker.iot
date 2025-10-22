@@ -350,7 +350,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 4.2.2 (2025-10-22)
 - (@GermanBluefox) Use only channel or devices for automatic detection
 
 ### 4.2.1 (2025-10-22)
@@ -369,9 +369,6 @@ setState('iot.0.app.message', JSON.stringify({
 ### 4.1.10 (2025-10-19)
 - (@GermanBluefox) Fixed detection of blinds
 - (@GermanBluefox) Fixed detection of sliders
-
-### 4.1.7 (2025-10-19)
-- (@GermanBluefox) Better handling of dimmer in alexa v3
 
 ## License
 
