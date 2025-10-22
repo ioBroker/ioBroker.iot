@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "4.2.0",
+    "version": "4.2.1",
     "news": {
+      "4.2.1": {
+        "en": "Added reset smart names dialog",
+        "de": "Hinzugefügt Zurücksetzen Smart Name Dialog",
+        "ru": "Добавлен сброс умных имен в диалог",
+        "pt": "Janela para reiniciar nomes inteligentes",
+        "nl": "Dialoogvenster Smart Names toegevoegd",
+        "fr": "Ajout de la boîte de dialogue réinitialiser les noms intelligents",
+        "it": "Aggiunta di ripristino nomi intelligenti finestra",
+        "es": "Diálogo de nombres inteligentes de reajuste",
+        "pl": "Dodano okno dialogowe reset smart names",
+        "uk": "Доданий скидання смарт імен діалог",
+        "zh-cn": "添加了智能名称对话框"
+      },
       "4.2.0": {
         "en": "Added debug information\nBetter handling of HUE devices\nUpdated type detector",
         "de": "Zusätzliche Informationen\nBessere Handhabung von HUE-Geräten\nAktualisierter Typdetektor",
@@ -80,19 +93,6 @@
         "pl": "Lepsza obsługa ściemniacza w alexa v3",
         "uk": "Краще обслуговування занурення в alexa v3",
         "zh-cn": "在Alexa v3中更好地处理沉淀"
-      },
-      "4.1.5": {
-        "en": "Better handling of color temperatures",
-        "de": "Bessere Handhabung von Farbtemperaturen",
-        "ru": "Лучшая обработка цветовых температур",
-        "pt": "Melhor manuseio das temperaturas de cor",
-        "nl": "Beter omgaan met kleurtemperaturen",
-        "fr": "Meilleure manipulation des températures de couleur",
-        "it": "Migliore gestione delle temperature di colore",
-        "es": "Mejor manejo de temperaturas de color",
-        "pl": "Lepsza obsługa temperatur kolorów",
-        "uk": "Краще обслуговування колірних температур",
-        "zh-cn": "更好地处理颜色温度"
       }
     },
     "titleLang": {

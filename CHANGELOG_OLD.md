@@ -511,6 +511,9 @@
 ### 0.1.4 (2018-09-26)
 
 -   (bluefox) Initial commit
+## 4.1.5 (2025-10-18)
+- (@GermanBluefox) Better handling of color temperatures
+
 ## 4.1.4 (2025-10-17)
 - (@GermanBluefox) Implemented stored values for Alexa V3
 - (@GermanBluefox) Added RGB(W) with individual states to Alexa V3

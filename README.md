@@ -350,7 +350,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 4.2.1 (2025-10-22)
 - (@GermanBluefox) Added reset smart names dialog
 
 ### 4.2.0 (2025-10-21)
@@ -369,9 +369,6 @@ setState('iot.0.app.message', JSON.stringify({
 
 ### 4.1.7 (2025-10-19)
 - (@GermanBluefox) Better handling of dimmer in alexa v3
-
-### 4.1.5 (2025-10-18)
-- (@GermanBluefox) Better handling of color temperatures
 
 ## License
 
