@@ -5,6 +5,7 @@ import {
     Badge,
     Box,
     Button,
+    Checkbox,
     CircularProgress,
     Dialog,
     DialogActions,
@@ -33,6 +34,7 @@ import {
     MdOutlineThermostat,
     MdPlayArrow,
     MdRefresh as IconRefresh,
+    MdPhonelinkErase as IconReset,
 } from 'react-icons/md';
 
 import { AiFillUnlock } from 'react-icons/ai';
@@ -566,6 +568,8 @@ interface Alexa3SmartNamesState {
     >;
     alive: boolean;
     values: { [id: string]: ioBroker.State | null | undefined };
+    showResetId: AlexaSH3DeviceDescription | null;
+    resetDevices: boolean[];
 }
 
 export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, Alexa3SmartNamesState> {
@@ -626,6 +630,8 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
             objects: {},
             alive: false,
             values: {},
+            showResetId: null,
+            resetDevices: [],
         };
     }
 
@@ -1757,6 +1763,133 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
         });
     }
 
+    renderResetDialog(): React.JSX.Element | null {
+        if (this.state.showResetId === null) {
+            return null;
+        }
+
+        const dev = this.state.showResetId;
+
+        return (
+            <Dialog
+                open={!0}
+                maxWidth="sm"
+                fullWidth
+                onClose={() => this.setState({ showResetId: null })}
+            >
+                <DialogTitle>{I18n.t('Migrate the device to use with Alexa V3')}</DialogTitle>
+                <DialogContent>
+                    <div>{I18n.t('Devices that should be reset')}</div>
+                    {dev.controls.map((control: AlexaSH3ControlDescription, c: number) => {
+                        const Icon = DEVICES[control.type]?.icon || null;
+                        const controlProps = this.getControlProps(control);
+                        return (
+                            <div
+                                key={`channel_${c}`}
+                                style={styles.devSubLine}
+                            >
+                                <Checkbox
+                                    checked={!!this.state.resetDevices[c]}
+                                    onClick={() => {
+                                        const resetDevices: boolean[] = [...this.state.resetDevices];
+                                        resetDevices[c] = !resetDevices[c];
+                                        this.setState({ resetDevices });
+                                    }}
+                                />
+                                {Icon ? (
+                                    <Icon
+                                        style={{
+                                            ...styles.deviceSmallIcon,
+                                            color: DEVICES[control.type]?.color,
+                                        }}
+                                    />
+                                ) : null}
+                                <div style={styles.devSubLineName}>
+                                    <div style={styles.devSubLineName1}>{I18n.t(control.type)}</div>
+                                    <div style={styles.devSubLineName2}>
+                                        <div style={styles.devSubLineName2Div}>
+                                            {controlProps.icon ? (
+                                                controlProps.icon.startsWith('data:image/svg') ? (
+                                                    <SVG
+                                                        style={styles.devSubLineName2Icon}
+                                                        src={controlProps.icon}
+                                                        width={20}
+                                                        height={20}
+                                                    />
+                                                ) : (
+                                                    <ARIcon
+                                                        src={controlProps.icon}
+                                                        style={{
+                                                            ...styles.devSubLineName2Icon,
+                                                            width: 20,
+                                                            height: 20,
+                                                        }}
+                                                    />
+                                                )
+                                            ) : null}
+                                            {controlProps.name}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style={styles.devLineActions}>
+                                    {Alexa3SmartNames.renderChannelActions(control)}
+                                </div>
+                            </div>
+                        );
+                    })}
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        variant="contained"
+                        disabled={!this.state.resetDevices.find(dev => dev)}
+                        onClick={async (): Promise<void> => {
+                            // Clear all smartName for selected devices
+                            for (let c = 0; c < dev.controls.length; c++) {
+                                if (this.state.resetDevices[c]) {
+                                    const control: AlexaSH3ControlDescription = dev.controls[c];
+                                    const state = Alexa3SmartNames.takeIdForSmartName(control);
+                                    const id = state.id;
+                                    const obj = await this.props.socket.getObject(id);
+                                    if (obj) {
+                                        const smartName = Utils.getSmartNameFromObj(
+                                            obj as ioBroker.StateObject,
+                                            `${this.props.adapterName}.${this.props.instance}`,
+                                            this.props.native.noCommon,
+                                        ) as SmartNameObject;
+                                        if (smartName !== undefined) {
+                                            // delete smart name
+                                            Utils.removeSmartName(
+                                                obj as ioBroker.StateObject,
+                                                `${this.props.adapterName}.${this.props.instance}`,
+                                                this.props.native.noCommon,
+                                            );
+                                            await this.props.socket.setObject(id, obj);
+                                        }
+                                    }
+                                }
+                            }
+                            // Inform instance
+                            this.setState({ showResetId: null }, () => this.browse(true));
+                        }}
+                        color="primary"
+                        startIcon={<IconCheck />}
+                    >
+                        {I18n.t('Reset selected')}
+                    </Button>
+                    <Button
+                        variant="contained"
+                        startIcon={<IconClose />}
+                        onClick={() => this.setState({ showResetId: null })}
+                        autoFocus
+                        color="grey"
+                    >
+                        {I18n.t('Close')}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        );
+    }
+
     renderDevice(dev: AlexaSH3DeviceDescription, lineNum: number): React.JSX.Element | null {
         // if (!dev.additionalApplianceDetails.group && dev.additionalApplianceDetails.nameModified) {
         const title = dev.friendlyName;
@@ -1822,6 +1955,33 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                     ) : null}
                 </div>
                 <span style={styles.devLineActions}>{Alexa3SmartNames.renderDevTypes(dev)}</span>
+                {!dev.autoDetected && dev.controls?.length > 1 ? (
+                    <Tooltip title={I18n.t('Reset for use with Alexa V3')}>
+                        <IconButton
+                            onClick={() => {
+                                // Find the control with maximal number of states and let it unchecked. All other will be checked
+                                let max = 0;
+                                let maxIndex = 0;
+                                const resetDevices = [];
+                                dev.controls.forEach((control, i) => {
+                                    const statesCount = Object.keys(control.states).filter(
+                                        stateName => control.states[stateName]?.id,
+                                    ).length;
+                                    if (statesCount > max) {
+                                        max = statesCount;
+                                        maxIndex = dev.controls.indexOf(control);
+                                    }
+                                    resetDevices[i] = true;
+                                });
+                                resetDevices[maxIndex] = false;
+
+                                this.setState({ showResetId: dev, resetDevices });
+                            }}
+                        >
+                            <IconReset />
+                        </IconButton>
+                    </Tooltip>
+                ) : null}
             </div>,
             expanded ? this.renderChannels(dev, lineNum) : null,
         ] as unknown as React.JSX.Element;
@@ -2255,6 +2415,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                         },
                     }}
                 />
+                {this.renderResetDialog()}
                 {this.renderDevices()}
                 {this.renderMessage()}
                 {this.renderEditDialog()}
