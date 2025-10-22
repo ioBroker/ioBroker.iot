@@ -350,6 +350,9 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Use only channel or devices for automatic detection
+
 ### 4.2.1 (2025-10-22)
 - (@GermanBluefox) Added reset smart names dialog
 

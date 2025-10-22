@@ -482,6 +482,9 @@ export async function controls(
         } else if (options.prioritizedTypes) {
             delete options.prioritizedTypes;
         }
+        const parentType = devicesObject[parentOf(id)]?.type;
+
+        options.detectOnlyChannel = parentType === 'channel' || parentType === 'device';
 
         // Try to detect with typeDetector
         let controls = detector.detect(options);
