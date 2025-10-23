@@ -350,6 +350,9 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Better auto-detection
+
 ### 4.2.2 (2025-10-22)
 - (@GermanBluefox) Use only channel or devices for automatic detection
 

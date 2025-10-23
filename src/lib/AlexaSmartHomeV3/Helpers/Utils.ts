@@ -460,6 +460,7 @@ export async function controls(
         detectOnlyChannel: true,
         detectAllPossibleDevices: true,
         id: '', // this will be set for each id in the list
+        ignoreEnums: true,
     };
 
     // process states with defined smartName
@@ -495,6 +496,11 @@ export async function controls(
         } else if ((smartName.smartType as string) === 'levelSlider') {
             smartName.smartType = Types.slider;
         }
+        // if (smartName.smartType) {
+        //     options.limitTypesToOneOf = [smartName.smartType];
+        // } else if (options.prioritizedTypes) {
+        //     delete options.prioritizedTypes;
+        // }
 
         const possibleTypes: Types[] = controls?.map(c => c.type) || [];
         const typeWasDetected = !smartName.smartType;
@@ -693,6 +699,8 @@ export async function controls(
             );
         }
     }
+
+    options.ignoreEnums = false;
 
     // go other the list of IDs to inspect and collect the detected controls
     list.forEach(id => {
