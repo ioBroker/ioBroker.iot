@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "4.2.2",
+    "version": "4.2.3",
     "news": {
+      "4.2.3": {
+        "en": "Better auto-detection",
+        "de": "Bessere automatische Erkennung",
+        "ru": "Лучшее автоматическое обнаружение",
+        "pt": "Melhor detecção automática",
+        "nl": "Betere automatische detectie",
+        "fr": "Meilleure détection automatique",
+        "it": "Migliore auto-detezione",
+        "es": "Mejor auto-detección",
+        "pl": "Lepsze automatyczne wykrywanie",
+        "uk": "Краще автодетекція",
+        "zh-cn": "更好的自动检测"
+      },
       "4.2.2": {
         "en": "Use only channel or devices for automatic detection",
         "de": "Verwenden Sie nur Kanal oder Geräte für automatische Erkennung",
@@ -80,19 +93,6 @@
         "pl": "Stałe wykrywanie żaluzji\nStałe wykrywanie suwaków",
         "uk": "Фіксоване виявлення жалюзі\nВиправлено виявлення слайдерів",
         "zh-cn": "固定检测百叶窗\n固定检测滑动器"
-      },
-      "4.1.7": {
-        "en": "Better handling of dimmer in alexa v3",
-        "de": "Bessere Handhabung von Dimmer in alexa v3",
-        "ru": "Лучшее управление диммером в alexa v3",
-        "pt": "Melhor manuseio de dimmer em alexa v3",
-        "nl": "Betere behandeling van dimmer in alexa v3",
-        "fr": "Meilleure manipulation du variateur en alexa v3",
-        "it": "Migliore gestione del dimmer in alexa v3",
-        "es": "Mejor manejo de martillo en alexa v3",
-        "pl": "Lepsza obsługa ściemniacza w alexa v3",
-        "uk": "Краще обслуговування занурення в alexa v3",
-        "zh-cn": "在Alexa v3中更好地处理沉淀"
       }
     },
     "titleLang": {

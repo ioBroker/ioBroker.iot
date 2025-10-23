@@ -511,6 +511,10 @@
 ### 0.1.4 (2018-09-26)
 
 -   (bluefox) Initial commit
+## 4.1.10 (2025-10-19)
+- (@GermanBluefox) Fixed detection of blinds
+- (@GermanBluefox) Fixed detection of sliders
+
 ## 4.1.7 (2025-10-19)
 - (@GermanBluefox) Better handling of dimmer in alexa v3
 

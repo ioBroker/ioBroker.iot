@@ -350,7 +350,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 4.2.3 (2025-10-23)
 - (@GermanBluefox) Better auto-detection
 
 ### 4.2.2 (2025-10-22)
@@ -368,10 +368,6 @@ setState('iot.0.app.message', JSON.stringify({
 - (@GermanBluefox) Added humidity sensor
 - (@GermanBluefox) Added unreach indicator
 - (@GermanBluefox) Corrected deletion of automatically detected devices
-
-### 4.1.10 (2025-10-19)
-- (@GermanBluefox) Fixed detection of blinds
-- (@GermanBluefox) Fixed detection of sliders
 
 ## License
 
