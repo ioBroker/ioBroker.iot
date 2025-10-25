@@ -143,13 +143,14 @@ describe('AlexaSmartHomeV3 - DeviceManager', function () {
             assert.equal(response.event.header.name, 'Discover.Response', 'Name!');
             assert.equal(response.event.payload.endpoints[0].friendlyName, 'Licht Hue Küchenzeile', 'Friendly Name!');
 
-            assert.equal(response.event.payload.endpoints[0].capabilities.length, 5);
+            assert.equal(response.event.payload.endpoints[0].capabilities.length, 6);
             assert.equal(response.event.payload.endpoints[0].capabilities[0].type, 'AlexaInterface');
             assert.equal(response.event.payload.endpoints[0].capabilities[0].interface, 'Alexa');
             assert.equal(response.event.payload.endpoints[0].capabilities[1].interface, 'Alexa.PowerController');
             assert.equal(response.event.payload.endpoints[0].capabilities[2].interface, 'Alexa.BrightnessController');
             assert.equal(response.event.payload.endpoints[0].capabilities[3].interface, 'Alexa.ColorTemperatureController');
             assert.equal(response.event.payload.endpoints[0].capabilities[4].interface, 'Alexa.ColorController');
+            assert.equal(response.event.payload.endpoints[0].capabilities[5].interface, 'Alexa.PercentageController');
             assert.equal(
                 response.event.payload.endpoints[0].capabilities[1].properties.supported[0].name,
                 'powerState',

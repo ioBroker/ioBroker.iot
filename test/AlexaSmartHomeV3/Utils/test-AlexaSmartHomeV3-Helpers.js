@@ -180,8 +180,8 @@ describe('AlexaSmartHomeV3 - Helpers', function () {
         it('Invalid chars prepended with hash and replaced', async function () {
             const input = `+++-+++`;
             const id = Utils.endpointId(input);
-            assert.equal(id.includes('#'), true);
-            assert.equal(id.substring(id.indexOf('#') + 1, id.indexOf('#') + 4), '---');
+            assert.equal(id.includes('_'), true);
+            assert.equal(id.substring(id.indexOf('_') + 1, id.indexOf('_') + 4), '---');
         });
     });
 
