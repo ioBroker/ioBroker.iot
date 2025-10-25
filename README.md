@@ -350,7 +350,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 4.2.4 (2025-10-25)
+### **WORK IN PROGRESS**
 - (@GermanBluefox) Modified the creation of EndpointID for devices with Umlauts.
 
 ### 4.2.3 (2025-10-23)
