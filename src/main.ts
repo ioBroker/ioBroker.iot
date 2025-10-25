@@ -999,7 +999,7 @@ export class IotAdapter extends Adapter {
         } else {
             let isCustom = false;
             let _type = type;
-            if (_type.match(/^custom_/)) {
+            if (_type.startsWith('custom_')) {
                 _type = _type.substring(7);
                 isCustom = true;
             }
@@ -1360,6 +1360,42 @@ export class IotAdapter extends Adapter {
         }
     }
 
+    async syncServiceStates(): Promise<void> {
+        const states = await this.getObjectViewAsync('system', 'state', {
+            startkey: `${this.namespace}.services.`,
+            endkey: `${this.namespace}.services.\u9999`,
+        });
+        // Create new states
+        for (let s = 0; s < this.config.allowedServices.length; s++) {
+            const type = this.config.allowedServices[s];
+            if (!states.rows.find(st => st.id === `${this.namespace}.services.custom_${type}`)) {
+                await this.setObjectNotExistsAsync(`services.custom_${type}`, {
+                    _id: `${this.namespace}.services.custom_${type}`,
+                    type: 'state',
+                    common: {
+                        name: `Service for ${type}`,
+                        write: false,
+                        read: true,
+                        type: 'mixed',
+                        role: 'value',
+                    },
+                    native: {},
+                });
+            }
+        }
+
+        // delete all service states
+        for (let s = 0; s < (states?.rows?.length || 0); s++) {
+            const id = states!.rows[s].id;
+            if (id.startsWith(`${this.namespace}.services.custom_`)) {
+                const stateId = id.substring(`${this.namespace}.services.custom_`.length);
+                if (!this.config.allowedServices.includes(stateId)) {
+                    await this.delStateAsync(id);
+                }
+            }
+        }
+    }
+
     async main(): Promise<void> {
         if (this.config.googleHome === undefined) {
             this.config.googleHome = false;
@@ -1442,6 +1478,8 @@ export class IotAdapter extends Adapter {
             .split(/[,\s]+/)
             .map(s => s.trim())
             .filter(s => s);
+
+        await this.syncServiceStates();
 
         await this.setStateAsync('info.connection', false, true);
         this.config.cloudUrl = this.config.cloudUrl || 'a18wym7vjdl22g.iot.eu-west-1.amazonaws.com';
