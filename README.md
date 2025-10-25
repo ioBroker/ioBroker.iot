@@ -350,7 +350,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 4.2.4 (2025-10-25)
 - (@GermanBluefox) Modified the creation of EndpointID for devices with Umlauts.
 
 ### 4.2.3 (2025-10-23)
@@ -366,11 +366,6 @@ setState('iot.0.app.message', JSON.stringify({
 - (@GermanBluefox) Added debug information
 - (@GermanBluefox) Better handling of HUE devices
 - (@GermanBluefox) Updated type detector
-
-### 4.1.11 (2025-10-20)
-- (@GermanBluefox) Added humidity sensor
-- (@GermanBluefox) Added unreach indicator
-- (@GermanBluefox) Corrected deletion of automatically detected devices
 
 ## License
 

@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "4.2.3",
+    "version": "4.2.4",
     "news": {
+      "4.2.4": {
+        "en": "Modified the creation of EndpointID for devices with Umlauts.",
+        "de": "Modifizierte die Erstellung von EndpointID für Geräte mit Umlauts.",
+        "ru": "Модифицировано создание EndpointID для устройств с Umlauts.",
+        "pt": "Modificou a criação de EndpointID para dispositivos com Umlauts.",
+        "nl": "Gewijzigde de aanmaak van EndpointID voor apparaten met Umlauts.",
+        "fr": "Modifie la création d'EndpointID pour les appareils avec Umlauts.",
+        "it": "Modificata la creazione di EndpointID per dispositivi con Umlauts.",
+        "es": "Modificó la creación de EndpointID para dispositivos con Umlauts.",
+        "pl": "Zmodyfikowano tworzenie Endpointed dla urządzeń z Umlautami.",
+        "uk": "Змінено створення EndpointID для пристроїв з Umlauts.",
+        "zh-cn": "修改了对 Umlauts 设备的 EndpointID 创建 ."
+      },
       "4.2.3": {
         "en": "Better auto-detection",
         "de": "Bessere automatische Erkennung",
@@ -80,19 +93,6 @@
         "pl": "Dodany czujnik wilgotności\nDodano wskaźnik niezasięgu\nSkorygowane usunięcie automatycznie wykrytych urządzeń",
         "uk": "Додана датчик вологості\nДоданий індикатор невідходу\nВиправлено видалення автоматично виявлених пристроїв",
         "zh-cn": "增加的湿度传感器\n添加未达到的指标\n更正自动检测设备的删除"
-      },
-      "4.1.10": {
-        "en": "Fixed detection of blinds\nFixed detection of sliders",
-        "de": "Feste Erkennung von Blinds\nFeste Erkennung von Schiebern",
-        "ru": "Фиксированное обнаружение жалюзи\nФиксированное обнаружение слайдеров",
-        "pt": "Detecção fixa de persianas\nDetecção fixa de barras deslizantes",
-        "nl": "Vaste detectie van blinden\nVaste detectie van sliders",
-        "fr": "Détection fixe des stores\nDétection fixe des curseurs",
-        "it": "Rilevamento fisso delle tende\nRilevamento fisso dei cursori",
-        "es": "Detección fija de persianas\nDetección fija de deslizadores",
-        "pl": "Stałe wykrywanie żaluzji\nStałe wykrywanie suwaków",
-        "uk": "Фіксоване виявлення жалюзі\nВиправлено виявлення слайдерів",
-        "zh-cn": "固定检测百叶窗\n固定检测滑动器"
       }
     },
     "titleLang": {
