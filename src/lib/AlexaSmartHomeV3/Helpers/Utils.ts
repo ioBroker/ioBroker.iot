@@ -221,7 +221,7 @@ export function endpointId(id: string): AlexaV3EndpointID {
     id = id.replace(/\s/g, '_');
     if (!regex.test(id)) {
         const hash = createHash('sha256').update(id).digest('hex');
-        id = `${hash}#${id.replace(/[^A-Za-z0-9\-_]+/g, '-')}`.substring(0, 256);
+        id = `${hash}_${id.replace(/[^A-Za-z0-9\-_]+/g, '-')}`.substring(0, 256);
     }
 
     return id;
