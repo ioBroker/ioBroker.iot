@@ -350,7 +350,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 4.2.6 (2025-10-26)
+### **WORK IN PROGRESS**
 - (@GermanBluefox) Create the service states at the instance start
 - (@GermanBluefox) Corrected error with gates
 
