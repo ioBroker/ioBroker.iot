@@ -511,6 +511,11 @@
 ### 0.1.4 (2018-09-26)
 
 -   (bluefox) Initial commit
+## 4.2.0 (2025-10-21)
+- (@GermanBluefox) Added debug information
+- (@GermanBluefox) Better handling of HUE devices
+- (@GermanBluefox) Updated type detector
+
 ## 4.1.11 (2025-10-20)
 - (@GermanBluefox) Added humidity sensor
 - (@GermanBluefox) Added unreach indicator

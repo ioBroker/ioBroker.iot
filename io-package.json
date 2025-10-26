@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "4.2.5",
+    "version": "4.2.6",
     "news": {
+      "4.2.6": {
+        "en": "Create the service states at the instance start\nCorrected error with gates",
+        "de": "Erstellen Sie die Servicezustände beim Beispielstart\nFehler behoben mit Toren",
+        "ru": "Создайте состояние сервиса в начале экземпляра\nИсправлена ошибка с воротами",
+        "pt": "Criar os estados de serviço no início da instância\nErro corrigido com portões",
+        "nl": "Creëer de service statuss bij het begin van de instantie\nGecorrigeerde fout met poorten",
+        "fr": "Créer les états de service au début de l'instance\nErreur corrigée avec les portes",
+        "it": "Creare gli stati di servizio all'inizio dell'istanza\nErrore corretto con cancelli",
+        "es": "Crear los estados de servicio en el caso empezar\nError corregido con puertas",
+        "pl": "Utwórz stany usługi na początku instancji\nSkorygowany błąd z bramami",
+        "uk": "Створіть штати служби в екземплярі\nВиправлена помилка з воротами",
+        "zh-cn": "在实例启动时创建服务状态\n纠正闸门错误"
+      },
       "4.2.5": {
         "en": "Modified the creation of EndpointID for devices with Umlauts.",
         "de": "Modifizierte die Erstellung von EndpointID für Geräte mit Umlauts.",
@@ -80,19 +93,6 @@
         "pl": "Dodano informacje o debugowaniu\nLepsza obsługa urządzeń HUE",
         "uk": "Додана інформація\nКраще обслуговування пристроїв HUE",
         "zh-cn": "添加调试信息\n更好地处理HUE设备"
-      },
-      "4.1.11": {
-        "en": "Added humidity sensor\nAdded unreach indicator\nCorrected deletion of automatically detected devices",
-        "de": "Zusätzlicher Feuchtigkeitssensor\nZusätzlicher unrichtiger Indikator\nKorrigiertes Löschen automatisch erkannter Geräte",
-        "ru": "Добавлен датчик влажности\nДобавлен индикатор недоступности\nИсправленное удаление автоматически обнаруженных устройств",
-        "pt": "Sensor de umidade adicionado\nIndicador de não acesso adicionado\nEliminação corrigida de dispositivos detectados automaticamente",
-        "nl": "Toegevoegde vochtigheidssensor\nOnbereikbare indicator toegevoegd\nGecorrigeerde verwijdering van automatisch gedetecteerde voorzieningen",
-        "fr": "Capteur d'humidité ajouté\nIndicateur non atteint ajouté\nSuppression corrigée des dispositifs détectés automatiquement",
-        "it": "Sensore di umidità aggiunto\nIndicatore di accesso aggiunto\nCancellazione corretta dei dispositivi rilevati automaticamente",
-        "es": "Sensor de humedad añadido\nIndicador de alcance\nEliminación corregida de dispositivos detectados automáticamente",
-        "pl": "Dodany czujnik wilgotności\nDodano wskaźnik niezasięgu\nSkorygowane usunięcie automatycznie wykrytych urządzeń",
-        "uk": "Додана датчик вологості\nДоданий індикатор невідходу\nВиправлено видалення автоматично виявлених пристроїв",
-        "zh-cn": "增加的湿度传感器\n添加未达到的指标\n更正自动检测设备的删除"
       }
     },
     "titleLang": {
