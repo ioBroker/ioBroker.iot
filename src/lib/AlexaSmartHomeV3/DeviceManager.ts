@@ -87,6 +87,7 @@ export default class DeviceManager {
         options.detectedControls.forEach(item => {
             this.log.silly(`processing control: ${JSON.stringify(item)}`);
             const control = Controls.factory(item);
+
             if (control) {
                 this.log.debug(`"${item.type}" added to "${options.friendlyName}"`);
                 controls.push(control);

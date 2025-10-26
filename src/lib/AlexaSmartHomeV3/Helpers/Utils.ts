@@ -477,6 +477,12 @@ export async function controls(
             continue;
         }
         options.id = id;
+        if (smartName.noAutoDetect) {
+            options.detectAllPossibleDevices = false;
+        } else {
+            options.detectAllPossibleDevices = true;
+        }
+
         // If ID is hue, prioritize hue
         if (devicesObject[id].common.role?.includes('.hue')) {
             options.prioritizedTypes = [[Types.hue, Types.rgb]];
@@ -485,10 +491,21 @@ export async function controls(
         }
         const parentType = devicesObject[parentOf(id)]?.type;
 
-        options.detectOnlyChannel = parentType === 'channel' || parentType === 'device';
+        options.detectOnlyChannel = !smartName.noAutoDetect && (parentType === 'channel' || parentType === 'device');
 
         // Try to detect with typeDetector
         let controls = detector.detect(options);
+
+        if (smartName.noAutoDetect && controls?.length) {
+            // get only first control
+            controls = [controls[0]];
+            // And take only first state
+            const state = controls[0].states.find(state => state.required);
+            if (state) {
+                state.id = id;
+                controls[0].states = [state];
+            }
+        }
 
         // Fix GUI error
         if ((smartName.smartType as string) === 'blinds') {
@@ -701,10 +718,14 @@ export async function controls(
     }
 
     options.ignoreEnums = false;
+    options.detectAllPossibleDevices = false;
 
     // go other the list of IDs to inspect and collect the detected controls
     list.forEach(id => {
         options.id = id;
+        const parentType = devicesObject[parentOf(id)]?.type;
+        options.detectOnlyChannel = parentType === 'channel' || parentType === 'device';
+
         const controls = detector.detect(options);
         const possibleTypes = controls?.map(c => c.type) || [];
 

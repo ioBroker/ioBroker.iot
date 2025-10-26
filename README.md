@@ -352,6 +352,7 @@ setState('iot.0.app.message', JSON.stringify({
 ## Changelog
 ### **WORK IN PROGRESS**
 - (@GermanBluefox) Create the service states at the instance start
+- (@GermanBluefox) Corrected error with gates
 
 ### 4.2.5 (2025-10-25)
 - (@GermanBluefox) Modified the creation of EndpointID for devices with Umlauts.

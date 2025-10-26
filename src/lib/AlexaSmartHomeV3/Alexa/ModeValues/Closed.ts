@@ -46,7 +46,7 @@ export default class Closed extends Base {
         return [
             {
                 '@type': 'StatesToValue',
-                states: ['Alexa.States.Close'],
+                states: ['Alexa.States.Closed'],
                 value: this.value,
             },
         ];

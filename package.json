@@ -23,9 +23,9 @@
   },
   "dependencies": {
     "@iobroker/adapter-core": "^3.3.2",
+    "@iobroker/type-detector": "^4.6.2",
     "aws-iot-device-sdk": "^2.2.15",
     "axios": "^1.12.2",
-    "@iobroker/type-detector": "^4.6.2",
     "mime": "^3.0.0",
     "uuid": "^11.0.0"
   },
@@ -37,11 +37,11 @@
     "@iobroker/eslint-config": "^2.2.0",
     "@iobroker/legacy-testing": "^2.0.2",
     "@iobroker/types": "^7.0.7",
-    "@types/node": "^24.7.1",
     "@types/aws-iot-device-sdk": "^2.2.8",
+    "@types/node": "^24.7.1",
     "ajv": "^8.17.1",
-    "ajv-formats": "^3.0.1",
     "ajv-draft-04": "^1.0.0",
+    "ajv-formats": "^3.0.1",
     "colorette": "^2.0.20",
     "puppeteer": "^24.24.0",
     "typescript": "^5.9.3"

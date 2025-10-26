@@ -459,6 +459,7 @@ export type SmartNameObject = { [lang in ioBroker.Languages]?: string } & {
     smartType?: Types | null;
     byON?: string | null; // it could be 'stored' or percent as string
     toggle?: boolean;
+    noAutoDetect?: boolean;
 };
 export type SmartName = null | false | string | SmartNameObject;
 

@@ -382,7 +382,11 @@ export default class Control {
 
     protected connectivityInitObject(alwaysReturn?: boolean): ControlStateInitObject | null {
         const map = this.statesMap;
-        if (!this.states[map.unreach]) {
+        const state = this.states[map.unreach];
+        if (state?.id.toLowerCase().includes('sticky_')) {
+            state.id = state.id.replace(/\.sticky_/i, '');
+        }
+        if (!state) {
             if (alwaysReturn) {
                 return {
                     getState: { id: '', smartName: '', common: {}, name: 'UNREACH' },
