@@ -1762,12 +1762,19 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                                     <div style={{ fontWeight: 'bold' }}>
                                         {I18n.t('Content of the smart name structure (for debug)')}
                                     </div>
-                                    {Object.keys(smartNameValue).map(name => (
-                                        <div key={name}>
-                                            <span style={{ fontWeight: 'bold' }}>{name}:</span>{' '}
-                                            {(smartNameValue as Record<string, string>)[name].toString()}
-                                        </div>
-                                    ))}
+                                    {Object.keys(smartNameValue).map(name => {
+                                        const value = (smartNameValue as Record<string, string>)[name];
+                                        return (
+                                            <div key={name}>
+                                                <span style={{ fontWeight: 'bold' }}>{name}:</span>{' '}
+                                                {value === null
+                                                    ? 'null'
+                                                    : value === undefined
+                                                      ? 'undefined'
+                                                      : value.toString()}
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             );
                         }
