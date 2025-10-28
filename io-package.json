@@ -3,19 +3,6 @@
     "name": "iot",
     "version": "4.2.8",
     "news": {
-      "4.2.8": {
-        "en": "Do not control \"white\" by RGBW devices\nCorrected GUI error",
-        "de": "\"weiß\" von RGBW-Geräten nicht steuern\nKorrigierter GUI-Fehler",
-        "ru": "Не управляйте «белыми» устройствами RGBW\nИсправленная ошибка GUI",
-        "pt": "Não controlar \"branco\" por dispositivos RGBW\nErro GUI corrigido",
-        "nl": "\"wit\" niet bedoeld door RGBW-apparaten\nGecorrigeerde GUI-fout",
-        "fr": "Ne pas contrôler \"blanc\" par les appareils RGBW\nErreur d'interface graphique corrigée",
-        "it": "Non controllare \"bianco\" da dispositivi RGBW\nErrore GUI corretto",
-        "es": "No controle \"blanco\" por dispositivos RGBW\nError de GUI corregido",
-        "pl": "Nie steruj \"białym\" urządzeniami RGBW\nSkorygowany błąd GUI",
-        "uk": "Не контролюємо \"білий\" пристроями RGBW\nВиправлена помилка інтерфейсу",
-        "zh-cn": "不使用 RGBW 设备控制“ 白色 ”\n更正的图形用户界面错误"
-      },
       "4.2.7": {
         "en": "Create the service states at the instance start\nCorrected error with gates",
         "de": "Erstellen Sie die Servicezustände beim Beispielstart\nFehler behoben mit Toren",

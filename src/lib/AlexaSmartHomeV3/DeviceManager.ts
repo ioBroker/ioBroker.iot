@@ -17,6 +17,27 @@ import ReportState from './Alexa/Directives/ReportState';
 import { randomUUID } from 'node:crypto';
 import type { Types } from '@iobroker/type-detector';
 
+const GroupWord: { [lang: string]: string } = {
+    en: 'Group',
+    de: 'Gruppe',
+    it: 'Gruppo',
+    fr: 'Groupe',
+    ru: 'Группа',
+    es: 'Grupo',
+    pl: 'Grupa',
+    nl: 'Groep',
+};
+const DeviceWord: { [lang: string]: string } = {
+    en: 'Device',
+    de: 'Gerät',
+    it: 'Dispositivo',
+    fr: 'Appareil',
+    ru: 'Устройство',
+    es: 'Dispositivo',
+    pl: 'Urządzenie',
+    nl: 'Dispositivo',
+};
+
 export default class DeviceManager {
     private lang: ioBroker.Languages = 'en';
     private devices: Device[] = [];
@@ -153,6 +174,7 @@ export default class DeviceManager {
 
             // detectedControls = detectedControls.filter(c => ['light', 'dimmer'].includes(c.type));
             const createdGroups: string[] = [];
+            const usedFriendlyNames: string[] = [];
 
             while (detectedControls.length) {
                 // take the next control
@@ -169,9 +191,22 @@ export default class DeviceManager {
                                 control.functionality &&
                                 item.functionality?.id === control.functionality.id,
                         );
+                        let friendlyName = Utils.friendlyNameByRoomAndFunctionName(control, this.lang);
+                        // If a friendly name is already used, append Gruppe, Group, Gruppo, Groupe, etc.
+                        if (usedFriendlyNames.includes(friendlyName)) {
+                            let index = 0;
+                            let newFriendlyName = '';
+                            do {
+                                newFriendlyName = `${friendlyName} ${GroupWord[this.lang] || GroupWord.en}${index ? ` ${index}` : ''}`;
+                                index++;
+                            } while (usedFriendlyNames.includes(newFriendlyName));
+                            friendlyName = newFriendlyName;
+                        }
+                        usedFriendlyNames.push(friendlyName);
+
                         this.toDevice({
                             detectedControls: processedControls,
-                            friendlyName: Utils.friendlyNameByRoomAndFunctionName(control, this.lang),
+                            friendlyName,
                             autoDetected: true,
                             roomName: this.getName(control.room?.common?.name),
                             funcName: this.getName(control.functionality?.common?.name),
@@ -190,9 +225,22 @@ export default class DeviceManager {
                         if (!createdGroups.includes(groupName)) {
                             createdGroups.push(groupName);
                             processedControls = detectedControls.filter(item => item.groupNames?.includes(groupName));
+                            let friendlyName = this.getName(groupName);
+                            // If a friendly name is already used, append Device
+                            if (usedFriendlyNames.includes(friendlyName)) {
+                                let index = 0;
+                                let newFriendlyName = '';
+                                do {
+                                    newFriendlyName = `${friendlyName} ${DeviceWord[this.lang] || DeviceWord.en}${index ? ` ${index}` : ''}`;
+                                    index++;
+                                } while (usedFriendlyNames.includes(newFriendlyName));
+                                friendlyName = newFriendlyName;
+                            }
+                            usedFriendlyNames.push(friendlyName);
+
                             this.toDevice({
                                 detectedControls: processedControls,
-                                friendlyName: this.getName(groupName),
+                                friendlyName,
                                 autoDetected: false,
                                 toggle: processedControls[0].object?.toggle ?? defaultToggle,
                                 possibleTypes: processedControls[0].object?.possibleTypes || [],

@@ -699,7 +699,7 @@ export async function controls(
                 }
 
                 const name = smartName[lang] || smartName.en || smartName.de;
-                control.groupNames = name?.split(',').map(n => n.trim()) || [];
+                control.groupNames = (name?.split(',').map(n => n.trim()) || []).filter(n => n);
 
                 adapter.log.debug(`[ALEXA3] added ${id} with smartName as "${smartName.smartType}"`);
                 detectedControls.push(control);
