@@ -1368,7 +1368,7 @@ export class IotAdapter extends Adapter {
         // Create new states
         for (let s = 0; s < this.config.allowedServices.length; s++) {
             const type = this.config.allowedServices[s];
-            if (!states.rows.find(st => st.id === `${this.namespace}.services.custom_${type}`)) {
+            if (type !== '*' && !states.rows.find(st => st.id === `${this.namespace}.services.custom_${type}`)) {
                 await this.setObjectNotExistsAsync(`services.custom_${type}`, {
                     _id: `${this.namespace}.services.custom_${type}`,
                     type: 'state',
@@ -1386,7 +1386,7 @@ export class IotAdapter extends Adapter {
 
         // delete all service states
         for (let s = 0; s < (states?.rows?.length || 0); s++) {
-            const id = states!.rows[s].id;
+            const id = states.rows[s].id;
             if (id.startsWith(`${this.namespace}.services.custom_`)) {
                 const stateId = id.substring(`${this.namespace}.services.custom_`.length);
                 if (!this.config.allowedServices.includes(stateId)) {
