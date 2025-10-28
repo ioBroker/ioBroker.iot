@@ -350,7 +350,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 4.2.8 (2025-10-28)
 - (@GermanBluefox) Do not control "white" by RGBW devices
 - (@GermanBluefox) Corrected GUI error
 
@@ -366,9 +366,6 @@ setState('iot.0.app.message', JSON.stringify({
 
 ### 4.2.2 (2025-10-22)
 - (@GermanBluefox) Use only channel or devices for automatic detection
-
-### 4.2.1 (2025-10-22)
-- (@GermanBluefox) Added reset smart names dialog
 
 ## License
 

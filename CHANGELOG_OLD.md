@@ -511,6 +511,9 @@
 ### 0.1.4 (2018-09-26)
 
 -   (bluefox) Initial commit
+## 4.2.1 (2025-10-22)
+- (@GermanBluefox) Added reset smart names dialog
+
 ## 4.2.0 (2025-10-21)
 - (@GermanBluefox) Added debug information
 - (@GermanBluefox) Better handling of HUE devices

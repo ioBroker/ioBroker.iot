@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "4.2.7",
+    "version": "4.2.8",
     "news": {
+      "4.2.8": {
+        "en": "Do not control \"white\" by RGBW devices\nCorrected GUI error",
+        "de": "\"weiß\" von RGBW-Geräten nicht steuern\nKorrigierter GUI-Fehler",
+        "ru": "Не управляйте «белыми» устройствами RGBW\nИсправленная ошибка GUI",
+        "pt": "Não controlar \"branco\" por dispositivos RGBW\nErro GUI corrigido",
+        "nl": "\"wit\" niet bedoeld door RGBW-apparaten\nGecorrigeerde GUI-fout",
+        "fr": "Ne pas contrôler \"blanc\" par les appareils RGBW\nErreur d'interface graphique corrigée",
+        "it": "Non controllare \"bianco\" da dispositivi RGBW\nErrore GUI corretto",
+        "es": "No controle \"blanco\" por dispositivos RGBW\nError de GUI corregido",
+        "pl": "Nie steruj \"białym\" urządzeniami RGBW\nSkorygowany błąd GUI",
+        "uk": "Не контролюємо \"білий\" пристроями RGBW\nВиправлена помилка інтерфейсу",
+        "zh-cn": "不使用 RGBW 设备控制“ 白色 ”\n更正的图形用户界面错误"
+      },
       "4.2.7": {
         "en": "Create the service states at the instance start\nCorrected error with gates",
         "de": "Erstellen Sie die Servicezustände beim Beispielstart\nFehler behoben mit Toren",
@@ -80,19 +93,6 @@
         "pl": "Dodano informacje o debugowaniu\nLepsza obsługa urządzeń HUE\nAktualizacja czujnika typu",
         "uk": "Додана інформація\nКраще обслуговування пристроїв HUE\nОновлений детектор типу",
         "zh-cn": "添加调试信息\n更好地处理HUE设备\n更新类型检测器"
-      },
-      "4.1.12": {
-        "en": "Added debug information\nBetter handling of HUE devices",
-        "de": "Zusätzliche Informationen\nBessere Handhabung von HUE-Geräten",
-        "ru": "Добавлена информация об отладке\nЛучшая обработка HUE устройств",
-        "pt": "Adicionado informação de depuração\nMelhor manuseio de dispositivos HUE",
-        "nl": "Debug-informatie toegevoegd\nBetere behandeling van HUE-apparaten",
-        "fr": "Ajout des informations de débogage\nMeilleure manipulation des appareils HUE",
-        "it": "Informazioni sul debug\nMigliore gestione dei dispositivi HUE",
-        "es": "Información adicional de depuración\nMejor manejo de dispositivos HUE",
-        "pl": "Dodano informacje o debugowaniu\nLepsza obsługa urządzeń HUE",
-        "uk": "Додана інформація\nКраще обслуговування пристроїв HUE",
-        "zh-cn": "添加调试信息\n更好地处理HUE设备"
       }
     },
     "titleLang": {
