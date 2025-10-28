@@ -350,6 +350,10 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Do not control "white" by RGBW devices
+- (@GermanBluefox) Corrected GUI error
+
 ### 4.2.7 (2025-10-26)
 - (@GermanBluefox) Create the service states at the instance start
 - (@GermanBluefox) Corrected error with gates
