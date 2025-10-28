@@ -169,39 +169,43 @@ export default class Rgb extends AdjustableControl {
             const red = parseInt(hex.substring(0, 2), 16);
             const green = parseInt(hex.substring(2, 4), 16);
             const blue = parseInt(hex.substring(4, 6), 16);
-            let white: number | undefined;
-            if (hex.length === 8) {
-                white = parseInt(hex.substring(6, 8), 16);
-            }
+            // let white: number | undefined;
+            // if (hex.length === 8) {
+            //     white = parseInt(hex.substring(6, 8), 16);
+            // }
+
             // Convert from 0-255 to 0-100
             const red100 = (red / 255) * 100;
             const green100 = (green / 255) * 100;
             const blue100 = (blue / 255) * 100;
-            let white100: number | undefined;
-            if (white !== undefined) {
-                white100 = (white / 255) * 100;
-            }
+            // let white100: number | undefined;
+            // if (white !== undefined) {
+            //     white100 = (white / 255) * 100;
+            // }
+
             // Convert from 0-100 to min-max of the state
             const minMaxRed = configuredRangeOrDefault(this.states[map.red]!);
             const minMaxGreen = configuredRangeOrDefault(this.states[map.green]!);
             const minMaxBlue = configuredRangeOrDefault(this.states[map.blue]!);
-            let minMaxWhite: { min: number | boolean; max: number | boolean } | undefined;
-            if (this.states[map.white]) {
-                minMaxWhite = configuredRangeOrDefault(this.states[map.white]!);
-            }
+            // let minMaxWhite: { min: number | boolean; max: number | boolean } | undefined;
+            // if (this.states[map.white]) {
+            //     minMaxWhite = configuredRangeOrDefault(this.states[map.white]!);
+            // }
+
             const redValue = denormalize_0_100(red100, minMaxRed.min as number, minMaxRed.max as number);
             const greenValue = denormalize_0_100(green100, minMaxGreen.min as number, minMaxGreen.max as number);
             const blueValue = denormalize_0_100(blue100, minMaxBlue.min as number, minMaxBlue.max as number);
-            let whiteValue: number | undefined;
-            if (this.states[map.white]) {
-                whiteValue = denormalize_0_100(white100!, minMaxWhite!.min as number, minMaxWhite!.max as number);
-            }
+            // let whiteValue: number | undefined;
+            // if (this.states[map.white]) {
+            //     whiteValue = denormalize_0_100(white100!, minMaxWhite!.min as number, minMaxWhite!.max as number);
+            // }
+
             // set states
             await Promise.all([
                 AdapterProvider.setState(this.states[map.red]!.id, redValue ?? 0),
                 AdapterProvider.setState(this.states[map.green]!.id, greenValue ?? 0),
                 AdapterProvider.setState(this.states[map.blue]!.id, blueValue ?? 0),
-                this.states[map.white] ? AdapterProvider.setState(this.states[map.white]!.id, whiteValue ?? 0) : null,
+                // this.states[map.white] ? AdapterProvider.setState(this.states[map.white]!.id, whiteValue ?? 0) : null,
             ]);
 
             property.currentValue = value;
