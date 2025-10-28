@@ -62,7 +62,7 @@
     "Default toggle behaviour (Only alexa v3)": "Domyślne zachowanie przełączania (tylko Alexa v3)",
     "Delete": "Usuwać",
     "Detection": "Wykrycie",
-    "Device %s was not added": "Urządzenie %s nie zostało dodane",
+    "Device %s was not added": "Nie można wykryć urządzenia „%s”. Sprawdź zdefiniowaną rolę odpowiednich obiektów lub utwórz alias z żądanym typem urządzenia i dodaj go.",
     "Device %s will be disabled.": "Urządzenie „%s” zostanie wyłączone.",
     "Device will be deactivated.": "Urządzenie zostanie dezaktywowane.",
     "Device will be disabled.": "Urządzenie zostanie wyłączone.",

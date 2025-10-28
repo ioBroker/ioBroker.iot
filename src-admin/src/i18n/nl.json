@@ -62,7 +62,7 @@
     "Default toggle behaviour (Only alexa v3)": "Standaard schakelgedrag (alleen alexa v3)",
     "Delete": "Verwijderen",
     "Detection": "Detectie",
-    "Device %s was not added": "Apparaat %s is niet toegevoegd",
+    "Device %s was not added": "Het apparaat \"%s\" kon niet worden gedetecteerd. Controleer de gedefinieerde rol van de relevante objecten of maak een alias aan met het gewenste apparaattype en voeg deze toe.",
     "Device %s will be disabled.": "Apparaat \"%s\" wordt uitgeschakeld.",
     "Device will be deactivated.": "Apparaat wordt gedeactiveerd.",
     "Device will be disabled.": "Apparaat %s zal worden uitgeschakeld.",

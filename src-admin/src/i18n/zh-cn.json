@@ -62,7 +62,7 @@
     "Default toggle behaviour (Only alexa v3)": "默认切换行为（仅限 alexa v3）",
     "Delete": "删除",
     "Detection": "检测",
-    "Device %s was not added": "未添加设备%s",
+    "Device %s was not added": "无法检测到设备“%s”。请检查相关对象的已定义角色，或创建所需设备类型的别名并添加。",
     "Device %s will be disabled.": "设备“%s”将被禁用。",
     "Device will be deactivated.": "设备将被停用。",
     "Device will be disabled.": "设备将被禁用。",

@@ -62,7 +62,7 @@
     "Default toggle behaviour (Only alexa v3)": "Default toggle behaviour (Only alexa v3)",
     "Delete": "Delete",
     "Detection": "Detection",
-    "Device %s was not added": "Device %s was not added",
+    "Device %s was not added": "The device \"%s\" could not be detected. Please check the defined role of the relevant objects or create an alias with the desired device type and add it.",
     "Device %s will be disabled.": "Device \"%s\" will be disabled.",
     "Device will be deactivated.": "Device will be deactivated.",
     "Device will be disabled.": "Device %s will be disabled.",

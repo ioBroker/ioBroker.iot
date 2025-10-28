@@ -62,7 +62,7 @@
     "Default toggle behaviour (Only alexa v3)": "Comportement de basculement par défaut (uniquement alexa v3)",
     "Delete": "Effacer",
     "Detection": "Détection",
-    "Device %s was not added": "Le périphérique %s n'a pas été ajouté",
+    "Device %s was not added": "Le périphérique « %s » n'a pas pu être détecté. Veuillez vérifier le rôle défini des objets concernés ou créer un alias avec le type de périphérique souhaité et l'ajouter.",
     "Device %s will be disabled.": "L'appareil « %s » sera désactivé.",
     "Device will be deactivated.": "L'appareil sera désactivé.",
     "Device will be disabled.": "L'appareil %s sera désactivé.",

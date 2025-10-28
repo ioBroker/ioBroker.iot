@@ -62,7 +62,7 @@
     "Default toggle behaviour (Only alexa v3)": "Comportamento de alternância padrão (somente alexa v3)",
     "Delete": "Excluir",
     "Detection": "Detecção",
-    "Device %s was not added": "O dispositivo %s não foi adicionado",
+    "Device %s was not added": "O dispositivo \"%s\" não pôde ser detectado. Verifique a função definida para os objetos relevantes ou crie um alias com o tipo de dispositivo desejado e adicione-o.",
     "Device %s will be disabled.": "O dispositivo \"%s\" será desabilitado.",
     "Device will be deactivated.": "O dispositivo será desativado.",
     "Device will be disabled.": "O dispositivo será desabilitado.",

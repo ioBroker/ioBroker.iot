@@ -62,7 +62,7 @@
     "Default toggle behaviour (Only alexa v3)": "Standardmäßiges Umschaltverhalten (nur Alexa v3)",
     "Delete": "Löschen",
     "Detection": "Erkennung",
-    "Device %s was not added": "Gerät %s wurde nicht hinzugefügt",
+    "Device %s was not added": "Das Gerät \"%s\" konnte nicht erkannt werden. Bitte prüfe die definierte Rolle der relevanten Objekte oder lege einen Alias mit dem gewünschten Gerätetyp an und füge diesen hinzu.",
     "Device %s will be disabled.": "Gerät „%s“ wird deaktiviert.",
     "Device will be deactivated.": "Gerät wird für die Sprachsteuerung deaktiviert.",
     "Device will be disabled.": "Gerät %s wird aus der Liste entfernt.",

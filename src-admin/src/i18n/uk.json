@@ -62,7 +62,7 @@
     "Default toggle behaviour (Only alexa v3)": "Поведінка перемикання за замовчуванням (тільки Alexa v3)",
     "Delete": "Видалити",
     "Detection": "виявлення",
-    "Device %s was not added": "Пристрій %s не додано",
+    "Device %s was not added": "Пристрій \"%s\" не вдалося виявити. Будь ласка, перевірте визначену роль відповідних об'єктів або створіть псевдонім із потрібним типом пристрою та додайте його.",
     "Device %s will be disabled.": "Пристрій \"%s\" буде вимкнено.",
     "Device will be deactivated.": "Пристрій буде деактивовано.",
     "Device will be disabled.": "Пристрій %s буде вимкнено.",

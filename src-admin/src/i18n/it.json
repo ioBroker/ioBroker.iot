@@ -62,7 +62,7 @@
     "Default toggle behaviour (Only alexa v3)": "Comportamento di commutazione predefinito (solo Alexa v3)",
     "Delete": "Elimina",
     "Detection": "Rilevamento",
-    "Device %s was not added": "Il dispositivo %s non è stato aggiunto",
+    "Device %s was not added": "Impossibile rilevare il dispositivo \"%s\". Verificare il ruolo definito degli oggetti rilevanti o creare un alias con il tipo di dispositivo desiderato e aggiungerlo.",
     "Device %s will be disabled.": "Il dispositivo \"%s\" verrà disabilitato.",
     "Device will be deactivated.": "Il dispositivo sarà disattivato.",
     "Device will be disabled.": "Il dispositivo sarà disabilitato.",
