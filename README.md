@@ -350,7 +350,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 4.2.9 (2025-10-28)
 - (@GermanBluefox) Do not control "white" by RGBW devices
 - (@GermanBluefox) Corrected GUI error
 - (@GermanBluefox) Avoid double entries in auto-detection
