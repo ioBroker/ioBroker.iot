@@ -347,7 +347,13 @@ export interface AlexaV3Capability {
         retrievable?: boolean;
         nonControllable?: boolean;
     };
-    configuration?: AlexaV3ModeConfiguration | AlexaV3RangeConfiguration;
+    configuration?:
+        | AlexaV3ModeConfiguration
+        | AlexaV3RangeConfiguration
+        | {
+              ordered: boolean;
+              supportedModes: AlexaV3DiscoveryResponse[];
+          };
     semantics?: {
         actionMappings: AlexaV3ActionMapping[];
         stateMappings: AlexaV3StateMapping[];
