@@ -200,6 +200,8 @@ export default class RgbSingle extends AdjustableControl {
 
     protected composeInitObjectColorTemperature(): ControlStateInitObject {
         const map = this.statesMap;
+        const isMireds = this.states[map.temperature]?.common?.unit === 'mireds';
+
         return {
             setState: this.states[map.temperature]!,
             getState: this.states[map.temperature]!,
@@ -228,9 +230,18 @@ export default class RgbSingle extends AdjustableControl {
                     return this.colorTemperatureTable[index];
                 }
 
+                // Convert Kelvin to mireds
+                if (isMireds) {
+                    return Math.round(1000000 / (alexaValue as number));
+                }
+
                 return alexaValue as number;
             },
             alexaGetter: function (value: ioBroker.StateValue | undefined): AlexaV3DirectiveValue {
+                // Convert Mireds to Kelvin
+                if (isMireds) {
+                    return Math.round(1000000 / (value as number));
+                }
                 return value as number;
             },
         };

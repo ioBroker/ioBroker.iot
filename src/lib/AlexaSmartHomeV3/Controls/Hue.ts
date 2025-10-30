@@ -220,6 +220,7 @@ export default class Hue extends AdjustableControl {
 
     private composeInitObjectColorTemperature(): ControlStateInitObject {
         const map = this.statesMap;
+        const isMireds = this.states[map.temperature]?.common?.unit === 'mireds';
 
         return {
             setState: this.states[map.temperature]!,
@@ -248,13 +249,20 @@ export default class Hue extends AdjustableControl {
                     index = index < 0 ? 0 : index;
                     return this.colorTemperatureTable[index];
                 }
-
+                // Convert Kelvin to mireds
+                if (isMireds) {
+                    return Math.round(1000000 / (alexaValue as number));
+                }
                 return alexaValue as number;
             },
             alexaGetter: function (
                 this: PropertiesBase,
                 value: ioBroker.StateValue | undefined,
             ): AlexaV3DirectiveValue {
+                // Convert Mireds to Kelvin
+                if (isMireds) {
+                    return Math.round(1000000 / (value as number));
+                }
                 return value as number;
             },
         };

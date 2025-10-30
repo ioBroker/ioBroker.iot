@@ -924,7 +924,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
         if (!!state?.val !== this.state.alive) {
             this.setState({ alive: !!state?.val }, () => {
                 if (this.state.alive) {
-                    setTimeout(() => this.browse(), 10000);
+                    setTimeout(() => this.browse(), 5000);
                 }
             });
         }
@@ -1578,80 +1578,76 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
     }
 
     static renderSelectTypeSelector(
-        type: false | Types,
+        type: null | Types,
         detected: boolean,
         possibleTypes: Types[],
         onChange: (value: string) => void,
     ): React.JSX.Element | null {
-        if (type !== false) {
-            const items = [
+        const items = [
+            <MenuItem
+                key="_"
+                value="_"
+                style={{ opacity: 0.5, fontStyle: 'normal' }}
+            >
+                <em>{I18n.t('Auto-detection')}</em>
+            </MenuItem>,
+        ];
+        if (!possibleTypes.length) {
+            possibleTypes = SMART_TYPES;
+        }
+        // get the mapping of device types
+        const mapping: { [key: string]: string } = {};
+        Object.keys(DEVICES).forEach(key => (mapping[key.toLowerCase()] = key));
+
+        for (let i = 0; i < possibleTypes.length; i++) {
+            const deviceDescription = DEVICES[mapping[possibleTypes[i].toLowerCase()]];
+            const Icon = deviceDescription?.icon || null;
+            items.push(
                 <MenuItem
-                    key="_"
-                    value="_"
-                    style={{ opacity: 0.5, fontStyle: 'normal' }}
+                    key={possibleTypes[i]}
+                    value={possibleTypes[i]}
                 >
-                    <em>{I18n.t('Auto-detection')}</em>
+                    {Icon ? (
+                        <Icon
+                            style={{
+                                width: 20,
+                                height: 20,
+                                marginRight: 4,
+                                color: deviceDescription?.color,
+                            }}
+                        />
+                    ) : null}
+                    {I18n.t(possibleTypes[i])}
+                    {detected && type === possibleTypes[i] ? (
+                        <span style={{ marginLeft: 4, color: 'orange' }}>(Auto)</span>
+                    ) : null}
                 </MenuItem>,
-            ];
-            if (!possibleTypes.length) {
-                possibleTypes = SMART_TYPES;
-            }
-            // get the mapping of device types
-            const mapping: { [key: string]: string } = {};
-            Object.keys(DEVICES).forEach(key => (mapping[key.toLowerCase()] = key));
-
-            for (let i = 0; i < possibleTypes.length; i++) {
-                const deviceDescription = DEVICES[mapping[possibleTypes[i].toLowerCase()]];
-                const Icon = deviceDescription?.icon || null;
-                items.push(
-                    <MenuItem
-                        key={possibleTypes[i]}
-                        value={possibleTypes[i]}
-                    >
-                        {Icon ? (
-                            <Icon
-                                style={{
-                                    width: 20,
-                                    height: 20,
-                                    marginRight: 4,
-                                    color: deviceDescription?.color,
-                                }}
-                            />
-                        ) : null}
-                        {I18n.t(possibleTypes[i])}
-                        {detected && type === possibleTypes[i] ? (
-                            <span style={{ marginLeft: 4, color: 'orange' }}>(Auto)</span>
-                        ) : null}
-                    </MenuItem>,
-                );
-            }
-            // convert from AlexaV2 to AlexaV3
-            if (type && !SMART_TYPES.includes(type)) {
-                if (SMART_TYPES.includes((type as unknown as Types).toLowerCase() as Types)) {
-                    type = type.toLowerCase() as Types;
-                } else if (SMART_TYPES_V2[type]) {
-                    type = SMART_TYPES_V2[type];
-                }
-            }
-
-            return (
-                <FormControl
-                    variant="standard"
-                    style={styles.selectType}
-                >
-                    <Select
-                        variant="standard"
-                        value={type || '_'}
-                        onChange={e => onChange(e.target.value === '_' ? '' : e.target.value)}
-                    >
-                        {items}
-                    </Select>
-                    <FormHelperText style={styles.devSubLineTypeTitle}>{I18n.t('Types')}</FormHelperText>
-                </FormControl>
             );
         }
+        // convert from AlexaV2 to AlexaV3
+        if (type && !SMART_TYPES.includes(type)) {
+            if (SMART_TYPES.includes((type as unknown as Types).toLowerCase() as Types)) {
+                type = type.toLowerCase() as Types;
+            } else if (SMART_TYPES_V2[type]) {
+                type = SMART_TYPES_V2[type];
+            }
+        }
 
-        return null;
+        return (
+            <FormControl
+                variant="standard"
+                style={styles.selectType}
+            >
+                <Select
+                    variant="standard"
+                    value={type || '_'}
+                    onChange={e => onChange(e.target.value === '_' ? '' : e.target.value)}
+                >
+                    {items}
+                </Select>
+                <FormHelperText style={styles.devSubLineTypeTitle}>{I18n.t('Types')}</FormHelperText>
+            </FormControl>
+        );
     }
 
     static takeIdForSmartName(control: AlexaSH3ControlDescription): IotExternalDetectorState {
@@ -1672,7 +1668,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
         }
         // get first id
         const state = Alexa3SmartNames.takeIdForSmartName(control);
-        const type = (state?.smartName as SmartNameObject)?.smartType || false;
+        const type = (state?.smartName as SmartNameObject)?.smartType || null;
 
         return Alexa3SmartNames.renderSelectTypeSelector(type, dev.typeWasDetected, dev.possibleTypes, value =>
             this.onParamsChange(state.id, undefined, value),
@@ -1699,7 +1695,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                         states = nStates;
                         this.objects[stateId]!.common.states = states;
                     }
-                    let valueStr: React.JSX.Element | null = null;
+                    let valueStr: React.JSX.Element | null;
                     const stateValue = this.state.values[stateId];
                     if (stateValue) {
                         if (states) {

@@ -670,6 +670,7 @@ export async function controls(
                         states: devicesObject[s.id]?.common?.states,
                         role: devicesObject[s.id]?.common?.role,
                         name: devicesObject[s.id]?.common?.name,
+                        unit: devicesObject[s.id]?.common?.unit,
                     };
                 });
 
@@ -760,6 +761,7 @@ export async function controls(
                         states: devicesObject[s.id]?.common?.states,
                         role: devicesObject[s.id]?.common?.role,
                         name: devicesObject[s.id]?.common?.name,
+                        unit: devicesObject[s.id]?.common?.unit,
                     };
                 });
                 if (smartDisabled) {

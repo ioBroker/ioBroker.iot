@@ -139,12 +139,14 @@ export class Base {
         this.#currentValue = value;
     }
 
+    /** Converts an Alexa value to an ioBroker value */
     value(alexaValue: AlexaV3DirectiveValue): ioBroker.StateValue | undefined {
         return this._alexaSetter && typeof alexaValue === 'number'
             ? this._alexaSetter(alexaValue)
             : (alexaValue as ioBroker.StateValue | undefined);
     }
 
+    /** Converts an ioBroker value to an Alexa value */
     alexaValue(value: ioBroker.StateValue | undefined): AlexaV3DirectiveValue {
         return this._alexaGetter && typeof value === 'number'
             ? this._alexaGetter(value)

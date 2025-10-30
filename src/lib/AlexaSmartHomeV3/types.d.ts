@@ -469,6 +469,7 @@ export interface IotInternalDetectorState extends InternalDetectorState {
     common: {
         min?: number;
         max?: number;
+        unit?: string;
         type?: ioBroker.CommonType;
         states?: { [value: string]: string };
         role?: string;
