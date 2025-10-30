@@ -350,7 +350,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 5.0.1 (2025-10-30)
+### **WORK IN PROGRESS**
 - (@GermanBluefox) Added mireds<->kelvin conversion for color temperature
 - (@GermanBluefox) It is possible to edit a type
 - (@GermanBluefox) Correcting creation of complex groups

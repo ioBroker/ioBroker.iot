@@ -161,7 +161,9 @@ export default class Ct extends AdjustableControl {
 
     protected composeInitObjectColorTemperature(): ControlStateInitObject {
         const map = this.statesMap;
-        const isMireds = this.states[map.temperature]?.common?.unit === 'mireds';
+        const isMireds =
+            this.states[map.temperature]?.common?.unit === 'mired' ||
+            this.states[map.temperature]?.common?.unit === 'mireds';
 
         return {
             setState: this.states[map.temperature]!,
