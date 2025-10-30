@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "5.0.1",
+    "version": "5.0.2",
     "news": {
+      "5.0.2": {
+        "en": "Added mireds<->kelvin conversion for color temperature\nIt is possible to edit a type\nCorrecting creation of complex groups\nSame as 4.2.11",
+        "de": "Hinzugefügt mireds<->kelvin Umwandlung für Farbtemperatur\nEs ist möglich, einen Typ zu bearbeiten\nKorrektur der Erstellung komplexer Gruppen\nGleich wie 4.2.11",
+        "ru": "Добавлено погрязшее преобразование <-> кельвина для цветовой температуры\nМожно редактировать тип\nКоррекция создания сложных групп\nТо же самое, что 4.2.11",
+        "pt": "Adicionado mireds<-> conversão de kelvin para temperatura de cor\nÉ possível editar um tipo\nCorrigindo a criação de grupos complexos\nIgual a 4.2.11",
+        "nl": "Toegevoegd mireds<->kelvin conversie voor kleurtemperatuur\nHet is mogelijk om een type te bewerken\nCorrigerende oprichting van complexe groepen\nZelfde als 4.2.11",
+        "fr": "Ajout de mireds <->kelvin conversion pour la température de couleur\nIl est possible de modifier un type\nCorrection de la création de groupes complexes\nMême que 4.2.11",
+        "it": "Conversione di mireds su >kelvin aggiunto per temperatura di colore\nÈ possibile modificare un tipo\nCorreggere la creazione di gruppi complessi\nStesso 4.2.11",
+        "es": "Conversión agregada de microsiervos para la temperatura de color\nEs posible editar un tipo\nCreación correcta de grupos complejos\nIgual que 4.2.11",
+        "pl": "Dodano miredy < - > konwersja kelwina dla temperatury barwy\nMożna edytować typ\nKorekcja tworzenia grup złożonych\nPodobnie jak 4.2.11",
+        "uk": "Додано міреди <->kelvin перетворення для температури кольору\nМожна редагувати тип\nПравильне створення складних груп\nТак само як 4.2.11",
+        "zh-cn": "添加嵌入点 <->kelvin 转换颜色温度\n可以编辑一个类型\n纠正复杂集团的产生\n与4.2.11相同"
+      },
       "4.2.9": {
         "en": "Do not control \"white\" by RGBW devices\nCorrected GUI error\nAvoid double entries in auto-detection",
         "de": "\"weiß\" von RGBW-Geräten nicht steuern\nKorrigierter GUI-Fehler\nVermeiden Sie Doppeleinträge in der Auto-Detektion",
