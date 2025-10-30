@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "4.2.9",
+    "version": "4.2.10",
     "news": {
+      "4.2.10": {
+        "en": "Added mireds<->kelvin conversion for color temperature\nIt is possible to edit a type",
+        "de": "Hinzugefügt mireds<->kelvin Umwandlung für Farbtemperatur\nEs ist möglich, einen Typ zu bearbeiten",
+        "ru": "Добавлено погрязшее преобразование <-> кельвина для цветовой температуры\nМожно редактировать тип",
+        "pt": "Adicionado mireds<-> conversão de kelvin para temperatura de cor\nÉ possível editar um tipo",
+        "nl": "Toegevoegd mireds<->kelvin conversie voor kleurtemperatuur\nHet is mogelijk om een type te bewerken",
+        "fr": "Ajout de mireds <->kelvin conversion pour la température de couleur\nIl est possible de modifier un type",
+        "it": "Conversione di mireds su >kelvin aggiunto per temperatura di colore\nÈ possibile modificare un tipo",
+        "es": "Conversión agregada de microsiervos para la temperatura de color\nEs posible editar un tipo",
+        "pl": "Dodano miredy < - > konwersja kelwina dla temperatury barwy\nMożna edytować typ",
+        "uk": "Додано міреди <->kelvin перетворення для температури кольору\nМожна редагувати тип",
+        "zh-cn": "添加嵌入点 <->kelvin 转换颜色温度\n可以编辑一个类型"
+      },
       "4.2.9": {
         "en": "Do not control \"white\" by RGBW devices\nCorrected GUI error\nAvoid double entries in auto-detection",
         "de": "\"weiß\" von RGBW-Geräten nicht steuern\nKorrigierter GUI-Fehler\nVermeiden Sie Doppeleinträge in der Auto-Detektion",
@@ -80,19 +93,6 @@
         "pl": "Dodano okno dialogowe reset smart names",
         "uk": "Доданий скидання смарт імен діалог",
         "zh-cn": "添加了智能名称对话框"
-      },
-      "4.2.0": {
-        "en": "Added debug information\nBetter handling of HUE devices\nUpdated type detector",
-        "de": "Zusätzliche Informationen\nBessere Handhabung von HUE-Geräten\nAktualisierter Typdetektor",
-        "ru": "Добавлена информация об отладке\nЛучшая обработка HUE устройств\nОбновленный детектор типов",
-        "pt": "Adicionado informação de depuração\nMelhor manuseio de dispositivos HUE\nDetector de tipo actualizado",
-        "nl": "Debug-informatie toegevoegd\nBetere behandeling van HUE-apparaten\nBijgewerkt type detector",
-        "fr": "Ajout des informations de débogage\nMeilleure manipulation des appareils HUE\nDétecteur de type actualisé",
-        "it": "Informazioni sul debug\nMigliore gestione dei dispositivi HUE\nRilevatore di tipo aggiornato",
-        "es": "Información adicional de depuración\nMejor manejo de dispositivos HUE\nDetector de tipo actualizado",
-        "pl": "Dodano informacje o debugowaniu\nLepsza obsługa urządzeń HUE\nAktualizacja czujnika typu",
-        "uk": "Додана інформація\nКраще обслуговування пристроїв HUE\nОновлений детектор типу",
-        "zh-cn": "添加调试信息\n更好地处理HUE设备\n更新类型检测器"
       }
     },
     "titleLang": {

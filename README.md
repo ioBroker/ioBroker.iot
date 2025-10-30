@@ -350,7 +350,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 4.2.10 (2025-10-30)
 - (@GermanBluefox) Added mireds<->kelvin conversion for color temperature
 - (@GermanBluefox) It is possible to edit a type
 
@@ -368,9 +368,6 @@ setState('iot.0.app.message', JSON.stringify({
 
 ### 4.2.3 (2025-10-23)
 - (@GermanBluefox) Better auto-detection
-
-### 4.2.2 (2025-10-22)
-- (@GermanBluefox) Use only channel or devices for automatic detection
 
 ## License
 
