@@ -10,6 +10,7 @@ import Muted from './Muted';
 import Percentage from './Percentage';
 import PowerState from './PowerState';
 import RelativeHumidity from './RelativeHumidity';
+import RangeValue from './RangeValue';
 import TargetSetpoint from './TargetSetpoint';
 import Temperature from './Temperature';
 import ThermostatMode from './ThermostatMode';
@@ -27,6 +28,7 @@ export default {
     Muted,
     Percentage,
     PowerState,
+    RangeValue,
     RelativeHumidity,
     TargetSetpoint,
     Temperature,

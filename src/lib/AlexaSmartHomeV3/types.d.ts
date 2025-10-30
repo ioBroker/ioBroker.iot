@@ -94,6 +94,31 @@ export type AlexaV3Category =
     | 'WATER_HEATER'
     | 'WEARABLE';
 
+export type AlexaV3UnitOfMeasure =
+    | 'Alexa.Unit.Angle.Degrees'
+    | 'Alexa.Unit.Angle.Radians'
+    | 'Alexa.Unit.Distance.Feet'
+    | 'Alexa.Unit.Distance.Inches'
+    | 'Alexa.Unit.Distance.Kilometers'
+    | 'Alexa.Unit.Distance.Meters'
+    | 'Alexa.Unit.Distance.Miles'
+    | 'Alexa.Unit.Distance.Yards'
+    | 'Alexa.Unit.Mass.Grams'
+    | 'Alexa.Unit.Mass.Kilograms'
+    | 'Alexa.Unit.Percent'
+    | 'Alexa.Unit.Temperature.Celsius'
+    | 'Alexa.Unit.Temperature.Degrees'
+    | 'Alexa.Unit.Temperature.Fahrenheit'
+    | 'Alexa.Unit.Temperature.Kelvin'
+    | 'Alexa.Unit.Volume.CubicFeet'
+    | 'Alexa.Unit.Volume.CubicMeters'
+    | 'Alexa.Unit.Volume.Gallons'
+    | 'Alexa.Unit.Volume.Liters'
+    | 'Alexa.Unit.Volume.Pints'
+    | 'Alexa.Unit.Volume.Quarts'
+    | 'Alexa.Unit.Weight.Ounces'
+    | 'Alexa.Unit.Weight.Pounds';
+
 export type AlexaV3DirectiveType =
     | 'SetTargetTemperature'
     | 'SetColorTemperature'
@@ -182,6 +207,9 @@ type AlexaV3Payload = {
     volumeDefault?: boolean;
     percentage?: number;
     percentageDelta?: number;
+    rangeValue?: number;
+    rangeValueDelta?: number;
+    rangeValueDeltaDefault?: boolean;
     targetSetpoint?: {
         value: number;
         scale: 'CELSIUS' | 'FAHRENHEIT';
@@ -292,6 +320,21 @@ export interface AlexaV3SmartHomeRequestEnvelope {
     }[];
 }
 
+type AlexaV3ModeConfiguration = {
+    ordered: boolean;
+    supportedModes: AlexaV3ThermostatMode[];
+    supportsScheduling?: boolean;
+};
+
+type AlexaV3RangeConfiguration = {
+    supportedRange: {
+        minimumValue: number;
+        maximumValue: number;
+        precision: 1;
+    };
+    unitOfMeasure?: AlexaV3UnitOfMeasure;
+};
+
 // Discovery
 export interface AlexaV3Capability {
     type?: 'AlexaInterface';
@@ -304,11 +347,7 @@ export interface AlexaV3Capability {
         retrievable?: boolean;
         nonControllable?: boolean;
     };
-    configuration?: {
-        ordered: boolean;
-        supportedModes: (AlexaV3DiscoveryResponse | string)[];
-        supportsScheduling?: boolean;
-    };
+    configuration?: AlexaV3ModeConfiguration | AlexaV3RangeConfiguration;
     semantics?: {
         actionMappings: AlexaV3ActionMapping[];
         stateMappings: AlexaV3StateMapping[];
@@ -474,6 +513,7 @@ export interface IotInternalDetectorState extends InternalDetectorState {
         states?: { [value: string]: string };
         role?: string;
         name?: ioBroker.StringOrTranslated;
+        step?: number;
     };
     // Used by GUI
     subscribed?: boolean;

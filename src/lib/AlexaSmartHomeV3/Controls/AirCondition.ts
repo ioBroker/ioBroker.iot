@@ -15,7 +15,6 @@ import type {
     IotExternalDetectorState,
     IotExternalPatternControl,
 } from '../types';
-import Connectivity from '../Alexa/Properties/Connectivity';
 import EndpointHealth from '../Alexa/Capabilities/EndpointHealth';
 
 export default class AirCondition extends AdjustableControl {

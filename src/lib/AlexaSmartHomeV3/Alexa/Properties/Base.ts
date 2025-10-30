@@ -52,7 +52,7 @@ export class Base {
     #setState: IotExternalDetectorState | null = null;
     protected _setId: string = '';
     protected _getId: string = '';
-    #valuesRange: { min: number | boolean; max: number | boolean } = { min: 0, max: 100 };
+    #valuesRange: { min: number | boolean; max: number | boolean; step?: number } = { min: 0, max: 100, step: 10 };
     protected _stateType: ioBroker.CommonType | undefined;
     #currentValue: ioBroker.StateValue | undefined;
     protected _alexaSetter?: (value: AlexaV3DirectiveValue) => ioBroker.StateValue | undefined;
@@ -121,6 +121,10 @@ export class Base {
         return this.#valuesRange.max;
     }
 
+    get valuesRangeStep(): number | undefined {
+        return this.#valuesRange.step;
+    }
+
     get setId(): string {
         return this._setId;
     }
@@ -185,6 +189,9 @@ export class Base {
         }
         if (this.propertyName === 'percentage') {
             return event.directive.payload.percentage;
+        }
+        if (this.propertyName === 'rangeValue') {
+            return event.directive.payload.rangeValue;
         }
         // @ts-expect-error fix later
         return event.directive.payload[this.propertyName];

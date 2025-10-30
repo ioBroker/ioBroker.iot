@@ -4,6 +4,7 @@ import Base from './Base';
 import type {
     AlexaV3ActionMapping,
     AlexaV3FriendlyName,
+    AlexaV3ModeConfiguration,
     AlexaV3Namespace,
     AlexaV3StateMapping,
     AlexaV3ThermostatMode,
@@ -58,11 +59,7 @@ export default class ThermostatController extends Base {
         };
     }
 
-    get configuration(): {
-        ordered: boolean;
-        supportedModes: AlexaV3ThermostatMode[];
-        supportsScheduling?: boolean;
-    } {
+    get configuration(): AlexaV3ModeConfiguration {
         return {
             ordered: false,
             supportedModes: this._thermostatMode?.supportedModes || ['AUTO'],

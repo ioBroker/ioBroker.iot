@@ -1,4 +1,4 @@
-import { AlexaV3DirectiveValue, AlexaV3Request, AlexaV3ThermostatMode } from '../../types';
+import type { AlexaV3DirectiveValue, AlexaV3Request, AlexaV3ThermostatMode } from '../../types';
 
 import { asEnum } from '../../Helpers/Utils';
 import Base, { type ControlStateInitObject } from './Base';

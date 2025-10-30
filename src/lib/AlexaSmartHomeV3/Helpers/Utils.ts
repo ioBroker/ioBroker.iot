@@ -179,18 +179,24 @@ export function parseISOString(dateTimeAsISOString: string): Date {
 export function configuredRangeOrDefault(state: IotExternalDetectorState): {
     min: number | boolean;
     max: number | boolean;
+    step?: number;
 } {
     if (state.common?.type === 'boolean') {
         return { min: false, max: true };
     }
     const configuredMin = state.common?.min;
     const configuredMax = state.common?.max;
+    const configuredStep = state.common?.step;
     const min =
         configuredMin === undefined || isNaN(configuredMin) ? 0 : parseFloat(configuredMin as unknown as string);
     const max =
         configuredMax === undefined || isNaN(configuredMax) ? 100 : parseFloat(configuredMax as unknown as string);
+    const step =
+        configuredStep === undefined || isNaN(configuredStep)
+            ? (max - min) / 10
+            : parseFloat(configuredStep as unknown as string);
 
-    return { min, max };
+    return { min, max, step };
 }
 
 export function currentHour(): Date {
@@ -671,6 +677,7 @@ export async function controls(
                         role: devicesObject[s.id]?.common?.role,
                         name: devicesObject[s.id]?.common?.name,
                         unit: devicesObject[s.id]?.common?.unit,
+                        step: devicesObject[s.id]?.common?.step,
                     };
                 });
 
@@ -762,6 +769,7 @@ export async function controls(
                         role: devicesObject[s.id]?.common?.role,
                         name: devicesObject[s.id]?.common?.name,
                         unit: devicesObject[s.id]?.common?.unit,
+                        step: devicesObject[s.id]?.common?.step,
                     };
                 });
                 if (smartDisabled) {
