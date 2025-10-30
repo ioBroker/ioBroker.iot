@@ -2232,6 +2232,12 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
         if (!this.state.edit) {
             return;
         }
+        const names = this.state.edit.name.split(',').map(n => n.trim());
+        // All names must be unique
+        const uniqueNames = new Set(names);
+        if (uniqueNames.size < names.length) {
+            this.state.edit.name = Array.from(uniqueNames).join(', ');
+        }
 
         // Check if the name is duplicate
         this.addChanged(this.state.edit.id, () => {
@@ -2258,8 +2264,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                     this.objects[id] = obj; // remember for later
                     if (obj) {
                         Utils.updateSmartName(
-                            // @ts-expect-error fixed in admin
-                            obj,
+                            obj as ioBroker.StateObject,
                             editedSmartName,
                             undefined,
                             editedSmartType,

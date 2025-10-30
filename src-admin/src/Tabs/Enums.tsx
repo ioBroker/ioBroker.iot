@@ -111,23 +111,24 @@ export default class Enums extends Component<EnumsProps, EnumsState> {
             message: '',
             loading: true,
         };
+    }
 
-        void this.props.socket.getEnums().then(res => {
-            const funcs: ioBroker.EnumObject[] = [];
-            const rooms: ioBroker.EnumObject[] = [];
-            if (res) {
-                Object.keys(res).forEach(id => {
-                    if (id.match(/^enum\.rooms\./)) {
-                        rooms.push(res[id]);
-                    } else if (id.match(/^enum\.functions\./)) {
-                        funcs.push(res[id]);
-                    }
-                });
-            }
+    async componentDidMount(): Promise<void> {
+        const res = await this.props.socket.getEnums('', true);
+        const funcs: ioBroker.EnumObject[] = [];
+        const rooms: ioBroker.EnumObject[] = [];
+        if (res) {
+            Object.keys(res).forEach(id => {
+                if (id.match(/^enum\.rooms\./)) {
+                    rooms.push(res[id]);
+                } else if (id.match(/^enum\.functions\./)) {
+                    funcs.push(res[id]);
+                }
+            });
+        }
 
-            this.setState({ funcs, rooms, loading: false });
-            return this.props.socket.subscribeObject('enum.*', this.onEnumUpdate);
-        });
+        this.setState({ funcs, rooms, loading: false });
+        return this.props.socket.subscribeObject('enum.*', this.onEnumUpdate);
     }
 
     componentWillUnmount(): void {
@@ -338,7 +339,6 @@ export default class Enums extends Component<EnumsProps, EnumsState> {
                 .then(obj => {
                     if (obj) {
                         Utils.updateSmartName(
-                            // @ts-expect-error fixed in admin
                             obj as ioBroker.StateObject | ioBroker.EnumObject,
                             this.state.editedSmartName,
                             undefined,

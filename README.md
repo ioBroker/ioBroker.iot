@@ -350,9 +350,10 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 4.2.10 (2025-10-30)
+### **WORK IN PROGRESS**
 - (@GermanBluefox) Added mireds<->kelvin conversion for color temperature
 - (@GermanBluefox) It is possible to edit a type
+- (@GermanBluefox) Correcting creation of complex groups
 
 ### 4.2.9 (2025-10-28)
 - (@GermanBluefox) Do not control "white" by RGBW devices

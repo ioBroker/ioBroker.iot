@@ -219,7 +219,9 @@ export default class DeviceManager {
                             `Control of type [${control.type}] assigned to room [${this.getName(control.room.common.name)}] has no function. Skipped.`,
                         );
                     }
-                } else if (control.groupNames) {
+                    // delete it from detected controls to avoid endless loop
+                    detectedControls.splice(0, 1);
+                } else if (control.groupNames?.length) {
                     // no room, but smart name (not only one)
                     control.groupNames.forEach(groupName => {
                         if (!createdGroups.includes(groupName)) {
@@ -239,27 +241,40 @@ export default class DeviceManager {
                             usedFriendlyNames.push(friendlyName);
 
                             this.toDevice({
-                                detectedControls: processedControls,
+                                detectedControls: JSON.parse(JSON.stringify(processedControls)),
                                 friendlyName,
                                 autoDetected: false,
                                 toggle: processedControls[0].object?.toggle ?? defaultToggle,
                                 possibleTypes: processedControls[0].object?.possibleTypes || [],
                                 typeWasDetected: processedControls[0].object?.typeWasDetected || false,
                             });
+
+                            // Remove groupName from all controls to avoid processing it again
+                            for (let c = detectedControls.length - 1; c >= 0; c--) {
+                                const pos = detectedControls[c].groupNames?.indexOf(groupName);
+                                if (pos !== -1) {
+                                    detectedControls[c].groupNames.splice(pos, 1);
+                                    if (!detectedControls[c].groupNames.length) {
+                                        detectedControls.splice(c, 1);
+                                    }
+                                }
+                            }
                         }
                     });
                 } else {
+                    // delete it from detected controls to avoid endless loop
+                    detectedControls.splice(0, 1);
                     // neither room nor smart name
                     this.log.debug(`Control of type [${control.type}] has neither room no smart name. Skipped.`);
                 }
 
-                if (!processedControls.length) {
-                    processedControls = [control];
-                }
+                // if (!processedControls.length) {
+                //     processedControls = [control];
+                // }
 
                 // remove processed controls
-                const objectIds = processedControls.map(item => item.object?.id);
-                detectedControls = detectedControls.filter(item => item.object && !objectIds.includes(item.object.id));
+                // const objectIds = processedControls.map(item => item.object?.id);
+                // detectedControls = detectedControls.filter(item => item.object && !objectIds.includes(item.object.id));
             }
 
             // done
