@@ -163,7 +163,7 @@ export default class DeviceManager {
             const defaultToggle = AdapterProvider.get().config.defaultToggle || false;
 
             // collect all iobroker controls in terms of iobroker type detector (https://github.com/ioBroker/ioBroker.type-detector)
-            let detectedControls = await Utils.controls(AdapterProvider.get(), this.lang);
+            const detectedControls = await Utils.controls(AdapterProvider.get(), this.lang);
 
             this.log.debug(`type detector found ${detectedControls.length} controls`);
 
@@ -251,9 +251,11 @@ export default class DeviceManager {
 
                             // Remove groupName from all controls to avoid processing it again
                             for (let c = detectedControls.length - 1; c >= 0; c--) {
-                                const pos = detectedControls[c].groupNames?.indexOf(groupName);
-                                if (pos !== -1) {
-                                    detectedControls[c].groupNames.splice(pos, 1);
+                                if (detectedControls[c].groupNames) {
+                                    const pos = detectedControls[c].groupNames?.indexOf(groupName);
+                                    if (pos !== -1) {
+                                        detectedControls[c].groupNames.splice(pos, 1);
+                                    }
                                     if (!detectedControls[c].groupNames.length) {
                                         detectedControls.splice(c, 1);
                                     }
