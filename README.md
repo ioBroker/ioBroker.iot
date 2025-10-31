@@ -19,6 +19,8 @@ It is not for remote access to your ioBroker instance. Use ioBroker.cloud adapte
 
 To use the iot adapter, you should first register on the ioBroker cloud [https://iobroker.pro](https://iobroker.pro).
 
+Note: Humidity sensor cannot be shown alone without temperature sensor, because Alexa and Google Home do not support such devices.
+
 [Reference to google API type settings](https://developers.google.com/actions/smarthome/guides/)
 
 ![Intro](img/intro.png)
@@ -350,6 +352,9 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Changed behavior of HUE lamps
+
 ### 5.0.2 (2025-10-30)
 - (@GermanBluefox) Added mireds<->kelvin conversion for color temperature
 - (@GermanBluefox) It is possible to edit a type

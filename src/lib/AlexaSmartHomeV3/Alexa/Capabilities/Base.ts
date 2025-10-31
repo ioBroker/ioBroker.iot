@@ -23,10 +23,6 @@ export abstract class Base {
         return `Alexa.${this.constructor.name}` as AlexaV3Namespace;
     }
 
-    reportValue(value: number | boolean): any {
-        return value;
-    }
-
     /**
      * Checks whether the capability instance matches, i.e. can handle the event Alexa sends to the skill
      *

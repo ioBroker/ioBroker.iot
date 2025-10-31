@@ -847,6 +847,18 @@ export function normalize_0_100(value: number, min: number, max: number, noRound
 }
 
 /**
+ * Normalizes any provided value with observed min and max to the range 0..1
+ *
+ * @param value value to be normalized
+ * @param min min observed (possible) value
+ * @param max max observed (possible) value
+ * @returns Normalized value in the range 0..100 or undefined on invalid input
+ */
+export function normalize_0_1(value: number, min: number, max: number): number | undefined {
+    return min >= max || value < min || value > max ? undefined : (value - min) / (max - min);
+}
+
+/**
  * Denormalizes any provided value from range 0..100 to the min..max range
  *
  * @param normalized normalized value
@@ -863,6 +875,23 @@ export function denormalize_0_100(normalized: number, min: number, max: number, 
     return min >= max || normalized < 0 || normalized > 100
         ? undefined
         : Math.round((normalized / 100) * (max - min) + min);
+}
+
+/**
+ * Denormalizes any provided value from range 0..1 to the min..max range
+ *
+ * @param normalized normalized value
+ * @param min min observed (possible) value
+ * @param max max observed (possible) value
+ * @param noRound do not round the result
+ * @returns Denormalized value in the range min-max
+ */
+export function denormalize_0_1(normalized: number, min: number, max: number, noRound?: boolean): number | undefined {
+    if (noRound) {
+        return min >= max || normalized < 0 || normalized > 1 ? undefined : normalized * (max - min) + min;
+    }
+
+    return min >= max || normalized < 0 || normalized > 1 ? undefined : Math.round(normalized * (max - min) + min);
 }
 
 /**

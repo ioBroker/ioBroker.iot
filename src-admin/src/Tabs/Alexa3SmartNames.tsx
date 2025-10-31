@@ -1201,8 +1201,14 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                         if (state?.value === 'NOT_DETECTED') {
                             style = { ...style, ...styles.deviceOff };
                         }
-                    } else if (state?.name === 'percentage' || state?.name === 'relativeHumidity') {
+                    } else if (state?.name === 'percentage') {
                         valueString = `${state.value === null ? '--' : Math.round(state.value * 100) / 100}%`;
+                    } else if (state?.name === 'relativeHumidity') {
+                        if (typeof state.value === 'object') {
+                            valueString = `${state.value?.value === null || state.value?.value === undefined ? '--' : Math.round(state.value.value * 100) / 100}%`;
+                        } else {
+                            valueString = state.value;
+                        }
                     } else if (state?.name === 'brightness') {
                         valueString = state.value === null ? '--' : Math.round(state.value * 100) / 100;
                     } else if (state?.name === 'temperature') {
@@ -1217,7 +1223,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                     }
 
                     if (state?.value && typeof state.value === 'object' && state.value.value !== undefined) {
-                        state.value = `${Math.round(state.value.value * 100) / 100} ${state.value.scale === 'CELSIUS' ? '°C' : state.value.scale}`;
+                        state.value = `${Math.round(state.value.value * 100) / 100} ${state.value.scale === 'CELSIUS' ? '°C' : state.value.scale === 'FAHRENHEIT' ? '°F' : state.value.scale || '%'}`;
                     }
                 }
                 const stateValue = state

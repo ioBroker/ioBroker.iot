@@ -1,7 +1,14 @@
 import Capabilities from '../Alexa/Capabilities';
 import type BrightnessController from '../Alexa/Capabilities/BrightnessController';
 import type ColorTemperatureController from '../Alexa/Capabilities/ColorTemperatureController';
-import { denormalize_0_100, normalize_0_100, closestFromList, rgb2hal } from '../Helpers/Utils';
+import {
+    denormalize_0_100,
+    normalize_0_100,
+    closestFromList,
+    rgb2hal,
+    normalize_0_1,
+    denormalize_0_1,
+} from '../Helpers/Utils';
 import Properties from '../Alexa/Properties';
 import PowerState from '../Alexa/Properties/PowerState';
 import Brightness from '../Alexa/Properties/Brightness';
@@ -43,10 +50,10 @@ export default class Hue extends AdjustableControl {
         // if the state ON, DIMMER or BRIGHTNESS configured
         if (this.states[map.on] || this._brightness) {
             if (!this.states[map.on]) {
-                this._offValue = denormalize_0_100(
+                this._offValue = denormalize_0_1(
                     AdapterProvider.deviceOffLevel(),
                     this._brightness!.valuesRangeMin as number,
-                    (this._brightness!.valuesRangeMin as number) || 100,
+                    (this._brightness!.valuesRangeMax as number) || 100,
                 ) as number;
             }
             this._supported.push(new Capabilities.PowerController(this.composeInitObjectPowerState()));
@@ -77,11 +84,33 @@ export default class Hue extends AdjustableControl {
             }
 
             if (property.propertyName === Properties.Color.propertyName) {
+                let saturation = property.hal!.saturation
+                    ? await AdapterProvider.getState(property.hal!.saturation)
+                    : 100;
+                let brightness = property.hal!.brightness
+                    ? await AdapterProvider.getState(property.hal!.brightness)
+                    : 100;
+                // convert to HAL object
+                if (this._brightness) {
+                    brightness = normalize_0_1(
+                        brightness as number,
+                        this._brightness.valuesRangeMin as number,
+                        this._brightness.valuesRangeMax as number,
+                    ) as number;
+                }
+                if (this.states[map.saturation]) {
+                    saturation = normalize_0_1(
+                        saturation as number,
+                        this.states[map.saturation]!.common.min || 0,
+                        this.states[map.saturation]!.common.max || 100,
+                    ) as number;
+                }
+
                 // @ts-expect-error special case for Hue property
                 property.currentValue = {
                     hue: property.currentValue,
-                    saturation: property.hal!.saturation,
-                    brightness: property.hal!.brightness,
+                    saturation,
+                    brightness,
                 };
             }
         }
@@ -108,14 +137,27 @@ export default class Hue extends AdjustableControl {
             const colorProperty = property as Color;
             const hueValue = rgb2hal(value as string);
             await AdapterProvider.setState(colorProperty.hal!.hue, hueValue.hue);
+            const map = this.statesMap;
             if (colorProperty.hal!.saturation) {
-                await AdapterProvider.setState(colorProperty.hal!.saturation, hueValue.saturation);
-            }
-            if (colorProperty.hal!.brightness) {
-                await AdapterProvider.setState(colorProperty.hal!.brightness, hueValue.brightness);
-            }
+                // The saturation is from 0 to 1 in Alexa, but from 0 to 100 in ioBroker
+                const iobValue = denormalize_0_1(
+                    hueValue.saturation,
+                    this.states[map.saturation]!.common.min || 0,
+                    this.states[map.saturation]!.common.max || 100,
+                ) as number;
 
+                await AdapterProvider.setState(colorProperty.hal!.saturation, iobValue);
+            }
             // do not set brightness
+            // if (colorProperty.hal!.brightness) {
+            //     // The brightness is from 0 to 1 in Alexa, but from 0 to 100 in ioBroker
+            //     const iobValue = denormalize_0_1(
+            //         hueValue.brightness,
+            //         this.states[map.brightness]!.common.min || 0,
+            //         this.states[map.brightness]!.common.max || 100,
+            //     ) as number;
+            //     await AdapterProvider.setState(colorProperty.hal!.brightness, iobValue);
+            // }
 
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-colorcontroller.html
             // Important: For the best user experience, when you make a color change, maintain the current brightness setting of the endpoint.
@@ -186,19 +228,26 @@ export default class Hue extends AdjustableControl {
             setState: this.states[map.dimmer] || this.states[map.brightness]!,
             getState: this.states[map.dimmer] || this.states[map.brightness]!,
             alexaSetter: function (this: PropertiesBase, alexaValue: AlexaV3DirectiveValue): ioBroker.StateValue {
-                return (
+                const ioBrokerValue =
                     denormalize_0_100(
                         alexaValue as number,
                         this.valuesRangeMin as number,
                         this.valuesRangeMax as number,
-                    ) ?? 0
-                );
+                    ) ?? 0;
+                console.log('Alexa Setter Brightness:', alexaValue, '->', ioBrokerValue);
+                return ioBrokerValue;
             },
             alexaGetter: function (
                 this: PropertiesBase,
                 value: ioBroker.StateValue | undefined,
             ): AlexaV3DirectiveValue {
-                return normalize_0_100(value as number, this.valuesRangeMin as number, this.valuesRangeMax as number);
+                const alexaValue = normalize_0_100(
+                    value as number,
+                    this.valuesRangeMin as number,
+                    this.valuesRangeMax as number,
+                );
+                console.log('Alexa Getter Brightness:', value, '->', alexaValue);
+                return alexaValue;
             },
             multiPurposeProperty: !this.states[map.on], // Could handle powerState events
             handleSimilarEvents: true, // If power set ON and brightness is 0, set to non-zero value

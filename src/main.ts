@@ -91,7 +91,7 @@ export class IotAdapter extends Adapter {
                     if (this.config.googleHome) {
                         void this.googleHome?.updateState(id, state);
                     }
-                    if (this.config.amazonAlexa) {
+                    if (this.config.amazonAlexaV3) {
                         void this.alexaSH3?.handleStateUpdate(id, state);
                     }
 

@@ -94,6 +94,8 @@ export default class Color extends Base {
             if (value.startsWith('rgb')) {
                 return rgb2hal(rgbwToHex(value));
             }
+        } else if (value && typeof value === 'object' && (value as any).hue !== undefined) {
+            return value as unknown as { hue: number; saturation: number; brightness: number };
         }
         return undefined;
     }

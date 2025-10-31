@@ -1,5 +1,5 @@
 import Base from './Base';
-import type { AlexaV3Request } from '../../types';
+import type { AlexaV3DirectiveValue, AlexaV3Request } from '../../types';
 
 export default class RelativeHumidity extends Base {
     static matches(event: AlexaV3Request): boolean {
@@ -8,5 +8,9 @@ export default class RelativeHumidity extends Base {
 
     matches(event: AlexaV3Request): boolean {
         return RelativeHumidity.matches(event);
+    }
+
+    reportValue(value: AlexaV3DirectiveValue): any {
+        return { value };
     }
 }
