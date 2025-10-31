@@ -511,6 +511,9 @@
 ### 0.1.4 (2018-09-26)
 
 -   (bluefox) Initial commit
+## 4.2.3 (2025-10-23)
+- (@GermanBluefox) Better auto-detection
+
 ## 4.2.2 (2025-10-22)
 - (@GermanBluefox) Use only channel or devices for automatic detection
 

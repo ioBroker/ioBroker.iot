@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "5.0.2",
+    "version": "5.0.3",
     "news": {
+      "5.0.3": {
+        "en": "Changed behavior of HUE lamps",
+        "de": "Geändertes Verhalten von HUE-Lampen",
+        "ru": "Изменилось поведение ламп",
+        "pt": "Comportamento alterado das lâmpadas HUE",
+        "nl": "Veranderd gedrag van HUE lampen",
+        "fr": "Changement de comportement des lampes HUE",
+        "it": "Comportamento modificato delle lampade HUE",
+        "es": "Comportamiento cambiado de lámparas HUE",
+        "pl": "Zmienione zachowanie lamp HUE",
+        "uk": "Зміна поведінки світильників HUE",
+        "zh-cn": "HUE灯改变行为"
+      },
       "5.0.2": {
         "en": "Added mireds<->kelvin conversion for color temperature\nIt is possible to edit a type\nCorrecting creation of complex groups\nSame as 4.2.11",
         "de": "Hinzugefügt mireds<->kelvin Umwandlung für Farbtemperatur\nEs ist möglich, einen Typ zu bearbeiten\nKorrektur der Erstellung komplexer Gruppen\nGleich wie 4.2.11",
@@ -80,19 +93,6 @@
         "pl": "Używanie wyłącznie kanału lub urządzeń do automatycznego wykrywania",
         "uk": "Використовуйте тільки канал або пристрої для автоматичного виявлення",
         "zh-cn": "只使用频道或设备进行自动检测"
-      },
-      "4.2.1": {
-        "en": "Added reset smart names dialog",
-        "de": "Hinzugefügt Zurücksetzen Smart Name Dialog",
-        "ru": "Добавлен сброс умных имен в диалог",
-        "pt": "Janela para reiniciar nomes inteligentes",
-        "nl": "Dialoogvenster Smart Names toegevoegd",
-        "fr": "Ajout de la boîte de dialogue réinitialiser les noms intelligents",
-        "it": "Aggiunta di ripristino nomi intelligenti finestra",
-        "es": "Diálogo de nombres inteligentes de reajuste",
-        "pl": "Dodano okno dialogowe reset smart names",
-        "uk": "Доданий скидання смарт імен діалог",
-        "zh-cn": "添加了智能名称对话框"
       }
     },
     "titleLang": {

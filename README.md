@@ -352,7 +352,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 5.0.3 (2025-10-31)
 - (@GermanBluefox) Changed behavior of HUE lamps
 
 ### 5.0.2 (2025-10-30)
@@ -372,9 +372,6 @@ setState('iot.0.app.message', JSON.stringify({
 
 ### 4.2.5 (2025-10-25)
 - (@GermanBluefox) Modified the creation of EndpointID for devices with Umlauts.
-
-### 4.2.3 (2025-10-23)
-- (@GermanBluefox) Better auto-detection
 
 ## License
 
