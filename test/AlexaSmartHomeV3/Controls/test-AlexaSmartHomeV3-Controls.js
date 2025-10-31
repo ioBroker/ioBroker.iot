@@ -122,7 +122,7 @@ describe('AlexaSmartHomeV3 - Controls', function () {
             assert.equal(response.context.properties.length, 2);
             assert.equal(response.context.properties[0].namespace, 'Alexa.HumiditySensor');
             assert.equal(response.context.properties[0].name, 'relativeHumidity');
-            assert.equal(response.context.properties[0].value, 81);
+            assert.equal(response.context.properties[0].value.value, 81);
 
             assert.equal(response.context.properties[1].hasOwnProperty('instance'), false);
             assert.equal(response.context.properties[1].namespace, 'Alexa.EndpointHealth');

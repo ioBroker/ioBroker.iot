@@ -29,7 +29,7 @@ import TabExtended from './Tabs/Extended';
 import TabServices from './Tabs/Services';
 import TabEnums from './Tabs/Enums';
 import TabAlexaSmartNames from './Tabs/AlexaSmartNames';
-import TabAlexa3SmartNames from './Tabs/Alexa3SmartNames';
+import TabAlexa3SmartNames from './Tabs/Alexa3';
 import TabAlisaSmartNames from './Tabs/AlisaSmartNames';
 import TabGoogleSmartNames from './Tabs/GoogleSmartNames';
 
