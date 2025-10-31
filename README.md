@@ -352,7 +352,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 5.0.4 (2025-10-31)
 - (@GermanBluefox) Changed behavior of HUE lamps
 
 ### 5.0.2 (2025-10-30)

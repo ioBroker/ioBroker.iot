@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "5.0.3",
+    "version": "5.0.4",
     "news": {
+      "5.0.4": {
+        "en": "Changed behavior of HUE lamps",
+        "de": "Geändertes Verhalten von HUE-Lampen",
+        "ru": "Изменилось поведение ламп",
+        "pt": "Comportamento alterado das lâmpadas HUE",
+        "nl": "Veranderd gedrag van HUE lampen",
+        "fr": "Changement de comportement des lampes HUE",
+        "it": "Comportamento modificato delle lampade HUE",
+        "es": "Comportamiento cambiado de lámparas HUE",
+        "pl": "Zmienione zachowanie lamp HUE",
+        "uk": "Зміна поведінки світильників HUE",
+        "zh-cn": "HUE灯改变行为"
+      },
       "5.0.2": {
         "en": "Added mireds<->kelvin conversion for color temperature\nIt is possible to edit a type\nCorrecting creation of complex groups\nSame as 4.2.11",
         "de": "Hinzugefügt mireds<->kelvin Umwandlung für Farbtemperatur\nEs ist möglich, einen Typ zu bearbeiten\nKorrektur der Erstellung komplexer Gruppen\nGleich wie 4.2.11",
