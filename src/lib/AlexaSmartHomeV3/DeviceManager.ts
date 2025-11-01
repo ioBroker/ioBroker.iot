@@ -175,8 +175,10 @@ export default class DeviceManager {
             // detectedControls = detectedControls.filter(c => ['light', 'dimmer'].includes(c.type));
             const createdGroups: string[] = [];
             const usedFriendlyNames: string[] = [];
+            let iteration = 0;
 
             while (detectedControls.length) {
+                iteration++;
                 // take the next control
                 const control = detectedControls[0];
                 let processedControls: IotExternalPatternControl[] = [];
@@ -270,13 +272,12 @@ export default class DeviceManager {
                     this.log.debug(`Control of type [${control.type}] has neither room no smart name. Skipped.`);
                 }
 
-                // if (!processedControls.length) {
-                //     processedControls = [control];
-                // }
-
-                // remove processed controls
-                // const objectIds = processedControls.map(item => item.object?.id);
-                // detectedControls = detectedControls.filter(item => item.object && !objectIds.includes(item.object.id));
+                if (iteration > 1000) {
+                    this.log.error(
+                        `too many iterations while collecting devices. Stopping to avoid endless loop: ${JSON.stringify(detectedControls)}`,
+                    );
+                    break;
+                }
             }
 
             // done

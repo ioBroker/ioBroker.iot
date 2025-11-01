@@ -347,8 +347,12 @@ export async function controls(
 
     // fetch all objects (states, channels and devices in terms of iobroker)
     const devicesObject = await allObjects(adapter);
+
+    adapter.log.debug(`[ALEXA3] Starting control detection with ${Object.keys(devicesObject).length} objects...`);
     // fetch all defined rooms and functions (enumerations)
     const [functionalities, rooms] = await functionalitiesAndRooms(adapter);
+
+    adapter.log.debug(`[ALEXA3] Found ${functionalities.length} functionalities and ${rooms.length} rooms...`);
 
     // every member of a function enumeration is added to the list of ids to inspect
     functionalities.forEach(functionEnumItem => {
@@ -429,6 +433,8 @@ export async function controls(
     // all ids, i.e. ids of all iobroker states/channels/devices
     const keys = Object.keys(devicesObject).sort();
 
+    adapter.log.debug(`[ALEXA3] collected ${keys.length} states from categories...`);
+
     const idsWithSmartName: string[] = [];
     // if a state has got a smart name directly assigned and neither itself nor its channel is in the list, add its id to the inspection list
     // and process it first
@@ -447,6 +453,8 @@ export async function controls(
             idsWithSmartName.push(id);
         }
     });
+
+    adapter.log.debug(`[ALEXA3] collected ${keys.length} smart names...`);
 
     // collect first all smart names and remove them from the auto-groups
     const detectedControls: IotExternalPatternControl[] = [];
@@ -728,6 +736,8 @@ export async function controls(
     options.ignoreEnums = false;
     options.detectAllPossibleDevices = false;
 
+    adapter.log.debug(`[ALEXA3] collected ${detectedControls.length} controls`);
+
     // go other the list of IDs to inspect and collect the detected controls
     list.forEach(id => {
         options.id = id;
@@ -826,6 +836,8 @@ export async function controls(
             }
         });
     });
+
+    adapter.log.debug(`[ALEXA3] sorted ${detectedControls.length} controls`);
 
     return detectedControls;
 }
