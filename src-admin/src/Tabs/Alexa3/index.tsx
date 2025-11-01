@@ -16,6 +16,9 @@ import {
     FormControlLabel,
     FormHelperText,
     IconButton,
+    ListItemIcon,
+    ListItemText,
+    Menu,
     MenuItem,
     Select,
     TextField,
@@ -41,6 +44,7 @@ import {
     FileCopy as IconCopy,
     UnfoldLess,
     UnfoldMore,
+    MoreVertRounded as IconMenu,
 } from '@mui/icons-material';
 
 import {
@@ -66,13 +70,15 @@ import {
     takeIdForSmartName,
     CAPABILITIES,
     DEVICES,
-    getParentId,
     renderSelectTypeSelector,
     getObjectIcon,
     getName,
     renderChannelActions,
     renderDevTypes,
+    type UpdateSmartNameOptions,
+    findDeviceForState,
 } from './utils';
+import SmartNameManageDialog from './SmartNameManageDialog';
 
 const CHANGED_COLOR = '#e7000040';
 const DEFAULT_CHANNEL_COLOR_DARK = '#4f4f4f';
@@ -266,11 +272,15 @@ interface Alexa3SmartNamesState {
         originalName: string;
         objectName: string;
         isAfterAdd: boolean;
+        isNoMagic?: boolean;
     };
     deleteId: string;
-
+    showDeviceMenu: null | {
+        el: HTMLButtonElement;
+        dev: AlexaSH3DeviceDescription;
+    };
     showListOfDevices: boolean;
-    showSelectId: boolean;
+    showSelectId: { predefinedName?: string } | null;
     showConfirmation: boolean | string;
     changed: string[];
     devices: AlexaSH3DeviceDescription[];
@@ -290,7 +300,6 @@ interface Alexa3SmartNamesState {
     alive: boolean;
     values: { [id: string]: ioBroker.State | null | undefined };
     showResetId: AlexaSH3DeviceDescription | null;
-    resetDevices: boolean[];
 }
 
 export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, Alexa3SmartNamesState> {
@@ -311,9 +320,12 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
     private collectSubscribesTimer: null | ReturnType<typeof setTimeout> = null;
     private collectUnsubscribes: string[] | null = null;
     private collectUnsubscribesTimer: null | ReturnType<typeof setTimeout> = null;
+    private readonly namespace: string;
 
     constructor(props: Alexa3SmartNamesProps) {
         super(props);
+
+        this.namespace = `${this.props.adapterName}.${this.props.instance}`;
 
         if (!capabilitiesTranslated) {
             Object.keys(CAPABILITIES).forEach(a => (CAPABILITIES[a].label = I18n.t(CAPABILITIES[a].label)));
@@ -338,7 +350,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
             deleteId: '',
 
             showListOfDevices: false,
-            showSelectId: false,
+            showSelectId: null,
             showConfirmation: '',
             changed: [],
             devices: [],
@@ -352,7 +364,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
             alive: false,
             values: {},
             showResetId: null,
-            resetDevices: [],
+            showDeviceMenu: null,
         };
     }
 
@@ -512,7 +524,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
         }, 10000);
 
         this.props.socket
-            .sendTo(`${this.props.adapterName}.${this.props.instance}`, 'browse3', null)
+            .sendTo(this.namespace, 'browse3', null)
             .then((list: AlexaSH3DeviceDescription[] | { error: string } | null): void => {
                 if (this.browseTimer) {
                     clearTimeout(this.browseTimer);
@@ -635,7 +647,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
     }
 
     informInstance(id: string): void {
-        void this.props.socket.sendTo(`${this.props.adapterName}.${this.props.instance}`, 'update', id);
+        void this.props.socket.sendTo(this.namespace, 'update', id);
     }
 
     addChanged(id: string, cb?: () => void): void {
@@ -662,7 +674,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                 if (obj) {
                     let smartName = Utils.getSmartNameFromObj(
                         obj as ioBroker.StateObject,
-                        `${this.props.adapterName}.${this.props.instance}`,
+                        this.namespace,
                         this.props.native.noCommon,
                     );
                     if (typeof smartName === 'object' && smartName) {
@@ -704,11 +716,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                 .then(obj => {
                     this.objects[id] = obj; // remember for later
                     if (obj) {
-                        Utils.disableSmartName(
-                            obj as ioBroker.StateObject,
-                            `${this.props.adapterName}.${this.props.instance}`,
-                            this.props.native.noCommon,
-                        );
+                        Utils.disableSmartName(obj as ioBroker.StateObject, this.namespace, this.props.native.noCommon);
                         return this.props.socket.setObject(id, obj);
                     }
                 })
@@ -863,7 +871,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                             if (obj) {
                                 updateSmartNameEx(obj, {
                                     noAutoDetect,
-                                    instanceId: `${this.props.adapterName}.${this.props.instance}`,
+                                    instanceId: this.namespace,
                                     noCommon: this.props.native.noCommon,
                                 });
                                 const posDev = this.state.devices.findIndex(d => d === dev);
@@ -911,7 +919,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                             undefined, // undefined means do not update
                             byON,
                             type,
-                            `${this.props.adapterName}.${this.props.instance}`,
+                            this.namespace,
                             this.props.native.noCommon,
                         );
                         if (this.state.lastChanged !== id) {
@@ -1013,7 +1021,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                     if (this.objects[stateId]?.common) {
                         let smartNameValue = Utils.getSmartNameFromObj(
                             this.objects[stateId] as ioBroker.StateObject,
-                            `${this.props.adapterName}.${this.props.instance}`,
+                            this.namespace,
                             this.props.native.noCommon,
                         );
                         if (typeof smartNameValue !== 'object' && smartNameValue) {
@@ -1087,41 +1095,6 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
         );
     }
 
-    async findDeviceForState(stateId: string): Promise<ioBroker.Object | null | undefined> {
-        // read channel
-        const channelId = getParentId(stateId);
-        const channelObj = await this.props.socket.getObject(channelId);
-        this.objects[channelId] = channelObj; // remember for later
-        if (channelObj?.type === 'device') {
-            return channelObj;
-        }
-
-        if (channelObj && (channelObj.type === 'channel' || channelObj.type === 'folder')) {
-            let deviceId = getParentId(channelId);
-            let deviceObj = await this.props.socket.getObject(deviceId);
-            this.objects[deviceId] = deviceObj; // remember for later
-
-            if (deviceObj?.type === 'device') {
-                return deviceObj;
-            }
-
-            if (deviceObj?.type === 'folder') {
-                deviceId = getParentId(channelId);
-                deviceObj = await this.props.socket.getObject(deviceId);
-                this.objects[deviceId] = deviceObj; // remember for later
-                if (deviceObj?.type === 'device') {
-                    return deviceObj;
-                }
-            }
-
-            return channelObj;
-        }
-
-        const result = await this.props.socket.getObject(stateId);
-        this.objects[stateId] = result; // remember for later
-        return result;
-    }
-
     getControlProps(control: AlexaSH3ControlDescription): {
         name: string;
         icon?: string | null;
@@ -1132,7 +1105,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
             this.requesting[stateId] = true;
             // try to find the device
             setTimeout(() => {
-                void this.findDeviceForState(stateId).then(obj => {
+                void findDeviceForState(stateId, this.props.socket, this.objects).then(obj => {
                     delete this.requesting[stateId];
                     const objects = JSON.parse(JSON.stringify(this.state.objects));
                     if (obj?.common) {
@@ -1259,123 +1232,84 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
             return null;
         }
 
-        const dev = this.state.showResetId;
+        return (
+            <SmartNameManageDialog
+                socket={this.props.socket}
+                objects={this.objects}
+                namespace={this.namespace}
+                noCommon={this.props.native.noCommon}
+                dev={this.state.showResetId}
+                language={this.language}
+                themeType={this.props.themeType}
+                onClose={(doInformBacken?: boolean) => {
+                    this.setState({ showResetId: null }, () => {
+                        if (doInformBacken) {
+                            // inform backend
+                            this.browse(true);
+                        }
+                    });
+                }}
+            />
+        );
+    }
+
+    renderDeviceMenu(): React.JSX.Element | null {
+        if (!this.state.showDeviceMenu) {
+            return null;
+        }
 
         return (
-            <Dialog
+            <Menu
                 open={!0}
-                maxWidth="sm"
-                fullWidth
-                onClose={() => this.setState({ showResetId: null })}
+                anchorEl={this.state.showDeviceMenu.el}
+                onClose={() => this.setState({ showDeviceMenu: null })}
             >
-                <DialogTitle>{I18n.t('Migrate the device to use with Alexa V3')}</DialogTitle>
-                <DialogContent>
-                    <div>{I18n.t('Devices that should be reset')}</div>
-                    {dev.controls.map((control: AlexaSH3ControlDescription, c: number) => {
-                        const Icon = DEVICES[control.type]?.icon || null;
-                        const controlProps = this.getControlProps(control);
-                        return (
-                            <div
-                                key={`channel_${c}`}
-                                style={styles.devSubLine}
-                            >
-                                <Checkbox
-                                    checked={!!this.state.resetDevices[c]}
-                                    onClick={() => {
-                                        const resetDevices: boolean[] = [...this.state.resetDevices];
-                                        resetDevices[c] = !resetDevices[c];
-                                        this.setState({ resetDevices });
-                                    }}
-                                />
-                                {Icon ? (
-                                    <Icon
-                                        style={{
-                                            ...styles.deviceSmallIcon,
-                                            color: DEVICES[control.type]?.color,
-                                        }}
-                                    />
-                                ) : null}
-                                <div style={styles.devSubLineName}>
-                                    <div style={styles.devSubLineName1}>{I18n.t(control.type)}</div>
-                                    <div style={styles.devSubLineName2}>
-                                        <div style={styles.devSubLineName2Div}>
-                                            {controlProps.icon ? (
-                                                controlProps.icon.startsWith('data:image/svg') ? (
-                                                    <SVG
-                                                        style={styles.devSubLineName2Icon}
-                                                        src={controlProps.icon}
-                                                        width={20}
-                                                        height={20}
-                                                    />
-                                                ) : (
-                                                    <ARIcon
-                                                        src={controlProps.icon}
-                                                        style={{
-                                                            ...styles.devSubLineName2Icon,
-                                                            width: 20,
-                                                            height: 20,
-                                                        }}
-                                                    />
-                                                )
-                                            ) : null}
-                                            {controlProps.name}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div style={styles.devLineActions}>{renderChannelActions(control)}</div>
-                            </div>
-                        );
-                    })}
-                </DialogContent>
-                <DialogActions>
-                    <Button
-                        variant="contained"
-                        disabled={!this.state.resetDevices.find(dev => dev)}
-                        onClick={async (): Promise<void> => {
-                            // Clear all smartName for selected devices
-                            for (let c = 0; c < dev.controls.length; c++) {
-                                if (this.state.resetDevices[c]) {
-                                    const control: AlexaSH3ControlDescription = dev.controls[c];
-                                    const state = takeIdForSmartName(control);
-                                    const id = state.id;
-                                    const obj = await this.props.socket.getObject(id);
-                                    if (obj) {
-                                        const smartName = Utils.getSmartNameFromObj(
-                                            obj as ioBroker.StateObject,
-                                            `${this.props.adapterName}.${this.props.instance}`,
-                                            this.props.native.noCommon,
-                                        ) as SmartNameObject;
-                                        if (smartName !== undefined) {
-                                            // delete smart name
-                                            Utils.removeSmartName(
-                                                obj as ioBroker.StateObject,
-                                                `${this.props.adapterName}.${this.props.instance}`,
-                                                this.props.native.noCommon,
-                                            );
-                                            await this.props.socket.setObject(id, obj);
-                                        }
-                                    }
-                                }
+                <MenuItem
+                    onClick={() => {
+                        const smartId = takeIdForSmartName(this.state.showDeviceMenu!.dev.controls[0]);
+                        const smartName = smartId?.smartName as SmartNameObject;
+                        this.setState({
+                            showSelectId: {
+                                predefinedName: smartName[this.language] || smartName.en || undefined,
+                            },
+                        });
+                    }}
+                >
+                    <ListItemIcon>
+                        <IconAdd />
+                    </ListItemIcon>
+                    <ListItemText>{I18n.t('Add state to current device')}</ListItemText>
+                </MenuItem>
+                <MenuItem
+                    onClick={() => {
+                        // Find the control with maximal number of states and let it unchecked. All others will be checked
+                        let max = 0;
+                        let maxIndex = 0;
+                        const resetDevices = [];
+                        this.state.showDeviceMenu!.dev.controls.forEach((control, i) => {
+                            const statesCount = Object.keys(control.states).filter(
+                                stateName => control.states[stateName]?.id,
+                            ).length;
+                            if (statesCount > max) {
+                                max = statesCount;
+                                maxIndex = this.state.showDeviceMenu!.dev.controls.indexOf(control);
                             }
-                            // Inform instance
-                            this.setState({ showResetId: null }, () => this.browse(true));
-                        }}
-                        color="primary"
-                        startIcon={<IconCheck />}
-                    >
-                        {I18n.t('Reset selected')}
-                    </Button>
-                    <Button
-                        variant="contained"
-                        startIcon={<IconClose />}
-                        onClick={() => this.setState({ showResetId: null })}
-                        autoFocus
-                        color="grey"
-                    >
-                        {I18n.t('Close')}
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                            resetDevices[i] = true;
+                        });
+                        resetDevices[maxIndex] = false;
+
+                        this.setState({
+                            showResetId: this.state.showDeviceMenu!.dev,
+                            showDeviceMenu: null,
+                        });
+                    }}
+                >
+                    <ListItemIcon>
+                        <IconReset />
+                    </ListItemIcon>
+                    <ListItemText>{I18n.t('Edit smart names for device')}</ListItemText>
+                </MenuItem>
+            </Menu>
         );
     }
 
@@ -1444,32 +1378,10 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                     ) : null}
                 </div>
                 <span style={styles.devLineActions}>{renderDevTypes(dev)}</span>
-                {!dev.autoDetected && dev.controls?.length > 1 ? (
-                    <Tooltip title={I18n.t('Reset for use with Alexa V3')}>
-                        <IconButton
-                            onClick={() => {
-                                // Find the control with maximal number of states and let it unchecked. All other will be checked
-                                let max = 0;
-                                let maxIndex = 0;
-                                const resetDevices = [];
-                                dev.controls.forEach((control, i) => {
-                                    const statesCount = Object.keys(control.states).filter(
-                                        stateName => control.states[stateName]?.id,
-                                    ).length;
-                                    if (statesCount > max) {
-                                        max = statesCount;
-                                        maxIndex = dev.controls.indexOf(control);
-                                    }
-                                    resetDevices[i] = true;
-                                });
-                                resetDevices[maxIndex] = false;
-
-                                this.setState({ showResetId: dev, resetDevices });
-                            }}
-                        >
-                            <IconReset />
-                        </IconButton>
-                    </Tooltip>
+                {!dev.autoDetected ? (
+                    <IconButton onClick={e => this.setState({ showDeviceMenu: { dev, el: e.currentTarget } })}>
+                        <IconMenu />
+                    </IconButton>
                 ) : null}
             </div>,
             expanded ? this.renderChannels(dev, lineNum) : null,
@@ -1529,7 +1441,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                             editedSmartName,
                             undefined,
                             editedSmartType,
-                            `${this.props.adapterName}.${this.props.instance}`,
+                            this.namespace,
                             this.props.native.noCommon,
                         );
                         return this.props.socket.setObject(id, obj);
@@ -1667,81 +1579,93 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
     }
 
     getSelectIdDialog(): React.JSX.Element | null {
-        if (this.state.showSelectId) {
-            return (
-                <DialogSelectID
-                    key="dialogSelectID1"
-                    imagePrefix="../.."
-                    theme={this.props.theme}
-                    socket={this.props.socket}
-                    selected=""
-                    types={['state']}
-                    onClose={() => this.setState({ showSelectId: false })}
-                    onOk={(selected /* , name */) => {
-                        this.setState({ showSelectId: false });
-                        const selectedId = Array.isArray(selected) ? selected[0] : selected;
-
-                        if (!selectedId) {
-                            this.setState({ message: I18n.t('Invalid ID') });
-                            return;
-                        }
-                        void this.props.socket.getObject(selectedId).then(obj => {
-                            this.objects[selectedId] = obj; // remember for later
-                            if (obj) {
-                                const name = Utils.getObjectNameFromObj(obj, null, { language: this.language });
-                                // special case for buttons
-                                if (obj.common.role?.includes('button')) {
-                                    if (this.props.native.noCommon) {
-                                        obj.common.custom ||= {};
-                                        obj.common.custom[`${this.props.adapterName}.${this.props.instance}`] ||= {};
-                                        obj.common.custom[
-                                            `${this.props.adapterName}.${this.props.instance}`
-                                        ].smartName = {
-                                            smartType: 'button',
-                                            [this.language]: name || I18n.t('Button'),
-                                        };
-                                    } else {
-                                        obj.common.smartName = {
-                                            smartType: 'button',
-                                            [this.language]: name || I18n.t('Button'),
-                                        };
-                                    }
-                                } else {
-                                    Utils.updateSmartName(
-                                        // @ts-expect-error fixed in admin
-                                        obj,
-                                        (name || I18n.t('Device name')).replace(/[-_.]+/g, ' '),
-                                        undefined,
-                                        undefined,
-                                        `${this.props.adapterName}.${this.props.instance}`,
-                                        this.props.native.noCommon,
-                                    );
-                                }
-                                this.addChanged(obj._id);
-                                this.waitForUpdateID = obj._id;
-
-                                if (this.state.lastChanged !== obj._id) {
-                                    this.setState({ lastChanged: obj._id });
-                                    this.timerChanged && clearTimeout(this.timerChanged);
-                                    this.timerChanged = setTimeout(() => {
-                                        this.setState({ lastChanged: '' });
-                                        this.timerChanged = null;
-                                    }, 30000);
-                                }
-
-                                this.props.socket
-                                    .setObject(obj._id, obj)
-                                    .then(() => this.informInstance(obj._id))
-                                    .catch(err => this.setState({ message: err }));
-                            } else {
-                                this.setState({ message: I18n.t('Invalid ID') });
-                            }
-                        });
-                    }}
-                />
-            );
+        if (!this.state.showSelectId) {
+            return null;
         }
-        return null;
+        return (
+            <DialogSelectID
+                key="dialogSelectID1"
+                imagePrefix="../.."
+                theme={this.props.theme}
+                socket={this.props.socket}
+                selected=""
+                types={['state']}
+                onClose={() => this.setState({ showSelectId: null })}
+                onOk={async (selected /* , name */): Promise<void> => {
+                    this.setState({ showSelectId: null });
+                    const selectedId = Array.isArray(selected) ? selected[0] : selected;
+
+                    if (!selectedId) {
+                        this.setState({ message: I18n.t('Invalid ID') });
+                        return;
+                    }
+                    const obj = await this.props.socket.getObject(selectedId);
+                    this.objects[selectedId] = obj; // remember for later
+                    if (obj) {
+                        const name = Utils.getObjectNameFromObj(obj, null, { language: this.language });
+                        // special case for buttons
+                        if (obj.common.role?.includes('button')) {
+                            if (this.props.native.noCommon) {
+                                obj.common.custom ||= {};
+                                obj.common.custom[this.namespace] ||= {};
+                                obj.common.custom[this.namespace].smartName = {
+                                    smartType: 'button',
+                                    [this.language]: name || I18n.t('Button'),
+                                };
+                                if (this.state.showSelectId?.predefinedName) {
+                                    obj.common.custom[this.namespace].smartName[this.language] =
+                                        this.state.showSelectId.predefinedName;
+                                    obj.common.custom[this.namespace].smartName.noAutoDetect = true;
+                                }
+                            } else {
+                                obj.common.smartName = {
+                                    smartType: 'button',
+                                    [this.language]: name || I18n.t('Button'),
+                                };
+                                if (this.state.showSelectId?.predefinedName) {
+                                    obj.common.smartName[this.language] = this.state.showSelectId.predefinedName;
+                                    obj.common.smartName.noAutoDetect = true;
+                                }
+                            }
+                        } else {
+                            const options: UpdateSmartNameOptions = {
+                                smartName: (name || I18n.t('Device name')).replace(/[-_.]+/g, ' '),
+                                instanceId: this.namespace,
+                                noCommon: this.props.native.noCommon,
+                            };
+                            if (this.state.showSelectId?.predefinedName) {
+                                options.noAutoDetect = true;
+                                options.smartName = this.state.showSelectId.predefinedName;
+                            }
+
+                            updateSmartNameEx(obj as ioBroker.StateObject, options);
+                        }
+                        this.addChanged(obj._id);
+                        if (!this.state.showSelectId?.predefinedName) {
+                            this.waitForUpdateID = obj._id;
+                        }
+
+                        if (this.state.lastChanged !== obj._id) {
+                            this.setState({ lastChanged: obj._id });
+                            this.timerChanged && clearTimeout(this.timerChanged);
+                            this.timerChanged = setTimeout(() => {
+                                this.setState({ lastChanged: '' });
+                                this.timerChanged = null;
+                            }, 30000);
+                        }
+
+                        try {
+                            await this.props.socket.setObject(obj._id, obj);
+                            this.informInstance(obj._id);
+                        } catch (err) {
+                            this.setState({ message: err instanceof Error ? err.message : `${err}` });
+                        }
+                    } else {
+                        this.setState({ message: I18n.t('Invalid ID') });
+                    }
+                }}
+            />
+        );
     }
 
     renderDevices(): React.JSX.Element {
@@ -1842,7 +1766,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                     title={I18n.t('Add new device from state')}
                     disabled={(!!this.state.lastChanged && !!this.waitForUpdateID) || !this.state.alive}
                     style={styles.button}
-                    onClick={() => this.setState({ showSelectId: true })}
+                    onClick={() => this.setState({ showSelectId: {} })}
                 >
                     {this.state.lastChanged && this.waitForUpdateID ? <CircularProgress /> : <IconAdd />}
                 </Fab>
@@ -1911,6 +1835,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                 />
                 {this.renderResetDialog()}
                 {this.renderDevices()}
+                {this.renderDeviceMenu()}
                 {this.renderMessage()}
                 {this.renderEditDialog()}
                 {this.getSelectIdDialog()}

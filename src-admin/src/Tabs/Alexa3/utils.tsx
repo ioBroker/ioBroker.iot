@@ -36,7 +36,7 @@ import { IoIosColorFilter, IoIosColorPalette } from 'react-icons/io';
 import { RxSlider } from 'react-icons/rx';
 import { TbVacuumCleaner } from 'react-icons/tb';
 import { WiHumidity } from 'react-icons/wi';
-import { I18n } from '@iobroker/adapter-react-v5';
+import { type AdminConnection, I18n, Utils } from '@iobroker/adapter-react-v5';
 import { FormControl, FormHelperText, MenuItem, Select } from '@mui/material';
 
 const SMART_TYPES: Types[] = [
@@ -562,16 +562,18 @@ export function hal2rgb(hal: { hue: number; saturation: number; brightness: numb
     return `#${toHex(to255(r))}${toHex(to255(g))}${toHex(to255(b))}`;
 }
 
+export interface UpdateSmartNameOptions {
+    smartName?: ioBroker.StringOrTranslated;
+    byON?: string | null;
+    smartType?: Types | null;
+    instanceId: string;
+    noCommon?: boolean;
+    noAutoDetect?: boolean;
+}
+
 export function updateSmartNameEx(
     obj: ioBroker.StateObject | ioBroker.EnumObject,
-    options: {
-        smartName?: ioBroker.StringOrTranslated;
-        byON?: string | null;
-        smartType?: Types | null;
-        instanceId: string;
-        noCommon?: boolean;
-        noAutoDetect?: boolean;
-    },
+    options: UpdateSmartNameOptions,
 ): void {
     const language = I18n.getLanguage();
 
@@ -774,4 +776,90 @@ export function getObjectIcon(
     }
 
     return src || null;
+}
+
+export async function findDeviceForState(
+    stateId: string,
+    socket: AdminConnection,
+    objects: { [id: string]: ioBroker.Object | null | undefined },
+): Promise<ioBroker.Object | null | undefined> {
+    // read channel
+    const channelId = getParentId(stateId);
+    const channelObj = await socket.getObject(channelId);
+    objects[channelId] = channelObj; // remember for later
+    if (channelObj?.type === 'device') {
+        return channelObj;
+    }
+
+    if (channelObj && (channelObj.type === 'channel' || channelObj.type === 'folder')) {
+        let deviceId = getParentId(channelId);
+        let deviceObj = await socket.getObject(deviceId);
+        objects[deviceId] = deviceObj; // remember for later
+
+        if (deviceObj?.type === 'device') {
+            return deviceObj;
+        }
+
+        if (deviceObj?.type === 'folder') {
+            deviceId = getParentId(channelId);
+            deviceObj = await socket.getObject(deviceId);
+            objects[deviceId] = deviceObj; // remember for later
+            if (deviceObj?.type === 'device') {
+                return deviceObj;
+            }
+        }
+
+        return channelObj;
+    }
+
+    const result = await socket.getObject(stateId);
+    objects[stateId] = result; // remember for later
+    return result;
+}
+
+export async function collectSmartNamesOfDevice(
+    dev: AlexaSH3DeviceDescription,
+    instanceId: string,
+    noCommon: boolean,
+    context: { objects: { [id: string]: ioBroker.Object | null | undefined }; socket: AdminConnection },
+): Promise<{ [id: string]: { common: ioBroker.StateCommon; smartName: SmartNameObject | false } }> {
+    const result: { [id: string]: { common: ioBroker.StateCommon; smartName: SmartNameObject | false } } = {};
+    // Process every control in device
+    for (const control of dev.controls) {
+        // Take all states of the control
+        for (const state of Object.values(control.states)) {
+            const parentObj = state?.id ? await findDeviceForState(state.id, context.socket, context.objects) : null;
+            if (parentObj && parentObj._id !== state?.id) {
+                // read all children of the device/channel+
+                const states = await context.socket.getObjectViewSystem(
+                    'state',
+                    `${parentObj._id}.`,
+                    `${parentObj._id}.\u9999`,
+                );
+                Object.keys(states).forEach(sid => {
+                    const smartName = Utils.getSmartNameFromObj(states[sid], instanceId, noCommon);
+                    if (smartName !== undefined && smartName !== null) {
+                        result[sid] = {
+                            common: states[sid].common,
+                            smartName: smartName as SmartNameObject | false,
+                        };
+                    }
+                });
+            } else {
+                const obj = state?.id ? context.objects[state.id] || (await context.socket.getObject(state.id)) : null;
+                if (obj) {
+                    context.objects[obj._id] = obj;
+                    const smartName = Utils.getSmartNameFromObj(obj as ioBroker.StateObject, instanceId, noCommon);
+                    if (smartName !== undefined && smartName !== null) {
+                        result[obj._id] = {
+                            common: obj.common as ioBroker.StateCommon,
+                            smartName: smartName as SmartNameObject | false,
+                        };
+                    }
+                }
+            }
+        }
+    }
+
+    return result;
 }
