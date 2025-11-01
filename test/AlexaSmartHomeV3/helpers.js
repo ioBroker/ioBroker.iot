@@ -265,6 +265,14 @@ const Helpers = {
         return new Controls.RgbSingle(Helpers.rgbSingleConfig());
     },
 
+    powerNumericConfig: function () {
+        return require('./Resources/power01.json');
+    },
+
+    powerNumericControl: function () {
+        return new Controls.Socket(Helpers.powerNumericConfig());
+    },
+
     powerControl: function () {
         return new Controls.Socket(require('./Resources/power.json'));
     },

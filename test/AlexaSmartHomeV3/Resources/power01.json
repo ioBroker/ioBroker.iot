@@ -1,0 +1,42 @@
+{
+    "states": [
+        {
+            "name": "SET",
+            "defaultRole": "switch",
+            "id": "alias.0.Wohnzimmer.Light01.ON",
+            "smartName": {
+                "smartType": "light"
+            },
+            "common": {
+                "type": "number"
+            }
+        },
+        {
+            "name": "ACTUAL",
+            "defaultRole": "state.switch",
+            "id": "alias.0.Wohnzimmer.Light01.ACTUAL",
+            "common": {
+                "type": "number"
+            }
+        }
+    ],
+    "type": "switch",
+    "object": {
+        "id": "alias.0.Wohnzimmer.Power",
+        "common": {
+            "name": {
+                "de": "Dimmer"
+            },
+            "role": "dimmer"
+        }
+    },
+    "room": {
+        "id": "enum.rooms.living_room",
+        "common": {
+            "name": {
+                "en": "Living Room"
+            },
+            "members": ["alias.0.Wohnzimmer.Dimmer", "alias.0.Wohnzimmer.Lampe"]
+        }
+    }
+}

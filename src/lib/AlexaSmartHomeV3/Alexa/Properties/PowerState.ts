@@ -74,11 +74,13 @@ export default class PowerState extends Base {
     alexaValue(value: ioBroker.StateValue | undefined): AlexaV3DirectiveValue {
         if (this._stateType === 'number') {
             const min = this.valuesRangeMin as number;
-            const max = this.valuesRangeMax as number;
+            // In this case, it is important if max is set or not
+            const max = this.valueRealMax;
+
             if (min === undefined || max === undefined) {
                 return (value as number) > 0 ? PowerState.ON : PowerState.OFF;
             }
-            const mid = min + (max - min) / 2;
+            const mid = min + ((max as number) - min) / 2;
             if ((value as number) >= mid) {
                 return PowerState.ON;
             }
@@ -90,11 +92,11 @@ export default class PowerState extends Base {
     value(alexaValue: AlexaV3DirectiveValue): ioBroker.StateValue | undefined {
         if (this._stateType === 'number') {
             const min = this.valuesRangeMin as number;
-            const max = this.valuesRangeMax as number;
+            const max = this.valueRealMax;
             if (min === undefined || max === undefined) {
                 return alexaValue === PowerState.ON ? 1 : alexaValue === PowerState.OFF ? 0 : undefined;
             }
-            return alexaValue === PowerState.ON ? max : alexaValue === PowerState.OFF ? min : undefined;
+            return alexaValue === PowerState.ON ? (max as number) : alexaValue === PowerState.OFF ? min : undefined;
         }
 
         return alexaValue === PowerState.ON ? true : alexaValue === PowerState.OFF ? false : undefined;

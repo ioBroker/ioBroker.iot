@@ -407,7 +407,7 @@ export default class Control {
 
         return {
             setState: this.states[map.set]!,
-            getState: this.states[map.actual]!,
+            getState: this.states[map.actual] || this.states[map.set]!,
             alexaSetter: function (alexaValue) {
                 return alexaValue === PowerState.ON;
             },

@@ -134,6 +134,43 @@ describe('AlexaSmartHomeV3 - Controls', function () {
         });
     });
 
+    describe('Light 0/1', async function () {
+        it('Light 0/1 reports state', async function () {
+            endpointId = 'endpoint-001';
+            friendlyName = 'some-friendly-name';
+            const devManager = new DeviceManager();
+            const idSet = helpers.getConfigForName('SET', helpers.powerNumericConfig());
+            const idActual = helpers.getConfigForName('ACTUAL', helpers.powerNumericConfig());
+            // set states to 0/1
+            await AdapterProvider.setState(idSet, 1);
+            await AdapterProvider.setState(idActual, 1);
+
+            const light = helpers.powerNumericControl();
+            devManager.addDevice(
+                new Device({
+                    id: endpointId,
+                    friendlyName,
+                    displayCategories: ['LIGHT'],
+                    controls: [light],
+                }),
+            );
+            const event = await helpers.getSample('StateReport/ReportState.json');
+            const response = await devManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+            assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
+            assert.equal(response.event.header.name, 'StateReport', 'Name!');
+            assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, 'Name!');
+            assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+
+            assert.equal(response.context.properties.length, 1);
+            assert.equal(response.context.properties[0].namespace, 'Alexa.PowerController');
+            assert.equal(response.context.properties[0].name, 'powerState');
+            assert.equal(response.context.properties[0].value, 'ON');
+
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+        });
+    });
+
     describe('Dimmer', async function () {
         it('Dimmer respects values range on setting brightness', async function () {
             const event = await helpers.getSample(

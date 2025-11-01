@@ -310,5 +310,49 @@ describe('AlexaSmartHomeV3 - PowerController', function () {
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
             assert.equal(lightDevice10_100.controls[0].supported[0].properties[0].currentValue, 10);
         });
+
+        it('Numeric PowerController TurnOn/Off', async function () {
+            const eventOn = await helpers.getSample('PowerController/PowerController.TurnOn.request.json');
+            const devManager = new DeviceManager();
+            const idSet = helpers.getConfigForName('SET', helpers.powerNumericConfig());
+            const idActual = helpers.getConfigForName('ACTUAL', helpers.powerNumericConfig());
+            // set states to 0/1
+            await AdapterProvider.setState(idSet, 0);
+            await AdapterProvider.setState(idActual, 0);
+
+            const light = helpers.powerNumericControl();
+            devManager.addDevice(
+                new Device({
+                    id: endpointId,
+                    friendlyName,
+                    displayCategories: ['LIGHT'],
+                    controls: [light],
+                }),
+            );
+            let response = await light.handle(eventOn);
+
+            let value = await AdapterProvider.getState(idSet);
+            assert.equal(value, 1, 'ioBroker.Value!');
+            await AdapterProvider.setState(idActual, value);
+
+            // and turn it off
+            const eventOff = await helpers.getSample('PowerController/PowerController.TurnOff.request.json');
+            response = await light.handle(eventOff);
+            value = await AdapterProvider.getState(idSet);
+            assert.equal(value, 0, 'ioBroker.Value!');
+
+            assert.equal(response.context.properties[0].namespace, 'Alexa.PowerController', 'Properties Namespace!');
+            assert.equal(response.context.properties[0].name, 'powerState', 'Properties Name!');
+            assert.equal(response.context.properties[0].value, 'OFF', 'Value!');
+
+            assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
+            assert.equal(response.event.header.name, 'Response', 'Namespace!');
+            assert.equal(
+                response.event.header.correlationToken,
+                eventOn.directive.header.correlationToken,
+                'Correlation Token!',
+            );
+            assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+        });
     });
 });

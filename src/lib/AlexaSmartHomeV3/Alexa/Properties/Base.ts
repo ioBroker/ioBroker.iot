@@ -121,6 +121,10 @@ export class Base {
         return this.#valuesRange.max;
     }
 
+    get valueRealMax(): number | boolean | undefined {
+        return this.#setState?.common.max;
+    }
+
     get valuesRangeStep(): number | undefined {
         return this.#valuesRange.step;
     }
