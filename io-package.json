@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "5.0.5",
+    "version": "5.0.6",
     "news": {
+      "5.0.6": {
+        "en": "Added logs to detect the issues with detection\nAdded possibility to use the 0/1 state as socket\nAdded dialog to bulk manage the smart names of one device",
+        "de": "Protokolle hinzugefügt, um die Probleme mit der Erkennung zu erkennen\nZusätzliche Möglichkeit, den Zustand 0/1 als Steckdose zu verwenden\nDialog hinzugefügt, um die intelligenten Namen eines Geräts zu verwalten",
+        "ru": "Добавлены журналы для обнаружения проблем с обнаружением\nДобавлена возможность использования состояния 0/1 в качестве розетки\nДобавлен диалог для массового управления умными именами одного устройства",
+        "pt": "Registros adicionados para detectar os problemas com detecção\nAdicionada possibilidade de usar o estado 0/1 como soquete\nJanela adicionada para gerir os nomes inteligentes de um dispositivo",
+        "nl": "Logs toegevoegd om problemen met detectie op te sporen\nToegevoegde mogelijkheid om de 0/1 status als socket te gebruiken\nDialoog toegevoegd om de slimme namen van één apparaat te beheren",
+        "fr": "Ajout de journaux pour détecter les problèmes avec détection\nPossibilité d'utiliser l'état 0/1 comme socket\nAjout de la boîte de dialogue pour gérer en vrac les noms intelligents d'un appareil",
+        "it": "Log aggiunti per rilevare i problemi con il rilevamento\nAggiunto possibilità di utilizzare lo stato 0/1 come presa\nAggiunto finestra di dialogo per gestire in massa i nomi intelligenti di un dispositivo",
+        "es": "Registros añadidos para detectar los problemas con la detección\nAñadido posibilidad de utilizar el estado 0/1 como socket\nAñadido diálogo para gestionar a granel los nombres inteligentes de un dispositivo",
+        "pl": "Dodano logi do wykrywania problemów z wykrywaniem\nDodano możliwość użycia stanu 0 / 1 jako gniazda\nDodano okno dialogowe do masowych zarządzania inteligentnymi nazwami jednego urządzenia",
+        "uk": "Додано журнали для виявлення проблем з виявленням\nДодано можливість використання стану 0/1 як розетки\nДодано діалогове вікно, щоб об'єднати смарт імена одного пристрою",
+        "zh-cn": "添加日志以检测问题\n添加使用 0/1 状态作为套接字的可能性\n添加对话框以管理一个设备的智能名称"
+      },
       "5.0.5": {
         "en": "Changed behavior of HUE lamps",
         "de": "Geändertes Verhalten von HUE-Lampen",
@@ -80,19 +93,6 @@
         "pl": "Lepsze automatyczne wykrywanie",
         "uk": "Краще автодетекція",
         "zh-cn": "更好的自动检测"
-      },
-      "4.2.2": {
-        "en": "Use only channel or devices for automatic detection",
-        "de": "Verwenden Sie nur Kanal oder Geräte für automatische Erkennung",
-        "ru": "Используйте только каналы или устройства для автоматического обнаружения",
-        "pt": "Usar apenas canal ou dispositivos para detecção automática",
-        "nl": "Gebruik alleen kanaal of apparaten voor automatische detectie",
-        "fr": "Utiliser uniquement un canal ou des dispositifs de détection automatique",
-        "it": "Utilizzare solo canale o dispositivi per il rilevamento automatico",
-        "es": "Utilice sólo el canal o los dispositivos para la detección automática",
-        "pl": "Używanie wyłącznie kanału lub urządzeń do automatycznego wykrywania",
-        "uk": "Використовуйте тільки канал або пристрої для автоматичного виявлення",
-        "zh-cn": "只使用频道或设备进行自动检测"
       }
     },
     "titleLang": {
