@@ -352,6 +352,9 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Added possibility to group devices by type in GUI
+
 ### 5.0.6 (2025-11-01)
 - (@GermanBluefox) Added logs to detect the issues with detection
 - (@GermanBluefox) Added possibility to use the 0/1 state as socket

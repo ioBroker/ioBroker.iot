@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import SVG from 'react-inlinesvg';
 
 import {
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
     Badge,
     Box,
     Button,
@@ -26,18 +29,6 @@ import {
 } from '@mui/material';
 
 import {
-    MdAdd as IconAdd,
-    MdClear as IconClear,
-    MdDelete as IconDelete,
-    MdDragHandle as IconCollapse,
-    MdEdit as IconEdit,
-    MdFormatAlignJustify as IconExpand,
-    MdList as IconList,
-    MdRefresh as IconRefresh,
-    MdPhonelinkErase as IconReset,
-} from 'react-icons/md';
-
-import {
     Check as IconCheck,
     ChevronRight,
     Close as IconClose,
@@ -45,6 +36,17 @@ import {
     UnfoldLess,
     UnfoldMore,
     MoreVertRounded as IconMenu,
+    Add as IconAdd,
+    Clear as IconClear,
+    Delete as IconDelete,
+    DragHandle as IconCollapse,
+    Edit as IconEdit,
+    FormatAlignJustify as IconExpand,
+    List as IconList,
+    Refresh as IconRefresh,
+    PhonelinkErase as IconReset,
+    Sort as IconByType,
+    SortByAlpha as IconByName,
 } from '@mui/icons-material';
 
 import {
@@ -289,6 +291,7 @@ interface Alexa3SmartNamesState {
     loading: boolean;
     browse: boolean;
     expanded: string[];
+    expandedTypes: string[];
     lastChanged: string;
     objects: Record<
         string,
@@ -300,6 +303,7 @@ interface Alexa3SmartNamesState {
     alive: boolean;
     values: { [id: string]: ioBroker.State | null | undefined };
     showResetId: AlexaSH3DeviceDescription | null;
+    sortBy: 'name' | 'type';
 }
 
 export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, Alexa3SmartNamesState> {
@@ -345,6 +349,14 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
             expanded = [];
         }
 
+        const expandedTypesStr = window.localStorage.getItem('v3.expandedTypes') || '[]';
+        let expandedTypes: string[];
+        try {
+            expandedTypes = JSON.parse(expandedTypesStr);
+        } catch {
+            expandedTypes = [];
+        }
+
         this.state = {
             edit: null,
             deleteId: '',
@@ -359,12 +371,14 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
             loading: true,
             browse: false,
             expanded,
+            expandedTypes,
             lastChanged: '',
             objects: {},
             alive: false,
             values: {},
             showResetId: null,
             showDeviceMenu: null,
+            sortBy: (window.localStorage.getItem('v3.sortBy') as 'type' | 'name') || 'name',
         };
     }
 
@@ -501,6 +515,40 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
         }
     };
 
+    showDevice(id: string, devices: AlexaSH3DeviceDescription[]): void {
+        devices ||= this.state.devices;
+        const deviceIndex = devices.findIndex(dev =>
+            dev.controls.find(control =>
+                Object.values(control.states).find((item: IotExternalDetectorState) => item.id === id),
+            ),
+        );
+        if (deviceIndex !== -1) {
+            if (this.state.sortBy === 'type') {
+                const id = `line${deviceIndex}`;
+                const type = devices[deviceIndex].controls[0].type || 'unknown';
+                if (!this.state.expandedTypes.includes(type)) {
+                    const expandedTypes = [...this.state.expandedTypes];
+                    expandedTypes.push(type);
+                    window.localStorage.setItem('v3.expandedTypes', JSON.stringify(expandedTypes));
+                    this.setState({ expandedTypes }, () => {
+                        setTimeout(() => {
+                            const el = document.getElementById(id);
+                            el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }, 100);
+                    });
+                } else {
+                    setTimeout(() => {
+                        const el = document.getElementById(id);
+                        el && el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 100);
+                }
+            } else {
+                const el = document.getElementById(id);
+                el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    }
+
     browse(isIndicate?: boolean): void {
         if (Date.now() - this.lastBrowse < 500) {
             return;
@@ -536,6 +584,8 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                 } else if (list) {
                     const typedList: AlexaSH3DeviceDescription[] = list as AlexaSH3DeviceDescription[];
                     if (this.waitForUpdateID) {
+                        this.showDevice(this.waitForUpdateID, typedList);
+
                         if (!this.onEdit(this.waitForUpdateID, typedList)) {
                             this.setState({ message: I18n.t('Device %s was not added', this.waitForUpdateID) });
                         }
@@ -586,23 +636,35 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
         }
     };
 
-    componentDidMount(): void {
-        void this.props.socket.getObject(`system.adapter.${this.props.adapterName}.${this.props.instance}`).then(obj =>
-            this.props.socket
-                .getState(`system.adapter.${this.props.adapterName}.${this.props.instance}.alive`)
-                .then(state => {
-                    if (!obj || !obj.common || (!obj.common.enabled && (!state || !state.val))) {
-                        this.setState({
-                            message: I18n.t('Instance must be enabled'),
-                            loading: false,
-                            devices: [],
-                            alive: false,
-                        });
-                    } else {
-                        this.setState({ alive: true }, () => this.browse());
-                    }
-                }),
+    async componentDidMount(): Promise<void> {
+        const obj = await this.props.socket.getObject(
+            `system.adapter.${this.props.adapterName}.${this.props.instance}`,
         );
+        const state = await this.props.socket.getState(
+            `system.adapter.${this.props.adapterName}.${this.props.instance}.alive`,
+        );
+
+        if (!obj || !obj.common || (!obj.common.enabled && !state?.val)) {
+            this.setState({
+                message: I18n.t('Instance must be enabled'),
+                loading: false,
+                devices: [],
+                alive: false,
+            });
+            void this.props.socket.subscribeState(
+                `system.adapter.${this.props.adapterName}.${this.props.instance}.alive`,
+                this.onAliveChanged,
+            );
+        } else {
+            this.setState({ alive: true }, () => {
+                this.browse();
+                // Subscribe on alive after the alive check
+                void this.props.socket.subscribeState(
+                    `system.adapter.${this.props.adapterName}.${this.props.instance}.alive`,
+                    this.onAliveChanged,
+                );
+            });
+        }
 
         void this.props.socket.subscribeState(
             `${this.props.adapterName}.${this.props.instance}.smart.updates3`,
@@ -611,10 +673,6 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
         void this.props.socket.subscribeState(
             `${this.props.adapterName}.${this.props.instance}.smart.updatesResult`,
             this.onResultUpdate,
-        );
-        void this.props.socket.subscribeState(
-            `system.adapter.${this.props.adapterName}.${this.props.instance}.alive`,
-            this.onAliveChanged,
         );
     }
 
@@ -738,10 +796,10 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
         });
     }
 
-    getControlId(lineNum: number, controlNum?: number): string {
-        return controlNum === undefined
-            ? this.state.devices[lineNum].friendlyName
-            : `${this.state.devices[lineNum].friendlyName}_${controlNum}`;
+    getControlId(deviceIndex: number, controlIndex?: number): string {
+        return controlIndex === undefined
+            ? this.state.devices[deviceIndex].friendlyName
+            : `${this.state.devices[deviceIndex].friendlyName}_${controlIndex}`;
     }
 
     onExpand(lineNum: number, controlNum?: number): void {
@@ -1129,7 +1187,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
         return { name: stateId };
     }
 
-    renderChannels(dev: AlexaSH3DeviceDescription, lineNum: number): (React.JSX.Element | null)[] {
+    renderChannels(dev: AlexaSH3DeviceDescription, deviceIndex: number): (React.JSX.Element | null)[] {
         return dev.controls.map((control: AlexaSH3ControlDescription, c: number): React.JSX.Element | null => {
             if (!control.states || !Object.keys(control.states).length) {
                 return null;
@@ -1154,7 +1212,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
             }
 
             const Icon = DEVICES[control.type]?.icon || null;
-            const expanded = this.state.expanded.includes(this.getControlId(lineNum, c));
+            const expanded = this.state.expanded.includes(this.getControlId(deviceIndex, c));
 
             const controlProps = this.getControlProps(control);
 
@@ -1165,7 +1223,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                 >
                     <IconButton
                         style={styles.devSubLineExpand}
-                        onClick={() => this.onExpand(lineNum, c)}
+                        onClick={() => this.onExpand(deviceIndex, c)}
                     >
                         <ChevronRight style={expanded ? styles.devSubLineExpanded : undefined} />
                     </IconButton>
@@ -1203,7 +1261,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                             style={styles.devLineEdit}
                             onClick={() => this.onEdit(id)}
                         >
-                            <IconEdit fontSize="middle" />
+                            <IconEdit style={{ width: 16, height: 16 }} />
                         </IconButton>
                     ) : (
                         <div style={styles.devLineEdit} />
@@ -1213,7 +1271,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                         style={dev.autoDetected ? styles.devLineDelete : styles.devSubLineDelete}
                         onClick={() => this.onAskDelete(id)}
                     >
-                        <IconDelete fontSize="middle" />
+                        <IconDelete style={{ width: 16, height: 16 }} />
                     </IconButton>
                 </div>,
                 expanded ? this.renderStates(control, background) : null,
@@ -1241,9 +1299,9 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                 dev={this.state.showResetId}
                 language={this.language}
                 themeType={this.props.themeType}
-                onClose={(doInformBacken?: boolean) => {
+                onClose={(doInformBackend?: boolean) => {
                     this.setState({ showResetId: null }, () => {
-                        if (doInformBacken) {
+                        if (doInformBackend) {
                             // inform backend
                             this.browse(true);
                         }
@@ -1313,7 +1371,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
         );
     }
 
-    renderDevice(dev: AlexaSH3DeviceDescription, lineNum: number): React.JSX.Element | null {
+    renderDevice(dev: AlexaSH3DeviceDescription, deviceIndex: number, lineNumber: number): React.JSX.Element | null {
         // if (!dev.additionalApplianceDetails.group && dev.additionalApplianceDetails.nameModified) {
         const title = dev.friendlyName;
         // } else {
@@ -1324,7 +1382,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
         // take the very first ID
         const id = Object.values(dev.controls[0].states)[0]!.id;
 
-        let background = lineNum % 2 ? (this.props.themeType === 'dark' ? '#272727' : '#f1f1f1') : 'inherit';
+        let background = lineNumber % 2 ? (this.props.themeType === 'dark' ? '#272727' : '#f1f1f1') : 'inherit';
         const changed = this.state.changed.includes(id);
         if (changed) {
             background = CHANGED_COLOR;
@@ -1334,13 +1392,14 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
 
         return [
             <div
-                key={`line${lineNum}`}
+                key={`line${deviceIndex}`}
+                id={`line${deviceIndex}`}
                 style={{ ...styles.devLine, background }}
             >
-                <div style={styles.devLineNumber}>{lineNum + 1}.</div>
+                <div style={styles.devLineNumber}>{lineNumber + 1}.</div>
                 <IconButton
                     style={styles.devLineExpand}
-                    onClick={() => this.onExpand(lineNum)}
+                    onClick={() => this.onExpand(deviceIndex)}
                 >
                     {dev.controls.length > 1 ? (
                         <Badge
@@ -1384,7 +1443,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                     </IconButton>
                 ) : null}
             </div>,
-            expanded ? this.renderChannels(dev, lineNum) : null,
+            expanded ? this.renderChannels(dev, deviceIndex) : null,
         ] as unknown as React.JSX.Element;
     }
 
@@ -1671,19 +1730,77 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
     renderDevices(): React.JSX.Element {
         const filter = this.state.filter.toLowerCase();
         const result = [];
-        for (let i = 0; i < this.state.devices.length; i++) {
-            if (this.state.filter && !this.state.devices[i].friendlyName.toLowerCase().includes(filter)) {
-                continue;
+        if (this.state.sortBy === 'name') {
+            for (let i = 0; i < this.state.devices.length; i++) {
+                if (this.state.filter && !this.state.devices[i].friendlyName.toLowerCase().includes(filter)) {
+                    continue;
+                }
+                result.push(this.renderDevice(this.state.devices[i], i, i));
             }
-            result.push(this.renderDevice(this.state.devices[i], i));
+            return (
+                <div
+                    key="listDevices"
+                    style={styles.columnDiv}
+                >
+                    {result}
+                </div>
+            );
         }
+        // sort by type
+        const devicesByType: Record<string, (React.JSX.Element | null)[]> = {};
+        this.state.devices.forEach((dev, i): void => {
+            if (this.state.filter && !this.state.devices[i].friendlyName.toLowerCase().includes(filter)) {
+                return;
+            }
+            const types: string[] = [];
+            dev.controls.forEach(control => {
+                if (control) {
+                    const type = control?.type || 'unknown';
+                    if (types.includes(type)) {
+                        return;
+                    }
+                    types.push(type);
+                    devicesByType[type] ||= [];
+                    devicesByType[type].push(this.renderDevice(dev, i, devicesByType[type].length));
+                }
+            });
+        });
 
         return (
             <div
-                key="listDevices"
+                key="listDevicesByType"
                 style={styles.columnDiv}
             >
-                {result}
+                {Object.keys(devicesByType)
+                    .sort()
+                    .map(type => {
+                        const Icon = DEVICES[type]?.icon || null;
+
+                        return (
+                            <Accordion
+                                key={`type_${type}`}
+                                expanded={this.state.expandedTypes.includes(type)}
+                                onChange={() => this.onExpandType(type)}
+                            >
+                                <AccordionSummary style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>
+                                    {Icon ? (
+                                        <Icon
+                                            style={{
+                                                width: 24,
+                                                height: 24,
+                                                color: DEVICES[type]?.color,
+                                                marginRight: 12,
+                                            }}
+                                        />
+                                    ) : null}
+                                    {I18n.t(type)}
+                                </AccordionSummary>
+                                <AccordionDetails style={{ paddingLeft: 20 }}>
+                                    {devicesByType[type].map(dev => dev)}
+                                </AccordionDetails>
+                            </Accordion>
+                        );
+                    })}
             </div>
         );
     }
@@ -1749,6 +1866,18 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
         );
     }
 
+    onExpandType(type: string) {
+        const expandedTypes = [...this.state.expandedTypes];
+        const index = expandedTypes.indexOf(type);
+        if (index === -1) {
+            expandedTypes.push(type);
+        } else {
+            expandedTypes.splice(index, 1);
+        }
+        this.setState({ expandedTypes });
+        window.localStorage.setItem('v3.expandedTypes', JSON.stringify(expandedTypes));
+    }
+
     render(): React.JSX.Element {
         if (this.state.loading) {
             return <CircularProgress key="alexaProgress" />;
@@ -1785,24 +1914,41 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                     title={I18n.t('Expand all devices')}
                     onClick={() => {
                         const expanded: string[] = [];
+                        const expandedTypes: string[] = [];
                         this.state.devices.forEach((dev, lineNum) => {
                             expanded.push(dev.friendlyName);
                             dev.controls.forEach((control, c) => {
                                 expanded.push(this.getControlId(lineNum, c));
+                                if (!expandedTypes.includes(control.type || 'unknown')) {
+                                    expandedTypes.push(control.type || 'unknown');
+                                }
                             });
                         });
                         window.localStorage.setItem('v3.expanded', JSON.stringify(expanded));
-                        this.setState({ expanded });
+                        if (this.state.sortBy === 'type') {
+                            window.localStorage.setItem('v3.expandedTypes', JSON.stringify(expandedTypes));
+                            this.setState({ expanded, expandedTypes });
+                        } else {
+                            this.setState({ expanded });
+                        }
                     }}
                 >
                     <UnfoldMore />
                 </IconButton>
                 <IconButton
-                    disabled={!this.state.expanded.length}
+                    disabled={
+                        !this.state.expanded.length &&
+                        (this.state.sortBy === 'name' || !this.state.expandedTypes.length)
+                    }
                     onClick={() => {
-                        this.setState({ expanded: [] });
                         this.unsubscribeAll();
                         window.localStorage.removeItem('v3.expanded');
+                        if (this.state.sortBy === 'type') {
+                            window.localStorage.removeItem('v3.expandedTypes');
+                            this.setState({ expanded: [], expandedTypes: [] });
+                        } else {
+                            this.setState({ expanded: [] });
+                        }
                     }}
                     title={I18n.t('Collapse all devices')}
                 >
@@ -1817,6 +1963,18 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                     disabled={this.state.browse || !this.state.alive}
                 >
                     <IconList />
+                </Fab>
+                <Fab
+                    style={{ ...styles.button, marginLeft: '1rem' }}
+                    title={I18n.t('Sort by name/type')}
+                    size="small"
+                    onClick={() => {
+                        window.localStorage.setItem('v3.sortBy', this.state.sortBy === 'name' ? 'type' : 'name');
+                        this.setState({ sortBy: this.state.sortBy === 'name' ? 'type' : 'name' });
+                    }}
+                    disabled={this.state.browse || !this.state.alive}
+                >
+                    {this.state.sortBy === 'type' ? <IconByType /> : <IconByName />}
                 </Fab>
                 <TextField
                     variant="standard"
