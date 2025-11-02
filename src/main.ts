@@ -39,6 +39,7 @@ export class IotAdapter extends Adapter {
     private connectedOwn = false;
     private secret: string = '';
     private connectStarted = 0;
+    private caCert: Buffer | null = null;
 
     public constructor(options: Partial<AdapterOptions> = {}) {
         super({
@@ -259,13 +260,14 @@ export class IotAdapter extends Adapter {
                                     obj.message = JSON.parse(obj.message);
                                 } catch (e) {
                                     this.log.error(`Cannot parse object: ${e}`);
-                                    obj.callback &&
+                                    if (obj.callback) {
                                         this.sendTo(
                                             obj.from,
                                             obj.command,
                                             { error: 'Invalid message format: cannot parse object' },
                                             obj.callback,
                                         );
+                                    }
                                     return;
                                 }
                             }
@@ -299,15 +301,15 @@ export class IotAdapter extends Adapter {
                                         try {
                                             this.urlKey = await this.createUrlKey(this.config.login, this.config.pass);
                                         } catch (err) {
-                                            return (
-                                                obj.callback &&
+                                            if (obj.callback) {
                                                 this.sendTo(
                                                     obj.from,
                                                     obj.command,
                                                     { error: `Cannot get urlKey: ${err.toString()}` },
                                                     obj.callback,
-                                                )
-                                            );
+                                                );
+                                            }
+                                            return;
                                         }
                                     }
                                 }
@@ -747,10 +749,10 @@ export class IotAdapter extends Adapter {
             }
         }
 
-        if (response.data && response.data.error) {
+        if (response.data?.error) {
             this.log.error(`Cannot fetch URL key: ${JSON.stringify(response.data.error)}`);
             throw new Error(response.data);
-        } else if (response.data && response.data.key) {
+        } else if (response.data?.key) {
             await this.setStateAsync('certs.urlKey', response.data.key, true);
             return { key: response.data.key };
         } else {
@@ -1161,13 +1163,14 @@ export class IotAdapter extends Adapter {
         if (!certs) {
             return this.log.error(`Cannot read connection certificates`);
         }
+        this.caCert ||= readFileSync(`${__dirname}/../keys/root-CA.crt`);
 
         try {
             this.connectStarted = Date.now();
             this.device = new DeviceModule({
                 privateKey: Buffer.from(certs.private),
                 clientCert: Buffer.from(certs.certificate),
-                caCert: readFileSync(`${__dirname}/../keys/root-CA.crt`),
+                caCert: this.caCert,
                 clientId,
                 username: 'ioBroker',
                 host: this.config.cloudUrl,
@@ -1271,12 +1274,16 @@ export class IotAdapter extends Adapter {
                 }
             });
         } catch (error) {
+            const errorText = error instanceof Error ? error.message : JSON.stringify(error);
+            if (errorText.includes('PEM routines')) {
+                this.log.error(`Cannot start IoT communication because of invalid certificates: ${error.message}`);
+                this.log.error(`Certs: ${JSON.stringify(certs)}`);
+                return;
+            }
             if (error && typeof error === 'object' && error.message) {
-                this.log.error(`Cannot read connection certificates: ${error.message}`);
+                this.log.error(`Cannot start IoT communication: ${error.message}`);
             } else {
-                this.log.error(
-                    `Cannot read connection certificates: ${JSON.stringify(error)} / ${error && error.toString()}`,
-                );
+                this.log.error(`Cannot start IoT communication: ${JSON.stringify(error)} / ${error?.toString()}`);
             }
 
             if ((error === 'timeout' || error.message?.includes('timeout')) && retry < 10) {
