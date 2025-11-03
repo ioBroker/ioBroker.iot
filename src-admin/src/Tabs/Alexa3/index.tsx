@@ -1005,12 +1005,14 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
         const state = takeIdForSmartName(control);
         const type = (state?.smartName as SmartNameObject)?.smartType || null;
 
-        return <SelectTypeSelector
-            type={type}
-            detected={dev.typeWasDetected}
-            possibleTypes={dev.possibleTypes}
-            onChange={value => this.onParamsChange(state!.id, undefined, value)}
-        />;
+        return (
+            <SelectTypeSelector
+                type={type}
+                detected={dev.typeWasDetected}
+                possibleTypes={dev.possibleTypes}
+                onChange={value => this.onParamsChange(state.id, undefined, value)}
+            />
+        );
     }
 
     renderStates(control: AlexaSH3ControlDescription, background: string): React.JSX.Element {
@@ -1555,18 +1557,18 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                         helperText={I18n.t('You can enter several names divided by comma')}
                         margin="normal"
                     />
-                    {this.state.edit.type !== null
-                        ? renderSelectTypeSelector(
-                              this.state.edit.type,
-                              this.state.edit.typeWasDetected,
-                              this.state.edit.possibleTypes,
-                              value => {
-                                  const edit = JSON.parse(JSON.stringify(this.state.edit));
-                                  edit.type = value;
-                                  this.setState({ edit });
-                              },
-                          )
-                        : null}
+                    {this.state.edit.type !== null ? (
+                        <SelectTypeSelector
+                            type={this.state.edit.type}
+                            detected={this.state.edit.typeWasDetected}
+                            possibleTypes={this.state.edit.possibleTypes}
+                            onChange={(value: Types): void => {
+                                const edit = JSON.parse(JSON.stringify(this.state.edit));
+                                edit.type = value;
+                                this.setState({ edit });
+                            }}
+                        />
+                    ) : null}
                 </DialogContent>
                 <DialogActions>
                     <Button
@@ -1732,7 +1734,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
 
     renderDevices(): React.JSX.Element {
         const filter = this.state.filter.toLowerCase();
-        const result = [];
+        const result: (React.JSX.Element | null)[] = [];
         if (this.state.sortBy === 'name') {
             for (let i = 0; i < this.state.devices.length; i++) {
                 if (this.state.filter && !this.state.devices[i].friendlyName.toLowerCase().includes(filter)) {
@@ -1869,7 +1871,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
         );
     }
 
-    onExpandType(type: string) {
+    onExpandType(type: string): void {
         const expandedTypes = [...this.state.expandedTypes];
         const index = expandedTypes.indexOf(type);
         if (index === -1) {

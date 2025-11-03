@@ -1,5 +1,5 @@
 import React from 'react';
-import { Divider, FormControl, FormHelperText, ListItemIcon, ListItemText, MenuItem, Select } from '@mui/material';
+import { Divider, FormControl, FormHelperText, ListItemText, MenuItem, Select } from '@mui/material';
 
 import type { IconType } from 'react-icons';
 
