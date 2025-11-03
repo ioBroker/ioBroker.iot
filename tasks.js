@@ -107,7 +107,9 @@ if (process.argv.find(arg => arg === '--rules-0-clean')) {
                 renameSync(`${__dirname}/admin/index.html`, `${__dirname}/admin/index_m.html`);
             }
         })
-        .then(() => cleanRules())
+        .then(() => {
+            cleanRules()
+        })
         .then(() => npmInstall('./src-rules/'))
         .then(() => buildReact(`${__dirname}/src-rules/`, { rootDir: __dirname, vite: true }))
         .then(() => copyRules());

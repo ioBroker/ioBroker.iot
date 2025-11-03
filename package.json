@@ -67,7 +67,7 @@
     "prepublishOnly": "npm run build",
     "lint": "eslint -c eslint.config.mjs",
     "build:backend": "tsc -p tsconfig.build.json && node tasks --backend",
-    "build": "node tasks && build:backend",
+    "build": "node tasks && npm run build:backend",
     "release": "release-script",
     "release-patch": "release-script patch --yes",
     "release-minor": "release-script minor --yes",
