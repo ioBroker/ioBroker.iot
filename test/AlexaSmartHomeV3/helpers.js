@@ -54,15 +54,15 @@ class AdapterMock {
     }
 
     async getObjectViewAsync(system, type) {
-        const result = { rows: []};
+        const result = { rows: [] };
         Object.keys(this.objects).forEach(key => {
             if (this.objects[key].type === type) {
                 result.rows.push({
                     id: key,
                     value: this.objects[key],
-                })
+                });
             }
-        })
+        });
         return result;
     }
 

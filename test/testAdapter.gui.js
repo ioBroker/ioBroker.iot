@@ -5,25 +5,31 @@ let gPage;
 const rootDir = `${__dirname}/../`;
 
 describe('test-admin-gui', () => {
-    before(async function (){
+    before(async function () {
         this.timeout(240_000);
 
         // install js-controller, web and vis-2-beta
         await engineHelper.startIoBrokerAdapters({ adapters: ['admin', 'iot'] });
-        const { page } = await guiHelper.startBrowser(`${adapterName}/index_m.html`, rootDir, process.env.CI === 'true');
+        const { page } = await guiHelper.startBrowser(
+            `${adapterName}/index_m.html`,
+            rootDir,
+            process.env.CI === 'true',
+        );
         gPage = page;
     });
 
-    it('Check admin server', async function (){
+    it('Check admin server', async function () {
         this.timeout(15_000);
-        return new Promise(resolve => setTimeout(async () => {
-            await gPage.waitForSelector('.App', { timeout: 15_000 });
-            await guiHelper.screenshot(rootDir, null, '01_started');
-            resolve();
-        }, 1000));
+        return new Promise(resolve =>
+            setTimeout(async () => {
+                await gPage.waitForSelector('.App', { timeout: 15_000 });
+                await guiHelper.screenshot(rootDir, null, '01_started');
+                resolve();
+            }, 1000),
+        );
     });
 
-    it('Select categories', async function (){
+    it('Select categories', async function () {
         this.timeout(5_000);
         await gPage.waitForSelector('.enums-tab', { timeout: 15_000 });
         // ignore message
@@ -34,10 +40,12 @@ describe('test-admin-gui', () => {
         }
 
         await gPage.click('.enums-tab');
-        return new Promise(resolve => setTimeout(async () => {
-            await guiHelper.screenshot(rootDir, null, '02_enums');
-            resolve();
-        }, 3000));
+        return new Promise(resolve =>
+            setTimeout(async () => {
+                await guiHelper.screenshot(rootDir, null, '02_enums');
+                resolve();
+            }, 3000),
+        );
     });
 
     after(async function () {

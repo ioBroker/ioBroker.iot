@@ -352,6 +352,9 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Showed last controller ID in `smart.lastObjectID`
+
 ### 5.0.7 (2025-11-03)
 - (@GermanBluefox) Added possibility to group devices by type in GUI
 - (@GermanBluefox) Allowed to select any type in Alexe V3

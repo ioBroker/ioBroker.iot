@@ -31,6 +31,7 @@ export default class AdapterProvider {
      */
     static async setState(id: string, value: ioBroker.StateValue): Promise<void> {
         await AdapterProvider.get().setForeignStateAsync(id, value, false);
+        await AdapterProvider.get().setStateAsync('smart.lastObjectID', id, true);
         AdapterProvider.get().log.silly(`[AlexaV3::AdapterProvider]: set [${id}] to [${value}]`);
     }
 
