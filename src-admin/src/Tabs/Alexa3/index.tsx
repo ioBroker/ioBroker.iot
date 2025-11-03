@@ -72,7 +72,7 @@ import {
     takeIdForSmartName,
     CAPABILITIES,
     DEVICES,
-    renderSelectTypeSelector,
+    SelectTypeSelector,
     getObjectIcon,
     getName,
     renderChannelActions,
@@ -1005,9 +1005,12 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
         const state = takeIdForSmartName(control);
         const type = (state?.smartName as SmartNameObject)?.smartType || null;
 
-        return renderSelectTypeSelector(type, dev.typeWasDetected, dev.possibleTypes, value =>
-            this.onParamsChange(state.id, undefined, value),
-        );
+        return <SelectTypeSelector
+            type={type}
+            detected={dev.typeWasDetected}
+            possibleTypes={dev.possibleTypes}
+            onChange={value => this.onParamsChange(state!.id, undefined, value)}
+        />;
     }
 
     renderStates(control: AlexaSH3ControlDescription, background: string): React.JSX.Element {

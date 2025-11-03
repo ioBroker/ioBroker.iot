@@ -1,13 +1,6 @@
 import React from 'react';
-import { Types } from '@iobroker/type-detector';
+import { Divider, FormControl, FormHelperText, ListItemIcon, ListItemText, MenuItem, Select } from '@mui/material';
 
-import type {
-    AlexaSH3ControlDescription,
-    AlexaSH3DeviceDescription,
-    IotExternalDetectorState,
-    SmartName,
-    SmartNameObject,
-} from './alexa.types';
 import type { IconType } from 'react-icons';
 
 import {
@@ -36,8 +29,17 @@ import { IoIosColorFilter, IoIosColorPalette } from 'react-icons/io';
 import { RxSlider } from 'react-icons/rx';
 import { TbVacuumCleaner } from 'react-icons/tb';
 import { WiHumidity } from 'react-icons/wi';
-import { type AdminConnection, I18n, Utils } from '@iobroker/adapter-react-v5';
-import { FormControl, FormHelperText, MenuItem, Select } from '@mui/material';
+
+import { type AdminConnection, DialogConfirm, I18n, Utils } from '@iobroker/adapter-react-v5';
+import { Types } from '@iobroker/type-detector';
+
+import type {
+    AlexaSH3ControlDescription,
+    AlexaSH3DeviceDescription,
+    IotExternalDetectorState,
+    SmartName,
+    SmartNameObject,
+} from './alexa.types';
 
 const SMART_TYPES: Types[] = [
     Types.socket,
@@ -399,12 +401,13 @@ export function renderDevTypes(dev: AlexaSH3DeviceDescription): React.JSX.Elemen
     return devices;
 }
 
-export function renderSelectTypeSelector(
-    type: null | Types,
-    detected: boolean,
-    possibleTypes: Types[],
-    onChange: (value: string) => void,
-): React.JSX.Element | null {
+export function SelectTypeSelector(props: {
+    type: null | Types;
+    detected: boolean;
+    possibleTypes: Types[];
+    onChange: (value: string) => void;
+}): React.JSX.Element | null {
+    const [showWarning, setShowWarning] = React.useState<Types | ''>('');
     const items = [
         <MenuItem
             key="_"
@@ -414,8 +417,31 @@ export function renderSelectTypeSelector(
             <em>{I18n.t('Auto-detection')}</em>
         </MenuItem>,
     ];
+    let possibleTypes = props.possibleTypes;
+    let addedDivider = false;
     if (!possibleTypes.length) {
         possibleTypes = SMART_TYPES;
+        if (!addedDivider) {
+            items.push(<Divider key="divider11" />);
+            items.push(
+                <MenuItem
+                    disabled
+                    value="__info__1"
+                    key="__info__1"
+                >
+                    <ListItemText
+                        style={{
+                            fontSize: 10,
+                            fontStyle: 'italic',
+                            color: 'orange',
+                        }}
+                        primary={I18n.t('Not suggested types')}
+                    />
+                </MenuItem>,
+            );
+            items.push(<Divider key="divider21" />);
+            addedDivider = true;
+        }
     }
     // get the mapping of device types
     const mapping: { [key: string]: string } = {};
@@ -440,12 +466,66 @@ export function renderSelectTypeSelector(
                     />
                 ) : null}
                 {I18n.t(possibleTypes[i])}
-                {detected && type === possibleTypes[i] ? (
+                {props.detected && props.type === possibleTypes[i] ? (
                     <span style={{ marginLeft: 4, color: 'orange' }}>(Auto)</span>
                 ) : null}
             </MenuItem>,
         );
     }
+
+    // Added all other types which are not in possibleTypes
+    SMART_TYPES.forEach(smartType => {
+        if (!possibleTypes.includes(smartType)) {
+            if (!addedDivider) {
+                items.push(<Divider key="divider1" />);
+                items.push(
+                    <MenuItem
+                        disabled
+                        value="__info__"
+                        key="__info__"
+                    >
+                        <ListItemText
+                            style={{
+                                fontSize: 10,
+                                fontStyle: 'italic',
+                                color: 'orange',
+                            }}
+                            primary={I18n.t('Not suggested types')}
+                        />
+                    </MenuItem>,
+                );
+                items.push(<Divider key="divider2" />);
+                addedDivider = true;
+            }
+
+            const deviceDescription = DEVICES[mapping[smartType.toLowerCase()]];
+            const Icon = deviceDescription?.icon || null;
+            items.push(
+                <MenuItem
+                    key={smartType}
+                    value={smartType}
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                    }}
+                >
+                    {Icon ? (
+                        <Icon
+                            style={{
+                                width: 20,
+                                height: 20,
+                                marginRight: 4,
+                                color: deviceDescription?.color,
+                            }}
+                        />
+                    ) : null}
+                    {I18n.t(smartType)}
+                </MenuItem>,
+            );
+        }
+    });
+
+    let type = props.type;
     // convert from AlexaV2 to AlexaV3
     if (type && !SMART_TYPES.includes(type)) {
         if (SMART_TYPES.includes((type as unknown as Types).toLowerCase() as Types)) {
@@ -460,10 +540,53 @@ export function renderSelectTypeSelector(
             variant="standard"
             style={styles.selectType}
         >
+            {showWarning ? (
+                <DialogConfirm
+                    title={I18n.t('Confirm type change')}
+                    text={I18n.t(
+                        'Type detector could not detect the selected type automatically. Are you sure you want to set the type to "%s"?',
+                        I18n.t(showWarning),
+                    )}
+                    onClose={(ok?: boolean): void => {
+                        if (ok) {
+                            props.onChange(showWarning);
+                        }
+                        setShowWarning('');
+                    }}
+                />
+            ) : null}
             <Select
                 variant="standard"
                 value={type || '_'}
-                onChange={e => onChange(e.target.value === '_' ? '' : e.target.value)}
+                renderValue={value => {
+                    if (value === '_') {
+                        return <em>{I18n.t('Auto-detection')}</em>;
+                    }
+                    const deviceDescription = DEVICES[mapping[value.toLowerCase()]];
+                    const Icon = deviceDescription?.icon || null;
+                    return (
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                            {Icon ? (
+                                <Icon
+                                    style={{
+                                        width: 20,
+                                        height: 20,
+                                        marginRight: 4,
+                                        color: deviceDescription?.color,
+                                    }}
+                                />
+                            ) : null}
+                            {I18n.t(value as string)}
+                        </div>
+                    );
+                }}
+                onChange={e => {
+                    if (e.target.value && e.target.value !== '_' && !possibleTypes.includes(e.target.value as Types)) {
+                        setShowWarning(e.target.value as Types);
+                    } else {
+                        props.onChange(e.target.value === '_' ? '' : e.target.value);
+                    }
+                }}
             >
                 {items}
             </Select>

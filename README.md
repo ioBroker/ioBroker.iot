@@ -354,6 +354,7 @@ setState('iot.0.app.message', JSON.stringify({
 ## Changelog
 ### **WORK IN PROGRESS**
 - (@GermanBluefox) Added possibility to group devices by type in GUI
+- (@GermanBluefox) Allowed to select any type in Alexe V3
 
 ### 5.0.6 (2025-11-01)
 - (@GermanBluefox) Added logs to detect the issues with detection
