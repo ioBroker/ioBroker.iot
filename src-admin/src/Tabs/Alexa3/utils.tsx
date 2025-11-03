@@ -37,7 +37,6 @@ import type {
     AlexaSH3ControlDescription,
     AlexaSH3DeviceDescription,
     IotExternalDetectorState,
-    SmartName,
     SmartNameObject,
 } from './alexa.types';
 
@@ -405,7 +404,7 @@ export function SelectTypeSelector(props: {
     type: null | Types;
     detected: boolean;
     possibleTypes: Types[];
-    onChange: (value: string) => void;
+    onChange: (value: Types | null) => void;
 }): React.JSX.Element | null {
     const [showWarning, setShowWarning] = React.useState<Types | ''>('');
     const items = [
@@ -584,7 +583,7 @@ export function SelectTypeSelector(props: {
                     if (e.target.value && e.target.value !== '_' && !possibleTypes.includes(e.target.value as Types)) {
                         setShowWarning(e.target.value as Types);
                     } else {
-                        props.onChange(e.target.value === '_' ? '' : e.target.value);
+                        props.onChange(e.target.value === '_' ? null : (e.target.value as Types));
                     }
                 }}
             >
@@ -692,159 +691,6 @@ export interface UpdateSmartNameOptions {
     instanceId: string;
     noCommon?: boolean;
     noAutoDetect?: boolean;
-}
-
-export function updateSmartNameEx(
-    obj: ioBroker.StateObject | ioBroker.EnumObject,
-    options: UpdateSmartNameOptions,
-): void {
-    const language = I18n.getLanguage();
-
-    // Typing must be fixed in js-controller
-    const sureStateObject = obj as ioBroker.StateObject;
-
-    // convert the old format
-    if (typeof sureStateObject.common.smartName === 'string') {
-        const nnn = sureStateObject.common.smartName;
-        sureStateObject.common.smartName = {};
-        sureStateObject.common.smartName[language] = nnn;
-    }
-
-    // convert the old settings
-    if (sureStateObject.native?.byON) {
-        delete sureStateObject.native.byON;
-        let _smartName: SmartName = sureStateObject.common.smartName as SmartName;
-
-        if (_smartName && typeof _smartName !== 'object') {
-            _smartName = {
-                en: _smartName,
-                [language]: _smartName,
-            };
-        }
-        sureStateObject.common.smartName = _smartName;
-    }
-    if (options.smartType !== undefined) {
-        if (options.noCommon) {
-            sureStateObject.common.custom ||= {};
-            sureStateObject.common.custom[options.instanceId] ||= {};
-            sureStateObject.common.custom[options.instanceId].smartName ||= {};
-            if (!options.smartType) {
-                delete sureStateObject.common.custom[options.instanceId].smartName.smartType;
-            } else {
-                sureStateObject.common.custom[options.instanceId].smartName.smartType = options.smartType;
-            }
-        } else {
-            sureStateObject.common.smartName ||= {};
-            if (!options.smartType) {
-                delete (sureStateObject.common.smartName as SmartNameObject).smartType;
-            } else {
-                (sureStateObject.common.smartName as SmartNameObject).smartType = options.smartType;
-            }
-        }
-    }
-
-    if (options.byON !== undefined) {
-        if (options.noCommon) {
-            sureStateObject.common.custom ||= {};
-            sureStateObject.common.custom[options.instanceId] ||= {};
-            sureStateObject.common.custom[options.instanceId].smartName ||= {};
-            sureStateObject.common.custom[options.instanceId].smartName.byON = options.byON;
-        } else {
-            sureStateObject.common.smartName ||= {};
-            (sureStateObject.common.smartName as SmartNameObject).byON = options.byON;
-        }
-    }
-
-    if (options.noAutoDetect !== undefined) {
-        if (options.noCommon) {
-            if (options.noAutoDetect) {
-                sureStateObject.common.custom ||= {};
-                sureStateObject.common.custom[options.instanceId] ||= {};
-                sureStateObject.common.custom[options.instanceId].smartName ||= {};
-                sureStateObject.common.custom[options.instanceId].smartName.noAutoDetect = options.noAutoDetect;
-            } else if (sureStateObject.common.custom?.[options.instanceId]?.smartName) {
-                delete sureStateObject.common.custom[options.instanceId].smartName.noAutoDetect;
-            }
-        } else {
-            if (!options.noAutoDetect && sureStateObject.common.smartName) {
-                delete (sureStateObject.common.smartName as SmartNameObject).noAutoDetect;
-            } else {
-                sureStateObject.common.smartName ||= {};
-                (sureStateObject.common.smartName as SmartNameObject).noAutoDetect = options.noAutoDetect;
-            }
-        }
-    }
-
-    if (options.smartName !== undefined) {
-        let smartName;
-        if (options.noCommon) {
-            sureStateObject.common.custom ||= {};
-            sureStateObject.common.custom[options.instanceId] ||= {};
-            sureStateObject.common.custom[options.instanceId].smartName ||= {};
-            smartName = sureStateObject.common.custom[options.instanceId].smartName;
-        } else {
-            sureStateObject.common.smartName ||= {};
-            smartName = sureStateObject.common.smartName;
-        }
-        smartName[language] = options.smartName;
-
-        // If smart name deleted
-        if (
-            smartName &&
-            (!smartName[language] ||
-                (smartName[language] === sureStateObject.common.name && !sureStateObject.common.role))
-        ) {
-            delete smartName[language];
-            let empty = true;
-            // Check if the structure has any definitions
-            for (const key in smartName) {
-                if (Object.prototype.hasOwnProperty.call(smartName, key)) {
-                    empty = false;
-                    break;
-                }
-            }
-            // If empty => delete smartName completely
-            if (empty) {
-                if (options.noCommon && sureStateObject.common.custom?.[options.instanceId]) {
-                    if (sureStateObject.common.custom[options.instanceId].smartName.byON === undefined) {
-                        delete sureStateObject.common.custom[options.instanceId];
-                    } else {
-                        delete sureStateObject.common.custom[options.instanceId].en;
-                        delete sureStateObject.common.custom[options.instanceId].de;
-                        delete sureStateObject.common.custom[options.instanceId].ru;
-                        delete sureStateObject.common.custom[options.instanceId].nl;
-                        delete sureStateObject.common.custom[options.instanceId].pl;
-                        delete sureStateObject.common.custom[options.instanceId].it;
-                        delete sureStateObject.common.custom[options.instanceId].fr;
-                        delete sureStateObject.common.custom[options.instanceId].pt;
-                        delete sureStateObject.common.custom[options.instanceId].es;
-                        delete sureStateObject.common.custom[options.instanceId].uk;
-                        delete sureStateObject.common.custom[options.instanceId]['zh-cn'];
-                    }
-                } else if (
-                    sureStateObject.common.smartName &&
-                    (sureStateObject.common.smartName as SmartNameObject).byON !== undefined
-                ) {
-                    const _smartName: { [lang in ioBroker.Languages]?: string } = sureStateObject.common.smartName as {
-                        [lang in ioBroker.Languages]?: string;
-                    };
-                    delete _smartName.en;
-                    delete _smartName.de;
-                    delete _smartName.ru;
-                    delete _smartName.nl;
-                    delete _smartName.pl;
-                    delete _smartName.it;
-                    delete _smartName.fr;
-                    delete _smartName.pt;
-                    delete _smartName.es;
-                    delete _smartName.uk;
-                    delete _smartName['zh-cn'];
-                } else {
-                    sureStateObject.common.smartName = null;
-                }
-            }
-        }
-    }
 }
 
 export function getName(name: ioBroker.StringOrTranslated | undefined, lang: ioBroker.Languages): string {

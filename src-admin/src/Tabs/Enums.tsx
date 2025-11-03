@@ -338,14 +338,11 @@ export default class Enums extends Component<EnumsProps, EnumsState> {
                 .getObject(id)
                 .then(obj => {
                     if (obj) {
-                        Utils.updateSmartName(
-                            obj as ioBroker.StateObject | ioBroker.EnumObject,
-                            this.state.editedSmartName,
-                            undefined,
-                            undefined,
-                            `${this.props.adapterName}.${this.props.instance}`,
-                            this.props.native.noCommon,
-                        );
+                        Utils.updateSmartNameEx(obj as ioBroker.StateObject | ioBroker.EnumObject, {
+                            smartName: this.state.editedSmartName,
+                            instanceId: `${this.props.adapterName}.${this.props.instance}`,
+                            noCommon: this.props.native.noCommon,
+                        });
                         newObj = obj as ioBroker.EnumObject;
                         return this.props.socket.setObject(id, obj);
                     }

@@ -79,6 +79,7 @@ const SMART_TYPES: { [name: string]: Types } = {
 function getSmartNameFromObj(
     obj: ioBroker.Object | ioBroker.StateCommon,
     instanceId: string,
+    lang: ioBroker.Languages,
     noCommon?: boolean,
 ): undefined | false | SmartNameObject {
     if (!obj) {
@@ -102,7 +103,7 @@ function getSmartNameFromObj(
             return false;
         }
         return {
-            en: result,
+            [lang]: result,
         };
     }
     // @ts-expect-error backwards compatibility
@@ -116,6 +117,7 @@ function getSmartNameFromObj(
 
 async function functionalitiesAndRooms(
     adapter: ioBroker.Adapter,
+    lang: ioBroker.Languages,
 ): Promise<[ioBroker.EnumObject[], ioBroker.EnumObject[]]> {
     const enumerations = await allEnums(adapter);
     // skip empty enums (with no members, i.e. states, assigned)
@@ -124,6 +126,7 @@ async function functionalitiesAndRooms(
             const smartName = getSmartNameFromObj(
                 item,
                 adapter.namespace,
+                lang,
                 (adapter.config as IotAdapterConfig).noCommon,
             );
             return smartName !== false;
@@ -350,7 +353,7 @@ export async function controls(
 
     adapter.log.debug(`[ALEXA3] Starting control detection with ${Object.keys(devicesObject).length} objects...`);
     // fetch all defined rooms and functions (enumerations)
-    const [functionalities, rooms] = await functionalitiesAndRooms(adapter);
+    const [functionalities, rooms] = await functionalitiesAndRooms(adapter, lang);
 
     adapter.log.debug(`[ALEXA3] Found ${functionalities.length} functionalities and ${rooms.length} rooms...`);
 
@@ -364,6 +367,7 @@ export async function controls(
             const smartName = getSmartNameFromObj(
                 devicesObject[id],
                 adapter.namespace,
+                lang,
                 (adapter.config as IotAdapterConfig).noCommon,
             );
 
@@ -402,6 +406,7 @@ export async function controls(
             const smartName = getSmartNameFromObj(
                 devicesObject[id],
                 adapter.namespace,
+                lang,
                 (adapter.config as IotAdapterConfig).noCommon,
             );
             const objType = devicesObject[id].type;
@@ -436,12 +441,18 @@ export async function controls(
     adapter.log.debug(`[ALEXA3] collected ${keys.length} states from categories...`);
 
     const idsWithSmartName: string[] = [];
+    const idsToDelete: string[] = [];
     // if a state has got a smart name directly assigned and neither itself nor its channel is in the list, add its id to the inspection list
     // and process it first
     keys.forEach(id => {
         const smartName =
             devicesObject[id] &&
-            getSmartNameFromObj(devicesObject[id], adapter.namespace, (adapter.config as IotAdapterConfig).noCommon);
+            getSmartNameFromObj(
+                devicesObject[id],
+                adapter.namespace,
+                lang,
+                (adapter.config as IotAdapterConfig).noCommon,
+            );
 
         const objType = devicesObject[id].type;
 
@@ -451,8 +462,23 @@ export async function controls(
             (objType === 'state' || objType === 'channel' || objType === 'device')
         ) {
             idsWithSmartName.push(id);
+        } else if (smartName === false) {
+            // Remove this state completely from the list
+            idsToDelete.push(id);
         }
     });
+
+    // remove all ids that are disabled from the list by smartName: false
+    if (idsToDelete.length) {
+        for (let d = idsToDelete.length - 1; d >= 0; d--) {
+            const id = idsToDelete[d];
+            const pos = list.indexOf(id);
+            if (pos !== -1) {
+                list.splice(pos, 1);
+                delete devicesObject[id];
+            }
+        }
+    }
 
     adapter.log.debug(`[ALEXA3] collected ${keys.length} smart names...`);
 
@@ -464,6 +490,7 @@ export async function controls(
     const usedIds: string[] = [];
     const ignoreIndicators = ['UNREACH_STICKY']; // Ignore indicators by name
     const excludedTypes = [Types.info];
+
     // initialize iobroker type detector
     const options: DetectOptions = {
         objects: devicesObject,
@@ -484,6 +511,7 @@ export async function controls(
         const smartName = getSmartNameFromObj(
             devicesObject[id],
             adapter.namespace,
+            lang,
             (adapter.config as IotAdapterConfig).noCommon,
         ) as SmartNameObject;
 
@@ -675,6 +703,7 @@ export async function controls(
                     s.smartName = getSmartNameFromObj(
                         devicesObject[s.id],
                         adapter.namespace,
+                        lang,
                         (adapter.config as IotAdapterConfig).noCommon,
                     );
                     s.common = {
@@ -763,6 +792,7 @@ export async function controls(
                     s.smartName = getSmartNameFromObj(
                         devicesObject[s.id],
                         adapter.namespace,
+                        lang,
                         (adapter.config as IotAdapterConfig).noCommon,
                     );
                     if (s.smartName === false) {
@@ -798,6 +828,7 @@ export async function controls(
                 const smartName = getSmartNameFromObj(
                     devicesObject[id],
                     adapter.namespace,
+                    lang,
                     (adapter.config as IotAdapterConfig).noCommon,
                 );
                 iotControl.object = {

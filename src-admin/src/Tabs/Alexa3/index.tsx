@@ -68,7 +68,6 @@ import type {
 } from './alexa.types';
 import type { Types } from '@iobroker/type-detector';
 import {
-    updateSmartNameEx,
     takeIdForSmartName,
     CAPABILITIES,
     DEVICES,
@@ -266,11 +265,11 @@ interface Alexa3SmartNamesProps {
 interface Alexa3SmartNamesState {
     edit: null | {
         id: string;
-        type: Types | null;
+        type: Types | undefined;
         typeWasDetected: boolean;
         possibleTypes: Types[];
         name: string;
-        originalType: string | null;
+        originalType: string | undefined;
         originalName: string;
         objectName: string;
         isAfterAdd: boolean;
@@ -743,11 +742,11 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                     this.setState({
                         edit: {
                             id,
-                            type: null,
+                            type: undefined,
                             name: this.editedSmartName,
                             typeWasDetected: device.typeWasDetected,
                             possibleTypes: device.possibleTypes,
-                            originalType: null,
+                            originalType: undefined,
                             originalName: this.editedSmartName,
                             objectName: Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() }),
                             isAfterAdd,
@@ -926,8 +925,9 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                             const obj: ioBroker.StateObject | null | undefined = (await this.props.socket.getObject(
                                 smartId.id,
                             )) as ioBroker.StateObject | null | undefined;
+
                             if (obj) {
-                                updateSmartNameEx(obj, {
+                                Utils.updateSmartNameEx(obj, {
                                     noAutoDetect,
                                     instanceId: this.namespace,
                                     noCommon: this.props.native.noCommon,
@@ -964,22 +964,19 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
         );
     }
 
-    onParamsChange(id: string, byON: string | undefined, type?: string): void {
+    onParamsChange(id: string, byON: string | undefined, type?: Types | null): void {
         this.addChanged(id, () =>
             this.props.socket
                 .getObject(id)
                 .then(obj => {
                     this.objects[id] = obj; // remember for later
                     if (obj) {
-                        Utils.updateSmartName(
-                            // @ts-expect-error fixed in admin
-                            obj,
-                            undefined, // undefined means do not update
+                        Utils.updateSmartNameEx(obj as ioBroker.StateObject, {
                             byON,
-                            type,
-                            this.namespace,
-                            this.props.native.noCommon,
-                        );
+                            smartType: type,
+                            instanceId: this.namespace,
+                            noCommon: this.props.native.noCommon,
+                        });
                         if (this.state.lastChanged !== id) {
                             this.setState({ lastChanged: id });
                             this.timerChanged && clearTimeout(this.timerChanged);
@@ -1482,37 +1479,38 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
             const editedSmartType = this.state.edit!.type;
             const editedSmartName = this.state.edit!.name;
 
-            this.setState({
-                edit: null,
-                lastChanged: id,
-            });
-
-            if (this.timerChanged) {
-                clearTimeout(this.timerChanged);
-            }
-            this.timerChanged = setTimeout(() => {
-                this.timerChanged = null;
-                this.setState({ lastChanged: '' });
-            }, 30000); // show for 30 seconds the green background for changes
-
-            this.props.socket
-                .getObject(id)
-                .then(obj => {
-                    this.objects[id] = obj; // remember for later
-                    if (obj) {
-                        Utils.updateSmartName(
-                            obj as ioBroker.StateObject,
-                            editedSmartName,
-                            undefined,
-                            editedSmartType,
-                            this.namespace,
-                            this.props.native.noCommon,
-                        );
-                        return this.props.socket.setObject(id, obj);
+            this.setState(
+                {
+                    edit: null,
+                    lastChanged: id,
+                },
+                async (): Promise<void> => {
+                    if (this.timerChanged) {
+                        clearTimeout(this.timerChanged);
                     }
-                })
-                .then(() => this.informInstance(id)) // update obj
-                .catch(err => this.props.onError(err));
+                    this.timerChanged = setTimeout(() => {
+                        this.timerChanged = null;
+                        this.setState({ lastChanged: '' });
+                    }, 30000); // show for 30 seconds the green background for changes
+
+                    try {
+                        const obj = await this.props.socket.getObject(id);
+                        this.objects[id] = obj; // remember for later
+                        if (obj) {
+                            Utils.updateSmartNameEx(obj as ioBroker.StateObject, {
+                                smartName: editedSmartName,
+                                smartType: editedSmartType,
+                                instanceId: this.namespace,
+                                noCommon: this.props.native.noCommon,
+                            });
+                            await this.props.socket.setObject(id, obj);
+                            this.informInstance(id);
+                        }
+                    } catch (err) {
+                        this.props.onError(err);
+                    }
+                },
+            );
         });
     }
 
@@ -1557,7 +1555,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                         helperText={I18n.t('You can enter several names divided by comma')}
                         margin="normal"
                     />
-                    {this.state.edit.type !== null ? (
+                    {this.state.edit.type !== undefined ? (
                         <SelectTypeSelector
                             type={this.state.edit.type}
                             detected={this.state.edit.typeWasDetected}
@@ -1576,7 +1574,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                         disabled={
                             !this.state.edit.name ||
                             (this.state.edit.originalName === this.state.edit.name &&
-                                (this.state.edit.type || null) === (this.state.edit.originalType || null))
+                                (this.state.edit.type || undefined) === (this.state.edit.originalType || undefined))
                         }
                         onClick={() => this.changeSmartName()}
                         color="primary"
@@ -1591,7 +1589,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                         color="grey"
                     >
                         {this.state.edit.originalName === this.state.edit.name &&
-                        (this.state.edit.type || null) === (this.state.edit.originalType || null)
+                        (this.state.edit.type || undefined) === (this.state.edit.originalType || undefined)
                             ? I18n.t('Close')
                             : I18n.t('Cancel')}
                     </Button>
@@ -1702,7 +1700,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                                 options.smartName = this.state.showSelectId.predefinedName;
                             }
 
-                            updateSmartNameEx(obj as ioBroker.StateObject, options);
+                            Utils.updateSmartNameEx(obj as ioBroker.StateObject, options);
                         }
                         this.addChanged(obj._id);
                         if (!this.state.showSelectId?.predefinedName) {

@@ -529,14 +529,11 @@ class GoogleSmartNames extends Component {
                         return this.setState({ message: I18n.t('Object %s is invalid. No common found.', newData.id) });
                     }
                     //  id, newData.type, newData.displayTraits, newData.displayAttributes
-                    Utils.updateSmartName(
-                        obj,
-                        this.editedSmartName,
-                        undefined,
-                        undefined,
-                        `${this.props.adapterName}.${this.props.instance}`,
-                        this.props.native.noCommon,
-                    );
+                    Utils.updateSmartNameEx(obj, {
+                        smartName: this.editedSmartName,
+                        instanceId: `${this.props.adapterName}.${this.props.instance}`,
+                        noCommon: this.props.native.noCommon,
+                    });
 
                     if (JSON.stringify(newData.displayTraits) !== JSON.stringify(oldData.displayTraits)) {
                         if (!Array.isArray(newData.displayTraits)) {
@@ -634,14 +631,11 @@ class GoogleSmartNames extends Component {
                                 }
 
                                 const name = Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() });
-                                Utils.updateSmartName(
-                                    obj,
-                                    (name || I18n.t('Device name')).replace(/[-_.]+/g, ' '),
-                                    undefined,
-                                    undefined,
-                                    `${this.props.adapterName}.${this.props.instance}`,
-                                    this.props.native.noCommon,
-                                );
+                                Utils.updateSmartNameEx(obj, {
+                                    smartName: (name || I18n.t('Device name')).replace(/[-_.]+/g, ' '),
+                                    instanceId: `${this.props.adapterName}.${this.props.instance}`,
+                                    noCommon: this.props.native.noCommon,
+                                });
                                 this.addChanged(obj._id);
                                 this.waitForUpdateID = obj._id;
 

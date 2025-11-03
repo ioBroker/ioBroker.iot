@@ -721,14 +721,11 @@ class AlisaDevices extends Component {
             this.props.socket
                 .getObject(id)
                 .then(obj => {
-                    Utils.updateSmartName(
-                        obj,
-                        this.editedSmartName,
-                        undefined,
-                        undefined,
-                        `${this.props.adapterName}.${this.props.instance}`,
-                        this.props.native.noCommon,
-                    );
+                    Utils.updateSmartNameEx(obj, {
+                        smartName: this.editedSmartName,
+                        instanceId: `${this.props.adapterName}.${this.props.instance}`,
+                        noCommon: this.props.native.noCommon,
+                    });
                     return this.props.socket.setObject(id, obj);
                 })
                 // update obj
@@ -856,14 +853,11 @@ class AlisaDevices extends Component {
                         this.props.socket.getObject(selected).then(obj => {
                             if (obj) {
                                 const name = Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() });
-                                Utils.updateSmartName(
-                                    obj,
-                                    (name || I18n.t('Device name')).replace(/[-_.]+/g, ' '),
-                                    undefined,
-                                    undefined,
-                                    `${this.props.adapterName}.${this.props.instance}`,
-                                    this.props.native.noCommon,
-                                );
+                                Utils.updateSmartNameEx(obj, {
+                                    smartName: (name || I18n.t('Device name')).replace(/[-_.]+/g, ' '),
+                                    instanceId: `${this.props.adapterName}.${this.props.instance}`,
+                                    noCommon: this.props.native.noCommon,
+                                });
                                 this.addChanged(obj._id);
                                 this.waitForUpdateID = obj._id;
 

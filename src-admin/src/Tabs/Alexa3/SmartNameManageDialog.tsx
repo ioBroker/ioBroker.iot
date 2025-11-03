@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import { type AdminConnection, I18n, type ThemeType, Utils } from '@iobroker/adapter-react-v5';
 import type { AlexaSH3DeviceDescription, SmartNameObject } from './alexa.types';
-import { collectSmartNamesOfDevice, findDeviceForState, updateSmartNameEx } from './utils';
+import { collectSmartNamesOfDevice, findDeviceForState } from './utils';
 import { Close as IconClose } from '@mui/icons-material';
 
 interface SmartNameManageDialogProps {
@@ -220,7 +220,7 @@ export default class SmartNameManageDialog extends Component<SmartNameManageDial
                                                                     this.props.noCommon,
                                                                 );
                                                             } else {
-                                                                updateSmartNameEx(obj as ioBroker.StateObject, {
+                                                                Utils.updateSmartNameEx(obj as ioBroker.StateObject, {
                                                                     smartName: this.props.dev.friendlyName,
                                                                     instanceId: this.props.namespace,
                                                                     noCommon: this.props.noCommon,
@@ -313,7 +313,7 @@ export default class SmartNameManageDialog extends Component<SmartNameManageDial
 
                                                             if (sn) {
                                                                 sn.noAutoDetect = !sn.noAutoDetect;
-                                                                updateSmartNameEx(obj as ioBroker.StateObject, {
+                                                                Utils.updateSmartNameEx(obj as ioBroker.StateObject, {
                                                                     noAutoDetect: sn?.noAutoDetect,
                                                                     instanceId: this.props.namespace,
                                                                     noCommon: this.props.noCommon,
