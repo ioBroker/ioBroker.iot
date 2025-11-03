@@ -47,6 +47,7 @@ export default class DeviceManager {
 
     private collecting = false;
     private recollect = false;
+    public validTill: number = 0;
 
     /** Creates a Device Manager */
     constructor() {
@@ -63,6 +64,10 @@ export default class DeviceManager {
 
     set language(value: ioBroker.Languages) {
         this.lang = value;
+    }
+
+    public setValidTill(validTill: number): void {
+        this.validTill = validTill;
     }
 
     matchDirective(event: AlexaV3Request): ChangeReport | Discovery | ReportState | null {
@@ -432,8 +437,7 @@ export default class DeviceManager {
                                     if (JSON.stringify(device.lastReportedState) !== JSON.stringify(deviceState)) {
                                         device.lastReportedState = deviceState;
                                         // fire state change report to Alexa
-                                        // BF[2024.02.04]: temporarily disabled as produced a huge number of events
-                                        if (process.env.TESTS_EXECUTION) {
+                                        if (this.validTill > Date.now() || process.env.TESTS_EXECUTION) {
                                             this.publishStateChange(stateChange);
                                         }
                                         await this.informAboutStatesChange();
@@ -508,10 +512,9 @@ export default class DeviceManager {
                         if (JSON.stringify(device.lastReportedState) !== JSON.stringify(deviceState)) {
                             device.lastReportedState = deviceState;
                             await this.informAboutStatesChange();
-                            // fire state change report to Alexa
 
-                            // BF[2024.02.04]: temporarily disabled as produced a huge number of events
-                            if (process.env.TESTS_EXECUTION) {
+                            // fire state change report to Alexa
+                            if (this.validTill > Date.now() || process.env.TESTS_EXECUTION) {
                                 await this.executeWithinRateLimits(
                                     device.id,
                                     () => {

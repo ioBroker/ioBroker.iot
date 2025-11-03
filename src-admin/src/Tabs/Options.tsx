@@ -18,6 +18,7 @@ import { MdRefresh as IconReload, MdClose as IconClose } from 'react-icons/md';
 
 import { I18n, Utils, Logo, type AdminConnection } from '@iobroker/adapter-react-v5';
 import type { IotAdapterConfig } from '../types';
+import { Refresh } from '@mui/icons-material';
 
 const styles: Record<string, React.CSSProperties> = {
     tab: {
@@ -78,9 +79,12 @@ interface OptionsState {
     toast: string;
     isInstanceAlive: boolean;
     debugVisible?: boolean;
+    validTill?: string;
 }
 
 export default class Options extends Component<OptionsProps, OptionsState> {
+    private readonly namespace = `${this.props.adapterName}.${this.props.instance}`;
+
     constructor(props: OptionsProps) {
         super(props);
 
@@ -89,29 +93,31 @@ export default class Options extends Component<OptionsProps, OptionsState> {
             toast: '',
             isInstanceAlive: false,
         };
-
-        void this.props.socket
-            .getState(`system.adapter.${this.props.adapterName}.${this.props.instance}.alive`)
-            .then(state => this.setState({ isInstanceAlive: !!state?.val }));
     }
 
-    componentDidMount(): void {
-        void this.props.socket.subscribeState(
-            `system.adapter.${this.props.adapterName}.${this.props.instance}.alive`,
-            this.onAliveChanged,
-        );
+    async componentDidMount(): Promise<void> {
+        const aliveState = await this.props.socket.getState(`system.adapter.${this.namespace}.alive`);
+        const validTillState = await this.props.socket.getState(`${this.namespace}.info.validTill`);
+        this.setState({ isInstanceAlive: !!aliveState?.val, validTill: validTillState?.val as string | undefined });
+
+        await this.props.socket.subscribeState(`${this.namespace}.info.validTill`, this.onValidTillChanged);
+        await this.props.socket.subscribeState(`system.adapter.${this.namespace}.alive`, this.onAliveChanged);
     }
 
     componentWillUnmount(): void {
-        this.props.socket.unsubscribeState(
-            `system.adapter.${this.props.adapterName}.${this.props.instance}.alive`,
-            this.onAliveChanged,
-        );
+        this.props.socket.unsubscribeState(`system.adapter.${this.namespace}.alive`, this.onAliveChanged);
+        this.props.socket.unsubscribeState(`${this.namespace}.info.validTill`, this.onValidTillChanged);
     }
 
     onAliveChanged = (id: string, state: ioBroker.State | null | undefined): void => {
-        if (id === `system.adapter.${this.props.adapterName}.${this.props.instance}.alive`) {
+        if (id === `system.adapter.${this.namespace}.alive`) {
             this.setState({ isInstanceAlive: !!state?.val });
+        }
+    };
+
+    onValidTillChanged = (id: string, state: ioBroker.State | null | undefined): void => {
+        if (id === `${this.namespace}.info.validTill`) {
+            this.setState({ validTill: state?.val as string | undefined });
         }
     };
 
@@ -191,7 +197,7 @@ export default class Options extends Component<OptionsProps, OptionsState> {
     }
 
     onDebug(): void {
-        void this.props.socket.sendTo(`${this.props.adapterName}.${this.props.instance}`, 'debug', null).then(data => {
+        void this.props.socket.sendTo(`${this.namespace}`, 'debug', null).then(data => {
             const file = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             // @ts-expect-error old browsers
             if (window.navigator.msSaveOrOpenBlob) {
@@ -294,6 +300,47 @@ export default class Options extends Component<OptionsProps, OptionsState> {
         );
     }
 
+    renderValidTill(): React.JSX.Element | null {
+        if (this.props.changed) {
+            return null;
+        }
+        const week = new Date();
+        week.setDate(week.getDate() + 7);
+        const expiring =
+            this.state.validTill &&
+            new Date(this.state.validTill) > new Date() &&
+            new Date(this.state.validTill).getTime() < week.getTime();
+        return (
+            <div>
+                <div
+                    style={{ display: 'flex', alignItems: 'center' }}
+                    title={expiring ? I18n.t('expiring_soon_tip') : ''}
+                >
+                    <span style={{ fontWeight: 'bold', marginRight: 8 }}>{I18n.t('Subscription till')}:</span>
+                    <span
+                        style={{
+                            color: expiring
+                                ? 'orange'
+                                : !this.state.validTill || new Date(this.state.validTill) <= new Date()
+                                  ? 'red'
+                                  : 'green',
+                        }}
+                    >
+                        {this.state.validTill ? new Date(this.state.validTill).toLocaleString() : I18n.t('--')}
+                    </span>
+                    <IconButton
+                        title={I18n.t('Refresh subscription info')}
+                        disabled={!this.state.isInstanceAlive}
+                        onClick={() => this.props.socket.sendTo(this.namespace, 'updateValidTill', null)}
+                    >
+                        <Refresh />
+                    </IconButton>
+                </div>
+                <span>{I18n.t('subscription_buy_tip')}</span>
+            </div>
+        );
+    }
+
     render(): React.JSX.Element {
         return (
             <form style={styles.tab}>
@@ -308,6 +355,8 @@ export default class Options extends Component<OptionsProps, OptionsState> {
                     {this.renderInput('ioBroker.pro Login', 'login', 'text', 'username')}
                     <br />
                     {this.renderInput('ioBroker.pro Password', 'pass', 'password', 'current-password')}
+                    <br />
+                    {this.renderValidTill()}
                     <br />
                     {this.renderCheckbox('Amazon AlexaV3', 'amazonAlexaV3')}
                     {this.renderCheckbox('Amazon Alexa (deprecated)', 'amazonAlexa')}

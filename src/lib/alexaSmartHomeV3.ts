@@ -33,6 +33,10 @@ export default class AlexaSH3 {
         await this.deviceManager.collectEndpoints();
     }
 
+    setValidTill(validTill: number): void {
+        this.deviceManager?.setValidTill(validTill);
+    }
+
     async getDevices(): Promise<AlexaSH3DeviceDescription[]> {
         if (this.deviceManager) {
             await this.deviceManager.collectEndpoints();

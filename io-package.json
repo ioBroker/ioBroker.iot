@@ -1,568 +1,631 @@
 {
-  "common": {
-    "name": "iot",
-    "version": "5.0.7",
-    "news": {
-      "5.0.7": {
-        "en": "Added possibility to group devices by type in GUI\nAllowed to select any type in Alexe V3\nRemove disabled states from auto-detection",
-        "de": "Möglichkeit, Geräte nach Typ in GUI zu gruppieren\nErlaubt, jeden Typ in Alexe V3 auszuwählen\nEntfernen von deaktivierten Zuständen von Auto-Detektion",
-        "ru": "Добавлена возможность группировать устройства по типу в GUI\nВыберите любой тип Alexe V3\nУдаление состояний инвалидов из системы автоматического обнаружения",
-        "pt": "Adicionada possibilidade de agrupar dispositivos por tipo na GUI\nPermite selecionar qualquer tipo no Alexe V3\nRemover estados desactivados da detecção automática",
-        "nl": "Mogelijkheid toegevoegd om apparaten per type in GUI te groeperen\nToegestaan om elk type in Alexe V3 te selecteren\nGehandicapte staten verwijderen van automatische detectie",
-        "fr": "Ajout de la possibilité de grouper les appareils par type dans GUI\nPermet de sélectionner n'importe quel type dans Alexe V3\nSupprimer les états désactivés de la détection automatique",
-        "it": "Aggiunta possibilità di raggruppare dispositivi per tipo in GUI\nPermesso di selezionare qualsiasi tipo in Alexe V3\nRimuovere gli stati disabilitati dalla rilevazione automatica",
-        "es": "Añadido posibilidad de agrupar dispositivos por tipo en GUI\nPermitido seleccionar cualquier tipo en Alexe V3\nEliminar estados discapacitados de la auto-detección",
-        "pl": "Dodano możliwość grupowania urządzeń według typu w GUI\nDozwolone wybranie dowolnego typu w Alexe V3\nUsuwanie stanów wyłączonych z autodetekcji",
-        "uk": "Додано можливість групових пристроїв за типом в GUI\nДозволено вибрати будь-який тип в Alexe V3\nВидалити відключені стани з автодетекції",
-        "zh-cn": "在图形用户界面中按类型添加到设备分组的可能性\n允许在 Alexe V3 中选择任意类型\n从自动检测中删除已禁用状态"
-      },
-      "5.0.6": {
-        "en": "Added logs to detect the issues with detection\nAdded possibility to use the 0/1 state as socket\nAdded dialog to bulk manage the smart names of one device",
-        "de": "Protokolle hinzugefügt, um die Probleme mit der Erkennung zu erkennen\nZusätzliche Möglichkeit, den Zustand 0/1 als Steckdose zu verwenden\nDialog hinzugefügt, um die intelligenten Namen eines Geräts zu verwalten",
-        "ru": "Добавлены журналы для обнаружения проблем с обнаружением\nДобавлена возможность использования состояния 0/1 в качестве розетки\nДобавлен диалог для массового управления умными именами одного устройства",
-        "pt": "Registros adicionados para detectar os problemas com detecção\nAdicionada possibilidade de usar o estado 0/1 como soquete\nJanela adicionada para gerir os nomes inteligentes de um dispositivo",
-        "nl": "Logs toegevoegd om problemen met detectie op te sporen\nToegevoegde mogelijkheid om de 0/1 status als socket te gebruiken\nDialoog toegevoegd om de slimme namen van één apparaat te beheren",
-        "fr": "Ajout de journaux pour détecter les problèmes avec détection\nPossibilité d'utiliser l'état 0/1 comme socket\nAjout de la boîte de dialogue pour gérer en vrac les noms intelligents d'un appareil",
-        "it": "Log aggiunti per rilevare i problemi con il rilevamento\nAggiunto possibilità di utilizzare lo stato 0/1 come presa\nAggiunto finestra di dialogo per gestire in massa i nomi intelligenti di un dispositivo",
-        "es": "Registros añadidos para detectar los problemas con la detección\nAñadido posibilidad de utilizar el estado 0/1 como socket\nAñadido diálogo para gestionar a granel los nombres inteligentes de un dispositivo",
-        "pl": "Dodano logi do wykrywania problemów z wykrywaniem\nDodano możliwość użycia stanu 0 / 1 jako gniazda\nDodano okno dialogowe do masowych zarządzania inteligentnymi nazwami jednego urządzenia",
-        "uk": "Додано журнали для виявлення проблем з виявленням\nДодано можливість використання стану 0/1 як розетки\nДодано діалогове вікно, щоб об'єднати смарт імена одного пристрою",
-        "zh-cn": "添加日志以检测问题\n添加使用 0/1 状态作为套接字的可能性\n添加对话框以管理一个设备的智能名称"
-      },
-      "5.0.5": {
-        "en": "Changed behavior of HUE lamps",
-        "de": "Geändertes Verhalten von HUE-Lampen",
-        "ru": "Изменилось поведение ламп",
-        "pt": "Comportamento alterado das lâmpadas HUE",
-        "nl": "Veranderd gedrag van HUE lampen",
-        "fr": "Changement de comportement des lampes HUE",
-        "it": "Comportamento modificato delle lampade HUE",
-        "es": "Comportamiento cambiado de lámparas HUE",
-        "pl": "Zmienione zachowanie lamp HUE",
-        "uk": "Зміна поведінки світильників HUE",
-        "zh-cn": "HUE灯改变行为"
-      },
-      "5.0.2": {
-        "en": "Added mireds<->kelvin conversion for color temperature\nIt is possible to edit a type\nCorrecting creation of complex groups\nSame as 4.2.11",
-        "de": "Hinzugefügt mireds<->kelvin Umwandlung für Farbtemperatur\nEs ist möglich, einen Typ zu bearbeiten\nKorrektur der Erstellung komplexer Gruppen\nGleich wie 4.2.11",
-        "ru": "Добавлено погрязшее преобразование <-> кельвина для цветовой температуры\nМожно редактировать тип\nКоррекция создания сложных групп\nТо же самое, что 4.2.11",
-        "pt": "Adicionado mireds<-> conversão de kelvin para temperatura de cor\nÉ possível editar um tipo\nCorrigindo a criação de grupos complexos\nIgual a 4.2.11",
-        "nl": "Toegevoegd mireds<->kelvin conversie voor kleurtemperatuur\nHet is mogelijk om een type te bewerken\nCorrigerende oprichting van complexe groepen\nZelfde als 4.2.11",
-        "fr": "Ajout de mireds <->kelvin conversion pour la température de couleur\nIl est possible de modifier un type\nCorrection de la création de groupes complexes\nMême que 4.2.11",
-        "it": "Conversione di mireds su >kelvin aggiunto per temperatura di colore\nÈ possibile modificare un tipo\nCorreggere la creazione di gruppi complessi\nStesso 4.2.11",
-        "es": "Conversión agregada de microsiervos para la temperatura de color\nEs posible editar un tipo\nCreación correcta de grupos complejos\nIgual que 4.2.11",
-        "pl": "Dodano miredy < - > konwersja kelwina dla temperatury barwy\nMożna edytować typ\nKorekcja tworzenia grup złożonych\nPodobnie jak 4.2.11",
-        "uk": "Додано міреди <->kelvin перетворення для температури кольору\nМожна редагувати тип\nПравильне створення складних груп\nТак само як 4.2.11",
-        "zh-cn": "添加嵌入点 <->kelvin 转换颜色温度\n可以编辑一个类型\n纠正复杂集团的产生\n与4.2.11相同"
-      },
-      "4.2.9": {
-        "en": "Do not control \"white\" by RGBW devices\nCorrected GUI error\nAvoid double entries in auto-detection",
-        "de": "\"weiß\" von RGBW-Geräten nicht steuern\nKorrigierter GUI-Fehler\nVermeiden Sie Doppeleinträge in der Auto-Detektion",
-        "ru": "Не управляйте «белыми» устройствами RGBW\nИсправленная ошибка GUI\nИзбегайте двойных записей в автоматическом обнаружении",
-        "pt": "Não controlar \"branco\" por dispositivos RGBW\nErro GUI corrigido\nEvite entradas duplas na detecção automática",
-        "nl": "\"wit\" niet bedoeld door RGBW-apparaten\nGecorrigeerde GUI-fout\nVermijd dubbele ingangen in auto-detectie",
-        "fr": "Ne pas contrôler \"blanc\" par les appareils RGBW\nErreur d'interface graphique corrigée\nÉvitez les doubles entrées dans la détection automatique",
-        "it": "Non controllare \"bianco\" da dispositivi RGBW\nErrore GUI corretto\nEvitare doppie entrate in auto-detezione",
-        "es": "No controle \"blanco\" por dispositivos RGBW\nError de GUI corregido\nEvite las entradas dobles en auto-detección",
-        "pl": "Nie steruj \"białym\" urządzeniami RGBW\nSkorygowany błąd GUI\nUnikaj podwójnych wpisów w autodetekcji",
-        "uk": "Не контролюємо \"білий\" пристроями RGBW\nВиправлена помилка інтерфейсу\nУникайте подвійних записів в автодетекції",
-        "zh-cn": "不使用 RGBW 设备控制“ 白色 ”\n更正的图形用户界面错误\n避免自动检测中的重复条目"
-      },
-      "4.2.7": {
-        "en": "Create the service states at the instance start\nCorrected error with gates",
-        "de": "Erstellen Sie die Servicezustände beim Beispielstart\nFehler behoben mit Toren",
-        "ru": "Создайте состояние сервиса в начале экземпляра\nИсправлена ошибка с воротами",
-        "pt": "Criar os estados de serviço no início da instância\nErro corrigido com portões",
-        "nl": "Creëer de service statuss bij het begin van de instantie\nGecorrigeerde fout met poorten",
-        "fr": "Créer les états de service au début de l'instance\nErreur corrigée avec les portes",
-        "it": "Creare gli stati di servizio all'inizio dell'istanza\nErrore corretto con cancelli",
-        "es": "Crear los estados de servicio en el caso empezar\nError corregido con puertas",
-        "pl": "Utwórz stany usługi na początku instancji\nSkorygowany błąd z bramami",
-        "uk": "Створіть штати служби в екземплярі\nВиправлена помилка з воротами",
-        "zh-cn": "在实例启动时创建服务状态\n纠正闸门错误"
-      },
-      "4.2.5": {
-        "en": "Modified the creation of EndpointID for devices with Umlauts.",
-        "de": "Modifizierte die Erstellung von EndpointID für Geräte mit Umlauts.",
-        "ru": "Модифицировано создание EndpointID для устройств с Umlauts.",
-        "pt": "Modificou a criação de EndpointID para dispositivos com Umlauts.",
-        "nl": "Gewijzigde de aanmaak van EndpointID voor apparaten met Umlauts.",
-        "fr": "Modifie la création d'EndpointID pour les appareils avec Umlauts.",
-        "it": "Modificata la creazione di EndpointID per dispositivi con Umlauts.",
-        "es": "Modificó la creación de EndpointID para dispositivos con Umlauts.",
-        "pl": "Zmodyfikowano tworzenie Endpointed dla urządzeń z Umlautami.",
-        "uk": "Змінено створення EndpointID для пристроїв з Umlauts.",
-        "zh-cn": "修改了对 Umlauts 设备的 EndpointID 创建 ."
-      }
-    },
-    "titleLang": {
-      "en": "IoT cloud connection",
-      "de": "Cloud IoT-Verbindung",
-      "ru": "Соединение Cloud IoT",
-      "pt": "Conexão Cloud IoT",
-      "nl": "Cloud IoT-verbinding",
-      "fr": "Connexion Cloud IoT",
-      "it": "Connessione Cloud IoT",
-      "es": "Conexión IoT en la nube",
-      "pl": "Połączenie Cloud IoT",
-      "uk": "З'єднання Cloud IoT",
-      "zh-cn": "IoT云连接"
-    },
-    "desc": {
-      "en": "Connects your ioBroker server to the ioBroker IoT cloud",
-      "de": "Verbindet Ihren ioBroker-Server mit der ioBroker IoT-Cloud",
-      "ru": "Соединяет ваш сервер ioBroker с облаком ioBroker IoT",
-      "pt": "Conecta seu servidor ioBroker à nuvem IoT do ioBroker",
-      "nl": "Verbindt uw ioBroker-server met de ioBroker IoT-cloud",
-      "fr": "Connecte votre serveur ioBroker au cloud ioBroker IoT",
-      "it": "Collega il tuo server ioBroker al cloud IoT IoBroker",
-      "es": "Conecta su servidor ioBroker a la nube ioBroker IoT",
-      "pl": "Łączy twój serwer ioBroker z chmurą IoT ioBroker",
-      "uk": "Підключає ваш сервер ioBroker до хмари ioBroker IoT",
-      "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
-    },
-    "authors": [
-      "bluefox <dogafox@gmail.com>"
-    ],
-    "platform": "Javascript/Node.js",
-    "mode": "daemon",
-    "loglevel": "info",
-    "readme": "https://github.com/ioBroker/ioBroker.iot/blob/master/README.md",
-    "icon": "iot.svg",
-    "connectionType": "cloud",
-    "dataSource": "push",
-    "tier": 3,
-    "keywords": [
-      "web",
-      "Cloud",
-      "communication"
-    ],
-    "enabled": false,
-    "compact": true,
-    "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.iot/master/admin/iot.svg",
-    "type": "communication",
-    "messagebox": true,
-    "supportedMessages": {
-      "custom": true,
-      "notifications": true
-    },
-    "stopBeforeUpdate": true,
-    "materialize": true,
-    "logTransporter": true,
-    "dependencies": [
-      {
-        "js-controller": ">=5.0.19"
-      }
-    ],
-    "preserveSettings": "smartName",
-    "eraseOnUpload": true,
-    "blockly": true,
-    "osDependencies": {
-      "linux": [
-        "libcairo2-dev",
-        "libpango1.0-dev",
-        "libjpeg-dev",
-        "libgif-dev",
-        "librsvg2-dev"
-      ]
-    },
-    "plugins": {
-      "sentry": {
-        "dsn": "https://20987eaf91ef49de821771499fdb4e1a@sentry.iobroker.net/40"
-      }
-    },
-    "nogit": true,
-    "javascriptRules": {
-      "i18n": true,
-      "url": "rules/customRuleBlocks.js",
-      "name": "ActionVisu",
-      "type": "module"
-    },
-    "ifInstalledDependencies": {
-      "javascript": ">=8.9.2"
-    },
-    "licenseInformation": {
-      "type": "free",
-      "license": "MIT"
-    }
-  },
-  "protectedNative": [
-    "login",
-    "pass"
-  ],
-  "native": {
-    "login": "email.com",
-    "pass": "",
-    "language": "",
-    "cloudUrl": "a18wym7vjdl22g.iot.eu-west-1.amazonaws.com",
-    "functionFirst": false,
-    "concatWord": "",
-    "responseOID": "",
-    "restartOnDisconnect": false,
-    "iftttKey": "",
-    "replaces": "",
-    "amazonAlexa": false,
-    "amazonAlexaV3": true,
-    "amazonAlexaBlood": "",
-    "amazonAlexaBloodShortAnswer": false,
-    "googleHome": false,
-    "yandexAlisa": false,
-    "allowedServices": "",
-    "text2command": "0",
-    "nightscout": "",
-    "nightscoutPass": "myBlood",
-    "noCommon": false,
-    "debug": false,
-    "remote": false,
-    "defaultToggle": false,
-    "remoteAdminInstance": "",
-    "remoteWebInstance": "",
-    "customKnownAlexaUsers": [],
-    "addCustomKnownAlexaUserNameToText": false,
-    "customKnownAlexaDevices": [],
-    "addCustomKnownAlexaDeviceRoomToText": false
-  },
-  "objects": [],
-  "instanceObjects": [
-    {
-      "_id": "info",
-      "type": "channel",
-      "common": {
-        "name": "Information"
-      },
-      "native": {}
-    },
-    {
-      "_id": "info.connection",
-      "type": "state",
-      "common": {
-        "role": "indicator.connected",
-        "name": "If connected to cloud",
-        "type": "boolean",
-        "read": true,
-        "write": false,
-        "def": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "info.ackTempPassword",
-      "type": "state",
-      "common": {
-        "role": "indicator",
-        "name": "If user have read about temp password for iot",
-        "type": "boolean",
-        "read": true,
-        "write": false,
-        "def": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "info.remoteTill",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": "Time till pro access is available",
-        "type": "string",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "smart.lastFunction",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": "Last controlled function",
-        "type": "string",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "smart.lastRoom",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": "Last controlled room",
-        "type": "string",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "smart.lastCommand",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": "Last command",
-        "type": "mixed",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "smart.lastCommandObj",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": "Last command as object",
-        "type": "string",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "smart.lastResponse",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": "Last textual response",
-        "type": "string",
-        "read": true,
-        "write": true
-      },
-      "native": {}
-    },
-    {
-      "_id": "smart.lastObjectID",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": "Last accessed object id",
-        "type": "string",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "smart.updates",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": "If updates of configuration is ready",
-        "type": "boolean",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "smart.updates3",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": "If updates of V3 configuration is ready",
-        "type": "boolean",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "smart.updatesGH",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": "If updates of google home configuration is ready",
-        "type": "boolean",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "smart.updatesYA",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": "If updates of yandex alice configuration is ready",
-        "type": "boolean",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "smart.updatesResult",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": "Result for last devices update",
-        "type": "string",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "services",
-      "type": "channel",
-      "common": {
-        "name": "Information"
-      },
-      "native": {}
-    },
-    {
-      "_id": "certs",
-      "type": "channel",
-      "common": {
-        "expert": true,
-        "name": "Certificates"
-      },
-      "native": {}
-    },
-    {
-      "_id": "certs.id",
-      "type": "state",
-      "common": {
-        "expert": true,
-        "role": "state",
-        "name": "Certificate ID",
-        "type": "string",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "certs.public",
-      "type": "state",
-      "common": {
-        "expert": true,
-        "role": "state",
-        "name": "Public key",
-        "type": "string",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "certs.private",
-      "type": "state",
-      "common": {
-        "expert": true,
-        "role": "state",
-        "name": "Private key",
-        "type": "string",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "certs.certificate",
-      "type": "state",
-      "common": {
-        "expert": true,
-        "role": "state",
-        "name": "Certificate",
-        "type": "string",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "certs.urlKey",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": "URL Key",
-        "desc": "Used for access this instance via URL",
-        "type": "string",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "certs.forceUserCreate",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": "Force user creation",
-        "desc": "Used to recreate the user and device anew",
-        "def": false,
-        "type": "boolean",
-        "read": true,
-        "write": true
-      },
-      "native": {}
-    },
-    {
-      "_id": "app",
-      "type": "channel",
-      "common": {
-        "expert": true,
-        "name": "Certificates"
-      },
-      "native": {}
-    },
-    {
-      "_id": "app.message",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": "Send message to app",
-        "desc": "Could be just message or JSON object {message: 'text', title: 'title', expire: 60, priority: 1}",
-        "type": "string",
-        "read": true,
-        "write": true
-      },
-      "native": {}
-    },
-    {
-      "_id": "app.title",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": "Title of message",
-        "type": "string",
-        "read": true,
-        "write": true
-      },
-      "native": {}
-    },
-    {
-      "_id": "app.expire",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": "Expire time in seconds",
-        "type": "number",
-        "unit": "seconds",
-        "read": true,
-        "max": 86400,
-        "min": 5,
-        "write": true
-      },
-      "native": {}
-    },
-    {
-      "_id": "app.priority",
-      "type": "state",
-      "common": {
-        "role": "state",
-        "name": "Expire time in seconds",
-        "type": "string",
-        "read": true,
-        "states": {
-          "0": "Normal",
-          "1": "High"
+    "common": {
+        "name": "iot",
+        "version": "5.0.7",
+        "news": {
+            "5.0.7": {
+                "en": "Added possibility to group devices by type in GUI\nAllowed to select any type in Alexe V3\nRemove disabled states from auto-detection",
+                "de": "Möglichkeit, Geräte nach Typ in GUI zu gruppieren\nErlaubt, jeden Typ in Alexe V3 auszuwählen\nEntfernen von deaktivierten Zuständen von Auto-Detektion",
+                "ru": "Добавлена возможность группировать устройства по типу в GUI\nВыберите любой тип Alexe V3\nУдаление состояний инвалидов из системы автоматического обнаружения",
+                "pt": "Adicionada possibilidade de agrupar dispositivos por tipo na GUI\nPermite selecionar qualquer tipo no Alexe V3\nRemover estados desactivados da detecção automática",
+                "nl": "Mogelijkheid toegevoegd om apparaten per type in GUI te groeperen\nToegestaan om elk type in Alexe V3 te selecteren\nGehandicapte staten verwijderen van automatische detectie",
+                "fr": "Ajout de la possibilité de grouper les appareils par type dans GUI\nPermet de sélectionner n'importe quel type dans Alexe V3\nSupprimer les états désactivés de la détection automatique",
+                "it": "Aggiunta possibilità di raggruppare dispositivi per tipo in GUI\nPermesso di selezionare qualsiasi tipo in Alexe V3\nRimuovere gli stati disabilitati dalla rilevazione automatica",
+                "es": "Añadido posibilidad de agrupar dispositivos por tipo en GUI\nPermitido seleccionar cualquier tipo en Alexe V3\nEliminar estados discapacitados de la auto-detección",
+                "pl": "Dodano możliwość grupowania urządzeń według typu w GUI\nDozwolone wybranie dowolnego typu w Alexe V3\nUsuwanie stanów wyłączonych z autodetekcji",
+                "uk": "Додано можливість групових пристроїв за типом в GUI\nДозволено вибрати будь-який тип в Alexe V3\nВидалити відключені стани з автодетекції",
+                "zh-cn": "在图形用户界面中按类型添加到设备分组的可能性\n允许在 Alexe V3 中选择任意类型\n从自动检测中删除已禁用状态"
+            },
+            "5.0.6": {
+                "en": "Added logs to detect the issues with detection\nAdded possibility to use the 0/1 state as socket\nAdded dialog to bulk manage the smart names of one device",
+                "de": "Protokolle hinzugefügt, um die Probleme mit der Erkennung zu erkennen\nZusätzliche Möglichkeit, den Zustand 0/1 als Steckdose zu verwenden\nDialog hinzugefügt, um die intelligenten Namen eines Geräts zu verwalten",
+                "ru": "Добавлены журналы для обнаружения проблем с обнаружением\nДобавлена возможность использования состояния 0/1 в качестве розетки\nДобавлен диалог для массового управления умными именами одного устройства",
+                "pt": "Registros adicionados para detectar os problemas com detecção\nAdicionada possibilidade de usar o estado 0/1 como soquete\nJanela adicionada para gerir os nomes inteligentes de um dispositivo",
+                "nl": "Logs toegevoegd om problemen met detectie op te sporen\nToegevoegde mogelijkheid om de 0/1 status als socket te gebruiken\nDialoog toegevoegd om de slimme namen van één apparaat te beheren",
+                "fr": "Ajout de journaux pour détecter les problèmes avec détection\nPossibilité d'utiliser l'état 0/1 comme socket\nAjout de la boîte de dialogue pour gérer en vrac les noms intelligents d'un appareil",
+                "it": "Log aggiunti per rilevare i problemi con il rilevamento\nAggiunto possibilità di utilizzare lo stato 0/1 come presa\nAggiunto finestra di dialogo per gestire in massa i nomi intelligenti di un dispositivo",
+                "es": "Registros añadidos para detectar los problemas con la detección\nAñadido posibilidad de utilizar el estado 0/1 como socket\nAñadido diálogo para gestionar a granel los nombres inteligentes de un dispositivo",
+                "pl": "Dodano logi do wykrywania problemów z wykrywaniem\nDodano możliwość użycia stanu 0 / 1 jako gniazda\nDodano okno dialogowe do masowych zarządzania inteligentnymi nazwami jednego urządzenia",
+                "uk": "Додано журнали для виявлення проблем з виявленням\nДодано можливість використання стану 0/1 як розетки\nДодано діалогове вікно, щоб об'єднати смарт імена одного пристрою",
+                "zh-cn": "添加日志以检测问题\n添加使用 0/1 状态作为套接字的可能性\n添加对话框以管理一个设备的智能名称"
+            },
+            "5.0.5": {
+                "en": "Changed behavior of HUE lamps",
+                "de": "Geändertes Verhalten von HUE-Lampen",
+                "ru": "Изменилось поведение ламп",
+                "pt": "Comportamento alterado das lâmpadas HUE",
+                "nl": "Veranderd gedrag van HUE lampen",
+                "fr": "Changement de comportement des lampes HUE",
+                "it": "Comportamento modificato delle lampade HUE",
+                "es": "Comportamiento cambiado de lámparas HUE",
+                "pl": "Zmienione zachowanie lamp HUE",
+                "uk": "Зміна поведінки світильників HUE",
+                "zh-cn": "HUE灯改变行为"
+            },
+            "5.0.2": {
+                "en": "Added mireds<->kelvin conversion for color temperature\nIt is possible to edit a type\nCorrecting creation of complex groups\nSame as 4.2.11",
+                "de": "Hinzugefügt mireds<->kelvin Umwandlung für Farbtemperatur\nEs ist möglich, einen Typ zu bearbeiten\nKorrektur der Erstellung komplexer Gruppen\nGleich wie 4.2.11",
+                "ru": "Добавлено погрязшее преобразование <-> кельвина для цветовой температуры\nМожно редактировать тип\nКоррекция создания сложных групп\nТо же самое, что 4.2.11",
+                "pt": "Adicionado mireds<-> conversão de kelvin para temperatura de cor\nÉ possível editar um tipo\nCorrigindo a criação de grupos complexos\nIgual a 4.2.11",
+                "nl": "Toegevoegd mireds<->kelvin conversie voor kleurtemperatuur\nHet is mogelijk om een type te bewerken\nCorrigerende oprichting van complexe groepen\nZelfde als 4.2.11",
+                "fr": "Ajout de mireds <->kelvin conversion pour la température de couleur\nIl est possible de modifier un type\nCorrection de la création de groupes complexes\nMême que 4.2.11",
+                "it": "Conversione di mireds su >kelvin aggiunto per temperatura di colore\nÈ possibile modificare un tipo\nCorreggere la creazione di gruppi complessi\nStesso 4.2.11",
+                "es": "Conversión agregada de microsiervos para la temperatura de color\nEs posible editar un tipo\nCreación correcta de grupos complejos\nIgual que 4.2.11",
+                "pl": "Dodano miredy < - > konwersja kelwina dla temperatury barwy\nMożna edytować typ\nKorekcja tworzenia grup złożonych\nPodobnie jak 4.2.11",
+                "uk": "Додано міреди <->kelvin перетворення для температури кольору\nМожна редагувати тип\nПравильне створення складних груп\nТак само як 4.2.11",
+                "zh-cn": "添加嵌入点 <->kelvin 转换颜色温度\n可以编辑一个类型\n纠正复杂集团的产生\n与4.2.11相同"
+            },
+            "4.2.9": {
+                "en": "Do not control \"white\" by RGBW devices\nCorrected GUI error\nAvoid double entries in auto-detection",
+                "de": "\"weiß\" von RGBW-Geräten nicht steuern\nKorrigierter GUI-Fehler\nVermeiden Sie Doppeleinträge in der Auto-Detektion",
+                "ru": "Не управляйте «белыми» устройствами RGBW\nИсправленная ошибка GUI\nИзбегайте двойных записей в автоматическом обнаружении",
+                "pt": "Não controlar \"branco\" por dispositivos RGBW\nErro GUI corrigido\nEvite entradas duplas na detecção automática",
+                "nl": "\"wit\" niet bedoeld door RGBW-apparaten\nGecorrigeerde GUI-fout\nVermijd dubbele ingangen in auto-detectie",
+                "fr": "Ne pas contrôler \"blanc\" par les appareils RGBW\nErreur d'interface graphique corrigée\nÉvitez les doubles entrées dans la détection automatique",
+                "it": "Non controllare \"bianco\" da dispositivi RGBW\nErrore GUI corretto\nEvitare doppie entrate in auto-detezione",
+                "es": "No controle \"blanco\" por dispositivos RGBW\nError de GUI corregido\nEvite las entradas dobles en auto-detección",
+                "pl": "Nie steruj \"białym\" urządzeniami RGBW\nSkorygowany błąd GUI\nUnikaj podwójnych wpisów w autodetekcji",
+                "uk": "Не контролюємо \"білий\" пристроями RGBW\nВиправлена помилка інтерфейсу\nУникайте подвійних записів в автодетекції",
+                "zh-cn": "不使用 RGBW 设备控制“ 白色 ”\n更正的图形用户界面错误\n避免自动检测中的重复条目"
+            },
+            "4.2.7": {
+                "en": "Create the service states at the instance start\nCorrected error with gates",
+                "de": "Erstellen Sie die Servicezustände beim Beispielstart\nFehler behoben mit Toren",
+                "ru": "Создайте состояние сервиса в начале экземпляра\nИсправлена ошибка с воротами",
+                "pt": "Criar os estados de serviço no início da instância\nErro corrigido com portões",
+                "nl": "Creëer de service statuss bij het begin van de instantie\nGecorrigeerde fout met poorten",
+                "fr": "Créer les états de service au début de l'instance\nErreur corrigée avec les portes",
+                "it": "Creare gli stati di servizio all'inizio dell'istanza\nErrore corretto con cancelli",
+                "es": "Crear los estados de servicio en el caso empezar\nError corregido con puertas",
+                "pl": "Utwórz stany usługi na początku instancji\nSkorygowany błąd z bramami",
+                "uk": "Створіть штати служби в екземплярі\nВиправлена помилка з воротами",
+                "zh-cn": "在实例启动时创建服务状态\n纠正闸门错误"
+            },
+            "4.2.5": {
+                "en": "Modified the creation of EndpointID for devices with Umlauts.",
+                "de": "Modifizierte die Erstellung von EndpointID für Geräte mit Umlauts.",
+                "ru": "Модифицировано создание EndpointID для устройств с Umlauts.",
+                "pt": "Modificou a criação de EndpointID para dispositivos com Umlauts.",
+                "nl": "Gewijzigde de aanmaak van EndpointID voor apparaten met Umlauts.",
+                "fr": "Modifie la création d'EndpointID pour les appareils avec Umlauts.",
+                "it": "Modificata la creazione di EndpointID per dispositivi con Umlauts.",
+                "es": "Modificó la creación de EndpointID para dispositivos con Umlauts.",
+                "pl": "Zmodyfikowano tworzenie Endpointed dla urządzeń z Umlautami.",
+                "uk": "Змінено створення EndpointID для пристроїв з Umlauts.",
+                "zh-cn": "修改了对 Umlauts 设备的 EndpointID 创建 ."
+            }
         },
-        "def": "normal",
-        "write": true
-      },
-      "native": {}
-    }
-  ]
+        "titleLang": {
+            "en": "IoT cloud connection",
+            "de": "Cloud IoT-Verbindung",
+            "ru": "Соединение Cloud IoT",
+            "pt": "Conexão Cloud IoT",
+            "nl": "Cloud IoT-verbinding",
+            "fr": "Connexion Cloud IoT",
+            "it": "Connessione Cloud IoT",
+            "es": "Conexión IoT en la nube",
+            "pl": "Połączenie Cloud IoT",
+            "uk": "З'єднання Cloud IoT",
+            "zh-cn": "IoT云连接"
+        },
+        "desc": {
+            "en": "Connects your ioBroker server to the ioBroker IoT cloud",
+            "de": "Verbindet Ihren ioBroker-Server mit der ioBroker IoT-Cloud",
+            "ru": "Соединяет ваш сервер ioBroker с облаком ioBroker IoT",
+            "pt": "Conecta seu servidor ioBroker à nuvem IoT do ioBroker",
+            "nl": "Verbindt uw ioBroker-server met de ioBroker IoT-cloud",
+            "fr": "Connecte votre serveur ioBroker au cloud ioBroker IoT",
+            "it": "Collega il tuo server ioBroker al cloud IoT IoBroker",
+            "es": "Conecta su servidor ioBroker a la nube ioBroker IoT",
+            "pl": "Łączy twój serwer ioBroker z chmurą IoT ioBroker",
+            "uk": "Підключає ваш сервер ioBroker до хмари ioBroker IoT",
+            "zh-cn": "连接你的ioBroker服务器的ioBroker IoT云"
+        },
+        "authors": ["bluefox <dogafox@gmail.com>"],
+        "platform": "Javascript/Node.js",
+        "mode": "daemon",
+        "loglevel": "info",
+        "readme": "https://github.com/ioBroker/ioBroker.iot/blob/master/README.md",
+        "icon": "iot.svg",
+        "connectionType": "cloud",
+        "dataSource": "push",
+        "tier": 3,
+        "keywords": ["web", "Cloud", "communication"],
+        "enabled": false,
+        "compact": true,
+        "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.iot/master/admin/iot.svg",
+        "type": "communication",
+        "messagebox": true,
+        "supportedMessages": {
+            "custom": true,
+            "notifications": true
+        },
+        "stopBeforeUpdate": true,
+        "materialize": true,
+        "logTransporter": true,
+        "dependencies": [
+            {
+                "js-controller": ">=5.0.19"
+            }
+        ],
+        "preserveSettings": "smartName",
+        "eraseOnUpload": true,
+        "blockly": true,
+        "osDependencies": {
+            "linux": ["libcairo2-dev", "libpango1.0-dev", "libjpeg-dev", "libgif-dev", "librsvg2-dev"]
+        },
+        "plugins": {
+            "sentry": {
+                "dsn": "https://20987eaf91ef49de821771499fdb4e1a@sentry.iobroker.net/40"
+            }
+        },
+        "nogit": true,
+        "javascriptRules": {
+            "i18n": true,
+            "url": "rules/customRuleBlocks.js",
+            "name": "ActionVisu",
+            "type": "module"
+        },
+        "ifInstalledDependencies": {
+            "javascript": ">=8.9.2"
+        },
+        "licenseInformation": {
+            "type": "free",
+            "license": "MIT"
+        }
+    },
+    "protectedNative": ["login", "pass"],
+    "native": {
+        "login": "email.com",
+        "pass": "",
+        "language": "",
+        "cloudUrl": "a18wym7vjdl22g.iot.eu-west-1.amazonaws.com",
+        "functionFirst": false,
+        "concatWord": "",
+        "responseOID": "",
+        "restartOnDisconnect": false,
+        "iftttKey": "",
+        "replaces": "",
+        "amazonAlexa": false,
+        "amazonAlexaV3": true,
+        "amazonAlexaBlood": "",
+        "amazonAlexaBloodShortAnswer": false,
+        "googleHome": false,
+        "yandexAlisa": false,
+        "allowedServices": "",
+        "text2command": "0",
+        "nightscout": "",
+        "nightscoutPass": "myBlood",
+        "noCommon": false,
+        "debug": false,
+        "remote": false,
+        "defaultToggle": false,
+        "remoteAdminInstance": "",
+        "remoteWebInstance": "",
+        "customKnownAlexaUsers": [],
+        "addCustomKnownAlexaUserNameToText": false,
+        "customKnownAlexaDevices": [],
+        "addCustomKnownAlexaDeviceRoomToText": false
+    },
+    "notifications": [
+        {
+            "scope": "iot",
+            "name": {
+                "en": "Subscription alert",
+                "de": "Abonnement-Warnung",
+                "ru": "Оповещение о подписке",
+                "pt": "Alerta de subscrição",
+                "nl": "Abonnementswaarschuwing",
+                "fr": "Alerte d'abonnement",
+                "it": "Avviso di sottoscrizione",
+                "es": "Alerta de suscripción",
+                "pl": "Alert subskrypcji",
+                "uk": "Сповіщення про підписку",
+                "zh-cn": "订阅警报"
+            },
+            "description": {
+                "en": "IoT or Remote subscription is about to expire.",
+                "de": "IoT- oder Remote-Abonnement läuft bald ab.",
+                "ru": "Подписка IoT или Remote скоро истекает.",
+                "pt": "A subscrição IoT ou Remote está prestes a expirar.",
+                "nl": "IoT- of Remote-abonnement loopt bijna af.",
+                "fr": "L'abonnement IoT ou Remote est sur le point d'expirer.",
+                "it": "L'abbonamento IoT o Remote sta per scadere.",
+                "es": "La suscripción IoT o Remote está a punto de expirar.",
+                "pl": "Subskrypcja IoT lub Remote wkrótce wygaśnie.",
+                "uk": "Підписка IoT або Remote скоро закінчується.",
+                "zh-cn": "IoT 或 Remote 订阅即将到期。"
+            },
+            "categories": [
+                {
+                    "category": "subscription",
+                    "name": {
+                        "en": "IoT or Remote subscription is about to expire.",
+                        "de": "IoT- oder Remote-Abonnement läuft bald ab.",
+                        "ru": "Подписка IoT или Remote скоро истекает.",
+                        "pt": "A subscrição IoT ou Remote está prestes a expirar.",
+                        "nl": "IoT- of Remote-abonnement loopt bijna af.",
+                        "fr": "L'abonnement IoT ou Remote est sur le point d'expirer.",
+                        "it": "L'abbonamento IoT o Remote sta per scadere.",
+                        "es": "La suscripción IoT o Remote está a punto de expirar.",
+                        "pl": "Subskrypcja IoT lub Remote wkrótce wygaśnie.",
+                        "uk": "Підписка IoT або Remote скоро закінчується.",
+                        "zh-cn": "IoT 或 Remote 订阅即将到期。"
+                    },
+                    "severity": "notify",
+                    "description": {
+                        "en": "Your IoT or Remote subscription is about to expire. Please renew it to continue using the cloud services.",
+                        "de": "Ihr IoT- oder Remote-Abonnement läuft bald ab. Bitte erneuern Sie es, um die Cloud-Dienste weiterhin nutzen zu können.",
+                        "ru": "Ваша подписка IoT или Remote скоро истекает. Пожалуйста, продлите ее, чтобы продолжить использование облачных сервисов.",
+                        "pt": "A sua subscrição IoT ou Remote está prestes a expirar. Por favor, renove-a para continuar a utilizar os serviços na nuvem.",
+                        "nl": "Uw IoT- of Remote-abonnement loopt bijna af. Vernieuw het om de clouddiensten te blijven gebruiken.",
+                        "fr": "Votre abonnement IoT ou Remote est sur le point d'expirer. Veuillez le renouvel, pour continuer à utiliser les services cloud.",
+                        "it": "Il tuo abbonamento IoT o Remote sta per scadere. Si prega di rinnovarlo per continuare a utilizzare i servizi cloud.",
+                        "es": "Su suscripción IoT o Remote está a punto de expirar. Por favor, renuévela para continuar utilizando los servicios en la nube.",
+                        "pl": "Twoja subskrypcja IoT lub Remote wkrótce wygaśnie. Proszę odnowić ją, aby kontynuować korzystanie z usług w chmurze.",
+                        "uk": "Ваша підписка IoT або Remote скоро закінчується. Будь ласка, поновіть її, щоб продовжувати користуватися хмарними сервісами.",
+                        "zh-cn": "您的 IoT 或 Remote 订阅即将到期。请续订以继续使用云服务。"
+                    },
+                    "regex": [],
+                    "limit": 1
+                }
+            ]
+        }
+    ],
+    "objects": [],
+    "instanceObjects": [
+        {
+            "_id": "info",
+            "type": "channel",
+            "common": {
+                "name": "Information"
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.connection",
+            "type": "state",
+            "common": {
+                "role": "indicator.connected",
+                "name": "If connected to cloud",
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.ackTempPassword",
+            "type": "state",
+            "common": {
+                "role": "indicator",
+                "name": "If user have read about temp password for iot",
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.validTill",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": "Date until the current license is valid",
+                "desc": {
+                    "en": "Updated once a day",
+                    "de": "Einmal täglich aktualisiert",
+                    "ru": "Обновляется раз в день",
+                    "pt": "Atualizado uma vez por dia",
+                    "nl": "Een keer per dag bijgewerkt",
+                    "fr": "Mis à jour une fois par jour",
+                    "it": "Aggiornato una volta al giorno",
+                    "es": "Actualizado una vez al día",
+                    "pl": "Aktualizowane raz dziennie",
+                    "uk": "Оновлюється раз на день",
+                    "zh-cn": "每天更新一次"
+                },
+                "type": "string",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "smart.lastFunction",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": "Last controlled function",
+                "type": "string",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "smart.lastRoom",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": "Last controlled room",
+                "type": "string",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "smart.lastCommand",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": "Last command",
+                "type": "mixed",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "smart.lastCommandObj",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": "Last command as object",
+                "type": "string",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "smart.lastResponse",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": "Last textual response",
+                "type": "string",
+                "read": true,
+                "write": true
+            },
+            "native": {}
+        },
+        {
+            "_id": "smart.lastObjectID",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": "Last accessed object id",
+                "type": "string",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "smart.updates",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": "If updates of configuration is ready",
+                "type": "boolean",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "smart.updates3",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": "If updates of V3 configuration is ready",
+                "type": "boolean",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "smart.updatesGH",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": "If updates of google home configuration is ready",
+                "type": "boolean",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "smart.updatesYA",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": "If updates of yandex alice configuration is ready",
+                "type": "boolean",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "smart.updatesResult",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": "Result for last devices update",
+                "type": "string",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "services",
+            "type": "channel",
+            "common": {
+                "name": "Information"
+            },
+            "native": {}
+        },
+        {
+            "_id": "certs",
+            "type": "channel",
+            "common": {
+                "expert": true,
+                "name": "Certificates"
+            },
+            "native": {}
+        },
+        {
+            "_id": "certs.id",
+            "type": "state",
+            "common": {
+                "expert": true,
+                "role": "state",
+                "name": "Certificate ID",
+                "type": "string",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "certs.public",
+            "type": "state",
+            "common": {
+                "expert": true,
+                "role": "state",
+                "name": "Public key",
+                "type": "string",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "certs.private",
+            "type": "state",
+            "common": {
+                "expert": true,
+                "role": "state",
+                "name": "Private key",
+                "type": "string",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "certs.certificate",
+            "type": "state",
+            "common": {
+                "expert": true,
+                "role": "state",
+                "name": "Certificate",
+                "type": "string",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "certs.urlKey",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": "URL Key",
+                "desc": "Used for access this instance via URL",
+                "type": "string",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "certs.forceUserCreate",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": "Force user creation",
+                "desc": "Used to recreate the user and device anew",
+                "def": false,
+                "type": "boolean",
+                "read": true,
+                "write": true
+            },
+            "native": {}
+        },
+        {
+            "_id": "app",
+            "type": "channel",
+            "common": {
+                "expert": true,
+                "name": "Certificates"
+            },
+            "native": {}
+        },
+        {
+            "_id": "app.message",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": "Send message to app",
+                "desc": "Could be just message or JSON object {message: 'text', title: 'title', expire: 60, priority: 1}",
+                "type": "string",
+                "read": true,
+                "write": true
+            },
+            "native": {}
+        },
+        {
+            "_id": "app.title",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": "Title of message",
+                "type": "string",
+                "read": true,
+                "write": true
+            },
+            "native": {}
+        },
+        {
+            "_id": "app.expire",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": "Expire time in seconds",
+                "type": "number",
+                "unit": "seconds",
+                "read": true,
+                "max": 86400,
+                "min": 5,
+                "write": true
+            },
+            "native": {}
+        },
+        {
+            "_id": "app.priority",
+            "type": "state",
+            "common": {
+                "role": "state",
+                "name": "Expire time in seconds",
+                "type": "string",
+                "read": true,
+                "states": {
+                    "0": "Normal",
+                    "1": "High"
+                },
+                "def": "normal",
+                "write": true
+            },
+            "native": {}
+        }
+    ]
 }
