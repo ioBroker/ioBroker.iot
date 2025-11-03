@@ -352,7 +352,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 5.0.7 (2025-11-03)
 - (@GermanBluefox) Added possibility to group devices by type in GUI
 - (@GermanBluefox) Allowed to select any type in Alexe V3
 - (@GermanBluefox) Remove disabled states from auto-detection
@@ -375,10 +375,6 @@ setState('iot.0.app.message', JSON.stringify({
 - (@GermanBluefox) Do not control "white" by RGBW devices
 - (@GermanBluefox) Corrected GUI error
 - (@GermanBluefox) Avoid double entries in auto-detection
-
-### 4.2.7 (2025-10-26)
-- (@GermanBluefox) Create the service states at the instance start
-- (@GermanBluefox) Corrected error with gates
 
 ## License
 

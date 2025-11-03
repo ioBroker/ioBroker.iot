@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "5.0.6",
+    "version": "5.0.7",
     "news": {
+      "5.0.7": {
+        "en": "Added possibility to group devices by type in GUI\nAllowed to select any type in Alexe V3\nRemove disabled states from auto-detection",
+        "de": "Möglichkeit, Geräte nach Typ in GUI zu gruppieren\nErlaubt, jeden Typ in Alexe V3 auszuwählen\nEntfernen von deaktivierten Zuständen von Auto-Detektion",
+        "ru": "Добавлена возможность группировать устройства по типу в GUI\nВыберите любой тип Alexe V3\nУдаление состояний инвалидов из системы автоматического обнаружения",
+        "pt": "Adicionada possibilidade de agrupar dispositivos por tipo na GUI\nPermite selecionar qualquer tipo no Alexe V3\nRemover estados desactivados da detecção automática",
+        "nl": "Mogelijkheid toegevoegd om apparaten per type in GUI te groeperen\nToegestaan om elk type in Alexe V3 te selecteren\nGehandicapte staten verwijderen van automatische detectie",
+        "fr": "Ajout de la possibilité de grouper les appareils par type dans GUI\nPermet de sélectionner n'importe quel type dans Alexe V3\nSupprimer les états désactivés de la détection automatique",
+        "it": "Aggiunta possibilità di raggruppare dispositivi per tipo in GUI\nPermesso di selezionare qualsiasi tipo in Alexe V3\nRimuovere gli stati disabilitati dalla rilevazione automatica",
+        "es": "Añadido posibilidad de agrupar dispositivos por tipo en GUI\nPermitido seleccionar cualquier tipo en Alexe V3\nEliminar estados discapacitados de la auto-detección",
+        "pl": "Dodano możliwość grupowania urządzeń według typu w GUI\nDozwolone wybranie dowolnego typu w Alexe V3\nUsuwanie stanów wyłączonych z autodetekcji",
+        "uk": "Додано можливість групових пристроїв за типом в GUI\nДозволено вибрати будь-який тип в Alexe V3\nВидалити відключені стани з автодетекції",
+        "zh-cn": "在图形用户界面中按类型添加到设备分组的可能性\n允许在 Alexe V3 中选择任意类型\n从自动检测中删除已禁用状态"
+      },
       "5.0.6": {
         "en": "Added logs to detect the issues with detection\nAdded possibility to use the 0/1 state as socket\nAdded dialog to bulk manage the smart names of one device",
         "de": "Protokolle hinzugefügt, um die Probleme mit der Erkennung zu erkennen\nZusätzliche Möglichkeit, den Zustand 0/1 als Steckdose zu verwenden\nDialog hinzugefügt, um die intelligenten Namen eines Geräts zu verwalten",
@@ -80,19 +93,6 @@
         "pl": "Zmodyfikowano tworzenie Endpointed dla urządzeń z Umlautami.",
         "uk": "Змінено створення EndpointID для пристроїв з Umlauts.",
         "zh-cn": "修改了对 Umlauts 设备的 EndpointID 创建 ."
-      },
-      "4.2.3": {
-        "en": "Better auto-detection",
-        "de": "Bessere automatische Erkennung",
-        "ru": "Лучшее автоматическое обнаружение",
-        "pt": "Melhor detecção automática",
-        "nl": "Betere automatische detectie",
-        "fr": "Meilleure détection automatique",
-        "it": "Migliore auto-detezione",
-        "es": "Mejor auto-detección",
-        "pl": "Lepsze automatyczne wykrywanie",
-        "uk": "Краще автодетекція",
-        "zh-cn": "更好的自动检测"
       }
     },
     "titleLang": {

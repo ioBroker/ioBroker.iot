@@ -511,6 +511,10 @@
 ### 0.1.4 (2018-09-26)
 
 -   (bluefox) Initial commit
+## 4.2.7 (2025-10-26)
+- (@GermanBluefox) Create the service states at the instance start
+- (@GermanBluefox) Corrected error with gates
+
 ## 4.2.5 (2025-10-25)
 - (@GermanBluefox) Modified the creation of EndpointID for devices with Umlauts.
 

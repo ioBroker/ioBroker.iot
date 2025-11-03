@@ -1,7 +1,7 @@
 {
     "name": "iobroker.iot.rules",
     "private": true,
-    "version": "5.0.6",
+    "version": "5.0.7",
     "type": "module",
     "scripts": {
         "start": "set PORT=4173 && vite start",
