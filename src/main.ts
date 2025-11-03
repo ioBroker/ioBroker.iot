@@ -678,7 +678,7 @@ export class IotAdapter extends Adapter {
 
     onConnect(clientId: string): void {
         if (!this.connectedOwn) {
-            this.log.info(`Connection changed: connect "${clientId}"`);
+            this.log.info(`Connection changed: connect "${clientId[0]}***${clientId[clientId.length - 1]}"`);
             this.connectedOwn = true;
             void this.setState('info.connection', this.connectedOwn, true);
             // setTimeout(() => {
