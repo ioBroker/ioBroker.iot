@@ -1147,6 +1147,21 @@ export class IotAdapter extends Adapter {
         });
     }
 
+    /**
+     * Calculate retry delay based on retry attempt number
+     * Implements exponential backoff: 0s, 5s, 10s, 20s, 30s, then 60s
+     *
+     * @param retry - The retry attempt number (0-based)
+     * @returns Delay in milliseconds
+     */
+    private getRetryDelay(retry: number): number {
+        const delays = [0, 5000, 10000, 20000, 30000];
+        if (retry < delays.length) {
+            return delays[retry];
+        }
+        return 60000; // 60 seconds for all subsequent retries
+    }
+
     async readValidTill(forceUpdate?: boolean): Promise<Date | null> {
         if (
             !forceUpdate &&
@@ -1259,10 +1274,16 @@ export class IotAdapter extends Adapter {
 
                 // restart the iot device if DNS cannot be resolved
                 if (errorTxt.includes('EAI_AGAIN')) {
-                    this.log.error(
-                        `DNS name of ${this.config.cloudUrl} cannot be resolved: connection will be retried in 10 seconds.`,
-                    );
-                    setTimeout(() => this.startDevice(clientId, login, password), 10000);
+                    const retryDelay = this.getRetryDelay(retry);
+                    const retrySeconds = retryDelay / 1000;
+                    if (retryDelay === 0) {
+                        this.log.error(`DNS name of ${this.config.cloudUrl} cannot be resolved: retrying immediately.`);
+                    } else {
+                        this.log.error(
+                            `DNS name of ${this.config.cloudUrl} cannot be resolved: connection will be retried in ${retrySeconds} seconds.`,
+                        );
+                    }
+                    setTimeout(() => this.startDevice(clientId, login, password, retry + 1), retryDelay);
                 }
             });
 
@@ -1354,7 +1375,14 @@ export class IotAdapter extends Adapter {
             }
 
             if ((error === 'timeout' || error.message?.includes('timeout')) && retry < 10) {
-                setTimeout(() => this.startDevice(clientId, login, password, retry + 1), 10000);
+                const retryDelay = this.getRetryDelay(retry);
+                const retrySeconds = retryDelay / 1000;
+                if (retryDelay === 0) {
+                    this.log.info('Connection timeout: retrying immediately.');
+                } else {
+                    this.log.info(`Connection timeout: retrying in ${retrySeconds} seconds.`);
+                }
+                setTimeout(() => this.startDevice(clientId, login, password, retry + 1), retryDelay);
             }
         }
     }
