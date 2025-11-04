@@ -15,7 +15,28 @@ It is not for remote access to your ioBroker instance. Use ioBroker.cloud adapte
 
 **This adapter uses Sentry libraries to automatically report exceptions and code errors to the developers.** For more details and for information how to disable the error reporting see [Sentry-Plugin Documentation](https://github.com/ioBroker/plugin-sentry#plugin-sentry)! Sentry reporting is used starting with js-controller 3.0.
 
-## Settings
+## Getting Started
+
+### What does this adapter do?
+
+This adapter connects your ioBroker devices to voice assistants like Amazon Alexa and Google Home. It automatically creates virtual smart home devices that can be controlled by voice commands.
+
+### Basic Concepts
+
+**Enumerations** are ioBroker's way of organizing your devices. There are two types:
+- **Rooms**: Locations like "Living Room", "Bedroom", "Kitchen"
+- **Functions**: Device types like "Light", "Heating", "Blinds"
+
+**Smart Names** are the names that voice assistants (Alexa, Google Home) use to identify your devices. The adapter automatically generates these names by combining room and function information (e.g., "Living Room Light").
+
+### How it works:
+
+1. You organize your ioBroker states into **rooms** and **functions** using enumerations
+2. The adapter automatically detects devices and creates smart names like "Living Room Light" or "Bedroom Heating"
+3. These virtual devices become available in Alexa or Google Home
+4. You can control them with voice commands like "Alexa, turn on Living Room Light"
+
+### Prerequisites
 
 To use the iot adapter, you should first register on the ioBroker cloud [https://iobroker.pro](https://iobroker.pro).
 
@@ -25,23 +46,45 @@ Note: Humidity sensor cannot be shown alone without temperature sensor, because 
 
 ![Intro](img/intro.png)
 
+## Settings
+
 ### Language
 
-If you select "default" language, the smart names of devices and of enumerations will not be translated. If some language is specified, all known names will be translated into this language.
-It is done to switch fast between many languages for demonstration purposes.
+This setting controls the language used for automatically generated device names.
+
+- **"default"**: Smart names will use the original names from your ioBroker enumerations (rooms and functions) without translation
+- **Specific language** (e.g., English, German): All known room and function names will be translated into the selected language
+
+**Example:**
+- If your enumeration is called "Wohnzimmer" (German for Living Room) and you select English as language, the device will be called "Living Room Light" in Alexa/Google Home
+- If you select "default", it will stay as "Wohnzimmer Light"
+
+This is useful for demonstration purposes or when you want to quickly switch between languages.
 
 ### Place function in names first
 
-Change the order of function and roles in self-generated names:
+This setting changes the order of words in automatically generated device names.
 
--   if false: "Room function", e.g. "Living room dimmer"
--   if true: "Function room", e.g. "Dimmer living room"
+By default, the adapter creates device names by combining the **room name** and **function name**.
+
+- **If unchecked (default)**: The room comes first → "Living Room Dimmer"
+- **If checked**: The function comes first → "Dimmer Living Room"
+
+**Why change this?** Some people find it more natural to say "Alexa, turn on Dimmer Living Room" instead of "Alexa, turn on Living Room Dimmer". Choose what sounds better in your language.
 
 ### Concatenate words with
 
-You can define the word which will be placed between function and room. E.g. "in" and from "Dimmer living room" will be "Dimmer in living room".
+This setting adds a connecting word between the room and function names in automatically generated device names.
 
-But it is not suggested doing so, because recognition engine must analyze one more word, and it can lead to misunderstandings.
+**Example:**
+- **Without** this setting: "Dimmer Living Room" or "Living Room Dimmer"
+- **With** "in" as connecting word: "Dimmer in Living Room" or "Living Room in Dimmer"
+
+**Important:** It's generally **not recommended** to use this feature because:
+- Voice assistants have to recognize an extra word, which can lead to misunderstandings
+- Simpler names work more reliably with voice commands
+
+Leave this empty unless you have a specific reason to add connecting words.
 
 ### OFF level for switches
 
@@ -96,41 +139,63 @@ Alexa, is "lock name" locked/unlocked
 Alexa, lock the "lock name"
 ```
 
-## How names will be generated
+## How device names are generated
 
-The adapter tries to generate virtual devices for smart home control (e.g., Amazon Alexa or Google Home).
+The adapter automatically creates virtual smart home devices by combining information from your ioBroker setup.
 
-There are two important enumerations for that: rooms and functions.
+### Understanding Enumerations
 
-Rooms are like: living room, bathroom, sleeping room.
-Functions are like: light, blind, heating.
+Enumerations are ioBroker's built-in way to organize devices:
+- **Rooms enumeration**: Contains locations (living room, bathroom, bedroom, kitchen, etc.)
+- **Functions enumeration**: Contains device types (light, blind, heating, etc.)
 
-The following conditions must be met to get the state in the automatically generated list:
+### Requirements for automatic detection
 
--   the state must be in some `function` enumeration.
--   the state must have a role (`state`, `switch` or `level.\*`, e.g., `level.dimmer`) if not directly included in "functions".
-    It can be that the channel is in the `functions`, but state itself not.
--   the state must be writable: `common.write` = true
--   the state dimmer must have `common.type` as 'number'
--   the state heating must have `common.unit` as `°C`, `°F` or `°K` and `common.type` as `number`
+For a state (device) to be automatically included in smart home control, it must meet these conditions:
 
-If the state is only in "functions" and not in any "room", the name of state will be used.
+1. **Must be in a function enumeration** (e.g., "Light", "Heating", "Blinds")
+2. **Must have the correct role**: `state`, `switch`, or `level.*` (like `level.dimmer`)
+   - If the entire channel is in the function enumeration, individual states don't need specific roles
+3. **Must be writable**: `common.write` must be `true`
+4. **Special requirements:**
+   - Dimmers must have `common.type` as `number`
+   - Heating must have `common.unit` as `°C`, `°F`, or `°K` and `common.type` as `number`
 
-The state names will be generated from function and room. E.g., all _lights_ in the _living room_ will be collected in the virtual device _living room light_.
-The user cannot change this name, because it is generated automatically.
-But if the enumeration name changes, this name will be changed too. (e.g., function "light" changed to "lights", so the _living room light_ will be changed to _living room lights_)
+### How names are created
 
-All the rules will be ignored if the state has common.smartName. In this case, just the smart name will be used.
+The adapter combines room and function information to create meaningful names:
 
-if `common.smartName` is `false`, the state or enumeration will not be included in the list generation.
+**Example:**
+- You have a light switch in the living room
+- The state is in enumeration "Light" (function) and "Living Room" (room)
+- The generated name will be: **"Living Room Light"**
 
-The configuration dialog lets the comfortable remove and add the single states to virtual groups or as single device.
+**Multiple devices of the same type:**
+All lights in the living room are grouped together under the same virtual device "Living Room Light". When you say "Alexa, turn on Living Room Light", all lights in that room will turn on.
+
+**Device without room:**
+If a state is only in a function enumeration (e.g., "Light") but not in any room, the original state name will be used.
+
+### Custom names with smartName
+
+You can override automatic naming:
+- Set `common.smartName` to your preferred name → The device will use this exact name
+- Set `common.smartName` to `false` → The device will be excluded from smart home control
+
+### Manual configuration
+
+The configuration dialog allows you to manually adjust which states are included and how they are grouped:
 ![Configuration](img/configuration.png)
 
-If the group has only one state, it can be renamed, as for this the state's smartName will be used.
-If the group has more than one state, the group must be renamed via the enumeration's names.
+**Renaming:**
+- **Single-state groups**: Can be renamed (uses the state's smartName)
+- **Multi-state groups**: Must be renamed by changing the enumeration names
 
-To create own groups, the user can install "scenes" adapter or create "script" in JavaScript adapter.
+### Creating custom groups
+
+To create your own device groups:
+- Use the "scenes" adapter
+- Create a "script" in the JavaScript adapter
 
 ### Replaces
 
