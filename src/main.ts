@@ -1155,11 +1155,38 @@ export class IotAdapter extends Adapter {
      * @returns Delay in milliseconds
      */
     private getRetryDelay(retry: number): number {
-        const delays = [0, 5000, 10000, 20000, 30000];
-        if (retry < delays.length) {
-            return delays[retry];
+        // Exponential backoff strategy: immediate, 5s, 10s, 20s, 30s, then 60s for all subsequent attempts
+        const RETRY_DELAYS_MS = [
+            0, // First retry: immediate
+            5_000, // Second retry: 5 seconds
+            10_000, // Third retry: 10 seconds
+            20_000, // Fourth retry: 20 seconds
+            30_000, // Fifth retry: 30 seconds
+        ];
+        const MAX_RETRY_DELAY_MS = 60_000; // Cap at 60 seconds for all subsequent retries
+
+        if (retry < RETRY_DELAYS_MS.length) {
+            return RETRY_DELAYS_MS[retry];
         }
-        return 60000; // 60 seconds for all subsequent retries
+        return MAX_RETRY_DELAY_MS;
+    }
+
+    /**
+     * Log retry information with appropriate log level and formatted message
+     *
+     * @param retryDelay - Delay in milliseconds
+     * @param errorType - Type of error (e.g., 'DNS resolution', 'Connection timeout')
+     * @param isError - Whether to log as error (true) or info (false)
+     */
+    private logRetryAttempt(retryDelay: number, errorType: string, isError: boolean = true): void {
+        const retrySeconds = retryDelay / 1000;
+        const logMethod = isError ? this.log.error.bind(this.log) : this.log.info.bind(this.log);
+
+        if (retryDelay === 0) {
+            logMethod(`${errorType}: retrying immediately.`);
+        } else {
+            logMethod(`${errorType}: retrying in ${retrySeconds} seconds.`);
+        }
     }
 
     async readValidTill(forceUpdate?: boolean): Promise<Date | null> {
@@ -1275,14 +1302,7 @@ export class IotAdapter extends Adapter {
                 // restart the iot device if DNS cannot be resolved
                 if (errorTxt.includes('EAI_AGAIN')) {
                     const retryDelay = this.getRetryDelay(retry);
-                    const retrySeconds = retryDelay / 1000;
-                    if (retryDelay === 0) {
-                        this.log.error(`DNS name of ${this.config.cloudUrl} cannot be resolved: retrying immediately.`);
-                    } else {
-                        this.log.error(
-                            `DNS name of ${this.config.cloudUrl} cannot be resolved: connection will be retried in ${retrySeconds} seconds.`,
-                        );
-                    }
+                    this.logRetryAttempt(retryDelay, `DNS name of ${this.config.cloudUrl} cannot be resolved`, true);
                     setTimeout(() => this.startDevice(clientId, login, password, retry + 1), retryDelay);
                 }
             });
@@ -1376,12 +1396,7 @@ export class IotAdapter extends Adapter {
 
             if ((error === 'timeout' || error.message?.includes('timeout')) && retry < 10) {
                 const retryDelay = this.getRetryDelay(retry);
-                const retrySeconds = retryDelay / 1000;
-                if (retryDelay === 0) {
-                    this.log.info('Connection timeout: retrying immediately.');
-                } else {
-                    this.log.info(`Connection timeout: retrying in ${retrySeconds} seconds.`);
-                }
+                this.logRetryAttempt(retryDelay, 'Connection timeout', false);
                 setTimeout(() => this.startDevice(clientId, login, password, retry + 1), retryDelay);
             }
         }
