@@ -24,6 +24,12 @@ export default class IotProxy {
         if (typeof message !== 'string') {
             message = JSON.stringify(message);
         }
-        setTimeout(() => IotProxy.device?.publish(topic, message, { qos: 0 }, (_error?: Error): void => {}), 100);
+        setTimeout(
+            strMessage => {
+                IotProxy.device?.publish(topic, strMessage, { qos: 0 }, (_error?: Error): void => {});
+            },
+            100,
+            message,
+        );
     }
 }

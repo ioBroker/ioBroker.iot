@@ -4,6 +4,31 @@ import type { AlexaV3Request } from '../../types';
 import type DeviceManager from '../../DeviceManager';
 
 export default class Discovery extends Base {
+    static setAllProactiveAndRetrievableFalse(obj: any): any {
+        if (obj === null || obj === undefined) {
+            return obj;
+        }
+
+        if (Array.isArray(obj)) {
+            for (let i = 0; i < obj.length; i++) {
+                Discovery.setAllProactiveAndRetrievableFalse(obj[i]);
+            }
+            return obj;
+        }
+
+        if (typeof obj === 'object') {
+            for (const key of Object.keys(obj)) {
+                if (key === 'proactivelyReported' || key === 'retrievable') {
+                    obj[key] = false;
+                } else {
+                    Discovery.setAllProactiveAndRetrievableFalse(obj[key]);
+                }
+            }
+        }
+
+        return obj;
+    }
+
     handle(event: AlexaV3Request, endpointManager: DeviceManager): Promise<AlexaResponse> {
         this.log.debug(`handling Discovery`);
         this.log.silly(`${JSON.stringify(event)}`);
@@ -37,8 +62,14 @@ export default class Discovery extends Base {
             });
         });
 
+        const json = response.get();
+
         this.log.silly(`${JSON.stringify(response.get())}`);
 
-        return Promise.resolve(response.get());
+        if (endpointManager.validTill <= Date.now()) {
+            Discovery.setAllProactiveAndRetrievableFalse(json);
+        }
+
+        return Promise.resolve(json);
     }
 }

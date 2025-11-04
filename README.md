@@ -419,6 +419,7 @@ setState('iot.0.app.message', JSON.stringify({
 ## Changelog
 ### **WORK IN PROGRESS**
 - (@GermanBluefox) Showed last controller ID in `smart.lastObjectID`
+- (@GermanBluefox) Showed subscription valid period in `info.validTill` and GUI
 
 ### 5.0.7 (2025-11-03)
 - (@GermanBluefox) Added possibility to group devices by type in GUI

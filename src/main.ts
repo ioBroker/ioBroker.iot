@@ -40,6 +40,9 @@ export class IotAdapter extends Adapter {
     private secret: string = '';
     private connectStarted = 0;
     private caCert: Buffer | null = null;
+    private validTill: string | null = null;
+    private validTillLastQuery: number = 0;
+    private alertReported = false;
 
     public constructor(options: Partial<AdapterOptions> = {}) {
         super({
@@ -89,16 +92,9 @@ export class IotAdapter extends Adapter {
                 }
 
                 if (state) {
-                    if (this.config.googleHome) {
-                        void this.googleHome?.updateState(id, state);
-                    }
-                    if (this.config.amazonAlexaV3) {
-                        void this.alexaSH3?.handleStateUpdate(id, state);
-                    }
-
-                    if (this.config.yandexAlisa) {
-                        void this.yandexAlisa?.updateState?.(id, state);
-                    }
+                    void this.googleHome?.updateState(id, state);
+                    void this.alexaSH3?.handleStateUpdate(id, state);
+                    void this.yandexAlisa?.updateState?.(id, state);
                 }
 
                 if (id) {
@@ -290,6 +286,11 @@ export class IotAdapter extends Adapter {
                             this.alexaSH2?.getDebug((data: any): void =>
                                 this.sendTo(obj.from, obj.command, data, obj.callback),
                             );
+                            break;
+
+                        case 'updateValidTill':
+                            await this.readValidTill(true);
+                            this.sendTo(obj.from, obj.command, this.validTill, obj.callback);
                             break;
 
                         case 'getServiceEndpoint':
@@ -678,7 +679,19 @@ export class IotAdapter extends Adapter {
 
     onConnect(clientId: string): void {
         if (!this.connectedOwn) {
-            this.log.info(`Connection changed: connect "${clientId}"`);
+            // Make from peter_gmail_com => p***r_g...com
+            const parts = clientId.split('_');
+            const clientIdSafe: string[] = [];
+            if (parts.length > 2) {
+                for (let i = 0; i < parts.length - 1; i++) {
+                    clientIdSafe.push(`${parts[i][0]}***${parts[i][parts[i].length - 1]}`);
+                }
+                clientIdSafe.push(parts[parts.length - 1]);
+            } else {
+                clientIdSafe.push(`${clientId[0]}***${clientId[clientId.length - 1]}`);
+            }
+
+            this.log.info(`Connection changed: connect "${clientIdSafe.join('_')}"`);
             this.connectedOwn = true;
             void this.setState('info.connection', this.connectedOwn, true);
             // setTimeout(() => {
@@ -1134,6 +1147,55 @@ export class IotAdapter extends Adapter {
         });
     }
 
+    async readValidTill(forceUpdate?: boolean): Promise<Date | null> {
+        if (
+            !forceUpdate &&
+            this.validTill &&
+            this.validTillLastQuery &&
+            Date.now() - this.validTillLastQuery < 24 * 3_600_000
+        ) {
+            const validTill = new Date(this.validTill);
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            if (validTill > tomorrow) {
+                return new Date(this.validTill);
+            }
+        }
+        try {
+            const response = await fetch('https://iobroker.pro:3001/api/v1/validTill', {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${Buffer.from(`${this.config.login}:${this.config.pass}`).toString('base64')}`,
+                },
+            });
+            if (response.ok) {
+                this.validTillLastQuery = Date.now();
+                const data = (await response.json()) as { validTill: string };
+                this.validTill = data.validTill;
+                await this.setStateAsync('info.validTill', this.validTill, true);
+                // If license will expire in less than 7 days, show warning every time adapter starts
+                const validTillDate = new Date(data.validTill);
+                const now = new Date();
+                const diff = validTillDate.getTime() - now.getTime();
+                const days = Math.ceil(diff / (1000 * 3600 * 24));
+                if (days <= 7 && !this.alertReported) {
+                    this.alertReported = true;
+                    await this.registerNotification('iot', 'subscription', validTillDate.toLocaleString());
+                    this.log.warn(
+                        `Your ioBroker IoT license will expire in ${days} day(s) on ${validTillDate.toDateString()}. Please renew your license to continue using all features without interruption.`,
+                    );
+                }
+
+                return new Date(data.validTill);
+            }
+            this.log.error(`Cannot fetch validTill: ${response.status} ${response.statusText}`);
+        } catch (error) {
+            this.log.error(`Cannot fetch validTill: ${error}`);
+        }
+
+        return null;
+    }
+
     async startDevice(clientId: string, login: string, password: string, retry?: number): Promise<void> {
         retry ||= 0;
         let certs:
@@ -1156,6 +1218,11 @@ export class IotAdapter extends Adapter {
                 throw error;
             }
         }
+
+        await this.readValidTill();
+        // Additionally, the cloud checks the "valid till" for alexaSH3
+        // this.alexaSH3?.setValidTill(this.validTill ? new Date(this.validTill).getTime() : Date.now() - 1000);
+        this.alexaSH3?.setValidTill(Date.now() - 1000);
 
         // destroy the old device
         await this.closeDevice();
@@ -1593,6 +1660,7 @@ export class IotAdapter extends Adapter {
                 iotDevice: this.device!,
             });
             this.alexaSH3.setLanguage(this.lang);
+            this.alexaSH3.setValidTill(this.validTill ? new Date(this.validTill).getTime() : Date.now() - 1000);
             await this.alexaSH3.updateDevices();
         } else {
             // Check that update result is empty
