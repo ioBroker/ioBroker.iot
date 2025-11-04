@@ -420,6 +420,7 @@ setState('iot.0.app.message', JSON.stringify({
 ### **WORK IN PROGRESS**
 - (@GermanBluefox) Showed last controller ID in `smart.lastObjectID`
 - (@GermanBluefox) Showed subscription valid period in `info.validTill` and GUI
+- (@Copilot) Implemented increasing reconnect intervall
 
 ### 5.0.7 (2025-11-03)
 - (@GermanBluefox) Added possibility to group devices by type in GUI

@@ -197,7 +197,8 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
 
         it('Report state for a smart lock', async function () {
             const event = await helpers.getSample('StateReport/ReportState.json');
-
+            const idSet = helpers.getConfigForName('SET', helpers.lockConfig());
+            await AdapterProvider.setState(idSet, false, true); // set to closed
             const deviceManager = new DeviceManager();
             deviceManager.addDevice(
                 new Device({
@@ -215,12 +216,18 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
             assert.equal(response.event.header.name, 'StateReport', 'Name!');
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
 
-            assert.equal(response.context.properties.length, 1);
+            assert.equal(response.context.properties.length, 2);
             assert.equal(response.context.properties[0].hasOwnProperty('instance'), false);
             assert.equal(response.context.properties[0].namespace, 'Alexa.LockController');
             assert.equal(response.context.properties[0].name, 'lockState');
             assert.equal(response.context.properties[0].value, 'LOCKED');
             assert.equal(response.context.properties[0].uncertaintyInMilliseconds, 0);
+
+            assert.equal(response.context.properties[1].hasOwnProperty('instance'), false);
+            assert.equal(response.context.properties[1].namespace, 'Alexa.EndpointHealth');
+            assert.equal(response.context.properties[1].name, 'connectivity');
+            assert.equal(response.context.properties[1].value.value, 'OK');
+            assert.equal(response.context.properties[1].uncertaintyInMilliseconds, 0);
         });
 
         it('Report state for a contact sensor', async function () {

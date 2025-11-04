@@ -357,8 +357,12 @@ const Helpers = {
         return new Controls.Gate(require('./Resources/gate.json'));
     },
 
+    lockConfig: function () {
+        return require('./Resources/lock.json');
+    },
+
     lockControl: function () {
-        return new Controls.Lock(require('./Resources/lock.json'));
+        return new Controls.Lock(this.lockConfig());
     },
 
     sceneControl: function () {

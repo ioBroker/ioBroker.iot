@@ -1337,6 +1337,103 @@ describe('AlexaSmartHomeV3 - Controls', function () {
         });
     });
 
+    describe('Lock', async function () {
+        before(async function () {
+            endpointId = 'endpoint-001';
+            friendlyName = 'some-friendly-name';
+            const idSet = helpers.getConfigForName('SET', helpers.lockConfig());
+            await AdapterProvider.setState(idSet, true, true); // set to open
+
+            deviceManager = new DeviceManager();
+            deviceManager.addDevice(
+                new Device({
+                    id: endpointId,
+                    friendlyName,
+                    controls: [helpers.lockControl()],
+                }),
+            );
+        });
+
+        it('Lock reports state', async function () {
+            const event = await helpers.getSample('StateReport/ReportState.json');
+            const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+            assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
+            assert.equal(response.event.header.name, 'StateReport', 'Name!');
+            assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, 'Name!');
+            assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+
+            assert.equal(response.context.properties.length, 2);
+
+            assert.equal(response.context.properties[0].namespace, 'Alexa.LockController');
+            assert.equal(response.context.properties[0].name, 'lockState');
+            assert.equal(response.context.properties[0].value, 'UNLOCKED');
+
+            assert.equal(response.context.properties[1].namespace, 'Alexa.EndpointHealth');
+            assert.equal(response.context.properties[1].name, 'connectivity');
+            assert.equal(response.context.properties[1].value.value, 'OK');
+        });
+
+        it('Lock should be UNLOCKED after unlock command', async function () {
+            const event = await helpers.getSample(
+                'LockController/LockController.Unlock.request.json',
+            );
+            const d = deviceManager.endpointById(event.directive.endpoint.endpointId);
+            assert.notEqual(d, undefined);
+            assert.equal(d instanceof Device, true);
+            let response = await d.handle(event);
+            const idSet = helpers.getConfigForName('SET', helpers.lockConfig());
+            let valueState = await AdapterProvider.getState(idSet);
+            assert.equal(valueState, true, 'Value!');
+
+            assert.equal(
+                response.context.properties[0].namespace,
+                'Alexa.LockController',
+                'Properties Namespace!',
+            );
+            assert.equal(response.context.properties[0].name, 'lockState', 'Properties Name!');
+            assert.equal(response.context.properties[0].value, 'UNLOCKED', 'Value!');
+
+            assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
+            assert.equal(response.event.header.name, 'Response', 'Namespace!');
+            assert.equal(
+                response.event.header.correlationToken,
+                event.directive.header.correlationToken,
+                'Correlation Token!',
+            );
+            assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+        });
+
+        it('Lock should be LOCKED after lock command', async function () {
+            const event = await helpers.getSample(
+                'LockController/LockController.Lock.request.json',
+            );
+            const d = deviceManager.endpointById(event.directive.endpoint.endpointId);
+            let response = await d.handle(event);
+            const idSet = helpers.getConfigForName('SET', helpers.lockConfig());
+            let valueState = await AdapterProvider.getState(idSet);
+            assert.equal(valueState, false, 'Value!');
+
+            assert.equal(
+                response.context.properties[0].namespace,
+                'Alexa.LockController',
+                'Properties Namespace!',
+            );
+            assert.equal(response.context.properties.length, 1, 'Properties Length!');
+            assert.equal(response.context.properties[0].name, 'lockState', 'Properties Name!');
+            assert.equal(response.context.properties[0].value, 'LOCKED', 'Value!');
+
+            assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
+            assert.equal(response.event.header.name, 'Response', 'Namespace!');
+            assert.equal(
+                response.event.header.correlationToken,
+                event.directive.header.correlationToken,
+                'Correlation Token!',
+            );
+            assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+        });
+    });
+
     describe('RgbSingle with power', async function () {
         before(function () {
             endpointId = 'endpoint-001';

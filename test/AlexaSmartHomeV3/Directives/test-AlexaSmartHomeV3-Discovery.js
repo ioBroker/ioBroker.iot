@@ -275,11 +275,13 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             assert.equal(response.event.payload.endpoints[0].endpointId, endpointId, 'Endpoint Id!');
             assert.equal(response.event.payload.endpoints[0].friendlyName, friendlyName, 'Friendly Name!');
 
-            assert.equal(response.event.payload.endpoints[0].capabilities.length, 2);
+            assert.equal(response.event.payload.endpoints[0].capabilities.length, 3);
             assert.equal(response.event.payload.endpoints[0].capabilities[0].type, 'AlexaInterface');
             assert.equal(response.event.payload.endpoints[0].capabilities[0].interface, 'Alexa');
             assert.equal(response.event.payload.endpoints[0].capabilities[1].interface, 'Alexa.LockController');
             assert.equal(response.event.payload.endpoints[0].capabilities[1].properties.supported[0].name, 'lockState');
+            assert.equal(response.event.payload.endpoints[0].capabilities[2].interface, 'Alexa.EndpointHealth');
+            assert.equal(response.event.payload.endpoints[0].capabilities[2].properties.supported[0].name, 'connectivity');
         });
 
         it('Discovery of a contact sensor', async function () {

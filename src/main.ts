@@ -3,6 +3,7 @@ import { Adapter, type AdapterOptions } from '@iobroker/adapter-core'; // Get co
 import { readFileSync } from 'node:fs';
 import axios from 'axios';
 import { deflateSync } from 'node:zlib';
+import { v4 as uuid } from 'uuid';
 
 // @ts-expect-error no types
 import AlexaSH2 from './lib/alexaSmartHomeV2';
@@ -23,13 +24,13 @@ const SPECIAL_ADAPTERS = ['netatmo'];
 const ALLOWED_SERVICES = SPECIAL_ADAPTERS.concat(['text2command']);
 
 // Connection retry delays in milliseconds
-// Progressive backoff strategy: immediate, 5s, 10s, 20s, 30s, then 60s for all subsequent attempts
+// Progressive backoff strategy: 10s, 15s, 20s, 30s, 45s, then 60s for all subsequent attempts
 const RETRY_DELAYS_MS = [
-    0, // First retry: immediate
-    5_000, // Second retry: 5 seconds
-    10_000, // Third retry: 10 seconds
-    20_000, // Fourth retry: 20 seconds
-    30_000, // Fifth retry: 30 seconds
+    10_000, // First retry: 10 seconds
+    15_000, // Second retry: 15 seconds
+    20_000, // Third retry: 20 seconds
+    30_000, // Fourth retry: 30 seconds
+    45_000, // Fifth retry: 45 seconds
 ];
 const MAX_RETRY_DELAY_MS = 60_000; // Cap at 60 seconds for all subsequent retries
 
@@ -949,7 +950,8 @@ export class IotAdapter extends Adapter {
                 if (this.alexaSH3) {
                     try {
                         const response = await this.alexaSH3.process(request);
-                        if (request.directive.header.messageId != response.event!.header.messageId) {
+                        // Message ID will be used to identify answer in the cloud. In the cloud it will be changed to unique
+                        if (request.directive.header.messageId !== response.event!.header.messageId) {
                             throw new Error('Incoming and outgoing header message IDs are not equal!');
                         }
                         return response as any;
@@ -1704,7 +1706,8 @@ export class IotAdapter extends Adapter {
                 iotDevice: this.device!,
             });
             this.alexaSH3.setLanguage(this.lang);
-            this.alexaSH3.setValidTill(this.validTill ? new Date(this.validTill).getTime() : Date.now() - 1000);
+            // this.alexaSH3.setValidTill(this.validTill ? new Date(this.validTill).getTime() : Date.now() - 1000);
+            this.alexaSH3.setValidTill(Date.now() - 1000);
             await this.alexaSH3.updateDevices();
         } else {
             // Check that update result is empty

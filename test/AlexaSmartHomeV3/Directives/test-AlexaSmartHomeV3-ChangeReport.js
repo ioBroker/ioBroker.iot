@@ -219,7 +219,8 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
 
         it('ChangeReport for a smart lock', async function () {
             const event = Directives.ChangeReport.get(endpointId, Properties.LockState.propertyName, true);
-
+            const idSet = helpers.getConfigForName('SET', helpers.lockConfig());
+            await AdapterProvider.setState(idSet, false, true); // set to closed
             deviceManager = new DeviceManager();
             deviceManager.addDevice(
                 new Device({

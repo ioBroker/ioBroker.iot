@@ -7,6 +7,16 @@
             "smartName": {
                 "smartType": "Lock"
             }
+        },
+        {
+            "name": "OPEN",
+            "defaultRole": "button",
+            "id": "alias.0.Wohnzimmer.Lock.OPEN",
+            "common": {
+                "write": true,
+                "type": "boolean",
+                "read": false
+            }
         }
     ],
     "type": "lock",

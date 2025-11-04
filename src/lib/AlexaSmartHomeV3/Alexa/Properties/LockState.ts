@@ -38,23 +38,23 @@ export default class LockState extends Base {
     }
 
     alexaValue(value: ioBroker.StateValue | undefined): AlexaV3DirectiveValue {
-        // Lock could be true (locked) or false (unlocked)
-        // ot 1 (locked) or 0 (unlocked)
+        // Lock could be true (unlocked) or false (locked)
+        // ot 1 (unlocked) or 0 (locked)
         if (value === true || value === 1) {
-            return LockState.LOCKED;
+            return LockState.UNLOCKED;
         }
         if (value === false || value === 0) {
-            return LockState.UNLOCKED;
+            return LockState.LOCKED;
         }
         return LockState.JAMMED;
     }
 
     value(alexaValue: AlexaV3DirectiveValue): ioBroker.StateValue | undefined {
         if (alexaValue === LockState.LOCKED || alexaValue === LockState.LOCK) {
-            return true;
+            return false;
         }
         if (alexaValue === LockState.UNLOCKED || alexaValue === LockState.UNLOCK) {
-            return false;
+            return true;
         }
         return undefined;
     }

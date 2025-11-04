@@ -10,7 +10,7 @@ export default class Lock extends Control {
         super(detectedControl);
 
         const lockController = new Capabilities.LockController(this.lockStateInitObject());
-        this._supported = [lockController];
+        this._supported = [lockController, new EndpointHealth(this.connectivityInitObject(true)!)];
 
         const health = this.connectivityInitObject();
         if (health) {
@@ -28,10 +28,10 @@ export default class Lock extends Control {
             setState: this.states[map.set]!,
             getState: this.states[map.actual]!,
             alexaSetter: function (alexaValue: AlexaV3DirectiveValue): ioBroker.StateValue | undefined {
-                return alexaValue === Properties.LockState.LOCK;
+                return alexaValue === Properties.LockState.UNLOCK;
             },
             alexaGetter: function (value: ioBroker.StateValue | undefined): AlexaV3DirectiveValue {
-                return value ? Properties.LockState.LOCKED : Properties.LockState.UNLOCKED;
+                return value ? Properties.LockState.UNLOCKED : Properties.LockState.LOCKED;
             },
         };
     }
