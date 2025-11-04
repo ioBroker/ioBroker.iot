@@ -22,6 +22,17 @@ const MAX_IOT_MESSAGE_LENGTH = 127 * 1024;
 const SPECIAL_ADAPTERS = ['netatmo'];
 const ALLOWED_SERVICES = SPECIAL_ADAPTERS.concat(['text2command']);
 
+// Connection retry delays in milliseconds
+// Progressive backoff strategy: immediate, 5s, 10s, 20s, 30s, then 60s for all subsequent attempts
+const RETRY_DELAYS_MS = [
+    0, // First retry: immediate
+    5_000, // Second retry: 5 seconds
+    10_000, // Third retry: 10 seconds
+    20_000, // Fourth retry: 20 seconds
+    30_000, // Fifth retry: 30 seconds
+];
+const MAX_RETRY_DELAY_MS = 60_000; // Cap at 60 seconds for all subsequent retries
+
 export class IotAdapter extends Adapter {
     declare public config: IotAdapterConfig;
     private recalcTimeout: NodeJS.Timeout | null = null;
@@ -1149,22 +1160,12 @@ export class IotAdapter extends Adapter {
 
     /**
      * Calculate retry delay based on retry attempt number
-     * Implements exponential backoff: 0s, 5s, 10s, 20s, 30s, then 60s
+     * Implements progressive backoff: 0s, 5s, 10s, 20s, 30s, then 60s
      *
      * @param retry - The retry attempt number (0-based)
      * @returns Delay in milliseconds
      */
     private getRetryDelay(retry: number): number {
-        // Exponential backoff strategy: immediate, 5s, 10s, 20s, 30s, then 60s for all subsequent attempts
-        const RETRY_DELAYS_MS = [
-            0, // First retry: immediate
-            5_000, // Second retry: 5 seconds
-            10_000, // Third retry: 10 seconds
-            20_000, // Fourth retry: 20 seconds
-            30_000, // Fifth retry: 30 seconds
-        ];
-        const MAX_RETRY_DELAY_MS = 60_000; // Cap at 60 seconds for all subsequent retries
-
         if (retry < RETRY_DELAYS_MS.length) {
             return RETRY_DELAYS_MS[retry];
         }
