@@ -65,6 +65,7 @@ async function allObjects(adapter: ioBroker.Adapter): Promise<Record<string, ioB
         );
 }
 
+// Automatically convert AlexaV2 to V3
 const SMART_TYPES: { [name: string]: Types } = {
     LIGHT: Types.light,
     SWITCH: Types.socket,
@@ -74,6 +75,7 @@ const SMART_TYPES: { [name: string]: Types } = {
     CAMERA: Types.camera,
     blinds: Types.blind, // error in the GUI
     levelSlider: Types.slider, // error in the GUI
+    TV: Types.button,
 };
 
 function getSmartNameFromObj(
@@ -507,6 +509,7 @@ export async function controls(
     // process states with defined smartName
     for (let s = 0; s < idsWithSmartName.length; s++) {
         const id = idsWithSmartName[s];
+
         const common = devicesObject[id].common;
         const smartName = getSmartNameFromObj(
             devicesObject[id],
