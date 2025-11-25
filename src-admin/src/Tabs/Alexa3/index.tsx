@@ -508,7 +508,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
         if (!!state?.val !== this.state.alive) {
             this.setState({ alive: !!state?.val }, () => {
                 if (this.state.alive) {
-                    setTimeout(() => this.browse(), 5000);
+                    setTimeout(() => this.browse('objects'), 5000);
                 }
             });
         }
@@ -548,7 +548,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
         }
     }
 
-    browse(isIndicate?: boolean): void {
+    browse(browseType: 'objects' | 'states', isIndicate?: boolean): void {
         if (Date.now() - this.lastBrowse < 500) {
             return;
         }
@@ -564,14 +564,14 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
             this.browseTimer = null;
             this.browseTimerCount++;
             if (this.browseTimerCount < 5) {
-                this.browse(isIndicate);
+                this.browse(browseType, isIndicate);
             } else {
                 this.setState({ message: I18n.t('Cannot read devices!') });
             }
         }, 10000);
 
         this.props.socket
-            .sendTo(this.namespace, 'browse3', null)
+            .sendTo(this.namespace, 'browse3', browseType)
             .then((list: AlexaSH3DeviceDescription[] | { error: string } | null): void => {
                 if (this.browseTimer) {
                     clearTimeout(this.browseTimer);
@@ -620,11 +620,11 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
 
     onReadyUpdate = (id: string, state: ioBroker.State | null | undefined): void => {
         console.log(`Update ${id} ${state ? `${state.val}/${state.ack}` : 'null'}`);
-        if (state?.ack === true && state.val === true) {
+        if (state?.ack === true && state.val) {
             this.devTimer && clearTimeout(this.devTimer);
             this.devTimer = setTimeout(() => {
                 this.devTimer = null;
-                this.browse();
+                this.browse(state.val === 1 ? 'objects' : 'states');
             }, 300);
         }
     };
@@ -656,7 +656,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
             );
         } else {
             this.setState({ alive: true }, () => {
-                this.browse();
+                this.browse('objects');
                 // Subscribe on alive after the alive check
                 void this.props.socket.subscribeState(
                     `system.adapter.${this.props.adapterName}.${this.props.instance}.alive`,
@@ -1305,7 +1305,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                     this.setState({ showResetId: null }, () => {
                         if (doInformBackend) {
                             // inform backend
-                            this.browse(true);
+                            this.browse('objects', true);
                         }
                     });
                 }}
@@ -1908,7 +1908,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                     title={I18n.t('Refresh list of devices')}
                     aria-label="Refresh"
                     style={styles.button}
-                    onClick={() => this.browse(true)}
+                    onClick={() => this.browse('objects', true)}
                     disabled={this.state.browse || !this.state.alive}
                 >
                     {this.state.browse ? <CircularProgress size={20} /> : <IconRefresh />}

@@ -66,9 +66,10 @@ export default class Discovery extends Base {
 
         this.log.silly(`${JSON.stringify(response.get())}`);
 
-        if (endpointManager.validTill <= Date.now()) {
-            Discovery.setAllProactiveAndRetrievableFalse(json);
-        }
+        // To do, activate it again after status report will work
+        //if (endpointManager.validTill <= Date.now()) {
+        Discovery.setAllProactiveAndRetrievableFalse(json);
+        //}
 
         return Promise.resolve(json);
     }

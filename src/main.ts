@@ -161,7 +161,7 @@ export class IotAdapter extends Adapter {
                                 // });
                                 if (this.alexaSH3) {
                                     await this.alexaSH3.updateDevices();
-                                    await this.setStateAsync('smart.updates3', true, true);
+                                    await this.setStateAsync('smart.updates3', 1, true);
                                 }
 
                                 this.googleHome?.updateDevices(async (analyseAddedId: any): Promise<void> => {
@@ -188,11 +188,11 @@ export class IotAdapter extends Adapter {
 
                         case 'browse3':
                             if (obj.callback) {
-                                this.log.info('Request V3 devices');
+                                this.log.info(`Request V3 devices: ${obj.message}`);
                                 if (this.alexaSH3) {
-                                    const devices = await this.alexaSH3.getDevices();
+                                    const devices = await this.alexaSH3.getDevices(obj.message === 'objects');
                                     this.sendTo(obj.from, obj.command, devices, obj.callback);
-                                    await this.setStateAsync('smart.updates3', false, true);
+                                    await this.setStateAsync('smart.updates3', 0, true);
                                 } else {
                                     this.sendTo(obj.from, obj.command, { error: 'not activated' }, obj.callback);
                                 }
@@ -1700,6 +1700,19 @@ export class IotAdapter extends Adapter {
         }
 
         if (this.config.amazonAlexaV3) {
+            // Change type of smart.updates3 to number
+            const obj = await this.getObjectAsync('smart.updates3');
+            if (obj && obj.common.type !== 'number') {
+                this.log.info('Upgrading smart.updates3 state to type "number"');
+                obj.common.type = 'number';
+                obj.common.states = {
+                    0: 'No update',
+                    1: 'objects',
+                    2: 'states',
+                };
+                await this.setObjectAsync('smart.updates3', obj);
+            }
+
             this.alexaSH3 = new AlexaSH3({
                 adapter: this,
                 iotClientId,
@@ -1713,7 +1726,7 @@ export class IotAdapter extends Adapter {
             // Check that update result is empty
             const state = await this.getStateAsync('smart.updates3');
             if (state?.val) {
-                await this.setStateAsync('smart.updates3', '', true);
+                await this.setStateAsync('smart.updates3', 0, true);
             }
         }
 

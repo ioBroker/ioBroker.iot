@@ -1,0 +1,19 @@
+{
+    "states": [
+        {
+            "name": "SET",
+            "id": "alias.0.Wohnzimmer.Backofen.SET",
+            "smartName": {
+                "smartType": "slider"
+            },
+            "common": {
+                "min": 80,
+                "max": 280,
+                "unit": "°C",
+                "type": "number",
+                "role": "level.temperature"
+            }
+        }
+    ],
+    "type": "slider"
+}

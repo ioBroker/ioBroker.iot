@@ -410,7 +410,6 @@ setState('iot.0.app.message', JSON.stringify({
 ## Todo
 
 -   Smart names must have higher priority as groups
--   Devices should be grouped by smart name
 
 <!--
 	Placeholder for the next version (at the beginning of the line):
@@ -421,6 +420,8 @@ setState('iot.0.app.message', JSON.stringify({
 - (@GermanBluefox) Showed last controller ID in `smart.lastObjectID`
 - (@GermanBluefox) Showed subscription valid period in `info.validTill` and GUI
 - (@Copilot) Implemented increasing reconnect intervall
+- (@GermanBluefox) Added automatically conversion of type TV (alexaV3) to button (alexaV3)
+- (@GermanBluefox) Optimized the update of devices in GUI
 
 ### 5.0.7 (2025-11-03)
 - (@GermanBluefox) Added possibility to group devices by type in GUI

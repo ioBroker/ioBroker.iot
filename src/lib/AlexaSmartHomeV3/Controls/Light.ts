@@ -1,9 +1,10 @@
 import Capabilities from '../Alexa/Capabilities';
 import Control, { type StateName } from './Control';
 import type { AlexaV3Category, AlexaV3DirectiveValue, IotExternalPatternControl } from '../types';
-import type { ControlStateInitObject } from '../Alexa/Properties/Base';
+import type { Base as PropertiesBase, ControlStateInitObject } from '../Alexa/Properties/Base';
 import PowerState from '../Alexa/Properties/PowerState';
 import EndpointHealth from '../Alexa/Capabilities/EndpointHealth';
+import Brightness from '../Alexa/Properties/Brightness';
 
 export default class Light extends Control {
     constructor(detectedControl: IotExternalPatternControl) {
@@ -26,6 +27,10 @@ export default class Light extends Control {
 
     get categories(): AlexaV3Category[] {
         return ['LIGHT'];
+    }
+
+    adjustableProperties(): (typeof PropertiesBase)[] {
+        return [Brightness];
     }
 
     get statesMap(): {

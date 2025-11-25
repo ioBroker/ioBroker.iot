@@ -423,9 +423,14 @@
             "common": {
                 "role": "state",
                 "name": "If updates of V3 configuration is ready",
-                "type": "boolean",
+                "type": "number",
                 "read": true,
-                "write": false
+                "write": false,
+                "states": {
+                    "0": "not needed",
+                    "1": "objects",
+                    "2": "states"
+                }
             },
             "native": {}
         },

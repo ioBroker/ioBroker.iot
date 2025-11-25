@@ -94,6 +94,112 @@ export type AlexaV3Category =
     | 'WATER_HEATER'
     | 'WEARABLE';
 
+// https://developer.amazon.com/en-US/docs/alexa/device-apis/resources-and-assets.html
+export type AlexaV3AssetName =
+    | 'Alexa.Actions.Charge'
+    | 'Alexa.Actions.Clean'
+    | 'Alexa.Actions.Dispense'
+    | 'Alexa.Actions.Dock'
+    | 'Alexa.Actions.Empty'
+    | 'Alexa.Actions.Mop'
+    | 'Alexa.Actions.Skip'
+    | 'Alexa.Actions.Sweep'
+    | 'Alexa.Actions.Vacuum'
+    | 'Alexa.Button.OffButton'
+    | 'Alexa.Button.OnButton'
+    | 'Alexa.Button.BrightenButton'
+    | 'Alexa.Button.DimButton'
+    | 'Alexa.Button.MainButton'
+    | 'Alexa.Button.TopButton'
+    | 'Alexa.Button.BottomButton'
+    | 'Alexa.Button.CenterButton'
+    | 'Alexa.Button.MiddleButton'
+    | 'Alexa.Button.UpButton'
+    | 'Alexa.Button.DownButton'
+    | 'Alexa.Button.LeftButton'
+    | 'Alexa.Button.RightButton'
+    | 'Alexa.Button.FirstButton'
+    | 'Alexa.Button.SecondButton'
+    | 'Alexa.Button.ThirdButton'
+    | 'Alexa.Button.FourthButton'
+    | 'Alexa.Button.FifthButton'
+    | 'Alexa.Button.SixthButton'
+    | 'Alexa.Button.SeventhButton'
+    | 'Alexa.Button.EighthButton'
+    | 'Alexa.Button.DoublePress'
+    | 'Alexa.Button.DoublePush'
+    | 'Alexa.Button.LongPress'
+    | 'Alexa.Button.LongPush'
+    | 'Alexa.Button.SinglePress'
+    | 'Alexa.Button.SinglePush'
+    | 'Alexa.DeviceName.AirPurifier'
+    | 'Alexa.DeviceName.Camera'
+    | 'Alexa.DeviceName.Fan'
+    | 'Alexa.DeviceName.Router'
+    | 'Alexa.DeviceName.Shade'
+    | 'Alexa.DeviceName.Shower'
+    | 'Alexa.DeviceName.SpaceHeater'
+    | 'Alexa.DeviceName.Washer'
+    | 'Alexa.Gesture.DoubleClick'
+    | 'Alexa.Gestures.DoubleTap'
+    | 'Alexa.Gesture.SingleClick'
+    | 'Alexa.Gesture.SwipeDown'
+    | 'Alexa.Gesture.SwipeLeft'
+    | 'Alexa.Gesture.SwipeRight'
+    | 'Alexa.Gesture.SwipeUp'
+    | 'Alexa.Gesture.Tap'
+    | 'Alexa.Setting.2GGuestWiFi'
+    | 'Alexa.Setting.5GGuestWiFi'
+    | 'Alexa.Setting.Auto'
+    | 'Alexa.Setting.Direction'
+    | 'Alexa.Setting.DryCycle'
+    | 'Alexa.Setting.FanSpeed'
+    | 'Alexa.Setting.GuestWiFi'
+    | 'Alexa.Setting.Heat'
+    | 'Alexa.Setting.Mode'
+    | 'Alexa.Setting.Night'
+    | 'Alexa.Setting.Opening'
+    | 'Alexa.Setting.Oscillate'
+    | 'Alexa.Setting.Preset'
+    | 'Alexa.Setting.Quiet'
+    | 'Alexa.Setting.Temperature'
+    | 'Alexa.Setting.WashCycle'
+    | 'Alexa.Setting.WaterTemperature'
+    | 'Alexa.Shower.HandHeld'
+    | 'Alexa.Shower.RainHead'
+    | 'Alexa.Unit.Angle.Degrees'
+    | 'Alexa.Unit.Angle.Radians'
+    | 'Alexa.Unit.Distance.Feet'
+    | 'Alexa.Unit.Distance.Inches'
+    | 'Alexa.Unit.Distance.Kilometers'
+    | 'Alexa.Unit.Distance.Meters'
+    | 'Alexa.Unit.Distance.Miles'
+    | 'Alexa.Unit.Distance.Yards'
+    | 'Alexa.Unit.Mass.Grams'
+    | 'Alexa.Unit.Mass.Kilograms'
+    | 'Alexa.Unit.Percent'
+    | 'Alexa.Unit.Temperature.Celsius'
+    | 'Alexa.Unit.Temperature.Degrees'
+    | 'Alexa.Unit.Temperature.Fahrenheit'
+    | 'Alexa.Unit.Temperature.Kelvin'
+    | 'Alexa.Unit.Volume.CubicFeet'
+    | 'Alexa.Unit.Volume.CubicMeters'
+    | 'Alexa.Unit.Volume.Gallons'
+    | 'Alexa.Unit.Volume.Liters'
+    | 'Alexa.Unit.Volume.Pints'
+    | 'Alexa.Unit.Volume.Quarts'
+    | 'Alexa.Unit.Weight.Ounces'
+    | 'Alexa.Unit.Weight.Pounds'
+    | 'Alexa.Value.Close'
+    | 'Alexa.Value.Delicate'
+    | 'Alexa.Value.High'
+    | 'Alexa.Value.Low'
+    | 'Alexa.Value.Maximum'
+    | 'Alexa.Value.Medium'
+    | 'Alexa.Value.Minimum'
+    | 'Alexa.Value.Open'
+    | 'Alexa.Value.QuickWash';
+
 export type AlexaV3UnitOfMeasure =
     | 'Alexa.Unit.Angle.Degrees'
     | 'Alexa.Unit.Angle.Radians'
@@ -160,6 +266,7 @@ export type AlexaV3Namespace =
     | 'Alexa.MotionSensor'
     | 'Alexa.PercentageController'
     | 'Alexa.PowerController'
+    | 'Alexa.RangeController'
     | 'Alexa.SceneController'
     | 'Alexa.Speaker'
     | 'Alexa.TemperatureSensor'
@@ -333,6 +440,12 @@ type AlexaV3RangeConfiguration = {
         precision: 1;
     };
     unitOfMeasure?: AlexaV3UnitOfMeasure;
+    presets?: {
+        rangeValue: number;
+        presetResources: {
+            friendlyNames: AlexaV3FriendlyName[];
+        };
+    }[];
 };
 
 // Discovery
@@ -484,7 +597,7 @@ export type AlexaV3ActionMapping = {
     };
 };
 export type AlexaV3FriendlyName =
-    | { '@type': 'asset'; value: { assetId: string } }
+    | { '@type': 'asset'; value: { assetId: AlexaV3AssetName } }
     | { '@type': 'text'; value: { text: string; locale: string } };
 
 export type AlexaV3DiscoveryResponse = {

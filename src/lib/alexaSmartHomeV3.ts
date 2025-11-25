@@ -37,8 +37,8 @@ export default class AlexaSH3 {
         this.deviceManager?.setValidTill(validTill);
     }
 
-    async getDevices(): Promise<AlexaSH3DeviceDescription[]> {
-        if (this.deviceManager) {
+    async getDevices(collectDevices: boolean): Promise<AlexaSH3DeviceDescription[]> {
+        if (this.deviceManager && collectDevices) {
             await this.deviceManager.collectEndpoints();
         }
         const endpoints = this.deviceManager?.endpoints || [];

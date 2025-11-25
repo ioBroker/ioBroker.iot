@@ -55,7 +55,7 @@ export default class DeviceManager {
     }
 
     async informAboutStatesChange(): Promise<void> {
-        await AdapterProvider.get().setStateAsync('smart.updates3', true, true);
+        await AdapterProvider.get().setStateAsync('smart.updates3', 2, true);
     }
 
     get language(): ioBroker.Languages {
@@ -246,6 +246,10 @@ export default class DeviceManager {
                                 friendlyName = newFriendlyName;
                             }
                             usedFriendlyNames.push(friendlyName);
+
+                            if (friendlyName === 'Backofen') {
+                                console.log('aaa');
+                            }
 
                             this.toDevice({
                                 detectedControls: JSON.parse(JSON.stringify(processedControls)),
