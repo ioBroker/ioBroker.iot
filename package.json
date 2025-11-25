@@ -25,7 +25,7 @@
     "@iobroker/adapter-core": "^3.3.2",
     "@iobroker/type-detector": "^4.6.2",
     "aws-iot-device-sdk": "^2.2.15",
-    "axios": "^1.13.1",
+    "axios": "^1.13.2",
     "mime": "^3.0.0",
     "uuid": "^11.0.0"
   },
