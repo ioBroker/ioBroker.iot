@@ -422,6 +422,7 @@ setState('iot.0.app.message', JSON.stringify({
 - (@Copilot) Implemented increasing reconnect intervall
 - (@GermanBluefox) Added automatically conversion of type TV (alexaV3) to button (alexaV3)
 - (@GermanBluefox) Optimized the update of devices in GUI
+- (@GermanBluefox) Implemented slider with custom min/max values
 
 ### 5.0.7 (2025-11-03)
 - (@GermanBluefox) Added possibility to group devices by type in GUI

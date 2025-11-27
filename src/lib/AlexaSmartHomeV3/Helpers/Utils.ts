@@ -521,9 +521,7 @@ export async function controls(
         if (!smartName) {
             continue;
         }
-        if (id.includes('.oven')) {
-            debugger;
-        }
+
         options.id = id;
         options.detectAllPossibleDevices = !smartName.noAutoDetect;
 
