@@ -2,6 +2,7 @@ const https = require('https');
 const addFormats = require('ajv-formats');
 const Ajv = require('ajv-draft-04');
 const Controls = require('../../build/lib/AlexaSmartHomeV3/Controls').default;
+const { readFileSync, existsSync } = require('node:fs');
 
 const ajv = new Ajv({ allErrors: true, strict: false });
 addFormats(ajv);
@@ -86,6 +87,9 @@ class AdapterMock {
         }
         if (id.includes('Lampe')) {
             return { val: true };
+        }
+        if (id.includes('Backofen.SET')) {
+            return { val: 110 };
         }
 
         // 875 of 500..1000 range corresponds to 75 of 0..100 range
@@ -365,6 +369,14 @@ const Helpers = {
         return new Controls.Lock(this.lockConfig());
     },
 
+    sliderConfig: function () {
+        return require('./Resources/slider.json');
+    },
+
+    sliderControl: function () {
+        return new Controls.Slider(this.sliderConfig());
+    },
+
     sceneControl: function () {
         return new Controls.Scene(require('./Resources/scene.json'));
     },
@@ -387,6 +399,13 @@ const Helpers = {
 
     getSample: async function (sampleJsonName) {
         if (commandsCache[sampleJsonName]) {
+            return JSON.parse(JSON.stringify(commandsCache[sampleJsonName]));
+        }
+        const parts = sampleJsonName.split('/');
+        const jsonName = parts.pop();
+
+        if (existsSync(`${__dirname}/Resources/${jsonName}`)) {
+            commandsCache[sampleJsonName] = JSON.parse(readFileSync(`${__dirname}/Resources/${jsonName}`).toString());
             return JSON.parse(JSON.stringify(commandsCache[sampleJsonName]));
         }
 

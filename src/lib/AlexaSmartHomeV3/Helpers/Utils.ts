@@ -521,12 +521,11 @@ export async function controls(
         if (!smartName) {
             continue;
         }
-        options.id = id;
-        if (smartName.noAutoDetect) {
-            options.detectAllPossibleDevices = false;
-        } else {
-            options.detectAllPossibleDevices = true;
+        if (id.includes('.oven')) {
+            debugger;
         }
+        options.id = id;
+        options.detectAllPossibleDevices = !smartName.noAutoDetect;
 
         // If ID is hue, prioritize hue
         if (devicesObject[id].common.role?.includes('.hue')) {

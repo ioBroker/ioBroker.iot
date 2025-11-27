@@ -1,10 +1,11 @@
 import { configuredRangeOrDefault, firstLower, className } from '../../Helpers/Utils';
-import type {
+import  {
     AlexaV3DirectiveName,
     AlexaV3DirectiveValue,
     AlexaV3Request,
-    IotExternalDetectorState,
+    IotExternalDetectorState, SmartNameObject,
 } from '../../types';
+import { Types } from '@iobroker/type-detector';
 
 export type ControlStateInitObject = {
     setState?: IotExternalDetectorState;
@@ -18,6 +19,7 @@ export type ControlStateInitObject = {
     offValue?: number;
     // Percent value to set the brightness when turning on the device
     onValue?: number | 'stored' | 'omit';
+    percentage?: boolean;
 
     // Extra for Hue control
     hal?: {
@@ -63,6 +65,7 @@ export class Base {
     protected _handleSimilarEvents: boolean = false;
     protected _offValue: number = 30;
     protected _onValueInPercent: number | undefined | 'stored' | 'omit';
+    protected isPercentage = false;
 
     /**
      * @param opts The object to initialize the corresponding ioBroker state.
@@ -87,6 +90,12 @@ export class Base {
             this.#valuesRange = configuredRangeOrDefault(this.#setState);
             this.#instance = opts.instance;
             this._onValueInPercent = opts.onValue;
+            if (opts.percentage) {
+                this.isPercentage = true;
+                this.#valuesRange.min = 0;
+                this.#valuesRange.max = 100;
+                this.#valuesRange.step = 10;
+            }
         }
 
         if (opts.alexaSetter) {
@@ -113,16 +122,43 @@ export class Base {
         return firstLower(className(this.toString()));
     }
 
+    // return ioBroker min
     get valuesRangeMin(): number | boolean {
         return this.#valuesRange.min;
     }
 
+    // return ioBroker max
     get valuesRangeMax(): number | boolean {
         return this.#valuesRange.max;
     }
 
     get valueRealMax(): number | boolean | undefined {
-        return this.#setState?.common.max;
+        const type = (this.#setState?.smartName as SmartNameObject)?.smartType;
+        // Is binary type
+        if (
+            type === Types.socket ||
+            type === Types.light ||
+            type === Types.fireAlarm ||
+            type === Types.floodAlarm ||
+            type === Types.window
+        ) {
+            return 1;
+        }
+        return this.#setState?.common?.max === undefined ? 100 : this.#setState.common.max;
+    }
+
+    get valueRealMin(): number | boolean | undefined {
+        return this.#setState?.common?.min === undefined ? 0 : this.#setState.common.min;
+    }
+
+    get valueRealStep(): number | boolean | undefined {
+        if (this.#setState?.common?.step) {
+            return this.#setState.common.step;
+        }
+        if (this.valueRealMax !== undefined && this.valueRealMin !== undefined) {
+            return ((this.valueRealMax as number) - (this.valueRealMin as number)) / 100;
+        }
+        return undefined;
     }
 
     get valuesRangeStep(): number | undefined {

@@ -29,6 +29,7 @@ import { IoIosColorFilter, IoIosColorPalette } from 'react-icons/io';
 import { RxSlider } from 'react-icons/rx';
 import { TbVacuumCleaner } from 'react-icons/tb';
 import { WiHumidity } from 'react-icons/wi';
+import { PiSlidersHorizontal } from 'react-icons/pi';
 
 import { type AdminConnection, DialogConfirm, I18n, Utils } from '@iobroker/adapter-react-v5';
 import { Types } from '@iobroker/type-detector';
@@ -36,6 +37,7 @@ import { Types } from '@iobroker/type-detector';
 import type {
     AlexaSH3ControlDescription,
     AlexaSH3DeviceDescription,
+    AlexaV3ReportedState,
     IotExternalDetectorState,
     SmartNameObject,
 } from './alexa.types';
@@ -61,6 +63,7 @@ const SMART_TYPES: Types[] = [
     Types.window,
 ];
 
+// Automatically convert AlexaV2 to V3
 const SMART_TYPES_V2: Record<string, Types> = {
     LIGHT: Types.light,
     SWITCH: Types.socket,
@@ -70,6 +73,7 @@ const SMART_TYPES_V2: Record<string, Types> = {
     CAMERA: Types.camera,
     blinds: Types.blind,
     levelSlider: Types.slider,
+    TV: Types.button,
 };
 const styles: { [styleName: string]: React.CSSProperties } = {
     deviceOff: {
@@ -118,6 +122,7 @@ export const CAPABILITIES: Record<
     targetSetpoint: { label: 'Set point', icon: Thermostat, color: '#813600' },
     temperature: { label: 'Temperature', icon: DeviceThermostat, color: '#9f1300' },
     thermostatMode: { label: 'Thermostat mode', icon: ThermostatAuto, color: '#800048' },
+    rangeValue: { label: 'Range value', icon: PiSlidersHorizontal, color: '#00804b' },
     volume: { label: 'Volume', icon: VolumeUp, color: '#006702' },
 };
 
@@ -191,69 +196,95 @@ export const DEVICES: Record<string, { label: string; icon: IconType; color: str
     Window: { label: 'Window sensor', icon: GiWindow, color: '#27c903' },
 };
 
+function state2string(state: AlexaV3ReportedState | undefined): {
+    color?: string;
+    value: string;
+    style?: React.CSSProperties;
+} {
+    const result: { color?: string; value: string; style?: React.CSSProperties } = { value: '' };
+    if (state) {
+        if (state.value === null || state.value === undefined) {
+            return { value: '--' };
+        }
+
+        if (state.name === 'color' && state.value && typeof state.value === 'object') {
+            // the object is HAL {
+            //     "hue": 0,
+            //     "saturation": 0,
+            //     "brightness": 0
+            // }
+            // So convert it to RGB
+            result.value = hal2rgb(state.value);
+            result.color = state.value;
+        } else if (state.name === 'powerState') {
+            if (state.value === 'OFF' || state?.value === false) {
+                result.style = { ...styles.deviceOff };
+            }
+        } else if (state.name === 'detectionState') {
+            if (state.value === 'NOT_DETECTED') {
+                result.style = { ...styles.deviceOff };
+            }
+        } else if (state.name === 'percentage') {
+            result.value = `${isNaN(state.value) || state.value === null ? '--' : Math.round(state.value * 100) / 100}%`;
+        } else if (state.name === 'relativeHumidity') {
+            if (typeof state.value === 'object') {
+                result.value = `${state.value?.value === null || state.value?.value === undefined ? '--' : Math.round(state.value.value * 100) / 100}%`;
+            } else {
+                result.value = state.value;
+            }
+        } else if (state.name === 'brightness') {
+            result.value = (Math.round(state.value * 100) / 100).toString();
+        } else if (state.name === 'rangeValue') {
+            result.value = (Math.round(state.value * 100) / 100).toString();
+        } else if (state.name === 'temperature') {
+            if (typeof state.value === 'object') {
+                const val = state.value?.value;
+                result.value =
+                    (val === null || val === undefined ? '--' : Math.round(val * 100) / 100) +
+                    (state.value?.scale === 'CELSIUS'
+                        ? '°C'
+                        : state.value.scale === 'FAHRENHEIT'
+                          ? '°F'
+                          : state.value.scale || '');
+            } else {
+                result.value = state.value;
+            }
+        }
+
+        if (state.value && typeof state.value === 'object' && state.value.value !== undefined) {
+            if (typeof state.value.value === 'number') {
+                result.value = `${Math.round(state.value.value * 100) / 100} ${state.value.scale === 'CELSIUS' ? '°C' : state.value.scale === 'FAHRENHEIT' ? '°F' : state.value.scale || '%'}`;
+            } else {
+                result.value = state.value.value.toString();
+            }
+        }
+        return result;
+    }
+    return { value: '' };
+}
+
 export function renderChannelActions(control: AlexaSH3ControlDescription): React.JSX.Element[] {
     // Type
     const actions: React.JSX.Element[] = [];
 
     Object.keys(CAPABILITIES).forEach(action => {
         if (control.supported.includes(action)) {
-            let state;
+            let state: AlexaV3ReportedState | undefined;
             const Icon = CAPABILITIES[action].icon;
             let style = { ...styles.actionIcon };
-            let valueString = null;
-            let valueColor = null;
             if (control.state) {
                 state = control.state.find(st => action === st.name);
-                if (state?.name === 'color' && state?.value && typeof state.value === 'object') {
-                    // the object is HAL {
-                    //     "hue": 0,
-                    //     "saturation": 0,
-                    //     "brightness": 0
-                    // }
-                    // So convert it to RGB
-                    state.value = hal2rgb(state.value);
-                    valueColor = state.value;
-                } else if (state?.name === 'powerState') {
-                    if (state?.value === 'OFF' || state?.value === false) {
-                        style = { ...style, ...styles.deviceOff };
-                    }
-                } else if (state?.name === 'detectionState') {
-                    if (state?.value === 'NOT_DETECTED') {
-                        style = { ...style, ...styles.deviceOff };
-                    }
-                } else if (state?.name === 'percentage') {
-                    valueString = `${state.value === null ? '--' : Math.round(state.value * 100) / 100}%`;
-                } else if (state?.name === 'relativeHumidity') {
-                    if (typeof state.value === 'object') {
-                        valueString = `${state.value?.value === null || state.value?.value === undefined ? '--' : Math.round(state.value.value * 100) / 100}%`;
-                    } else {
-                        valueString = state.value;
-                    }
-                } else if (state?.name === 'brightness') {
-                    valueString = state.value === null ? '--' : Math.round(state.value * 100) / 100;
-                } else if (state?.name === 'temperature') {
-                    if (typeof state.value === 'object') {
-                        const val = state.value?.value;
-                        valueString =
-                            (val === null || val === undefined ? '--' : Math.round(val * 100) / 100) +
-                            (state.value?.scale === 'CELSIUS' ? '°C' : state.value.scale);
-                    } else {
-                        valueString = state.value;
-                    }
-                }
-
-                if (state?.value && typeof state.value === 'object' && state.value.value !== undefined) {
-                    state.value = `${Math.round(state.value.value * 100) / 100} ${state.value.scale === 'CELSIUS' ? '°C' : state.value.scale === 'FAHRENHEIT' ? '°F' : state.value.scale || '%'}`;
-                }
             }
-            const stateValue = state
-                ? ` - ${state.value === null || state.value === undefined ? '--' : state.value}`
-                : '';
+            const valueObj = state2string(state);
+
+            if (valueObj.style) {
+                style = { ...style, ...valueObj.style };
+            }
 
             actions.push(
                 <span
                     key={action}
-                    title={CAPABILITIES[action].label + stateValue}
+                    title={CAPABILITIES[action].label + (valueObj.value ? `: ${valueObj.value}` : '')}
                     style={styles.actionSpan}
                 >
                     <Icon
@@ -261,11 +292,11 @@ export function renderChannelActions(control: AlexaSH3ControlDescription): React
                             ...style,
                             ...CAPABILITIES[action]?.style,
                             color: CAPABILITIES[action]?.color,
-                            backgroundColor: valueColor,
+                            backgroundColor: valueObj.color,
                         }}
                     />
-                    {valueString !== null ? (
-                        <span style={{ color: DEVICES[control.type]?.color }}>{valueString}</span>
+                    {valueObj.value !== null ? (
+                        <span style={{ color: DEVICES[control.type]?.color }}>{valueObj.value}</span>
                     ) : null}
                 </span>,
             );
@@ -328,62 +359,27 @@ export function renderDevTypes(dev: AlexaSH3DeviceDescription): React.JSX.Elemen
             usedTypes.push(control.type);
             if (DEVICES[control.type]) {
                 const Icon = DEVICES[control.type].icon;
-                let style = styles.actionSpan;
-                let valuePercent = null;
-                let valueBrightness = null;
-                let valueColor = undefined;
                 let state;
                 if (dev.state) {
                     state = dev.state.find(st => control.supported.includes(st.name));
-                    if (state?.name === 'color' && state?.value && typeof state.value === 'object') {
-                        // the object is HAL {
-                        //     "hue": 0,
-                        //     "saturation": 0,
-                        //     "brightness": 0
-                        // }
-                        // So convert it to RGB
-                        valueColor = hal2rgb(state.value);
-                        state.value = valueColor;
-                    } else if (state?.name === 'powerState') {
-                        if (state?.value === 'OFF' || state?.value === false) {
-                            style = { ...style, ...styles.deviceOff };
-                        }
-                    } else if (state?.name === 'detectionState') {
-                        if (state?.value === 'NOT_DETECTED') {
-                            style = { ...style, ...styles.deviceOff };
-                        }
-                    } else if (state?.name === 'percentage') {
-                        valuePercent = `${state.value === null ? '--' : Math.round(state.value * 100) / 100}%`;
-                    } else if (state?.name === 'brightness') {
-                        valueBrightness = state.value === null ? '--' : Math.round(state.value * 100) / 100;
-                    }
-                    if (state?.value && typeof state.value === 'object' && state.value.value !== undefined) {
-                        state.value = `${Math.round(state.value.value * 100) / 100}} ${state.value.scale === 'CELSIUS' ? '°C' : state.value.scale}`;
-                    }
                 }
-                const stateValue = state
-                    ? ` - ${state.value === null || state.value === undefined ? '--' : state.value}`
-                    : '';
+                const valueObj = state2string(state);
+                const style = { ...styles.actionSpan, ...valueObj.style };
 
                 const currentType = (
                     <span
                         key={`${control.type}_${i}`}
-                        title={DEVICES[control.type].label + stateValue}
+                        title={DEVICES[control.type].label + (valueObj.value ? `: ${valueObj.value}` : '')}
                         style={style}
                     >
                         <Icon
                             style={{
                                 ...styles.deviceIcon,
                                 color: DEVICES[control.type].color,
-                                backgroundColor: valueColor,
+                                backgroundColor: valueObj.color,
                             }}
                         />
-                        {valuePercent !== null ? (
-                            <span style={{ color: DEVICES[control.type].color }}>{valuePercent}</span>
-                        ) : null}
-                        {valueBrightness !== null ? (
-                            <span style={{ color: DEVICES[control.type].color }}>{valueBrightness}</span>
-                        ) : null}
+                        <span style={{ color: DEVICES[control.type].color }}>{valueObj.value}</span>
                     </span>
                 );
 

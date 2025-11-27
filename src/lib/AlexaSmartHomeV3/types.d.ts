@@ -305,7 +305,7 @@ type AlexaV3Payload = {
         brightness: number;
     };
     brightness?: number;
-    brightnessDelta?: number;
+    brightnessDelta?: number; // there is no brightnessDeltaDefault
     colorTemperatureInKelvin?: number;
     mode?: string; // e.g. "WashCycle.Normal" or "Washer.WashTemperature"
     modeDelta?: number;
@@ -313,7 +313,7 @@ type AlexaV3Payload = {
     volume?: number;
     volumeDefault?: boolean;
     percentage?: number;
-    percentageDelta?: number;
+    percentageDelta?: number; // there is no percentageDeltaDefault
     rangeValue?: number;
     rangeValueDelta?: number;
     rangeValueDeltaDefault?: boolean;

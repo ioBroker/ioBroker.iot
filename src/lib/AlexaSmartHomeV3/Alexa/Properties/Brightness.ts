@@ -68,4 +68,28 @@ export default class Brightness extends AdjustableProperty {
 
         return event.directive.payload.brightnessDelta;
     }
+
+    /** Converts an Alexa value to an ioBroker value */
+    value(alexaValue: AlexaV3DirectiveValue): ioBroker.StateValue | undefined {
+        // Convert alexa value 0-100 to ioBroker value min-max
+        if (typeof alexaValue === 'number') {
+            const value =
+                (this.valueRealMin as number) +
+                (((this.valueRealMax as number) - (this.valueRealMin as number)) * alexaValue) / 100;
+            return Math.round(value);
+        }
+        return undefined;
+    }
+
+    /** Converts an ioBroker value to an Alexa value */
+    alexaValue(value: ioBroker.StateValue | undefined): AlexaV3DirectiveValue {
+        // Convert ioBroker Value min-max to Alexa value 0-100
+        if (typeof value === 'number') {
+            const alexaValue =
+                ((value - (this.valueRealMin as number)) * 100) /
+                ((this.valueRealMax as number) - (this.valueRealMin as number));
+            return Math.round(alexaValue);
+        }
+        return undefined;
+    }
 }

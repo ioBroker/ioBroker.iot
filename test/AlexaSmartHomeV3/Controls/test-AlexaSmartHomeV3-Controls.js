@@ -7,8 +7,10 @@ const AdapterProvider = require('../../../build/lib/AlexaSmartHomeV3/Helpers/Ada
 let deviceManager;
 let dimmerDeviceManager;
 let lightDeviceManager;
+let rangeDeviceManager;
 let dimmer;
 let light;
+let range;
 let endpointId;
 let friendlyName;
 
@@ -1819,6 +1821,41 @@ describe('AlexaSmartHomeV3 - Controls', function () {
                 'Correlation Token!',
             );
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+        });
+    });
+
+    describe('Slider value', async function () {
+        before(function () {
+            range = helpers.sliderControl();
+            endpointId = 'endpoint-001';
+            friendlyName = 'some-friendly-name';
+
+            rangeDeviceManager = new DeviceManager();
+            rangeDeviceManager.addDevice(
+                new Device({
+                    id: endpointId,
+                    friendlyName,
+                    displayCategories: ['OTHER'],
+                    controls: [range],
+                }),
+            );
+        });
+
+        it('Slider reports state', async function () {
+            const event = await helpers.getSample('StateReport/ReportState.json');
+            const response = await rangeDeviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+            assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
+            assert.equal(response.event.header.name, 'StateReport', 'Name!');
+            assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken, 'Name!');
+            assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+
+            assert.equal(response.context.properties.length, 1);
+            assert.equal(response.context.properties[0].namespace, 'Alexa.RangeController');
+            assert.equal(response.context.properties[0].name, 'rangeValue');
+            assert.equal(response.context.properties[0].value, 110);
+
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
         });
     });
 });

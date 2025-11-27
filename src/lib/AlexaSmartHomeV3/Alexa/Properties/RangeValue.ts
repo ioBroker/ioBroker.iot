@@ -2,6 +2,10 @@ import type { AlexaV3DirectiveValue, AlexaV3Request } from '../../types';
 import AdjustableProperty from './AdjustableProperty';
 
 export default class RangeValue extends AdjustableProperty {
+    static matches(event: AlexaV3Request): boolean {
+        return event?.directive?.header?.namespace === `Alexa.RangeController`;
+    }
+
     matches(event: AlexaV3Request): boolean {
         return RangeValue.matches(event);
     }

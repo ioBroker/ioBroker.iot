@@ -1,7 +1,7 @@
 import type { Types } from '@iobroker/type-detector';
 
 import AlexaResponse from '../Alexa/AlexaResponse';
-import { firstLower, className, ensureValueInRange_0_100, denormalize_0_100, normalize_0_100 } from '../Helpers/Utils';
+import { firstLower, className, denormalize_0_100, normalize_0_100, ensureValueInRange } from '../Helpers/Utils';
 import Logger from '../Helpers/Logger';
 import AdapterProvider from '../Helpers/AdapterProvider';
 import type { ControlStateInitObject, Base as PropertiesBase } from '../Alexa/Properties/Base';
@@ -273,8 +273,10 @@ export default class Control {
         // convert the current value to Alexa value
         const valueToAdjust = property.alexaValue(currentValue);
         // adjust Alexa value
-        const adjustedValue = ensureValueInRange_0_100(
+        const adjustedValue = ensureValueInRange(
             parseFloat((valueToAdjust as string) || '0') + parseFloat((delta as string) || '0'),
+            property.valuesRangeMin as number,
+            property.valuesRangeMax as number,
         );
         // convert adjusted value to iobroker value
         const value = property.value(adjustedValue);
@@ -440,19 +442,17 @@ export default class Control {
             getState: this.states[map.actual]!,
             alexaSetter: function (this: PropertiesBase, alexaValue: AlexaV3DirectiveValue): ioBroker.StateValue {
                 return (
-                    denormalize_0_100(
-                        alexaValue as number,
-                        this.valuesRangeMin as number,
-                        this.valuesRangeMax as number,
-                    ) || 0
+                    denormalize_0_100(alexaValue as number, this.valueRealMin as number, this.valueRealMax as number) ||
+                    0
                 );
             },
             alexaGetter: function (
                 this: PropertiesBase,
                 value: ioBroker.StateValue | undefined,
             ): AlexaV3DirectiveValue {
-                return normalize_0_100(value as number, this.valuesRangeMin as number, this.valuesRangeMax as number);
+                return normalize_0_100(value as number, this.valueRealMin as number, this.valueRealMax as number);
             },
+            percentage: true,
         };
     }
 }

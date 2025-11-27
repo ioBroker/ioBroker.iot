@@ -67,6 +67,7 @@ describe('AlexaSmartHomeV3 - ThermostatController', function () {
             const event = await helpers.getSample(
                 'ThermostatController/ThermostatController.SetThermostatMode.request.json',
             );
+            event.directive.header.payloadVersion = '3';
             assert.equal(thermostat.supports(event), false);
         });
         it('ThermostatController does not match v3 Directive SetThermostatMode', async function () {

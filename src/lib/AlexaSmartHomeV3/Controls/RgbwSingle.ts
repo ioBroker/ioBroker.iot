@@ -260,6 +260,7 @@ export default class RgbwSingle extends AdjustableControl {
                 }
                 return value as number;
             },
+            percentage: true,
         };
     }
 }

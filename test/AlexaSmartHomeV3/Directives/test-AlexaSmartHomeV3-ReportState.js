@@ -322,5 +322,32 @@ describe('AlexaSmartHomeV3 - ReportState', function () {
             assert.equal(response.context.properties[1].value, false);
             assert.equal(response.context.properties[1].uncertaintyInMilliseconds, 0);
         });
+
+        it('Report state for a slider', async function () {
+            const event = await helpers.getSample('StateReport/ReportState.json');
+
+            const deviceManager = new DeviceManager();
+            deviceManager.addDevice(
+                new Device({
+                    id: endpointId,
+                    friendlyName,
+                    controls: [helpers.sliderControl()],
+                }),
+            );
+
+            const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+
+            assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
+            assert.equal(response.event.header.name, 'StateReport', 'Name!');
+            assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+
+            assert.equal(response.context.properties.length, 1);
+
+            assert.equal(response.context.properties[0].namespace, 'Alexa.RangeController');
+            assert.equal(response.context.properties[0].name, 'rangeValue');
+            assert.equal(response.context.properties[0].value, 110);
+            assert.equal(response.context.properties[0].uncertaintyInMilliseconds, 0);
+        });
     });
 });

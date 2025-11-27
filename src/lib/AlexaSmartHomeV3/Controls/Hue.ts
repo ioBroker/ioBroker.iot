@@ -253,6 +253,7 @@ export default class Hue extends AdjustableControl {
             handleSimilarEvents: true, // If power set ON and brightness is 0, set to non-zero value
             offValue,
             onValue,
+            percentage: true,
         };
     }
 

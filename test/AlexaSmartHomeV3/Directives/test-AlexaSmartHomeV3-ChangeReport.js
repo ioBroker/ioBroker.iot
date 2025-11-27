@@ -23,7 +23,7 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
                 id: endpointId,
                 friendlyName,
                 displayCategories: ['LIGHT'],
-                controls: [helpers.dimmerControl(), helpers.temperatureControl()],
+                controls: [helpers.dimmerControl(), helpers.temperatureControl(), helpers.sliderControl()],
             }),
         );
     });
@@ -54,7 +54,7 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
             assert.equal(response.event.payload.change.properties[0].uncertaintyInMilliseconds, 0);
 
             // unchanged properties
-            assert.equal(response.context.properties.length, 3);
+            assert.equal(response.context.properties.length, 4);
             assert.equal(response.context.properties[0].namespace, 'Alexa.BrightnessController');
             assert.equal(response.context.properties[0].name, 'brightness');
             assert.equal(response.context.properties[0].value, 75);
@@ -70,6 +70,30 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
             assert.equal(response.context.properties[2].name, 'connectivity');
             assert.equal(response.context.properties[2].value.value, 'OK');
             assert.equal(response.context.properties[2].uncertaintyInMilliseconds, 0);
+        });
+
+        it('ChangeReport for a slider', async function () {
+            const event = Directives.ChangeReport.get(endpointId, Properties.RangeValue.propertyName, true);
+            const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+            assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
+            assert.equal(response.event.header.name, 'ChangeReport', 'Name!');
+            assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+
+            // changed properties
+            assert.equal(response.event.payload.change.cause.type, 'PHYSICAL_INTERACTION');
+            assert.equal(response.event.payload.change.properties.length, 1);
+            assert.equal(response.event.payload.change.properties[0].namespace, 'Alexa.RangeController');
+            assert.equal(response.event.payload.change.properties[0].name, 'rangeValue');
+            assert.equal(response.event.payload.change.properties[0].value, 110);
+            assert.equal(response.event.payload.change.properties[0].uncertaintyInMilliseconds, 0);
+
+            // unchanged properties
+            assert.equal(response.context.properties.length, 4);
+            assert.equal(response.context.properties[0].namespace, 'Alexa.PowerController');
+            assert.equal(response.context.properties[0].name, 'powerState');
+            assert.equal(response.context.properties[0].value, 'ON');
+            assert.equal(response.context.properties[0].uncertaintyInMilliseconds, 0);
         });
 
         it('ChangeReport for a temperature sensor', async function () {
@@ -90,7 +114,7 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
             assert.equal(response.event.payload.change.properties[0].uncertaintyInMilliseconds, 0);
 
             // unchanged properties
-            assert.equal(response.context.properties.length, 3);
+            assert.equal(response.context.properties.length, 4);
             assert.equal(response.context.properties[0].namespace, 'Alexa.PowerController');
             assert.equal(response.context.properties[0].name, 'powerState');
             assert.equal(response.context.properties[0].value, 'ON');
@@ -106,6 +130,11 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
             assert.equal(response.context.properties[2].name, 'connectivity');
             assert.equal(response.context.properties[2].value.value, 'OK');
             assert.equal(response.context.properties[2].uncertaintyInMilliseconds, 0);
+
+            assert.equal(response.context.properties[3].namespace, 'Alexa.RangeController');
+            assert.equal(response.context.properties[3].name, 'rangeValue');
+            assert.equal(response.context.properties[3].value, 110);
+            assert.equal(response.context.properties[3].uncertaintyInMilliseconds, 0);
         });
 
         it('ChangeReport for a thermostat', async function () {
@@ -243,6 +272,35 @@ describe('AlexaSmartHomeV3 - ChangeReport', function () {
             assert.equal(response.event.payload.change.properties[0].namespace, 'Alexa.LockController');
             assert.equal(response.event.payload.change.properties[0].name, 'lockState');
             assert.equal(response.event.payload.change.properties[0].value, 'LOCKED');
+            assert.equal(response.event.payload.change.properties[0].uncertaintyInMilliseconds, 0);
+        });
+
+        it('ChangeReport for a slider', async function () {
+            const event = Directives.ChangeReport.get(endpointId, Properties.RangeValue.propertyName, true);
+            const idSet = helpers.getConfigForName('SET', helpers.sliderConfig());
+            await AdapterProvider.setState(idSet, 110, true); // set to closed
+            deviceManager = new DeviceManager();
+            deviceManager.addDevice(
+                new Device({
+                    id: endpointId,
+                    friendlyName,
+                    displayCategories: ['OTHER'],
+                    controls: [helpers.sliderControl()],
+                }),
+            );
+            const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+
+            assert.equal(response.event.header.namespace, 'Alexa', 'Namespace!');
+            assert.equal(response.event.header.name, 'ChangeReport', 'Name!');
+            assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
+
+            // changed properties
+            assert.equal(response.event.payload.change.cause.type, 'PHYSICAL_INTERACTION');
+            assert.equal(response.event.payload.change.properties.length, 1);
+            assert.equal(response.event.payload.change.properties[0].namespace, 'Alexa.RangeController');
+            assert.equal(response.event.payload.change.properties[0].name, 'rangeValue');
+            assert.equal(response.event.payload.change.properties[0].value, 110);
             assert.equal(response.event.payload.change.properties[0].uncertaintyInMilliseconds, 0);
         });
 
