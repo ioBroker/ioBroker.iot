@@ -1,92 +1,92 @@
 {
-  "name": "iobroker.iot",
-  "version": "5.0.7",
-  "description": "This adapter allows to communicate Amazon Alexa and Google Home with ioBroker.",
-  "author": {
-    "name": "bluefox",
-    "email": "dogafox@gmail.com"
-  },
-  "homepage": "https://github.com/ioBroker/ioBroker.iot",
-  "keywords": [
-    "ioBroker",
-    "mqtt",
-    "aws",
-    "cloud",
-    "web"
-  ],
-  "engines": {
-    "node": ">=18"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ioBroker/ioBroker.iot"
-  },
-  "dependencies": {
-    "@iobroker/adapter-core": "^3.3.2",
-    "@iobroker/type-detector": "^4.6.2",
-    "aws-iot-device-sdk": "^2.2.16",
-    "axios": "^1.13.2",
-    "mime": "^3.0.0",
-    "uuid": "^11.0.0"
-  },
-  "devDependencies": {
-    "@alcalzone/release-script": "^5.0.0",
-    "@alcalzone/release-script-plugin-iobroker": "^4.0.0",
-    "@alcalzone/release-script-plugin-license": "^4.0.0",
-    "@iobroker/build-tools": "^2.0.15",
-    "@iobroker/eslint-config": "^2.2.0",
-    "@iobroker/legacy-testing": "^2.0.2",
-    "@iobroker/types": "^7.0.7",
-    "@types/aws-iot-device-sdk": "^2.2.9",
-    "@types/node": "^24.9.2",
-    "ajv": "^8.17.1",
-    "ajv-draft-04": "^1.0.0",
-    "ajv-formats": "^3.0.1",
-    "colorette": "^2.0.20",
-    "puppeteer": "^24.31.0",
-    "typescript": "^5.9.3"
-  },
-  "bugs": {
-    "url": "https://github.com/ioBroker/ioBroker.iot/issues"
-  },
-  "main": "build/main.js",
-  "files": [
-    "admin/",
-    "doc/",
-    "img/",
-    "keys/",
-    "build/",
-    "io-package.json",
-    "LICENSE"
-  ],
-  "scripts": {
-    "test-gui": "mocha test/testAdapter.gui.js --exit",
-    "test-package": "mocha test/testPackageFiles.js --exit",
-    "test": "npm run test-gui && npm run test-package && npm run test-alexa-v3",
-    "test-alexa-v3": "mocha --grep AlexaSmartHomeV3 --recursive",
-    "prepublishOnly": "npm run build",
-    "lint": "eslint -c eslint.config.mjs",
-    "build:backend": "tsc -p tsconfig.build.json && node tasks --backend",
-    "build": "node tasks && npm run build:backend",
-    "release": "release-script",
-    "release-patch": "release-script patch --yes",
-    "release-minor": "release-script minor --yes",
-    "release-major": "release-script major --yes",
-    "translate": "translate-adapter",
-    "update-packages": "npx -y npm-check-updates --upgrade && cd src-admin && npx -y npm-check-updates --upgrade && cd ../src-rules && npx -y npm-check-updates --upgrade",
-    "npm": "npm i && cd src-admin && npm i -f && cd ../src-rules && npm i -f",
-    "rules-0-clean": "node tasks --rules-0-clean",
-    "rules-1-npm": "node tasks --rules-1-npm",
-    "rules-2-compile": "node tasks --rules-2-compile",
-    "rules-3-copy": "node tasks --rules-3-copy",
-    "rules-build": "node tasks --rules-build",
-    "0-clean": "node tasks --0-clean",
-    "1-npm": "node tasks --1-npm",
-    "2-build": "node tasks --2-build",
-    "3-copy": "node tasks --3-copy",
-    "4-patch": "node tasks --4-patch",
-    "build-admin": "node tasks --build-admin"
-  },
-  "license": "MIT",
-  "readmeFilename": "README.md"
+    "name": "iobroker.iot",
+    "version": "5.0.7",
+    "description": "This adapter allows to communicate Amazon Alexa and Google Home with ioBroker.",
+    "author": {
+        "name": "bluefox",
+        "email": "dogafox@gmail.com"
+    },
+    "homepage": "https://github.com/ioBroker/ioBroker.iot",
+    "keywords": [
+        "ioBroker",
+        "mqtt",
+        "aws",
+        "cloud",
+        "web"
+    ],
+    "engines": {
+        "node": ">=18"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/ioBroker/ioBroker.iot"
+    },
+    "dependencies": {
+        "@iobroker/adapter-core": "^3.3.2",
+        "@iobroker/type-detector": "^4.6.4",
+        "aws-iot-device-sdk": "^2.2.16",
+        "axios": "^1.13.2",
+        "mime": "^3.0.0",
+        "uuid": "^11.0.0"
+    },
+    "devDependencies": {
+        "@alcalzone/release-script": "^5.0.0",
+        "@alcalzone/release-script-plugin-iobroker": "^4.0.0",
+        "@alcalzone/release-script-plugin-license": "^4.0.0",
+        "@iobroker/build-tools": "^2.0.15",
+        "@iobroker/eslint-config": "^2.2.0",
+        "@iobroker/legacy-testing": "^2.0.2",
+        "@iobroker/types": "^7.0.7",
+        "@types/aws-iot-device-sdk": "^2.2.9",
+        "@types/node": "^24.9.2",
+        "ajv": "^8.17.1",
+        "ajv-draft-04": "^1.0.0",
+        "ajv-formats": "^3.0.1",
+        "colorette": "^2.0.20",
+        "puppeteer": "^24.31.0",
+        "typescript": "^5.9.3"
+    },
+    "bugs": {
+        "url": "https://github.com/ioBroker/ioBroker.iot/issues"
+    },
+    "main": "build/main.js",
+    "files": [
+        "admin/",
+        "doc/",
+        "img/",
+        "keys/",
+        "build/",
+        "io-package.json",
+        "LICENSE"
+    ],
+    "scripts": {
+        "test-gui": "mocha test/testAdapter.gui.js --exit",
+        "test-package": "mocha test/testPackageFiles.js --exit",
+        "test": "npm run test-gui && npm run test-package && npm run test-alexa-v3",
+        "test-alexa-v3": "mocha --grep AlexaSmartHomeV3 --recursive",
+        "prepublishOnly": "npm run build",
+        "lint": "eslint -c eslint.config.mjs",
+        "build:backend": "tsc -p tsconfig.build.json && node tasks --backend",
+        "build": "node tasks && npm run build:backend",
+        "release": "release-script",
+        "release-patch": "release-script patch --yes",
+        "release-minor": "release-script minor --yes",
+        "release-major": "release-script major --yes",
+        "translate": "translate-adapter",
+        "update-packages": "npx -y npm-check-updates --upgrade && cd src-admin && npx -y npm-check-updates --upgrade && cd ../src-rules && npx -y npm-check-updates --upgrade",
+        "npm": "npm i && cd src-admin && npm i -f && cd ../src-rules && npm i -f",
+        "rules-0-clean": "node tasks --rules-0-clean",
+        "rules-1-npm": "node tasks --rules-1-npm",
+        "rules-2-compile": "node tasks --rules-2-compile",
+        "rules-3-copy": "node tasks --rules-3-copy",
+        "rules-build": "node tasks --rules-build",
+        "0-clean": "node tasks --0-clean",
+        "1-npm": "node tasks --1-npm",
+        "2-build": "node tasks --2-build",
+        "3-copy": "node tasks --3-copy",
+        "4-patch": "node tasks --4-patch",
+        "build-admin": "node tasks --build-admin"
+    },
+    "license": "MIT",
+    "readmeFilename": "README.md"
 }
