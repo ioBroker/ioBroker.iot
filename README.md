@@ -416,7 +416,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 5.0.8 (2025-11-28)
 - (@GermanBluefox) Showed last controller ID in `smart.lastObjectID`
 - (@GermanBluefox) Showed subscription valid period in `info.validTill` and GUI
 - (@Copilot) Implemented increasing reconnect intervall
@@ -442,11 +442,6 @@ setState('iot.0.app.message', JSON.stringify({
 - (@GermanBluefox) It is possible to edit a type
 - (@GermanBluefox) Correcting creation of complex groups
 - (@GermanBluefox) Same as 4.2.11
-
-### 4.2.9 (2025-10-28)
-- (@GermanBluefox) Do not control "white" by RGBW devices
-- (@GermanBluefox) Corrected GUI error
-- (@GermanBluefox) Avoid double entries in auto-detection
 
 ## License
 

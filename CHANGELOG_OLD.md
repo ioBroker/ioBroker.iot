@@ -511,6 +511,11 @@
 ### 0.1.4 (2018-09-26)
 
 -   (bluefox) Initial commit
+## 4.2.9 (2025-10-28)
+- (@GermanBluefox) Do not control "white" by RGBW devices
+- (@GermanBluefox) Corrected GUI error
+- (@GermanBluefox) Avoid double entries in auto-detection
+
 ## 4.2.7 (2025-10-26)
 - (@GermanBluefox) Create the service states at the instance start
 - (@GermanBluefox) Corrected error with gates
