@@ -36,7 +36,7 @@
     "@iobroker/build-tools": "^2.0.15",
     "@iobroker/eslint-config": "^2.2.0",
     "@iobroker/legacy-testing": "^2.0.2",
-    "@iobroker/types": "^7.0.7",
+    "@iobroker/types": "^7.1.0",
     "@types/aws-iot-device-sdk": "^2.2.9",
     "@types/node": "^24.10.1",
     "ajv": "^8.17.1",
