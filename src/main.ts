@@ -3,7 +3,6 @@ import { Adapter, type AdapterOptions } from '@iobroker/adapter-core'; // Get co
 import { readFileSync } from 'node:fs';
 import axios from 'axios';
 import { deflateSync } from 'node:zlib';
-import { v4 as uuid } from 'uuid';
 
 // @ts-expect-error no types
 import AlexaSH2 from './lib/alexaSmartHomeV2';
@@ -34,7 +33,7 @@ const RETRY_DELAYS_MS = [
 ];
 const MAX_RETRY_DELAY_MS = 60_000; // Cap at 60 seconds for all subsequent retries
 
-export class IotAdapter extends Adapter {
+class IotAdapter extends Adapter {
     declare public config: IotAdapterConfig;
     private recalcTimeout: NodeJS.Timeout | null = null;
     private lang: ioBroker.Languages = 'de';
@@ -1763,6 +1762,8 @@ export class IotAdapter extends Adapter {
         await this.subscribeStatesAsync('app.message');
     }
 }
+
+export default IotAdapter;
 
 if (require.main !== module) {
     // Export the constructor in compact mode

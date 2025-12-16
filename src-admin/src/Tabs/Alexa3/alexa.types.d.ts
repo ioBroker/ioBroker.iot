@@ -1,5 +1,6 @@
 // we extend this type for our use
 import type { InternalDetectorState, Types } from '@iobroker/type-detector/types';
+import type { AlexaSH3ControlType } from '../../../../src/lib/AlexaSmartHomeV3/types';
 
 export type AlexaV3EndpointID = string;
 
@@ -362,8 +363,36 @@ export interface AlexaV3ReportedState {
     timeOfSample?: string;
     uncertaintyInMilliseconds?: number;
 }
+
+export type AlexaSH3ControlType =
+    | 'AirCondition'
+    | 'Blind'
+    | 'Button'
+    | 'ContactSensor'
+    | 'Ct'
+    | 'Dimmer'
+    | 'Door'
+    | 'Gate'
+    | 'Humidity'
+    | 'Hue'
+    | 'Light'
+    | 'Lock'
+    | 'Motion'
+    | 'Percentage'
+    | 'Rgb'
+    | 'RgbSingle'
+    | 'RgbwSingle'
+    | 'Slider'
+    | 'Socket'
+    | 'Temperature'
+    | 'Thermostat'
+    | 'VacuumCleaner'
+    | 'Volume'
+    | 'VolumeGroup'
+    | 'Window';
+
 export type AlexaSH3ControlDescription = {
-    type: string;
+    type: AlexaSH3ControlType;
     states: Record<string, IotExternalDetectorState | undefined>;
     supported: string[];
     enforced: string[];

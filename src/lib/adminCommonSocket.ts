@@ -1,7 +1,7 @@
 import { normalize } from 'node:path';
 import { existsSync, lstatSync, readdirSync } from 'node:fs';
 import axios from 'axios';
-import type { IotAdapter } from '../main';
+import type IotAdapter from '../main';
 
 const ALLOW_CACHE = [
     'getRepository',

@@ -1,4 +1,5 @@
 import AdapterProvider from './AdapterProvider';
+import type { AlexaSH3ControlType } from '../../../../src-admin/src/Tabs/Alexa3/alexa.types';
 
 export type LogFn = (message: string) => void;
 
@@ -6,13 +7,14 @@ export default class Logger {
     private readonly logged: Map<number, number> = new Map();
     private readonly maxLoggedEntries = 500;
     private readonly ttl = 30;
-    public _component: string;
+    public _component: AlexaSH3ControlType | 'Unknown';
 
     constructor(instance: unknown) {
         if (instance && typeof instance === 'object' && 'constructor' in instance) {
-            this._component = (instance as { constructor: { name?: string } }).constructor.name || 'Unknown';
+            this._component =
+                ((instance as { constructor: { name?: string } }).constructor.name as AlexaSH3ControlType) || 'Unknown';
         } else if (typeof instance === 'string') {
-            this._component = instance;
+            this._component = instance as AlexaSH3ControlType;
         } else {
             this._component = 'Unknown';
         }
@@ -22,7 +24,7 @@ export default class Logger {
         return this._component;
     }
 
-    set component(value: string) {
+    set component(value: AlexaSH3ControlType) {
         this._component = value;
     }
 

@@ -1,4 +1,4 @@
-import type { IotAdapter } from '../../../main';
+import type IotAdapter from '../../../main';
 
 export default class AdapterProvider {
     static adapterInstance: IotAdapter;

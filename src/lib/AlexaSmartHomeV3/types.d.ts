@@ -520,8 +520,37 @@ export interface AlexaV3ReportedState {
     timeOfSample?: string;
     uncertaintyInMilliseconds?: number;
 }
+
+export type AlexaSH3ControlType =
+    | 'AirCondition'
+    | 'Blind'
+    | 'Button'
+    | 'ContactSensor'
+    | 'Ct'
+    | 'Dimmer'
+    | 'Door'
+    | 'Gate'
+    | 'Humidity'
+    | 'Hue'
+    | 'Light'
+    | 'Lock'
+    | 'Motion'
+    | 'Percentage'
+    | 'Rgb'
+    | 'RgbSingle'
+    | 'RgbwSingle'
+    | 'Slider'
+    | 'Socket'
+    | 'Temperature'
+    | 'Thermostat'
+    | 'VacuumCleaner'
+    | 'Volume'
+    | 'VolumeGroup'
+    | 'Window'
+    | 'Unknown';
+
 export type AlexaSH3ControlDescription = {
-    type: string;
+    type: AlexaSH3ControlType;
     states: Record<string, IotExternalDetectorState | undefined>;
     supported: string[];
     enforced: string[];

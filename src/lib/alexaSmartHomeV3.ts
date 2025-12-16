@@ -6,7 +6,7 @@ import IotProxy from './AlexaSmartHomeV3/Helpers/IotProxy';
 import RateLimiter from './AlexaSmartHomeV3/Helpers/RateLimiter';
 import type { AlexaSH3ControlDescription, AlexaSH3DeviceDescription, AlexaV3Request } from './AlexaSmartHomeV3/types';
 import type AlexaResponse from './AlexaSmartHomeV3/Alexa/AlexaResponse';
-import type { IotAdapter } from '../main';
+import type IotAdapter from '../main';
 
 export default class AlexaSH3 {
     private readonly deviceManager: DeviceManager;

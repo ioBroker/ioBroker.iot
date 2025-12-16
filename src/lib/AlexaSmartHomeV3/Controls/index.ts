@@ -2,22 +2,22 @@ import AdjustableControl from './AdjustableControl';
 import AdjustablePercentageControl from './AdjustablePercentageControl';
 import AirCondition from './AirCondition';
 import Blind from './Blind';
+import Button from './Button';
 import ContactSensor from './ContactSensor';
-import type Control from './Control';
 import Ct from './Ct';
 import Dimmer from './Dimmer';
 import Door from './Door';
 import Gate from './Gate';
-import Humidity from './Humidity';
 import Hue from './Hue';
+import Humidity from './Humidity';
 import Light from './Light';
 import Lock from './Lock';
 import Motion from './Motion';
+import Percentage from './Percentage';
+import ReadOnlyDetector from './ReadOnlyDetector';
 import Rgb from './Rgb';
 import RgbSingle from './RgbSingle';
 import RgbwSingle from './RgbwSingle';
-import ReadOnlyDetector from './ReadOnlyDetector';
-import Button from './Button';
 import Slider from './Slider';
 import Socket from './Socket';
 import Temperature from './Temperature';
@@ -26,6 +26,8 @@ import VacuumCleaner from './VacuumCleaner';
 import Volume from './Volume';
 import VolumeGroup from './VolumeGroup';
 import Window from './Window';
+
+import type Control from './Control';
 import type { IotExternalPatternControl } from '../types';
 
 export default {
@@ -68,6 +70,9 @@ export default {
         }
         if (item.type === Motion.type) {
             return new Motion(item);
+        }
+        if (item.type === Percentage.type) {
+            return new Percentage(item);
         }
         if (item.type === Rgb.type) {
             return new Rgb(item);

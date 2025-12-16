@@ -17,12 +17,13 @@ import {
     ToggleOn,
     VolumeOff,
     VolumeUp,
+    Percent,
 } from '@mui/icons-material';
 import { MdBlinds, MdOutlineSensors, MdOutlineThermostat, MdPlayArrow } from 'react-icons/md';
 import { AiFillUnlock } from 'react-icons/ai';
 import { BsFillDoorOpenFill, BsFillVolumeUpFill } from 'react-icons/bs';
 import { CgMenuMotion } from 'react-icons/cg';
-import { FaLightbulb, FaPercentage as Percent, FaSnowflake, FaTemperatureLow } from 'react-icons/fa';
+import { FaLightbulb, FaSnowflake, FaTemperatureLow } from 'react-icons/fa';
 import { GiElectricalSocket, GiGate, GiWindow } from 'react-icons/gi';
 import { HiLightBulb } from 'react-icons/hi';
 import { IoIosColorFilter, IoIosColorPalette } from 'react-icons/io';
@@ -57,6 +58,7 @@ const SMART_TYPES: Types[] = [
     Types.ct,
     Types.motion,
     Types.slider,
+    Types.percentage,
     Types.temperature,
     Types.humidity,
     Types.button,
@@ -100,10 +102,7 @@ const styles: { [styleName: string]: React.CSSProperties } = {
     },
 };
 
-export const CAPABILITIES: Record<
-    string,
-    { label: string; icon: IconType; color: string; style?: React.CSSProperties }
-> = {
+export const CAPABILITIES: Record<string, { label: string; icon: IconType; color: string; style?: React.CSSProperties }> = {
     brightness: { label: 'Brightness', icon: Brightness5, color: '#c9b803' },
     connectivity: {
         label: 'Connectivity',
@@ -116,7 +115,7 @@ export const CAPABILITIES: Record<
     lockState: { label: 'Lock', icon: Lock, color: '#00519b' },
     mode: { label: 'Mode', icon: ModeStandby, color: '#112233' },
     muted: { label: 'Muted', icon: VolumeOff, color: '#9701af' },
-    percentage: { label: 'Percentage', icon: Percent, color: '#009870' },
+    percentage: { label: 'Percentage', icon: Percent, color: '#fa8547' },
     powerState: { label: 'Power', icon: ToggleOn, color: '#70bd00' },
     relativeHumidity: { label: 'Humidity', icon: WiHumidity, color: '#3c58ca', style: { width: 24, height: 24 } },
     targetSetpoint: { label: 'Set point', icon: Thermostat, color: '#813600' },
@@ -183,6 +182,7 @@ export const DEVICES: Record<string, { label: string; icon: IconType; color: str
     },
     Lock: { label: 'Lock', icon: AiFillUnlock, color: '#c9030a' },
     Motion: { label: 'Motion', icon: CgMenuMotion, color: '#149100' },
+    Percentage: { label: 'Percentage', icon: Percent, color: '#fa8547' },
     Rgb: { label: 'RGB(W)', icon: IoIosColorPalette, color: '#5a9600' },
     RgbSingle: { label: 'RGB single', icon: IoIosColorPalette, color: '#5a9600' },
     RgbwSingle: { label: 'RGBW single', icon: IoIosColorPalette, color: '#5a9600' },

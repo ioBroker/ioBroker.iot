@@ -3,7 +3,7 @@ import { deflateSync } from 'node:zlib';
 import AdminSocket from './adminCommonSocket';
 import type { IotAdapterConfig } from './types';
 import type { device as DeviceModule } from 'aws-iot-device-sdk';
-import type { IotAdapter } from '../main';
+import type IotAdapter from '../main';
 
 type MESSAGE_TYPE = number;
 const MESSAGE_TYPES: Record<string, MESSAGE_TYPE> = {

@@ -5,8 +5,9 @@
     "dependencies": {
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.1",
-        "@iobroker/adapter-react-v5": "^8.0.9",
-        "@iobroker/types": "^7.0.8-alpha.7-20250928-40cb80c18",
+        "@iobroker/adapter-react-v5": "^8.0.16",
+        "@iobroker/types": "^7.1.0",
+        "@iobroker/type-detector": "^5.0.9",
         "@mui/icons-material": "^6.5.0",
         "@mui/material": "^6.5.0",
         "@sentry/browser": "^10.22.0",

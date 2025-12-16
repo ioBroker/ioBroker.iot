@@ -416,10 +416,13 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Added percentual control
+
 ### 5.0.8 (2025-11-28)
 - (@GermanBluefox) Showed last controller ID in `smart.lastObjectID`
 - (@GermanBluefox) Showed subscription valid period in `info.validTill` and GUI
-- (@Copilot) Implemented increasing reconnect intervall
+- (@Copilot) Implemented increasing reconnect interval
 - (@GermanBluefox) Added automatically conversion of type TV (alexaV3) to button (alexaV3)
 - (@GermanBluefox) Optimized the update of devices in GUI
 - (@GermanBluefox) Implemented slider with custom min/max values

@@ -1,4 +1,4 @@
-import type { IotAdapter } from '../main';
+import type IotAdapter from '../main';
 /**
  * Handles `sendToAdapter` command
  *

@@ -1,6 +1,6 @@
 import textsT from './texts';
 import type { IotAdapterConfig } from './types';
-import type { IotAdapter } from '../main';
+import type IotAdapter from '../main';
 
 // Stop phrases all in lower case!
 // Required by v2 custom skill to detect when the user wants to cancel the conversation

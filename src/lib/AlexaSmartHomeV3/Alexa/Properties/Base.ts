@@ -1,9 +1,10 @@
 import { configuredRangeOrDefault, firstLower, className } from '../../Helpers/Utils';
-import  {
+import type {
     AlexaV3DirectiveName,
     AlexaV3DirectiveValue,
     AlexaV3Request,
-    IotExternalDetectorState, SmartNameObject,
+    IotExternalDetectorState,
+    SmartNameObject,
 } from '../../types';
 import { Types } from '@iobroker/type-detector';
 
