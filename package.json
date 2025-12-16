@@ -38,7 +38,7 @@
     "@iobroker/legacy-testing": "^2.0.2",
     "@iobroker/types": "^7.1.0",
     "@types/aws-iot-device-sdk": "^2.2.9",
-    "@types/node": "^24.10.1",
+    "@types/node": "^25.0.2",
     "ajv": "^8.17.1",
     "ajv-draft-04": "^1.0.0",
     "ajv-formats": "^3.0.1",
