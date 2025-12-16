@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "5.0.9",
+    "version": "5.0.10",
     "news": {
+      "5.0.10": {
+        "en": "Added percentual control\nCorrecting creation for complex groups",
+        "de": "Prozentuale Kontrolle hinzugefügt\nKorrektur der Kreation für komplexe Gruppen",
+        "ru": "Дополнительный процентный контроль\nКорректировка создания сложных групп",
+        "pt": "Controle percentual adicionado\nCorrigindo a criação de grupos complexos",
+        "nl": "Toegevoegde procentuele controle\nCorrigerende creatie voor complexe groepen",
+        "fr": "Pourcentage de contrôle ajouté\nCorrection de la création de groupes complexes",
+        "it": "Aggiunto controllo percentuale\nCreazione di correzione per gruppi complessi",
+        "es": "Control porcentual\nCreación correcta para grupos complejos",
+        "pl": "Dodano kontrolę percentualną\nKorekcja tworzenia dla grup złożonych",
+        "uk": "Розширений контроль відсотків\nПравильне створення складних груп",
+        "zh-cn": "添加百分数控制\n纠正复杂群体的创建"
+      },
       "5.0.9": {
         "en": "Added percentual control\nCorrecting creation for complex groups",
         "de": "Prozentuale Kontrolle hinzugefügt\nKorrektur der Kreation für komplexe Gruppen",
@@ -80,19 +93,6 @@
         "pl": "Dodano miredy < - > konwersja kelwina dla temperatury barwy\nMożna edytować typ\nKorekcja tworzenia grup złożonych\nPodobnie jak 4.2.11",
         "uk": "Додано міреди <->kelvin перетворення для температури кольору\nМожна редагувати тип\nПравильне створення складних груп\nТак само як 4.2.11",
         "zh-cn": "添加嵌入点 <->kelvin 转换颜色温度\n可以编辑一个类型\n纠正复杂集团的产生\n与4.2.11相同"
-      },
-      "4.2.9": {
-        "en": "Do not control \"white\" by RGBW devices\nCorrected GUI error\nAvoid double entries in auto-detection",
-        "de": "\"weiß\" von RGBW-Geräten nicht steuern\nKorrigierter GUI-Fehler\nVermeiden Sie Doppeleinträge in der Auto-Detektion",
-        "ru": "Не управляйте «белыми» устройствами RGBW\nИсправленная ошибка GUI\nИзбегайте двойных записей в автоматическом обнаружении",
-        "pt": "Não controlar \"branco\" por dispositivos RGBW\nErro GUI corrigido\nEvite entradas duplas na detecção automática",
-        "nl": "\"wit\" niet bedoeld door RGBW-apparaten\nGecorrigeerde GUI-fout\nVermijd dubbele ingangen in auto-detectie",
-        "fr": "Ne pas contrôler \"blanc\" par les appareils RGBW\nErreur d'interface graphique corrigée\nÉvitez les doubles entrées dans la détection automatique",
-        "it": "Non controllare \"bianco\" da dispositivi RGBW\nErrore GUI corretto\nEvitare doppie entrate in auto-detezione",
-        "es": "No controle \"blanco\" por dispositivos RGBW\nError de GUI corregido\nEvite las entradas dobles en auto-detección",
-        "pl": "Nie steruj \"białym\" urządzeniami RGBW\nSkorygowany błąd GUI\nUnikaj podwójnych wpisów w autodetekcji",
-        "uk": "Не контролюємо \"білий\" пристроями RGBW\nВиправлена помилка інтерфейсу\nУникайте подвійних записів в автодетекції",
-        "zh-cn": "不使用 RGBW 设备控制“ 白色 ”\n更正的图形用户界面错误\n避免自动检测中的重复条目"
       }
     },
     "titleLang": {
