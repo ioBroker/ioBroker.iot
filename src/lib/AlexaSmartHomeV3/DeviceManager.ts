@@ -179,8 +179,20 @@ export default class DeviceManager {
 
             // detectedControls = detectedControls.filter(c => ['light', 'dimmer'].includes(c.type));
             const createdGroups: string[] = [];
-            const usedFriendlyNames: string[] = [];
             let iteration = 0;
+
+            // First collect all custom friendly names assigned by user
+            const customNamedControls: string[] = [];
+            for (const control of detectedControls) {
+                if (control.groupNames) {
+                    for (const groupName of control.groupNames) {
+                        if (!customNamedControls.includes(this.getName(groupName))) {
+                            customNamedControls.push(this.getName(groupName));
+                            break;
+                        }
+                    }
+                }
+            }
 
             while (detectedControls.length) {
                 iteration++;
@@ -200,16 +212,15 @@ export default class DeviceManager {
                         );
                         let friendlyName = Utils.friendlyNameByRoomAndFunctionName(control, this.lang);
                         // If a friendly name is already used, append Gruppe, Group, Gruppo, Groupe, etc.
-                        if (usedFriendlyNames.includes(friendlyName)) {
+                        if (customNamedControls.includes(friendlyName)) {
                             let index = 0;
                             let newFriendlyName = '';
                             do {
                                 newFriendlyName = `${friendlyName} ${GroupWord[this.lang] || GroupWord.en}${index ? ` ${index}` : ''}`;
                                 index++;
-                            } while (usedFriendlyNames.includes(newFriendlyName));
+                            } while (customNamedControls.includes(newFriendlyName));
                             friendlyName = newFriendlyName;
                         }
-                        usedFriendlyNames.push(friendlyName);
 
                         this.toDevice({
                             detectedControls: processedControls,
@@ -234,26 +245,9 @@ export default class DeviceManager {
                         if (!createdGroups.includes(groupName)) {
                             createdGroups.push(groupName);
                             processedControls = detectedControls.filter(item => item.groupNames?.includes(groupName));
-                            let friendlyName = this.getName(groupName);
-                            // If a friendly name is already used, append Device
-                            if (usedFriendlyNames.includes(friendlyName)) {
-                                let index = 0;
-                                let newFriendlyName = '';
-                                do {
-                                    newFriendlyName = `${friendlyName} ${DeviceWord[this.lang] || DeviceWord.en}${index ? ` ${index}` : ''}`;
-                                    index++;
-                                } while (usedFriendlyNames.includes(newFriendlyName));
-                                friendlyName = newFriendlyName;
-                            }
-                            usedFriendlyNames.push(friendlyName);
-
-                            if (friendlyName === 'Backofen') {
-                                console.log('aaa');
-                            }
-
                             this.toDevice({
                                 detectedControls: JSON.parse(JSON.stringify(processedControls)),
-                                friendlyName,
+                                friendlyName: this.getName(groupName),
                                 autoDetected: false,
                                 toggle: processedControls[0].object?.toggle ?? defaultToggle,
                                 possibleTypes: processedControls[0].object?.possibleTypes || [],
@@ -274,6 +268,11 @@ export default class DeviceManager {
                             }
                         }
                     });
+                    // Be sure, that the processed control is removed
+                    const index = detectedControls.indexOf(control);
+                    if (index !== -1) {
+                        detectedControls.splice(index, 1);
+                    }
                 } else {
                     // delete it from detected controls to avoid endless loop
                     detectedControls.splice(0, 1);
