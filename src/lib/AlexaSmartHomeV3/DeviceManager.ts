@@ -27,16 +27,16 @@ const GroupWord: { [lang: string]: string } = {
     pl: 'Grupa',
     nl: 'Groep',
 };
-const DeviceWord: { [lang: string]: string } = {
-    en: 'Device',
-    de: 'Gerät',
-    it: 'Dispositivo',
-    fr: 'Appareil',
-    ru: 'Устройство',
-    es: 'Dispositivo',
-    pl: 'Urządzenie',
-    nl: 'Dispositivo',
-};
+// const DeviceWord: { [lang: string]: string } = {
+//     en: 'Device',
+//     de: 'Gerät',
+//     it: 'Dispositivo',
+//     fr: 'Appareil',
+//     ru: 'Устройство',
+//     es: 'Dispositivo',
+//     pl: 'Urządzenie',
+//     nl: 'Dispositivo',
+// };
 
 export default class DeviceManager {
     private lang: ioBroker.Languages = 'en';
