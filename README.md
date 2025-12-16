@@ -416,7 +416,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 5.0.9 (2025-12-16)
+### **WORK IN PROGRESS**
 - (@GermanBluefox) Added percentual control
 - (@GermanBluefox) Correcting creation for complex groups
 

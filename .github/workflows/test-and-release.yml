@@ -32,7 +32,6 @@ jobs:
             - uses: ioBroker/testing-action-check@v1
               with:
                   node-version: '22.x'
-                  install-command: 'npm install'
                   lint: true
 
             # Runs adapter tests on all supported node versions and OSes
@@ -76,7 +75,6 @@ jobs:
               with:
                   node-version: '22.x'
                   build: true
-                  install-command: 'npm install'
                   github-token: ${{ secrets.GITHUB_TOKEN }}
                   sentry: true
                   sentry-token: ${{ secrets.SENTRY_AUTH_TOKEN }}
