@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "5.0.8",
+    "version": "5.0.9",
     "news": {
+      "5.0.9": {
+        "en": "Added percentual control\nCorrecting creation for complex groups",
+        "de": "Prozentuale Kontrolle hinzugefügt\nKorrektur der Kreation für komplexe Gruppen",
+        "ru": "Дополнительный процентный контроль\nКорректировка создания сложных групп",
+        "pt": "Controle percentual adicionado\nCorrigindo a criação de grupos complexos",
+        "nl": "Toegevoegde procentuele controle\nCorrigerende creatie voor complexe groepen",
+        "fr": "Pourcentage de contrôle ajouté\nCorrection de la création de groupes complexes",
+        "it": "Aggiunto controllo percentuale\nCreazione di correzione per gruppi complessi",
+        "es": "Control porcentual\nCreación correcta para grupos complejos",
+        "pl": "Dodano kontrolę percentualną\nKorekcja tworzenia dla grup złożonych",
+        "uk": "Розширений контроль відсотків\nПравильне створення складних груп",
+        "zh-cn": "添加百分数控制\n纠正复杂群体的创建"
+      },
       "5.0.8": {
         "en": "Showed last controller ID in `smart.lastObjectID`\nShowed subscription valid period in `info.validTill` and GUI\nImplemented increasing reconnect intervall\nAdded automatically conversion of type TV (alexaV3) to button (alexaV3)\nOptimized the update of devices in GUI\nImplemented slider with custom min/max values",
         "de": "Zuletzt angezeigte Controller-ID in `smart.lastObjectID`\nGezeigte Abonnement gültige Periode in `info.valid Till und GUI\nErgänzendes Reconnect Intervall\nAutomatische Umwandlung des Typs TV (alexaV3) zu Schaltfläche (alexaV3) hinzugefügt\nOptimierte das Update von Geräten in GUI\nEinbauschieber mit benutzerdefinierten min/max-Werten",
@@ -80,19 +93,6 @@
         "pl": "Nie steruj \"białym\" urządzeniami RGBW\nSkorygowany błąd GUI\nUnikaj podwójnych wpisów w autodetekcji",
         "uk": "Не контролюємо \"білий\" пристроями RGBW\nВиправлена помилка інтерфейсу\nУникайте подвійних записів в автодетекції",
         "zh-cn": "不使用 RGBW 设备控制“ 白色 ”\n更正的图形用户界面错误\n避免自动检测中的重复条目"
-      },
-      "4.2.7": {
-        "en": "Create the service states at the instance start\nCorrected error with gates",
-        "de": "Erstellen Sie die Servicezustände beim Beispielstart\nFehler behoben mit Toren",
-        "ru": "Создайте состояние сервиса в начале экземпляра\nИсправлена ошибка с воротами",
-        "pt": "Criar os estados de serviço no início da instância\nErro corrigido com portões",
-        "nl": "Creëer de service statuss bij het begin van de instantie\nGecorrigeerde fout met poorten",
-        "fr": "Créer les états de service au début de l'instance\nErreur corrigée avec les portes",
-        "it": "Creare gli stati di servizio all'inizio dell'istanza\nErrore corretto con cancelli",
-        "es": "Crear los estados de servicio en el caso empezar\nError corregido con puertas",
-        "pl": "Utwórz stany usługi na początku instancji\nSkorygowany błąd z bramami",
-        "uk": "Створіть штати служби в екземплярі\nВиправлена помилка з воротами",
-        "zh-cn": "在实例启动时创建服务状态\n纠正闸门错误"
       }
     },
     "titleLang": {

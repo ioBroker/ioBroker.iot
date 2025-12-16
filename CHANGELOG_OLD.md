@@ -511,6 +511,12 @@
 ### 0.1.4 (2018-09-26)
 
 -   (bluefox) Initial commit
+## 5.0.2 (2025-10-30)
+- (@GermanBluefox) Added mireds<->kelvin conversion for color temperature
+- (@GermanBluefox) It is possible to edit a type
+- (@GermanBluefox) Correcting creation of complex groups
+- (@GermanBluefox) Same as 4.2.11
+
 ## 4.2.9 (2025-10-28)
 - (@GermanBluefox) Do not control "white" by RGBW devices
 - (@GermanBluefox) Corrected GUI error
