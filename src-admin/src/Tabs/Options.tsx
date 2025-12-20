@@ -80,6 +80,7 @@ interface OptionsState {
     isInstanceAlive: boolean;
     debugVisible?: boolean;
     validTill?: string;
+    takeFromCloud: { login: string; pass: string; instance: number } | null;
 }
 
 export default class Options extends Component<OptionsProps, OptionsState> {
@@ -92,13 +93,43 @@ export default class Options extends Component<OptionsProps, OptionsState> {
             inAction: false,
             toast: '',
             isInstanceAlive: false,
+            takeFromCloud: null,
         };
+    }
+
+    async readCloudCredentials(): Promise<void> {
+        if (!this.props.native.login && !this.props.native.pass && !this.state.takeFromCloud) {
+            // read all cloud.X instances
+            const instances = await this.props.socket.getAdapterInstances('cloud');
+            // First find enabled instance
+            let instance: number | null = null;
+            for (let i = 0; i < instances.length; i++) {
+                const inst = instances[i];
+                if (inst.common.enabled) {
+                    instance = parseInt(inst._id.split('.').pop() as string, 10);
+                    break;
+                }
+            }
+            // If no enabled instance found, take first one
+            if (instance === null && instances.length) {
+                instance = parseInt(instances[0]._id.split('.').pop() as string, 10);
+            }
+            if (instance !== null) {
+                const obj = await this.props.socket.getObject(`system.adapter.cloud.${instance}`);
+                const native = obj?.native as { login?: string; pass?: string } | undefined;
+                if (native?.login && native?.pass) {
+                    const passEncrypted = await this.props.socket.decrypt(native?.pass);
+                    this.setState({ takeFromCloud: { login: native.login, pass: passEncrypted, instance } });
+                }
+            }
+        }
     }
 
     async componentDidMount(): Promise<void> {
         const aliveState = await this.props.socket.getState(`system.adapter.${this.namespace}.alive`);
         const validTillState = await this.props.socket.getState(`${this.namespace}.info.validTill`);
         this.setState({ isInstanceAlive: !!aliveState?.val, validTill: validTillState?.val as string | undefined });
+        await this.readCloudCredentials();
 
         await this.props.socket.subscribeState(`${this.namespace}.info.validTill`, this.onValidTillChanged);
         await this.props.socket.subscribeState(`system.adapter.${this.namespace}.alive`, this.onAliveChanged);
@@ -134,6 +165,7 @@ export default class Options extends Component<OptionsProps, OptionsState> {
         attr: string,
         type?: 'text' | 'number' | 'password',
         autoComplete?: string,
+        style?: React.CSSProperties,
     ): React.JSX.Element {
         const error = attr === 'pass' && Options.checkPassword(this.props.native[attr]);
         return (
@@ -142,11 +174,26 @@ export default class Options extends Component<OptionsProps, OptionsState> {
                 label={I18n.t(title)}
                 error={!!error}
                 autoComplete={autoComplete || ''}
-                style={styles.input}
+                style={{
+                    ...styles.input,
+                    ...style,
+                }}
                 value={(this.props.native as unknown as Record<string, string>)[attr]}
                 type={type || 'text'}
                 helperText={error || ''}
-                onChange={e => this.props.onChange(attr, e.target.value)}
+                onChange={e => {
+                    this.props.onChange(attr, e.target.value, () => {
+                        if (
+                            (attr === 'pass' || attr === 'login') &&
+                            !this.props.native.pass &&
+                            !this.props.native.login
+                        ) {
+                            this.readCloudCredentials().catch(e =>
+                                console.error(`Cannot read cloud credentials: ${e}`),
+                            );
+                        }
+                    });
+                }}
                 margin="normal"
             />
         );
@@ -355,6 +402,19 @@ export default class Options extends Component<OptionsProps, OptionsState> {
                     {this.renderInput('ioBroker.pro Login', 'login', 'text', 'username')}
                     <br />
                     {this.renderInput('ioBroker.pro Password', 'pass', 'password', 'current-password')}
+                    {this.state.takeFromCloud && !this.props.native.pass && !this.props.native.login ? <br /> : null}
+                    {this.state.takeFromCloud && !this.props.native.pass && !this.props.native.login ? (
+                        <Button
+                            variant="outlined"
+                            onClick={() => {
+                                this.props.onChange('login', this.state.takeFromCloud!.login, () =>
+                                    this.props.onChange('pass', this.state.takeFromCloud!.pass),
+                                );
+                            }}
+                        >
+                            {I18n.t('Take credentials from cloud.%s', this.state.takeFromCloud.instance)}
+                        </Button>
+                    ) : null}
                     <br />
                     {this.renderValidTill()}
                     <br />

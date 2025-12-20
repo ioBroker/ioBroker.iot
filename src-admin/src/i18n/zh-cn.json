@@ -202,6 +202,7 @@
     "Sort by name/type": "按名称/类型排序",
     "State ID": "州身份证",
     "Subscription till": "订阅至",
+    "Take credentials from cloud.%s": "从“cloud.%s”获取凭证",
     "Temperature": "温度",
     "The device was added. You can set a smart name now or just keep the current.": "设备已添加。您可以立即设置智能名称，也可以保留当前名称。",
     "The linking process has been changed for a few months.": "链接过程已更改了几个月。",

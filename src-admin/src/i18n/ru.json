@@ -202,6 +202,7 @@
     "Sort by name/type": "Сортировать по имени/типу",
     "State ID": "Государственный идентификатор",
     "Subscription till": "Подписка до",
+    "Take credentials from cloud.%s": "Взять учетные данные из \"cloud.%s\"",
     "Temperature": "Температура",
     "The device was added. You can set a smart name now or just keep the current.": "Устройство добавлено. Вы можете задать ему новое имя сейчас или оставить текущее.",
     "The linking process has been changed for a few months.": "Несколько месяцев назад изменился процесс привязки.",

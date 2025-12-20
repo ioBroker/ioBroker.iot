@@ -202,6 +202,7 @@
     "Sort by name/type": "Sort by name/type",
     "State ID": "State ID",
     "Subscription till": "Subscription till",
+    "Take credentials from cloud.%s": "Take credentials from \"cloud.%s\"",
     "Temperature": "Temperature",
     "The device was added. You can set a smart name now or just keep the current.": "The device was added. You can set a smart name now or just keep the current.",
     "The linking process has been changed for a few months.": "The linking process has been changed for a few months.",

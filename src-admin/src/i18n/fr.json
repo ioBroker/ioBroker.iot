@@ -202,6 +202,7 @@
     "Sort by name/type": "Trier par nom/type",
     "State ID": "Identifiant d'État",
     "Subscription till": "Abonnement jusqu'à",
+    "Take credentials from cloud.%s": "Récupérez les identifiants depuis « cloud.%s »",
     "Temperature": "Température",
     "The device was added. You can set a smart name now or just keep the current.": "L'appareil a été ajouté. Vous pouvez définir un nom intelligent maintenant ou conserver le nom actuel.",
     "The linking process has been changed for a few months.": "Le processus de mise en relation a été modifié depuis quelques mois.",
