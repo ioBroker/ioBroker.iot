@@ -178,6 +178,7 @@
     "Save configuration to file": "将配置保存到文件",
     "Save settings and the names will be changed": "保存设置，名称将被更改",
     "Save settings before pressing this button": "按此按钮之前保存设置",
+    "Scan this QR code from Android \"ioBroker visu\" App (2.0.0)": "使用 Android “ioBroker visu” 应用 (2.0.0) 扫描此二维码",
     "Search": "搜索",
     "Select": "选择",
     "Sensor": "传感器",
