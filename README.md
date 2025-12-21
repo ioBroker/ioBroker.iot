@@ -416,7 +416,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 5.0.12 (2025-12-21)
 - (@GermanBluefox) Added copy of credentials from cloud instance
 - (@GermanBluefox) Added QR code to fast connect the ioBroker visu app
 
@@ -441,9 +441,6 @@ setState('iot.0.app.message', JSON.stringify({
 - (@GermanBluefox) Added logs to detect the issues with detection
 - (@GermanBluefox) Added possibility to use the 0/1 state as socket
 - (@GermanBluefox) Added dialog to bulk manage the smart names of one device
-
-### 5.0.5 (2025-10-31)
-- (@GermanBluefox) Changed behavior of HUE lamps
 
 ## License
 

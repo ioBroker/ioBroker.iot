@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "5.0.11",
+    "version": "5.0.12",
     "news": {
+      "5.0.12": {
+        "en": "Added copy of credentials from cloud instance\nAdded QR code to fast connect the ioBroker visu app",
+        "de": "Hinzugefügt Kopie der Anmeldeinformationen aus der Cloud-Instanz\nQR-Code zum schnellen Verbinden der ioBroker visu App hinzugefügt",
+        "ru": "Добавлена копия учетных данных из облачного экземпляра\nДобавлен QR-код для быстрого подключения приложения ioBroker visu",
+        "pt": "Adicionada cópia de credenciais da instância da nuvem\nAdicionado código QR para conectar rapidamente o aplicativo visu ioBroker",
+        "nl": "Kopie van referenties van cloud-instance toegevoegd\nToegevoegd QR code om snel verbinding te maken met de ioBroker visu app",
+        "fr": "Ajout d'une copie des identifiants depuis l'instance cloud\nAjout du code QR pour connecter rapidement l'application ioBroker visu",
+        "it": "Copia aggiuntiva delle credenziali dall'istanza cloud\nAggiunto il codice QR per collegare velocemente l'app ioBroker visu",
+        "es": "Copia adicional de las credenciales de instancia de nube\nCódigo QR añadido para conectar rápidamente la aplicación ioBroker visu",
+        "pl": "Dodano kopię referencji z instancji chmur\nDodano kod QR, aby szybko połączyć aplikację joBroker visu",
+        "uk": "Додано копію облікових записів з хмарних екземплярів\nДодано QR-код для швидкого підключення додатку ioBroker visu",
+        "zh-cn": "从云实例中添加的证书副本\n添加 QR 代码以快速连接 ioBroker visu app"
+      },
       "5.0.11": {
         "en": "Added percentual control\nCorrecting creation for complex groups",
         "de": "Prozentuale Kontrolle hinzugefügt\nKorrektur der Kreation für komplexe Gruppen",
@@ -80,19 +93,6 @@
         "pl": "Dodano logi do wykrywania problemów z wykrywaniem\nDodano możliwość użycia stanu 0 / 1 jako gniazda\nDodano okno dialogowe do masowych zarządzania inteligentnymi nazwami jednego urządzenia",
         "uk": "Додано журнали для виявлення проблем з виявленням\nДодано можливість використання стану 0/1 як розетки\nДодано діалогове вікно, щоб об'єднати смарт імена одного пристрою",
         "zh-cn": "添加日志以检测问题\n添加使用 0/1 状态作为套接字的可能性\n添加对话框以管理一个设备的智能名称"
-      },
-      "5.0.5": {
-        "en": "Changed behavior of HUE lamps",
-        "de": "Geändertes Verhalten von HUE-Lampen",
-        "ru": "Изменилось поведение ламп",
-        "pt": "Comportamento alterado das lâmpadas HUE",
-        "nl": "Veranderd gedrag van HUE lampen",
-        "fr": "Changement de comportement des lampes HUE",
-        "it": "Comportamento modificato delle lampade HUE",
-        "es": "Comportamiento cambiado de lámparas HUE",
-        "pl": "Zmienione zachowanie lamp HUE",
-        "uk": "Зміна поведінки світильників HUE",
-        "zh-cn": "HUE灯改变行为"
       }
     },
     "titleLang": {

@@ -511,6 +511,9 @@
 ### 0.1.4 (2018-09-26)
 
 -   (bluefox) Initial commit
+## 5.0.5 (2025-10-31)
+- (@GermanBluefox) Changed behavior of HUE lamps
+
 ## 5.0.2 (2025-10-30)
 - (@GermanBluefox) Added mireds<->kelvin conversion for color temperature
 - (@GermanBluefox) It is possible to edit a type
