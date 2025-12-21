@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect, useState } from 'react';
+import QRCode from 'qrcode';
 
 import {
     TextField,
@@ -62,6 +63,56 @@ const styles: Record<string, React.CSSProperties> = {
     },
 };
 
+interface Props {
+    text: string;
+    size?: number;
+    className?: string;
+    title?: string;
+    onClick?: () => void;
+}
+
+function QrCode({ text, size = 256, className, title = '', onClick }: Props): React.JSX.Element {
+    const [svg, setSvg] = useState<string>('');
+
+    useEffect(() => {
+        let mounted = true;
+        QRCode.toString(text || '', {
+            type: 'svg',
+            width: size,
+            margin: 1,
+            errorCorrectionLevel: 'H',
+        })
+            .then(res => {
+                if (mounted) {
+                    setSvg(res);
+                }
+            })
+            .catch(err => {
+                console.error('QR error:', err);
+                if (mounted) {
+                    setSvg('');
+                }
+            });
+
+        return () => {
+            mounted = false;
+        };
+    }, [text, size]);
+
+    if (!svg) {
+        return <div>...</div>;
+    }
+
+    return (
+        <div
+            onClick={() => onClick?.()}
+            title={title}
+            className={className}
+            dangerouslySetInnerHTML={{ __html: svg }}
+        />
+    );
+}
+
 interface OptionsProps {
     common: ioBroker.AdapterCommon;
     native: IotAdapterConfig;
@@ -81,6 +132,7 @@ interface OptionsState {
     debugVisible?: boolean;
     validTill?: string;
     takeFromCloud: { login: string; pass: string; instance: number } | null;
+    visuAppInstructions?: string;
 }
 
 export default class Options extends Component<OptionsProps, OptionsState> {
@@ -95,6 +147,59 @@ export default class Options extends Component<OptionsProps, OptionsState> {
             isInstanceAlive: false,
             takeFromCloud: null,
         };
+    }
+
+    async readVisuAppInstructions(): Promise<void> {
+        // First get the web server instance
+        const instances = await this.props.socket.getAdapterInstances('web');
+        let webObj: ioBroker.InstanceObject | null = null;
+        for (let i = 0; i < instances.length; i++) {
+            const inst = instances[i];
+            if (inst.common.enabled) {
+                webObj = inst;
+                break;
+            }
+        }
+        // If no enabled instance found, take first one
+        if (webObj === null && instances.length) {
+            webObj = instances[0];
+        }
+        if (webObj) {
+            const iotObj = await this.props.socket.getObject(`system.adapter.iot.${this.props.instance}`);
+            const native = webObj.native as { bind?: string; port: string | number; auth?: boolean; secure: boolean } | undefined;
+            const addresses: string[] = [];
+            if (native?.bind === '0.0.0.0') {
+                // Read the host information from system configuration
+                const hostConfig = await this.props.socket.getObject(`system.host.${webObj?.common.host}`);
+                if (hostConfig?.native?.hardware?.networkInterfaces) {
+                    // List all IP4 external interfaces
+                    const interfaces = hostConfig.native.hardware.networkInterfaces;
+                    Object.keys(interfaces).forEach(ifName => {
+                        interfaces[ifName]?.forEach((iface: any) => {
+                            if (iface.family === 'IPv4' && !iface.internal) {
+                                addresses.push(`${iface.address}/${iface.netmask}`);
+                            }
+                        });
+                    });
+                }
+            } else {
+                addresses.push(native?.bind as string);
+            }
+
+            if (native?.auth && native?.secure) {
+                window.alert(I18n.t('ioBroker visu cannot authenticate on a secure web server. Please disable either authentication or SSL.'));
+                return;
+            }
+
+            const decodedPassword = await this.props.socket.decrypt(iotObj?.native.pass || '');
+            const text = `iotConfig|port:${native?.port}|ips:${addresses.join(',')}|cu:${this.props.native.login}|cp:${decodedPassword}|https:${!!native?.secure}|auth:${!!native?.auth}`;
+            // Convert to base64
+            const base64 = btoa(text);
+
+            this.setState({ visuAppInstructions: base64 });
+        } else {
+            window.alert(I18n.t('No web instance found. Please install and enable web adapter.'));
+        }
     }
 
     async readCloudCredentials(): Promise<void> {
@@ -416,6 +521,26 @@ export default class Options extends Component<OptionsProps, OptionsState> {
                         </Button>
                     ) : null}
                     <br />
+                    {this.props.changed || this.state.visuAppInstructions ? null : (
+                        <Button
+                            variant="outlined"
+                            onClick={() => this.readVisuAppInstructions()}
+                        >
+                            {I18n.t('Show Visu App connection instructions')}
+                        </Button>
+                    )}
+                    {this.state.visuAppInstructions ? (
+                        <QrCode
+                            title={I18n.t('Click to hide QR code')}
+                            onClick={() => this.setState({ visuAppInstructions: '' })}
+                            text={this.state.visuAppInstructions}
+                        />
+                    ) : null}
+                    {this.state.visuAppInstructions ? (
+                        <div style={{ marginBottom: 50 }}>
+                            {I18n.t('Scan this QR code from Android "ioBroker visu" App (2.0.0)')}
+                        </div>
+                    ) : null}
                     {this.renderValidTill()}
                     <br />
                     {this.renderCheckbox('Amazon AlexaV3', 'amazonAlexaV3')}

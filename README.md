@@ -418,6 +418,7 @@ setState('iot.0.app.message', JSON.stringify({
 ## Changelog
 ### **WORK IN PROGRESS**
 - (@GermanBluefox) Added copy of credentials from cloud instance
+- (@GermanBluefox) Added QR code to fast connect the ioBroker visu app
 
 ### 5.0.11 (2025-12-16)
 - (@GermanBluefox) Added percentual control
