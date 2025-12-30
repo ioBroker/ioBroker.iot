@@ -335,10 +335,14 @@ export default class SmartNameManageDialog extends Component<SmartNameManageDial
                                             />
                                         </TableCell>
                                         <TableCell>
-                                            {state.common.min !== undefined ? state.common.min.toString() : '-'}
+                                            {state.common.min !== undefined && state.common.min !== null
+                                                ? state.common.min.toString()
+                                                : '-'}
                                         </TableCell>
                                         <TableCell>
-                                            {state.common.max !== undefined ? state.common.max.toString() : '-'}
+                                            {state.common.max !== undefined && state.common.max !== null
+                                                ? state.common.max.toString()
+                                                : '-'}
                                         </TableCell>
                                     </TableRow>
                                 );

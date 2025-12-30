@@ -251,7 +251,7 @@ function state2string(state: AlexaV3ReportedState | undefined): {
             }
         }
 
-        if (state.value && typeof state.value === 'object' && state.value.value !== undefined) {
+        if (state.value && typeof state.value === 'object' && state.value.value !== undefined && state.value.value !== null) {
             if (typeof state.value.value === 'number') {
                 result.value = `${Math.round(state.value.value * 100) / 100} ${state.value.scale === 'CELSIUS' ? '°C' : state.value.scale === 'FAHRENHEIT' ? '°F' : state.value.scale || '%'}`;
             } else {
