@@ -241,7 +241,8 @@ export default class DeviceManager {
                     detectedControls.splice(0, 1);
                 } else if (control.groupNames?.length) {
                     // no room, but smart name (not only one)
-                    control.groupNames.forEach(groupName => {
+                    const names = [...control.groupNames];
+                    names.forEach(groupName => {
                         if (!createdGroups.includes(groupName)) {
                             createdGroups.push(groupName);
                             processedControls = detectedControls.filter(item => item.groupNames?.includes(groupName));

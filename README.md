@@ -416,6 +416,9 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Corrected the handling of the multiple group names
+
 ### 5.0.12 (2025-12-21)
 - (@GermanBluefox) Added copy of credentials from cloud instance
 - (@GermanBluefox) Added QR code to fast connect the ioBroker visu app
