@@ -417,6 +417,7 @@ setState('iot.0.app.message', JSON.stringify({
 -->
 ## Changelog
 ### **WORK IN PROGRESS**
+- (iobroker-bot) Adapter requires node.js >= 20 now.
 - (@GermanBluefox) Corrected the handling of the multiple group names
 
 ### 5.0.12 (2025-12-21)
