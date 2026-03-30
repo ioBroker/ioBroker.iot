@@ -7,7 +7,7 @@ import {
     roleOrEnumWindow,
     roleOrEnumDoor,
     roleOrEnumGate,
-} from '@iobroker/type-detector/roleEnumUtils';
+} from '@iobroker/type-detector/build/roleEnumUtils';
 import type {
     AlexaV3EndpointID,
     IotExternalDetectorState,
@@ -777,7 +777,7 @@ export async function controls(
         const possibleTypes = controls?.map(c => c.type) || [];
 
         controls?.forEach(control => {
-            const iotControl: IotExternalPatternControl = control as IotExternalPatternControl;
+            const iotControl: IotExternalPatternControl = control as unknown as IotExternalPatternControl;
 
             // if any detected state has an ID, we can use this control
             if (iotControl.states.find(state => state.id)) {

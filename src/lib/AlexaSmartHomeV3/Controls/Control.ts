@@ -129,7 +129,7 @@ export default class Control {
         return this.supported.find(capability => capability.matches(event)) !== undefined;
     }
     /**
-     * This function returns whether the control though doesn't natively support the passed on Alexa directive, but able to handle it.
+     * This function returns whether the control, though doesn't natively support the passed on Alexa directive, but able to handle it.
      *
      * @param event The event containing the Alexa directive as it comes from AWS Alexa Service
      * @returns True if the control can handle the directive, false - otherwise
@@ -201,7 +201,7 @@ export default class Control {
                 }
             }
 
-            // though the processed directive required to change a single value, the response must contain values of all "relevant" properties
+            // though the processed directive required changing a single value, the response must contain values of all "relevant" properties
             // Please refer to this for details: https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-thermostatcontroller.html#settargettemperature-response-event
         }
 
