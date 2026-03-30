@@ -16,7 +16,7 @@ export type ControlStateInitObject = {
     multiPurposeProperty?: boolean;
     // If brightness set to non-zero value and power is off, turn the lamp on
     handleSimilarEvents?: boolean;
-    // Level below which the dimmer or percent based control means "off"
+    // Level below which the dimmer or percent-based control means "off"
     offValue?: number;
     // Percent value to set the brightness when turning on the device
     onValue?: number | 'stored' | 'omit';

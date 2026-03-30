@@ -1746,7 +1746,7 @@ class IotAdapter extends Adapter {
         if (this.config.yandexAlisa) {
             this.yandexAlisa = new YandexAlisa(this, this.urlKey);
         } else {
-            // Check that update result is empty
+            // Check that an update result is empty
             const state = await this.getStateAsync('smart.updatesYA');
             if (state?.val) {
                 await this.setStateAsync('smart.updatesYA', '', true);

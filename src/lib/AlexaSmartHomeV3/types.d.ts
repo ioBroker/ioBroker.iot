@@ -1,5 +1,5 @@
 // we extend this type for our use
-import type { InternalDetectorState, Types } from '@iobroker/type-detector/types';
+import type { InternalDetectorState, Types } from '@iobroker/type-detector';
 
 export type AlexaV3EndpointID = string;
 

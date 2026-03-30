@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'node:crypto';
 import * as Utils from '../Helpers/Utils';
 import type {
     AlexaV3Capability,
@@ -138,7 +138,7 @@ export default class AlexaResponse {
                 header: {
                     namespace: Utils.defaultIfNullOrEmpty<AlexaV3Namespace>(opts.namespace, 'Alexa'),
                     name: Utils.defaultIfNullOrEmpty<AlexaV3DirectiveType>(opts.name, 'Response'),
-                    messageId: Utils.defaultIfNullOrEmpty(opts.messageId, uuidv4()),
+                    messageId: Utils.defaultIfNullOrEmpty(opts.messageId, randomUUID()),
                     correlationToken: Utils.defaultIfNullOrEmpty(opts.correlationToken, undefined),
                     payloadVersion: Utils.defaultIfNullOrEmpty<'3'>(opts.payloadVersion, '3'),
                 },

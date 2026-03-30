@@ -1,0 +1,1 @@
+const _="__mf_init____mf__virtual/ActionVisu__mf_v__runtimeInit__mf_v__.js__";if(!globalThis[_]){let i,t;const n=new Promise((e,o)=>{i=e,t=o});globalThis[_]={initPromise:n,initResolve:i,initReject:t}}var s=globalThis[_];export{s as A};

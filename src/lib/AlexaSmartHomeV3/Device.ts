@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'node:crypto';
 import type { Types } from '@iobroker/type-detector';
 
 import { endpointId, defaultIfNullOrEmpty, distinctByPropertyName } from './Helpers/Utils';
@@ -45,8 +45,8 @@ export default class Device {
         this.typeWasDetected = opts.typeWasDetected;
         this.possibleTypes = opts.possibleTypes;
         this.log = new Logger(this);
-        this.id = defaultIfNullOrEmpty<string>(endpointId(opts.id), uuidv4());
-        this.friendlyName = defaultIfNullOrEmpty<string>(opts.friendlyName, uuidv4());
+        this.id = defaultIfNullOrEmpty<string>(endpointId(opts.id), randomUUID());
+        this.friendlyName = defaultIfNullOrEmpty<string>(opts.friendlyName, randomUUID());
         this.controls = defaultIfNullOrEmpty<Control[]>(opts.controls, []);
         this.autoDetected = !!opts.autoDetected;
         this.roomName = opts.roomName;
