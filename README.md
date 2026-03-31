@@ -416,7 +416,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 5.0.13 (2026-03-31)
 - (iobroker-bot) Adapter requires node.js >= 20 now.
 - (@GermanBluefox) Corrected the handling of the multiple group names
 - (@GermanBluefox) Fixing the license validation
@@ -441,11 +441,6 @@ setState('iot.0.app.message', JSON.stringify({
 - (@GermanBluefox) Added possibility to group devices by type in GUI
 - (@GermanBluefox) Allowed to select any type in Alexe V3
 - (@GermanBluefox) Remove disabled states from auto-detection
-
-### 5.0.6 (2025-11-01)
-- (@GermanBluefox) Added logs to detect the issues with detection
-- (@GermanBluefox) Added possibility to use the 0/1 state as socket
-- (@GermanBluefox) Added dialog to bulk manage the smart names of one device
 
 ## License
 

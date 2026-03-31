@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "5.0.12",
+    "version": "5.0.13",
     "news": {
+      "5.0.13": {
+        "en": "Adapter requires node.js >= 20 now.\nCorrected the handling of the multiple group names\nFixing the license validation",
+        "de": "Adapter benötigt jetzt node.js >= 20.\nDie Handhabung der Mehrfachgruppennamen wurde korrigiert\nFestlegung der Lizenzvalidierung",
+        "ru": "Адаптер требует node.js >= 20 сейчас.\nИсправлена обработка множественных названий групп\nИсправление проверки лицензии",
+        "pt": "O adaptador requer gnod.js >= 20 agora.\nCorrigido o tratamento dos nomes de vários grupos\nCorrigindo a validação da licença",
+        "nl": "Voor de adapter zijn node.js > 20 nu nodig.\nCorrectie voor de behandeling van de meervoudige groepsnamen\nVaststelling van de licentievalidatie",
+        "fr": "Adapter nécessite node.js >= 20 maintenant.\nCorrection du traitement des noms de groupes multiples\nCorrection de la validation de la licence",
+        "it": "Adattatore richiede node.js >= 20 ora.\nCorretto il trattamento dei nomi dei gruppi multipli\nFissare la convalida della licenza",
+        "es": "Adaptador requiere node.js >= 20 ahora.\nCorregido el manejo de los nombres de grupos múltiples\nFijar la validación de la licencia",
+        "pl": "Adapter wymaga node.js > = 20 teraz.\nPoprawiono obsługę wielu nazw grup\nUstawienie zatwierdzenia licencji",
+        "uk": "Адаптер вимагає node.js >= 20 тепер.\nВиправлено обробку кількох назв груп\nВиправлення перевірки ліцензії",
+        "zh-cn": "适配器需要节点.js >= 20 现在.\n更正了多个组名的处理\n修复许可证验证"
+      },
       "5.0.12": {
         "en": "Added copy of credentials from cloud instance\nAdded QR code to fast connect the ioBroker visu app",
         "de": "Hinzugefügt Kopie der Anmeldeinformationen aus der Cloud-Instanz\nQR-Code zum schnellen Verbinden der ioBroker visu App hinzugefügt",
@@ -80,19 +93,6 @@
         "pl": "Dodano możliwość grupowania urządzeń według typu w GUI\nDozwolone wybranie dowolnego typu w Alexe V3\nUsuwanie stanów wyłączonych z autodetekcji",
         "uk": "Додано можливість групових пристроїв за типом в GUI\nДозволено вибрати будь-який тип в Alexe V3\nВидалити відключені стани з автодетекції",
         "zh-cn": "在图形用户界面中按类型添加到设备分组的可能性\n允许在 Alexe V3 中选择任意类型\n从自动检测中删除已禁用状态"
-      },
-      "5.0.6": {
-        "en": "Added logs to detect the issues with detection\nAdded possibility to use the 0/1 state as socket\nAdded dialog to bulk manage the smart names of one device",
-        "de": "Protokolle hinzugefügt, um die Probleme mit der Erkennung zu erkennen\nZusätzliche Möglichkeit, den Zustand 0/1 als Steckdose zu verwenden\nDialog hinzugefügt, um die intelligenten Namen eines Geräts zu verwalten",
-        "ru": "Добавлены журналы для обнаружения проблем с обнаружением\nДобавлена возможность использования состояния 0/1 в качестве розетки\nДобавлен диалог для массового управления умными именами одного устройства",
-        "pt": "Registros adicionados para detectar os problemas com detecção\nAdicionada possibilidade de usar o estado 0/1 como soquete\nJanela adicionada para gerir os nomes inteligentes de um dispositivo",
-        "nl": "Logs toegevoegd om problemen met detectie op te sporen\nToegevoegde mogelijkheid om de 0/1 status als socket te gebruiken\nDialoog toegevoegd om de slimme namen van één apparaat te beheren",
-        "fr": "Ajout de journaux pour détecter les problèmes avec détection\nPossibilité d'utiliser l'état 0/1 comme socket\nAjout de la boîte de dialogue pour gérer en vrac les noms intelligents d'un appareil",
-        "it": "Log aggiunti per rilevare i problemi con il rilevamento\nAggiunto possibilità di utilizzare lo stato 0/1 come presa\nAggiunto finestra di dialogo per gestire in massa i nomi intelligenti di un dispositivo",
-        "es": "Registros añadidos para detectar los problemas con la detección\nAñadido posibilidad de utilizar el estado 0/1 como socket\nAñadido diálogo para gestionar a granel los nombres inteligentes de un dispositivo",
-        "pl": "Dodano logi do wykrywania problemów z wykrywaniem\nDodano możliwość użycia stanu 0 / 1 jako gniazda\nDodano okno dialogowe do masowych zarządzania inteligentnymi nazwami jednego urządzenia",
-        "uk": "Додано журнали для виявлення проблем з виявленням\nДодано можливість використання стану 0/1 як розетки\nДодано діалогове вікно, щоб об'єднати смарт імена одного пристрою",
-        "zh-cn": "添加日志以检测问题\n添加使用 0/1 状态作为套接字的可能性\n添加对话框以管理一个设备的智能名称"
       }
     },
     "titleLang": {

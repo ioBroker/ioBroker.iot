@@ -511,6 +511,11 @@
 ### 0.1.4 (2018-09-26)
 
 -   (bluefox) Initial commit
+## 5.0.6 (2025-11-01)
+- (@GermanBluefox) Added logs to detect the issues with detection
+- (@GermanBluefox) Added possibility to use the 0/1 state as socket
+- (@GermanBluefox) Added dialog to bulk manage the smart names of one device
+
 ## 5.0.5 (2025-10-31)
 - (@GermanBluefox) Changed behavior of HUE lamps
 
