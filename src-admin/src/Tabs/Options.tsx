@@ -480,10 +480,10 @@ export default class Options extends Component<OptionsProps, OptionsState> {
                         style={{
                             color: expiring
                                 ? 'orange'
-                                : new Date(this.state.validTill!) <= new Date()
-                                  ? 'red'
-                                  : this.state.validTill === '--'
-                                    ? 'grey'
+                                : this.state.validTill === '--'
+                                  ? 'grey'
+                                  : new Date(this.state.validTill!) <= new Date()
+                                    ? 'red'
                                     : 'green',
                         }}
                     >
