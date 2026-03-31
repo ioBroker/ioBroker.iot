@@ -237,8 +237,16 @@ export default class DeviceManager {
                             `Control of type [${control.type}] assigned to room [${this.getName(control.room.common.name)}] has no function. Skipped.`,
                         );
                     }
-                    // delete it from detected controls to avoid endless loop
-                    detectedControls.splice(0, 1);
+                    // delete all processed controls from detected controls
+                    if (processedControls.length > 1) {
+                        for (let i = detectedControls.length - 1; i >= 0; i--) {
+                            if (processedControls.includes(detectedControls[i])) {
+                                detectedControls.splice(i, 1);
+                            }
+                        }
+                    } else {
+                        detectedControls.splice(0, 1);
+                    }
                 } else if (control.groupNames?.length) {
                     // no room, but smart name (not only one)
                     const names = [...control.groupNames];
@@ -269,7 +277,7 @@ export default class DeviceManager {
                             }
                         }
                     });
-                    // Be sure, that the processed control is removed
+                    // Be sure that the processed control is removed
                     const index = detectedControls.indexOf(control);
                     if (index !== -1) {
                         detectedControls.splice(index, 1);
