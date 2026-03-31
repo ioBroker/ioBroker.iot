@@ -418,6 +418,7 @@ setState('iot.0.app.message', JSON.stringify({
 ## Changelog
 ### **WORK IN PROGRESS**
 - (@GermanBluefox) Corrected the handling of the multiple group names
+- (@GermanBluefox) Fixing the license validation
 
 ### 5.0.12 (2025-12-21)
 - (@GermanBluefox) Added copy of credentials from cloud instance
