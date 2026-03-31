@@ -419,6 +419,7 @@ setState('iot.0.app.message', JSON.stringify({
 ### **WORK IN PROGRESS**
 - (iobroker-bot) Adapter requires node.js >= 20 now.
 - (@GermanBluefox) Corrected the handling of the multiple group names
+- (@GermanBluefox) Fixing the license validation
 
 ### 5.0.12 (2025-12-21)
 - (@GermanBluefox) Added copy of credentials from cloud instance
@@ -450,7 +451,7 @@ setState('iot.0.app.message', JSON.stringify({
 
 The MIT License (MIT)
 
-Copyright (c) 2018-2025 bluefox <dogafox@gmail.com>
+Copyright (c) 2018-2026 bluefox <dogafox@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

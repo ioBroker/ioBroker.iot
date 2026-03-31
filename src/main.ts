@@ -4,8 +4,6 @@ import { readFileSync } from 'node:fs';
 import axios from 'axios';
 import { deflateSync } from 'node:zlib';
 
-// @ts-expect-error no types
-import AlexaSH2 from './lib/alexaSmartHomeV2';
 import AlexaSH3 from './lib/alexaSmartHomeV3';
 import AlexaCustom, { type AlexaCustomResponse } from './lib/alexaCustom';
 // @ts-expect-error no types
@@ -38,7 +36,6 @@ class IotAdapter extends Adapter {
     private recalcTimeout: NodeJS.Timeout | null = null;
     private lang: ioBroker.Languages = 'de';
     private translate = false;
-    private alexaSH2: AlexaSH2 | null = null;
     private alexaSH3: AlexaSH3 | null = null;
     private googleHome: GoogleHome | null = null;
     private alexaCustom: AlexaCustom | null = null;
@@ -51,7 +48,7 @@ class IotAdapter extends Adapter {
     private secret: string = '';
     private connectStarted = 0;
     private caCert: Buffer | null = null;
-    private validTill: string | null = null;
+    private validTill: string | null = null; // null - never read, "--" - user has no license, ISO date string - valid till
     private validTillLastQuery: number = 0;
     private alertReported = false;
 
@@ -68,7 +65,6 @@ class IotAdapter extends Adapter {
                         this.lang = 'en';
                     }
 
-                    this.alexaSH2?.setLanguage(this.lang);
                     this.alexaSH3?.setLanguage(this.lang);
                     this.yandexAlisa?.setLanguage(this.lang);
                     this.alexaCustom?.setLanguage(this.lang);
@@ -145,19 +141,6 @@ class IotAdapter extends Adapter {
 
                             this.recalcTimeout = setTimeout(async () => {
                                 this.recalcTimeout = null;
-                                this.alexaSH2?.updateDevices(
-                                    obj.message,
-                                    async (analyseAddedId: any): Promise<void> => {
-                                        await this.setStateAsync('smart.updatesResult', analyseAddedId || '', true);
-                                        this.log.debug('Devices updated!');
-                                        await this.setStateAsync('smart.updates', true, true);
-                                    },
-                                );
-
-                                // this.alexaSH3 && this.alexaSH3.updateDevices(obj.message, async analyseAddedId => {
-                                //     await this.setStateAsync('smart.updatesResult', analyseAddedId || '', true);
-                                //     await this.setStateAsync('smart.updates3', true, true);
-                                // });
                                 if (this.alexaSH3) {
                                     await this.alexaSH3.updateDevices();
                                     await this.setStateAsync('smart.updates3', 1, true);
@@ -169,20 +152,6 @@ class IotAdapter extends Adapter {
                                     await this.setStateAsync('smart.updatesGH', true, true);
                                 });
                             }, 1000);
-                            break;
-
-                        case 'browse':
-                            if (obj.callback) {
-                                this.log.info('Request devices');
-                                if (this.alexaSH2) {
-                                    this.alexaSH2.updateDevices(() => {
-                                        this.sendTo(obj.from, obj.command, this.alexaSH2!.getDevices(), obj.callback);
-                                        void this.setState('smart.updates', false, true);
-                                    });
-                                } else {
-                                    this.sendTo(obj.from, obj.command, { error: 'not activated' }, obj.callback);
-                                }
-                            }
                             break;
 
                         case 'browse3':
@@ -291,12 +260,6 @@ class IotAdapter extends Adapter {
 
                         case 'alexaCustomResponse':
                             this.alexaCustom?.setResponse(obj.message);
-                            break;
-
-                        case 'debug':
-                            this.alexaSH2?.getDebug((data: any): void =>
-                                this.sendTo(obj.from, obj.command, data, obj.callback),
-                            );
                             break;
 
                         case 'updateValidTill':
@@ -972,9 +935,6 @@ class IotAdapter extends Adapter {
                 }
                 return { error: 'Service is disabled' };
             } else {
-                if (this.alexaSH2) {
-                    return this.alexaSH2.process(request, this.config.amazonAlexa) as any;
-                }
                 return { error: 'Service is disabled' };
             }
         } else if (type.startsWith('ifttt')) {
@@ -1191,19 +1151,23 @@ class IotAdapter extends Adapter {
         }
     }
 
-    async readValidTill(forceUpdate?: boolean): Promise<Date | null> {
+    async readValidTill(forceUpdate?: boolean): Promise<void> {
         if (
             !forceUpdate &&
             this.validTill &&
             this.validTillLastQuery &&
             Date.now() - this.validTillLastQuery < 24 * 3_600_000
         ) {
-            const validTill = new Date(this.validTill);
-            const tomorrow = new Date();
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            if (validTill > tomorrow) {
-                return new Date(this.validTill);
+            if (this.validTill !== '--') {
+                const validTill = new Date(this.validTill);
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                if (validTill > tomorrow) {
+                    // use cached value
+                    return;
+                }
             }
+            return;
         }
         try {
             const response = await fetch('https://iobroker.pro:3001/api/v1/validTill', {
@@ -1216,28 +1180,31 @@ class IotAdapter extends Adapter {
                 this.validTillLastQuery = Date.now();
                 const data = (await response.json()) as { validTill: string };
                 this.validTill = data.validTill;
-                await this.setStateAsync('info.validTill', this.validTill, true);
-                // If license will expire in less than 7 days, show warning every time adapter starts
-                const validTillDate = new Date(data.validTill);
-                const now = new Date();
-                const diff = validTillDate.getTime() - now.getTime();
-                const days = Math.ceil(diff / (1000 * 3600 * 24));
-                if (days <= 7 && !this.alertReported) {
-                    this.alertReported = true;
-                    await this.registerNotification('iot', 'subscription', validTillDate.toLocaleString());
-                    this.log.warn(
-                        `Your ioBroker IoT license will expire in ${days} day(s) on ${validTillDate.toDateString()}. Please renew your license to continue using all features without interruption.`,
-                    );
+                if (Math.abs(Date.now() - new Date(data.validTill).getTime()) < 120_000) {
+                    // User has no valid license and never had
+                    this.log.debug('You do not have any licenses.');
+                    this.validTill = '--';
+                } else {
+                    // If license expires in less than 7 days, show warning every time adapter starts
+                    const validTillDate = new Date(data.validTill);
+                    const now = new Date();
+                    const diff = validTillDate.getTime() - now.getTime();
+                    const days = Math.ceil(diff / (1000 * 3600 * 24));
+                    if (days <= 7 && !this.alertReported) {
+                        this.alertReported = true;
+                        await this.registerNotification('iot', 'subscription', validTillDate.toLocaleString());
+                        this.log.warn(
+                            `Your ioBroker IoT license will expire in ${days} day(s) on ${validTillDate.toDateString()}. Please renew your license to continue using all features without interruption.`,
+                        );
+                    }
                 }
-
-                return new Date(data.validTill);
+                await this.setStateAsync('info.validTill', this.validTill, true);
+            } else {
+                this.log.error(`Cannot fetch validTill: ${response.status} ${response.statusText}`);
             }
-            this.log.error(`Cannot fetch validTill: ${response.status} ${response.statusText}`);
         } catch (error) {
             this.log.error(`Cannot fetch validTill: ${error}`);
         }
-
-        return null;
     }
 
     async startDevice(clientId: string, login: string, password: string, retry?: number): Promise<void> {
@@ -1646,16 +1613,10 @@ class IotAdapter extends Adapter {
             this.lang = 'en';
         }
 
-        if (this.config.amazonAlexa) {
-            this.alexaSH2 = new AlexaSH2(this);
-            this.alexaSH2.setLanguage(this.lang, this.translate);
-            this.alexaSH2.updateDevices();
-        } else {
-            // Check that update result is empty
-            const state = await this.getStateAsync('smart.updatesResult');
-            if (state?.val) {
-                await this.setStateAsync('smart.updatesResult', '', true);
-            }
+        // Check that update result is empty
+        const state = await this.getStateAsync('smart.updatesResult');
+        if (state?.val) {
+            await this.setStateAsync('smart.updatesResult', '', true);
         }
 
         this.remote?.setLanguage(this.lang);
@@ -1746,7 +1707,7 @@ class IotAdapter extends Adapter {
         if (this.config.yandexAlisa) {
             this.yandexAlisa = new YandexAlisa(this, this.urlKey);
         } else {
-            // Check that update result is empty
+            // Check that an update result is empty
             const state = await this.getStateAsync('smart.updatesYA');
             if (state?.val) {
                 await this.setStateAsync('smart.updatesYA', '', true);

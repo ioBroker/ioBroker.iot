@@ -166,7 +166,9 @@ export default class Options extends Component<OptionsProps, OptionsState> {
         }
         if (webObj) {
             const iotObj = await this.props.socket.getObject(`system.adapter.iot.${this.props.instance}`);
-            const native = webObj.native as { bind?: string; port: string | number; auth?: boolean; secure: boolean } | undefined;
+            const native = webObj.native as
+                | { bind?: string; port: string | number; auth?: boolean; secure: boolean }
+                | undefined;
             const addresses: string[] = [];
             if (native?.bind === '0.0.0.0') {
                 // Read the host information from system configuration
@@ -187,7 +189,11 @@ export default class Options extends Component<OptionsProps, OptionsState> {
             }
 
             if (native?.auth && native?.secure) {
-                window.alert(I18n.t('ioBroker visu cannot authenticate on a secure web server. Please disable either authentication or SSL.'));
+                window.alert(
+                    I18n.t(
+                        'ioBroker visu cannot authenticate on a secure web server. Please disable either authentication or SSL.',
+                    ),
+                );
                 return;
             }
 
@@ -460,6 +466,7 @@ export default class Options extends Component<OptionsProps, OptionsState> {
         week.setDate(week.getDate() + 7);
         const expiring =
             this.state.validTill &&
+            this.state.validTill !== '--' &&
             new Date(this.state.validTill) > new Date() &&
             new Date(this.state.validTill).getTime() < week.getTime();
         return (
@@ -473,12 +480,16 @@ export default class Options extends Component<OptionsProps, OptionsState> {
                         style={{
                             color: expiring
                                 ? 'orange'
-                                : !this.state.validTill || new Date(this.state.validTill) <= new Date()
+                                : new Date(this.state.validTill!) <= new Date()
                                   ? 'red'
-                                  : 'green',
+                                  : this.state.validTill === '--'
+                                    ? 'grey'
+                                    : 'green',
                         }}
                     >
-                        {this.state.validTill ? new Date(this.state.validTill).toLocaleString() : I18n.t('--')}
+                        {this.state.validTill && this.state.validTill !== '--'
+                            ? new Date(this.state.validTill).toLocaleString()
+                            : I18n.t('--')}
                     </span>
                     <IconButton
                         title={I18n.t('Refresh subscription info')}

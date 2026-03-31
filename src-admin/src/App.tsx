@@ -28,7 +28,6 @@ import TabOptions from './Tabs/Options';
 import TabExtended from './Tabs/Extended';
 import TabServices from './Tabs/Services';
 import TabEnums from './Tabs/Enums';
-import TabAlexaSmartNames from './Tabs/AlexaSmartNames';
 import TabAlexa3SmartNames from './Tabs/Alexa3';
 import TabAlisaSmartNames from './Tabs/AlisaSmartNames';
 import TabGoogleSmartNames from './Tabs/GoogleSmartNames';
@@ -312,26 +311,6 @@ export default class App extends GenericApp<GenericAppProps, AppState> {
                                     }
                                     instance={this.instance}
                                     adapterName={this.adapterName}
-                                />
-                            )}
-                            {this.state.selectedTab === 'alexa' && (
-                                <TabAlexaSmartNames
-                                    key="alexa"
-                                    themeType={this.state.themeType}
-                                    theme={this.state.theme}
-                                    common={this.common}
-                                    socket={this.socket}
-                                    native={this.state.native}
-                                    onError={(text: string | Error): void =>
-                                        this.setState({
-                                            errorText:
-                                                (text || (text as any) === 0) && typeof text !== 'string'
-                                                    ? (text as any).toString()
-                                                    : text,
-                                        })
-                                    }
-                                    adapterName={this.adapterName}
-                                    instance={this.instance}
                                 />
                             )}
                             {this.state.selectedTab === 'alexa3' && (

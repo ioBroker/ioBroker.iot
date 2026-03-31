@@ -1,6 +1,6 @@
 const ChannelDetector = require('@iobroker/type-detector');
 const axios = require('axios');
-const uuid = require('uuid').v1;
+const { randomUUID } = require('node:crypto');
 
 const textsT = require('./texts').default;
 const roomsT = require('./rooms').default;
@@ -2340,7 +2340,7 @@ class YandexAlisa {
             // https://yandex.ru/dev/dialogs/alice/doc/smart-home/reference/get-devices-docpage/
             case '/v1.0/user/devices': {
                 const result = {
-                    request_id: uuid(),
+                    request_id: randomUUID(),
                     payload: {
                         user_id: this.user_id,
                         devices: await this.getSmartDevices(),
@@ -2360,7 +2360,7 @@ class YandexAlisa {
                 if (ids) {
                     const devices = await this.querySmartDevicesByIds(ids);
                     const queryResult = {
-                        request_id: uuid(),
+                        request_id: randomUUID(),
                         payload: {
                             user_id: this.user_id,
                             devices: devices.map(d => this._getSmartDeviceState(d)),
@@ -2385,7 +2385,7 @@ class YandexAlisa {
                 }
 
                 const result = {
-                    request_id: uuid(),
+                    request_id: randomUUID(),
                     payload: {
                         devices,
                     },

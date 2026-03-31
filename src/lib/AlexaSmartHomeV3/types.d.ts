@@ -1,5 +1,5 @@
 // we extend this type for our use
-import type { InternalDetectorState, Types } from '@iobroker/type-detector/types';
+import type { ExternalDetectorState, Types } from '@iobroker/type-detector';
 
 export type AlexaV3EndpointID = string;
 
@@ -650,7 +650,7 @@ export type SmartNameObject = { [lang in ioBroker.Languages]?: string } & {
 };
 export type SmartName = null | false | string | SmartNameObject;
 
-export interface IotInternalDetectorState extends InternalDetectorState {
+export interface IotExternalDetectorState extends ExternalDetectorState {
     id: string;
     smartName: SmartName | undefined;
     common: {
@@ -665,11 +665,6 @@ export interface IotInternalDetectorState extends InternalDetectorState {
     };
     // Used by GUI
     subscribed?: boolean;
-}
-
-export interface IotExternalDetectorState extends Omit<IotInternalDetectorState, 'enums' | 'role'> {
-    enums?: boolean;
-    role?: string;
 }
 
 export interface IotExternalPatternControl {
