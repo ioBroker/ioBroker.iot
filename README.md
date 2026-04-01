@@ -416,8 +416,13 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 5.0.13 (2026-03-31)
+### **WORK IN PROGRESS**
 - (iobroker-bot) Adapter requires node.js >= 20 now.
+- (@GermanBluefox) Removed support for Alexa 2
+- (@GermanBluefox) Fixed bug in Alisa with color and motion sensor
+- (@GermanBluefox) Validate Discovery response before sending it back
+
+### 5.0.13 (2026-03-31)
 - (@GermanBluefox) Corrected the handling of the multiple group names
 - (@GermanBluefox) Fixing the license validation
 
