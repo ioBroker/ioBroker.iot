@@ -490,8 +490,8 @@ class GoogleHome {
     }
 
     _subscribeAllIds(ids, cb) {
-        if (!ids || !ids.length) {
-            cb && cb();
+        if (!ids?.length) {
+            cb?.();
         } else {
             const id = ids.shift();
             if (!id) {
@@ -504,8 +504,8 @@ class GoogleHome {
     }
 
     _unsubscribeAllIds(ids, cb) {
-        if (!ids || !ids.length) {
-            cb && cb();
+        if (!ids?.length) {
+            cb?.();
         } else {
             const id = ids.shift();
             if (!id) {
@@ -522,16 +522,17 @@ class GoogleHome {
         this.smartDevices &&
             Object.keys(this.smartDevices).forEach(devId => {
                 const custom = this.smartDevices[devId].customData;
-                custom &&
+                if (custom) {
                     Object.keys(custom).forEach(attr => {
-                        attr && attr.startsWith('get_') && !ids.includes(custom[attr]) && ids.push(custom[attr]);
+                        attr?.startsWith('get_') && !ids.includes(custom[attr]) && ids.push(custom[attr]);
                     });
+                }
             });
 
         this.adapter.log.debug(`[GHOME] Unsubscribe ${ids.length} states for google home`);
         this._unsubscribeAllIds(ids, () => {
             this.adapter.log.debug(`[GHOME] Unsubscribe done`);
-            cb && cb();
+            cb?.();
         });
     }
 
@@ -540,18 +541,19 @@ class GoogleHome {
         this.smartDevices &&
             Object.keys(this.smartDevices).forEach(devId => {
                 const custom = this.smartDevices[devId].customData;
-                custom &&
+                if (custom) {
                     Object.keys(custom).forEach(
                         attr =>
-                            attr && attr.startsWith('get_') && !ids.includes(custom[attr]) && ids.push(custom[attr]),
+                            attr?.startsWith('get_') && !ids.includes(custom[attr]) && ids.push(custom[attr]),
                     );
+                }
             });
 
         this.adapter.log.debug(`[GHOME] Subscribe ${ids.length} states for google home`);
 
         this._subscribeAllIds(ids, () => {
             this.adapter.log.debug(`[GHOME] Subscribe done`);
-            cb && cb();
+            cb?.();
         });
     }
 
@@ -561,27 +563,19 @@ class GoogleHome {
         if (!onlySimpleName) {
             if (this.adapter.config.noCommon) {
                 if (
-                    obj.common &&
-                    obj.common.custom &&
-                    obj.common.custom[this.adapter.namespace] &&
-                    obj.common.custom[this.adapter.namespace].smartName &&
+                    obj.common?.custom?.[this.adapter.namespace]?.smartName &&
                     obj.common.custom[this.adapter.namespace].smartName !== 'ignore'
                 ) {
                     name = obj.common.custom[this.adapter.namespace].smartName;
                 }
             } else {
-                if (
-                    obj.common &&
-                    obj.common.smartName &&
-                    obj.common.smartName !== true &&
-                    obj.common.smartName !== 'ignore'
-                ) {
+                if (obj.common?.smartName && obj.common.smartName !== true && obj.common.smartName !== 'ignore') {
                     name = obj.common.smartName;
                 }
             }
         }
         // if no smart name found, get the normal key
-        if (!name && obj && obj.common && obj.common.name) {
+        if (!name && obj?.common?.name) {
             name = obj.common.name;
         }
 
@@ -598,7 +592,7 @@ class GoogleHome {
 
     checkName(name, obj, room, func) {
         if (!name) {
-            name = name || this.getObjectName(obj) || '';
+            name ||= this.getObjectName(obj) || '';
             name = name.replace(/[^a-zA-ZöäüßÖÄÜа-яА-Я0-9ÉéÈèÀàÂâÊêÙùÛûÇçÎîËëÏïŸÿÔôŒœãõìòáíóú]/g, ' ');
             let _name = name.toLowerCase();
             let pos;
@@ -622,10 +616,10 @@ class GoogleHome {
 
     processSocket(id, control, name, room, func, obj) {
         const setOnOffState = control.states.find(state => state.name === 'SET' && state.id);
-        const set_on = setOnOffState && setOnOffState.id;
+        const set_on = setOnOffState?.id;
 
         const getOnOffState = control.states.find(state => state.name === 'ACTUAL' && state.id);
-        const get_on = (getOnOffState && getOnOffState.id) || set_on;
+        const get_on = getOnOffState?.id || set_on;
 
         name = this.checkName(name, obj, room, func);
 
@@ -653,10 +647,10 @@ class GoogleHome {
 
     processLight(id, control, name, room, func, obj) {
         const setOnOffState = control.states.find(state => state.name === 'SET' && state.id);
-        const set_on = setOnOffState && setOnOffState.id;
+        const set_on = setOnOffState?.id;
 
         const getOnOffState = control.states.find(state => state.name === 'ACTUAL' && state.id);
-        const get_on = (getOnOffState && getOnOffState.id) || set_on;
+        const get_on = getOnOffState?.id || set_on;
 
         const traits = ['action.devices.traits.OnOff'];
         name = this.checkName(name, obj, room, func);
@@ -685,7 +679,7 @@ class GoogleHome {
 
     processInfo(id, control, name, room, func, obj) {
         const getOnOffState = control.states.find(state => state.name === 'ACTUAL' && state.id);
-        const get_on = getOnOffState && getOnOffState.id;
+        const get_on = getOnOffState?.id;
 
         name = this.checkName(name, obj, room, func);
 
@@ -732,10 +726,10 @@ class GoogleHome {
 
     processButton(id, control, name, room, func, obj) {
         const setOnOffState = control.states.find(state => state.name === 'SET' && state.id);
-        const set_on = setOnOffState && setOnOffState.id;
+        const set_on = setOnOffState?.id;
 
         const getOnOffState = control.states.find(state => state.name === 'ACTUAL' && state.id);
-        const get_on = (getOnOffState && getOnOffState.id) || set_on;
+        const get_on = getOnOffState?.id || set_on;
 
         const traits = ['action.devices.traits.OnOff'];
         name = this.checkName(name, obj, room, func);
@@ -764,21 +758,21 @@ class GoogleHome {
 
     processDimmer(id, control, name, room, func, obj) {
         const setBrightnessState = control.states.find(state => state.name === 'SET' && state.id);
-        let set_brightness = setBrightnessState && setBrightnessState.id;
-        if (set_brightness.indexOf('.dimspeed') !== -1) {
+        let set_brightness = setBrightnessState?.id;
+        if (set_brightness?.includes('.dimspeed')) {
             let idArray = set_brightness.split('.');
             idArray.pop();
             idArray.push('bri');
             set_brightness = idArray.join('.');
         }
         const getBrightnessState = control.states.find(state => state.name === 'ACTUAL' && state.id);
-        const get_brightness = (getBrightnessState && getBrightnessState.id) || set_brightness;
+        const get_brightness = getBrightnessState?.id || set_brightness;
 
         const setOnOffState = control.states.find(state => state.name === 'ON_SET' && state.id);
-        const set_on = (setOnOffState && setOnOffState.id) || set_brightness;
+        const set_on = setOnOffState?.id || set_brightness;
 
         const getOnOffState = control.states.find(state => state.name === 'ON_ACTUAL' && state.id);
-        const get_on = (getOnOffState && getOnOffState.id) || set_on;
+        const get_on = getOnOffState?.id || set_on;
 
         const traits = [];
 
@@ -822,27 +816,27 @@ class GoogleHome {
         if (!setBrightnessState) {
             setBrightnessState = control.states.find(state => state.name === 'DIMMER' && state.id);
         }
-        const set_brightness = setBrightnessState && setBrightnessState.id;
+        const set_brightness = setBrightnessState?.id;
         const get_brightness = set_brightness;
 
         let setOnOffState = control.states.find(state => state.name === 'ON' && state.id);
 
-        const set_on = (setOnOffState && setOnOffState.id) || set_brightness;
+        const set_on = setOnOffState?.id || set_brightness;
         const get_on = set_on;
 
         let setHueState = control.states.find(state => state.name === 'HUE' && state.id);
 
-        const set_color_hue = setHueState && setHueState.id;
+        const set_color_hue = setHueState?.id;
         const get_color_hue = set_color_hue;
 
         let setSaturationState = control.states.find(state => state.name === 'SATURATION' && state.id);
 
-        const set_color_saturation = setSaturationState && setSaturationState.id;
+        const set_color_saturation = setSaturationState?.id;
         const get_color_saturation = set_color_saturation;
 
         let setTempState = control.states.find(state => state.name === 'TEMPERATURE' && state.id);
 
-        const set_color_temperature = setTempState && setTempState.id;
+        const set_color_temperature = setTempState?.id;
         const get_color_temperature = set_color_temperature;
 
         const traits = [];
@@ -910,24 +904,24 @@ class GoogleHome {
         if (!setBrightnessState) {
             setBrightnessState = control.states.find(state => state.name === 'DIMMER' && state.id);
         }
-        const set_brightness = setBrightnessState && setBrightnessState.id;
+        const set_brightness = setBrightnessState?.id;
         const get_brightness = set_brightness;
 
         let setOnOffState = control.states.find(state => state.name === 'ON_LIGHT' && state.id);
         if (!setOnOffState) {
             setOnOffState = control.states.find(state => state.name === 'ON' && state.id);
         }
-        const set_on = (setOnOffState && setOnOffState.id) || set_brightness;
+        const set_on = setOnOffState?.id || set_brightness;
         const get_on = set_on;
 
         let setRGBState = control.states.find(state => state.name === 'RGB' && state.id);
 
-        const set_color_spectrumRGB = setRGBState && setRGBState.id;
+        const set_color_spectrumRGB = setRGBState?.id;
         const get_color_spectrumRGB = set_color_spectrumRGB;
 
         let setTempState = control.states.find(state => state.name === 'TEMPERATURE' && state.id);
 
-        const set_color_temperature = setTempState && setTempState.id;
+        const set_color_temperature = setTempState?.id;
         const get_color_temperature = set_color_temperature;
 
         const traits = [];
@@ -995,34 +989,34 @@ class GoogleHome {
         if (!setBrightnessState) {
             setBrightnessState = control.states.find(state => state.name === 'DIMMER' && state.id);
         }
-        const set_brightness = setBrightnessState && setBrightnessState.id;
+        const set_brightness = setBrightnessState?.id;
         const get_brightness = set_brightness;
 
         let setOnOffState = control.states.find(state => state.name === 'ON_LIGHT' && state.id);
         if (!setOnOffState) {
             setOnOffState = control.states.find(state => state.name === 'ON' && state.id);
         }
-        const set_on = (setOnOffState && setOnOffState.id) || set_brightness;
+        const set_on = setOnOffState?.id || set_brightness;
         const get_on = set_on;
 
         let setTempState = control.states.find(state => state.name === 'TEMPERATURE' && state.id);
 
-        const set_color_temperature = setTempState && setTempState.id;
+        const set_color_temperature = setTempState?.id;
         const get_color_temperature = set_color_temperature;
 
         let setRState = control.states.find(state => state.name === 'RED' && state.id);
 
-        const set_color_R = setRState && setRState.id;
+        const set_color_R = setRState?.id;
         const get_color_R = set_color_R;
 
         let setGState = control.states.find(state => state.name === 'GREEN' && state.id);
 
-        const set_color_G = setGState && setGState.id;
+        const set_color_G = setGState?.id;
         const get_color_G = set_color_G;
 
         let setBState = control.states.find(state => state.name === 'BLUE' && state.id);
 
-        const set_color_B = setBState && setBState.id;
+        const set_color_B = setBState?.id;
         const get_color_B = set_color_B;
 
         const traits = [];
@@ -1092,19 +1086,19 @@ class GoogleHome {
         if (!setBrightnessState) {
             setBrightnessState = control.states.find(state => state.name === 'DIMMER' && state.id);
         }
-        const set_brightness = setBrightnessState && setBrightnessState.id;
+        const set_brightness = setBrightnessState?.id;
         const get_brightness = set_brightness;
 
         let setOnOffState = control.states.find(state => state.name === 'ON' && state.id);
         if (!setOnOffState) {
             setOnOffState = control.states.find(state => state.name === 'ON_LIGHT' && state.id);
         }
-        const set_on = (setOnOffState && setOnOffState.id) || set_brightness;
+        const set_on = setOnOffState?.id || set_brightness;
         const get_on = set_on;
 
         let setTempState = control.states.find(state => state.name === 'TEMPERATURE' && state.id);
 
-        const set_color_temperature = setTempState && setTempState.id;
+        const set_color_temperature = setTempState?.id;
         const get_color_temperature = set_color_temperature;
 
         const traits = [];
@@ -1164,8 +1158,8 @@ class GoogleHome {
 
     processWindowTilt(id, control, name, room, func, obj) {
         const getWindowTile = control.states.find(state => state.name === 'ACTUAL' && state.id);
-        const get_isLocked = getWindowTile && getWindowTile.id;
-        const set_lock = getWindowTile && getWindowTile.id;
+        const get_isLocked = getWindowTile?.id;
+        const set_lock = getWindowTile?.id;
         const set_openPercent = set_lock;
         const get_openPercent = get_isLocked;
 
@@ -1208,11 +1202,11 @@ class GoogleHome {
 
     processBlind(id, control, name, room, func, obj) {
         const getOpenPercent = control.states.find(state => state.name === 'SET' && state.id);
-        const set_openPercent = getOpenPercent && getOpenPercent.id;
+        const set_openPercent = getOpenPercent?.id;
         const get_openPercent = set_openPercent;
 
         const getOpenDirection = control.states.find(state => state.name === 'DIRECTION' && state.id);
-        const set_openDirection = getOpenDirection && getOpenDirection.id;
+        const set_openDirection = getOpenDirection?.id;
         const get_openDirection = set_openDirection;
 
         const traits = [];
@@ -1247,16 +1241,14 @@ class GoogleHome {
 
     processTemperature(id, control, name, room, func, obj) {
         const setThermostatTemperatureSetpoint = control.states.find(state => state.name === 'SET' && state.id);
-        const set_thermostatTemperatureSetpoint =
-            setThermostatTemperatureSetpoint && setThermostatTemperatureSetpoint.id;
+        const set_thermostatTemperatureSetpoint = setThermostatTemperatureSetpoint?.id;
 
         const getThermostatTemperatureAmbient = control.states.find(state => state.name === 'ACTUAL' && state.id);
         const get_thermostatTemperatureAmbient =
-            (getThermostatTemperatureAmbient && getThermostatTemperatureAmbient.id) ||
-            set_thermostatTemperatureSetpoint;
+            getThermostatTemperatureAmbient?.id || set_thermostatTemperatureSetpoint;
 
         const getThermostatHumidityAmbient = control.states.find(state => state.name === 'SECOND' && state.id);
-        const get_thermostatHumidityAmbient = getThermostatHumidityAmbient && getThermostatHumidityAmbient.id;
+        const get_thermostatHumidityAmbient = getThermostatHumidityAmbient?.id;
 
         const traits = [];
         traits.push('action.devices.traits.TemperatureSetting');
@@ -1297,16 +1289,14 @@ class GoogleHome {
 
     processThermostat(id, control, name, room, func, obj) {
         const setThermostatTemperatureSetpoint = control.states.find(state => state.name === 'SET' && state.id);
-        const set_thermostatTemperatureSetpoint =
-            setThermostatTemperatureSetpoint && setThermostatTemperatureSetpoint.id;
+        const set_thermostatTemperatureSetpoint = setThermostatTemperatureSetpoint?.id;
         const get_thermostatTemperatureSetpoint = set_thermostatTemperatureSetpoint;
         const getThermostatTemperatureAmbient = control.states.find(state => state.name === 'ACTUAL' && state.id);
         const get_thermostatTemperatureAmbient =
-            (getThermostatTemperatureAmbient && getThermostatTemperatureAmbient.id) ||
-            set_thermostatTemperatureSetpoint;
+            getThermostatTemperatureAmbient?.id || set_thermostatTemperatureSetpoint;
 
         const getThermostatHumidityAmbient = control.states.find(state => state.name === 'HUMIDITY' && state.id);
-        const get_thermostatHumidityAmbient = getThermostatHumidityAmbient && getThermostatHumidityAmbient.id;
+        const get_thermostatHumidityAmbient = getThermostatHumidityAmbient?.id;
 
         const traits = [];
         traits.push('action.devices.traits.TemperatureSetting');
@@ -1349,26 +1339,26 @@ class GoogleHome {
 
     processMedia(id, control, name, room, func, obj) {
         const setOnOffState = control.states.find(state => state.name === 'STATE' && state.id);
-        const set_on = setOnOffState && setOnOffState.id;
+        const set_on = setOnOffState?.id;
         const get_on = set_on;
 
         const setPlayState = control.states.find(state => state.name === 'PLAY' && state.id);
-        const set_mediaPlay = (setPlayState && setPlayState.id) || set_on;
+        const set_mediaPlay = setPlayState?.id || set_on;
 
         const setPauseState = control.states.find(state => state.name === 'PAUSE' && state.id);
-        const set_mediaPause = setPauseState && setPauseState.id;
+        const set_mediaPause = setPauseState?.id;
 
         const setStopState = control.states.find(state => state.name === 'STOP' && state.id);
-        const set_mediaStop = setStopState && setStopState.id;
+        const set_mediaStop = setStopState?.id;
 
         const setNextState = control.states.find(state => state.name === 'NEXT' && state.id);
-        const set_mediaNext = setNextState && setNextState.id;
+        const set_mediaNext = setNextState?.id;
 
         const setPrevState = control.states.find(state => state.name === 'PREV' && state.id);
-        const set_mediaPrev = setPrevState && setPrevState.id;
+        const set_mediaPrev = setPrevState?.id;
 
         const setVolumeState = control.states.find(state => state.name === 'VOLUME' && state.id);
-        const set_brightness = setVolumeState && setVolumeState.id;
+        const set_brightness = setVolumeState?.id;
 
         const traits = [
             'action.devices.traits.OnOff',
@@ -1422,17 +1412,14 @@ class GoogleHome {
                     return null;
                 }
             } else {
-                return states && states.common && states.common.custom && states.common.custom[this.adapter.namespace]
+                return states?.common?.custom?.[this.adapter.namespace]
                     ? states.common.custom[this.adapter.namespace].smartName
                     : undefined;
             }
         } else if (!this.adapter.config.noCommon) {
-            return states[id] && states[id].common ? states[id].common.smartName : null;
+            return states[id]?.common ? states[id].common.smartName : null;
         } else {
-            return states[id] &&
-                states[id].common &&
-                states[id].common.custom &&
-                states[id].common.custom[this.adapter.namespace]
+            return states[id]?.common?.custom?.[this.adapter.namespace]
                 ? states[id].common.custom[this.adapter.namespace].smartName || null
                 : null;
         }
@@ -1499,21 +1486,20 @@ class GoogleHome {
                     result[id]['displayConv2iob'] = smartName.ghConv2iob;
                 }
             }
-            if ((typeof smartName === 'object' && smartName && smartName.ghType && smartName.ghTraits) || parentId) {
-                if (smartName && smartName.ghType) {
+            if ((typeof smartName === 'object' && smartName?.ghType && smartName.ghTraits) || parentId) {
+                if (smartName?.ghType) {
                     result[id].type = smartName.ghType;
                 }
-                if (smartName && smartName.ghTraits && smartName.ghTraits.length > 0 && smartName.ghTraits[0]) {
+                if (smartName?.ghTraits?.length > 0 && smartName.ghTraits[0]) {
                     result[id].traits = [smartName.ghTraits[0].split('_')[0]];
                     result[id].displayTraits = [smartName.ghTraits[0]];
                 }
                 try {
-                    if (smartName && smartName.ghAttributes) {
+                    if (smartName?.ghAttributes) {
                         result[id].attributes = JSON.parse(smartName.ghAttributes);
                         result[id].displayAttributes = JSON.stringify(result[id].attributes);
                     }
                 } catch (error) {
-                    this.adapter.log.error(`[GHOME] Cannot parse attributes ${error} ${smartName.ghAttributes}`);
                     this.adapter.log.error(`[GHOME] Cannot parse attributes ${error} ${smartName.ghAttributes}`);
                     result[id].attributes = {};
                     result[id].displayAttributes = smartName.ghAttributes;
@@ -1536,8 +1522,6 @@ class GoogleHome {
                     };
 
                     const controls = this.detector.detect(options);
-                    // if (id.indexOf('deconz.0.Lights.27') !== -1)
-                    //     debugger
                     if (controls) {
                         let control = controls[0];
                         if (controls[0].type === 'socket' && controls[1] && controls[1].type !== 'info') {
@@ -1555,9 +1539,9 @@ class GoogleHome {
                                 funcName,
                                 objects[id],
                             );
-                            result[id].displayTraits = result[id].displayTraits || result[id].traits;
+                            result[id].displayTraits ||= result[id].traits;
 
-                            if (typeof smartName === 'object' && smartName && smartName.ghAttributes) {
+                            if (typeof smartName === 'object' && smartName?.ghAttributes) {
                                 result[id].attributes = JSON.parse(smartName.ghAttributes);
                                 result[id].displayAttributes = JSON.stringify(result[id].attributes);
                             }
@@ -1570,7 +1554,7 @@ class GoogleHome {
                                 const briState = await this.adapter.getForeignObjectAsync(
                                     result[id].customData.set_brightness,
                                 );
-                                if (briState && briState.common && briState.common.max && briState.common.max >= 101) {
+                                if (briState?.common?.max && briState.common.max >= 101) {
                                     result[id]['conv2GH'][result[id].customData.set_brightness] =
                                         'return value/' + briState.common.max / 100;
                                     result[id]['conv2iob'][result[id].customData.set_brightness] =
@@ -1581,11 +1565,7 @@ class GoogleHome {
                                 const set_color_temperature = await this.adapter.getForeignObjectAsync(
                                     result[id].customData.set_color_temperature,
                                 );
-                                if (
-                                    set_color_temperature &&
-                                    set_color_temperature.common &&
-                                    set_color_temperature.common.max <= 500
-                                ) {
+                                if (set_color_temperature?.common?.max <= 500) {
                                     result[id]['conv2GH'][result[id].customData.set_color_temperature] =
                                         'return 1000000/value';
                                     result[id]['conv2iob'][result[id].customData.set_color_temperature] =
@@ -1601,8 +1581,6 @@ class GoogleHome {
 
                             //   childStates.forEach((child) => {
                             Object.keys(result[id].customData).forEach(element => {
-                                // if (element.indexOf('get_') !== -1) {
-
                                 const childID = result[id].customData[element];
 
                                 if (!childID) {
@@ -1662,7 +1640,7 @@ class GoogleHome {
                     this.adapter.log.error(`[GHOME] ${e.stack}`);
                 }
                 return;
-            } else if (typeof smartName === 'object' && smartName && smartName.smartType) {
+            } else if (typeof smartName === 'object' && smartName?.smartType) {
                 //SMARTTYPES = ['LIGHT', 'SWITCH', 'THERMOSTAT', 'ACTIVITY_TRIGGER', 'SCENE_TRIGGER', 'SMARTPLUG', 'SMARTLOCK', 'CAMERA'];
                 switch (smartName.smartType) {
                     case 'LIGHT':
@@ -1683,7 +1661,7 @@ class GoogleHome {
                         break;
                 }
 
-                result[id].displayTraits = result[id].displayTraits || result[id].traits;
+                result[id].displayTraits ||= result[id].traits;
                 result[id].ioType = objects[id].type;
                 result[id].smartEnum = 'X';
 
@@ -1744,9 +1722,7 @@ class GoogleHome {
                 },
             ];
             if (
-                smartName &&
-                smartName.ghTraits &&
-                smartName.ghTraits.length > 0 &&
+                smartName?.ghTraits?.length > 0 &&
                 smartName.ghTraits[0] &&
                 traitEnum[smartName.ghTraits[0]]
             ) {
@@ -1778,9 +1754,7 @@ class GoogleHome {
                     result[id].attributes = JSON.parse(defaultAttributes);
                     const obj = await this.adapter.getForeignObjectAsync(id);
                     if (
-                        !obj.common ||
-                        !obj.common.smartName ||
-                        !obj.common.smartName.ghAttributes ||
+                        !obj.common?.smartName?.ghAttributes ||
                         obj.common.smartName.ghAttributes !== defaultAttributes
                     ) {
                         await this.adapter.extendForeignObjectAsync(id, {
@@ -1797,11 +1771,9 @@ class GoogleHome {
             }
 
             //merge states with same name and room
-            if (this.smartNames[friendlyName] && this.smartNames[friendlyName].roomHint === roomName) {
+            if (this.smartNames[friendlyName]?.roomHint === roomName) {
                 if (
-                    smartName &&
-                    smartName.ghTraits &&
-                    Array.isArray(smartName.ghTraits) &&
+                    Array.isArray(smartName?.ghTraits) &&
                     smartName.ghTraits.length > 0 &&
                     smartName.ghTraits[0]
                 ) {
@@ -1863,42 +1835,39 @@ class GoogleHome {
                         this.adapter.getObjectView('system', 'enum', {}, (err, _enums) => {
                             const objects = {};
                             const enums = {};
-                            if (_devices && _devices.rows) {
+                            if (_devices?.rows) {
                                 for (let i = 0; i < _devices.rows.length; i++) {
                                     if (
-                                        _devices.rows[i].value &&
-                                        _devices.rows[i].value._id &&
+                                        _devices.rows[i].value?._id &&
                                         !ignoreIds.find(reg => reg.test(_devices.rows[i].value._id))
                                     ) {
                                         objects[_devices.rows[i].value._id] = _devices.rows[i].value;
                                     }
                                 }
                             }
-                            if (_channels && _channels.rows) {
+                            if (_channels?.rows) {
                                 for (let i = 0; i < _channels.rows.length; i++) {
                                     if (
-                                        _channels.rows[i].value &&
-                                        _channels.rows[i].value._id &&
+                                        _channels.rows[i].value?._id &&
                                         !ignoreIds.find(reg => reg.test(_channels.rows[i].value._id))
                                     ) {
                                         objects[_channels.rows[i].value._id] = _channels.rows[i].value;
                                     }
                                 }
                             }
-                            if (_states && _states.rows) {
+                            if (_states?.rows) {
                                 for (let i = 0; i < _states.rows.length; i++) {
                                     if (
-                                        _states.rows[i].value &&
-                                        _states.rows[i].value._id &&
+                                        _states.rows[i].value?._id &&
                                         !ignoreIds.find(reg => reg.test(_states.rows[i].value._id))
                                     ) {
                                         objects[_states.rows[i].value._id] = _states.rows[i].value;
                                     }
                                 }
                             }
-                            if (_enums && _enums.rows) {
+                            if (_enums?.rows) {
                                 for (let i = 0; i < _enums.rows.length; i++) {
-                                    if (_enums.rows[i].value && _enums.rows[i].value._id) {
+                                    if (_enums.rows[i].value?._id) {
                                         enums[_enums.rows[i].value._id] = _enums.rows[i].value;
                                         objects[_enums.rows[i].value._id] = _enums.rows[i].value;
                                     }
@@ -1948,7 +1917,7 @@ class GoogleHome {
                                 `[GHOME] Invalid URL Pro key. Status auto-update is disabled you can set states but receive states only manually: ${err}`,
                             );
                         // call cb otherwise frontend get no results
-                        cb && cb();
+                        cb?.();
                     });
             });
         });
@@ -1966,7 +1935,7 @@ class GoogleHome {
         let roomHint = '';
         allRooms.forEach(roomId => {
             const room = enums[roomId];
-            if (!room.common || !room.common.members || !room.common.members.length) {
+            if (!room.common?.members?.length) {
                 return;
             }
 
@@ -1976,14 +1945,14 @@ class GoogleHome {
                 const idArray = id.split('.');
                 idArray.pop();
                 const parent = idArray.join('.');
-                if (objects[parent] && objects[parent].type === 'channel') {
+                if (objects[parent]?.type === 'channel') {
                     pos = room.common.members.indexOf(parent);
                 }
             }
             if (pos !== -1) {
                 // Get the name of function (with language and if name is empty)
                 let roomName = this.getSmartName(room);
-                roomName = roomName || room.common.name;
+                roomName ||= room.common.name;
                 if (roomName && typeof roomName === 'object') {
                     roomName = roomName[this.lang] || roomName.en;
                 }
@@ -2051,8 +2020,7 @@ class GoogleHome {
             const func = enums[funcId];
 
             if (
-                !func.common ||
-                !func.common.members ||
+                !func.common?.members ||
                 typeof func.common.members !== 'object' ||
                 !func.common.members.length
             ) {
@@ -2061,7 +2029,7 @@ class GoogleHome {
             this.adapter.log.debug(`[GHOME] Process ${funcId}`);
             // Get the name of function (with language and if name is empty)
             let funcName = this.getSmartName(func);
-            funcName = funcName || func.common.name;
+            funcName ||= func.common.name;
 
             if (funcName && typeof funcName === 'object') {
                 funcName = funcName[this.lang] || funcName.en;
@@ -2080,8 +2048,7 @@ class GoogleHome {
                         const room = enums[roomId];
 
                         if (
-                            !room.common ||
-                            !room.common.members ||
+                            !room.common?.members ||
                             typeof func.common.members !== 'object' ||
                             !room.common.members.length
                         ) {
@@ -2089,15 +2056,13 @@ class GoogleHome {
                         }
 
                         // If state or channel is in some room and in some function
-                        const pos = room.common.members.indexOf(id);
-
-                        if (pos !== -1) {
+                        if (room.common.members.includes(id)) {
                             // find name for room if not found earlier
                             if (!roomNames[roomId]) {
                                 // Get the name of function (with language and if name is empty)
                                 let roomName = this.getSmartName(room);
 
-                                roomName = roomName || room.common.name;
+                                roomName ||= room.common.name;
 
                                 if (roomName && typeof roomName === 'object') {
                                     roomName = roomName[this.lang] || roomName.en;
@@ -2109,7 +2074,7 @@ class GoogleHome {
                                 }
                                 roomNames[roomId] = roomName;
                             }
-                            if (objects[id] && objects[id].type === 'state') {
+                            if (objects[id]?.type === 'state') {
                                 this.adapter.log.warn(
                                     `[GHOME] ${id} is a state. It's recommended to add rooms and functionality to channels or devices and not to a state to get auto detected for Google Home. This works only for simple switches.`,
                                 );
@@ -2183,7 +2148,7 @@ class GoogleHome {
                             continue;
                         }
                         const _attr = attr.substring(4);
-                        json[devId] = json[devId] || {};
+                        json[devId] ||= {};
                         json[devId][_attr] = {
                             id: custom[attr],
                         };
@@ -2195,10 +2160,10 @@ class GoogleHome {
                 }
 
                 for (const attr in custom) {
-                    if (custom.hasOwnProperty(attr) && attr && custom[attr] === id && attr.startsWith('get_')) {
+                    if (custom.hasOwnProperty(attr) && custom[attr] === id && attr?.startsWith('get_')) {
                         const _attr = attr.substring(4);
                         let val;
-                        json[devId] = json[devId] || {};
+                        json[devId] ||= {};
 
                         try {
                             if (_attr === 'on') {
@@ -2232,7 +2197,7 @@ class GoogleHome {
                                     val = Math.floor(spectrumRgb);
                                 }
                             } else if (_attr === 'color_hue') {
-                                json[devId].color = json[devId].color ? json[devId].color : {};
+                                json[devId].color ||= {};
                                 const hue = json[devId].color_hue
                                     ? await this.adapter.getForeignStateAsync(json[devId].color_hue.id)
                                     : { val: 0 };
@@ -2287,10 +2252,10 @@ class GoogleHome {
                                         b = q;
                                         break;
                                 }
-                                val = Math.floor((r << (16 + g)) << (8 + b));
+                                val = (r << 16) | (g << 8) | b;
                             } else if (_attr === 'color_spectrumRGB') {
                                 const rgb = state.val;
-                                json[devId].color = json[devId].color ? json[devId].color : {};
+                                json[devId].color ||= {};
                                 if (rgb && rgb.substring) {
                                     val = parseInt(rgb.substring(1), 16) || 0;
                                 } else {
@@ -2325,20 +2290,14 @@ class GoogleHome {
                             }
 
                             // do not send the same state to google
-                            if (
-                                (this.reportedStates[devId] &&
-                                    this.reportedStates[devId][_attr] &&
-                                    this.reportedStates[devId][_attr].val !== val) ||
-                                !this.reportedStates[devId] ||
-                                !this.reportedStates[devId][_attr]
-                            ) {
-                                this.reportedStates[devId] = this.reportedStates[devId] || {};
-                                this.reportedStates[devId][_attr] = this.reportedStates[devId][_attr] || {};
+                            if (this.reportedStates[devId]?.[_attr]?.val !== val) {
+                                this.reportedStates[devId] ||= {};
+                                this.reportedStates[devId][_attr] ||= {};
                                 this.reportedStates[devId][_attr].val = val;
                                 this.reportedStates[devId][_attr].ts = now;
-                                json[devId] = json[devId] || {};
+                                json[devId] ||= {};
                                 if (_attr.includes('color_')) {
-                                    json[devId].color = json[devId].color ? json[devId].color : {};
+                                    json[devId].color ||= {};
                                     if (_attr === 'color_temperature') {
                                         json[devId].color.temperatureK = Math.floor(val);
                                     } else {
@@ -2403,13 +2362,13 @@ class GoogleHome {
                     );
                 })
                 .catch(error => {
-                    if (error.response && error.response.status === 404) {
+                    if (error.response?.status === 404) {
                         this.adapter.log.error(`[GHOME] device ${id} is unknown to google home`);
                         this.unknownDevices[id] = Date.now();
-                    } else if (error.response && error.response.status === 401) {
+                    } else if (error.response?.status === 401) {
                         this.adapter.log.error(`[GHOME] auth error: ${JSON.stringify(error.response.body)}`);
                         this.urlKeyOk = false; // invalidate urlKey
-                    } else if (error.response && error.response.status === 410) {
+                    } else if (error.response?.status === 410) {
                         this.adapter.log.error(
                             `[GHOME] invalid protocol version: ${JSON.stringify(error.response.body)}`,
                         );
@@ -2441,9 +2400,9 @@ class GoogleHome {
                 if (this.smartDevicesSentToGoogle.hasOwnProperty(devId)) {
                     const custom = this.smartDevicesSentToGoogle[devId].customData;
                     for (const attr in custom) {
-                        if (custom.hasOwnProperty(attr) && attr && attr.startsWith('get_')) {
+                        if (custom.hasOwnProperty(attr) && attr?.startsWith('get_')) {
                             const _attr = attr.substring(4);
-                            json[devId] = json[devId] || {};
+                            json[devId] ||= {};
                             json[devId][_attr] = {
                                 id: custom[attr],
                             };
@@ -2474,12 +2433,9 @@ class GoogleHome {
                             continue;
                         }
 
-                        state = state || { val: false };
+                        state ||= { val: false };
 
-                        if (
-                            this.smartDevices[devId].conv2GH &&
-                            this.smartDevices[devId].conv2GH[json[devId][attr].id]
-                        ) {
+                        if (this.smartDevices[devId].conv2GH?.[json[devId][attr].id]) {
                             try {
                                 const conv = new Function(
                                     'value',
@@ -2502,17 +2458,23 @@ class GoogleHome {
                                 state.val === true ||
                                 (typeof state.val === 'number' && state.val > 0);
                         } else if (attr === 'color_R' || attr === 'color_G' || attr === 'color_B') {
-                            const r = await this.adapter.getForeignStateAsync(json[devId].color_R.id);
-                            const g = await this.adapter.getForeignStateAsync(json[devId].color_G.id);
-                            const b = await this.adapter.getForeignStateAsync(json[devId].color_B.id);
-                            const spectrumRgb = (r.val << 16) + (g.val << 8) + b.val;
-                            json[devId].color = json[devId].color ? json[devId].color : {};
+                            const r = json[devId].color_R
+                                ? await this.adapter.getForeignStateAsync(json[devId].color_R.id)
+                                : { val: 0 };
+                            const g = json[devId].color_G
+                                ? await this.adapter.getForeignStateAsync(json[devId].color_G.id)
+                                : { val: 0 };
+                            const b = json[devId].color_B
+                                ? await this.adapter.getForeignStateAsync(json[devId].color_B.id)
+                                : { val: 0 };
+                            const spectrumRgb = ((r?.val || 0) << 16) | ((g?.val || 0) << 8) | (b?.val || 0);
+                            json[devId].color ||= {};
                             json[devId].color.spectrumRGB = Math.floor(spectrumRgb);
                             delete json[devId]['color_R'];
                             delete json[devId]['color_G'];
                             delete json[devId]['color_B'];
                         } else if (attr === 'color_hue') {
-                            json[devId].color = json[devId].color ? json[devId].color : {};
+                            json[devId].color ||= {};
                             if (json[devId].color_hue && json[devId].color_saturation && json[devId].brightness) {
                                 try {
                                     const hue = await this.adapter.getForeignStateAsync(json[devId].color_hue.id);
@@ -2561,7 +2523,7 @@ class GoogleHome {
                                             b = q;
                                             break;
                                     }
-                                    json[devId].color.spectrumRGB = Math.floor((r << (16 + g)) << (8 + b));
+                                    json[devId].color.spectrumRGB = (r << 16) | (g << 8) | b;
                                 } catch (error) {
                                     this.adapter.log.error(`[GHOME] ${error}`);
                                 }
@@ -2571,7 +2533,7 @@ class GoogleHome {
                             delete json[devId]['brightness'];
                         } else if (attr === 'color_spectrumRGB') {
                             const rgb = state.val;
-                            json[devId].color = json[devId].color ? json[devId].color : {};
+                            json[devId].color ||= {};
                             if (rgb && rgb.substring) {
                                 json[devId].color.spectrumRGB = parseInt(rgb.substring(1), 16) || 0;
                             } else {
@@ -2582,7 +2544,7 @@ class GoogleHome {
                         } else if (attr === 'color_temperature') {
                             const temp = state.val;
 
-                            json[devId].color = json[devId].color ? json[devId].color : {};
+                            json[devId].color ||= {};
                             json[devId].color.temperatureK = Math.floor(temp);
 
                             delete json[devId][attr];
@@ -2643,13 +2605,13 @@ class GoogleHome {
                     this.adapter.log.debug(`[GHOME] Status reported: ${JSON.stringify(response.data)}`);
                 })
                 .catch(error => {
-                    if (error.response && error.response.status === 404) {
+                    if (error.response?.status === 404) {
                         this.adapter.log.error(`[GHOME] devices are unknown to google home`);
                         Object.keys(this.unknownDevices).forEach(id => (this.unknownDevices[id] = Date.now()));
-                    } else if (error.response && error.response.status === 401) {
+                    } else if (error.response?.status === 401) {
                         this.adapter.log.error(`[GHOME] auth error: ${JSON.stringify(error.response.data)}`);
                         this.urlKeyOk = false; // invalidate urlKey
-                    } else if (error.response && error.response.status === 410) {
+                    } else if (error.response?.status === 410) {
                         this.adapter.log.error(
                             `[GHOME] invalid protocol version: ${JSON.stringify(error.response.data)}`,
                         );
@@ -2727,8 +2689,8 @@ class GoogleHome {
     }
 
     getStates(ids, callback, states) {
-        states = states || {};
-        if (!ids || !ids.length) {
+        states ||= {};
+        if (!ids?.length) {
             callback(states);
         } else {
             const id = ids.shift();
@@ -2736,7 +2698,7 @@ class GoogleHome {
                 setImmediate(() => this.getStates(ids, callback, states));
             } else {
                 this.adapter.getForeignState(id, (err, state) => {
-                    states[id] = state && state.val;
+                    states[id] = state?.val;
                     setImmediate(() => this.getStates(ids, callback, states));
                 });
             }
@@ -2778,11 +2740,8 @@ class GoogleHome {
                             const attrs = this.smartDevices[dev.id].customData;
                             if (attrs) {
                                 Object.keys(attrs).forEach(attr => {
-                                    if (attr && attr.startsWith('get_')) {
-                                        if (
-                                            this.smartDevices[dev.id].conv2GH &&
-                                            this.smartDevices[dev.id].conv2GH[attrs[attr]]
-                                        ) {
+                                    if (attr?.startsWith('get_')) {
+                                        if (this.smartDevices[dev.id].conv2GH?.[attrs[attr]]) {
                                             try {
                                                 const conv = new Function(
                                                     'value',
@@ -2806,14 +2765,10 @@ class GoogleHome {
                                                     (states[attrs.get_color_R] << 16) +
                                                     (states[attrs.get_color_G] << 8) +
                                                     states[attrs.get_color_B];
-                                                responseDev[dev.id].color = responseDev[dev.id].color
-                                                    ? responseDev[dev.id].color
-                                                    : {};
+                                                responseDev[dev.id].color ||= {};
                                                 responseDev[dev.id].color.spectrumRgb = spectrumRgb;
                                             } else if (attr === 'get_color_hue') {
-                                                responseDev[dev.id].color = responseDev[dev.id].color
-                                                    ? responseDev[dev.id].color
-                                                    : {};
+                                                responseDev[dev.id].color ||= {};
                                                 const h = states[attrs.get_color_hue] / 360;
                                                 const s = states[attrs.get_color_saturation] / 255;
                                                 const v = states[attrs.get_brightness] / 100;
@@ -2855,12 +2810,10 @@ class GoogleHome {
                                                         b = q;
                                                         break;
                                                 }
-                                                responseDev[dev.id].color.spectrumRgb = (r << (16 + g)) << (8 + b);
+                                                responseDev[dev.id].color.spectrumRgb = (r << 16) | (g << 8) | b;
                                             } else if (attr === 'get_color_spectrumRGB') {
                                                 const rgb = states[attrs.get_color_spectrumRGB];
-                                                responseDev[dev.id].color = responseDev[dev.id].color
-                                                    ? responseDev[dev.id].color
-                                                    : {};
+                                                responseDev[dev.id].color ||= {};
                                                 if (rgb && rgb.substring) {
                                                     responseDev[dev.id].color.spectrumRgb =
                                                         parseInt(rgb.substring(1), 16) || 0;
@@ -2868,14 +2821,8 @@ class GoogleHome {
                                                     responseDev[dev.id].color.spectrumRgb = rgb;
                                                 }
                                             } else {
-                                                if (responseDev[dev.id][attrArray[0]]) {
-                                                    responseDev[dev.id][attrArray[0]][attrArray[1]] =
-                                                        states[attrs[attr]];
-                                                } else {
-                                                    responseDev[dev.id][attrArray[0]] = {};
-                                                    responseDev[dev.id][attrArray[0]][attrArray[1]] =
-                                                        states[attrs[attr]];
-                                                }
+                                                responseDev[dev.id][attrArray[0]] ||= {};
+                                                responseDev[dev.id][attrArray[0]][attrArray[1]] = states[attrs[attr]];
                                             }
                                         } else {
                                             if (
@@ -2946,8 +2893,8 @@ class GoogleHome {
     }
 
     setStates(tasks, callback, results) {
-        results = results || {};
-        if (!tasks || !tasks.length) {
+        results ||= {};
+        if (!tasks?.length) {
             callback(results);
         } else {
             const task = tasks.shift();
@@ -2956,9 +2903,9 @@ class GoogleHome {
             if (task.cmd === 'action.devices.commands.SetToggles') {
                 this.adapter.getForeignState(task.id, task.val, (error, state) => {
                     if (!error) {
-                        const val = !(state && state.val);
+                        const val = !state?.val;
                         this.adapter.setForeignState(task.id, val, error => {
-                            results[task.devId] = results[task.devId] || {};
+                            results[task.devId] ||= {};
                             results[task.devId][task.param] = val;
                             if (error) {
                                 results[task.devId].error = error;
@@ -2974,7 +2921,7 @@ class GoogleHome {
                 });
             } else {
                 this.adapter.setForeignState(task.id, task.val, error => {
-                    results[task.devId] = results[task.devId] || {};
+                    results[task.devId] ||= {};
                     results[task.devId][task.param] = task.val;
 
                     if (error) {
@@ -3122,10 +3069,7 @@ class GoogleHome {
 
                                     paths.forEach(element => {
                                         if (attrs[`set_${element.path}`]) {
-                                            if (
-                                                this.smartDevices[dev.id].conv2iob &&
-                                                this.smartDevices[dev.id].conv2iob[attrs[`set_${element.path}`]]
-                                            ) {
+                                            if (this.smartDevices[dev.id].conv2iob?.[attrs[`set_${element.path}`]]) {
                                                 try {
                                                     const conv = new Function(
                                                         'value',
