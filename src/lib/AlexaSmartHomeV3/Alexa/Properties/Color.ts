@@ -1,6 +1,6 @@
 import Base, { type ControlStateInitObject } from './Base';
 import type { AlexaV3DirectiveValue, AlexaV3Request, IotExternalDetectorState } from '../../types';
-import { rgb2hal, rgbw2hal, rgbwToHex, hal2rgb } from '../../Helpers/Utils';
+import { rgb2hal, rgbw2hal, rgbwToHex, hal2rgb, hal2rgbw } from '../../Helpers/Utils';
 
 interface DedicatedRGB {
     red: IotExternalDetectorState;
@@ -105,7 +105,7 @@ export default class Color extends Base {
             const hslValue = alexaValue as { hue: number; saturation: number; brightness: number };
             if ('hue' in hslValue && 'saturation' in hslValue) {
                 if (this._rgbw) {
-                    return `${hal2rgb(hslValue)}ff`;
+                    return hal2rgbw(hslValue);
                 }
                 return hal2rgb(hslValue);
             }

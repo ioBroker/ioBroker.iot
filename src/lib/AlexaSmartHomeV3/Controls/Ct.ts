@@ -35,7 +35,7 @@ export default class Ct extends AdjustableControl {
                 this._offValue = denormalize_0_100(
                     offValue,
                     this._brightness!.valuesRangeMin as number,
-                    (this._brightness!.valuesRangeMin as number) || 100,
+                    (this._brightness!.valuesRangeMax as number) || 100,
                 ) as number;
             }
             this._supported.push(new Capabilities.PowerController(this.composeInitObjectPowerState()));

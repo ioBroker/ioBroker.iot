@@ -181,14 +181,14 @@ export default class DeviceManager {
             const createdGroups: string[] = [];
             let iteration = 0;
 
-            // First collect all custom friendly names assigned by user
+            // First, collect all custom-friendly names assigned by user
             const customNamedControls: string[] = [];
             for (const control of detectedControls) {
                 if (control.groupNames) {
                     for (const groupName of control.groupNames) {
-                        if (!customNamedControls.includes(this.getName(groupName))) {
-                            customNamedControls.push(this.getName(groupName));
-                            break;
+                        const name = this.getName(groupName);
+                        if (!customNamedControls.includes(name)) {
+                            customNamedControls.push(name);
                         }
                     }
                 }
@@ -303,7 +303,7 @@ export default class DeviceManager {
                 this.log.debug(`${device.toString()}`);
             }
 
-            // a new discovery process is needed in case we had already devices and device collection was
+            // a new discovery process is needed in case we already had devices and device collection was
             // triggered again by, e.g., a change in room/function enums
             // if (discoveryNeeded) {
             //     this.log.info(`Please delete all managed by ioBroker devices in your Alexa app and then start discovery`);
@@ -373,7 +373,7 @@ export default class DeviceManager {
         const promises = [];
         for (const id of this.subscribed) {
             this.log.silly(`unsubscribing from updates of ${id}`);
-            promises.push(AdapterProvider.subscribe(id));
+            promises.push(AdapterProvider.unsubscribe(id));
         }
         await Promise.allSettled(promises);
 

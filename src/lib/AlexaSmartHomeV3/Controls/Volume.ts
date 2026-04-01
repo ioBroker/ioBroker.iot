@@ -44,8 +44,8 @@ export default class Volume extends AdjustableControl {
             // set volume
             if (value) {
                 // set volume to 0 on MUTED true
-                await AdapterProvider.setState(this._speaker.volume.setId, 0);
                 this._lastVolume = this._speaker.volume.currentValue;
+                await AdapterProvider.setState(this._speaker.volume.setId, 0);
                 this._speaker.volume.currentValue = 0;
             } else {
                 // set volume to the last known, configured or 20 otherwise on MUTED false
@@ -81,7 +81,7 @@ export default class Volume extends AdjustableControl {
         if (property.currentValue === undefined) {
             property.currentValue = await AdapterProvider.getState(property.getId);
 
-            // convert non zero volumes to muted = false
+            // convert non-zero volumes to muted = false
             if (
                 property.propertyName === this._speaker.muted.propertyName &&
                 property.getId === this._speaker.volume.getId

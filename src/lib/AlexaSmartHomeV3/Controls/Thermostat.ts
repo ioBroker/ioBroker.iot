@@ -152,7 +152,7 @@ export default class Thermostat extends AdjustableControl {
                 return 0;
             },
             alexaGetter: function (value: ioBroker.StateValue | undefined): AlexaV3DirectiveValue {
-                return (value !== undefined && states[value as number] !== undefined) || 'AUTO';
+                return (value !== undefined && states[value as number]) || 'AUTO';
             },
             supportedModes: supportedModes,
         };

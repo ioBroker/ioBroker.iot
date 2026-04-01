@@ -71,7 +71,7 @@ export default class AirCondition extends AdjustableControl {
                 // set mode to OFF
                 const modeOffValue = this._thermostatMode.supportedModesAsEnum[ThermostatMode.OFF];
                 await AdapterProvider.setState(this._thermostatMode.setId, modeOffValue);
-                this._thermostatMode.currentValue = this._lastKnownMode;
+                this._thermostatMode.currentValue = modeOffValue;
                 this._powerState.currentValue = false;
             }
         } else {
@@ -173,7 +173,7 @@ export default class AirCondition extends AdjustableControl {
                 return 0;
             },
             alexaGetter: function (value: ioBroker.StateValue | undefined): AlexaV3DirectiveValue {
-                return (value !== undefined && states[value as number] !== undefined) || 'AUTO';
+                return (value !== undefined && states[value as number]) || 'AUTO';
             },
             supportedModes: supportedModes,
         };

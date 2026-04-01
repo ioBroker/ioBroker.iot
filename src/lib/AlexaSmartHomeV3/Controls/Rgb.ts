@@ -61,7 +61,7 @@ export default class Rgb extends AdjustableControl {
                 this._offValue = denormalize_0_100(
                     AdapterProvider.deviceOffLevel(),
                     this._brightness!.valuesRangeMin as number,
-                    (this._brightness!.valuesRangeMin as number) || 100,
+                    (this._brightness!.valuesRangeMax as number) || 100,
                 ) as number;
             }
             this._supported.push(new Capabilities.PowerController(this.composeInitObjectPowerState()));
