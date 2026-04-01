@@ -2,6 +2,7 @@ import AlexaResponse from '../AlexaResponse';
 import Base from './Base';
 import type { AlexaV3Request } from '../../types';
 import type DeviceManager from '../../DeviceManager';
+import { validateDiscoveryResponse } from '../../Helpers/DiscoveryValidator';
 
 export default class Discovery extends Base {
     static setAllProactiveAndRetrievableFalse(obj: any): any {
@@ -70,6 +71,8 @@ export default class Discovery extends Base {
         //if (endpointManager.validTill <= Date.now()) {
         Discovery.setAllProactiveAndRetrievableFalse(json);
         //}
+
+        validateDiscoveryResponse(json, this.log);
 
         return Promise.resolve(json);
     }
