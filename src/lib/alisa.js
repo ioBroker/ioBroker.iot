@@ -126,7 +126,6 @@ class YandexAliceConverter {
         return new Promise(resolve => {
             const attribute = entity.ATTRIBUTES.find(attr => attr.attribute === name);
             const stateId = attribute ? attribute.getId || attribute.setId : undefined;
-            entity.context.capabilities = [];
             const capability = entity.context.properties.find(
                 cap => cap.type === 'devices.properties.event' && cap.parameters.instance === name,
             );
@@ -470,8 +469,8 @@ class YandexAliceConverter {
             const attribute = entity.ATTRIBUTES.find(attr => attr.attribute === 'rgb');
             const stateId = attribute ? attribute.getId : undefined;
             const capability = data.capabilities.find(cap => cap.type === 'devices.capabilities.color_setting');
-            if (capability && capability.state && stateId && capability.state.instance === 'rgb') {
-                const val = capability.state.value.toString(16);
+            if (capability?.state && stateId && capability.state.instance === 'rgb') {
+                const val = capability.state.value.toString(16).padStart(6, '0');
                 this.adapter.setForeignState(stateId, `#${val}`);
                 capability.state.action_result = { status: 'DONE' };
             }
@@ -752,13 +751,13 @@ class YandexAliceConverter {
 
         state = control.states.find(s => s.id && ['DIMMER', 'SET', 'BRIGHTNESS'].includes(s.name));
         let setDimmer = '';
-        if (state && state.id) {
+        if (state?.id) {
             setDimmer = state.id;
             entity.ATTRIBUTES.push({
                 attribute: 'brightness',
                 getId: getDimmer || setDimmer,
                 setId: setDimmer,
-                type: objects[setDimmer] && objects[setDimmer].common && objects[setDimmer].common.type,
+                type: objects[setDimmer]?.common?.type,
             });
             this._addID2entity(state.id, entity);
         } else if (getDimmer) {
@@ -766,9 +765,9 @@ class YandexAliceConverter {
                 attribute: 'brightness',
                 getId: getDimmer,
                 setId: null,
-                type: objects[getDimmer] && objects[getDimmer].common && objects[getDimmer].common.type,
+                type: objects[getDimmer]?.common?.type,
             });
-            this._addID2entity(state.id, entity);
+            this._addID2entity(getDimmer, entity);
         }
 
         // capabilities
@@ -1118,7 +1117,7 @@ class YandexAliceConverter {
         }
 
         state = control.states.find(s => s.id && s.name === 'ACTUAL');
-        if (state && state.id && objects[state.id].common.type === 'boolean') {
+        if (state?.id && objects[state.id]?.common?.type === 'boolean') {
             entity.STATE.getId = state.id;
             this._addID2entity(state.id, entity);
         }
@@ -1755,10 +1754,10 @@ class YandexAlisa {
             if (func) {
                 pos = _name.indexOf(func.toLowerCase());
                 if (pos !== -1) {
-                    name = name.substring(0, pos) + name.substring(pos + room.length + 1);
+                    name = name.substring(0, pos) + name.substring(pos + func.length + 1);
                 }
             }
-            name = name.replace(/\s\s/g).replace(/\s\s/g).trim();
+            name = name.replace(/\s\s/g, ' ').replace(/\s\s/g, ' ').trim();
         }
         return name;
     }
@@ -2058,8 +2057,7 @@ class YandexAlisa {
             let ids = Object.keys(objects);
 
             this.enums = [];
-            this.smartDevices = {};
-            this.enums = [];
+            this.smartDevices = [];
             this.usedIds = [];
             this.keys = [];
 
@@ -2310,8 +2308,11 @@ class YandexAlisa {
     doAction(deviceData) {
         return new Promise(resolve => {
             const entity = this.smartDevices.find(entity => deviceData.id === entity.context.id);
-            entity && resolve(this._doSmartDeviceAction(entity, deviceData));
-            resolve();
+            if (entity) {
+                resolve(this._doSmartDeviceAction(entity, deviceData));
+            } else {
+                resolve();
+            }
         });
     }
 
