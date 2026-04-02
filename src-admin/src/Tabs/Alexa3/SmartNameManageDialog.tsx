@@ -110,7 +110,7 @@ export default class SmartNameManageDialog extends Component<SmartNameManageDial
                         // If both states are from the same ioBroker device, then ignore
                         const parentObj1 = await findDeviceForState(id1, this.props.socket, this.props.objects);
                         const parentObj2 = await findDeviceForState(id2, this.props.socket, this.props.objects);
-                        if (parentObj1?._id !== parentObj2?._id) {
+                        if (parentObj1?._id === parentObj2?._id) {
                             continue;
                         }
                         if (name1 !== this.props.dev.friendlyName && !problems.includes(id1)) {

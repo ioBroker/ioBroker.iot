@@ -333,7 +333,6 @@ export default class Enums extends Component<EnumsProps, EnumsState> {
             const id = this.state.editId;
             this.setState({ editId: '' });
 
-            let newObj: ioBroker.EnumObject;
             this.props.socket
                 .getObject(id)
                 .then(obj => {
@@ -343,12 +342,11 @@ export default class Enums extends Component<EnumsProps, EnumsState> {
                             instanceId: `${this.props.adapterName}.${this.props.instance}`,
                             noCommon: this.props.native.noCommon,
                         });
-                        newObj = obj as ioBroker.EnumObject;
-                        return this.props.socket.setObject(id, obj);
+                        return this.props.socket.setObject(id, obj).then(() => obj as ioBroker.EnumObject);
                     }
+                    return undefined;
                 })
-                .then(() => {
-                    // update obj
+                .then(newObj => {
                     this.updateObjInState(id, newObj);
                     this.informInstance(id);
                 })

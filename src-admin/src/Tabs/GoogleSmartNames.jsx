@@ -74,7 +74,7 @@ class GoogleSmartNames extends Component {
             editObjectName: '',
             deleteId: '',
 
-            expertMode: window.localStorage.getItem('App.expertMode') !== 'true',
+            expertMode: window.localStorage.getItem('App.expertMode') === 'true',
             helpHidden: window.localStorage.getItem('App.helpHidden') === 'true',
             showSelectId: false,
             searchText: '',
@@ -643,14 +643,16 @@ class GoogleSmartNames extends Component {
                                     this.setState({ lastChanged: obj._id });
                                     this.timerChanged && clearTimeout(this.timerChanged);
                                     this.timerChanged = setTimeout(() => {
-                                        this.setState({ lastChanged: '' });
                                         this.timerChanged = null;
+                                        this.setState({ lastChanged: '' });
                                     }, 30000);
                                 }
 
                                 if (!obj.common.smartName) {
-                                    obj.common.smartName = { ghType: 'action.devices.types.LIGHT' };
-                                    obj.common.smartName = { ghTraits: ['action.devices.traits.OnOff'] };
+                                    obj.common.smartName = {
+                                        ghTraits: ['action.devices.traits.OnOff'],
+                                        ghType: 'action.devices.types.LIGHT',
+                                    };
                                 } else {
                                     obj.common.smartName.ghType = 'action.devices.types.LIGHT';
                                     obj.common.smartName.ghTraits = ['action.devices.traits.OnOff'];

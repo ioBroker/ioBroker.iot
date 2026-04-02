@@ -1,4 +1,4 @@
-import Logger from './Logger';
+import type Logger from './Logger';
 
 // Alexa limits: https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-discovery.html
 const MAX_ENDPOINTS = 300;
@@ -14,30 +14,87 @@ const RESPONSE_SIZE_WARNING_BYTES = 100 * 1024;
 
 // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-discovery.html#display-categories
 const VALID_DISPLAY_CATEGORIES = new Set([
-    'ACTIVITY_TRIGGER', 'AIR_CONDITIONER', 'AIR_FRESHENER', 'AIR_PURIFIER', 'AIR_QUALITY_MONITOR',
-    'ALEXA_VOICE_ENABLED', 'AUTO_ACCESSORY', 'BLUETOOTH_SPEAKER', 'CAMERA', 'CHRISTMAS_TREE',
-    'COFFEE_MAKER', 'COMPUTER', 'CONTACT_SENSOR', 'DISHWASHER', 'DOOR', 'DOORBELL', 'DRYER',
-    'EXTERIOR_BLIND', 'FAN', 'GAME_CONSOLE', 'GARAGE_DOOR', 'HEADPHONES', 'HUB',
-    'INTERIOR_BLIND', 'LAPTOP', 'LIGHT', 'MICROWAVE', 'MOBILE_PHONE', 'MOTION_SENSOR',
-    'MUSIC_SYSTEM', 'NETWORK_HARDWARE', 'OTHER', 'OVEN', 'PHONE', 'PRINTER', 'REMOTE',
-    'ROUTER', 'SCENE_TRIGGER', 'SCREEN', 'SECURITY_PANEL', 'SECURITY_SYSTEM', 'SLOW_COOKER',
-    'SMARTLOCK', 'SMARTPLUG', 'SPEAKER', 'STREAMING_DEVICE', 'SWITCH', 'TABLET',
-    'TEMPERATURE_SENSOR', 'THERMOSTAT', 'TV', 'VACUUM_CLEANER', 'VACUUM', 'VEHICLE',
-    'WASHER', 'WATER_HEATER', 'WEARABLE',
+    'ACTIVITY_TRIGGER',
+    'AIR_CONDITIONER',
+    'AIR_FRESHENER',
+    'AIR_PURIFIER',
+    'AIR_QUALITY_MONITOR',
+    'ALEXA_VOICE_ENABLED',
+    'AUTO_ACCESSORY',
+    'BLUETOOTH_SPEAKER',
+    'CAMERA',
+    'CHRISTMAS_TREE',
+    'COFFEE_MAKER',
+    'COMPUTER',
+    'CONTACT_SENSOR',
+    'DISHWASHER',
+    'DOOR',
+    'DOORBELL',
+    'DRYER',
+    'EXTERIOR_BLIND',
+    'FAN',
+    'GAME_CONSOLE',
+    'GARAGE_DOOR',
+    'HEADPHONES',
+    'HUB',
+    'INTERIOR_BLIND',
+    'LAPTOP',
+    'LIGHT',
+    'MICROWAVE',
+    'MOBILE_PHONE',
+    'MOTION_SENSOR',
+    'MUSIC_SYSTEM',
+    'NETWORK_HARDWARE',
+    'OTHER',
+    'OVEN',
+    'PHONE',
+    'PRINTER',
+    'REMOTE',
+    'ROUTER',
+    'SCENE_TRIGGER',
+    'SCREEN',
+    'SECURITY_PANEL',
+    'SECURITY_SYSTEM',
+    'SLOW_COOKER',
+    'SMARTLOCK',
+    'SMARTPLUG',
+    'SPEAKER',
+    'STREAMING_DEVICE',
+    'SWITCH',
+    'TABLET',
+    'TEMPERATURE_SENSOR',
+    'THERMOSTAT',
+    'TV',
+    'VACUUM_CLEANER',
+    'VACUUM',
+    'VEHICLE',
+    'WASHER',
+    'WATER_HEATER',
+    'WEARABLE',
 ]);
 
 const VALID_NAMESPACES = new Set([
-    'Alexa', 'Alexa.BrightnessController', 'Alexa.ColorController', 'Alexa.ColorTemperatureController',
-    'Alexa.ContactSensor', 'Alexa.EndpointHealth', 'Alexa.HumiditySensor', 'Alexa.LockController',
-    'Alexa.ModeController', 'Alexa.MotionSensor', 'Alexa.PercentageController', 'Alexa.PowerController',
-    'Alexa.RangeController', 'Alexa.SceneController', 'Alexa.Speaker', 'Alexa.TemperatureSensor',
+    'Alexa',
+    'Alexa.BrightnessController',
+    'Alexa.ColorController',
+    'Alexa.ColorTemperatureController',
+    'Alexa.ContactSensor',
+    'Alexa.EndpointHealth',
+    'Alexa.HumiditySensor',
+    'Alexa.LockController',
+    'Alexa.ModeController',
+    'Alexa.MotionSensor',
+    'Alexa.PercentageController',
+    'Alexa.PowerController',
+    'Alexa.RangeController',
+    'Alexa.SceneController',
+    'Alexa.Speaker',
+    'Alexa.TemperatureSensor',
     'Alexa.ThermostatController',
 ]);
 
 // Multi-instance capabilities that require an instance property
-const REQUIRES_INSTANCE = new Set([
-    'Alexa.ModeController', 'Alexa.RangeController', 'Alexa.ToggleController',
-]);
+const REQUIRES_INSTANCE = new Set(['Alexa.ModeController', 'Alexa.RangeController', 'Alexa.ToggleController']);
 
 // Alexa wake words — devices named like this can't be controlled
 const WAKE_WORDS = ['alexa', 'echo', 'amazon', 'computer', 'ziggy'];
@@ -155,20 +212,24 @@ export function validateDiscoveryResponse(response: any, log: Logger): any {
     return response;
 }
 
-function validateEndpoint(
-    ep: DiscoveryEndpoint,
-    seenIds: Set<string>,
-    seenNames: Set<string>,
-): ValidationError[] {
+function validateEndpoint(ep: DiscoveryEndpoint, seenIds: Set<string>, seenNames: Set<string>): ValidationError[] {
     const issues: ValidationError[] = [];
     const id = ep.endpointId || '(empty)';
     const name = ep.friendlyName || '(empty)';
 
     const error = (field: string, message: string): ValidationError => ({
-        endpointId: id, friendlyName: name, field, message, severity: 'error',
+        endpointId: id,
+        friendlyName: name,
+        field,
+        message,
+        severity: 'error',
     });
     const warning = (field: string, message: string): ValidationError => ({
-        endpointId: id, friendlyName: name, field, message, severity: 'warning',
+        endpointId: id,
+        friendlyName: name,
+        field,
+        message,
+        severity: 'warning',
     });
 
     // --- endpointId ---
@@ -197,7 +258,9 @@ function validateEndpoint(
         // Wake words as device name make the device unusable
         const lower = ep.friendlyName.toLowerCase().trim();
         if (WAKE_WORDS.includes(lower)) {
-            issues.push(warning('friendlyName', `"${ep.friendlyName}" is an Alexa wake word — device may not be controllable`));
+            issues.push(
+                warning('friendlyName', `"${ep.friendlyName}" is an Alexa wake word — device may not be controllable`),
+            );
         }
 
         // Duplicate names confuse Alexa ("which one did you mean?")
@@ -247,7 +310,12 @@ function validateEndpoint(
         for (const cap of ep.capabilities) {
             const capKey = `${cap.interface || ''}::${cap.instance || ''}`;
             if (cap.interface !== 'Alexa' && capKeys.has(capKey)) {
-                issues.push(error('capabilities', `duplicate capability ${cap.interface}${cap.instance ? ` (${cap.instance})` : ''}`));
+                issues.push(
+                    error(
+                        'capabilities',
+                        `duplicate capability ${cap.interface}${cap.instance ? ` (${cap.instance})` : ''}`,
+                    ),
+                );
             }
             capKeys.add(capKey);
 

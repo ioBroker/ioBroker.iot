@@ -391,7 +391,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
             this.collectSubscribes.push(id);
             const pos = this.collectUnsubscribes?.indexOf(id);
             if (pos !== -1 && pos !== undefined) {
-                this.collectUnsubscribes?.splice(pos);
+                this.collectUnsubscribes?.splice(pos, 1);
                 if (!this.collectUnsubscribes?.length) {
                     this.collectUnsubscribes = null;
                     if (this.collectUnsubscribesTimer) {
@@ -433,7 +433,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
 
                 const pos = this.collectSubscribes?.indexOf(id);
                 if (pos !== -1 && pos !== undefined) {
-                    this.collectSubscribes?.splice(pos);
+                    this.collectSubscribes?.splice(pos, 1);
                     if (!this.collectSubscribes?.length) {
                         this.collectSubscribes = null;
                         if (this.collectSubscribesTimer) {
@@ -1086,7 +1086,7 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                         );
                         if (typeof smartNameValue !== 'object' && smartNameValue) {
                             smartNameValue = {
-                                [this.language]: smartName,
+                                [this.language]: smartNameValue,
                             };
                         }
                         if (smartNameValue) {

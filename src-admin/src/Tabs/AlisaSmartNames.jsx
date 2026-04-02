@@ -328,6 +328,11 @@ class AlisaDevices extends Component {
                     browse: false,
                 });
             }
+        }).catch(error => {
+            this.browseTimer && clearTimeout(this.browseTimer);
+            this.browseTimerCount = 0;
+            this.browseTimer = null;
+            this.setState({ message: error?.toString() || I18n.t('Cannot read devices!'), browse: false, loading: false });
         });
     }
 
