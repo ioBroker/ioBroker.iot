@@ -511,6 +511,11 @@
 ### 0.1.4 (2018-09-26)
 
 -   (bluefox) Initial commit
+## 5.0.7 (2025-11-03)
+- (@GermanBluefox) Added possibility to group devices by type in GUI
+- (@GermanBluefox) Allowed to select any type in Alexe V3
+- (@GermanBluefox) Remove disabled states from auto-detection
+
 ## 5.0.6 (2025-11-01)
 - (@GermanBluefox) Added logs to detect the issues with detection
 - (@GermanBluefox) Added possibility to use the 0/1 state as socket

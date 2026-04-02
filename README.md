@@ -416,7 +416,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 6.0.0 (2026-04-02)
 - (iobroker-bot) Adapter requires node.js >= 20 now.
 - (@GermanBluefox) Removed support for Alexa 2
 - (@GermanBluefox) Fixed bug in Alisa with color and motion sensor
@@ -441,11 +441,6 @@ setState('iot.0.app.message', JSON.stringify({
 - (@GermanBluefox) Added automatically conversion of type TV (alexaV3) to button (alexaV3)
 - (@GermanBluefox) Optimized the update of devices in GUI
 - (@GermanBluefox) Implemented slider with custom min/max values
-
-### 5.0.7 (2025-11-03)
-- (@GermanBluefox) Added possibility to group devices by type in GUI
-- (@GermanBluefox) Allowed to select any type in Alexe V3
-- (@GermanBluefox) Remove disabled states from auto-detection
 
 ## License
 
