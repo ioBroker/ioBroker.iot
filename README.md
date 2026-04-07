@@ -416,7 +416,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 6.0.0 (2026-04-02)
+### **WORK IN PROGRESS**
 - (iobroker-bot) Adapter requires node.js >= 20 now.
 - (@GermanBluefox) Removed support for Alexa 2
 - (@GermanBluefox) Fixed bug in Alisa with color and motion sensor

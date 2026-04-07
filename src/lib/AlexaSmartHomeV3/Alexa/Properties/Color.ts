@@ -1,6 +1,6 @@
 import Base, { type ControlStateInitObject } from './Base';
 import type { AlexaV3DirectiveValue, AlexaV3Request, IotExternalDetectorState } from '../../types';
-import { rgb2hal, rgbw2hal, rgbwToHex, hal2rgb, hal2rgbw } from '../../Helpers/Utils';
+import { rgb2hal, rgbw2hal, rgbwToHex, hal2rgb } from '../../Helpers/Utils';
 
 interface DedicatedRGB {
     red: IotExternalDetectorState;
