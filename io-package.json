@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "6.0.0",
+    "version": "6.0.1",
     "news": {
+      "6.0.1": {
+        "en": "Adapter requires node.js >= 20 now.\nRemoved support for Alexa 2\nFixed bug in Alisa with color and motion sensor\nValidate Discovery response before sending it back",
+        "de": "Adapter benötigt jetzt node.js >= 20.\nEntfernte Unterstützung für Alexa 2\nFehler behoben in Alisa mit Farb- und Bewegungssensor\nGültige Discovery-Reaktion, bevor sie zurückschicken",
+        "ru": "Адаптер требует node.js >= 20 сейчас.\nСнята поддержка Alexa 2\nИсправлена ошибка в Alisa с датчиком цвета и движения\nПодтвердите ответ Discovery перед отправкой обратно",
+        "pt": "O adaptador requer gnod.js >= 20 agora.\nSuporte removido para Alexa 2\nErro fixo em Alisa com sensor de cor e movimento\nValidar a resposta Discovery antes de enviá-la de volta",
+        "nl": "Voor de adapter zijn node.js > 20 nu nodig.\nOndersteuning verwijderd voor Alexa 2\nFixed bug in Alisa met kleur en bewegingssensor\nValideren Discovery antwoord voordat het terug te sturen",
+        "fr": "Adapter nécessite node.js >= 20 maintenant.\nSupprimé le support pour Alexa 2\nCorrection du bug dans Alisa avec capteur de couleur et de mouvement\nValider la réponse de Discovery avant de la renvoyer",
+        "it": "Adattatore richiede node.js >= 20 ora.\nSupporto rimosso per Alexa 2\nBug fisso in Alisa con sensore di colore e movimento\nConvalida la risposta Discovery prima di inviarla",
+        "es": "Adaptador requiere node.js >= 20 ahora.\nSoporte extraído para Alexa 2\nError fijo en Alisa con sensor de color y movimiento\nValidar respuesta Discovery antes de enviarla de vuelta",
+        "pl": "Adapter wymaga node.js > = 20 teraz.\nUsunięte wsparcie dla Alexa 2\nNaprawiono błąd w Alisie z czujnikiem kolorów i ruchu\nSprawdzić odpowiedź Discovery przed wysłaniem jej z powrotem",
+        "uk": "Адаптер вимагає node.js >= 20 тепер.\nВидалення підтримки Alexa 2\nВиправлена помилка в Алісі з датчиком кольору і руху\nДійсність Відповіді про відкриття",
+        "zh-cn": "适配器需要节点.js >= 20 现在.\n删除对 Alexa 2 的支持\nAlisa 有颜色和运动传感器的固定错误\n在发回前验证发现回复"
+      },
       "5.0.13": {
         "en": "Adapter requires node.js >= 20 now.\nCorrected the handling of the multiple group names\nFixing the license validation",
         "de": "Adapter benötigt jetzt node.js >= 20.\nDie Handhabung der Mehrfachgruppennamen wurde korrigiert\nFestlegung der Lizenzvalidierung",
