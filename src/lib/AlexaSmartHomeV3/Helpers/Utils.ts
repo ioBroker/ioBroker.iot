@@ -1133,8 +1133,10 @@ export function hal2rgbw(hal: { hue: number; saturation: number; brightness: num
     }
 
     // Extract the common white component (min of R,G,B = p) into the dedicated white channel
-    const w = p;
-    return `#${toHex(to255(r - w))}${toHex(to255(g - w))}${toHex(to255(b - w))}${toHex(to255(w))}`;
+    // const w = p;
+    // return `#${toHex(to255(r - w))}${toHex(to255(g - w))}${toHex(to255(b - w))}${toHex(to255(w))}`;
+    // Simple calculations
+    return `#${toHex(to255(r))}${toHex(to255(g))}${toHex(to255(b))}${toHex(to255(255))}`;
 }
 
 /**

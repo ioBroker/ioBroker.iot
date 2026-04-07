@@ -1,4 +1,5 @@
 import type Logger from './Logger';
+import type AlexaResponse from '../Alexa/AlexaResponse';
 
 // Alexa limits: https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-discovery.html
 const MAX_ENDPOINTS = 300;
@@ -130,13 +131,14 @@ export interface ValidationError {
  * Validates the Alexa Discovery response and removes invalid endpoints.
  * Returns the sanitized response.
  */
-export function validateDiscoveryResponse(response: any, log: Logger): any {
+export function validateDiscoveryResponse(response: AlexaResponse, log: Logger): AlexaResponse {
     // Validate response header structure
     const header = response?.event?.header;
     if (!header) {
         log.error('Discovery: response has no event.header');
         return response;
     }
+    // @ts-expect-error
     if (header.namespace !== 'Alexa.Discovery') {
         log.error(`Discovery: unexpected namespace "${header.namespace}", expected "Alexa.Discovery"`);
     }
@@ -144,10 +146,10 @@ export function validateDiscoveryResponse(response: any, log: Logger): any {
         log.error(`Discovery: unexpected name "${header.name}", expected "Discover.Response"`);
     }
     if (header.payloadVersion !== '3') {
-        log.error(`Discovery: unexpected payloadVersion "${header.payloadVersion}", expected "3"`);
+        log.error(`Discovery: unexpected payloadVersion "${header.payloadVersion as unknown as string}", expected "3"`);
     }
 
-    const endpoints: DiscoveryEndpoint[] = response?.event?.payload?.endpoints;
+    const endpoints: DiscoveryEndpoint[] | undefined = response?.event?.payload?.endpoints;
     if (!endpoints || !Array.isArray(endpoints)) {
         return response;
     }
@@ -324,7 +326,7 @@ function validateEndpoint(ep: DiscoveryEndpoint, seenIds: Set<string>, seenNames
                 issues.push(warning('capabilities', `unknown interface "${cap.interface}"`));
             }
 
-            if (cap.version && cap.version !== '3') {
+            if (cap.version && cap.version !== '3' && cap.version !== '3.2') {
                 issues.push(error('capabilities', `unexpected version "${cap.version}" for ${cap.interface}`));
             }
 

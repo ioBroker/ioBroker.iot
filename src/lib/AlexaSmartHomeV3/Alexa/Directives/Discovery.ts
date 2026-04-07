@@ -65,8 +65,6 @@ export default class Discovery extends Base {
 
         const json = response.get();
 
-        this.log.silly(`${JSON.stringify(response.get())}`);
-
         // To do, activate it again after status report will work
         //if (endpointManager.validTill <= Date.now()) {
         Discovery.setAllProactiveAndRetrievableFalse(json);

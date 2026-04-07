@@ -105,7 +105,7 @@ export default class Color extends Base {
             const hslValue = alexaValue as { hue: number; saturation: number; brightness: number };
             if ('hue' in hslValue && 'saturation' in hslValue) {
                 if (this._rgbw) {
-                    return hal2rgbw(hslValue);
+                    return `${hal2rgb(hslValue)}ff`;
                 }
                 return hal2rgb(hslValue);
             }

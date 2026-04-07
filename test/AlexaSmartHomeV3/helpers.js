@@ -2,7 +2,7 @@ const https = require('https');
 const addFormats = require('ajv-formats');
 const Ajv = require('ajv-draft-04');
 const Controls = require('../../build/lib/AlexaSmartHomeV3/Controls').default;
-const { readFileSync, existsSync } = require('node:fs');
+const { readFileSync, existsSync, writeFileSync } = require('node:fs');
 
 const ajv = new Ajv({ allErrors: true, strict: false });
 addFormats(ajv);
@@ -426,6 +426,9 @@ const Helpers = {
 
                 res.on('end', () => {
                     commandsCache[sampleJsonName] = JSON.parse(jsonString);
+                    if (!existsSync(`${__dirname}/Resources/${jsonName}`)) {
+                        writeFileSync(`${__dirname}/Resources/${jsonName}`, jsonString);
+                    }
                     resolve(JSON.parse(jsonString));
                 });
 
