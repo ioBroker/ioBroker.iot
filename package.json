@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@iobroker/adapter-core": "^3.3.2",
-    "@iobroker/type-detector": "^5.0.11",
+    "@iobroker/type-detector": "^5.0.13",
     "aws-iot-device-sdk": "^2.2.16",
     "axios": "^1.14.0",
     "mime": "^3.0.0"
