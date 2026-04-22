@@ -23,10 +23,18 @@ export default class TargetSetpoint extends Base {
             : event.directive.payload.targetSetpointDelta!.value;
     }
 
+    private get scale(): 'CELSIUS' | 'FAHRENHEIT' {
+        const unit = this.getSetState()?.common?.unit?.trim().toUpperCase();
+        if (unit === '°F' || unit === 'F' || unit === 'FAHRENHEIT') {
+            return 'FAHRENHEIT';
+        }
+        return 'CELSIUS';
+    }
+
     reportValue(value: number): any {
         return {
             value,
-            scale: TargetSetpoint.CELSIUS_SCALE,
+            scale: this.scale,
         };
     }
 }

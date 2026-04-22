@@ -5,6 +5,10 @@ import type DeviceManager from '../../DeviceManager';
 import { validateDiscoveryResponse } from '../../Helpers/DiscoveryValidator';
 
 export default class Discovery extends Base {
+    static isSensorInterface(iface: unknown): boolean {
+        return typeof iface === 'string' && iface.endsWith('Sensor');
+    }
+
     static setAllProactiveAndRetrievableFalse(obj: any): any {
         if (obj === null || obj === undefined) {
             return obj;
@@ -18,6 +22,13 @@ export default class Discovery extends Base {
         }
 
         if (typeof obj === 'object') {
+            // Sensor capabilities (e.g. Alexa.TemperatureSensor, HumiditySensor,
+            // MotionSensor, ContactSensor) must stay retrievable so Alexa can
+            // answer queries like "What's the temperature in the kitchen?".
+            if (Discovery.isSensorInterface(obj.interface)) {
+                return obj;
+            }
+
             for (const key of Object.keys(obj)) {
                 if (key === 'proactivelyReported' || key === 'retrievable') {
                     obj[key] = false;

@@ -316,6 +316,16 @@ export default class Control {
                 try {
                     await this.getOrRetrieveCurrentValue(property);
 
+                    // Skip properties whose underlying state has no value yet (e.g. just after
+                    // adapter restart). Reporting `{value: null}` to Alexa is rejected as
+                    // invalid. Connectivity is exempt because `false` is a valid value there.
+                    if (property.currentValue === null && property.propertyName !== 'connectivity') {
+                        this.log.debug(
+                            `skipping property "${property.propertyName}" of "${this.name}" — value is null`,
+                        );
+                        continue;
+                    }
+
                     const toReport: AlexaV3ReportedState = {
                         namespace: capability.namespace,
                         instance: property.instance,

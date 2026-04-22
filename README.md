@@ -416,6 +416,9 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Allowed to read temperature information via Alexa
+
 ### 6.0.1 (2026-04-07)
 - (iobroker-bot) Adapter requires node.js >= 20 now.
 - (@GermanBluefox) Removed support for Alexa 2

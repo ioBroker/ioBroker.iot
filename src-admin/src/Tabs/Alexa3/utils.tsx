@@ -249,9 +249,13 @@ function state2string(state: AlexaV3ReportedState | undefined): {
             } else {
                 result.value = state.value;
             }
-        }
-
-        if (state.value && typeof state.value === 'object' && state.value.value !== undefined && state.value.value !== null) {
+        } else if (
+            state.value &&
+            typeof state.value === 'object' &&
+            state.value.value !== undefined &&
+            state.value.value !== null
+        ) {
+            // Fallback for other object-valued properties not covered above
             if (typeof state.value.value === 'number') {
                 result.value = `${Math.round(state.value.value * 100) / 100} ${state.value.scale === 'CELSIUS' ? '°C' : state.value.scale === 'FAHRENHEIT' ? '°F' : state.value.scale || '%'}`;
             } else {
