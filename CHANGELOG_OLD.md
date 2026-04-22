@@ -511,6 +511,14 @@
 ### 0.1.4 (2018-09-26)
 
 -   (bluefox) Initial commit
+## 5.0.8 (2025-11-28)
+- (@GermanBluefox) Showed last controller ID in `smart.lastObjectID`
+- (@GermanBluefox) Showed subscription valid period in `info.validTill` and GUI
+- (@Copilot) Implemented increasing reconnect interval
+- (@GermanBluefox) Added automatically conversion of type TV (alexaV3) to button (alexaV3)
+- (@GermanBluefox) Optimized the update of devices in GUI
+- (@GermanBluefox) Implemented slider with custom min/max values
+
 ## 5.0.7 (2025-11-03)
 - (@GermanBluefox) Added possibility to group devices by type in GUI
 - (@GermanBluefox) Allowed to select any type in Alexe V3

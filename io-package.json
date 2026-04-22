@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "6.0.1",
+    "version": "6.0.2",
     "news": {
+      "6.0.2": {
+        "en": "Allowed to read temperature information via Alexa",
+        "de": "Erlaubt, Temperaturinformationen über Alexa zu lesen",
+        "ru": "Разрешено читать информацию о температуре через Alexa",
+        "pt": "Permite ler informações de temperatura através de Alexa",
+        "nl": "Toegestaan om temperatuurinformatie te lezen via Alexa",
+        "fr": "Permet de lire les informations de température via Alexa",
+        "it": "Permesso di leggere le informazioni sulla temperatura tramite Alexa",
+        "es": "Permitido leer información de temperatura a través de Alexa",
+        "pl": "Dozwolone odczytywanie informacji dotyczących temperatury za pośrednictwem Alexa",
+        "uk": "Ознайомитися з інформацією про температуру через Alexa",
+        "zh-cn": "允许通过Alexa读取温度信息"
+      },
       "6.0.1": {
         "en": "Adapter requires node.js >= 20 now.\nRemoved support for Alexa 2\nFixed bug in Alisa with color and motion sensor\nValidate Discovery response before sending it back",
         "de": "Adapter benötigt jetzt node.js >= 20.\nEntfernte Unterstützung für Alexa 2\nFehler behoben in Alisa mit Farb- und Bewegungssensor\nGültige Discovery-Reaktion, bevor sie zurückschicken",
@@ -80,19 +93,6 @@
         "pl": "Dodano kontrolę percentualną\nKorekcja tworzenia dla grup złożonych",
         "uk": "Розширений контроль відсотків\nПравильне створення складних груп",
         "zh-cn": "添加百分数控制\n纠正复杂群体的创建"
-      },
-      "5.0.8": {
-        "en": "Showed last controller ID in `smart.lastObjectID`\nShowed subscription valid period in `info.validTill` and GUI\nImplemented increasing reconnect intervall\nAdded automatically conversion of type TV (alexaV3) to button (alexaV3)\nOptimized the update of devices in GUI\nImplemented slider with custom min/max values",
-        "de": "Zuletzt angezeigte Controller-ID in `smart.lastObjectID`\nGezeigte Abonnement gültige Periode in `info.valid Till und GUI\nErgänzendes Reconnect Intervall\nAutomatische Umwandlung des Typs TV (alexaV3) zu Schaltfläche (alexaV3) hinzugefügt\nOptimierte das Update von Geräten in GUI\nEinbauschieber mit benutzerdefinierten min/max-Werten",
-        "ru": "Последний идентификатор контроллера в Smart.lastObjectID\nПоказан срок действия подписки в ‘info.valid Исполнитель: Till' & GUI\nРеализовано увеличение интервала повторного подключения\nДобавлено автоматическое преобразование типа телевизора (alexaV3) в кнопку (alexaV3)\nОптимизировано обновление устройств в GUI\nРеализованный слайдер с пользовательскими значениями min/max",
-        "pt": "Mostrado o último ID do controlador em `smart.lastObjectID`\nMostrado o período de assinatura válido em `info.valid Till` e GUI\nIntervalo de reconexão crescente implementado\nAdicionada conversão automática do tipo TV (alexaV3) para botão (alexaV3)\nOtimizado a atualização de dispositivos na GUI\nBarra deslizante implementada com valores min/max personalizados",
-        "nl": "Laat de laatste controller ID zien in \nToon een geldig abonnementsperiode in  Tot en met GUI\nGeïmplementeerd toenemende reconnect intervall\nToegevoegd automatisch conversie van type TV (alexaV3) naar knop (alexaV3)\nDe update van apparaten in GUI geoptimaliseerd\nGeïmplementeerde schuifregelaar met aangepaste min/max waarden",
-        "fr": "Afficher le dernier ID du contrôleur dans `smart.lastObjectID`\nAbonnement affiché valide dans `info.valid Till' et GUI\nImplémenté augmentation de l'intervalle de reconnect\nAjouté automatiquement la conversion de type TV (alexaV3) au bouton (alexaV3)\nOptimisé la mise à jour des appareils dans GUI\nSlider appliqué avec des valeurs min/max personnalisées",
-        "it": "Mostrato ultimo controller ID in `smart.lastObjectID`\nMostrato abbonamento valido periodo in `info.valid Finora e GUI\nIntervallo di ricollegamento crescente\nAggiunto automaticamente la conversione di tipo TV (alexaV3) a pulsante (alexaV3)\nOttimizzato l'aggiornamento dei dispositivi in GUI\nSlider implementato con valori minimi/max personalizzati",
-        "es": "Mosted last controlador ID in `smart.lastObjectID`\nSe muestra la suscripción periodo válido en `info.valid Till ' and GUI\nIntervalo de reconexión cada vez mayor\nSe agregó automáticamente la conversión de tipo TV (alexaV3) al botón (alexaV3)\nOptimizado la actualización de dispositivos en GUI\nDeslizador implementado con valores personalizados min/max",
-        "pl": "Pokazane ostatnie ID kontrolera w 'smart.lastObjectID'\nPokazany okres subskrypcji w 'info.valid Till' and GUI\nWdrożenie zwiększającego się ponownego połączenia intervall\nDodano automatyczną konwersję typu TV (alexaV3) na przycisk (alexaV3)\nOptymalizacja aktualizacji urządzeń w GUI\nWbudowany suwak o własnych wartościach min / max",
-        "uk": "Показати останнє ідентифікатор контролера в `smart.lastObjectID`\nВідкрито дійсний період передплати в `info.valid Till` і GUI\nРеалізовано збільшення інтервалу від'єднання\nДодано автоматично перетворення типу TV (alexaV3) на кнопку (alexaV3)\nОптимізовано оновлення пристроїв в GUI\nРеалізовано слайдер з індивідуальними значеннями min/max",
-        "zh-cn": "在“ smart. last ObjectID” 中显示上一个控制器 ID\n在“ info.valid”中显示订阅有效期间 直到“和图形界面”\n执行增加的重联间隔l\n自动转换 TV( alexaV3) 到按钮( alexaV3)\n优化图形用户界面设备的更新\n已执行带有自定义分/最大值的滑动器"
       }
     },
     "titleLang": {
