@@ -102,7 +102,10 @@ const styles: { [styleName: string]: React.CSSProperties } = {
     },
 };
 
-export const CAPABILITIES: Record<string, { label: string; icon: IconType; color: string; style?: React.CSSProperties }> = {
+export const CAPABILITIES: Record<
+    string,
+    { label: string; icon: IconType; color: string; style?: React.CSSProperties }
+> = {
     brightness: { label: 'Brightness', icon: Brightness5, color: '#c9b803' },
     connectivity: {
         label: 'Connectivity',

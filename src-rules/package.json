@@ -13,9 +13,11 @@
         "preview": "vite preview --port 4173"
     },
     "dependencies": {
-        "@iobroker/adapter-react-v5": "^8.1.6",
+        "@emotion/react": "^11.14.0",
+        "@emotion/styled": "^11.14.1",
+        "@iobroker/adapter-react-v5": "^8.2.2",
         "@iobroker/javascript-rules-dev": "^0.0.6",
-        "@iobroker/types": "^7.1.0",
+        "@iobroker/types": "^7.1.1",
         "@module-federation/runtime": "^2.3.0",
         "@module-federation/vite": "^1.13.5",
         "@mui/material": "6.5.0",

@@ -1,5 +1,5 @@
 // we extend this type for our use
-import type { InternalDetectorState, Types } from '@iobroker/type-detector/types';
+import type { InternalDetectorState, Types } from '@iobroker/type-detector';
 import type { AlexaSH3ControlType } from '../../../../src/lib/AlexaSmartHomeV3/types';
 
 export type AlexaV3EndpointID = string;
