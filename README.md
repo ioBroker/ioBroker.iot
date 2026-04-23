@@ -416,7 +416,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 6.0.3 (2026-04-23)
 - (@GermanBluefox) Allowed to read temperature information via Alexa
 
 ### 6.0.1 (2026-04-07)

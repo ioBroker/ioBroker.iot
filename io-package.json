@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "6.0.2",
+    "version": "6.0.3",
     "news": {
+      "6.0.3": {
+        "en": "Allowed to read temperature information via Alexa",
+        "de": "Erlaubt, Temperaturinformationen über Alexa zu lesen",
+        "ru": "Разрешено читать информацию о температуре через Alexa",
+        "pt": "Permite ler informações de temperatura através de Alexa",
+        "nl": "Toegestaan om temperatuurinformatie te lezen via Alexa",
+        "fr": "Permet de lire les informations de température via Alexa",
+        "it": "Permesso di leggere le informazioni sulla temperatura tramite Alexa",
+        "es": "Permitido leer información de temperatura a través de Alexa",
+        "pl": "Dozwolone odczytywanie informacji dotyczących temperatury za pośrednictwem Alexa",
+        "uk": "Ознайомитися з інформацією про температуру через Alexa",
+        "zh-cn": "允许通过Alexa读取温度信息"
+      },
       "6.0.1": {
         "en": "Adapter requires node.js >= 20 now.\nRemoved support for Alexa 2\nFixed bug in Alisa with color and motion sensor\nValidate Discovery response before sending it back",
         "de": "Adapter benötigt jetzt node.js >= 20.\nEntfernte Unterstützung für Alexa 2\nFehler behoben in Alisa mit Farb- und Bewegungssensor\nGültige Discovery-Reaktion, bevor sie zurückschicken",
