@@ -742,7 +742,7 @@ export default class RemoteAccess {
 
                 return {
                     file: Buffer.from(response.data).toString('base64'),
-                    mimeType: response.headers['content-type'],
+                    mimeType: (response.headers['content-type'] as string) || 'text/plain',
                 };
             })
             .catch(error => {
