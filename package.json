@@ -43,7 +43,7 @@
     "ajv-formats": "^3.0.1",
     "colorette": "^2.0.20",
     "puppeteer": "^24.40.0",
-    "typescript": "~5.9.3"
+    "typescript": "~6.0.3"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.iot/issues"
