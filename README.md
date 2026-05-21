@@ -416,6 +416,10 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+
+### **WORK IN PROGRESS**
+- (ioBroker-Bot) Adapter requires js-controller >= 6.0.11 now.
+
 ### 6.0.3 (2026-04-23)
 - (@GermanBluefox) Allowed to read temperature information via Alexa
 
