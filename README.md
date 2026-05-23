@@ -437,6 +437,8 @@ setState('iot.0.app.message', JSON.stringify({
 - (@GermanBluefox) Added percentual control
 - (@GermanBluefox) Correcting creation for complex groups
 
+[Older changelogs can be found there](CHANGELOG_OLD.md)
+
 ## License
 
 The MIT License (MIT)
