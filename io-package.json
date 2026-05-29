@@ -147,7 +147,6 @@
       "notifications": true
     },
     "stopBeforeUpdate": true,
-    "materialize": true,
     "logTransporter": true,
     "dependencies": [
       {
@@ -184,6 +183,9 @@
     "licenseInformation": {
       "type": "free",
       "license": "MIT"
+    },
+    "adminUI": {
+      "config": "materialize"
     }
   },
   "protectedNative": [
