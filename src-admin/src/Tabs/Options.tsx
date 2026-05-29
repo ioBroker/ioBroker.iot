@@ -13,6 +13,10 @@ import {
     CardMedia,
     Snackbar,
     IconButton,
+    FormControl,
+    FormLabel,
+    RadioGroup,
+    Radio,
 } from '@mui/material';
 
 import { MdRefresh as IconReload, MdClose as IconClose } from 'react-icons/md';
@@ -573,6 +577,30 @@ export default class Options extends Component<OptionsProps, OptionsState> {
                         label={I18n.t('Google Home')}
                     />
                     {this.renderCheckbox('Yandex Алиса', 'yandexAlisa')}
+                    <br />
+
+                    <FormControl
+                        component="fieldset"
+                        style={{ marginTop: 10, marginBottom: 10 }}
+                    >
+                        <FormLabel component="legend">{I18n.t('Detection method')}</FormLabel>
+                        <RadioGroup
+                            row
+                            value={this.props.native.detectionMethod || 'enums'}
+                            onChange={e => this.props.onChange('detectionMethod', e.target.value)}
+                        >
+                            <FormControlLabel
+                                value="enums"
+                                control={<Radio color="primary" />}
+                                label={I18n.t('By categories')}
+                            />
+                            <FormControlLabel
+                                value="devices"
+                                control={<Radio color="primary" />}
+                                label={I18n.t('By devices')}
+                            />
+                        </RadioGroup>
+                    </FormControl>
                     <br />
 
                     <p>{I18n.t('new_certs_tip')}</p>

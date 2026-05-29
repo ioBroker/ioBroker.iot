@@ -22,6 +22,7 @@ export interface IotAdapterConfig {
     nightscout: string;
     nightscoutPass: string;
     noCommon: boolean;
+    detectionMethod: 'enums' | 'devices';
     debug: boolean;
     remote: boolean;
     defaultToggle: boolean;

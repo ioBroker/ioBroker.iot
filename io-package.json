@@ -212,6 +212,7 @@
     "nightscout": "",
     "nightscoutPass": "myBlood",
     "noCommon": false,
+    "detectionMethod": "enums",
     "debug": false,
     "remote": false,
     "defaultToggle": false,
