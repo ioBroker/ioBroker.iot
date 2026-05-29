@@ -193,6 +193,78 @@ export default class Enums extends Component<EnumsProps, EnumsState> {
         }
     }
 
+    isEnumEnabled(obj: ioBroker.EnumObject): boolean {
+        const smartName = Utils.getSmartNameFromObj(
+            obj as unknown as ioBroker.StateObject,
+            `${this.props.adapterName}.${this.props.instance}`,
+            this.props.native.noCommon,
+        );
+        return smartName !== false;
+    }
+
+    getColumnState(name: 'funcs' | 'rooms'): 'all' | 'none' | 'partial' {
+        const items = this.state[name];
+        if (!items.length) {
+            return 'none';
+        }
+        let enabled = 0;
+        for (const obj of items) {
+            if (this.isEnumEnabled(obj)) {
+                enabled++;
+            }
+        }
+        if (enabled === 0) {
+            return 'none';
+        }
+        if (enabled === items.length) {
+            return 'all';
+        }
+        return 'partial';
+    }
+
+    async onToggleAllEnums(name: 'funcs' | 'rooms'): Promise<void> {
+        const state = this.getColumnState(name);
+        const shouldEnable = state !== 'all';
+        const items = this.state[name];
+        const namespace = `${this.props.adapterName}.${this.props.instance}`;
+        const noCommon = this.props.native.noCommon;
+        const DELAY_MS = 100;
+
+        this.setState({ inAction: true });
+
+        let first = true;
+        for (const orig of items) {
+            const isCurrentlyEnabled = this.isEnumEnabled(orig);
+            if (isCurrentlyEnabled === shouldEnable) {
+                continue;
+            }
+            if (!first) {
+                await new Promise<void>(resolve => setTimeout(resolve, DELAY_MS));
+            }
+            first = false;
+
+            const obj: ioBroker.EnumObject = JSON.parse(JSON.stringify(orig));
+            if (shouldEnable) {
+                Utils.removeSmartName(obj as unknown as ioBroker.StateObject, namespace, noCommon);
+            } else {
+                Utils.disableSmartName(obj as unknown as ioBroker.StateObject, namespace, noCommon);
+            }
+
+            this.addChanged(obj._id);
+            try {
+                await this.props.socket.setObject(obj._id, obj);
+                this.updateObjInState(obj._id, obj);
+                this.informInstance(obj._id);
+            } catch (err) {
+                this.props.onError(err as Error);
+            }
+            const changedId = obj._id;
+            setTimeout(() => this.removeChanged(changedId), 500);
+        }
+
+        this.setState({ inAction: false });
+    }
+
     onToggleEnum(id: string): void {
         let obj: ioBroker.EnumObject | undefined =
             this.state.funcs.find(e => e._id === id) || this.state.rooms.find(e => e._id === id);
@@ -412,6 +484,53 @@ export default class Enums extends Component<EnumsProps, EnumsState> {
         return null;
     }
 
+    renderColumnHeader(label: string, name: 'funcs' | 'rooms'): React.JSX.Element {
+        const columnState = this.getColumnState(name);
+        const isPartial = columnState === 'partial';
+        const checked = columnState !== 'none';
+        const titleKey =
+            columnState === 'all'
+                ? 'Disable all'
+                : columnState === 'none'
+                  ? 'Enable all'
+                  : 'Enable all (some are disabled)';
+
+        return (
+            <Box
+                component="h5"
+                sx={theme => ({
+                    ...(typeof styles.columnHeader === 'function' ? styles.columnHeader(theme) : styles.columnHeader),
+                    display: 'flex',
+                    alignItems: 'center',
+                })}
+            >
+                <span style={{ flex: 1 }}>{label}</span>
+                <Switch
+                    title={I18n.t(titleKey)}
+                    disabled={this.state.inAction || !this.state[name].length}
+                    checked={checked}
+                    sx={
+                        isPartial
+                            ? {
+                                  '& .MuiSwitch-thumb': {
+                                      backgroundColor: 'warning.main',
+                                  },
+                                  '& .MuiSwitch-track': {
+                                      opacity: 0.5,
+                                      backgroundColor: 'warning.main',
+                                  },
+                                  '& .MuiSwitch-switchBase': {
+                                      transform: 'translateX(9px)',
+                                  },
+                              }
+                            : undefined
+                    }
+                    onChange={() => void this.onToggleAllEnums(name)}
+                />
+            </Box>
+        );
+    }
+
     render(): React.JSX.Element {
         if (this.state.loading) {
             return <CircularProgress />;
@@ -419,21 +538,11 @@ export default class Enums extends Component<EnumsProps, EnumsState> {
         return (
             <form style={styles.tab}>
                 <div style={styles.column}>
-                    <Box
-                        component="h5"
-                        sx={styles.columnHeader}
-                    >
-                        {I18n.t('Rooms')}
-                    </Box>
+                    {this.renderColumnHeader(I18n.t('Rooms'), 'rooms')}
                     <div style={styles.columnDiv}>{this.renderEnums('rooms')}</div>
                 </div>
                 <div style={styles.column}>
-                    <Box
-                        component="h5"
-                        sx={styles.columnHeader}
-                    >
-                        {I18n.t('Functions')}
-                    </Box>
+                    {this.renderColumnHeader(I18n.t('Functions'), 'funcs')}
                     <div style={styles.columnDiv}>{this.renderEnums('funcs')}</div>
                 </div>
                 {this.renderMessage()}

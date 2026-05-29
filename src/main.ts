@@ -1596,7 +1596,7 @@ class IotAdapter extends Adapter {
         }
 
         // detect netatmo creation
-        await this.subscribeForeignObjectsAsync('system.adapter.*');
+        await this.subscribeForeignObjectsAsync('*');
 
         await this.subscribeStatesAsync('smart.*');
 
