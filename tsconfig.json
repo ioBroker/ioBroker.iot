@@ -1,5 +1,6 @@
 // Root tsconfig to set the settings and power editor support for all TS files
 {
+    "extends": "@tsconfig/node20/tsconfig.json",
     "compileOnSave": true,
     "compilerOptions": {
         "noEmit": true,
