@@ -104,19 +104,43 @@ export default class AlexaSH3 {
     }
 
     async handleObjectChange(id: string, obj: ioBroker.Object | null | undefined): Promise<void> {
-        // Handle enum changes
-        if (obj) {
-            // An object was changed
-            // console.log(`object ${id} changed: ${JSON.stringify(obj)}`);
-        } else {
-            // An object was deleted
-            // console.log(`object ${id} deleted`);
+        // main.ts subscribes to `*` for unrelated reasons (netatmo, appNotifications, …),
+        // so this handler is hit for nearly every object change in the system. Filter to
+        // changes that can actually influence the Alexa device tree, otherwise the heavy
+        // `collectEndpoints()` runs constantly.
+        if (!this.isAlexaRelevantChange(id, obj)) {
+            return;
         }
 
-        // either an enum was deleted or changed => re-collect devices
-
-        // intentionally not waiting for the promise to resolve
         await this.deviceManager.collectEndpoints();
+    }
+
+    private isAlexaRelevantChange(id: string, obj: ioBroker.Object | null | undefined): boolean {
+        // Room / function enum changes redefine group membership → always re-detect.
+        if (id.startsWith('enum.functions.') || id.startsWith('enum.rooms.')) {
+            return true;
+        }
+        // Cheap exclusion of namespaces that never contribute.
+        if (id.startsWith('system.') || id.startsWith('script.')) {
+            return false;
+        }
+        // State already tracked by Alexa: any change (incl. deletion) matters.
+        if (this.deviceManager.isStateTracked(id)) {
+            return true;
+        }
+        // New / modified object with a smartName → user just (de)activated it for Alexa.
+        if (obj) {
+            const common = obj.common as ioBroker.StateCommon | undefined;
+            if (common?.smartName !== undefined) {
+                return true;
+            }
+            const ns = AdapterProvider.get().namespace;
+            const customSmart = common?.custom?.[ns]?.smartName;
+            if (customSmart !== undefined) {
+                return true;
+            }
+        }
+        return false;
     }
 
     pauseEvents(): void {

@@ -148,6 +148,10 @@
     },
     "stopBeforeUpdate": true,
     "materialize": true,
+    "supportCustoms": true,
+    "adminUI": {
+      "custom": "json"
+    },
     "logTransporter": true,
     "dependencies": [
       {

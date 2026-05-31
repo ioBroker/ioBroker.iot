@@ -92,6 +92,11 @@ export default class DeviceManager {
         return this.devices.find(device => device.id === id);
     }
 
+    /** Returns `true` if the given state id is currently tracked by any device. */
+    isStateTracked(id: string): boolean {
+        return this.subscribed.includes(id);
+    }
+
     addDevice(device: Device): void {
         this.devices.push(device);
     }

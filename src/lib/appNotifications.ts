@@ -1,279 +1,246 @@
 import type IotAdapter from '../main';
-
-interface CustomSettings {
-    enabled: boolean;
-    changesType: 'update' | 'change';
-    triggerType: 'both' | 'true' | 'false';
-    withAck: 'any' | 'true' | 'false';
-    messageFalse?: string;
-    messageTrue?: string;
-    message?: string;
-    delta?: number
-    priority: 'high' | 'normal' | 'silence';
-    ttlSeconds: number;
-}
+import { I18n } from '@iobroker/adapter-core';
 
 /**
- * One rule describing when and what to send to the ioBroker Visu App
- * if a watched (foreign) state changes.
- *
- * Example for `javascript.0.alarm` (boolean):
- *   {
- *       id: 'javascript.0.alarm',
- *       title: 'Alarmanlage',
- *       messageTrue: 'Alarmanlage ist aktiviert',
- *       messageFalse: 'Alarmanlage ist deaktiviert',
- *       category: 'alarm',
- *       trigger: 'change',
- *   }
+ * Per-state custom settings stored under `obj.common.custom['iot.<instance>']`.
+ * The shape mirrors `admin/jsonCustom.json` — every field is optional except
+ * `enabled`, which is set by the admin when the user toggles the custom on.
  */
-export interface AppNotificationRule {
-    /** Foreign state id to watch (e.g. `javascript.0.alarm`). */
-    id: string;
-    /** Title shown by the app. Defaults to `'ioBroker'`. */
+export interface CustomSettings {
+    enabled: boolean;
+    /** Notification title shown by the app. Supports `${name}` / `${value}` placeholders. */
     title?: string;
-    /**
-     * Message template. Supports placeholders `{id}`, `{value}`, `{val}`,
-     * `{oldValue}`, `{title}`. Used when `messageTrue` / `messageFalse`
-     * are not applicable (non-boolean states or no specific match).
-     */
+    /** Message text. Supports `${name}` / `${value}` placeholders. */
     message?: string;
-    /** Used when the state becomes truthy. Falls back to `message`. */
-    messageTrue?: string;
-    /** Used when the state becomes falsy. Falls back to `message`. */
-    messageFalse?: string;
-    /**
-     * When to actually fire:
-     *  - `'change'`  – only on value change (default)
-     *  - `'true'`    – only when the new value is truthy
-     *  - `'false'`   – only when the new value is falsy
-     *  - `'any'`     – on every ack update (use with care)
-     */
-    trigger?: 'change' | 'true' | 'false' | 'any';
-    /**
-     * Free-text grouping tag delivered alongside the message so an Android
-     * widget can decide what to render (`alarm`, `door`, `presence`, ...).
-     */
-    category?: string;
-    /** Forward FCM priority to the cloud. */
+    /** Time-to-live in seconds (cloud-side expiry). */
+    expire?: number;
+    /** FCM priority. `'high'` triggers immediate delivery. */
     priority?: 'high' | 'normal';
-    /** Time-to-live in seconds for the FCM message. */
-    ttlSeconds?: number;
-    /** If `true`, also fire when the state is set with `ack === false`. Default: `false`. */
-    includeUnacked?: boolean;
+    /** Number of minimal change befor next notification */
+    debounceDifference?: number;
+    /** Skip when `state.val === oldValue`. */
+    reportChanges?: boolean;
+    /** Boolean-only: status text used in the message when value is falsy. */
+    offStatus?: string;
+    /** Boolean-only: status text used in the message when value is truthy. */
+    onStatus?: string;
+    /** Suppress notifications for truthy values. */
+    onlyFalse?: boolean;
+    /** Suppress notifications for falsy values. */
+    onlyTrue?: boolean;
+    /**
+     * Comma-separated list of device IDs that should receive the notification.
+     * Empty / undefined → broadcast to all devices linked to the account.
+     */
+    devices?: string;
+}
+
+/** Cached entry per managed state. */
+interface ManagedRule {
+    settings: CustomSettings;
+    /** Display name; resolved from `common.name` at registration time. */
+    title: string;
+    /** Last known value, used for `reportChanges` comparison. */
+    lastValue: ioBroker.StateValue | undefined;
+    /**
+     * Last value for which a notification was actually sent. Used together
+     * with {@link CustomSettings.debounceDifference} to suppress small jitter
+     * around the same level.
+     */
+    lastNotifiedValue: ioBroker.StateValue | undefined;
+    /** Object type (so we can format boolean states properly). */
+    type: ioBroker.CommonType | undefined;
 }
 
 /**
- * Payload that ends up being JSON-encoded and forwarded by
- * `IotAdapter.sendMessageToApp()` to `https://app-message.iobroker.in/`.
- * Extra fields (`payload`, `category`, `id`, ...) are passed through to
- * the FCM data section so an Android widget can act on them.
+ * JSON payload forwarded by {@link IotAdapter.sendMessageToApp} to
+ * `https://app-message.iobroker.in/`. The cloud uses `message`, `title`,
+ * `priority` and `ttlSeconds` directly; extra fields ride along on the
+ * `payload` sub-object so an Android widget can act on them (deep links,
+ * categories, recipients, …).
  */
 export interface AppNotificationPayload {
     title: string;
     message: string;
-    priority?: 'high';
-    ttlSeconds?: number;
-    /** Structured data for widgets / deep links. */
+    /** FCM priority. `'high'` triggers immediate delivery. */
+    priority?: 'high' | 'normal';
+    /** Time-to-live in seconds (cloud-side expiry). */
+    expire?: number;
+    /** Trait sub-payload forwarded to the app for widgets / deep links. */
     payload: {
-        id: string;
-        value: ioBroker.StateValue;
-        oldValue?: ioBroker.StateValue;
-        category?: string;
-        ack: boolean;
-        ts: number;
+        /** JSON-stringified array of device IDs (requires Visu App ≥ 1.4.0). */
+        devices?: string;
+        id?: string;
+        ack?: string;
+        value?: string;
+        oldValue?: string;
+        from?: string;
     };
 }
 
-const PLACEHOLDER_RE = /\{(id|value|val|oldValue|title)\}/g;
-
 /**
- * Substitute the supported placeholders in a message / title template.
- */
-function applyTemplate(
-    template: string,
-    ctx: { id: string; value: ioBroker.StateValue; oldValue: ioBroker.StateValue | undefined; title: string },
-): string {
-    return template.replace(PLACEHOLDER_RE, (_match, key: string) => {
-        switch (key) {
-            case 'id':
-                return ctx.id;
-            case 'value':
-            case 'val':
-                return ctx.value === null || ctx.value === undefined ? '' : String(ctx.value);
-            case 'oldValue':
-                return ctx.oldValue === null || ctx.oldValue === undefined ? '' : String(ctx.oldValue);
-            case 'title':
-                return ctx.title;
-            default:
-                return '';
-        }
-    });
-}
-
-/**
- * Decide which message text matches the new state value, or `null` if the
- * rule does not produce a message for it.
- */
-function pickMessage(rule: AppNotificationRule, value: ioBroker.StateValue): string | null {
-    const truthy = !!value;
-    if (truthy && rule.messageTrue) {
-        return rule.messageTrue;
-    }
-    if (!truthy && rule.messageFalse) {
-        return rule.messageFalse;
-    }
-    return rule.message ?? null;
-}
-
-/**
- * Build the JSON payload to send to the app for a given rule + state change.
- * Returns `null` if the rule has no message for this transition (the caller
- * should silently skip).
- */
-export function buildAppNotification(
-    rule: AppNotificationRule,
-    state: ioBroker.State,
-    oldValue: ioBroker.StateValue | undefined,
-): AppNotificationPayload | null {
-    const rawMessage = pickMessage(rule, state.val);
-    if (!rawMessage) {
-        return null;
-    }
-    const title = rule.title || 'ioBroker';
-    const ctx = { id: rule.id, value: state.val, oldValue, title };
-
-    const payload: AppNotificationPayload = {
-        title: applyTemplate(title, ctx),
-        message: applyTemplate(rawMessage, ctx),
-        payload: {
-            id: rule.id,
-            value: state.val,
-            oldValue,
-            category: rule.category,
-            ack: state.ack,
-            ts: state.ts ?? Date.now(),
-        },
-    };
-    if (rule.priority === 'high') {
-        payload.priority = 'high';
-    }
-    if (rule.ttlSeconds && rule.ttlSeconds > 0) {
-        payload.ttlSeconds = Math.min(rule.ttlSeconds, 3_600 * 48);
-    }
-    return payload;
-}
-
-/**
- * Returns `true` if this rule should fire for the given state change.
- */
-function shouldFire(
-    rule: AppNotificationRule,
-    state: ioBroker.State,
-    oldValue: ioBroker.StateValue | undefined,
-): boolean {
-    if (!state.ack && !rule.includeUnacked) {
-        return false;
-    }
-    switch (rule.trigger ?? 'change') {
-        case 'any':
-            return true;
-        case 'true':
-            return !!state.val && state.val !== oldValue;
-        case 'false':
-            return !state.val && state.val !== oldValue;
-        case 'change':
-        default:
-            return state.val !== oldValue;
-    }
-}
-
-/**
- * Manages a set of {@link AppNotificationRule}s: subscribes to the relevant
- * foreign states, remembers their last value, and dispatches a predefined
- * message (with id + value payload) via the adapter's existing
- * `sendMessageToApp()` whenever a rule matches.
+ * Manages a set of states that the user has marked for app-notifications
+ * via the standard ioBroker custom config (`obj.common.custom[<namespace>]`).
+ *
+ * Lifecycle:
+ *  1. {@link init} – called once on adapter start. Loads every existing
+ *     foreign object that has a non-empty `custom[namespace]`, builds a
+ *     {@link ManagedRule} cache, primes the `lastValue` from the current
+ *     state and subscribes to the foreign state.
+ *  2. {@link handleObjectChange} – called from the adapter's object-change
+ *     callback. Handles add / update / remove transitions in the cache and
+ *     keeps the subscriptions in sync.
+ *  3. {@link handleStateChange} – called from the adapter's state-change
+ *     callback. Filters according to the user settings and dispatches a
+ *     notification through {@link IotAdapter.sendMessageToApp}.
+ *  4. {@link destroy} – called from `unload`. Unsubscribes everything.
  *
  * Wiring in `main.ts`:
- *
  * ```ts
- * import { AppNotifications } from './lib/appNotifications';
- *
- * // in the constructor / main():
  * this.appNotifications = new AppNotifications(this);
- * await this.appNotifications.setRules(this.config.appNotifications ?? []);
+ * await this.appNotifications.init();
  *
- * // in stateChange:
- * void this.appNotifications?.handleStateChange(id, state);
- *
- * // in unload:
- * await this.appNotifications?.destroy();
+ * // in objectChange: void this.appNotifications.handleObjectChange(id, obj);
+ * // in stateChange:  void this.appNotifications.handleStateChange(id, state);
+ * // in unload:       await this.appNotifications.destroy();
  * ```
  */
 export class AppNotifications {
     private readonly adapter: IotAdapter;
-    private rules: Map<string, AppNotificationRule> = new Map();
-    private lastValues: Map<string, ioBroker.StateValue | undefined> = new Map();
+    private readonly rules: Map<string, ManagedRule> = new Map();
 
-    constructor(adapter: IotAdapter) {
+    constructor(adapter: IotAdapter, lang: ioBroker.Languages) {
         this.adapter = adapter;
+        I18n.init(`${__dirname}/../`, lang).catch(e => this.adapter.log.error(e));
+    }
+
+    /** Returns the custom block for this instance, or `undefined` if not enabled. */
+    private extractSettings(
+        obj: { [instance: string]: { enabled: boolean; [key: string]: any } } | null | undefined,
+    ): CustomSettings | undefined {
+        if (!obj) {
+            return undefined;
+        }
+        const custom = obj[this.adapter.namespace];
+        if (!custom) {
+            return undefined;
+        }
+        const settings = custom as unknown as CustomSettings;
+        return settings.enabled ? settings : undefined;
+    }
+
+    /** Derive the display title for an object from `common.name`. */
+    private resolveTitle(_settings: CustomSettings, obj: ioBroker.Object): string {
+        const name = obj.common?.name;
+        if (typeof name === 'object' && name) {
+            return name.en || name[Object.keys(name)[0] as keyof typeof name] || obj._id;
+        }
+        return name || obj._id;
     }
 
     /**
-     * Replace the active rule set. Subscribes to new foreign state ids and
-     * unsubscribes ones that are no longer referenced. Seeds the
-     * last-value cache so the first event after start doesn't spuriously
-     * fire as a "change".
+     * Initial scan executed once at adapter start. Locates every foreign
+     * object that has at least one `custom` entry, filters those that belong
+     * to this instance with `enabled === true`, primes the cache and
+     * subscribes to the corresponding states.
      */
-    async setRules(rules: AppNotificationRule[]): Promise<void> {
-        const next = new Map<string, AppNotificationRule>();
-        for (const rule of rules) {
-            if (!rule?.id) {
-                this.adapter.log.warn('[appNotifications] Skipping rule without id');
-                continue;
-            }
-            if (!rule.message && !rule.messageTrue && !rule.messageFalse) {
-                this.adapter.log.warn(`[appNotifications] Rule for "${rule.id}" has no message; skipping`);
-                continue;
-            }
-            next.set(rule.id, rule);
+    async init(): Promise<void> {
+        let view: ioBroker.GetObjectViewItem<ioBroker.StateObject>[] | undefined;
+        try {
+            const result = await this.adapter.getObjectViewAsync('system', 'custom', {});
+            view = result?.rows as ioBroker.GetObjectViewItem<ioBroker.StateObject>[] | undefined;
+        } catch (e) {
+            this.adapter.log.warn(`[appNotifications] Cannot enumerate custom objects: ${e as string}`);
+            return;
+        }
+        if (!view?.length) {
+            return;
         }
 
-        // unsubscribe removed
-        for (const id of this.rules.keys()) {
-            if (!next.has(id)) {
-                try {
-                    await this.adapter.unsubscribeForeignStatesAsync(id);
-                } catch (e) {
-                    this.adapter.log.warn(`[appNotifications] Cannot unsubscribe "${id}": ${e}`);
-                }
-                this.lastValues.delete(id);
+        for (const row of view) {
+            const id = row.id;
+            const custom = row.value as unknown as
+                | { [instance: string]: { enabled: boolean; [key: string]: any } }
+                | null
+                | undefined;
+            const settings = this.extractSettings(custom);
+            if (!settings || !custom) {
+                continue;
             }
-        }
-        // subscribe added & seed cache
-        for (const [id] of next) {
-            if (!this.rules.has(id)) {
-                try {
-                    await this.adapter.subscribeForeignStatesAsync(id);
-                } catch (e) {
-                    this.adapter.log.warn(`[appNotifications] Cannot subscribe to "${id}": ${e}`);
-                }
-                try {
-                    const current = await this.adapter.getForeignStateAsync(id);
-                    this.lastValues.set(id, current?.val);
-                } catch {
-                    this.lastValues.set(id, undefined);
-                }
+            const obj = await this.adapter.getForeignObjectAsync(id);
+            if (obj) {
+                await this.registerRule(id, obj, settings);
             }
         }
 
-        this.rules = next;
-        this.adapter.log.info(`[appNotifications] ${this.rules.size} rule(s) active`);
+        this.adapter.log.info(`[appNotifications] Tracking ${this.rules.size} state(s) for app notifications`);
     }
 
-    /** Currently active rules (copy). */
-    getRules(): AppNotificationRule[] {
-        return [...this.rules.values()];
+    /**
+     * Reconcile the rule cache when an object changes:
+     *  - object deleted (or custom block removed) → drop rule, unsubscribe
+     *  - custom block added for this instance      → register rule, subscribe
+     *  - existing rule was modified                → update settings in place
+     */
+    async handleObjectChange(id: string, obj: ioBroker.Object | null | undefined): Promise<void> {
+        const settings = this.extractSettings(obj?.common?.custom);
+        const existing = this.rules.get(id);
+
+        if (existing && (!obj || !settings)) {
+            await this.unregisterRule(id);
+            return;
+        }
+
+        if (!existing && obj && settings) {
+            await this.registerRule(id, obj, settings);
+            return;
+        }
+
+        if (existing && obj && settings) {
+            // In-place update. lastValue stays valid; subscription is unchanged.
+            existing.settings = settings;
+            existing.title = this.resolveTitle(settings, obj);
+            existing.type = (obj.common as ioBroker.StateCommon | undefined)?.type;
+        }
+    }
+
+    private async registerRule(id: string, obj: ioBroker.Object, settings: CustomSettings): Promise<void> {
+        try {
+            await this.adapter.subscribeForeignStatesAsync(id);
+        } catch (e) {
+            this.adapter.log.warn(`[appNotifications] Cannot subscribe to ${id}: ${e as string}`);
+            return;
+        }
+
+        let lastValue: ioBroker.StateValue | undefined;
+        try {
+            const state = await this.adapter.getForeignStateAsync(id);
+            lastValue = state?.val ?? undefined;
+        } catch {
+            lastValue = undefined;
+        }
+
+        this.rules.set(id, {
+            settings,
+            title: this.resolveTitle(settings, obj),
+            lastValue,
+            lastNotifiedValue: undefined,
+            type: (obj.common as ioBroker.StateCommon | undefined)?.type,
+        });
+        this.adapter.log.debug(`[appNotifications] Registered "${id}"`);
+    }
+
+    private async unregisterRule(id: string): Promise<void> {
+        if (!this.rules.has(id)) {
+            return;
+        }
+        try {
+            await this.adapter.unsubscribeForeignStatesAsync(id);
+        } catch {
+            // ignore — adapter may already be unloading
+        }
+        this.rules.delete(id);
+        this.adapter.log.debug(`[appNotifications] Unregistered "${id}"`);
     }
 
     /**
@@ -288,38 +255,145 @@ export class AppNotifications {
         if (!rule) {
             return;
         }
-        const oldValue = this.lastValues.get(id);
-        if (!shouldFire(rule, state, oldValue)) {
-            // keep cache fresh even when we don't notify
-            this.lastValues.set(id, state.val);
+        const oldValue = rule.lastValue;
+        rule.lastValue = state.val;
+
+        if (!this.shouldFire(rule, state, oldValue)) {
             return;
         }
 
-        const payload = buildAppNotification(rule, state, oldValue);
-        this.lastValues.set(id, state.val);
+        const payload = this.buildAppNotification(id, rule, state, oldValue);
         if (!payload) {
             return;
         }
+        rule.lastNotifiedValue = state.val;
         try {
             await this.adapter.sendMessageToApp(JSON.stringify(payload));
-            this.adapter.log.debug(
-                `[appNotifications] Sent "${payload.message}" for ${id}=${String(state.val)}`,
-            );
+            this.adapter.log.debug(`[appNotifications] Sent "${payload.message}" for ${id}=${String(state.val)}`);
         } catch (e) {
-            this.adapter.log.error(`[appNotifications] Cannot send notification for "${id}": ${e}`);
+            this.adapter.log.error(`[appNotifications] Cannot send notification for "${id}": ${e as string}`);
         }
+    }
+
+    private shouldFire(rule: ManagedRule, state: ioBroker.State, oldValue: ioBroker.StateValue | undefined): boolean {
+        const settings = rule.settings;
+
+        if (settings.reportChanges && state.val === oldValue) {
+            return false;
+        }
+
+        if (rule.type === 'boolean') {
+            if (settings.onlyTrue && !state.val) {
+                return false;
+            }
+            return !(settings.onlyFalse && state.val);
+        }
+
+        // Numeric debounce: suppress small jitter around the last notified level.
+        const delta = settings.debounceDifference;
+        if (delta !== undefined && delta > 0 && typeof state.val === 'number') {
+            const last = rule.lastNotifiedValue;
+            if (typeof last === 'number' && Math.abs(state.val - last) < delta) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private buildAppNotification(
+        id: string,
+        rule: ManagedRule,
+        state: ioBroker.State,
+        oldValue: ioBroker.StateValue | undefined,
+    ): AppNotificationPayload | null {
+        const message = this.formatMessage(rule, state.val);
+        if (!message) {
+            return null;
+        }
+
+        const titleTemplate = rule.settings.title?.trim();
+        const title = titleTemplate ? this.applyTemplate(titleTemplate, rule.title, state.val) : rule.title;
+
+        const result: AppNotificationPayload = {
+            title,
+            message,
+            payload: {
+                id,
+                value: state.val === null || state.val === undefined ? '' : String(state.val),
+                oldValue: oldValue === null || oldValue === undefined ? '' : String(oldValue),
+                ack: state.ack ? 'true' : 'false',
+            },
+        };
+
+        if (rule.settings.priority === 'high' || rule.settings.priority === 'normal') {
+            result.priority = rule.settings.priority;
+        }
+
+        if (rule.settings.expire !== undefined && rule.settings.expire > 0) {
+            // Cloud accepts both `expire` (seconds) and `ttlSeconds`. Use `expire` to match the
+            // app message documentation; sendMessageToApp() normalises both to `ttlSeconds`.
+            result.expire = Math.min(rule.settings.expire, 3_600 * 48);
+        }
+
+        const rawDevices = rule.settings.devices?.trim();
+        if (rawDevices) {
+            const devs = rawDevices
+                .split(',')
+                .map(d => d.trim())
+                .filter(d => d);
+            if (devs.length) {
+                // Visu App ≥ 1.4.0 expects payload.devices as a JSON-stringified array.
+                result.payload.devices = JSON.stringify(devs);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Pick the message text:
+     *  - boolean: use `onStatus` / `offStatus` (with `${name}` / `${value}` placeholders),
+     *    otherwise fall back to `<name>: ON|OFF`.
+     *  - other types: use `message` template (placeholders supported), otherwise fall back
+     *    to `<name>: <value>`.
+     */
+    private formatMessage(rule: ManagedRule, value: ioBroker.StateValue): string {
+        if (rule.type === 'boolean') {
+            const truthy = !!value;
+            const explicit = truthy ? rule.settings.onStatus : rule.settings.offStatus;
+            if (explicit) {
+                return this.applyTemplate(explicit, rule.title, value);
+            }
+            return `${rule.title}: ${truthy ? I18n.t('ON') : I18n.t('OFF')}`;
+        }
+
+        const template = rule.settings.message;
+        if (template) {
+            return this.applyTemplate(template, rule.title, value);
+        }
+        if (value === null || value === undefined) {
+            return `${rule.title}: -`;
+        }
+        return `${rule.title}: ${String(value)}`;
+    }
+
+    /** Substitute `${name}` and `${value}` placeholders in a message template. */
+    private applyTemplate(template: string, name: string, value: ioBroker.StateValue): string {
+        const v = value === null || value === undefined ? '' : String(value);
+        return template.replace(/\$\{name\}/g, name).replace(/\$\{value\}/g, v);
     }
 
     /** Unsubscribe everything. Call from the adapter's `unload`. */
     async destroy(): Promise<void> {
-        for (const id of this.rules.keys()) {
+        const ids = [...this.rules.keys()];
+        this.rules.clear();
+        for (const id of ids) {
             try {
                 await this.adapter.unsubscribeForeignStatesAsync(id);
             } catch {
                 // ignore
             }
         }
-        this.rules.clear();
-        this.lastValues.clear();
     }
 }

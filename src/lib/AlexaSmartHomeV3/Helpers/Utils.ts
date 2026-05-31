@@ -350,92 +350,101 @@ export async function controls(
     // here we collect ids to inspect
     const list: string[] = [];
 
+    const detectionMethod = (adapter.config as IotAdapterConfig).detectionMethod || 'enums';
+    const enumsMode = detectionMethod !== 'devices';
+
     // fetch all objects (states, channels and devices in terms of iobroker)
     const devicesObject = await allObjects(adapter);
 
-    adapter.log.debug(`[ALEXA3] Starting control detection with ${Object.keys(devicesObject).length} objects...`);
+    adapter.log.debug(
+        `[ALEXA3] Starting control detection with ${Object.keys(devicesObject).length} objects (mode: ${detectionMethod})...`,
+    );
     // fetch all defined rooms and functions (enumerations)
     const [functionalities, rooms] = await functionalitiesAndRooms(adapter, lang);
 
     adapter.log.debug(`[ALEXA3] Found ${functionalities.length} functionalities and ${rooms.length} rooms...`);
 
-    // every member of a function enumeration is added to the list of ids to inspect
-    functionalities.forEach(functionEnumItem => {
-        functionEnumItem?.common?.members?.forEach(id => {
-            if (!devicesObject[id]) {
-                // Enum has unknown member
-                return;
-            }
-            const smartName = getSmartNameFromObj(
-                devicesObject[id],
-                adapter.namespace,
-                lang,
-                (adapter.config as IotAdapterConfig).noCommon,
-            );
+    // In "devices" detection mode, skip enum-based auto-discovery — only states with
+    // explicit valid smartName are exposed (the user picks them individually in the Devices tab).
+    if (enumsMode) {
+        // every member of a function enumeration is added to the list of ids to inspect
+        functionalities.forEach(functionEnumItem => {
+            functionEnumItem?.common?.members?.forEach(id => {
+                if (!devicesObject[id]) {
+                    // Enum has unknown member
+                    return;
+                }
+                const smartName = getSmartNameFromObj(
+                    devicesObject[id],
+                    adapter.namespace,
+                    lang,
+                    (adapter.config as IotAdapterConfig).noCommon,
+                );
 
-            const objType = devicesObject[id].type;
-            if (
-                devicesObject[id].common &&
-                (objType === 'state' || objType === 'channel' || objType === 'device') &&
-                !list.includes(id) &&
-                smartName !== false // if the device is not disabled
-            ) {
-                const channelId = getChannelId(id, devicesObject);
-                if (channelId) {
-                    if (!list.includes(channelId)) {
-                        const deviceId = getDeviceId(id, devicesObject);
-                        if (deviceId) {
-                            if (!list.includes(deviceId)) {
+                const objType = devicesObject[id].type;
+                if (
+                    devicesObject[id].common &&
+                    (objType === 'state' || objType === 'channel' || objType === 'device') &&
+                    !list.includes(id) &&
+                    smartName !== false // if the device is not disabled
+                ) {
+                    const channelId = getChannelId(id, devicesObject);
+                    if (channelId) {
+                        if (!list.includes(channelId)) {
+                            const deviceId = getDeviceId(id, devicesObject);
+                            if (deviceId) {
+                                if (!list.includes(deviceId)) {
+                                    list.push(id);
+                                }
+                            } else {
                                 list.push(id);
                             }
-                        } else {
-                            list.push(id);
                         }
+                    } else {
+                        list.push(id);
                     }
-                } else {
-                    list.push(id);
                 }
-            }
+            });
         });
-    });
 
-    // a member of a room enumeration is only added if neither its parent (channel) nor its grandparent (device) is in
-    rooms.forEach(roomEnumItem => {
-        roomEnumItem.common.members?.forEach(id => {
-            if (!devicesObject[id]) {
-                return;
-            }
-            const smartName = getSmartNameFromObj(
-                devicesObject[id],
-                adapter.namespace,
-                lang,
-                (adapter.config as IotAdapterConfig).noCommon,
-            );
-            const objType = devicesObject[id].type;
-            if (
-                devicesObject[id].common &&
-                (objType === 'state' || objType === 'channel' || objType === 'device') &&
-                !list.includes(id) &&
-                smartName !== false // if the device is not disabled
-            ) {
-                const channelId = getChannelId(id, devicesObject);
-                if (channelId) {
-                    if (!list.includes(channelId)) {
-                        const deviceId = getDeviceId(id, devicesObject);
-                        if (deviceId) {
-                            if (!list.includes(deviceId)) {
+        // a member of a room enumeration is only added if neither its parent (channel) nor its grandparent (device) is in
+        rooms.forEach(roomEnumItem => {
+            roomEnumItem.common.members?.forEach(id => {
+                if (!devicesObject[id]) {
+                    return;
+                }
+                const smartName = getSmartNameFromObj(
+                    devicesObject[id],
+                    adapter.namespace,
+                    lang,
+                    (adapter.config as IotAdapterConfig).noCommon,
+                );
+                const objType = devicesObject[id].type;
+                if (
+                    devicesObject[id].common &&
+                    (objType === 'state' || objType === 'channel' || objType === 'device') &&
+                    !list.includes(id) &&
+                    smartName !== false // if the device is not disabled
+                ) {
+                    const channelId = getChannelId(id, devicesObject);
+                    if (channelId) {
+                        if (!list.includes(channelId)) {
+                            const deviceId = getDeviceId(id, devicesObject);
+                            if (deviceId) {
+                                if (!list.includes(deviceId)) {
+                                    list.push(id);
+                                }
+                            } else {
                                 list.push(id);
                             }
-                        } else {
-                            list.push(id);
                         }
+                    } else {
+                        list.push(id);
                     }
-                } else {
-                    list.push(id);
                 }
-            }
+            });
         });
-    });
+    }
 
     // all ids, i.e. ids of all iobroker states/channels/devices
     const keys = Object.keys(devicesObject).sort();

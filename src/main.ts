@@ -6,13 +6,12 @@ import { deflateSync } from 'node:zlib';
 
 import AlexaSH3 from './lib/alexaSmartHomeV3';
 import AlexaCustom, { type AlexaCustomResponse } from './lib/alexaCustom';
-// @ts-expect-error no types
 import GoogleHome from './lib/googleHome';
-// @ts-expect-error no types
 import YandexAlisa from './lib/alisa';
 import Remote, { type SOCKET_MESSAGE, type SOCKET_TRUNK } from './lib/remote';
 import { handleGeofenceData, handleDevicesData, handleSendToAdapter, handleGetInstances } from './lib/visuApp';
 import { buildMessageFromNotification } from './lib/notifications';
+import { AppNotifications } from './lib/appNotifications';
 import type { IotAdapterConfig } from './lib/types';
 
 const NONE = '___none___';
@@ -42,6 +41,7 @@ class IotAdapter extends Adapter {
     private yandexAlisa: YandexAlisa | null = null;
     private remote: Remote | null = null;
     private device: DeviceModule | null = null;
+    private appNotifications: AppNotifications | null = null;
     private urlKey: { key: string } | null = null;
 
     private connectedOwn = false;
@@ -84,6 +84,7 @@ class IotAdapter extends Adapter {
                     return;
                 }
                 void this.alexaSH3?.handleObjectChange(id, obj);
+                void this.appNotifications?.handleObjectChange(id, obj);
 
                 if (id) {
                     this.remote?.updateObject(id, obj);
@@ -102,6 +103,7 @@ class IotAdapter extends Adapter {
                     void this.googleHome?.updateState(id, state);
                     void this.alexaSH3?.handleStateUpdate(id, state);
                     void this.yandexAlisa?.updateState?.(id, state);
+                    void this.appNotifications?.handleStateChange(id, state);
                 }
 
                 if (id) {
@@ -126,6 +128,10 @@ class IotAdapter extends Adapter {
                     if (this.alexaSH3) {
                         await this.alexaSH3.destroy();
                     }
+                    if (this.appNotifications) {
+                        await this.appNotifications.destroy();
+                        this.appNotifications = null;
+                    }
                 } catch {
                     // ignore
                 }
@@ -146,7 +152,7 @@ class IotAdapter extends Adapter {
                                     await this.setStateAsync('smart.updates3', 1, true);
                                 }
 
-                                this.googleHome?.updateDevices(async (analyseAddedId: any): Promise<void> => {
+                                void this.googleHome?.updateDevices(async (analyseAddedId: any): Promise<void> => {
                                     await this.setStateAsync('smart.updatesResult', analyseAddedId || '', true);
                                     this.log.debug('GH Devices updated!');
                                     await this.setStateAsync('smart.updatesGH', true, true);
@@ -171,7 +177,7 @@ class IotAdapter extends Adapter {
                             if (obj.callback) {
                                 this.log.info('Request google home devices');
                                 if (this.googleHome) {
-                                    this.googleHome.updateDevices(() => {
+                                    void this.googleHome.updateDevices(() => {
                                         this.sendTo(obj.from, obj.command, this.googleHome!.getDevices(), obj.callback);
                                         void this.setStateAsync('smart.updatesGH', false, true);
                                     });
@@ -185,7 +191,7 @@ class IotAdapter extends Adapter {
                             if (obj.callback) {
                                 this.log.info('Request Yandex Alice devices');
                                 if (this.yandexAlisa) {
-                                    this.yandexAlisa.updateDevices(() => {
+                                    void this.yandexAlisa.updateDevices(() => {
                                         this.sendTo(
                                             obj.from,
                                             obj.command,
@@ -329,7 +335,8 @@ class IotAdapter extends Adapter {
                                 if (obj.callback) {
                                     this.sendTo(obj.from, 'sendNotification', { sent: true }, obj.callback);
                                 }
-                            } catch {
+                            } catch (e) {
+                                this.log.error(`Cannot forward notification to app: ${e as string}`);
                                 if (obj.callback) {
                                     this.sendTo(obj.from, 'sendNotification', { sent: false }, obj.callback);
                                 }
@@ -474,14 +481,36 @@ class IotAdapter extends Adapter {
             throw new Error('Empty message');
         }
 
-        const response = await axios.post('https://app-message.iobroker.in/', json, {
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${Buffer.from(`${this.config.login}:${this.config.pass}`).toString('base64')}`,
-            },
-            timeout: 5_000,
-            validateStatus: status => status < 400,
-        });
+        let response;
+        try {
+            response = await axios.post('https://app-message.iobroker.in/', json, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${Buffer.from(`${this.config.login}:${this.config.pass}`).toString('base64')}`,
+                },
+                timeout: 5_000,
+                validateStatus: status => status < 400,
+            });
+        } catch (error) {
+            // Surface the cloud's response body — `error.toString()` alone would only show
+            // "Request failed with status code 4xx" and hide what the server actually said.
+            const err = error as {
+                response?: { status?: number; statusText?: string; data?: unknown };
+                request?: unknown;
+                message?: string;
+            };
+            let detail: string;
+            if (err.response) {
+                const body = err.response.data;
+                const bodyText = body === undefined ? '' : typeof body === 'string' ? body : JSON.stringify(body);
+                detail = `HTTP ${err.response.status}${err.response.statusText ? ` ${err.response.statusText}` : ''}${bodyText ? ` — ${bodyText}` : ''}`;
+            } else if (err.request) {
+                detail = 'No response from cloud (network error / timeout)';
+            } else {
+                detail = err.message || 'Unknown error';
+            }
+            throw new Error(`app-message endpoint rejected the message: ${detail}`);
+        }
         await this.setState('app.message', message, true);
         this.log.debug(`Message sent: ${JSON.stringify(response.data)}`);
     }
@@ -964,7 +993,7 @@ class IotAdapter extends Adapter {
             this.log.debug(`[GHOME] request: ${JSON.stringify(request)}`);
 
             if (this.googleHome) {
-                return this.googleHome.process(request, this.config.googleHome);
+                return this.googleHome.process(request, this.config.googleHome) as any;
             }
             return { error: 'Service is disabled' };
         } else if (type.startsWith('alisa')) {
@@ -1560,6 +1589,9 @@ class IotAdapter extends Adapter {
 
         this.remote = new Remote(this, this.config.login.replace(/[^-_:a-zA-Z1-9]/g, '_'));
 
+        this.appNotifications = new AppNotifications(this, this.lang);
+        await this.appNotifications.init();
+
         this.config.allowedServices = ((this.config.allowedServices as string) || '')
             .split(/[,\s]+/)
             .map(s => s.trim())
@@ -1715,10 +1747,10 @@ class IotAdapter extends Adapter {
         }
 
         this.googleHome?.setLanguage(this.lang);
-        this.googleHome?.updateDevices();
+        await this.googleHome?.updateDevices();
 
         this.yandexAlisa?.setLanguage(this.lang);
-        this.yandexAlisa?.updateDevices();
+        await this.yandexAlisa?.updateDevices();
 
         await this.subscribeStatesAsync('app.message');
     }

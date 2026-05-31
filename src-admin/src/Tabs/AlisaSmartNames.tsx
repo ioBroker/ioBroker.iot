@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 
 import {
     TextField,
@@ -14,6 +13,7 @@ import {
     Fab,
     Box,
 } from '@mui/material';
+import type { IconType } from 'react-icons';
 
 import {
     MdEdit as IconEdit,
@@ -42,21 +42,36 @@ import {
 
 import { FileCopy as IconCopy, Close as IconClose, Check as IconCheck } from '@mui/icons-material';
 
-import { Utils, I18n, DialogMessage, DialogSelectID } from '@iobroker/adapter-react-v5';
+import {
+    Utils,
+    I18n,
+    DialogMessage,
+    DialogSelectID,
+    type AdminConnection,
+    type IobTheme,
+    type ThemeType,
+} from '@iobroker/adapter-react-v5';
+
+import type { IotAdapterConfig } from '../types';
 
 const colorOn = '#aba613';
 const colorOff = '#444';
 const colorSet = '#00c6ff';
 const colorRGB = '#ff7ee3';
 const colorRead = '#00bc00';
-// const colorThermometer = '#bc1600';
 const CHANGED_COLOR = '#e7000040';
 const DEFAULT_CHANNEL_COLOR_DARK = '#4f4f4f';
 const DEFAULT_CHANNEL_COLOR_LIGHT = '#e9e9e9';
 const LAST_CHANGED_COLOR_DARK = '#5c8f65';
 const LAST_CHANGED_COLOR_LIGHT = '#b4ffbe';
 
-const actionsMapping = {
+interface AlisaActionConfig {
+    color: string;
+    icon: IconType;
+    desc: string;
+}
+
+const actionsMapping: Record<string, AlisaActionConfig> = {
     OnOff: { color: colorOn, icon: IconOn, desc: 'On/Off' },
     Brightness: { color: colorSet, icon: IconBulb, desc: 'Dimmer' },
     RGB: { color: colorRGB, icon: IconBulb, desc: 'Set color' },
@@ -86,9 +101,9 @@ const actionsMapping = {
     getContact: { color: colorRead, icon: IconContact, desc: 'Get contact' },
 };
 
-// const SMARTTYPES = ['LIGHT', 'SWITCH', 'THERMOSTAT', 'ACTIVITY_TRIGGER', 'SCENE_TRIGGER', 'SMARTPLUG', 'SMARTLOCK', 'CAMERA', 'THERMOSTAT.AC', 'VACUUM_CLEANER'];
+let actionsTranslated = false;
 
-const styles = {
+const styles: Record<string, any> = {
     tab: {
         width: '100%',
         height: '100%',
@@ -187,7 +202,6 @@ const styles = {
         display: 'inline-block',
         fontSize: 13,
         paddingLeft: 70,
-        // width: 'calc(100% - 400px)'
     },
     devSubSubLine: {
         fontSize: 10,
@@ -218,7 +232,7 @@ const styles = {
     devSubLineTypeTitle: {
         marginTop: 0,
     },
-    headerRow: theme => ({
+    headerRow: (theme: IobTheme): React.CSSProperties => ({
         paddingLeft: theme.spacing(1),
         background: theme.palette.primary.main,
     }),
@@ -234,13 +248,76 @@ const styles = {
     },
 };
 
-class AlisaDevices extends Component {
-    constructor(props) {
+interface AlisaDeviceAttribute {
+    name: string;
+    getId?: string | null;
+    setId?: string | null;
+}
+
+interface AlisaDevice {
+    name: string;
+    main: { getId: string | null; setId: string | null };
+    attributes: AlisaDeviceAttribute[];
+    actions: string[];
+    iobID: string;
+    description: string;
+    room?: string;
+    func: string;
+}
+
+interface BrowseResponseError {
+    error: string;
+}
+
+type BrowseResponse = AlisaDevice[] | BrowseResponseError;
+
+interface AlisaSmartNamesProps {
+    socket: AdminConnection;
+    adapterName: string;
+    instance: number;
+    native: IotAdapterConfig;
+    onError: (text: string | Error) => void;
+    themeType: ThemeType;
+    theme: IobTheme;
+    common?: ioBroker.AdapterCommon | null;
+    title?: string;
+}
+
+interface AlisaSmartNamesState {
+    editedSmartName: string;
+    editId: string;
+    editObjectName: string;
+    deleteId: string;
+    showSelectId: boolean;
+    showConfirmation: boolean;
+    changed: string[];
+    devices: AlisaDevice[];
+    message: string;
+    filter: string;
+    loading: boolean;
+    browse: boolean;
+    expanded: string[];
+    lastChanged: string;
+    showListOfDevices?: boolean;
+}
+
+export default class AlisaDevices extends Component<AlisaSmartNamesProps, AlisaSmartNamesState> {
+    private timerChanged: ReturnType<typeof setTimeout> | null = null;
+    private browseTimer: ReturnType<typeof setTimeout> | null = null;
+    private browseTimerCount = 0;
+    private editedSmartName: string | null = '';
+    private waitForUpdateID: string | null = null;
+    private lastBrowse = 0;
+    private devTimer: ReturnType<typeof setTimeout> | null = null;
+    private readonly onReadyUpdateBound: (id: string, state: ioBroker.State | null | undefined) => void;
+    private readonly onResultUpdateBound: (id: string, state: ioBroker.State | null | undefined) => void;
+
+    constructor(props: AlisaSmartNamesProps) {
         super(props);
 
-        if (!actionsMapping.translated) {
+        if (!actionsTranslated) {
             Object.keys(actionsMapping).forEach(a => (actionsMapping[a].desc = I18n.t(actionsMapping[a].desc)));
-            actionsMapping.translated = true;
+            actionsTranslated = true;
         }
 
         this.state = {
@@ -248,9 +325,8 @@ class AlisaDevices extends Component {
             editId: '',
             editObjectName: '',
             deleteId: '',
-
             showSelectId: false,
-            showConfirmation: '',
+            showConfirmation: false,
             changed: [],
             devices: [],
             message: '',
@@ -261,29 +337,29 @@ class AlisaDevices extends Component {
             lastChanged: '',
         };
 
-        this.timerChanged = null;
-        this.browseTimer = null;
-        this.browseTimerCount = 0;
-        this.editedSmartName = '';
-
-        this.waitForUpdateID = null;
         this.onReadyUpdateBound = this.onReadyUpdate.bind(this);
         this.onResultUpdateBound = this.onResultUpdate.bind(this);
 
-        this.props.socket.getObject(`system.adapter.${this.props.adapterName}.${this.props.instance}`).then(obj => {
-            this.props.socket
-                .getState(`system.adapter.${this.props.adapterName}.${this.props.instance}.alive`)
-                .then(state => {
-                    if (!obj || !obj.common || (!obj.common.enabled && (!state || !state.val))) {
-                        this.setState({ message: I18n.t('Instance must be enabled'), loading: false, devices: [] });
-                    } else {
-                        this.browse();
-                    }
-                });
-        });
+        void this.props.socket
+            .getObject(`system.adapter.${this.props.adapterName}.${this.props.instance}`)
+            .then(obj => {
+                void this.props.socket
+                    .getState(`system.adapter.${this.props.adapterName}.${this.props.instance}.alive`)
+                    .then(state => {
+                        if (!obj?.common || (!obj.common.enabled && !state?.val)) {
+                            this.setState({
+                                message: I18n.t('Instance must be enabled'),
+                                loading: false,
+                                devices: [],
+                            });
+                        } else {
+                            this.browse();
+                        }
+                    });
+            });
     }
 
-    browse(isIndicate) {
+    browse(isIndicate?: boolean): void {
         if (Date.now() - this.lastBrowse < 500) {
             return;
         }
@@ -306,37 +382,50 @@ class AlisaDevices extends Component {
             }
         }, 10000);
 
-        this.props.socket.sendTo(`${this.props.adapterName}.${this.props.instance}`, 'browseAlisa', null).then(list => {
-            this.browseTimer && clearTimeout(this.browseTimer);
-            this.browseTimerCount = 0;
-            this.browseTimer = null;
+        void this.props.socket
+            .sendTo(`${this.props.adapterName}.${this.props.instance}`, 'browseAlisa', null)
+            .then((list: BrowseResponse) => {
+                if (this.browseTimer) {
+                    clearTimeout(this.browseTimer);
+                }
+                this.browseTimerCount = 0;
+                this.browseTimer = null;
 
-            if (list && list.error) {
-                this.setState({ message: I18n.t(list.error) });
-            } else {
+                if ((list as BrowseResponseError)?.error) {
+                    this.setState({ message: I18n.t((list as BrowseResponseError).error) });
+                    return;
+                }
+
+                const devices = list as AlisaDevice[];
                 if (this.waitForUpdateID) {
-                    if (!this.onEdit(this.waitForUpdateID, list)) {
+                    if (!this.onEdit(this.waitForUpdateID, devices)) {
                         this.setState({ message: I18n.t('Device %s was not added', this.waitForUpdateID) });
                     }
                     this.waitForUpdateID = null;
                 }
 
                 this.setState({
-                    devices: list,
+                    devices,
                     loading: false,
                     changed: [],
                     browse: false,
                 });
-            }
-        }).catch(error => {
-            this.browseTimer && clearTimeout(this.browseTimer);
-            this.browseTimerCount = 0;
-            this.browseTimer = null;
-            this.setState({ message: error?.toString() || I18n.t('Cannot read devices!'), browse: false, loading: false });
-        });
+            })
+            .catch((error: unknown) => {
+                if (this.browseTimer) {
+                    clearTimeout(this.browseTimer);
+                }
+                this.browseTimerCount = 0;
+                this.browseTimer = null;
+                this.setState({
+                    message: (error as Error)?.toString() || I18n.t('Cannot read devices!'),
+                    browse: false,
+                    loading: false,
+                });
+            });
     }
 
-    onReadyUpdate(id, state) {
+    onReadyUpdate = (_id: string, state: ioBroker.State | null | undefined): void => {
         if (state && state.ack === true && state.val === true) {
             if (this.devTimer) {
                 clearTimeout(this.devTimer);
@@ -346,24 +435,26 @@ class AlisaDevices extends Component {
                 this.browse();
             }, 300);
         }
-    }
+    };
 
-    onResultUpdate(id, state) {
-        state && state.ack === true && state.val && this.setState({ message: state.val });
-    }
+    onResultUpdate = (_id: string, state: ioBroker.State | null | undefined): void => {
+        if (state && state.ack === true && state.val) {
+            this.setState({ message: state.val as string });
+        }
+    };
 
-    componentDidMount() {
-        this.props.socket.subscribeState(
+    componentDidMount(): void {
+        void this.props.socket.subscribeState(
             `${this.props.adapterName}.${this.props.instance}.smart.updates`,
             this.onReadyUpdateBound,
         );
-        this.props.socket.subscribeState(
+        void this.props.socket.subscribeState(
             `${this.props.adapterName}.${this.props.instance}.smart.updatesResult`,
             this.onResultUpdateBound,
         );
     }
 
-    componentWillUnmount() {
+    componentWillUnmount(): void {
         this.props.socket.unsubscribeState(
             `${this.props.adapterName}.${this.props.instance}.smart.updates`,
             this.onReadyUpdateBound,
@@ -378,67 +469,56 @@ class AlisaDevices extends Component {
         }
     }
 
-    informInstance(id) {
-        this.props.socket.sendTo(`${this.props.adapterName}.${this.props.instance}`, 'update', id);
+    informInstance(id: string): void {
+        void this.props.socket.sendTo(`${this.props.adapterName}.${this.props.instance}`, 'update', id);
     }
 
-    addChanged(id, cb) {
-        const changed = JSON.parse(JSON.stringify(this.state.changed));
+    addChanged(id: string, cb?: () => void): void {
+        const changed = [...this.state.changed];
         if (!changed.includes(id)) {
             changed.push(id);
-            this.setState({ changed }, () => cb && cb());
+            this.setState({ changed }, () => cb?.());
         } else {
-            cb && cb();
+            cb?.();
         }
     }
 
-    /*
-    removeChanged(id) {
-        const changed = JSON.parse(JSON.stringify(this.state.changed));
-        const pos = changed.indexOf(id);
-
-        if (pos !== -1) {
-            changed.splice(pos, 1);
-            this.setState({ changed });
+    onEdit(id: string, devices?: AlisaDevice[]): boolean {
+        const list = devices || this.state.devices;
+        const device = list.find(dev => dev.iobID === id);
+        if (!device) {
+            return false;
         }
-    }
-    */
-
-    onEdit(id, devices) {
-        devices = devices || this.state.devices;
-        const device = devices.find(dev => dev.iobID === id);
-        if (device) {
-            /* this.props.socket.getObject(id)
-                .then(obj => { */
-            let smartName = device.name;
-            if (typeof smartName === 'object' && smartName) {
-                smartName = smartName[I18n.getLanguage()] || smartName.en;
-            }
-            this.editedSmartName = smartName;
-            this.setState({
-                editId: id,
-                editedSmartName: smartName,
-                editObjectName: smartName, // Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() })
-            });
-            //                });
-            return true;
+        let smartName: unknown = device.name;
+        if (smartName && typeof smartName === 'object') {
+            const obj = smartName as ioBroker.Translated;
+            smartName = obj[I18n.getLanguage()] || obj.en || '';
         }
-        return false;
+        const nameStr = (smartName as string) || '';
+        this.editedSmartName = nameStr;
+        this.setState({
+            editId: id,
+            editedSmartName: nameStr,
+            editObjectName: nameStr,
+        });
+        return true;
     }
 
-    onAskDelete(deleteId) {
+    onAskDelete(deleteId: string): void {
         this.setState({ deleteId, showConfirmation: true });
     }
 
-    onDelete() {
+    onDelete(): void {
         const id = this.state.deleteId;
-        // const device = this.state.devices.find(dev => dev.additionalApplianceDetails.id === id);
         this.addChanged(id, () => {
             this.props.socket
                 .getObject(id)
                 .then(obj => {
+                    if (!obj) {
+                        return undefined;
+                    }
                     Utils.disableSmartName(
-                        obj,
+                        obj as ioBroker.StateObject,
                         `${this.props.adapterName}.${this.props.instance}`,
                         this.props.native.noCommon,
                     );
@@ -447,22 +527,22 @@ class AlisaDevices extends Component {
                 .then(() => {
                     this.setState({ deleteId: '', showConfirmation: false, lastChanged: id });
 
-                    this.timerChanged && clearTimeout(this.timerChanged);
+                    if (this.timerChanged) {
+                        clearTimeout(this.timerChanged);
+                    }
                     this.timerChanged = setTimeout(() => {
                         this.setState({ lastChanged: '' });
                         this.timerChanged = null;
                     }, 30000);
 
-                    // update obj
                     this.informInstance(id);
                 })
-                .catch(err => this.props.onError(err));
+                .catch(err => this.props.onError(err as Error));
         });
     }
 
-    static renderActions(dev) {
-        // Type
-        const actions = [];
+    static renderActions(dev: AlisaDevice): React.JSX.Element[] | null {
+        const actions: React.JSX.Element[] = [];
         if (!dev.actions) {
             console.log('Something went wrong');
             return null;
@@ -494,7 +574,6 @@ class AlisaDevices extends Component {
                 );
             }
         });
-        // add unknown actions
         for (let a = 0; a < dev.actions.length; a++) {
             if (!actionsMapping[dev.actions[a]]) {
                 actions.push(<span key={dev.actions[a]}>{dev.actions[a]}</span>);
@@ -503,8 +582,8 @@ class AlisaDevices extends Component {
         return actions;
     }
 
-    onExpand(lineNum) {
-        const expanded = JSON.parse(JSON.stringify(this.state.expanded));
+    onExpand(lineNum: number): void {
+        const expanded = [...this.state.expanded];
         const pos = expanded.indexOf(this.state.devices[lineNum].name);
         if (pos === -1) {
             expanded.push(this.state.devices[lineNum].name);
@@ -514,59 +593,11 @@ class AlisaDevices extends Component {
         this.setState({ expanded });
     }
 
-    /*
-    onParamsChange(id, byON, type) {
-        this.addChanged(id, () => {
-            this.props.socket.getObject(id)
-                .then(obj => {
-                    Utils.updateSmartName(obj, undefined, byON, type, `${this.props.adapterName}.${this.props.instance}`, this.props.native.noCommon);
-
-                    if (this.state.lastChanged !== id) {
-                        this.setState({ lastChanged: id });
-                        this.timerChanged && clearTimeout(this.timerChanged);
-                        this.timerChanged = setTimeout(() => {
-                            this.setState({ lastChanged: '' });
-                            this.timerChanged = null;
-                        }, 30000);
-                    }
-
-                    return this.props.socket.setObject(id, obj);
-                })
-                .then(() => {
-                    // update obj
-                    this.informInstance(id);
-                })
-                .catch(err => this.props.onError(err));
-        });
-    }
-
-    renderSelectType(dev, lineNum, id, type) {
-        if (type !== false) {
-            const items = [<MenuItem key="_" value="_"><em>{I18n.t('no type')}</em></MenuItem>];
-            for (let i = 0; i < SMARTTYPES.length; i++) {
-                items.push(<MenuItem key={SMARTTYPES[i]} value={SMARTTYPES[i]}><em>{I18n.t(SMARTTYPES[i])}</em></MenuItem>);
-            }
-            return <FormControl variant="standard">
-                <Select variant="standard" value={type || '_'} onChange={e => this.onParamsChange(id, undefined, e.target.value)}>{items}</Select>
-                <FormHelperText style={styles.devSubLineTypeTitle}>{I18n.t('Types')}</FormHelperText>
-            </FormControl>;
-        }
-        return '';
-    }
-    */
-
-    renderChannels(dev, lineNum) {
-        const result = [];
+    renderChannels(dev: AlisaDevice, lineNum: number): React.JSX.Element[] {
+        const result: React.JSX.Element[] = [];
         const id = dev.main.getId || dev.iobID;
         const name = dev.func;
-        const background =
-            this.props.themeType === 'dark'
-                ? DEFAULT_CHANNEL_COLOR_DARK
-                : DEFAULT_CHANNEL_COLOR_LIGHT; /* this.state.changed.includes(id) ? CHANGED_COLOR : DEFAULT_CHANNEL_COLOR;
-        if (this.state.lastChanged === id && background === DEFAULT_CHANNEL_COLOR) {
-            background = LAST_CHANGED_COLOR;
-        }
-        */
+        const background = this.props.themeType === 'dark' ? DEFAULT_CHANNEL_COLOR_DARK : DEFAULT_CHANNEL_COLOR_LIGHT;
         result.push(
             <div
                 key={`sub${id}_${lineNum}`}
@@ -599,51 +630,18 @@ class AlisaDevices extends Component {
             );
         });
 
-        /* if (dev.additionalApplianceDetails.group) {
-            const channels   = dev.additionalApplianceDetails.channels;
-            const names      = dev.additionalApplianceDetails.names;
-            const types      = dev.additionalApplianceDetails.byONs;
-            const smarttypes = dev.additionalApplianceDetails.smartTypes;
-
-            let c = 0;
-            for (const chan in channels) {
-                if (channels.hasOwnProperty(chan)) {
-                    for (let i = 0; i < channels[chan].length; i++) {
-                        const id = channels[chan][i].id;
-                        let background = this.state.changed.indexOf(id) !== -1 ? CHANGED_COLOR : DEFAULT_CHANNEL_COLOR;
-                        if (this.state.lastChanged === id && background === DEFAULT_CHANNEL_COLOR) {
-                            background = LAST_CHANGED_COLOR;
-                        }
-                        result.push(<div key={'sub' + id} style={styles.devSubLine} style={(c % 2) ? {} : {background}}>
-                            <div style={{ ...styles.devLineActions, ...styles.channelLineActions }}>{AlisaSmartNames.renderActions(channels[chan][i])}</div>
-                            <div style={styles.devSubLineName} title={id}>{(names[id] || id)}
-                                {id !== names[id] ? <span style={styles.devSubSubLineName}>{id}</span> : null}
-                            </div>
-                            {this.renderSelectType(dev, lineNum, id, smarttypes[id])}
-                            {this.renderSelectByOn(dev, lineNum, id, types[id])}
-                            <IconButton aria-label="Delete" style={styles.devSubLineDelete} onClick={() => this.onAskDelete(id, lineNum)}><IconDelete fontSize="middle" /></IconButton>
-                        </div>);
-                        c++;
-                    }
-                }
-            }
-        } else {
-        } */
         return result;
     }
 
-    renderDevice(dev, lineNum) {
-        // return <div key={lineNum}>{JSON.stringify(dev)}</div>;
+    renderDevice(dev: AlisaDevice, lineNum: number): React.ReactNode[] {
         const expanded = this.state.expanded.includes(dev.name);
-        let background = lineNum % 2 ? (this.props.themeType === 'dark' ? '#272727' : '#f1f1f1') : 'inherit';
+        let background: string = lineNum % 2 ? (this.props.themeType === 'dark' ? '#272727' : '#f1f1f1') : 'inherit';
         const changed = this.state.changed.includes(dev.iobID);
         if (changed) {
             background = CHANGED_COLOR;
         } else if (dev.iobID === this.state.lastChanged) {
             background = this.props.themeType === 'dark' ? LAST_CHANGED_COLOR_DARK : LAST_CHANGED_COLOR_LIGHT;
         }
-
-        // const isComplex = dev.
 
         return [
             <div
@@ -684,21 +682,21 @@ class AlisaDevices extends Component {
                     style={styles.devLineEdit}
                     onClick={() => this.onEdit(dev.iobID)}
                 >
-                    <IconEdit fontSize="middle" />
+                    <IconEdit fontSize="medium" />
                 </IconButton>
                 <IconButton
                     aria-label="Delete"
                     style={styles.devLineDelete}
                     onClick={() => this.onAskDelete(dev.iobID)}
                 >
-                    <IconDelete fontSize="middle" />
+                    <IconDelete fontSize="medium" />
                 </IconButton>
             </div>,
             expanded ? this.renderChannels(dev, lineNum) : null,
         ];
     }
 
-    renderMessage() {
+    renderMessage(): React.JSX.Element | null {
         if (this.state.message) {
             return (
                 <DialogMessage
@@ -710,14 +708,15 @@ class AlisaDevices extends Component {
         return null;
     }
 
-    changeSmartName(e) {
-        e && e.preventDefault();
-        // Check if the name is duplicate
+    changeSmartName(e?: React.SyntheticEvent): void {
+        e?.preventDefault();
         this.addChanged(this.state.editId, () => {
             const id = this.state.editId;
             this.setState({ editId: '', editObjectName: '', lastChanged: id });
 
-            this.timerChanged && clearTimeout(this.timerChanged);
+            if (this.timerChanged) {
+                clearTimeout(this.timerChanged);
+            }
             this.timerChanged = setTimeout(() => {
                 this.setState({ lastChanged: '' });
                 this.timerChanged = null;
@@ -726,173 +725,180 @@ class AlisaDevices extends Component {
             this.props.socket
                 .getObject(id)
                 .then(obj => {
-                    Utils.updateSmartNameEx(obj, {
-                        smartName: this.editedSmartName,
+                    if (!obj) {
+                        return undefined;
+                    }
+                    Utils.updateSmartNameEx(obj as ioBroker.StateObject, {
+                        smartName: this.editedSmartName ?? '',
                         instanceId: `${this.props.adapterName}.${this.props.instance}`,
                         noCommon: this.props.native.noCommon,
                     });
                     return this.props.socket.setObject(id, obj);
                 })
-                // update obj
                 .then(() => this.informInstance(id))
-                .catch(err => this.props.onError(err));
+                .catch(err => this.props.onError(err as Error));
         });
     }
 
-    renderEditDialog() {
-        if (this.state.editId) {
-            return (
-                <Dialog
-                    open={!0}
-                    maxWidth="sm"
-                    fullWidth
-                    onClose={() => {
-                        this.editedSmartName = null;
-                        this.setState({ editId: '', editedSmartName: '' });
-                    }}
-                    aria-labelledby="message-dialog-title"
-                    aria-describedby="message-dialog-description"
-                >
-                    <DialogTitle id="message-dialog-title">
-                        {this.props.title || I18n.t('Smart name for %s', this.state.editObjectName)}
-                    </DialogTitle>
-                    <DialogContent>
-                        <p>
-                            <span>ID:</span> <span style={styles.editedId}>{this.state.editId}</span>
-                        </p>
-                        <TextField
-                            variant="standard"
-                            style={{ width: '100%' }}
-                            label={I18n.t('Smart name')}
-                            autoFocus
-                            onKeyDown={e => e.key === 'Enter' && this.changeSmartName(e)}
-                            onChange={e => (this.editedSmartName = e.target.value)}
-                            defaultValue={this.state.editedSmartName}
-                            helperText={I18n.t('You can enter several names divided by comma')}
-                            margin="normal"
-                        />
-                    </DialogContent>
-                    <DialogActions>
-                        <Button
-                            variant="contained"
-                            onClick={() => this.changeSmartName()}
-                            color="primary"
-                            startIcon={<IconCheck />}
-                        >
-                            {I18n.t('Ok')}
-                        </Button>
-                        <Button
-                            variant="contained"
-                            startIcon={<IconClose />}
-                            color="grey"
-                            onClick={() => {
-                                this.editedSmartName = null;
-                                this.setState({ editId: '', editedSmartName: '' });
-                            }}
-                        >
-                            {I18n.t('Cancel')}
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-            );
+    renderEditDialog(): React.JSX.Element | null {
+        if (!this.state.editId) {
+            return null;
         }
-        return null;
+        return (
+            <Dialog
+                open={!0}
+                maxWidth="sm"
+                fullWidth
+                onClose={() => {
+                    this.editedSmartName = null;
+                    this.setState({ editId: '', editedSmartName: '' });
+                }}
+                aria-labelledby="message-dialog-title"
+                aria-describedby="message-dialog-description"
+            >
+                <DialogTitle id="message-dialog-title">
+                    {this.props.title || I18n.t('Smart name for %s', this.state.editObjectName)}
+                </DialogTitle>
+                <DialogContent>
+                    <p>
+                        <span>ID:</span> <span style={styles.editedId}>{this.state.editId}</span>
+                    </p>
+                    <TextField
+                        variant="standard"
+                        style={{ width: '100%' }}
+                        label={I18n.t('Smart name')}
+                        autoFocus
+                        onKeyDown={e => e.key === 'Enter' && this.changeSmartName(e)}
+                        onChange={e => (this.editedSmartName = e.target.value)}
+                        defaultValue={this.state.editedSmartName}
+                        helperText={I18n.t('You can enter several names divided by comma')}
+                        margin="normal"
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        variant="contained"
+                        onClick={() => this.changeSmartName()}
+                        color="primary"
+                        startIcon={<IconCheck />}
+                    >
+                        {I18n.t('Ok')}
+                    </Button>
+                    <Button
+                        variant="contained"
+                        startIcon={<IconClose />}
+                        color="grey"
+                        onClick={() => {
+                            this.editedSmartName = null;
+                            this.setState({ editId: '', editedSmartName: '' });
+                        }}
+                    >
+                        {I18n.t('Cancel')}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        );
     }
 
-    renderConfirmDialog() {
-        if (this.state.showConfirmation) {
-            return (
-                <Dialog
-                    open={!0}
-                    maxWidth="sm"
-                    fullWidth
-                    onClose={() => this.setState({ showConfirmation: '' })}
-                    aria-labelledby="confirmation-dialog-title"
-                    aria-describedby="confirmation-dialog-description"
-                >
-                    <DialogTitle id="confirmation-dialog-title">
-                        {this.props.title || I18n.t('Device %s will be disabled.', this.state.deleteId)}
-                    </DialogTitle>
-                    <DialogContent>
-                        <p>{I18n.t('Are you sure?')}</p>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button
-                            variant="contained"
-                            onClick={() => this.onDelete()}
-                            color="primary"
-                            autoFocus
-                            startIcon={<IconDelete />}
-                        >
-                            {I18n.t('Delete')}
-                        </Button>
-                        <Button
-                            color="grey"
-                            variant="contained"
-                            onClick={() => this.setState({ showConfirmation: '' })}
-                            startIcon={<IconClose />}
-                        >
-                            {I18n.t('Cancel')}
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-            );
+    renderConfirmDialog(): React.JSX.Element | null {
+        if (!this.state.showConfirmation) {
+            return null;
         }
-        return null;
+        return (
+            <Dialog
+                open={!0}
+                maxWidth="sm"
+                fullWidth
+                onClose={() => this.setState({ showConfirmation: false })}
+                aria-labelledby="confirmation-dialog-title"
+                aria-describedby="confirmation-dialog-description"
+            >
+                <DialogTitle id="confirmation-dialog-title">
+                    {this.props.title || I18n.t('Device %s will be disabled.', this.state.deleteId)}
+                </DialogTitle>
+                <DialogContent>
+                    <p>{I18n.t('Are you sure?')}</p>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        variant="contained"
+                        onClick={() => this.onDelete()}
+                        color="primary"
+                        autoFocus
+                        startIcon={<IconDelete />}
+                    >
+                        {I18n.t('Delete')}
+                    </Button>
+                    <Button
+                        color="grey"
+                        variant="contained"
+                        onClick={() => this.setState({ showConfirmation: false })}
+                        startIcon={<IconClose />}
+                    >
+                        {I18n.t('Cancel')}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        );
     }
 
-    getSelectIdDialog() {
-        if (this.state.showSelectId) {
-            return (
-                <DialogSelectID
-                    theme={this.props.theme}
-                    key="dialogSelectAlisa"
-                    imagePrefix="../.."
-                    socket={this.props.socket}
-                    selected=""
-                    types={['state']}
-                    onClose={() => this.setState({ showSelectId: false })}
-                    onOk={(selected /* , name */) => {
-                        this.setState({ showSelectId: false });
-
-                        this.props.socket.getObject(selected).then(obj => {
-                            if (obj) {
-                                const name = Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() });
-                                Utils.updateSmartNameEx(obj, {
-                                    smartName: (name || I18n.t('Device name')).replace(/[-_.]+/g, ' '),
-                                    instanceId: `${this.props.adapterName}.${this.props.instance}`,
-                                    noCommon: this.props.native.noCommon,
-                                });
-                                this.addChanged(obj._id);
-                                this.waitForUpdateID = obj._id;
-
-                                if (this.state.lastChanged !== obj._id) {
-                                    this.setState({ lastChanged: obj._id });
-                                    this.timerChanged && clearTimeout(this.timerChanged);
-                                    this.timerChanged = setTimeout(() => {
-                                        this.setState({ lastChanged: '' });
-                                        this.timerChanged = null;
-                                    }, 30000);
-                                }
-
-                                this.props.socket
-                                    .setObject(obj._id, obj)
-                                    .then(() => this.informInstance(obj._id))
-                                    .catch(err => this.setState({ message: err }));
-                            } else {
-                                this.setState({ message: I18n.t('Invalid ID') });
-                            }
+    getSelectIdDialog(): React.JSX.Element | null {
+        if (!this.state.showSelectId) {
+            return null;
+        }
+        return (
+            <DialogSelectID
+                theme={this.props.theme}
+                key="dialogSelectAlisa"
+                imagePrefix="../.."
+                socket={this.props.socket}
+                selected=""
+                types={['state']}
+                onClose={() => this.setState({ showSelectId: false })}
+                onOk={(selected: string | string[] | undefined): void => {
+                    this.setState({ showSelectId: false });
+                    const selectedId = Array.isArray(selected) ? selected[0] : selected;
+                    if (!selectedId) {
+                        return;
+                    }
+                    void this.props.socket.getObject(selectedId).then(obj => {
+                        if (!obj) {
+                            this.setState({ message: I18n.t('Invalid ID') });
+                            return;
+                        }
+                        const name = Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() });
+                        Utils.updateSmartNameEx(obj as ioBroker.StateObject, {
+                            smartName: (name || I18n.t('Device name')).replace(/[-_.]+/g, ' '),
+                            instanceId: `${this.props.adapterName}.${this.props.instance}`,
+                            noCommon: this.props.native.noCommon,
                         });
-                    }}
-                />
-            );
-        }
-        return null;
+                        this.addChanged(obj._id);
+                        this.waitForUpdateID = obj._id;
+
+                        if (this.state.lastChanged !== obj._id) {
+                            this.setState({ lastChanged: obj._id });
+                            if (this.timerChanged) {
+                                clearTimeout(this.timerChanged);
+                            }
+                            this.timerChanged = setTimeout(() => {
+                                this.setState({ lastChanged: '' });
+                                this.timerChanged = null;
+                            }, 30000);
+                        }
+
+                        this.props.socket
+                            .setObject(obj._id, obj)
+                            .then(() => this.informInstance(obj._id))
+                            .catch(err => this.setState({ message: (err as Error)?.toString() || String(err) }));
+                    });
+                }}
+            />
+        );
     }
 
-    renderDevices() {
+    renderDevices(): React.JSX.Element {
         const filter = this.state.filter.toLowerCase();
-        const result = [];
+        const result: React.ReactNode[] = [];
         for (let i = 0; i < this.state.devices.length; i++) {
             if (this.state.filter && !this.state.devices[i].name.toLowerCase().includes(filter)) {
                 continue;
@@ -909,7 +915,7 @@ class AlisaDevices extends Component {
         );
     }
 
-    renderListOfDevices() {
+    renderListOfDevices(): React.JSX.Element | null {
         if (!this.state.showListOfDevices) {
             return null;
         }
@@ -970,7 +976,7 @@ class AlisaDevices extends Component {
         );
     }
 
-    render() {
+    render(): React.JSX.Element {
         if (this.state.loading) {
             return <CircularProgress key="alexaProgress" />;
         }
@@ -1035,18 +1041,3 @@ class AlisaDevices extends Component {
         );
     }
 }
-
-AlisaDevices.propTypes = {
-    //    common: PropTypes.object.isRequired,
-    native: PropTypes.object.isRequired,
-    instance: PropTypes.number.isRequired,
-    adapterName: PropTypes.string.isRequired,
-    onError: PropTypes.func,
-    //    onLoad: PropTypes.func,
-    //    onChange: PropTypes.func,
-    socket: PropTypes.object.isRequired,
-    themeType: PropTypes.string,
-    theme: PropTypes.object,
-};
-
-export default AlisaDevices;

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 
 import {
     useMediaQuery,
@@ -18,7 +17,15 @@ import {
 
 import { FileCopy as IconCopy, Close as IconClose } from '@mui/icons-material';
 
-import { Utils, IconExpert as ExpertIcon, I18n, DialogSelectID, DialogMessage } from '@iobroker/adapter-react-v5';
+import {
+    Utils,
+    IconExpert as ExpertIcon,
+    I18n,
+    DialogSelectID,
+    DialogMessage,
+    type AdminConnection,
+    type IobTheme,
+} from '@iobroker/adapter-react-v5';
 
 import {
     MdAdd as IconAdd,
@@ -29,8 +36,9 @@ import {
 } from 'react-icons/md';
 
 import TreeTable from '../Components/TreeTable';
+import type { IotAdapterConfig } from '../types';
 
-const styles = {
+const styles: Record<string, any> = {
     tab: {
         height: '100%',
         overflow: 'hidden',
@@ -45,8 +53,8 @@ const styles = {
         marginLeft: 8,
         verticalAlign: 'middle',
     },
-    headerRow: theme => ({
-        pl: 1,
+    headerRow: (theme: IobTheme): React.CSSProperties => ({
+        paddingLeft: theme.spacing(1),
         background: theme.palette.primary.main,
     }),
     headerCell: {
@@ -59,13 +67,128 @@ const styles = {
         verticalAlign: 'top',
         width: '30%',
     },
+    button: {
+        // empty placeholder used inline below
+    },
 };
 
 const MOBILE_HEIGHT = 400;
 const MOBILE_WIDTH = 400;
 
-class GoogleSmartNames extends Component {
-    constructor(props) {
+// SmartName as it can appear inside obj.common.smartName, with Google-Home-specific fields.
+interface GHSmartName {
+    [lang: string]: string | string[] | undefined;
+    ghType?: string;
+    ghTraits?: string[];
+    ghAttributes?: string;
+    ghConv2GH?: string;
+    ghConv2iob?: string;
+}
+
+interface GHDeviceName {
+    defaultNames?: string[];
+    name?: string;
+    nicknames?: string | string[];
+}
+
+// A device row as returned by the backend's getDevices() (mirror of GHDevice in src/lib/googleHome.ts).
+interface GHDevice {
+    id: string;
+    type?: string;
+    traits?: string[];
+    displayTraits?: string | string[];
+    attributes?: Record<string, unknown>;
+    displayAttributes?: string;
+    name?: GHDeviceName;
+    willReportState?: boolean;
+    roomHint?: string;
+    deviceInfo?: { manufacturer?: string; model?: string };
+    customData?: Record<string, string | undefined>;
+    smartEnum?: string;
+    ioType?: string;
+    parentId?: string;
+    conv2GH?: Record<string, string> | string;
+    displayConv2GH?: string;
+    conv2iob?: Record<string, string> | string;
+    displayConv2iob?: string;
+    otherDeviceIds?: { deviceId: string }[];
+    merged?: boolean;
+    common?: { smartName?: GHSmartName };
+    _id?: string;
+}
+
+interface BrowseResponseError {
+    error: string;
+}
+type BrowseResponse = GHDevice[] | BrowseResponseError;
+
+interface EditCellProps {
+    value: string;
+    onChange: (value: string) => void;
+}
+
+// Extends the TreeTable column type with local-only fields (expertMode + editComponent).
+interface TreeTableColumn {
+    field: string;
+    title: string;
+    editable?: 'never';
+    lookup?: Record<string, string>;
+    cellStyle?: React.CSSProperties;
+    expertMode?: boolean;
+    editComponent?: (props: EditCellProps) => React.JSX.Element;
+}
+
+interface GoogleSmartNamesProps {
+    socket: AdminConnection;
+    adapterName: string;
+    instance: number;
+    native: IotAdapterConfig;
+    onError: (text: string | Error) => void;
+    theme: IobTheme;
+    themeType?: 'light' | 'dark';
+    common?: ioBroker.AdapterCommon | null;
+    smallDisplay?: boolean;
+    title?: string;
+}
+
+interface GoogleSmartNamesState {
+    editedSmartName: string;
+    editId: string;
+    editObjectName: string;
+    deleteId: string;
+    expertMode: boolean;
+    helpHidden: boolean;
+    hideHelp?: boolean;
+    showSelectId: boolean;
+    searchText: string;
+    showConfirmation: boolean;
+    changed: string[];
+    devices: GHDevice[];
+    message: string;
+    filter: string;
+    loading: boolean;
+    browse: boolean;
+    expanded: string[];
+    lastChanged: string;
+    helpHeight: number;
+    showListOfDevices?: boolean;
+}
+
+class GoogleSmartNames extends Component<GoogleSmartNamesProps, GoogleSmartNamesState> {
+    private timerChanged: ReturnType<typeof setTimeout> | null = null;
+    private browseTimer: ReturnType<typeof setTimeout> | null = null;
+    private browseTimerCount = 0;
+    private editedSmartName: string | string[] = '';
+    private waitForUpdateID: string | null = null;
+    private lastBrowse = 0;
+    private devTimer: ReturnType<typeof setTimeout> | null = null;
+    private readonly onReadyUpdateBound: (id: string, state: ioBroker.State | null | undefined) => void;
+    private readonly onResultUpdateBound: (id: string, state: ioBroker.State | null | undefined) => void;
+    private readonly helpRef = React.createRef<HTMLDivElement>();
+
+    private readonly columns: TreeTableColumn[];
+
+    constructor(props: GoogleSmartNamesProps) {
         super(props);
 
         this.state = {
@@ -78,7 +201,7 @@ class GoogleSmartNames extends Component {
             helpHidden: window.localStorage.getItem('App.helpHidden') === 'true',
             showSelectId: false,
             searchText: '',
-            showConfirmation: '',
+            showConfirmation: false,
             changed: [],
             devices: [],
             message: '',
@@ -163,22 +286,15 @@ class GoogleSmartNames extends Component {
                 title: I18n.t('Function/Trait'),
                 field: 'displayTraits',
                 lookup: {
-                    // 'action.devices.traits.ArmDisarm':   'ArmDisarm',
                     'action.devices.traits.Brightness': 'Brightness',
-                    // 'action.devices.traits.CameraStream': 'CameraStream',
                     'action.devices.traits.ColorSetting_temperature': 'ColorSetting_Temperature',
                     'action.devices.traits.ColorSetting_spectrumRGB': 'ColorSetting_RGB',
-                    // 'action.devices.traits.Dock':        'Dock',
                     'action.devices.traits.FanSpeed': 'FanSpeed',
-                    // 'action.devices.traits.LightEffects': 'LightEffects',
-                    // 'action.devices.traits.Locator':     'Locator',
                     'action.devices.traits.LockUnlock': 'LockUnlock',
                     'action.devices.traits.Modes': 'Modes',
                     'action.devices.traits.OnOff': 'OnOff',
                     'action.devices.traits.OpenClose': 'OpenClose',
-                    // 'action.devices.traits.RunCycle':    'RunCycle',
                     'action.devices.traits.Scene': 'Scene',
-                    // 'action.devices.traits.Sensor':      'Sensor',
                     'action.devices.traits.StartStop': 'StartStop',
                     'action.devices.traits.TemperatureControl_temperatureSetpointCelsius': 'Oven_SetTemp',
                     'action.devices.traits.TemperatureControl_temperatureAmbientCelsius': 'Oven_StatusTemp',
@@ -186,7 +302,6 @@ class GoogleSmartNames extends Component {
                     'action.devices.traits.TemperatureSetting_thermostatTemperatureSetpoint': 'Thermostat_SetTemp',
                     'action.devices.traits.TemperatureSetting_thermostatTemperatureAmbient': 'Thermostat_StatusTemp',
                     'action.devices.traits.TemperatureSetting_thermostatHumidityAmbient': 'Thermostat_StatusHumidity',
-                    // 'action.devices.traits.Timer':       'Timer',
                     'action.devices.traits.Toggles': 'Toggles',
                     'action.devices.traits.Volume': 'Volume',
                 },
@@ -238,22 +353,19 @@ class GoogleSmartNames extends Component {
             },
         ];
 
-        this.timerChanged = null;
-        this.browseTimer = null;
-        this.browseTimerCount = 0;
-        this.editedSmartName = '';
-
-        this.waitForUpdateID = null;
         this.onReadyUpdateBound = this.onReadyUpdate.bind(this);
         this.onResultUpdateBound = this.onResultUpdate.bind(this);
-        this.helpRef = React.createRef();
 
-        this.props.socket.getObject(`system.adapter.${this.props.adapterName}.${this.props.instance}`).then(obj =>
+        void this.props.socket.getObject(`system.adapter.${this.props.adapterName}.${this.props.instance}`).then(obj =>
             this.props.socket
                 .getState(`system.adapter.${this.props.adapterName}.${this.props.instance}.alive`)
                 .then(state => {
-                    if (!obj || !obj.common || (!obj.common.enabled && (!state || !state.val))) {
-                        this.setState({ message: I18n.t('Instance must be enabled'), loading: false, devices: [] });
+                    if (!obj?.common || (!obj.common.enabled && !state?.val)) {
+                        this.setState({
+                            message: I18n.t('Instance must be enabled'),
+                            loading: false,
+                            devices: [],
+                        });
                     } else {
                         this.browse();
                     }
@@ -261,7 +373,7 @@ class GoogleSmartNames extends Component {
         );
     }
 
-    static editDisplayConv2GH(props) {
+    static editDisplayConv2GH(props: EditCellProps): React.JSX.Element {
         return (
             <div>
                 Conversation to Google Home = function(value)&#123;
@@ -277,7 +389,7 @@ class GoogleSmartNames extends Component {
         );
     }
 
-    static editDisplayConv2iob(props) {
+    static editDisplayConv2iob(props: EditCellProps): React.JSX.Element {
         return (
             <div>
                 Conversation to ioBroker = function(value)&#123;
@@ -293,7 +405,7 @@ class GoogleSmartNames extends Component {
         );
     }
 
-    static editDisplayAttributesComponent(props) {
+    static editDisplayAttributesComponent(props: EditCellProps): React.JSX.Element {
         return (
             <textarea
                 rows={4}
@@ -304,7 +416,7 @@ class GoogleSmartNames extends Component {
         );
     }
 
-    browse(isIndicate) {
+    browse(isIndicate?: boolean): void {
         if (Date.now() - this.lastBrowse < 500) {
             return;
         }
@@ -326,36 +438,42 @@ class GoogleSmartNames extends Component {
             }
         }, 10000);
 
-        this.props.socket
+        void this.props.socket
             .sendTo(`${this.props.adapterName}.${this.props.instance}`, 'browseGH', null)
-            .then(list => {
-                this.browseTimer && clearTimeout(this.browseTimer);
+            .then((list: BrowseResponse) => {
+                if (this.browseTimer) {
+                    clearTimeout(this.browseTimer);
+                }
                 this.browseTimerCount = 0;
                 this.browseTimer = null;
 
-                if (list && list.error) {
-                    this.setState({ message: I18n.t(list.error) });
-                } else {
-                    if (this.waitForUpdateID) {
-                        if (!this.onEdit(this.waitForUpdateID, list)) {
-                            this.setState({ message: I18n.t('Device %s was not added', this.waitForUpdateID) });
-                        }
-                        this.waitForUpdateID = null;
-                    }
-
-                    this.setState({
-                        devices: list,
-                        loading: false,
-                        changed: [],
-                        browse: false,
-                    });
+                if ((list as BrowseResponseError)?.error) {
+                    this.setState({ message: I18n.t((list as BrowseResponseError).error) });
+                    return;
                 }
+
+                const devices = list as GHDevice[];
+                if (this.waitForUpdateID) {
+                    if (!this.onEdit(this.waitForUpdateID, devices)) {
+                        this.setState({ message: I18n.t('Device %s was not added', this.waitForUpdateID) });
+                    }
+                    this.waitForUpdateID = null;
+                }
+
+                this.setState({
+                    devices,
+                    loading: false,
+                    changed: [],
+                    browse: false,
+                });
             })
-            .catch(error => this.setState({ message: I18n.t(error), browse: false }));
+            .catch((error: unknown) =>
+                this.setState({ message: I18n.t((error as Error)?.toString() || ''), browse: false }),
+            );
     }
 
-    onReadyUpdate(id, state) {
-        console.log(`Update ${id} ${state ? `${state.val}/${state.ack}` : 'null'}`);
+    onReadyUpdate(id: string, state: ioBroker.State | null | undefined): void {
+        console.log(`Update ${id} ${state ? `${String(state.val)}/${String(state.ack)}` : 'null'}`);
         if (state && state.ack === true && state.val === true) {
             if (this.devTimer) {
                 clearTimeout(this.devTimer);
@@ -367,22 +485,24 @@ class GoogleSmartNames extends Component {
         }
     }
 
-    onResultUpdate(state) {
-        state && state.ack === true && state.val && this.setState({ message: state.val });
+    onResultUpdate(_id: string, state: ioBroker.State | null | undefined): void {
+        if (state && state.ack === true && state.val) {
+            this.setState({ message: state.val as string });
+        }
     }
 
-    componentDidMount() {
-        this.props.socket.subscribeState(
+    componentDidMount(): void {
+        void this.props.socket.subscribeState(
             `${this.props.adapterName}.${this.props.instance}.smart.updatesGH`,
             this.onReadyUpdateBound,
         );
-        this.props.socket.subscribeState(
+        void this.props.socket.subscribeState(
             `${this.props.adapterName}.${this.props.instance}.smart.updatesResult`,
             this.onResultUpdateBound,
         );
     }
 
-    componentWillUnmount() {
+    componentWillUnmount(): void {
         this.props.socket.unsubscribeState(
             `${this.props.adapterName}.${this.props.instance}.smart.updatesGH`,
             this.onReadyUpdateBound,
@@ -397,62 +517,56 @@ class GoogleSmartNames extends Component {
         }
     }
 
-    informInstance(id) {
-        this.props.socket.sendTo(`${this.props.adapterName}.${this.props.instance}`, 'update', id);
+    informInstance(id: string): void {
+        void this.props.socket.sendTo(`${this.props.adapterName}.${this.props.instance}`, 'update', id);
     }
 
-    addChanged(id, cb) {
-        const changed = JSON.parse(JSON.stringify(this.state.changed));
+    addChanged(id: string, cb?: () => void): void {
+        const changed = [...this.state.changed];
         if (!changed.includes(id)) {
             changed.push(id);
-            this.setState({ changed }, () => cb && cb());
+            this.setState({ changed }, () => cb?.());
         } else {
-            cb && cb();
+            cb?.();
         }
     }
 
-    /*
-    removeChanged(id) {
-        const changed = JSON.parse(JSON.stringify(this.state.changed));
-        const pos = changed.indexOf(id);
-
-        if (pos !== -1) {
-            changed.splice(pos, 1);
-            this.setState({ changed });
+    onEdit(id: string, devices?: GHDevice[]): boolean {
+        const list = devices || this.state.devices;
+        const device = list.find(dev => dev.id === id);
+        if (!device) {
+            return false;
         }
-    }
-    */
-
-    onEdit(id, devices) {
-        devices = devices || this.state.devices;
-        const device = devices.find(dev => dev.id === id);
-        if (device) {
-            this.props.socket.getObject(id).then(obj => {
-                let smartName = device.common && device.common.smartName ? device.common.smartName : device._id;
-                if (typeof smartName === 'object' && smartName) {
-                    smartName = smartName[I18n.getLanguage()] || smartName.en;
-                }
-                this.editedSmartName = smartName;
-                this.setState({
-                    editId: id,
-                    editedSmartName: smartName,
-                    editObjectName: Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() }),
-                });
+        void this.props.socket.getObject(id).then(obj => {
+            const smartNameSource = device.common?.smartName ?? device._id;
+            let smartName: string | string[] = '';
+            if (smartNameSource && typeof smartNameSource === 'object') {
+                const t = smartNameSource as ioBroker.Translated;
+                smartName = t[I18n.getLanguage()] || t.en || '';
+            } else {
+                smartName = (smartNameSource as string) || '';
+            }
+            this.editedSmartName = smartName;
+            this.setState({
+                editId: id,
+                editedSmartName: smartName,
+                editObjectName: Utils.getObjectNameFromObj(obj!, null, { language: I18n.getLanguage() }),
             });
-            return true;
-        }
-        return false;
+        });
+        return true;
     }
 
-    onDelete() {
+    onDelete(): void {
         const id = this.state.deleteId;
-        // const device = this.state.devices.find(dev => dev.additionalApplianceDetails.id === id);
         this.addChanged(id, () => {
             this.props.socket
                 .getObject(id)
                 .then(obj => {
+                    if (!obj) {
+                        return undefined;
+                    }
                     Utils.disableSmartName(
-                        obj,
+                        obj as ioBroker.StateObject,
                         `${this.props.adapterName}.${this.props.instance}`,
                         this.props.native.noCommon,
                     );
@@ -461,226 +575,164 @@ class GoogleSmartNames extends Component {
                 .then(() => {
                     this.setState({ deleteId: '', showConfirmation: false, lastChanged: id });
 
-                    this.timerChanged && clearTimeout(this.timerChanged);
+                    if (this.timerChanged) {
+                        clearTimeout(this.timerChanged);
+                    }
                     this.timerChanged = setTimeout(() => {
                         this.setState({ lastChanged: '' });
                         this.timerChanged = null;
                     }, 30000);
 
-                    // update obj
                     this.informInstance(id);
                 })
-                .catch(err => this.props.onError(err));
+                .catch(err => this.props.onError(err as Error));
         });
     }
 
-    /*
-    renderSelectByOn(id, type) {
-        // type = '-', 'stored', false or number [5-100]
-        if (type !== false) {
-            const items = [
-                <MenuItem key="_" value=""><em>{I18n.t('Default')}</em></MenuItem>,
-                <MenuItem key="last" value="stored">{I18n.t('last value')}</MenuItem>,
-            ];
-            for (let i = 5; i <= 100; i += 5) {
-                items.push(<MenuItem key={i.toString()} value={i.toString()}>
-                    {i}
-%
-                </MenuItem>);
-            }
-            return <FormControl style={styles.devSubLineByOn} variant="standard">
-                <Select variant="standard" style={styles.devSubLineByOnSelect} value={(type || '').toString()} onChange={e => this.onParamsChange(id, e.target.value)}>{items}</Select>
-                <FormHelperText style={styles.devSubLineTypeTitle}>{I18n.t('by ON')}</FormHelperText>
-            </FormControl>;
-        }
-        return null;
-    }
-
-    onParamsChange(id, byON, type) {
-        this.addChanged(id, () => {
-            this.props.socket.getObject(id)
-                .then(obj => {
-                    Utils.updateSmartName(obj, undefined, byON, type, `${this.props.adapterName}.${this.props.instance}`, this.props.native.noCommon);
-
-                    if (this.state.lastChanged !== id) {
-                        this.setState({ lastChanged: id });
-                        this.timerChanged && clearTimeout(this.timerChanged);
-                        this.timerChanged = setTimeout(() => {
-                            this.setState({ lastChanged: '' });
-                            this.timerChanged = null;
-                        }, 30000);
-                    }
-
-                    return this.props.socket.setObject(id, obj);
-                })
-                // update obj
-                .then(() => this.informInstance(id))
-                .catch(err => this.props.onError(err));
-        });
-    }
-    */
-
-    onGHParamsChange(newData, oldData) {
+    onGHParamsChange(newData: GHDevice, oldData: GHDevice): void {
         this.addChanged(newData.id, () => {
             this.props.socket
                 .getObject(newData.id)
                 .then(obj => {
-                    if (!obj || !obj.common) {
-                        return this.setState({ message: I18n.t('Object %s is invalid. No common found.', newData.id) });
+                    if (!obj?.common) {
+                        this.setState({ message: I18n.t('Object %s is invalid. No common found.', newData.id) });
+                        return undefined;
                     }
-                    //  id, newData.type, newData.displayTraits, newData.displayAttributes
-                    Utils.updateSmartNameEx(obj, {
-                        smartName: this.editedSmartName,
+                    Utils.updateSmartNameEx(obj as ioBroker.StateObject, {
+                        smartName: Array.isArray(this.editedSmartName)
+                            ? this.editedSmartName.join(',')
+                            : this.editedSmartName,
                         instanceId: `${this.props.adapterName}.${this.props.instance}`,
                         noCommon: this.props.native.noCommon,
                     });
 
+                    const common = obj.common as ioBroker.StateCommon & { smartName?: GHSmartName };
+                    common.smartName ||= {};
+                    const smartName = common.smartName as GHSmartName;
+
                     if (JSON.stringify(newData.displayTraits) !== JSON.stringify(oldData.displayTraits)) {
                         if (!Array.isArray(newData.displayTraits)) {
-                            newData.displayTraits = [newData.displayTraits];
+                            newData.displayTraits = [newData.displayTraits as string];
                         }
-
-                        obj.common.smartName.ghTraits = newData.displayTraits;
+                        smartName.ghTraits = newData.displayTraits;
                     }
                     if (newData.type !== oldData.type) {
-                        obj.common.smartName.ghType = newData.type;
+                        smartName.ghType = newData.type;
                     }
                     if (newData.displayAttributes !== oldData.displayAttributes) {
-                        obj.common.smartName.ghAttributes = newData.displayAttributes;
+                        smartName.ghAttributes = newData.displayAttributes;
                         try {
-                            if (obj.common.smartName.ghAttributes) {
-                                JSON.parse(obj.common.smartName.ghAttributes);
+                            if (smartName.ghAttributes) {
+                                JSON.parse(smartName.ghAttributes);
                             }
-                        } catch (error) {
+                        } catch {
                             this.setState({ message: I18n.t('Attributes has not correct JSON format.') });
                         }
                     }
                     if (newData.conv2GH) {
-                        obj.common.smartName.ghConv2GH = newData.displayConv2GH;
+                        smartName.ghConv2GH = newData.displayConv2GH;
                     }
                     if (newData.conv2iob) {
-                        obj.common.smartName.ghConv2iob = newData.displayConv2iob;
+                        smartName.ghConv2iob = newData.displayConv2iob;
                     }
                     return this.props.socket.setObject(newData.id, obj);
                 })
-                // update obj
                 .then(() => this.informInstance(newData.id))
-                .catch(err => this.props.onError(err));
+                .catch(err => this.props.onError(err as Error));
         });
     }
 
-    renderMessage() {
-        if (this.state.message) {
-            return (
-                <DialogMessage
-                    text={this.state.message}
-                    onClose={() => this.setState({ message: '' })}
-                />
-            );
+    renderMessage(): React.JSX.Element | null {
+        if (!this.state.message) {
+            return null;
         }
-        return null;
+        return (
+            <DialogMessage
+                text={this.state.message}
+                onClose={() => this.setState({ message: '' })}
+            />
+        );
     }
 
-    /*
-    changeSmartName(e) {
-        e && e.preventDefault();
-        // Check if the name is duplicate
-        this.addChanged(this.state.editId, () => {
-            const id = this.state.editId;
-            this.setState({ editId: '', editObjectName: '', lastChanged: id });
+    getSelectIdDialog(): React.JSX.Element | null {
+        if (!this.state.showSelectId) {
+            return null;
+        }
+        return (
+            <DialogSelectID
+                key="dialogSelectGoogle"
+                theme={this.props.theme}
+                imagePrefix="../.."
+                socket={this.props.socket}
+                selected=""
+                types={['state']}
+                onClose={() => this.setState({ showSelectId: false })}
+                onOk={(selected: string | string[] | undefined): void => {
+                    this.setState({ showSelectId: false });
+                    const selectedId = Array.isArray(selected) ? selected[0] : selected;
+                    if (!selectedId) {
+                        return;
+                    }
 
-            this.timerChanged && clearTimeout(this.timerChanged);
-            this.timerChanged = setTimeout(() => {
-                this.setState({ lastChanged: '' });
-                this.timerChanged = null;
-            }, 30000);
+                    void this.props.socket.getObject(selectedId).then(obj => {
+                        if (!obj) {
+                            this.setState({ message: I18n.t('Invalid ID') });
+                            return;
+                        }
+                        if (!obj.common) {
+                            this.setState({
+                                message: I18n.t('Object %s is invalid. No common found.', selectedId),
+                            });
+                            return;
+                        }
 
-            this.props.socket.getObject(id)
-                .then(obj => {
-                    Utils.updateSmartName(obj, this.editedSmartName, undefined, undefined, `${this.props.adapterName}.${this.props.instance}`, this.props.native.noCommon);
-                    return this.props.socket.setObject(id, obj);
-                })
-                // update obj
-                .then(() => this.informInstance(id))
-                .catch(err => this.props.onError(err));
-        });
-    }
-    */
-
-    getSelectIdDialog() {
-        if (this.state.showSelectId) {
-            return (
-                <DialogSelectID
-                    key="dialogSelectGoogle"
-                    theme={this.props.theme}
-                    imagePrefix="../.."
-                    socket={this.props.socket}
-                    selected=""
-                    types={['state']}
-                    onClose={() => this.setState({ showSelectId: false })}
-                    onOk={selected => {
-                        this.setState({ showSelectId: false });
-
-                        this.props.socket.getObject(selected).then(obj => {
-                            if (obj) {
-                                if (!obj.common) {
-                                    this.setState({
-                                        message: I18n.t('Object %s is invalid. No common found.', selected),
-                                    });
-                                    return;
-                                }
-
-                                const name = Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() });
-                                Utils.updateSmartNameEx(obj, {
-                                    smartName: (name || I18n.t('Device name')).replace(/[-_.]+/g, ' '),
-                                    instanceId: `${this.props.adapterName}.${this.props.instance}`,
-                                    noCommon: this.props.native.noCommon,
-                                });
-                                this.addChanged(obj._id);
-                                this.waitForUpdateID = obj._id;
-
-                                if (this.state.lastChanged !== obj._id) {
-                                    this.setState({ lastChanged: obj._id });
-                                    this.timerChanged && clearTimeout(this.timerChanged);
-                                    this.timerChanged = setTimeout(() => {
-                                        this.timerChanged = null;
-                                        this.setState({ lastChanged: '' });
-                                    }, 30000);
-                                }
-
-                                if (!obj.common.smartName) {
-                                    obj.common.smartName = {
-                                        ghTraits: ['action.devices.traits.OnOff'],
-                                        ghType: 'action.devices.types.LIGHT',
-                                    };
-                                } else {
-                                    obj.common.smartName.ghType = 'action.devices.types.LIGHT';
-                                    obj.common.smartName.ghTraits = ['action.devices.traits.OnOff'];
-                                }
-
-                                this.props.socket
-                                    .setObject(obj._id, obj)
-                                    .then(() => {
-                                        this.informInstance(obj._id);
-                                        this.setState({
-                                            message: I18n.t(
-                                                'Please add type and trait to complete the Google Home state.',
-                                            ),
-                                        });
-                                    })
-                                    .catch(err => this.setState({ message: err }));
-                            } else {
-                                this.setState({ message: I18n.t('Invalid ID') });
-                            }
+                        const name = Utils.getObjectNameFromObj(obj, null, { language: I18n.getLanguage() });
+                        Utils.updateSmartNameEx(obj as ioBroker.StateObject, {
+                            smartName: (name || I18n.t('Device name')).replace(/[-_.]+/g, ' '),
+                            instanceId: `${this.props.adapterName}.${this.props.instance}`,
+                            noCommon: this.props.native.noCommon,
                         });
-                    }}
-                />
-            );
-        }
-        return null;
+                        this.addChanged(obj._id);
+                        this.waitForUpdateID = obj._id;
+
+                        if (this.state.lastChanged !== obj._id) {
+                            this.setState({ lastChanged: obj._id });
+                            if (this.timerChanged) {
+                                clearTimeout(this.timerChanged);
+                            }
+                            this.timerChanged = setTimeout(() => {
+                                this.timerChanged = null;
+                                this.setState({ lastChanged: '' });
+                            }, 30000);
+                        }
+
+                        const common = obj.common as ioBroker.StateCommon & { smartName?: GHSmartName };
+                        if (!common.smartName) {
+                            common.smartName = {
+                                ghTraits: ['action.devices.traits.OnOff'],
+                                ghType: 'action.devices.types.LIGHT',
+                            };
+                        } else {
+                            common.smartName.ghType = 'action.devices.types.LIGHT';
+                            common.smartName.ghTraits = ['action.devices.traits.OnOff'];
+                        }
+
+                        this.props.socket
+                            .setObject(obj._id, obj)
+                            .then(() => {
+                                this.informInstance(obj._id);
+                                this.setState({
+                                    message: I18n.t('Please add type and trait to complete the Google Home state.'),
+                                });
+                            })
+                            .catch(err => this.setState({ message: (err as Error)?.toString?.() || String(err) }));
+                    });
+                }}
+            />
+        );
     }
 
-    renderListOfDevices() {
+    renderListOfDevices(): React.JSX.Element | null {
         if (!this.state.showListOfDevices) {
             return null;
         }
@@ -711,9 +763,16 @@ class GoogleSmartNames extends Component {
                     <div style={styles.tableDiv}>
                         {this.state.devices.map((item, i) => (
                             <div key={i}>
-                                <div style={styles.tableCell}>{item.name.nicknames.join(', ')}</div>
                                 <div style={styles.tableCell}>
-                                    {item.displayTraits.map(n => n.replace('action.devices.traits.', '')).join(', ')}
+                                    {Array.isArray(item.name?.nicknames)
+                                        ? item.name?.nicknames.join(', ')
+                                        : item.name?.nicknames || ''}
+                                </div>
+                                <div style={styles.tableCell}>
+                                    {(Array.isArray(item.displayTraits) ? item.displayTraits : [item.displayTraits])
+                                        .filter(Boolean)
+                                        .map(n => (n as string).replace('action.devices.traits.', ''))
+                                        .join(', ')}
                                 </div>
                                 <div style={styles.tableCell}>{item.roomHint}</div>
                             </div>
@@ -725,9 +784,12 @@ class GoogleSmartNames extends Component {
                         variant="outlined"
                         onClick={() => {
                             this.setState({ showListOfDevices: false });
-                            const lines = this.state.devices.map(
-                                item => `${item.name.nicknames.join(', ')}\t${item.displayTraits}\t${item.roomHint}`,
-                            );
+                            const lines = this.state.devices.map(item => {
+                                const nicknames = Array.isArray(item.name?.nicknames)
+                                    ? item.name?.nicknames.join(', ')
+                                    : item.name?.nicknames || '';
+                                return `${nicknames}\t${String(item.displayTraits)}\t${String(item.roomHint || '')}`;
+                            });
                             Utils.copyToClipboard(lines.join('\n'));
                         }}
                         color="primary"
@@ -749,7 +811,7 @@ class GoogleSmartNames extends Component {
         );
     }
 
-    renderInstructions() {
+    renderInstructions(): React.JSX.Element | null {
         const desktop = window.innerHeight > MOBILE_HEIGHT && window.innerWidth > MOBILE_WIDTH;
 
         if (this.state.helpHidden || this.props.smallDisplay || !desktop) {
@@ -784,7 +846,7 @@ class GoogleSmartNames extends Component {
         );
     }
 
-    renderToolbar() {
+    renderToolbar(): React.JSX.Element {
         const desktop = window.innerHeight > MOBILE_HEIGHT && window.innerWidth > MOBILE_WIDTH;
 
         return (
@@ -870,7 +932,7 @@ class GoogleSmartNames extends Component {
         );
     }
 
-    componentDidUpdate(/* prevProps, prevState, snapshot */) {
+    componentDidUpdate(): void {
         if (this.helpRef.current) {
             const h = this.helpRef.current.clientHeight;
             if (this.state.helpHeight !== h) {
@@ -885,7 +947,7 @@ class GoogleSmartNames extends Component {
         }
     }
 
-    render() {
+    render(): React.JSX.Element {
         if (this.state.loading) {
             return <CircularProgress key="alexaProgress" />;
         }
@@ -895,7 +957,9 @@ class GoogleSmartNames extends Component {
                   item =>
                       item.name?.name?.toLowerCase().includes(searchText) ||
                       item.name?.defaultNames?.find(n => n.toLowerCase().includes(searchText)) ||
-                      item.name?.nicknames?.find(n => n.toLowerCase().includes(searchText)),
+                      (Array.isArray(item.name?.nicknames)
+                          ? item.name?.nicknames.find(n => n.toLowerCase().includes(searchText))
+                          : item.name?.nicknames?.toLowerCase().includes(searchText)),
               )
             : this.state.devices;
 
@@ -914,14 +978,16 @@ class GoogleSmartNames extends Component {
                 >
                     <TreeTable
                         columns={this.state.expertMode ? this.columns : this.columns.filter(item => !item.expertMode)}
-                        data={devices}
-                        onUpdate={(newData, oldData) => {
-                            if (newData.name.nicknames && Array.isArray(newData.name.nicknames)) {
-                                newData.name.nicknames = newData.name.nicknames.join(',');
+                        data={devices as unknown as Record<string, unknown>[]}
+                        onUpdate={(newData: Record<string, unknown>, oldData: Record<string, unknown>): void => {
+                            const _new = newData as unknown as GHDevice;
+                            const _old = oldData as unknown as GHDevice;
+                            if (_new.name?.nicknames && Array.isArray(_new.name.nicknames)) {
+                                _new.name.nicknames = _new.name.nicknames.join(',');
                             }
-                            this.editedSmartName = newData.name.nicknames;
-                            this.setState({ editId: newData.id }, () => {
-                                if (!newData.type || !newData.displayTraits) {
+                            this.editedSmartName = (_new.name?.nicknames as string) || '';
+                            this.setState({ editId: _new.id }, () => {
+                                if (!_new.type || !_new.displayTraits) {
                                     this.setState({
                                         browse: true,
                                         message: I18n.t(
@@ -932,38 +998,46 @@ class GoogleSmartNames extends Component {
                                     this.setState({ browse: true });
                                 }
 
-                                this.onGHParamsChange(newData, oldData);
-                                const _devices = JSON.parse(JSON.stringify(this.state.devices));
-                                _devices[_devices.indexOf(oldData)] = newData;
-                                this.setState({ ...this.state, devices: _devices });
+                                this.onGHParamsChange(_new, _old);
+                                const _devices = JSON.parse(JSON.stringify(this.state.devices)) as GHDevice[];
+                                _devices[_devices.indexOf(_old)] = _new;
+                                this.setState({ devices: _devices });
                             });
                         }}
-                        onDelete={oldData => {
-                            // if smartenum set smartname on false if not delete/reset smartname content
-                            if (oldData.smartEnum === 'X') {
-                                this.setState({ deleteId: oldData.id });
+                        onDelete={(oldData: Record<string, unknown>): Promise<void> => {
+                            const _old = oldData as unknown as GHDevice;
+                            if (_old.smartEnum === 'X') {
+                                this.setState({ deleteId: _old.id });
                             } else {
-                                this.props.socket.getObject(oldData.id).then(obj => {
-                                    if (obj && obj.common && obj.common.smartName) {
-                                        delete obj.common.smartName.ghTraits;
-                                        delete obj.common.smartName.ghType;
-                                        delete obj.common.smartName.ghAttributes;
+                                void this.props.socket.getObject(_old.id).then(obj => {
+                                    if (obj?.common) {
+                                        const common = obj.common as ioBroker.StateCommon & {
+                                            smartName?: GHSmartName;
+                                        };
+                                        if (common.smartName) {
+                                            delete common.smartName.ghTraits;
+                                            delete common.smartName.ghType;
+                                            delete common.smartName.ghAttributes;
+                                        }
                                     }
-                                    return this.props.socket.setObject(oldData.id, obj);
+                                    if (obj) {
+                                        return this.props.socket.setObject(_old.id, obj);
+                                    }
+                                    return undefined;
                                 });
                             }
 
-                            return new Promise(resolve => {
+                            return new Promise<void>(resolve => {
                                 setTimeout(() => {
                                     if (this.state.deleteId) {
                                         this.onDelete();
                                     } else {
-                                        this.informInstance(oldData.id);
+                                        this.informInstance(_old.id);
                                     }
                                     resolve();
-                                    const _devices = JSON.parse(JSON.stringify(this.state.devices));
-                                    _devices.splice(_devices.indexOf(oldData), 1);
-                                    this.setState({ ...this.state, devices: _devices });
+                                    const _devices = JSON.parse(JSON.stringify(this.state.devices)) as GHDevice[];
+                                    _devices.splice(_devices.indexOf(_old), 1);
+                                    this.setState({ devices: _devices });
                                 }, 600);
                             });
                         }}
@@ -977,23 +1051,19 @@ class GoogleSmartNames extends Component {
     }
 }
 
-GoogleSmartNames.propTypes = {
-    //    common:      PropTypes.object.isRequired,
-    native: PropTypes.object.isRequired,
-    instance: PropTypes.number.isRequired,
-    adapterName: PropTypes.string.isRequired,
-    onError: PropTypes.func,
-    //    onLoad:      PropTypes.func,
-    //    onChange:    PropTypes.func,
-    socket: PropTypes.object.isRequired,
-    theme: PropTypes.object,
-};
+// HOC that injects the `smallDisplay` prop (mobile-detection hook can only run inside a function component).
+type WithoutSmallDisplay = Omit<GoogleSmartNamesProps, 'smallDisplay'>;
+function withMediaQuery<C extends React.ComponentType<GoogleSmartNamesProps>>(Wrapped: C) {
+    return function MediaQueryWrapper(props: WithoutSmallDisplay): React.JSX.Element {
+        const smallDisplay = useMediaQuery('(max-width:600px)');
+        const Comp: React.ComponentType<GoogleSmartNamesProps> = Wrapped;
+        return (
+            <Comp
+                {...props}
+                smallDisplay={smallDisplay}
+            />
+        );
+    };
+}
 
-export const withMediaQuery = () => GoogleSmartNamesComponent => props => (
-    <GoogleSmartNamesComponent
-        smallDisplay={useMediaQuery('(max-width:600px)')}
-        {...props}
-    />
-);
-
-export default withMediaQuery()(GoogleSmartNames);
+export default withMediaQuery(GoogleSmartNames);
