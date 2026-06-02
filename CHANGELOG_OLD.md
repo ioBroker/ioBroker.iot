@@ -511,6 +511,10 @@
 ### 0.1.4 (2018-09-26)
 
 -   (bluefox) Initial commit
+## 5.0.11 (2025-12-16)
+- (@GermanBluefox) Added percentual control
+- (@GermanBluefox) Correcting creation for complex groups
+
 ## 5.0.8 (2025-11-28)
 - (@GermanBluefox) Showed last controller ID in `smart.lastObjectID`
 - (@GermanBluefox) Showed subscription valid period in `info.validTill` and GUI

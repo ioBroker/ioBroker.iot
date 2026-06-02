@@ -416,7 +416,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 6.1.0 (2026-06-02)
 - (@GermanBluefox) Implemented new feature to select devices from the list and not by enumeration
 - (@GermanBluefox) Possibilty to send messages to the app directly from the state
 - (@GermanBluefox) Migrated google and alisa to TypeScript
@@ -437,10 +437,6 @@ setState('iot.0.app.message', JSON.stringify({
 ### 5.0.12 (2025-12-21)
 - (@GermanBluefox) Added copy of credentials from cloud instance
 - (@GermanBluefox) Added QR code to fast connect the ioBroker visu app
-
-### 5.0.11 (2025-12-16)
-- (@GermanBluefox) Added percentual control
-- (@GermanBluefox) Correcting creation for complex groups
 
 ## License
 

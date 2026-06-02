@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "6.0.3",
+    "version": "6.1.0",
     "news": {
+      "6.1.0": {
+        "en": "Implemented new feature to select devices from the list and not by enumeration\nPossibilty to send messages to the app directly from the state\nMigrated google and alisa to TypeScript",
+        "de": "Neue Funktion implementiert, um Geräte aus der Liste auszuwählen und nicht durch Aufzählung\nMöglichkeit, Nachrichten an die App direkt aus dem Staat zu senden\nMigration von Google und Alisa zu TypeScript",
+        "ru": "Внедрена новая функция выбора устройств из списка, а не перечисления\nВозможность отправлять сообщения в приложение напрямую из государства\nGoogle и Алиса перешли на TypeScript",
+        "pt": "Novo recurso implementado para selecionar dispositivos da lista e não por enumeração\nPossibilidade de enviar mensagens para o aplicativo diretamente do estado\nGoogle migrado e alisa para TypeScript",
+        "nl": "Nieuwe functie geïmplementeerd om apparaten uit de lijst te selecteren en niet door opsomming\nMogelijkheid om berichten rechtstreeks vanuit de staat naar de app te sturen\nMigreerde google en alisa naar TypeScript",
+        "fr": "Nouvelle fonctionnalité appliquée pour sélectionner les appareils de la liste et non par dénombrement\nPossibilité d'envoyer des messages à l'application directement depuis l'état\nGoogle et alisa ont migré vers TypeScript",
+        "it": "Nuova funzionalità implementata per selezionare i dispositivi dall'elenco e non per enumerazione\nPossibiltà di inviare messaggi all'app direttamente dallo stato\nGoogle migrato e alisa a TypeScript",
+        "es": "Nueva función implementada para seleccionar dispositivos de la lista y no por enumeración\nPosibilidad de enviar mensajes a la aplicación directamente desde el estado\nGoogle migrado y alisa a TipoScript",
+        "pl": "Wdrożenie nowej funkcji do wyboru urządzeń z listy, a nie poprzez wyliczenie\nMożliwości wysyłania wiadomości do aplikacji bezpośrednio ze stanu\nMigrated google i Alisa do TypeScript",
+        "uk": "Реалізовано нову функцію для вибору пристроїв зі списку та не шляхом евакуації\nОбов'язки для відправки повідомлень в додаток безпосередньо з держави\nMigrated google і alisa для TypeScript",
+        "zh-cn": "执行从列表中选择设备的新功能,而不是通过点数\n从国家直接向应用程序发送消息的可能性\n将 google 和 alisa 移到类型脚本"
+      },
       "6.0.3": {
         "en": "Allowed to read temperature information via Alexa",
         "de": "Erlaubt, Temperaturinformationen über Alexa zu lesen",
@@ -69,19 +82,6 @@
         "zh-cn": "添加百分数控制\n纠正复杂群体的创建"
       },
       "5.0.10": {
-        "en": "Added percentual control\nCorrecting creation for complex groups",
-        "de": "Prozentuale Kontrolle hinzugefügt\nKorrektur der Kreation für komplexe Gruppen",
-        "ru": "Дополнительный процентный контроль\nКорректировка создания сложных групп",
-        "pt": "Controle percentual adicionado\nCorrigindo a criação de grupos complexos",
-        "nl": "Toegevoegde procentuele controle\nCorrigerende creatie voor complexe groepen",
-        "fr": "Pourcentage de contrôle ajouté\nCorrection de la création de groupes complexes",
-        "it": "Aggiunto controllo percentuale\nCreazione di correzione per gruppi complessi",
-        "es": "Control porcentual\nCreación correcta para grupos complejos",
-        "pl": "Dodano kontrolę percentualną\nKorekcja tworzenia dla grup złożonych",
-        "uk": "Розширений контроль відсотків\nПравильне створення складних груп",
-        "zh-cn": "添加百分数控制\n纠正复杂群体的创建"
-      },
-      "5.0.9": {
         "en": "Added percentual control\nCorrecting creation for complex groups",
         "de": "Prozentuale Kontrolle hinzugefügt\nKorrektur der Kreation für komplexe Gruppen",
         "ru": "Дополнительный процентный контроль\nКорректировка создания сложных групп",
