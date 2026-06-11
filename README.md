@@ -416,7 +416,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 6.1.1 (2026-06-11)
 - (@GermanBluefox) Added support of credentials manager
 
 ### 6.1.0 (2026-06-02)
@@ -436,10 +436,6 @@ setState('iot.0.app.message', JSON.stringify({
 ### 5.0.13 (2026-03-31)
 - (@GermanBluefox) Corrected the handling of the multiple group names
 - (@GermanBluefox) Fixing the license validation
-
-### 5.0.12 (2025-12-21)
-- (@GermanBluefox) Added copy of credentials from cloud instance
-- (@GermanBluefox) Added QR code to fast connect the ioBroker visu app
 
 ## License
 
