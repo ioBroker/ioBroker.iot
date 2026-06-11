@@ -1,6 +1,8 @@
 export interface IotAdapterConfig {
     login: string;
     pass: string;
+    credentialType?: 'manager' | 'manual';
+    credentialId?: string;
     language: ioBroker.Languages;
     cloudUrl: string;
     functionFirst: boolean;

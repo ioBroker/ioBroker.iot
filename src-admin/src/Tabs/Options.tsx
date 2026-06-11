@@ -17,6 +17,9 @@ import {
     FormLabel,
     RadioGroup,
     Radio,
+    InputLabel,
+    Select,
+    MenuItem,
 } from '@mui/material';
 
 import { MdRefresh as IconReload, MdClose as IconClose } from 'react-icons/md';
@@ -137,6 +140,7 @@ interface OptionsState {
     validTill?: string;
     takeFromCloud: { login: string; pass: string; instance: number } | null;
     visuAppInstructions?: string;
+    credentials: { label: string; value: string }[] | null;
 }
 
 export default class Options extends Component<OptionsProps, OptionsState> {
@@ -150,6 +154,7 @@ export default class Options extends Component<OptionsProps, OptionsState> {
             toast: '',
             isInstanceAlive: false,
             takeFromCloud: null,
+            credentials: null,
         };
     }
 
@@ -240,11 +245,42 @@ export default class Options extends Component<OptionsProps, OptionsState> {
         }
     }
 
+    static getCredentialName(obj: ioBroker.Object): string {
+        const name = obj.common?.name;
+        let text: string;
+        if (name && typeof name === 'object') {
+            text = name[I18n.getLanguage()] || name.en || Object.values(name)[0] || '';
+        } else {
+            text = name || '';
+        }
+        return text || obj._id.substring('system.credentials.'.length);
+    }
+
     async componentDidMount(): Promise<void> {
         const aliveState = await this.props.socket.getState(`system.adapter.${this.namespace}.alive`);
         const validTillState = await this.props.socket.getState(`${this.namespace}.info.validTill`);
         this.setState({ isInstanceAlive: !!aliveState?.val, validTill: validTillState?.val as string | undefined });
         await this.readCloudCredentials();
+
+        // read system credentials
+        let credentials: { label: string; value: string }[] = [];
+        try {
+            const objs = await this.props.socket.getObjectViewSystem(
+                'config',
+                'system.credentials.',
+                'system.credentials.香',
+            );
+            credentials = Object.values(objs)
+                .filter(obj => !!obj)
+                .map(obj => ({
+                    label: Options.getCredentialName(obj as ioBroker.Object),
+                    value: obj._id,
+                }))
+                .sort((a, b) => a.label.localeCompare(b.label));
+        } catch (e) {
+            console.error(`Cannot read credentials: ${e}`);
+        }
+        this.setState({ credentials });
 
         await this.props.socket.subscribeState(`${this.namespace}.info.validTill`, this.onValidTillChanged);
         await this.props.socket.subscribeState(`system.adapter.${this.namespace}.alive`, this.onAliveChanged);
@@ -519,11 +555,54 @@ export default class Options extends Component<OptionsProps, OptionsState> {
                     onLoad={this.props.onLoad}
                 />
                 <div style={{ ...styles.column, ...styles.columnSettings }}>
-                    {this.renderInput('ioBroker.pro Login', 'login', 'text', 'username')}
+                    {this.props.native.credentialType === 'manager' || this.state.credentials?.length ? (
+                        <FormControl
+                            variant="standard"
+                            style={styles.input}
+                        >
+                            <InputLabel>{I18n.t('Credentials type')}</InputLabel>
+                            <Select
+                                value={this.props.native.credentialType || 'manual'}
+                                onChange={e => this.props.onChange('credentialType', e.target.value)}
+                            >
+                                <MenuItem value="manager">{I18n.t('System credentials')}</MenuItem>
+                                <MenuItem value="manual">{I18n.t('Manual')}</MenuItem>
+                            </Select>
+                        </FormControl>
+                    ) : null}
+                    {this.props.native.credentialType === 'manager' && (
+                        <FormControl
+                            variant="standard"
+                            style={{ minWidth: 200, marginLeft: 16 }}
+                        >
+                            <InputLabel>{I18n.t('Credentials')}</InputLabel>
+                            <Select
+                                value={this.props.native.credentialId || ''}
+                                onChange={e => this.props.onChange('credentialId', e.target.value)}
+                            >
+                                <MenuItem value="">{I18n.t('none')}</MenuItem>
+                                {this.state.credentials?.map(item => (
+                                    <MenuItem value={item.value}>{item.label}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    )}
                     <br />
-                    {this.renderInput('ioBroker.pro Password', 'pass', 'password', 'current-password')}
-                    {this.state.takeFromCloud && !this.props.native.pass && !this.props.native.login ? <br /> : null}
-                    {this.state.takeFromCloud && !this.props.native.pass && !this.props.native.login ? (
+                    {this.props.native.credentialType !== 'manager' &&
+                        this.renderInput('ioBroker.pro Login', 'login', 'text', 'username')}
+                    {this.props.native.credentialType !== 'manager' && <br />}
+                    {this.props.native.credentialType !== 'manager' &&
+                        this.renderInput('ioBroker.pro Password', 'pass', 'password', 'current-password')}
+                    {this.props.native.credentialType !== 'manager' &&
+                    this.state.takeFromCloud &&
+                    !this.props.native.pass &&
+                    !this.props.native.login ? (
+                        <br />
+                    ) : null}
+                    {this.props.native.credentialType !== 'manager' &&
+                    this.state.takeFromCloud &&
+                    !this.props.native.pass &&
+                    !this.props.native.login ? (
                         <Button
                             variant="outlined"
                             onClick={() => {

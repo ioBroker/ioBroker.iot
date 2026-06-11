@@ -14,7 +14,7 @@ export default class AlexaSH3 {
     constructor(options: { adapter: IotAdapter; iotDevice: DeviceModule; iotClientId: string }) {
         this.deviceManager = new DeviceManager();
         AdapterProvider.init(options.adapter);
-        IotProxy.init(options.iotDevice, options.iotClientId, options.adapter.config.login);
+        IotProxy.init(options.iotDevice, options.iotClientId, options.adapter.login);
         RateLimiter.init().catch((err: Error) => options.adapter.log.error(err.message));
         // Subscribe on enum changes
         options.adapter.subscribeForeignObjects('enum.functions.*');

@@ -145,7 +145,7 @@ The adapter automatically creates virtual smart home devices by combining inform
 
 ### Understanding Enumerations
 
-Enumerations are ioBroker's built-in way to organize devices:
+Enumerations are ioBroker's a built-in way to organize devices:
 - **Rooms enumeration**: Contains locations (living room, bathroom, bedroom, kitchen, etc.)
 - **Functions enumeration**: Contains device types (light, blind, heating, etc.)
 
@@ -263,7 +263,7 @@ sendTo('iot.0', 'getServiceEndpoint', { serviceName: 'custom_myService' }, resul
 
 ### `text2command`
 
-You may write `text2command` in white list, you can send POST request to `https://service.iobroker.in/v1/iotService?service=text2command&key=<user-app-key>&user=<USER_EMAIL>` to write data into _text2command.X.text_ variable.
+You may write `text2command` in white list, you can send POST request to `https://service.iobroker.in/v1/iotService?service=text2command&key=<user-app-key>&user=<USER_EMAIL>` to write data into `text2command.X.text` variable.
 
 You can use GET method too `https://service.iobroker.in/v1/iotService?service=text2command&key=<user-app-key>&user=<USER_EMAIL>&data=<MY COMMAND>`
 
@@ -416,9 +416,12 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Added support of credentials manager
+
 ### 6.1.0 (2026-06-02)
 - (@GermanBluefox) Implemented new feature to select devices from the list and not by enumeration
-- (@GermanBluefox) Possibilty to send messages to the app directly from the state
+- (@GermanBluefox) Possibility to send messages to the app directly from the state
 - (@GermanBluefox) Migrated google and alisa to TypeScript
 
 ### 6.0.3 (2026-04-23)

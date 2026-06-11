@@ -1,5 +1,5 @@
 import { device as DeviceModule } from 'aws-iot-device-sdk';
-import { Adapter, type AdapterOptions } from '@iobroker/adapter-core'; // Get common adapter utils
+import { Adapter, type AdapterOptions, EXIT_CODES, Credentials } from '@iobroker/adapter-core'; // Get common adapter utils
 import { readFileSync } from 'node:fs';
 import axios from 'axios';
 import { deflateSync } from 'node:zlib';
@@ -51,12 +51,18 @@ class IotAdapter extends Adapter {
     private validTill: string | null = null; // null - never read, "--" - user has no license, ISO date string - valid till
     private validTillLastQuery: number = 0;
     private alertReported = false;
+    public login: string = '';
+    private password: string = '';
 
     public constructor(options: Partial<AdapterOptions> = {}) {
         super({
             ...options,
             name: 'iot',
             objectChange: (id, obj) => {
+                if (id.startsWith(Credentials.CREDENTIALS_PREFIX)) {
+                    // handled by subscribeCredentials; credential objects must never be forwarded to the cloud
+                    return;
+                }
                 if (id === 'system.config' && obj && !this.translate) {
                     const systemObj = obj as ioBroker.SystemConfigObject;
                     this.lang = systemObj.common.language;
@@ -280,7 +286,7 @@ class IotAdapter extends Adapter {
                                         this.urlKey = await this.readUrlKey();
                                     } catch {
                                         try {
-                                            this.urlKey = await this.createUrlKey(this.config.login, this.config.pass);
+                                            this.urlKey = await this.createUrlKey(this.login, this.password);
                                         } catch (err) {
                                             if (obj.callback) {
                                                 this.sendTo(
@@ -301,7 +307,7 @@ class IotAdapter extends Adapter {
                                     data?: string;
                                     warning?: string;
                                 } = {
-                                    url: `https://service.iobroker.in/v1/iotService?key=${this.urlKey.key}&user=${encodeURIComponent(this.config.login)}`,
+                                    url: `https://service.iobroker.in/v1/iotService?key=${this.urlKey.key}&user=${encodeURIComponent(this.login)}`,
                                 };
                                 const serviceName =
                                     typeof obj.message === 'string' ? obj.message : obj.message?.serviceName;
@@ -486,7 +492,7 @@ class IotAdapter extends Adapter {
             response = await axios.post('https://app-message.iobroker.in/', json, {
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${Buffer.from(`${this.config.login}:${this.config.pass}`).toString('base64')}`,
+                    Authorization: `Bearer ${Buffer.from(`${this.login}:${this.password}`).toString('base64')}`,
                 },
                 timeout: 5_000,
                 validateStatus: status => status < 400,
@@ -1202,7 +1208,7 @@ class IotAdapter extends Adapter {
             const response = await fetch('https://iobroker.pro:3001/api/v1/validTill', {
                 method: 'GET',
                 headers: {
-                    Authorization: `Bearer ${Buffer.from(`${this.config.login}:${this.config.pass}`).toString('base64')}`,
+                    Authorization: `Bearer ${Buffer.from(`${this.login}:${this.password}`).toString('base64')}`,
                 },
             });
             if (response.ok) {
@@ -1405,10 +1411,10 @@ class IotAdapter extends Adapter {
             return;
         }
 
-        const email = this.config.login.replace(/[^\w\d-_]/g, '_');
+        const email = this.login.replace(/[^\w\d-_]/g, '_');
         const secret = this.config.nightscoutPass;
         const apiSecret = email + (secret ? `-${secret}` : '');
-        const URL = `https://generate-key.iobroker.in/v1/generateUrlKey?user=${encodeURIComponent(this.config.login)}&pass=${encodeURIComponent(this.config.pass)}&apisecret=${encodeURIComponent(apiSecret)}`;
+        const URL = `https://generate-key.iobroker.in/v1/generateUrlKey?user=${encodeURIComponent(this.login)}&pass=${encodeURIComponent(this.password)}&apisecret=${encodeURIComponent(apiSecret)}`;
         let response;
 
         try {
@@ -1511,6 +1517,33 @@ class IotAdapter extends Adapter {
         }
     }
 
+    private async resolveCredentials(data: {
+        credentialType?: 'manual' | 'manager';
+        credentialId?: string;
+        login?: string;
+        pass?: string;
+    }): Promise<{ login: string; password: string; subscribe: boolean } | null> {
+        if (data.credentialType === 'manager') {
+            if (!data.credentialId) {
+                this.log.error('Credentials not provided. Please check your configuration!');
+                return null;
+            }
+            try {
+                const credentials = await Credentials.getCredentials<Credentials.LoginPasswordCredentials>(
+                    this,
+                    data.credentialId,
+                );
+                return { login: credentials.values.login, password: credentials.values.password, subscribe: true };
+            } catch (error) {
+                this.log.error(
+                    `Cannot read credentials "${data.credentialId}": ${error instanceof Error ? error.message : String(error)}`,
+                );
+                return null;
+            }
+        }
+        return { login: data.login || this.login, password: data.pass || this.password, subscribe: false };
+    }
+
     async main(): Promise<void> {
         if (this.config.googleHome === undefined) {
             this.config.googleHome = false;
@@ -1548,11 +1581,8 @@ class IotAdapter extends Adapter {
             this.config.deviceOffLevel = 30;
         }
 
-        if (this.config.login !== (this.config.login || '').trim().toLowerCase()) {
+        if (this.login !== (this.login || '').trim().toLowerCase()) {
             this.log.error('Please write your login only in lowercase!');
-        }
-        if (!this.config.login || !this.config.pass) {
-            return this.log.error('No cloud credentials found. Please get one on https://iobroker.pro');
         }
 
         let systemConfig = await this.getForeignObjectAsync('system.config');
@@ -1560,15 +1590,44 @@ class IotAdapter extends Adapter {
             this.log.warn('Object system.config not found. Please check your installation!');
             systemConfig = { common: {} } as ioBroker.SystemConfigObject;
         }
+        this.secret = systemConfig?.native?.secret || 'Zgfr56gFe87jJOM';
+
+        const credentials = await this.resolveCredentials({
+            credentialType: this.config.credentialType,
+            credentialId: this.config.credentialId,
+            login: this.config.login,
+            pass: this.decryptOwn(this.secret, this.config.pass),
+        });
+
+        if (credentials?.subscribe && this.config.credentialId) {
+            await Credentials.subscribeCredentials<Credentials.LoginPasswordCredentials>(
+                this,
+                this.config.credentialId,
+                (id: string, newCred) => {
+                    if (newCred) {
+                        if (newCred.values.login !== this.login || newCred.values.password !== this.password) {
+                            this.log.info(`Credential ${id} was changed, reconnecting...`);
+                            this.terminate(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
+                        }
+                    } else {
+                        this.log.info(`Credential ${id} was deleted, reconnecting...`);
+                        this.terminate(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
+                    }
+                },
+            );
+        }
+        this.login = credentials?.login || '';
+        this.password = credentials?.password || '';
+
+        if (!this.login || !this.password) {
+            return this.log.error('No cloud credentials found. Please get one on https://iobroker.pro');
+        }
 
         // create service state for netatmo if any instance exists
         for (let a = 0; a < SPECIAL_ADAPTERS.length; a++) {
             await this.createStateForAdapter(SPECIAL_ADAPTERS[a]);
         }
 
-        this.secret = systemConfig?.native?.secret || 'Zgfr56gFe87jJOM';
-
-        this.config.pass = this.decryptOwn(this.secret, this.config.pass);
         this.config.deviceOffLevel = parseFloat(this.config.deviceOffLevel as string) || 0;
         this.config.concatWord = (this.config.concatWord || '').toString().trim();
         this.config.apikey = (this.config.apikey || '').trim();
@@ -1587,7 +1646,7 @@ class IotAdapter extends Adapter {
             this.yandexAlisa = new YandexAlisa(this);
         }
 
-        this.remote = new Remote(this, this.config.login.replace(/[^-_:a-zA-Z1-9]/g, '_'));
+        this.remote = new Remote(this, this.login.replace(/[^-_:a-zA-Z1-9]/g, '_'));
 
         this.appNotifications = new AppNotifications(this, this.lang);
         await this.appNotifications.init();
@@ -1602,7 +1661,7 @@ class IotAdapter extends Adapter {
         await this.setStateAsync('info.connection', false, true);
         this.config.cloudUrl = this.config.cloudUrl || 'a18wym7vjdl22g.iot.eu-west-1.amazonaws.com';
 
-        if (!this.config.login || !this.config.pass) {
+        if (!this.login || !this.password) {
             return this.log.error('No cloud credentials found. Please get one on https://iobroker.pro');
         }
 
@@ -1654,10 +1713,10 @@ class IotAdapter extends Adapter {
         this.remote?.setLanguage(this.lang);
         // check password
         if (
-            this.config.pass.length < 8 ||
-            !this.config.pass.match(/[a-z]/) ||
-            !this.config.pass.match(/[A-Z]/) ||
-            !this.config.pass.match(/\d/)
+            this.password.length < 8 ||
+            !this.password.match(/[a-z]/) ||
+            !this.password.match(/[A-Z]/) ||
+            !this.password.match(/\d/)
         ) {
             return this.log.error(
                 'The password must be at least 8 characters long and have numbers, upper and lower case letters. Please change the password in the profile https://iobroker.pro/accountProfile.',
@@ -1666,9 +1725,9 @@ class IotAdapter extends Adapter {
 
         await this.updateNightscoutSecret();
 
-        const iotClientId = this.config.login.replace(/[^-_:a-zA-Z1-9]/g, '_');
+        const iotClientId = this.login.replace(/[^-_:a-zA-Z1-9]/g, '_');
         // user will be created here
-        await this.startDevice(iotClientId, this.config.login, this.config.pass);
+        await this.startDevice(iotClientId, this.login, this.password);
 
         // after the user created, we can try to generate URL key
         // read URL keys from server
@@ -1682,7 +1741,7 @@ class IotAdapter extends Adapter {
                 this.config.iftttKey
             ) {
                 try {
-                    this.urlKey = await this.createUrlKey(this.config.login, this.config.pass);
+                    this.urlKey = await this.createUrlKey(this.login, this.password);
                 } catch (err) {
                     return this.log.error(
                         `Cannot read URL key: ${typeof err === 'object' ? JSON.stringify(err) : err}`,

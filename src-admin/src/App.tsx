@@ -94,11 +94,11 @@ export default class App extends GenericApp<GenericAppProps, AppState> {
         };
 
         extendedProps.sentryDSN = window.sentryDSN;
-        extendedProps.socket = {
-            protocol: 'http:',
-            host: '192.168.1.129',
-            port: 8081,
-        };
+        // extendedProps.socket = {
+        //     protocol: 'http:',
+        //     host: '192.168.1.129',
+        //     port: 8081,
+        // };
 
         super(props, extendedProps);
 
