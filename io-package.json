@@ -3,19 +3,6 @@
     "name": "iot",
     "version": "6.1.1",
     "news": {
-      "6.1.1": {
-        "en": "Added support of credentials manager",
-        "de": "Zusätzliche Unterstützung des Anmeldermanagers",
-        "ru": "Добавлена поддержка менеджера по учетным данным",
-        "pt": "Adicionado suporte ao gestor de credenciais",
-        "nl": "Toegevoegde ondersteuning van credentials manager",
-        "fr": "Soutien supplémentaire du gestionnaire des pouvoirs",
-        "it": "Aggiunto supporto di credenziali manager",
-        "es": "Añadido el apoyo del administrador de credenciales",
-        "pl": "Dodano wsparcie menedżera mandatów",
-        "uk": "Додано підтримку менеджера облікових записів",
-        "zh-cn": "证书管理器的支持增加"
-      },
       "6.1.0": {
         "en": "Implemented new feature to select devices from the list and not by enumeration\nPossibilty to send messages to the app directly from the state\nMigrated google and alisa to TypeScript",
         "de": "Neue Funktion implementiert, um Geräte aus der Liste auszuwählen und nicht durch Aufzählung\nMöglichkeit, Nachrichten an die App direkt aus dem Staat zu senden\nMigration von Google und Alisa zu TypeScript",

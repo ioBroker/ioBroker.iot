@@ -416,7 +416,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 6.1.1 (2026-06-11)
+### **WORK IN PROGRESS**
 - (@GermanBluefox) Added support of credentials manager
 
 ### 6.1.0 (2026-06-02)

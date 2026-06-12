@@ -59,7 +59,7 @@ class IotAdapter extends Adapter {
             ...options,
             name: 'iot',
             objectChange: (id, obj) => {
-                if (id.startsWith(Credentials.CREDENTIALS_PREFIX)) {
+                if (Credentials?.CREDENTIALS_PREFIX && id.startsWith(Credentials.CREDENTIALS_PREFIX)) {
                     // handled by subscribeCredentials; credential objects must never be forwarded to the cloud
                     return;
                 }
@@ -1524,6 +1524,12 @@ class IotAdapter extends Adapter {
         pass?: string;
     }): Promise<{ login: string; password: string; subscribe: boolean } | null> {
         if (data.credentialType === 'manager') {
+            if (!Credentials?.getCredentials) {
+                this.log.error(
+                    'Actually iot adapter is not able to use credentials manager. Please update @iobroker/adapter-core to version 3.4.1 or higher!',
+                );
+                return null;
+            }
             if (!data.credentialId) {
                 this.log.error('Credentials not provided. Please check your configuration!');
                 return null;
