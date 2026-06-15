@@ -19,7 +19,7 @@
         "@iobroker/javascript-rules-dev": "^0.0.6",
         "@iobroker/types": "^7.1.1",
         "@module-federation/runtime": "^2.3.0",
-        "@module-federation/vite": "^1.13.5",
+        "@module-federation/vite": "^1.16.8",
         "@mui/material": "6.5.0",
         "@mui/styles": "6.4.8",
         "@originjs/vite-plugin-federation": "^1.4.1",
