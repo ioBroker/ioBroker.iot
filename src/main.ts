@@ -1526,7 +1526,7 @@ class IotAdapter extends Adapter {
         if (data.credentialType === 'manager') {
             if (!Credentials?.getCredentials) {
                 this.log.error(
-                    'Actually iot adapter is not able to use credentials manager. Please update @iobroker/adapter-core to version 3.4.1 or higher!',
+                    'Actually iot adapter is not able to use credentials manager. Please update js-controller to 7.2.2 or higher!',
                 );
                 return null;
             }

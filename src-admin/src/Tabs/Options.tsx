@@ -271,7 +271,7 @@ export default class Options extends Component<OptionsProps, OptionsState> {
                 'system.credentials.香',
             );
             credentials = Object.values(objs)
-                .filter(obj => !!obj)
+                .filter(obj => !!obj && (obj.native as any)?.type === 'cloud')
                 .map(obj => ({
                     label: Options.getCredentialName(obj as ioBroker.Object),
                     value: obj._id,
