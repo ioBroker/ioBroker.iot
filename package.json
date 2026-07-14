@@ -22,7 +22,7 @@
     "url": "https://github.com/ioBroker/ioBroker.iot"
   },
   "dependencies": {
-    "@iobroker/adapter-core": "^3.4.1",
+    "@iobroker/adapter-core": "^3.4.2",
     "@iobroker/type-detector": "^5.0.15",
     "aws-iot-device-sdk": "^2.2.16",
     "axios": "^1.17.0",
