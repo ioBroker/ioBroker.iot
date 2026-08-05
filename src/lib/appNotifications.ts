@@ -160,9 +160,7 @@ export class AppNotifications {
         for (const row of view) {
             const id = row.id;
             const custom = row.value as unknown as
-                | { [instance: string]: { enabled: boolean; [key: string]: any } }
-                | null
-                | undefined;
+                { [instance: string]: { enabled: boolean; [key: string]: any } } | null | undefined;
             const settings = this.extractSettings(custom);
             if (!settings || !custom) {
                 continue;

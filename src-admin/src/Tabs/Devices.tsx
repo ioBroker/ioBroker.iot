@@ -28,7 +28,7 @@ import {
     MdCheck as IconCheck,
 } from 'react-icons/md';
 
-import { Utils, I18n, type IobTheme, type AdminConnection, Icon, DeviceTypeIcon } from '@iobroker/adapter-react-v5';
+import { Utils, I18n, type IobTheme, type AdminConnection, Icon, DeviceTypeIcon } from '@iobroker/gui-components';
 import ChannelDetector, { Types, type DetectOptions, type PatternControl } from '@iobroker/type-detector';
 
 import type { IotAdapterConfig } from '../types';

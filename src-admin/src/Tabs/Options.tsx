@@ -24,7 +24,7 @@ import {
 
 import { MdRefresh as IconReload, MdClose as IconClose } from 'react-icons/md';
 
-import { I18n, Utils, Logo, type AdminConnection } from '@iobroker/adapter-react-v5';
+import { I18n, Utils, Logo, type AdminConnection } from '@iobroker/gui-components';
 import type { IotAdapterConfig } from '../types';
 import { Refresh } from '@mui/icons-material';
 

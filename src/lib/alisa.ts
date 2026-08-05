@@ -243,6 +243,13 @@ interface UrlKey {
     key: string;
 }
 
+// Numeric capability instances (range, temperature_k, ...) never carry the HSV object form of
+// AlisaCapabilityValue, but the union allows it. Drop that case so the value can be stringified
+// for parseFloat/parseInt without ever yielding '[object Object]'.
+function numericCapabilityValue(value: AlisaCapabilityValue): string {
+    return typeof value === 'object' ? '' : String(value);
+}
+
 // -----------------------------------------------------------------------------
 // Converter
 // -----------------------------------------------------------------------------
@@ -287,7 +294,7 @@ class YandexAliceConverter {
 
     private _getSmartName(obj: ioBroker.Object | null | undefined): SmartName {
         if (!(this.adapter.config as IotAdapterConfig).noCommon) {
-            return obj?.common ? ((obj.common as ioBroker.StateCommon).smartName as SmartName) || '' : '';
+            return obj?.common ? (obj.common as ioBroker.StateCommon).smartName || '' : '';
         }
         const custom = (obj?.common as ioBroker.StateCommon)?.custom?.[this.adapter.namespace];
         return custom ? custom.smartName : '';
@@ -424,7 +431,7 @@ class YandexAliceConverter {
             if (state) {
                 const val =
                     (parseFloat(state.val as unknown as string) || 0) +
-                    parseFloat(String(capability.state.value as unknown as string));
+                    parseFloat(numericCapabilityValue(capability.state.value));
                 await this.adapter.setForeignStateAsync(stateId, val);
                 capability.state.action_result = { status: 'DONE' };
             } else {
@@ -436,10 +443,7 @@ class YandexAliceConverter {
             }
             return data;
         }
-        await this.adapter.setForeignStateAsync(
-            stateId,
-            parseFloat(String(capability.state.value as unknown as string)),
-        );
+        await this.adapter.setForeignStateAsync(stateId, parseFloat(numericCapabilityValue(capability.state.value)));
         capability.state.action_result = { status: 'DONE' };
         return data;
     }
@@ -487,7 +491,7 @@ class YandexAliceConverter {
             val = parseInt(val, 10);
         }
         if (val !== undefined) {
-            await this.adapter.setForeignStateAsync(stateId, val as ioBroker.StateValue);
+            await this.adapter.setForeignStateAsync(stateId, val);
         }
         capability.state.action_result = { status: 'DONE' };
         return data;
@@ -595,7 +599,7 @@ class YandexAliceConverter {
         const stateId = attribute ? attribute.getId : undefined;
         const capability = data.capabilities.find(cap => cap.type === 'devices.capabilities.color_setting');
         if (capability?.state && stateId && capability.state.instance === 'temperature_k') {
-            const val = parseInt(String(capability.state.value as unknown as string));
+            const val = parseInt(numericCapabilityValue(capability.state.value));
             await this.adapter.setForeignStateAsync(stateId, val);
             capability.state.action_result = { status: 'DONE' };
         }

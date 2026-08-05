@@ -96,7 +96,7 @@ export default class PowerState extends Base {
             if (min === undefined || max === undefined) {
                 return alexaValue === PowerState.ON ? 1 : alexaValue === PowerState.OFF ? 0 : undefined;
             }
-            return alexaValue === PowerState.ON ? (max as number) : alexaValue === PowerState.OFF ? min : undefined;
+            return alexaValue === PowerState.ON ? max : alexaValue === PowerState.OFF ? min : undefined;
         }
 
         return alexaValue === PowerState.ON ? true : alexaValue === PowerState.OFF ? false : undefined;

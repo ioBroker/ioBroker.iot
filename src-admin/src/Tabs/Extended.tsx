@@ -14,7 +14,7 @@ import {
 
 import { MdAdd as IconAdd } from 'react-icons/md';
 
-import { Utils, I18n, DialogSelectID, type AdminConnection, type IobTheme } from '@iobroker/adapter-react-v5';
+import { Utils, I18n, DialogSelectID, type AdminConnection, type IobTheme } from '@iobroker/gui-components';
 import type { IotAdapterConfig } from '../types';
 
 const styles: Record<string, React.CSSProperties> = {

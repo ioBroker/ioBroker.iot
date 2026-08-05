@@ -416,6 +416,9 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Migrated to TypeScript 6 and react 19
+
 ### 6.1.3 (2026-06-12)
 - (@GermanBluefox) Added support of credentials manager
 

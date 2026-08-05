@@ -618,7 +618,7 @@ class IotAdapter extends Adapter {
                 this.log.debug(`Cannot parse: ${JSON.stringify(data)}`);
             }
         } else {
-            dataObj = data as { id?: string; val?: ioBroker.StateValue; ack?: boolean };
+            dataObj = data;
         }
 
         if (id) {

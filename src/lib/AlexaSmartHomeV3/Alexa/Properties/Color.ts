@@ -95,14 +95,14 @@ export default class Color extends Base {
                 return rgb2hal(rgbwToHex(value));
             }
         } else if (value && typeof value === 'object' && (value as any).hue !== undefined) {
-            return value as unknown as { hue: number; saturation: number; brightness: number };
+            return value;
         }
         return undefined;
     }
 
     value(alexaValue: AlexaV3DirectiveValue): ioBroker.StateValue | undefined {
         if (typeof alexaValue === 'object' && alexaValue !== null) {
-            const hslValue = alexaValue as { hue: number; saturation: number; brightness: number };
+            const hslValue = alexaValue;
             if ('hue' in hslValue && 'saturation' in hslValue) {
                 if (this._rgbw) {
                     return `${hal2rgb(hslValue)}ff`;

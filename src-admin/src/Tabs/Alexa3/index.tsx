@@ -58,7 +58,7 @@ import {
     type IobTheme,
     type AdminConnection,
     type ThemeType,
-} from '@iobroker/adapter-react-v5';
+} from '@iobroker/gui-components';
 import type { IotAdapterConfig } from '../../types';
 import type {
     AlexaSH3DeviceDescription,

@@ -96,14 +96,14 @@ export default class Hue extends AdjustableControl {
                         brightness as number,
                         this._brightness.valuesRangeMin as number,
                         this._brightness.valuesRangeMax as number,
-                    ) as number;
+                    );
                 }
                 if (this.states[map.saturation]) {
                     saturation = normalize_0_1(
                         saturation as number,
                         this.states[map.saturation]!.common.min || 0,
                         this.states[map.saturation]!.common.max || 100,
-                    ) as number;
+                    );
                 }
 
                 // @ts-expect-error special case for Hue property
@@ -215,7 +215,7 @@ export default class Hue extends AdjustableControl {
         if (this.smartName && typeof this.smartName === 'object') {
             const byOn = this.smartName.byON;
             if (byOn !== null && byOn !== undefined && !isNaN(byOn as unknown as number)) {
-                onValue = parseFloat(byOn as any);
+                onValue = parseFloat(byOn);
                 if (onValue < offValue) {
                     onValue = offValue;
                 }

@@ -942,15 +942,12 @@ export default class RemoteAccess {
                     promiseFile = AdminSocket.getListOfAllAdapters(this.adapter)
                         .then(result => {
                             const packed = deflateSync(JSON.stringify([null, result])).toString('base64');
-                            return { sid: message.sid, d: [_type, id, '', packed] } as SOCKET_MESSAGE;
+                            return { sid: message.sid, d: [_type, id, '', packed] as SOCKET_PAYLOAD };
                         })
-                        .catch(
-                            error =>
-                                ({
-                                    sid: message.sid,
-                                    d: [_type, id, '', [error.toString()]],
-                                }) as SOCKET_MESSAGE,
-                        );
+                        .catch(error => ({
+                            sid: message.sid,
+                            d: [_type, id, '', [error.toString()]],
+                        }));
                 } else if (name === 'vendorPrefix' || name === '/vendorPrefix') {
                     return Promise.resolve({ sid: message.sid, d: [_type, id, '', [null, this.vendorPrefix]] });
                 } else if (name.startsWith('/adapter')) {
@@ -1143,7 +1140,7 @@ export default class RemoteAccess {
                                 return {sid: message.sid, d: [_type, id, name, packed]};
                             }
                         })*/
-                        .catch(error => ({ sid: message.sid, d: [_type, id, name, [error]] }) as SOCKET_MESSAGE);
+                        .catch(error => ({ sid: message.sid, d: [_type, id, name, [error]] as SOCKET_PAYLOAD }));
                 }
             } else if (this.handlers[name]) {
                 const argsArray = args as any[];
@@ -1301,7 +1298,7 @@ export default class RemoteAccess {
                             message.ru,
                         ),
                     )
-                    .catch(error => ({ sid: message.sid, d: [_type, id, name, [error]] }) as SOCKET_MESSAGE);
+                    .catch(error => ({ sid: message.sid, d: [_type, id, name, [error]] as SOCKET_PAYLOAD }));
             } else if (name === 'readFile64') {
                 const adapter = (args as [id: string, filePath: string])[0];
                 const fileName = (args as [id: string, filePath: string])[1];
@@ -1335,7 +1332,7 @@ export default class RemoteAccess {
                             message.ru,
                         );
                     })
-                    .catch(error => ({ sid: message.sid, d: [_type, id, name, [error]] }) as SOCKET_MESSAGE);
+                    .catch(error => ({ sid: message.sid, d: [_type, id, name, [error]] as SOCKET_PAYLOAD }));
             } else if (name === 'writeFile' || name === 'writeFile64') {
                 const [adr, fileName, data64, options] = args as [
                     adapterId: string,
@@ -1374,7 +1371,7 @@ export default class RemoteAccess {
                             message.ru,
                         ),
                     )
-                    .catch(error => ({ sid: message.sid, d: [_type, id, name, [error]] }) as SOCKET_MESSAGE);
+                    .catch(error => ({ sid: message.sid, d: [_type, id, name, [error]] as SOCKET_PAYLOAD }));
             } else if (name === 'getEasyMode') {
                 promiseOne = AdminSocket.getEasyMode(this.adapter, this.adminObj);
             } else if (name === 'getAdapterInstances') {
@@ -1492,19 +1489,19 @@ export default class RemoteAccess {
                     .then(commandsPermissions =>
                         this._sendResponse(message.sid, _type, id, name, [commandsPermissions]),
                     )
-                    .catch(error => ({ sid: message.sid, d: [_type, id, name, [error]] }) as SOCKET_MESSAGE);
+                    .catch(error => ({ sid: message.sid, d: [_type, id, name, [error]] as SOCKET_PAYLOAD }));
             } else if (name === 'sendToHost') {
                 const [host, command, msg] = args as [host: string, command: string, message: any];
                 this.adapter.log.debug(`[REMOTE] SEND_TO_HOST: ${command}`);
                 // check if the host is alive
                 promiseResult = AdminSocket.sendToHost(this.adapter, host, command, msg)
                     .then(data => this._sendResponse(message.sid, _type, id, name, [data], message.wu, message.ru))
-                    .catch(error => ({ sid: message.sid, d: [_type, id, name, [error]] }) as SOCKET_MESSAGE);
+                    .catch(error => ({ sid: message.sid, d: [_type, id, name, [error]] as SOCKET_PAYLOAD }));
             } else if (name === 'sendTo') {
                 const [adapterInstance, command, message] = args as [instance: string, command: string, message: any];
                 promiseResult = AdminSocket.sendTo(this.adapter, adapterInstance, command, message)
                     .then(data => this._sendResponse(message.sid, _type, id, name, [data], message.wu, message.ru))
-                    .catch(error => ({ sid: message.sid, d: [_type, id, name, [error]] }) as SOCKET_MESSAGE);
+                    .catch(error => ({ sid: message.sid, d: [_type, id, name, [error]] as SOCKET_PAYLOAD }));
             } else if (name === 'getAllObjects') {
                 promiseOne = AdminSocket.getAllObjects(this.adapter);
             }
@@ -1517,7 +1514,7 @@ export default class RemoteAccess {
                     .then(result =>
                         this._sendResponse(message.sid, _type, id, name, [null, result], message.wu, message.ru),
                     )
-                    .catch(error => ({ sid: message.sid, d: [_type, id, name, [error]] }) as SOCKET_MESSAGE);
+                    .catch(error => ({ sid: message.sid, d: [_type, id, name, [error]] as SOCKET_PAYLOAD }));
             }
 
             if (!promiseResult) {

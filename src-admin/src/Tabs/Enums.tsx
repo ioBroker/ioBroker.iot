@@ -16,7 +16,7 @@ import {
 import { MdEdit as IconEdit } from 'react-icons/md';
 import { Close as IconClose, Check as IconCheck } from '@mui/icons-material';
 
-import { Utils, I18n, DialogMessage, type IobTheme, type AdminConnection } from '@iobroker/adapter-react-v5';
+import { Utils, I18n, DialogMessage, type IobTheme, type AdminConnection } from '@iobroker/gui-components';
 import type { IotAdapterConfig } from '../types';
 
 const CHANGED_COLOR = '#e7000040';

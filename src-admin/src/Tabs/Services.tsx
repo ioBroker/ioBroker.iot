@@ -18,7 +18,7 @@ import {
 
 import { MdRefresh as IconRefresh, MdClose as IconClose, MdAdd as IconAdd } from 'react-icons/md';
 
-import { Utils, I18n, DialogSelectID, IconCopy, type AdminConnection, type IobTheme } from '@iobroker/adapter-react-v5';
+import { Utils, I18n, DialogSelectID, IconCopy, type AdminConnection, type IobTheme } from '@iobroker/gui-components';
 import type { IotAdapterConfig } from '../types';
 
 const styles: Record<string, React.CSSProperties> = {
@@ -65,7 +65,7 @@ const styles: Record<string, React.CSSProperties> = {
     },
     chips: {
         border: '1px solid #DDD',
-        borderRadius: 1,
+        borderRadius: 5,
         width: 'calc(100% - 250px)',
         display: 'inline-block',
         padding: 5,
@@ -401,7 +401,7 @@ export default class Services extends Component<ServicesProps, ServicesState> {
                         variant="standard"
                         value={this.props.native.text2command || '_'}
                         onChange={e =>
-                            this.props.onChange('text2command', e.target.value === '_' ? '' : e.target.value)
+                            this.props.onChange('text2command', e.target.value)
                         }
                         input={
                             <Input

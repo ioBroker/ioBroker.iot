@@ -21,7 +21,7 @@ import {
     type IobTheme,
     type GenericAppProps,
     type GenericAppState,
-} from '@iobroker/adapter-react-v5';
+} from '@iobroker/gui-components';
 import type { IotAdapterConfig } from './types';
 
 import TabOptions from './Tabs/Options';

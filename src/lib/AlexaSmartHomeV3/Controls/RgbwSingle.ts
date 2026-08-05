@@ -141,7 +141,7 @@ export default class RgbwSingle extends AdjustableControl {
                 //   "brightness": 0.6524
                 // } to RGB hex #RRGGBBWW
                 if (typeof alexaValue === 'object' && alexaValue !== null) {
-                    return hal2rgbw(alexaValue as { hue: number; saturation: number; brightness: number });
+                    return hal2rgbw(alexaValue);
                 }
 
                 return null;
@@ -180,7 +180,7 @@ export default class RgbwSingle extends AdjustableControl {
         if (this.smartName && typeof this.smartName === 'object') {
             const byOn = this.smartName.byON;
             if (byOn !== null && byOn !== undefined && !isNaN(byOn as unknown as number)) {
-                onValue = parseFloat(byOn as any);
+                onValue = parseFloat(byOn);
                 if (onValue < offValue) {
                     onValue = offValue;
                 }

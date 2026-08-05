@@ -25,7 +25,7 @@ import {
     DialogMessage,
     type AdminConnection,
     type IobTheme,
-} from '@iobroker/adapter-react-v5';
+} from '@iobroker/gui-components';
 
 import {
     MdAdd as IconAdd,

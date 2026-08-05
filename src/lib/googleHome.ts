@@ -1884,12 +1884,11 @@ export default class GoogleHome {
                     result[id].attributes = JSON.parse(defaultAttributes);
                     const obj = await this.adapter.getForeignObjectAsync(id);
                     const existingSn = (obj?.common as ioBroker.StateCommon | undefined)?.smartName as
-                        | SmartNameObject
-                        | undefined;
+                        SmartNameObject | undefined;
                     if (!existingSn?.ghAttributes || existingSn.ghAttributes !== defaultAttributes) {
                         await this.adapter.extendForeignObjectAsync(id, {
                             common: { smartName: { ghAttributes: defaultAttributes } as SmartNameObject },
-                        } as Partial<ioBroker.StateObject>);
+                        });
                     }
                 } else {
                     result[id].attributes = {};
@@ -2323,7 +2322,7 @@ export default class GoogleHome {
                         if (typeof rgb === 'string') {
                             val = parseInt(rgb.substring(1), 16) || 0;
                         } else {
-                            val = rgb as number;
+                            val = rgb;
                         }
                     } else if (_attr === 'color_temperature') {
                         const temp = state.val as number;
@@ -2964,7 +2963,7 @@ export default class GoogleHome {
                         execute.command
                     ) {
                         const cmd = execute.command.split('.').pop()!;
-                        execute.params = {} as GHExecuteParams;
+                        execute.params = {};
                         execute.params[cmd] = !execute.params.deactivate;
                     }
 
@@ -2972,7 +2971,7 @@ export default class GoogleHome {
                         const paths: { path: string; val: ioBroker.StateValue }[] = [];
                         const paramValue = execute.params[param];
                         if (paramValue && typeof paramValue === 'object') {
-                            Object.keys(paramValue as Record<string, unknown>).forEach(subElement => {
+                            Object.keys(paramValue).forEach(subElement => {
                                 if (subElement === 'spectrumRGB' && attrs.set_color_R) {
                                     const rgb = parseInt(String(execute.params.color?.spectrumRGB)) || 0;
                                     paths.push({ path: 'color_R', val: (rgb & 0xff0000) >> 16 });
@@ -3062,7 +3061,7 @@ export default class GoogleHome {
             if (r.error) {
                 return { ids: [devId], status: 'ERROR', errorCode: String(r.error) };
             }
-            return { ids: [devId], status: 'SUCCESS', states: r as Record<string, unknown> };
+            return { ids: [devId], status: 'SUCCESS', states: r };
         });
 
         return { requestId, payload: { commands: responseCommands } };
