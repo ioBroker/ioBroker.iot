@@ -416,7 +416,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 7.0.0 (2026-08-05)
 - (@GermanBluefox) Migrated to TypeScript 6 and react 19
 
 ### 6.1.3 (2026-06-12)
@@ -435,10 +435,6 @@ setState('iot.0.app.message', JSON.stringify({
 - (@GermanBluefox) Removed support for Alexa 2
 - (@GermanBluefox) Fixed bug in Alisa with color and motion sensor
 - (@GermanBluefox) Validate Discovery response before sending it back
-
-### 5.0.13 (2026-03-31)
-- (@GermanBluefox) Corrected the handling of the multiple group names
-- (@GermanBluefox) Fixing the license validation
 
 ## License
 
