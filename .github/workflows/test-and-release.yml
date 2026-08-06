@@ -46,7 +46,7 @@ jobs:
                 node-version: [22.x, 24.x]
 
         steps:
-            - uses: ioBroker/testing-action-adapter@v1.1.1
+            - uses: ioBroker/testing-action-adapter@v1.1.2
               with:
                   build: true
                   os: 'ubuntu-latest'
