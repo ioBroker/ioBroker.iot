@@ -416,7 +416,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 7.0.1 (2026-08-06)
 - (@GermanBluefox) Migrated to TypeScript 6 and react 19
 
 ### 6.1.3 (2026-06-12)
