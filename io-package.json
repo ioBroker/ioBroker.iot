@@ -3,19 +3,6 @@
     "name": "iot",
     "version": "7.0.0",
     "news": {
-      "7.0.0": {
-        "en": "Migrated to TypeScript 6 and react 19",
-        "de": "Migration zu TypeScript 6 und React 19",
-        "ru": "Перешёл на TypeScript 6 и React 19.",
-        "pt": "Migrei para TypeScript 6 e React 19.",
-        "nl": "Overgestapt naar TypeScript 6 en React 19.",
-        "fr": "Migration vers TypeScript 6 et React 19",
-        "it": "Migrazione a TypeScript 6 e React 19",
-        "es": "Migrado a TypeScript 6 y React 19.",
-        "pl": "Migracja do TypeScript 6 i React 19",
-        "uk": "Перейшов на TypeScript 6 та React 19",
-        "zh-cn": "已迁移到 TypeScript 6 和 React 19"
-      },
       "6.1.3": {
         "en": "Added support of credentials manager",
         "de": "Zusätzliche Unterstützung des Anmeldermanagers",
