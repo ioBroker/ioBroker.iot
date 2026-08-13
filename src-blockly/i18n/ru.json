@@ -1,0 +1,14 @@
+{
+    "ifttt_event": "event",
+    "ifttt_iot": "Послать текст в IFTTT через iot",
+    "ifttt_log": "Протокол",
+    "ifttt_log_debug": "debug",
+    "ifttt_log_error": "ошибка",
+    "ifttt_log_info": "инфо",
+    "ifttt_log_none": "нет",
+    "ifttt_log_warn": "warning",
+    "ifttt_tooltip": "Послать в IFTTT",
+    "ifttt_value1": "value1",
+    "ifttt_value2": "value2",
+    "ifttt_value3": "value3"
+}
