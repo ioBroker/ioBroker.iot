@@ -38,7 +38,7 @@
         "@iobroker/types": "^7.2.2",
         "@types/aws-iot-device-sdk": "^2.2.9",
         "@types/mime": "^3.0.0",
-        "@types/node": "^22.20.1",
+        "@types/node": "^26.2.0",
         "ajv": "^8.20.0",
         "ajv-draft-04": "^1.0.0",
         "ajv-formats": "^3.0.1",
