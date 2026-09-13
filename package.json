@@ -42,7 +42,7 @@
         "ajv": "^8.20.0",
         "ajv-draft-04": "^1.0.0",
         "ajv-formats": "^3.0.1",
-        "blockly": "^13.2.1",
+        "blockly": "^13.3.0",
         "colorette": "^2.0.20",
         "esbuild": "^0.28.2",
         "puppeteer": "^25.6.0",
