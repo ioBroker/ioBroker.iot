@@ -67,6 +67,22 @@ interface ExtendedOptionsState {
     showSelectId: boolean;
     adminInstances: { title: string; value: string; noTranslation?: true }[];
     webInstances: { title: string; value: string; noTranslation?: true }[];
+    mcpInstances: { title: string; value: string; noTranslation?: true }[];
+}
+
+type InstanceObjects = Awaited<ReturnType<AdminConnection['getAdapterInstances']>>;
+
+function instancesToOptions(
+    instances: InstanceObjects,
+    filter: (item: InstanceObjects[number]) => boolean,
+): { title: string; value: string; noTranslation?: true }[] {
+    const options: { title: string; value: string; noTranslation?: true }[] = instances.filter(filter).map(item => ({
+        title: `${item.common.name}.${item._id.split('.').pop()}`,
+        value: `${item.common.name}.${item._id.split('.').pop()}`,
+        noTranslation: true,
+    }));
+    options.unshift({ title: 'disabled', value: '' });
+    return options;
 }
 
 export default class ExtendedOptions extends Component<ExtendedOptionsProps, ExtendedOptionsState> {
@@ -77,35 +93,28 @@ export default class ExtendedOptions extends Component<ExtendedOptionsProps, Ext
             showSelectId: false,
             adminInstances: [],
             webInstances: [],
+            mcpInstances: [],
         };
     }
 
     componentDidMount(): void {
-        void this.props.socket.getAdapterInstances('admin').then(adminInstances => {
-            // filter out instances with authentication
-            const aInstances: { title: string; value: string; noTranslation?: true }[] = adminInstances
-                .filter(item => !item.native.auth)
-                .map(item => ({
-                    title: `${item.common.name}.${item._id.split('.').pop()}`,
-                    value: `${item.common.name}.${item._id.split('.').pop()}`,
-                    noTranslation: true,
-                }));
+        void this.readInstances();
+    }
 
-            aInstances.unshift({ title: 'disabled', value: '' });
+    async readInstances(): Promise<void> {
+        const adminInstances = await this.props.socket.getAdapterInstances('admin');
+        const webInstances = await this.props.socket.getAdapterInstances('web');
+        const mcpInstances = await this.props.socket.getAdapterInstances('mcp').catch((): InstanceObjects => []);
 
-            return this.props.socket.getAdapterInstances('web').then(webInstances => {
-                const wInstances: { title: string; value: string; noTranslation?: true }[] = webInstances
-                    .filter(item => !item.native.auth)
-                    .map(item => ({
-                        title: `${item.common.name}.${item._id.split('.').pop()}`,
-                        value: `${item.common.name}.${item._id.split('.').pop()}`,
-                        noTranslation: true,
-                    }));
-
-                wInstances.unshift({ title: 'disabled', value: '' });
-
-                this.setState({ adminInstances: aInstances, webInstances: wInstances });
-            });
+        this.setState({
+            // filter out instances with authentication: the remote access cannot log in
+            adminInstances: instancesToOptions(adminInstances, item => !item.native.auth),
+            webInstances: instancesToOptions(webInstances, item => !item.native.auth),
+            // as web extension, the authentication of the web instance is checked by the adapter
+            mcpInstances: instancesToOptions(
+                mcpInstances,
+                item => !item.native.oauth && (!!item.native.webInstance || !item.native.auth),
+            ),
         });
     }
 
@@ -281,6 +290,12 @@ export default class ExtendedOptions extends Component<ExtendedOptionsProps, Ext
                         : null}
                     {this.props.native.remote
                         ? this.renderSelect('Web instance', 'remoteWebInstance', this.state.webInstances, {
+                              width: 120,
+                              minWidth: 120,
+                          })
+                        : null}
+                    {this.props.native.remote
+                        ? this.renderSelect('MCP instance', 'remoteMcpInstance', this.state.mcpInstances, {
                               width: 120,
                               minWidth: 120,
                           })

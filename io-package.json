@@ -222,6 +222,7 @@
     "defaultToggle": false,
     "remoteAdminInstance": "",
     "remoteWebInstance": "",
+    "remoteMcpInstance": "",
     "customKnownAlexaUsers": [],
     "addCustomKnownAlexaUserNameToText": false,
     "customKnownAlexaDevices": [],

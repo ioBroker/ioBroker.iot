@@ -1,6 +1,7 @@
 import axios, { type AxiosError } from 'axios';
 import { deflateSync } from 'node:zlib';
-import AdminSocket from './adminCommonSocket';
+import { Agent as HttpsAgent } from 'node:https';
+import AdminSocket, { COMMANDS_PERMISSIONS } from './adminCommonSocket';
 import type { IotAdapterConfig } from './types';
 import type { device as DeviceModule } from 'aws-iot-device-sdk';
 import type IotAdapter from '../main';
@@ -22,14 +23,72 @@ const MESSAGE_TYPES: Record<string, MESSAGE_TYPE> = {
 };
 
 const MAX_IOT_MESSAGE_LENGTH = 127 * 1024;
+// Reserve for the JSON envelope ({sid, i, l, d: [type, id, name, ...]}) around a packed payload
+const MAX_IOT_PAYLOAD_LENGTH = MAX_IOT_MESSAGE_LENGTH - 1024;
 const MAX_POST_MESSAGE_LENGTH = 127 * 1024;
+const MAX_POST_PAYLOAD_LENGTH = MAX_POST_MESSAGE_LENGTH - 1024;
 const MAX_FILE_SIZE = 4 * 1024 * 1024;
 
 const COLLECT_OBJS_MS = 400;
 const COLLECT_STATES_MS = 400;
 const COLLECT_LOGS_MS = 800;
+// do not wait for the collect interval if more states are collected
+const MAX_COLLECTED_STATES = 70;
+// sockets without any request for this time are deleted
+const SOCKET_INACTIVITY_MS = 30 * 3600 * 1000;
+// trunks of big files, which were not confirmed by the cloud, are deleted after this time
+const PACKETS_TTL_MS = 120000;
+
+const MCP_TIMEOUT_MS = 60000;
+// only these headers are forwarded to and from the local MCP server (no authorization, no cookies)
+const MCP_REQUEST_HEADERS = ['accept', 'content-type', 'mcp-session-id', 'mcp-protocol-version', 'last-event-id'];
+const MCP_RESPONSE_HEADERS = ['content-type', 'mcp-session-id', 'mcp-protocol-version'];
 
 const NONE = '___none___';
+const INVALID_CONNECTION = 'invalid connectionId';
+
+// local instances often use certificates, which are not issued for "localhost"
+const localHttpsAgent = new HttpsAgent({ rejectUnauthorized: false });
+
+/** Request for the local MCP server, sent by the cloud with the command `mcp` */
+export type MCP_REMOTE_REQUEST = {
+    /** Default POST */
+    method?: 'POST' | 'GET' | 'DELETE';
+    headers?: Record<string, string>;
+    /** JSON-RPC message(s) as object or as string */
+    body?: unknown;
+};
+
+/** Answer of the local MCP server */
+export type MCP_REMOTE_RESPONSE = {
+    status: number;
+    headers: Record<string, string>;
+    /** Raw body: JSON or text/event-stream */
+    body: string;
+};
+
+/** Error objects cannot be serialized to JSON, so send their message */
+function normalizeError(error: any): any {
+    return error instanceof Error ? error.message : error;
+}
+
+/** Build the local URL of a web server instance (admin, web or mcp) from its settings */
+export function getLocalUrl(native: Record<string, any>): string {
+    let host: string = native.bind || '';
+    if (!host || host === '0.0.0.0') {
+        host = '127.0.0.1';
+    } else if (host === '::') {
+        host = 'localhost';
+    } else if (host.includes(':')) {
+        host = `[${host}]`;
+    }
+    return `${native.secure ? 'https' : 'http'}://${host}:${native.port}`;
+}
+
+function parseMs(value: number | string | undefined, defaultMs: number): number {
+    const ms = parseInt(value as string, 10);
+    return Number.isFinite(ms) && ms >= 0 ? ms : defaultMs;
+}
 
 type SessionID = string;
 type SubscribeType = 'stateChange' | 'objectChange' | 'log';
@@ -57,9 +116,13 @@ export type SOCKET_MESSAGE = {
     wu?: string;
     ru?: string;
 };
+type SOCKET_CHANGE_ARGS =
+    | [ioBroker.LogMessage[]]
+    | [string[], (ioBroker.Object | null | undefined)[]]
+    | [string[], (ioBroker.State | null | undefined)[]];
 export type SOCKET_CHANGE_MESSAGE = {
     name: SubscribeType;
-    args: string | [ioBroker.LogMessage[]] | [string[], (ioBroker.Object | null | undefined)[]];
+    args: string | SOCKET_CHANGE_ARGS;
     sid: SessionID;
     multi?: boolean;
 };
@@ -110,36 +173,48 @@ export default class RemoteAccess {
     private sendLogsTimeout: NodeJS.Timeout | null = null;
     private sendStatesTimeout: NodeJS.Timeout | null = null;
     private infoTimeout: NodeJS.Timeout | null = null;
+    // changes of one type are sent one after another, else a client could receive an old value after a new one
+    private readonly sending: Record<SubscribeType, boolean> = { stateChange: false, objectChange: false, log: false };
     private secret: string = '';
 
     constructor(adapter: IotAdapter, clientId: string) {
         this.adapter = adapter;
         this.config = adapter.config;
         this.clientId = clientId;
-        this.collectStatesMs =
-            this.config.collectStatesMs === undefined
-                ? COLLECT_STATES_MS
-                : parseInt(this.config.collectStatesMs as string, 10);
-        this.collectObjectsMs =
-            this.config.collectObjectsMs === undefined
-                ? COLLECT_OBJS_MS
-                : parseInt(this.config.collectObjectsMs as string, 10);
-        this.collectLogsMs =
-            this.config.collectLogsMs === undefined
-                ? COLLECT_LOGS_MS
-                : parseInt(this.config.collectLogsMs as string, 10);
+        // empty strings from the configuration must not lead to NaN
+        this.collectStatesMs = parseMs(this.config.collectStatesMs, COLLECT_STATES_MS);
+        this.collectObjectsMs = parseMs(this.config.collectObjectsMs, COLLECT_OBJS_MS);
+        this.collectLogsMs = parseMs(this.config.collectLogsMs, COLLECT_LOGS_MS);
 
         this.handlers = {
             getObject: { f: this.adapter.getForeignObjectAsync.bind(this.adapter), args: 1 },
             setObject: { f: this.adapter.setForeignObjectAsync.bind(this.adapter), args: 2 },
-            getState: { f: this.adapter.getForeignStateAsync.bind(this.adapter), args: 1 },
+            getState: {
+                // fill the cache, else updateState ignores the changes of this state
+                f: (stateId: string): Promise<ioBroker.State | null | undefined> =>
+                    this.adapter.getForeignStateAsync(stateId).then(state => {
+                        if (stateId) {
+                            this.statesCache[stateId] = JSON.stringify(state);
+                        }
+                        return state;
+                    }),
+                args: 1,
+            },
             setState: { f: this.adapter.setForeignStateAsync.bind(this.adapter), args: 2 },
             delState: { f: this.adapter.delForeignStateAsync.bind(this.adapter), args: 2 },
             getObjectView: { f: this.adapter.getObjectViewAsync.bind(this.adapter), args: 4 },
             delObject: { f: this.adapter.delForeignObjectAsync.bind(this.adapter), args: 2 },
             delObjects: { f: this.adapter.delForeignObjectAsync.bind(this.adapter), args: 2 },
             extendObject: { f: this.adapter.extendForeignObjectAsync.bind(this.adapter), args: 2 },
-            getForeignStates: { f: this.adapter.getForeignStatesAsync.bind(this.adapter), args: 1 },
+            getForeignStates: {
+                // fill the cache, else updateState ignores the changes of these states
+                f: (pattern: string | string[]): Promise<Record<string, ioBroker.State>> =>
+                    this.adapter.getForeignStatesAsync(pattern).then(states => {
+                        this._fillStatesCache(states);
+                        return states;
+                    }),
+                args: 1,
+            },
             getForeignObjects: { f: this.adapter.getForeignObjectsAsync.bind(this.adapter), args: 2 },
             fileExists: { f: this.adapter.fileExistsAsync.bind(this.adapter), args: 2 },
             chownFile: { f: this.adapter.chownFileAsync.bind(this.adapter), args: 3 },
@@ -166,27 +241,36 @@ export default class RemoteAccess {
                 this.localAdmin = null;
                 this.adapter.log.warn('[REMOTE] Cannot read admin files while iobroker.admin was not found');
             }
-            void this.adapter.getForeignObjectAsync(`system.adapter.${this.config.remoteAdminInstance}`).then(obj => {
-                this.adminObj = obj || null;
-                if (obj?.native && !obj.native.auth) {
-                    this.adminUrl = `${obj.native.secure ? 'https:' : 'http:'}//localhost:${obj.native.port}`;
-                }
-            });
+            this.adapter
+                .getForeignObjectAsync(`system.adapter.${this.config.remoteAdminInstance}`)
+                .then(obj => {
+                    this.adminObj = obj || null;
+                    if (obj?.native && !obj.native.auth) {
+                        this.adminUrl = getLocalUrl(obj.native);
+                    }
+                })
+                .catch(e => this.adapter.log.error(`[REMOTE] Cannot read admin instance: ${e}`));
         }
         if (this.config.remoteWebInstance) {
-            void this.adapter.getForeignObjectAsync(`system.adapter.${this.config.remoteWebInstance}`).then(obj => {
-                this.webObj = obj || null;
-                if (obj?.native && !obj.native.auth) {
-                    this.webUrl = `${obj.native.secure ? 'https:' : 'http:'}//localhost:${obj.native.port}`;
-                }
-            });
+            this.adapter
+                .getForeignObjectAsync(`system.adapter.${this.config.remoteWebInstance}`)
+                .then(obj => {
+                    this.webObj = obj || null;
+                    if (obj?.native && !obj.native.auth) {
+                        this.webUrl = getLocalUrl(obj.native);
+                    }
+                })
+                .catch(e => this.adapter.log.error(`[REMOTE] Cannot read web instance: ${e}`));
         }
 
-        void this.adapter.getForeignObjectAsync('system.meta.uuid').then(obj => {
-            if (obj?.native) {
-                this.vendorPrefix = obj.native.uuid.length > 36 ? obj.native.uuid.substring(0, 2) : '';
-            }
-        });
+        this.adapter
+            .getForeignObjectAsync('system.meta.uuid')
+            .then(obj => {
+                if (obj?.native) {
+                    this.vendorPrefix = obj.native.uuid.length > 36 ? obj.native.uuid.substring(0, 2) : '';
+                }
+            })
+            .catch(e => this.adapter.log.error(`[REMOTE] Cannot read system UUID: ${e}`));
     }
 
     setLanguage(_lang: ioBroker.Languages): void {
@@ -197,27 +281,120 @@ export default class RemoteAccess {
         this.device = device;
     }
 
-    async _sendCachedStates(): Promise<void> {
-        const sids = Object.keys(this.sockets);
-
-        const listOfStates = this.listOfStates;
-        // clear cache
-        this.listOfStates = { ids: [], states: [] };
-
-        if (sids.length) {
-            this.adapter.log.debug(
-                `Send to ${sids.length} sockets: ${listOfStates.ids.map((id, i) => `${id}: ${listOfStates.states[i]?.val}`).join(', ')}`,
-            );
-
-            // pack the data
-            const data = JSON.stringify([listOfStates.ids, listOfStates.states]);
-            const args = deflateSync(data).toString('base64');
-
-            for (let s = 0; s < sids.length; s++) {
-                const error = await this._sendEvent({ name: 'stateChange', args, sid: sids[s], multi: true });
-                if (error) {
-                    this.adapter.log.warn(`[REMOTE] cannot send "stateChange": ${JSON.stringify(error)}`);
+    /**
+     * Send the collected changes of one type.
+     * If the previous changes of this type are still being sent, the new ones are sent right after them,
+     * so the client always gets the changes in the right order.
+     */
+    async _flush(type: SubscribeType): Promise<void> {
+        if (this.sending[type]) {
+            return;
+        }
+        this.sending[type] = true;
+        try {
+            for (;;) {
+                if (type === 'stateChange') {
+                    const listOfStates = this.listOfStates;
+                    if (!listOfStates.ids.length) {
+                        break;
+                    }
+                    this.listOfStates = { ids: [], states: [] };
+                    if (this.adapter.log.level === 'debug') {
+                        this.adapter.log.debug(
+                            `[REMOTE] Send states: ${listOfStates.ids.map((id, i) => `${id}: ${listOfStates.states[i]?.val}`).join(', ')}`,
+                        );
+                    }
+                    await this._sendChanges('stateChange', listOfStates.ids, listOfStates.states);
+                } else if (type === 'objectChange') {
+                    const listOfObjects = this.listOfObjects;
+                    if (!listOfObjects.ids.length) {
+                        break;
+                    }
+                    this.listOfObjects = { ids: [], objs: [] };
+                    await this._sendChanges('objectChange', listOfObjects.ids, listOfObjects.objs);
+                } else {
+                    const listOfLogs = this.listOfLogs;
+                    if (!listOfLogs.length) {
+                        break;
+                    }
+                    this.listOfLogs = [];
+                    await Promise.all(
+                        this._getSubscribedSockets('log').map(sid => this._sendChangeEvent(sid, 'log', [listOfLogs])),
+                    );
                 }
+            }
+        } finally {
+            this.sending[type] = false;
+        }
+    }
+
+    /** Get the sockets, which subscribed on the given ID (or on the logs) */
+    _getSubscribedSockets(type: SubscribeType, id?: string): SessionID[] {
+        return Object.keys(this.sockets).filter(sid => {
+            const subscribes = this.sockets[sid]._subscribe[type];
+            return !!subscribes?.length && (id === undefined || subscribes.some(s => s.regex.test(id)));
+        });
+    }
+
+    /** Send to every socket only the changes it subscribed on. The sockets are served in parallel. */
+    async _sendChanges(
+        name: 'stateChange' | 'objectChange',
+        ids: string[],
+        values: (ioBroker.State | ioBroker.Object | null | undefined)[],
+    ): Promise<void> {
+        await Promise.all(
+            Object.keys(this.sockets).map(sid => {
+                const subscribes = this.sockets[sid]?._subscribe[name];
+                if (!subscribes?.length) {
+                    return Promise.resolve();
+                }
+                const socketIds: string[] = [];
+                const socketValues: (ioBroker.State | ioBroker.Object | null | undefined)[] = [];
+                for (let i = 0; i < ids.length; i++) {
+                    if (subscribes.some(s => s.regex.test(ids[i]))) {
+                        socketIds.push(ids[i]);
+                        socketValues.push(values[i]);
+                    }
+                }
+                if (!socketIds.length) {
+                    return Promise.resolve();
+                }
+                return this._sendChangeEvent(sid, name, [socketIds, socketValues] as SOCKET_CHANGE_ARGS);
+            }),
+        );
+    }
+
+    /**
+     * Send a change event (stateChange, objectChange or log) to one socket.
+     * The events Lambda forwards every POST as one WebSocket frame, which is limited to ~128 KB:
+     * small events are sent unchanged, bigger ones packed and too big ones split into parts
+     * (the browser collects the parts by ID, joins and unpacks them).
+     */
+    async _sendChangeEvent(sid: SessionID, name: SubscribeType, args: SOCKET_CHANGE_ARGS): Promise<void> {
+        // errors by sending of logs must not be logged, else every error creates a new log to send
+        const silent = name === 'log';
+        const json = JSON.stringify(args);
+        if (Buffer.byteLength(json) <= MAX_POST_PAYLOAD_LENGTH) {
+            await this._sendEvent({ name, args, sid, multi: true }, silent);
+            return;
+        }
+        const packed = deflateSync(json).toString('base64');
+        if (packed.length <= MAX_POST_PAYLOAD_LENGTH) {
+            await this._sendEvent({ name, args: packed, sid, multi: true }, silent);
+            return;
+        }
+
+        // one random ID per event, so the client can collect the parts
+        const id = Math.round(Math.random() * 1000000000);
+        const count = Math.ceil(packed.length / MAX_POST_PAYLOAD_LENGTH);
+        for (let i = 0; i < count; i++) {
+            const part = packed.substring(i * MAX_POST_PAYLOAD_LENGTH, (i + 1) * MAX_POST_PAYLOAD_LENGTH);
+            const error = await this._sendEvent(
+                { sid, d: [MESSAGE_TYPES.COMBINED_MESSAGE, id, name, part, count, i] },
+                silent,
+            );
+            if (error) {
+                break;
             }
         }
     }
@@ -226,96 +403,67 @@ export default class RemoteAccess {
         if (!this.config.remote) {
             return;
         }
-        const cache = JSON.stringify(state);
+        const cache = JSON.stringify(state ?? null);
 
-        if (this.statesCache[id] && this.statesCache[id] !== cache) {
-            if (this.config.debug) {
-                this.adapter.log.debug(`[REMOTE] send stateChange "${id}": ${JSON.stringify(state)}`);
+        // only the states, which were read by a client, are sent
+        if (!this.statesCache[id] || this.statesCache[id] === cache) {
+            return;
+        }
+        this.statesCache[id] = cache;
+
+        if (!this._getSubscribedSockets('stateChange', id).length) {
+            return;
+        }
+
+        if (this.config.debug) {
+            this.adapter.log.debug(`[REMOTE] send stateChange "${id}": ${cache}`);
+        }
+
+        this.listOfStates.ids.push(id);
+        this.listOfStates.states.push(JSON.parse(cache));
+
+        // do not wait if the list will be too long
+        if (this.listOfStates.ids.length > MAX_COLLECTED_STATES) {
+            if (this.sendStatesTimeout) {
+                clearTimeout(this.sendStatesTimeout);
+                this.sendStatesTimeout = null;
             }
-
-            this.statesCache[id] = cache;
-
-            this.listOfStates.ids.push(id);
-            this.listOfStates.states.push(JSON.parse(JSON.stringify(state)));
-
-            // do not wait if the list will be too long
-            if (this.listOfStates.ids.length > 70) {
-                if (this.sendObjectsTimeout) {
-                    clearTimeout(this.sendObjectsTimeout);
-                    this.sendObjectsTimeout = null;
-                }
-                this._sendCachedStates().catch(e => this.adapter.log.error(`[REMOTE] Cannot send cached states: ${e}`));
-            } else {
-                this.sendObjectsTimeout ||= setTimeout(() => {
-                    this.sendObjectsTimeout = null;
-                    this._sendCachedStates().catch(e =>
-                        this.adapter.log.error(`[REMOTE] Cannot send cached states: ${e}`),
-                    );
-                }, this.collectStatesMs);
-            }
+            this._flush('stateChange').catch(e => this.adapter.log.error(`[REMOTE] Cannot send cached states: ${e}`));
         } else {
-            // this.adapter.log.debug(`[REMOTE] ignore stateChange "${id}": ${JSON.stringify(state)}`);
+            this.sendStatesTimeout ||= setTimeout(() => {
+                this.sendStatesTimeout = null;
+                this._flush('stateChange').catch(e =>
+                    this.adapter.log.error(`[REMOTE] Cannot send cached states: ${e}`),
+                );
+            }, this.collectStatesMs);
         }
     }
 
     updateObject(id: string, obj: ioBroker.Object | null | undefined): void {
-        if (!this.config.remote) {
+        if (!this.config.remote || !this._getSubscribedSockets('objectChange', id).length) {
             return;
         }
         this.listOfObjects.ids.push(id);
-        this.listOfObjects.objs.push(JSON.parse(JSON.stringify(obj)));
+        this.listOfObjects.objs.push(obj ? JSON.parse(JSON.stringify(obj)) : null);
 
-        if (this.sendObjectsTimeout) {
-            clearTimeout(this.sendObjectsTimeout);
-        }
-
-        this.sendObjectsTimeout = setTimeout(async () => {
+        // the timer is not restarted by every change, else nothing is sent while objects change permanently
+        this.sendObjectsTimeout ||= setTimeout(() => {
             this.sendObjectsTimeout = null;
-            const listOfObjects = this.listOfObjects;
-            this.listOfObjects = { ids: [], objs: [] };
-            const sids = Object.keys(this.sockets);
-
-            for (let s = 0; s < sids.length; s++) {
-                const error = await this._sendEvent({
-                    name: 'objectChange',
-                    args: [listOfObjects.ids, listOfObjects.objs],
-                    sid: sids[s],
-                    multi: true,
-                });
-                if (error) {
-                    this.adapter.log.warn(`[REMOTE] cannot send "objectChange": ${JSON.stringify(error)}`);
-                }
-            }
-        }, COLLECT_OBJS_MS);
+            this._flush('objectChange').catch(e => this.adapter.log.error(`[REMOTE] Cannot send object changes: ${e}`));
+        }, this.collectObjectsMs);
     }
 
     onLog(obj: ioBroker.LogMessage): void {
-        if (!this.config.remote) {
+        if (!this.config.remote || !this._getSubscribedSockets('log').length) {
             return;
         }
         this.listOfLogs.push(obj);
 
-        if (this.sendLogsTimeout) {
-            clearTimeout(this.sendLogsTimeout);
-        }
-
-        this.sendLogsTimeout = setTimeout(async () => {
+        // the timer is not restarted by every log line, else nothing is sent while something logs permanently
+        this.sendLogsTimeout ||= setTimeout(() => {
             this.sendLogsTimeout = null;
-            const listOfLogs = this.listOfLogs;
-            this.listOfLogs = [];
-            const sids = Object.keys(this.sockets);
-            for (let s = 0; s < sids.length; s++) {
-                const error = await this._sendEvent({
-                    name: 'log',
-                    args: [listOfLogs],
-                    sid: sids[s],
-                    multi: true,
-                });
-                if (error) {
-                    this.adapter.log.error(`[REMOTE] cannot send "log": ${JSON.stringify(error)}`);
-                }
-            }
-        }, COLLECT_LOGS_MS);
+            this._flush('log').catch(e => this.adapter.log.debug(`[REMOTE] Cannot send logs: ${e}`));
+        }, this.collectLogsMs);
     }
 
     destroy(): void {
@@ -342,21 +490,31 @@ export default class RemoteAccess {
 
     _clearMemory(): void {
         const now = Date.now();
-        const DAY = 36000000 * 3;
         Object.keys(this.sockets).forEach(sid => {
-            if (now - this.sockets[sid].ts > DAY) {
-                this._unsubscribeSocket(sid, 'stateChange');
-                this._unsubscribeSocket(sid, 'objectChange');
-                this._unsubscribeSocket(sid, 'log');
-                delete this.sockets[sid];
+            if (now - this.sockets[sid].ts > SOCKET_INACTIVITY_MS) {
+                this._removeSocket(sid);
             }
         });
 
         Object.keys(this.packets).forEach(id => {
-            if (now - this.packets[id].ts > 120000) {
+            if (now - this.packets[id].ts > PACKETS_TTL_MS) {
                 delete this.packets[id];
             }
         });
+    }
+
+    _startGarbageCollector(): void {
+        this.gcInterval ||= setInterval(() => this._clearMemory(), 60000);
+    }
+
+    /** Delete the socket and release its subscriptions */
+    _removeSocket(sid: SessionID): void {
+        if (this.sockets[sid]) {
+            this._unsubscribeSocket(sid, 'stateChange');
+            this._unsubscribeSocket(sid, 'objectChange');
+            this._unsubscribeSocket(sid, 'log');
+            delete this.sockets[sid];
+        }
     }
 
     _readAllObjects(): Promise<{ [id: string]: ioBroker.Object }> {
@@ -376,21 +534,9 @@ export default class RemoteAccess {
         if (!pattern || typeof pattern !== 'string') {
             return null;
         }
-        if (pattern !== '*') {
-            if (pattern[0] === '*' && pattern[pattern.length - 1] !== '*') {
-                pattern += '$';
-            }
-            if (pattern[0] !== '*' && pattern[pattern.length - 1] === '*') {
-                pattern = `^${pattern}`;
-            }
-        }
-        pattern = pattern.replace(/\./g, '\\.');
-        pattern = pattern.replace(/\*/g, '.*');
-        pattern = pattern.replace(/\[/g, '\\[');
-        pattern = pattern.replace(/]/g, '\\]');
-        pattern = pattern.replace(/\(/g, '\\(');
-        pattern = pattern.replace(/\)/g, '\\)');
-        return pattern;
+        // IDs may contain characters with special meaning in regular expressions. Only "*" is a wildcard.
+        const escaped = pattern.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*');
+        return `^${escaped}$`;
     }
 
     _subscribe(sid: SessionID, type: SubscribeType, pattern: string): void {
@@ -519,11 +665,7 @@ export default class RemoteAccess {
     }
 
     _unsubscribeAll(): void {
-        Object.keys(this.sockets).forEach(sid => {
-            this._unsubscribe(sid, 'stateChange');
-            this._unsubscribe(sid, 'objectChange');
-            this._unsubscribe(sid, 'log');
-        });
+        Object.keys(this.sockets).forEach(sid => this._removeSocket(sid));
     }
 
     _unsubscribeSocket(sid: SessionID, type: SubscribeType): void {
@@ -581,10 +723,14 @@ export default class RemoteAccess {
         }
     }
 
-    _sendEvent(
-        message: SOCKET_MESSAGE | SOCKET_CHANGE_MESSAGE,
-        _originalMessage?: SOCKET_MESSAGE,
-    ): Promise<string | undefined> {
+    /**
+     * Send a message to the client via the events server.
+     *
+     * @param message message to send
+     * @param silent log errors only as debug
+     * @returns error text or undefined if sent
+     */
+    _sendEvent(message: SOCKET_MESSAGE | SOCKET_CHANGE_MESSAGE, silent?: boolean): Promise<string | undefined> {
         return axios
             .post('https://remote-events.iobroker.in/', message, {
                 validateStatus: status => status === 200,
@@ -593,30 +739,38 @@ export default class RemoteAccess {
             .then(() => undefined)
             .catch(error => {
                 let errorMessage: any;
-                if ((error as AxiosError).response) {
+                if ((error as AxiosError)?.response) {
                     errorMessage = (error as AxiosError).response!.data || (error as AxiosError).response!.status;
                 } else {
-                    errorMessage = error.message?.toString();
+                    errorMessage = error?.message?.toString() || error;
                 }
 
-                this.adapter.log.warn(
-                    `[REMOTE] Cannot send status update to ${message.sid} (${JSON.stringify(_originalMessage)}): ${JSON.stringify(errorMessage)}`,
-                );
-
-                if (errorMessage.error === 'invalid connectionId') {
+                if (errorMessage?.error === INVALID_CONNECTION) {
+                    // the client is disconnected
                     if (this.sockets[message.sid]) {
                         this.adapter.log.debug(`[REMOTE] delete connection id ${message.sid}`);
-                        delete this.sockets[message.sid];
+                        this._removeSocket(message.sid);
                     }
-                    errorMessage = false;
-                } else {
-                    this.adapter.log.warn(
-                        `[REMOTE] Cannot send status update to "${message.sid}" (${JSON.stringify(_originalMessage)}): ${JSON.stringify(errorMessage)}`,
-                    );
+                    return INVALID_CONNECTION;
                 }
 
-                return JSON.stringify(errorMessage);
+                // do not log the whole message, it can be very big
+                const command = (message as SOCKET_CHANGE_MESSAGE).name || (message as SOCKET_MESSAGE).d?.[2];
+                const text = `[REMOTE] Cannot send "${command}" to "${message.sid}": ${JSON.stringify(errorMessage)}`;
+                if (silent) {
+                    this.adapter.log.debug(text);
+                } else {
+                    this.adapter.log.warn(text);
+                }
+
+                return typeof errorMessage === 'string' ? errorMessage : JSON.stringify(errorMessage);
             });
+    }
+
+    _fillStatesCache(states: Record<string, ioBroker.State> | null | undefined): void {
+        if (states) {
+            Object.keys(states).forEach(stateId => (this.statesCache[stateId] = JSON.stringify(states[stateId])));
+        }
     }
 
     async _getStatesManyArgs(
@@ -628,11 +782,9 @@ export default class RemoteAccess {
             try {
                 const result: Record<string, ioBroker.State> = await this.adapter.getForeignStatesAsync(id || '*');
                 response[a] = [null, result];
-                if (result) {
-                    Object.keys(result).forEach(id => (this.statesCache[id] = JSON.stringify(result[id])));
-                }
+                this._fillStatesCache(result);
             } catch (error) {
-                response[a] = [error];
+                response[a] = [normalizeError(error)];
             }
         }
         return response;
@@ -649,7 +801,7 @@ export default class RemoteAccess {
                 response[a] = [null, result];
                 this.statesCache[id] = JSON.stringify(result);
             } catch (error) {
-                response[a] = [error];
+                response[a] = [normalizeError(error)];
             }
         }
         return response;
@@ -665,7 +817,7 @@ export default class RemoteAccess {
                 const result = await this.adapter.getForeignObjectAsync(id || '*');
                 response[a] = [null, result];
             } catch (error) {
-                response[a] = [error];
+                response[a] = [normalizeError(error)];
             }
         }
         return response;
@@ -729,7 +881,8 @@ export default class RemoteAccess {
         return axios(url + path, {
             responseType: 'arraybuffer',
             validateStatus: status => status === 200,
-            timeout: 500,
+            timeout: 5000,
+            httpsAgent: localHttpsAgent,
         })
             .then(response => {
                 // replace port
@@ -776,7 +929,7 @@ export default class RemoteAccess {
     ): Promise<SOCKET_MESSAGE> {
         let packed = deflateSync(JSON.stringify(args)).toString('base64');
 
-        if (packed.length > MAX_IOT_MESSAGE_LENGTH) {
+        if (packed.length > MAX_IOT_PAYLOAD_LENGTH) {
             if (writeUrl) {
                 if (args.length === 3) {
                     const [error, file, mimeType] = args;
@@ -821,16 +974,16 @@ export default class RemoteAccess {
             this.packets[id] = {ts: Date.now(), trunks};
 
             // start garbage collector
-            this.gcInterval = this.gcInterval || setInterval(() => this._clearMemory(), 60000);
+            this._startGarbageCollector();
 
             return trunks;*/
             setImmediate(async () => {
-                if (packed.length > MAX_POST_MESSAGE_LENGTH) {
+                if (packed.length > MAX_POST_PAYLOAD_LENGTH) {
                     // too big message. Do not use iot for that and send directly to socket
                     const packets: string[] = [];
-                    while (packed.length > MAX_POST_MESSAGE_LENGTH) {
-                        const trunk = packed.substring(0, MAX_POST_MESSAGE_LENGTH);
-                        packed = packed.substring(MAX_POST_MESSAGE_LENGTH);
+                    while (packed.length > MAX_POST_PAYLOAD_LENGTH) {
+                        const trunk = packed.substring(0, MAX_POST_PAYLOAD_LENGTH);
+                        packed = packed.substring(MAX_POST_PAYLOAD_LENGTH);
                         packets.push(trunk);
                     }
                     if (packed.length) {
@@ -843,7 +996,7 @@ export default class RemoteAccess {
                             d: [_type, id, name, packets[i], packets.length, i],
                         });
                         if (error) {
-                            this.adapter.log.error(`[REMOTE] cannot send: ${JSON.stringify(error)}`);
+                            // already logged
                             break;
                         }
                     }
@@ -864,13 +1017,7 @@ export default class RemoteAccess {
             return;
         }
 
-        const sids = Object.keys(this.sockets);
-        for (let s = 0; s < sids.length; s++) {
-            this._unsubscribeSocket(sids[s], 'stateChange');
-            this._unsubscribeSocket(sids[s], 'objectChange');
-            this._unsubscribeSocket(sids[s], 'log');
-            delete this.sockets[sids[s]];
-        }
+        Object.keys(this.sockets).forEach(sid => this._removeSocket(sid));
     }
 
     process(
@@ -889,26 +1036,38 @@ export default class RemoteAccess {
             message = request;
         }
 
+        if (message && !Array.isArray(message.d)) {
+            return Promise.reject(new Error('Invalid message'));
+        }
+
         if (message) {
             const [_type, id, name, args, readUrl] = message.d;
             let promiseOne: Promise<any> | undefined; // answer will be created automatically (error, result)
             let promiseResult: Promise<SOCKET_MESSAGE | '___none___'> | undefined; // answer will be created by promise
 
             if (this.config.remote && _type === MESSAGE_TYPES.MISSING) {
-                if (this.packets[id]) {
+                const packet = this.packets[`${message.sid}_${id}`];
+                if (packet) {
                     const missing = (args as number[][])[0];
                     this.adapter.log.warn(
                         `[REMOTE] Request for existing trunks: ${id}, "${name}": ${JSON.stringify(missing)}`,
                     );
 
-                    if (this.device) {
+                    if (this.device && Array.isArray(missing)) {
                         setImmediate(async () => {
                             try {
                                 for (let m = 0; m < missing.length; m++) {
+                                    const trunk = packet.trunks[missing[m]];
+                                    if (!trunk) {
+                                        this.adapter.log.warn(
+                                            `[REMOTE] Requested trunk ${missing[m]} of ${id}, "${name}" does not exist`,
+                                        );
+                                        continue;
+                                    }
                                     await new Promise<void>((resolve, reject) =>
                                         this.device!.publish(
                                             `response/${this.clientId}/${serviceType}`,
-                                            JSON.stringify(this.packets[id].trunks[m]),
+                                            JSON.stringify(trunk),
                                             { qos: 1 },
                                             error => {
                                                 if (error) {
@@ -931,7 +1090,7 @@ export default class RemoteAccess {
                 promiseResult = Promise.resolve(NONE);
             } else if (this.config.remote && _type === MESSAGE_TYPES.SENDING_DONE) {
                 this.adapter.log.debug(`[REMOTE] Packet received: ${id}, "${name}"`);
-                delete this.packets[id];
+                delete this.packets[`${message.sid}_${id}`];
                 promiseResult = Promise.resolve(NONE);
             } else if (_type === MESSAGE_TYPES.HTML) {
                 let promiseFile: Promise<SOCKET_MESSAGE | { file: string; mimeType: string }>;
@@ -981,7 +1140,8 @@ export default class RemoteAccess {
                             return data as { file: string; mimeType: string };
                         })
                         .catch(() => {
-                            if (this.webUrl) {
+                            // the path must be absolute, else it could change the host of the URL
+                            if (this.webUrl && path.startsWith('/')) {
                                 // try to read from server
                                 return this.readUrlFile(this.webUrl, path, message.sid, _type, id);
                             }
@@ -1001,11 +1161,16 @@ export default class RemoteAccess {
                             return Promise.resolve(data as SOCKET_MESSAGE);
                         }
                         const dataFile = data as { file: string; mimeType: string };
-                        let packed = deflateSync(JSON.stringify(data)).toString('base64');
+                        const canUpload = typeof args === 'string' && args.startsWith('https:');
+                        // do not pack big files, which will be rejected anyway
+                        let packed =
+                            !canUpload && dataFile.file.length > MAX_FILE_SIZE
+                                ? ''
+                                : deflateSync(JSON.stringify(data)).toString('base64');
                         if (
                             typeof args === 'string' &&
                             args?.startsWith('https:') &&
-                            packed.length > MAX_IOT_MESSAGE_LENGTH
+                            packed.length > MAX_IOT_PAYLOAD_LENGTH
                         ) {
                             // upload file to temp server
                             return this.uploadToServer(args, dataFile).then(done => ({
@@ -1032,11 +1197,11 @@ export default class RemoteAccess {
                             });
                         }
 
-                        if (packed.length > MAX_IOT_MESSAGE_LENGTH) {
+                        if (packed.length > MAX_IOT_PAYLOAD_LENGTH) {
                             const packets: string[] = [];
-                            while (packed.length > MAX_IOT_MESSAGE_LENGTH) {
-                                const trunk = packed.substring(0, MAX_IOT_MESSAGE_LENGTH);
-                                packed = packed.substring(MAX_IOT_MESSAGE_LENGTH);
+                            while (packed.length > MAX_IOT_PAYLOAD_LENGTH) {
+                                const trunk = packed.substring(0, MAX_IOT_PAYLOAD_LENGTH);
+                                packed = packed.substring(MAX_IOT_PAYLOAD_LENGTH);
                                 packets.push(trunk);
                             }
                             if (packed.length) {
@@ -1050,10 +1215,11 @@ export default class RemoteAccess {
                                 d: [_type, id, '', trunk],
                             }));
 
-                            this.packets[id] = { ts: Date.now(), trunks };
+                            // key by session too: the Lambda may use the same ID for parallel requests
+                            this.packets[`${message.sid}_${id}`] = { ts: Date.now(), trunks };
 
                             // start garbage collector
-                            this.gcInterval = this.gcInterval || setInterval(() => this._clearMemory(), 60000);
+                            this._startGarbageCollector();
 
                             return Promise.resolve(trunks);
                         }
@@ -1078,6 +1244,8 @@ export default class RemoteAccess {
                         ts: Date.now(),
                     };
                     isNew = true;
+                    // delete the sockets, which never disconnected
+                    this._startGarbageCollector();
                 } else {
                     this.sockets[message.sid].ts = Date.now();
                 }
@@ -1142,7 +1310,7 @@ export default class RemoteAccess {
                         })*/
                         .catch(error => ({ sid: message.sid, d: [_type, id, name, [error]] as SOCKET_PAYLOAD }));
                 }
-            } else if (this.handlers[name]) {
+            } else if (Object.hasOwn(this.handlers, name)) {
                 const argsArray = args as any[];
                 if (!this.handlers[name].args) {
                     promiseOne = this.handlers[name].f();
@@ -1178,19 +1346,22 @@ export default class RemoteAccess {
                 // ping
                 promiseResult = Promise.resolve({ sid: message.sid, d: [_type, id, name, [null, !isNew]] });
             } else if (name === 'name') {
+                const socketName = (args as [string])?.[0];
                 const socket = this.sockets[message.sid];
-                if (socket.name === undefined) {
-                    socket.name = name;
-                    this.adapter.log.info(`[REMOTE] socket ${message.sid} connected with name "${name}"`);
-                } else if (socket.name !== name) {
+                if (!socket) {
+                    // ignore
+                } else if (socket.name === undefined) {
+                    socket.name = socketName;
+                    this.adapter.log.info(`[REMOTE] socket ${message.sid} connected with name "${socketName}"`);
+                } else if (socket.name !== socketName) {
                     this.adapter.log.warn(
-                        `[REMOTE] socket ${message.sid} changed socket name from ${socket.name} to ${name}`,
+                        `[REMOTE] socket ${message.sid} changed socket name from ${socket.name} to ${socketName}`,
                     );
-                    socket.name = name;
+                    socket.name = socketName;
                 }
 
                 // start garbage collector
-                this.gcInterval = this.gcInterval || setInterval(() => this._clearMemory(), 60000);
+                this._startGarbageCollector();
 
                 promiseResult = Promise.resolve({ sid: message.sid, d: [_type, id, name, []] });
             } else if (name === 'authenticate') {
@@ -1203,7 +1374,11 @@ export default class RemoteAccess {
                     d: [_type, id, name, [result.ip, result.obj]],
                 }));
             } else if (name === 'getStates') {
-                promiseOne = this.adapter.getForeignStatesAsync((args as [string])[0] || '*');
+                promiseOne = this.adapter.getForeignStatesAsync((args as [string])[0] || '*').then(result => {
+                    // fill the cache, else updateState ignores the changes of these states
+                    this._fillStatesCache(result);
+                    return result;
+                });
             } else if (name === 'requireLog') {
                 const isEnabled = (args as [string])[0];
                 if (isEnabled) {
@@ -1216,17 +1391,16 @@ export default class RemoteAccess {
                     this._showSubscribes(message.sid, 'log');
                 }
 
-                promiseOne = Promise.resolve({ sid: message.sid, d: [_type, id, name, [null]] });
+                promiseResult = Promise.resolve({ sid: message.sid, d: [_type, id, name, [null]] });
             } else if (name === 'DCT') {
                 // disconnect
                 const socket = this.sockets[message.sid];
                 this.adapter.log.debug(`[REMOTE] ---- DISCONNECT ${message.sid}`);
                 if (socket) {
-                    this._unsubscribeSocket(message.sid, 'stateChange');
-                    this._unsubscribeSocket(message.sid, 'objectChange');
-                    this._unsubscribeSocket(message.sid, 'log');
-                    delete this.sockets[message.sid];
+                    this._removeSocket(message.sid);
                 }
+                // the client is gone and expects no answer
+                promiseResult = Promise.resolve(NONE);
             } else if (name === 'getVersion') {
                 promiseResult = Promise.resolve({
                     sid: message.sid,
@@ -1243,7 +1417,7 @@ export default class RemoteAccess {
                 }
 
                 this.adapter.log.level === 'debug' && this._showSubscribes(message.sid, 'stateChange');
-                promiseOne = Promise.resolve({ sid: message.sid, d: [_type, id, name, [null]] });
+                promiseResult = Promise.resolve({ sid: message.sid, d: [_type, id, name, [null]] });
             } else if (name === 'unsubscribe' || name === 'unsubscribeStates') {
                 const pattern = (args as [string | string[]])[0];
                 if (Array.isArray(pattern)) {
@@ -1255,7 +1429,7 @@ export default class RemoteAccess {
                 }
 
                 this.adapter.log.level === 'debug' && this._showSubscribes(message.sid, 'stateChange');
-                promiseOne = Promise.resolve({ sid: message.sid, d: [_type, id, name, [null]] });
+                promiseResult = Promise.resolve({ sid: message.sid, d: [_type, id, name, [null]] });
             } else if (name === 'subscribeObjects') {
                 const pattern = (args as [string | string[]])?.[0] || '*';
                 if (Array.isArray(pattern)) {
@@ -1267,7 +1441,7 @@ export default class RemoteAccess {
                 }
 
                 this.adapter.log.level === 'debug' && this._showSubscribes(message.sid, 'objectChange');
-                promiseOne = Promise.resolve({ sid: message.sid, d: [_type, id, name, [null]] });
+                promiseResult = Promise.resolve({ sid: message.sid, d: [_type, id, name, [null]] });
             } else if (name === 'unsubscribeObjects') {
                 const pattern = (args as [string | string[]])[0];
                 if (Array.isArray(pattern)) {
@@ -1279,7 +1453,7 @@ export default class RemoteAccess {
                 }
 
                 this.adapter.log.level === 'debug' && this._showSubscribes(message.sid, 'objectChange');
-                promiseOne = Promise.resolve({ sid: message.sid, d: [_type, id, name, [null]] });
+                promiseResult = Promise.resolve({ sid: message.sid, d: [_type, id, name, [null]] });
             } else if (name === 'authEnabled') {
                 promiseResult = Promise.resolve({ sid: message.sid, d: [_type, id, name, [false, 'admin']] });
             } else if (name === 'readFile') {
@@ -1306,16 +1480,18 @@ export default class RemoteAccess {
                     .readFileAsync(adapter, fileName)
                     .then(data => {
                         let data64: string | undefined;
-                        if (data.mimeType) {
+                        if (data.file) {
                             try {
                                 if (
                                     data.mimeType === 'application/json' ||
                                     data.mimeType === 'application/json5' ||
                                     fileName.toLowerCase().endsWith('.json5')
                                 ) {
-                                    data64 = Buffer.from(encodeURIComponent(data.mimeType)).toString('base64');
-                                } else if (data.mimeType) {
-                                    data64 = Buffer.from(data.mimeType).toString('base64');
+                                    data64 = Buffer.from(encodeURIComponent(data.file.toString())).toString('base64');
+                                } else {
+                                    data64 = Buffer.isBuffer(data.file)
+                                        ? data.file.toString('base64')
+                                        : Buffer.from(data.file).toString('base64');
                                 }
                             } catch (error) {
                                 this.adapter.log.error(`[readFile64] Cannot convert data: ${error.toString()}`);
@@ -1410,33 +1586,27 @@ export default class RemoteAccess {
                 if (this.secret) {
                     promiseOne = Promise.resolve(this.adapter.decrypt(this.secret, (args as [string])[0]));
                 } else {
-                    promiseOne = this.adapter.getForeignObjectAsync(
-                        'system.config',
-                        (err: Error | null | undefined, obj: ioBroker.SystemConfigObject): string => {
-                            if (obj?.native?.secret) {
-                                this.secret = obj.native.secret;
-                                return this.adapter.decrypt(this.secret, (args as [string])[0]);
-                            }
-                            this.adapter.log.error(`No system.config found: ${err}`);
-                            throw new Error('No system.config found');
-                        },
-                    );
+                    promiseOne = this.adapter.getForeignObjectAsync('system.config').then(obj => {
+                        if (obj?.native?.secret) {
+                            this.secret = obj.native.secret;
+                            return this.adapter.decrypt(this.secret, (args as [string])[0]);
+                        }
+                        this.adapter.log.error('No system.config found');
+                        throw new Error('No system.config found');
+                    });
                 }
             } else if (name === 'encrypt') {
                 if (this.secret) {
                     promiseOne = Promise.resolve(this.adapter.encrypt(this.secret, (args as [string])[0]));
                 } else {
-                    promiseOne = this.adapter.getForeignObjectAsync(
-                        'system.config',
-                        (err: Error | null | undefined, obj: ioBroker.SystemConfigObject): string => {
-                            if (obj?.native?.secret) {
-                                this.secret = obj.native.secret;
-                                return this.adapter.encrypt(this.secret, (args as [string])[0]);
-                            }
-                            this.adapter.log.error(`No system.config found: ${err}`);
-                            throw new Error('No system.config found');
-                        },
-                    );
+                    promiseOne = this.adapter.getForeignObjectAsync('system.config').then(obj => {
+                        if (obj?.native?.secret) {
+                            this.secret = obj.native.secret;
+                            return this.adapter.encrypt(this.secret, (args as [string])[0]);
+                        }
+                        this.adapter.log.error('No system.config found');
+                        throw new Error('No system.config found');
+                    });
                 }
             } else if (name === 'getIsEasyModeStrict') {
                 promiseOne = AdminSocket.getIsEasyModeStrict(this.adapter, this.adminObj);
@@ -1483,7 +1653,7 @@ export default class RemoteAccess {
                     (args as [forceUpdate?: boolean, autoUpdate?: boolean])[1],
                 );
             } else if (name === 'getUserPermissions') {
-                this.adapter.log.error(`[REMOTE] getUserPermissions not implemented!!!!!!!!!!!!!!!!!!!!!`);
+                promiseOne = this._getUserPermissions();
             } else if (name === 'listPermissions') {
                 promiseResult = AdminSocket.listPermissions(this.adapter)
                     .then(commandsPermissions =>
@@ -1498,12 +1668,21 @@ export default class RemoteAccess {
                     .then(data => this._sendResponse(message.sid, _type, id, name, [data], message.wu, message.ru))
                     .catch(error => ({ sid: message.sid, d: [_type, id, name, [error]] as SOCKET_PAYLOAD }));
             } else if (name === 'sendTo') {
-                const [adapterInstance, command, message] = args as [instance: string, command: string, message: any];
-                promiseResult = AdminSocket.sendTo(this.adapter, adapterInstance, command, message)
+                const [adapterInstance, command, msg] = args as [instance: string, command: string, message: any];
+                promiseResult = AdminSocket.sendTo(this.adapter, adapterInstance, command, msg)
                     .then(data => this._sendResponse(message.sid, _type, id, name, [data], message.wu, message.ru))
                     .catch(error => ({ sid: message.sid, d: [_type, id, name, [error]] as SOCKET_PAYLOAD }));
             } else if (name === 'getAllObjects') {
                 promiseOne = AdminSocket.getAllObjects(this.adapter);
+            } else if (name === 'mcp') {
+                promiseResult = this._mcpRequest((args as [MCP_REMOTE_REQUEST] | undefined)?.[0])
+                    .then(response =>
+                        this._sendResponse(message.sid, _type, id, name, [null, response], message.wu, message.ru),
+                    )
+                    .catch(error => ({
+                        sid: message.sid,
+                        d: [_type, id, name, [normalizeError(error)]] as SOCKET_PAYLOAD,
+                    }));
             }
 
             // MESSAGE is the only one-way message and no answer is expected
@@ -1522,18 +1701,163 @@ export default class RemoteAccess {
                 promiseResult = Promise.resolve({ sid: message.sid, d: [_type, id, name, ['Unknown command']] });
             }
 
-            return promiseResult.then(result => {
-                if (result !== NONE && result.d && result.d[0] !== MESSAGE_TYPES.WAIT) {
-                    setImmediate(
-                        async (_result, _message) => await this._sendEvent(_result, _message),
-                        result,
-                        message,
-                    );
-                }
+            return promiseResult
+                .catch((error): SOCKET_MESSAGE | typeof NONE => {
+                    this.adapter.log.warn(`[REMOTE] Cannot process "${name}": ${normalizeError(error)}`);
+                    if (_type === MESSAGE_TYPES.MESSAGE || _type === MESSAGE_TYPES.COMBINED_MESSAGE) {
+                        return NONE;
+                    }
+                    return { sid: message.sid, d: [_type, id, name, [normalizeError(error)]] };
+                })
+                .then(result => {
+                    if (result !== NONE && result.d && result.d[0] !== MESSAGE_TYPES.WAIT) {
+                        // Error objects would be sent as {}
+                        if (Array.isArray(result.d[3])) {
+                            result.d[3] = result.d[3].map(normalizeError);
+                        }
+                        setImmediate(() => void this._sendEvent(result));
+                    }
 
-                return NONE;
-            });
+                    return NONE;
+                });
         }
         return Promise.reject(new Error('Null message'));
+    }
+
+    /**
+     * Permissions of the remote admin user.
+     * The remote admin instance has no authentication, so like the local admin it uses its default user.
+     */
+    _getUserPermissions(): Promise<ioBroker.PermissionSet> {
+        let user: string = this.adminObj?.native?.defaultUser || 'admin';
+        if (!user.startsWith('system.user.')) {
+            user = `system.user.${user}`;
+        }
+        // the types of js-controller do not know the permission type "users", but it is supported
+        return this.adapter.calculatePermissionsAsync(
+            user,
+            COMMANDS_PERMISSIONS as unknown as Parameters<IotAdapter['calculatePermissionsAsync']>[1],
+        );
+    }
+
+    /** Find the web instance, which hosts MCP running as extension of all web instances */
+    async _findWebInstance(): Promise<string> {
+        if (this.config.remoteWebInstance) {
+            return this.config.remoteWebInstance;
+        }
+        const view = await this.adapter.getObjectViewAsync('system', 'instance', {
+            startkey: 'system.adapter.web.',
+            endkey: 'system.adapter.web.香',
+        });
+        const row = view?.rows.find(item => item.value?.common?.enabled && !item.value.native?.auth);
+        return row ? row.id.replace(/^system\.adapter\./, '') : '';
+    }
+
+    /** Get the URL of the MCP endpoint of the configured MCP instance */
+    async _getMcpUrl(): Promise<string> {
+        const mcpInstance = this.config.remoteMcpInstance;
+        if (!mcpInstance) {
+            throw new Error('MCP instance is not configured');
+        }
+        const mcpObj = await this.adapter.getForeignObjectAsync(`system.adapter.${mcpInstance}`);
+        if (!mcpObj?.native) {
+            throw new Error(`MCP instance "${mcpInstance}" does not exist`);
+        }
+        if (!mcpObj.common?.enabled) {
+            throw new Error(`MCP instance "${mcpInstance}" is not enabled`);
+        }
+        if (mcpObj.native.oauth) {
+            throw new Error(
+                `OAuth authentication of "${mcpInstance}" is enabled, which is not supported via remote access`,
+            );
+        }
+
+        let serverInstance: string = mcpInstance;
+        let serverObj: ioBroker.InstanceObject = mcpObj;
+        if (mcpObj.native.webInstance) {
+            // MCP runs as extension and uses the web server of the web instance
+            serverInstance =
+                mcpObj.native.webInstance === '*' ? await this._findWebInstance() : mcpObj.native.webInstance;
+            const webObj = serverInstance
+                ? ((await this.adapter.getForeignObjectAsync(`system.adapter.${serverInstance}`)) as
+                      ioBroker.InstanceObject | null | undefined)
+                : null;
+            if (!webObj?.native) {
+                throw new Error(
+                    `Web instance "${serverInstance || '*'}" of MCP instance "${mcpInstance}" does not exist`,
+                );
+            }
+            if (!webObj.common?.enabled) {
+                throw new Error(`Web instance "${serverInstance}" of MCP instance "${mcpInstance}" is not enabled`);
+            }
+            serverObj = webObj;
+        }
+        // the remote access has no credentials for the local server
+        if (serverObj.native.auth) {
+            throw new Error(
+                `The authentication of "${serverInstance}" is enabled, which is not supported via remote access`,
+            );
+        }
+
+        return `${getLocalUrl(serverObj.native)}/mcp`;
+    }
+
+    /**
+     * Forward one request of the MCP Streamable HTTP transport to the local MCP server.
+     * Only request/response pairs can be forwarded: the server-to-client SSE stream (GET) is answered with 405,
+     * which tells the MCP client that the server does not offer this stream.
+     */
+    async _mcpRequest(request: MCP_REMOTE_REQUEST | undefined): Promise<MCP_REMOTE_RESPONSE> {
+        const url = await this._getMcpUrl();
+
+        const method = (request?.method || 'POST').toUpperCase();
+        if (method !== 'POST' && method !== 'DELETE') {
+            return { status: 405, headers: { allow: 'POST, DELETE' }, body: '' };
+        }
+
+        const headers: Record<string, string> = {};
+        if (request?.headers && typeof request.headers === 'object') {
+            for (const [headerName, value] of Object.entries(request.headers)) {
+                if (typeof value === 'string' && MCP_REQUEST_HEADERS.includes(headerName.toLowerCase())) {
+                    headers[headerName.toLowerCase()] = value;
+                }
+            }
+        }
+
+        let data: string | undefined;
+        if (method === 'POST') {
+            // the MCP transport rejects requests, which do not accept both formats
+            headers.accept ||= 'application/json, text/event-stream';
+            headers['content-type'] ||= 'application/json';
+            data = typeof request?.body === 'string' ? request.body : JSON.stringify(request?.body ?? null);
+        }
+
+        const response = await axios.request<string>({
+            url,
+            method,
+            headers,
+            data,
+            responseType: 'text',
+            // keep the body as it is (JSON or text/event-stream)
+            transformResponse: [(body: string): string => body],
+            validateStatus: () => true,
+            maxRedirects: 0,
+            timeout: MCP_TIMEOUT_MS,
+            httpsAgent: localHttpsAgent,
+        });
+
+        const responseHeaders: Record<string, string> = {};
+        for (const headerName of MCP_RESPONSE_HEADERS) {
+            const value = response.headers[headerName];
+            if (value !== undefined && value !== null) {
+                responseHeaders[headerName] = String(value);
+            }
+        }
+
+        return {
+            status: response.status,
+            headers: responseHeaders,
+            body: typeof response.data === 'string' ? response.data : '',
+        };
     }
 }

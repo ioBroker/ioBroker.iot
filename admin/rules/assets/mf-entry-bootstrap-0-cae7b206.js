@@ -4,6 +4,16 @@ globalThis[__mfCacheGlobalKey] ||= { share: {}, remote: {} };
 globalThis[__mfCacheGlobalKey].share ||= {};
 globalThis[__mfCacheGlobalKey].remote ||= {};
 const __mfModuleCache = globalThis[__mfCacheGlobalKey];
+const __mfTrackPendingShareLoad = (promise) => {
+  const pendingShareLoads = (__mfModuleCache.pendingShareLoads ||= []);
+  pendingShareLoads.push(promise);
+  const cleanup = () => {
+    const index = pendingShareLoads.indexOf(promise);
+    if (index !== -1) pendingShareLoads.splice(index, 1);
+  };
+  void promise.then(cleanup, cleanup);
+  return promise;
+};
 for (const __mfShareKey of Object.keys(__mfModuleCache.share)) {
   if (__mfShareKey.startsWith("default:")) {
     const __mfLegacyShareKey = __mfShareKey.slice("default:".length);
@@ -25,11 +35,14 @@ const __mfImport = (src) =>
 
 
 
+
 (async () => {
-  const __mfHostInit = await __mfImport("./hostInit-CTQOGI2M.js");
+  const __mfHostInit = await __mfImport("./hostInit-D3A_74R6.js");
   await __mfHostInit.__tla;
   const { initHost } = __mfHostInit;
   await initHost();
+  const __mfPendingShares = await __mfImport("./pendingShares-BkMl8xfb.js").catch(() => undefined);
+  if (__mfPendingShares && typeof __mfPendingShares.preloadPendingShares === "function") await __mfPendingShares.preloadPendingShares();
   if (__mfModuleCache.pendingShareLoads) {
     await Promise.all(__mfModuleCache.pendingShareLoads);
   }
@@ -37,4 +50,4 @@ const __mfImport = (src) =>
   if (__mfReactServerModuleCache?.pendingShareLoads) {
     await Promise.all(__mfReactServerModuleCache.pendingShareLoads);
   }
-})().then(() => __mfImport("./index-BbFninPV.js"));
+})().then(() => __mfImport("./index---g7GnqY.js"));

@@ -30,6 +30,7 @@ export interface IotAdapterConfig {
     defaultToggle: boolean;
     remoteAdminInstance: `${string}.${number}`;
     remoteWebInstance: `${string}.${number}`;
+    remoteMcpInstance?: `${string}.${number}` | '';
     customKnownAlexaUsers: {
         id: string;
         name: string;

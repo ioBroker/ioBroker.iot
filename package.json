@@ -25,7 +25,7 @@
         "@iobroker/adapter-core": "^3.4.3",
         "@iobroker/type-detector": "^6.0.1",
         "aws-iot-device-sdk": "^2.2.16",
-        "axios": "^1.19.0",
+        "axios": "^1.20.0",
         "mime": "^3.0.0"
     },
     "devDependencies": {
@@ -45,7 +45,7 @@
         "blockly": "^13.3.0",
         "colorette": "^2.0.20",
         "esbuild": "^0.28.2",
-        "puppeteer": "^25.10.0",
+        "puppeteer": "^25.11.0",
         "typescript": "~6.0.3"
     },
     "bugs": {
@@ -64,7 +64,8 @@
     "scripts": {
         "test:gui": "mocha test/testAdapter.gui.js --exit",
         "test:package": "mocha test/testPackageFiles.js --exit",
-        "test": "npm run test:gui && npm run test:package && npm run test:alexa-v3",
+        "test": "npm run test:gui && npm run test:package && npm run test:alexa-v3 && npm run test:remote",
+        "test:remote": "mocha test/testRemote.js --exit",
         "test:integration": "npm run test:gui && npm run test:alexa-v3",
         "test:alexa-v3": "mocha --grep AlexaSmartHomeV3 --recursive",
         "prepublishOnly": "npm run build",

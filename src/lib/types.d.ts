@@ -30,6 +30,8 @@ export interface IotAdapterConfig {
     defaultToggle: boolean;
     remoteAdminInstance: `${string}.${number}`;
     remoteWebInstance: `${string}.${number}`;
+    /** MCP instance (e.g. `mcp.0`), which is reachable via remote access */
+    remoteMcpInstance?: `${string}.${number}` | '';
     customKnownAlexaUsers: {
         id: string;
         name: string;

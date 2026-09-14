@@ -86,6 +86,8 @@ class IotAdapter extends Adapter {
                         // update state
                         setTimeout(async () => await this.createStateForAdapter(adpr), 1000);
                     }
+                    // remote admin shows the instances and must get their changes
+                    this.remote?.updateObject(id, obj);
 
                     return;
                 }
