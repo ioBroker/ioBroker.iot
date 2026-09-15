@@ -419,11 +419,7 @@ setState('iot.0.app.message', JSON.stringify({
 ### **WORK IN PROGRESS**
 - (@GermanBluefox) Remote access: MCP requests of the cloud are answered via MQTT (message type 12)
 - (@GermanBluefox) Migrated blockly to TypeScript
-- (@GermanBluefox) Remote access: missing parts of big files are sent again correctly, also for parallel requests
-- (@GermanBluefox) Remote access: big answers and change events are packed or split, so they fit into cloud messages
-- (@GermanBluefox) Remote access: fixed `readFile64`, `sendTo`, `encrypt`/`decrypt` and answers of `subscribe`/`requireLog`
-- (@GermanBluefox) Remote access: state changes are not lost any more and use the configured collect intervals
-- (@GermanBluefox) Remote access: longer timeout for reading files from the local admin and web instances
+- (@GermanBluefox) Remote access improved
 - (@GermanBluefox) Avoided the Node.js 24 deprecation warning DEP0187 (`fs.existsSync`) when connecting to the cloud
 
 ### 7.0.1 (2026-08-06)
