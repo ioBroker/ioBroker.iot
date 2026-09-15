@@ -416,7 +416,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 7.1.0 (2026-09-15)
 - (@GermanBluefox) Remote access: MCP requests of the cloud are answered via MQTT (message type 12)
 - (@GermanBluefox) Migrated blockly to TypeScript
 - (@GermanBluefox) Remote access improved
@@ -435,12 +435,6 @@ setState('iot.0.app.message', JSON.stringify({
 
 ### 6.0.3 (2026-04-23)
 - (@GermanBluefox) Allowed to read temperature information via Alexa
-
-### 6.0.1 (2026-04-07)
-- (iobroker-bot) Adapter requires node.js >= 20 now.
-- (@GermanBluefox) Removed support for Alexa 2
-- (@GermanBluefox) Fixed bug in Alisa with color and motion sensor
-- (@GermanBluefox) Validate Discovery response before sending it back
 
 ## License
 

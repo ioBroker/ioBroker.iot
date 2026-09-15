@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "7.0.1",
+    "version": "7.1.0",
     "news": {
+      "7.1.0": {
+        "en": "Remote access: MCP requests of the cloud are answered via MQTT (message type 12)\nMigrated blockly to TypeScript\nRemote access improved\nAvoided the Node.js 24 deprecation warning DEP0187 (`fs.existsSync`) when connecting to the cloud",
+        "de": "Fernzugriff: MCP-Anfragen der Cloud werden per MQTT beantwortet (Typ 12)\nBlockweise zu TypeScript migriert\nFernzugriff verbessert\nVermeidete die Node.js 24-Warnung DEP0187 (`fs.ExistsSync`) beim Verbinden mit der Cloud",
+        "ru": "Удаленный доступ: запросы MCP в облаке обрабатываются с помощью MQTT (тип сообщения 12)\nБлочный перенос на TypeScript\nУлучшен удаленный доступ\nПри подключении к облаку удалось избежать предупреждения об устаревании Node.js 24 DEP0187 (`fs.ExistsSync`)",
+        "pt": "Acesso remoto: solicitações MCP da nuvem são atendidas via MQTT (tipo 12)\nMigrou em bloco para TypeScript\nMelhor acesso remoto\nEvitou o aviso de suspensão do Node.js 24 DEP0187 (`fs.existsSync`) ao se conectar à nuvem",
+        "nl": "Toegang op afstand: MCP-aanvragen van de cloud worden beantwoord via MQTT (berichttype 12)\nBlokkerig gemigreerd naar TypeScript\nToegang op afstand verbeterd\nIk heb de deprecatiewaarschuwing van Node.js 24 (DEP0187 (`FS.ExistsSync`) vermeden bij het verbinden met de cloud",
+        "fr": "Accès à distance : réponse aux requêtes MCP du cloud via MQTT (message de type 12)\nA migré en bloc vers TypeScript\nAccès à distance amélioré\nJ'ai évité l'alerte de dépréciation Node.js 24 DEP0187 (`FS.ExistsSync`) lors de la connexion au cloud",
+        "it": "Accesso remoto: risposta alle richieste MCP dal cloud MQTT (messaggio 12)\nÈ passato a TypeScript\nAccesso remoto migliorato\nEvitato l'avviso di deprecazione di Node.js 24 DEP0187 (`fs.existsSync`) durante la connessione al cloud",
+        "es": "Acceso remoto: las solicitudes MCP de la nube se responden en MQTT (tipo de mensaje 12)\nMigró en bloque a TypeScript\nAcceso remoto mejorado\nEvitó el aviso de obsolescencia de Node.js 24 DEP0187 (`fs.ExistsSync`) al conectarse a la nube",
+        "pl": "Zdalny dostęp: na żądania MCP w chmurze odpowiadają za pośrednictwem MQTT (typ wiadomości 12)\nPrzemigrowany blokowo do TypeScript\nPoprawiono zdalny dostęp\nUniknęło ostrzeżenia o deprecacji Node.js 24 DEP0187 (`FS.ExistsSync`) podczas łączenia się z chmurą",
+        "uk": "Віддалений доступ: MCP-запити хмари відповідають через MQTT (тип повідомлення 12)\nПеремігрується блокно до TypeScript\nВіддалений доступ покращено\nУникає попередження про застарілість Node.js 24 DEP0187 (`FS.existsSync`) під час підключення до хмари",
+        "zh-cn": "远程访问：通过 MQTT 回复云端的 MCP 请求（消息类型 12）\n分块迁移到 TypeScript\n远程访问得到改善\n连接云时避免了 Node.js 24 弃用警告 DEP0187 (`fs.existsSync`)"
+      },
       "7.0.1": {
         "en": "Migrated to TypeScript 6 and react 19",
         "de": "Migration zu TypeScript 6 und React 19",
@@ -80,19 +93,6 @@
         "pl": "Adapter wymaga node.js > = 20 teraz.\nPoprawiono obsługę wielu nazw grup\nUstawienie zatwierdzenia licencji",
         "uk": "Адаптер вимагає node.js >= 20 тепер.\nВиправлено обробку кількох назв груп\nВиправлення перевірки ліцензії",
         "zh-cn": "适配器需要节点.js >= 20 现在.\n更正了多个组名的处理\n修复许可证验证"
-      },
-      "5.0.12": {
-        "en": "Added copy of credentials from cloud instance\nAdded QR code to fast connect the ioBroker visu app",
-        "de": "Hinzugefügt Kopie der Anmeldeinformationen aus der Cloud-Instanz\nQR-Code zum schnellen Verbinden der ioBroker visu App hinzugefügt",
-        "ru": "Добавлена копия учетных данных из облачного экземпляра\nДобавлен QR-код для быстрого подключения приложения ioBroker visu",
-        "pt": "Adicionada cópia de credenciais da instância da nuvem\nAdicionado código QR para conectar rapidamente o aplicativo visu ioBroker",
-        "nl": "Kopie van referenties van cloud-instance toegevoegd\nToegevoegd QR code om snel verbinding te maken met de ioBroker visu app",
-        "fr": "Ajout d'une copie des identifiants depuis l'instance cloud\nAjout du code QR pour connecter rapidement l'application ioBroker visu",
-        "it": "Copia aggiuntiva delle credenziali dall'istanza cloud\nAggiunto il codice QR per collegare velocemente l'app ioBroker visu",
-        "es": "Copia adicional de las credenciales de instancia de nube\nCódigo QR añadido para conectar rápidamente la aplicación ioBroker visu",
-        "pl": "Dodano kopię referencji z instancji chmur\nDodano kod QR, aby szybko połączyć aplikację joBroker visu",
-        "uk": "Додано копію облікових записів з хмарних екземплярів\nДодано QR-код для швидкого підключення додатку ioBroker visu",
-        "zh-cn": "从云实例中添加的证书副本\n添加 QR 代码以快速连接 ioBroker visu app"
       }
     },
     "titleLang": {
