@@ -64,8 +64,10 @@
     "scripts": {
         "test:gui": "mocha test/testAdapter.gui.js --exit",
         "test:package": "mocha test/testPackageFiles.js --exit",
-        "test": "npm run test:gui && npm run test:package && npm run test:alexa-v3 && npm run test:remote",
+        "test": "npm run test:gui && npm run test:package && npm run test:alexa-v3 && npm run test:remote && npm run test:connection && npm run test:device",
         "test:remote": "mocha test/testRemote.js --exit",
+        "test:connection": "mocha test/testConnectionDiagnostics.js --exit",
+        "test:device": "mocha test/testIotDevice.js --exit",
         "test:integration": "npm run test:gui && npm run test:alexa-v3",
         "test:alexa-v3": "mocha --grep AlexaSmartHomeV3 --recursive",
         "prepublishOnly": "npm run build",

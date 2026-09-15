@@ -2,6 +2,9 @@ const assert = require('node:assert');
 const http = require('node:http');
 const { inflateSync } = require('node:zlib');
 const { randomBytes } = require('node:crypto');
+const { mkdtempSync, mkdirSync, writeFileSync, rmSync } = require('node:fs');
+const { join } = require('node:path');
+const { tmpdir } = require('node:os');
 const axios = require('axios');
 const remoteModule = require('../build/lib/remote');
 
@@ -17,9 +20,11 @@ const TYPE = {
     HTML: 9,
     COMBINED_CALLBACK: 10,
     COMBINED_MESSAGE: 11,
+    MCP: 12,
 };
 const MAX_MESSAGE_LENGTH = 127 * 1024;
-const MAX_PAYLOAD_LENGTH = MAX_MESSAGE_LENGTH - 1024;
+// limit for messages to the events server (POST)
+const MAX_POST_MESSAGE_LENGTH = 65 * 1024;
 
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 const tick = () => new Promise(resolve => setImmediate(resolve));
@@ -184,6 +189,15 @@ describe('Remote', function () {
             assert.strictEqual(getLocalUrl({ port: 8082, bind: '192.168.1.5' }), 'http://192.168.1.5:8082');
             assert.strictEqual(getLocalUrl({ port: 8082, bind: '::' }), 'http://localhost:8082');
             assert.strictEqual(getLocalUrl({ port: 8082, bind: 'fe80::1' }), 'http://[fe80::1]:8082');
+
+            // instance on another host
+            const addresses = ['127.0.0.1', '::1', 'fe80::2', '2001:db8::5', '192.168.1.20'];
+            assert.strictEqual(getLocalUrl({ port: 8081 }, addresses), 'http://192.168.1.20:8081');
+            assert.strictEqual(getLocalUrl({ port: 8081, bind: '::' }, addresses), 'http://192.168.1.20:8081');
+            assert.strictEqual(getLocalUrl({ port: 8081 }, ['::1', '2001:db8::5']), 'http://[2001:db8::5]:8081');
+            assert.strictEqual(getLocalUrl({ port: 8081, bind: '10.0.0.3' }, addresses), 'http://10.0.0.3:8081');
+            assert.strictEqual(getLocalUrl({ port: 8081 }, ['127.0.0.1']), '');
+            assert.strictEqual(getLocalUrl({ port: 8081 }, []), '');
         });
 
         it('invalid collect intervals fall back to the defaults', () => {
@@ -347,6 +361,47 @@ describe('Remote', function () {
             );
             await request(remote, 's1', 'getUserPermissions', []);
             assert.deepStrictEqual(answerOf(sent, 's1').d[3], ['no user']);
+        });
+
+        function createRepositoryRemote(count) {
+            const repository = {};
+            for (let i = 0; i < count; i++) {
+                repository[`adapter-with-a-long-name-${i}`] = {
+                    version: `1.${i}.0`,
+                    // random parts, else the repository is packed too well to be split
+                    extIcon: `https://raw.githubusercontent.com/${randomBytes(40).toString('hex')}/admin/icon.png`,
+                    news: { en: 'not needed' },
+                };
+            }
+            const result = createRemote(
+                {},
+                { states: { 'system.host.test.alive': { val: true } } },
+                { patch: adapter => (adapter.sendToHost = (host, command, msg, cb) => cb(repository)) },
+            );
+            const compact = {};
+            Object.keys(repository).forEach(
+                key => (compact[key] = { version: repository[key].version, icon: repository[key].extIcon }),
+            );
+            return { ...result, compact };
+        }
+
+        it('getCompactRepository answers packed', async () => {
+            const { remote, sent, compact } = createRepositoryRemote(10);
+            await request(remote, 's1', 'getCompactRepository', ['system.host.test']);
+            assert.deepStrictEqual(unpack(answerOf(sent, 's1').d[3]), [compact]);
+        });
+
+        it('getCompactRepository splits a big repository, which does not fit into one message', async () => {
+            const { remote, sent, compact } = createRepositoryRemote(3000);
+            assert.ok(JSON.stringify([compact]).length > MAX_MESSAGE_LENGTH);
+
+            await request(remote, 's1', 'getCompactRepository', ['system.host.test']);
+            await tick();
+
+            const parts = sent.filter(message => message.d?.[1] === 1);
+            assert.ok(parts.length > 1);
+            parts.forEach(message => assert.ok(JSON.stringify(message).length <= MAX_POST_MESSAGE_LENGTH));
+            assert.deepStrictEqual(unpack(parts.map(message => message.d[3]).join('')), [compact]);
         });
     });
 
@@ -633,6 +688,7 @@ describe('Remote', function () {
             await remote._sendChangeEvent('s1', 'stateChange', [ids, states]);
             assert.strictEqual(sent.length, 1);
             assert.strictEqual(typeof sent[0].args, 'string');
+            assert.ok(JSON.stringify(sent[0]).length <= MAX_POST_MESSAGE_LENGTH);
             assert.deepStrictEqual(unpack(sent[0].args), [ids, states]);
         });
 
@@ -652,7 +708,7 @@ describe('Remote', function () {
                 assert.deepStrictEqual(message.d.slice(0, 3), [TYPE.COMBINED_MESSAGE, id, 'log']);
                 assert.strictEqual(message.d[4], sent.length);
                 assert.strictEqual(message.d[5], i);
-                assert.ok(JSON.stringify(message).length <= MAX_MESSAGE_LENGTH);
+                assert.ok(JSON.stringify(message).length <= MAX_POST_MESSAGE_LENGTH);
             });
             assert.deepStrictEqual(unpack(sent.map(message => message.d[3]).join('')), [logs]);
         });
@@ -692,8 +748,21 @@ describe('Remote', function () {
                 assert.deepStrictEqual(message.d.slice(0, 3), [TYPE.CALLBACK, 7, 'getObjects']);
                 assert.strictEqual(message.d[4], sent.length);
                 assert.strictEqual(message.d[5], i);
-                assert.ok(JSON.stringify(message).length <= MAX_MESSAGE_LENGTH);
+                assert.ok(JSON.stringify(message).length <= MAX_POST_MESSAGE_LENGTH);
             });
+            assert.deepStrictEqual(unpack(sent.map(message => message.d[3]).join('')), args);
+        });
+
+        it('splits answers, which fit into an IoT message, but not into one POST', async () => {
+            const { remote, sent } = createRemote();
+            // packed about 93 KB: more than a POST, less than an IoT message
+            const args = [null, { data: randomBytes(70000).toString('base64') }];
+            const answer = await remote._sendResponse('s1', TYPE.CALLBACK, 8, 'readFile', args);
+            assert.strictEqual(answer.d[0], TYPE.WAIT);
+            await tick();
+            await tick();
+            assert.ok(sent.length > 1);
+            sent.forEach(message => assert.ok(JSON.stringify(message).length <= MAX_POST_MESSAGE_LENGTH));
             assert.deepStrictEqual(unpack(sent.map(message => message.d[3]).join('')), args);
         });
 
@@ -777,6 +846,179 @@ describe('Remote', function () {
             assert.ok(answer.d[3].error.startsWith('File is too big'));
         });
 
+        it('reads the admin pages from the installation directory of admin', async () => {
+            const base = mkdtempSync(join(tmpdir(), 'iot-admin-'));
+            const www = join(base, 'adminWww');
+            mkdirSync(join(www, 'img'), { recursive: true });
+            writeFileSync(join(www, 'img', 'no-image.svg'), '<svg/>');
+            writeFileSync(join(www, 'index.html'), '<html>@@socketPath@@</html>');
+            writeFileSync(join(base, 'secret.txt'), 'secret');
+            try {
+                const { remote } = createRemote(
+                    {},
+                    { files: { 'admin/login-bg.png': { file: Buffer.from('PNG'), mimeType: 'image/png' } } },
+                );
+                remote.adminWwwDir = www;
+                const read = async name => {
+                    const answer = await remote.process({ sid: 's1', d: [TYPE.HTML, 1, name] }, 'remote');
+                    return typeof answer.d[3] === 'string' ? unpack(answer.d[3]) : answer.d[3];
+                };
+
+                const svg = await read('/admin/img/no-image.svg?v=1');
+                assert.strictEqual(Buffer.from(svg.file, 'base64').toString(), '<svg/>');
+                assert.strictEqual(svg.mimeType, 'image/svg+xml');
+                // uploaded files are still read from the file storage
+                assert.strictEqual(Buffer.from((await read('/admin/login-bg.png')).file, 'base64').toString(), 'PNG');
+                // HTML pages are templates, which only admin can fill
+                assert.deepStrictEqual(await read('/admin/index.html'), { error: 'Not exists' });
+                assert.deepStrictEqual(await read('/admin/img/../../secret.txt'), { error: 'Not exists' });
+            } finally {
+                rmSync(base, { recursive: true, force: true });
+            }
+        });
+
+        it('reads missing admin pages from the admin instance without the prefix', async () => {
+            const { remote } = createRemote(
+                { remoteAdminInstance: 'admin.0', remoteWebInstance: 'web.0' },
+                {
+                    objects: {
+                        'system.adapter.admin.0': { common: {}, native: { port: 8081, bind: '0.0.0.0' } },
+                        'system.adapter.web.0': { common: {}, native: { port: 8082, bind: '0.0.0.0' } },
+                    },
+                },
+            );
+            await tick();
+            remote.adminWwwDir = null;
+            const urls = [];
+            remote.readUrlFile = async (url, path, sid, type, id) => {
+                urls.push(url + path);
+                return { sid, d: [type, id, '', { error: 'Not exists' }] };
+            };
+            await remote.process({ sid: 's1', d: [TYPE.HTML, 1, '/admin/img/no-image.svg?v=1'] }, 'remote');
+            await remote.process({ sid: 's1', d: [TYPE.HTML, 2, '/vis-2/missing.png'] }, 'remote');
+            assert.deepStrictEqual(urls, [
+                'http://127.0.0.1:8081/img/no-image.svg?v=1',
+                'http://127.0.0.1:8082/vis-2/missing.png',
+            ]);
+        });
+
+        it('reads the admin pages via HTTP from the host of the admin instance', async () => {
+            const base = mkdtempSync(join(tmpdir(), 'iot-admin-'));
+            const www = join(base, 'adminWww');
+            mkdirSync(join(www, 'img'), { recursive: true });
+            writeFileSync(join(www, 'img', 'no-image.svg'), '<svg/>');
+            try {
+                const { remote } = createRemote(
+                    { remoteAdminInstance: 'admin.0' },
+                    {
+                        objects: {
+                            'system.adapter.admin.0': {
+                                common: { host: 'other-host' },
+                                native: { port: 8081, bind: '0.0.0.0', auth: true },
+                            },
+                            'system.host.other-host': { common: { address: ['127.0.0.1', 'fe80::2', '192.168.1.20'] } },
+                        },
+                    },
+                );
+                await tick();
+                // the local installation must not be used for an admin on another host
+                remote.adminWwwDir = www;
+                const urls = [];
+                remote.readUrlFile = async (url, path) => {
+                    urls.push(url + path);
+                    return { file: Buffer.from('SVG').toString('base64'), mimeType: 'image/svg+xml' };
+                };
+                await remote.process({ sid: 's1', d: [TYPE.HTML, 1, '/admin/img/no-image.svg'] }, 'remote');
+                await remote.process({ sid: 's1', d: [TYPE.HTML, 2, '/admin/adapter/admin/admin.svg'] }, 'remote');
+                assert.deepStrictEqual(urls, [
+                    'http://192.168.1.20:8081/img/no-image.svg',
+                    'http://192.168.1.20:8081/adapter/admin/admin.svg',
+                ]);
+            } finally {
+                rmSync(base, { recursive: true, force: true });
+            }
+        });
+
+        it('treats redirects to the login page as not authorised', async () => {
+            const server = http.createServer((req, res) => {
+                if (req.url === '/img/no-image.svg') {
+                    res.writeHead(200, { 'Content-Type': 'image/svg+xml' });
+                    res.end('<svg/>');
+                } else {
+                    res.writeHead(302, { Location: '/login/index.html' });
+                    res.end();
+                }
+            });
+            await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+            try {
+                const url = `http://127.0.0.1:${server.address().port}`;
+                const { remote } = createRemote();
+                const file = await remote.readUrlFile(url, '/img/no-image.svg', 's1', TYPE.HTML, 1);
+                assert.strictEqual(Buffer.from(file.file, 'base64').toString(), '<svg/>');
+                assert.strictEqual(file.mimeType, 'image/svg+xml');
+                const denied = await remote.readUrlFile(url, '/adapter/admin/admin.svg', 's1', TYPE.HTML, 2);
+                assert.deepStrictEqual(denied.d[3], { error: 'Not authorised' });
+            } finally {
+                server.close();
+            }
+        });
+
+        it('reads adapter files with and without the admin prefix from "<adapter>.admin"', async () => {
+            const { remote } = createRemote(
+                {},
+                {
+                    files: {
+                        'cloud.admin/cloud.png': { file: Buffer.from('PNG'), mimeType: 'image/png' },
+                        'cloud.admin/index.html': { file: Buffer.from('<html>'), mimeType: 'text/html' },
+                        'docker-manager.admin/img/icon.svg': { file: Buffer.from('<svg/>'), mimeType: 'image/svg+xml' },
+                    },
+                },
+            );
+            const read = async name => {
+                const answer = await remote.process({ sid: 's1', d: [TYPE.HTML, 1, name] }, 'remote');
+                return typeof answer.d[3] === 'string' ? unpack(answer.d[3]) : answer.d[3];
+            };
+
+            const withPrefix = await read('/admin/adapter/cloud/cloud.png');
+            assert.strictEqual(Buffer.from(withPrefix.file, 'base64').toString(), 'PNG');
+            assert.strictEqual(withPrefix.mimeType, 'image/png');
+            assert.strictEqual(Buffer.from((await read('/adapter/cloud/cloud.png?0')).file, 'base64').toString(), 'PNG');
+            assert.strictEqual(Buffer.from((await read('/admin/adapter/cloud/')).file, 'base64').toString(), '<html>');
+            const svg = await read('/admin/adapter/docker-manager/img/icon.svg');
+            assert.strictEqual(svg.mimeType, 'image/svg+xml');
+            assert.deepStrictEqual(await read('/admin/adapter/cloud/missing.png'), { error: 'Not exists' });
+        });
+
+        it('reads missing adapter files from the admin instance and never leaves the adapter directory', async () => {
+            const { remote } = createRemote(
+                { remoteAdminInstance: 'admin.0', remoteWebInstance: 'web.0' },
+                {
+                    objects: {
+                        'system.adapter.admin.0': { common: {}, native: { port: 8081, bind: '0.0.0.0' } },
+                        'system.adapter.web.0': { common: {}, native: { port: 8082, bind: '0.0.0.0' } },
+                    },
+                },
+            );
+            await tick();
+            const urls = [];
+            remote.readUrlFile = async (url, path, sid, type, id) => {
+                urls.push(url + path);
+                return { file: Buffer.from('SVG').toString('base64'), mimeType: 'image/svg+xml' };
+            };
+
+            const answer = await remote.process(
+                { sid: 's1', d: [TYPE.HTML, 1, '/admin/adapter/admin/admin.svg?0'] },
+                'remote',
+            );
+            assert.strictEqual(unpack(answer.d[3]).mimeType, 'image/svg+xml');
+            const forbidden = await remote.process(
+                { sid: 's1', d: [TYPE.HTML, 2, '/admin/adapter/cloud/../../etc/passwd'] },
+                'remote',
+            );
+            assert.deepStrictEqual(forbidden.d[3], { error: 'Not exists' });
+            assert.deepStrictEqual(urls, ['http://127.0.0.1:8081/adapter/admin/admin.svg?0']);
+        });
+
         it('reads missing files from the web instance only with an absolute path', async () => {
             const { remote } = createRemote(
                 { remoteWebInstance: 'web.0' },
@@ -806,7 +1048,16 @@ describe('Remote', function () {
                 req.on('data', chunk => (body += chunk));
                 req.on('end', () => {
                     received.push({ method: req.method, url: req.url, headers: req.headers, body });
-                    if (req.method === 'POST') {
+                    // answers of @iobroker/mcp-server for unknown sessions and invalid requests
+                    if (req.headers['mcp-session-id'] === 'expired' && req.method === 'DELETE') {
+                        res.writeHead(400, { 'Content-Type': 'text/html; charset=utf-8' });
+                        res.end('Invalid or missing session ID');
+                    } else if (req.headers['mcp-session-id'] === 'expired' || body.includes('"method":"invalid"')) {
+                        res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+                        res.end(
+                            '{"jsonrpc":"2.0","error":{"code":-32000,"message":"Bad Request: No valid session ID provided"},"id":null}',
+                        );
+                    } else if (req.method === 'POST') {
                         res.writeHead(200, {
                             'Content-Type': 'text/event-stream',
                             'Mcp-Session-Id': 'session-1',
@@ -835,11 +1086,21 @@ describe('Remote', function () {
             ...extra,
         });
 
+        /** Sends the request like the cloud (message type 12) and returns `[null, response]` or `[error]` */
         async function mcpRequest(remote, sent, mcp) {
-            await request(remote, 's1', 'mcp', [mcp]);
-            const answer = answerOf(sent, 's1');
-            return typeof answer.d[3] === 'string' ? unpack(answer.d[3]) : answer.d[3];
+            const answer = await remote.process({ sid: 's1', d: [TYPE.MCP, 1, 'mcp', mcp] }, 'remote/uuid-1');
+            await tick();
+            assert.strictEqual(sent.length, 0, 'MCP answers must not be sent via the events server');
+            const data = answer.d[3];
+            return typeof data === 'string' ? [null, unpack(data)] : [data.error];
         }
+
+        it('does not know "mcp" as socket command', async () => {
+            const { remote, sent } = createRemote({ remoteMcpInstance: 'mcp.0' }, { objects: mcpObjects() });
+            await request(remote, 's1', 'mcp', [{ body: {} }]);
+            assert.deepStrictEqual(answerOf(sent, 's1').d[3], ['Unknown command']);
+            assert.strictEqual(received.length, 0);
+        });
 
         it('forwards requests to the MCP instance', async () => {
             const { remote, sent } = createRemote({ remoteMcpInstance: 'mcp.0' }, { objects: mcpObjects() });
@@ -879,6 +1140,28 @@ describe('Remote', function () {
             assert.strictEqual(answer[1].status, 200);
             assert.strictEqual(received[0].method, 'DELETE');
             assert.strictEqual(received[0].headers['mcp-session-id'], 'session-1');
+        });
+
+        it('answers requests of an unknown session with 404, so the client starts a new session', async () => {
+            const { remote, sent, adapter } = createRemote({ remoteMcpInstance: 'mcp.0' }, { objects: mcpObjects() });
+            const call = {
+                jsonrpc: '2.0',
+                id: 2,
+                method: 'tools/call',
+                params: { name: 'get_states', arguments: { ids: ['a.0.b'] } },
+            };
+
+            const post = await mcpRequest(remote, sent, { headers: { 'mcp-session-id': 'expired' }, body: call });
+            assert.strictEqual(post[1].status, 404);
+            assert.ok(post[1].body.includes('No valid session ID'));
+
+            const del = await mcpRequest(remote, sent, { method: 'DELETE', headers: { 'mcp-session-id': 'expired' } });
+            assert.strictEqual(del[1].status, 404);
+            assert.ok(adapter.logs.info.some(text => text.includes('"expired" is unknown')));
+
+            // without a session ID it is a real bad request
+            const invalid = await mcpRequest(remote, sent, { body: { jsonrpc: '2.0', id: 3, method: 'invalid' } });
+            assert.strictEqual(invalid[1].status, 400);
         });
 
         it('answers GET with 405, because SSE streams cannot be forwarded', async () => {
@@ -942,6 +1225,26 @@ describe('Remote', function () {
             assert.strictEqual(received.length, 0);
         });
 
+        it('uses the address of the host, if MCP runs on another host', async () => {
+            const objects = mcpObjects(
+                { bind: '0.0.0.0' },
+                { 'system.host.other-host': { common: { address: ['127.0.0.1', '::1'] } } },
+            );
+            objects['system.adapter.mcp.0'].common.host = 'other-host';
+            const first = createRemote({ remoteMcpInstance: 'mcp.0' }, { objects });
+            const error = await mcpRequest(first.remote, first.sent, { body: {} });
+            assert.ok(error[0].includes('address of the host "other-host"'), error[0]);
+
+            // a specific bind address is used directly
+            objects['system.adapter.mcp.0'].native.bind = '127.0.0.1';
+            const second = createRemote({ remoteMcpInstance: 'mcp.0' }, { objects });
+            const answer = await mcpRequest(second.remote, second.sent, {
+                body: { jsonrpc: '2.0', id: 1, method: 'ping' },
+            });
+            assert.strictEqual(answer[1].status, 200);
+            assert.strictEqual(received.length, 1);
+        });
+
         it('answers with an error if the MCP server is not reachable', async () => {
             const closed = http.createServer();
             await new Promise(resolve => closed.listen(0, '127.0.0.1', resolve));
@@ -955,6 +1258,119 @@ describe('Remote', function () {
             const answer = await mcpRequest(remote, sent, { body: {} });
             assert.strictEqual(answer.length, 1);
             assert.ok(answer[0].includes('ECONNREFUSED'), answer[0]);
+        });
+
+        describe('via IoT (message type 12)', () => {
+            const MCP_RESPONSE = {
+                status: 200,
+                headers: { 'content-type': 'application/json', 'mcp-session-id': 'session-1' },
+                body: '{"jsonrpc":"2.0","id":1,"result":{"tools":[]}}',
+            };
+
+            function mcpIot(remote, mcp, sid = 's1', id = 4) {
+                return remote.process({ sid, d: [TYPE.MCP, id, 'mcp', mcp] }, 'remote/uuid-1');
+            }
+
+            it('answers "Not enabled" if remote access is disabled', async () => {
+                const { remote, sent } = createRemote({ remote: false, remoteMcpInstance: 'mcp.0' });
+                let called = false;
+                remote._mcpRequest = async () => {
+                    called = true;
+                    return MCP_RESPONSE;
+                };
+                const answer = await mcpIot(remote, { body: {} });
+                await tick();
+                assert.deepStrictEqual(answer, { sid: 's1', d: [TYPE.MCP, 4, '', { error: 'Not enabled' }] });
+                assert.strictEqual(called, false);
+                assert.strictEqual(sent.length, 0);
+            });
+
+            it('returns a small answer as one packed message and not via the events server', async () => {
+                const { remote, sent } = createRemote();
+                const requests = [];
+                remote._mcpRequest = async mcp => {
+                    requests.push(mcp);
+                    return MCP_RESPONSE;
+                };
+                const mcp = { method: 'POST', headers: { 'mcp-session-id': 'session-1' }, body: { id: 1 } };
+                const answer = await mcpIot(remote, mcp);
+                await tick();
+
+                assert.ok(!Array.isArray(answer));
+                assert.strictEqual(answer.sid, 's1');
+                assert.deepStrictEqual(answer.d.slice(0, 3), [TYPE.MCP, 4, '']);
+                assert.strictEqual(answer.d.length, 4);
+                assert.deepStrictEqual(unpack(answer.d[3]), MCP_RESPONSE);
+                assert.deepStrictEqual(requests, [mcp]);
+                assert.strictEqual(sent.length, 0);
+                assert.deepStrictEqual(Object.keys(remote.packets), []);
+            });
+
+            it('splits a big answer into trunks and resends missing trunks', async () => {
+                const { remote, sent } = createRemote();
+                const response = { ...MCP_RESPONSE, body: randomBytes(200000).toString('base64') };
+                remote._mcpRequest = async () => response;
+                const published = [];
+                remote.registerDevice({
+                    publish: (topic, payload, options, cb) => {
+                        published.push({ topic, trunk: JSON.parse(payload) });
+                        cb();
+                    },
+                });
+
+                const trunks = await mcpIot(remote, { body: {} }, 's1', 6);
+                await tick();
+
+                assert.ok(Array.isArray(trunks) && trunks.length > 1);
+                trunks.forEach((trunk, i) => {
+                    assert.strictEqual(trunk.sid, 's1');
+                    assert.strictEqual(trunk.i, i);
+                    assert.strictEqual(trunk.l, trunks.length);
+                    assert.deepStrictEqual(trunk.d.slice(0, 3), [TYPE.MCP, 6, '']);
+                    assert.ok(JSON.stringify(trunk).length <= MAX_MESSAGE_LENGTH);
+                });
+                assert.deepStrictEqual(unpack(trunks.map(trunk => trunk.d[3]).join('')), response);
+                assert.strictEqual(sent.length, 0);
+                assert.deepStrictEqual(Object.keys(remote.packets), ['s1_6']);
+
+                await remote.process({ sid: 's1', d: [TYPE.MISSING, 6, '', [[1]]] }, 'remote/uuid-1');
+                await wait(10);
+                assert.deepStrictEqual(published, [{ topic: 'response/client/remote/uuid-1', trunk: trunks[1] }]);
+
+                await remote.process({ sid: 's1', d: [TYPE.SENDING_DONE, 6, ''] }, 'remote/uuid-1');
+                assert.deepStrictEqual(Object.keys(remote.packets), []);
+            });
+
+            it('answers with the error text if the request fails', async () => {
+                const { remote, sent } = createRemote();
+                remote._mcpRequest = async () => {
+                    throw new Error('MCP server is down');
+                };
+                const answer = await mcpIot(remote, { body: {} });
+                assert.deepStrictEqual(answer, { sid: 's1', d: [TYPE.MCP, 4, '', { error: 'MCP server is down' }] });
+
+                // not configured MCP instance, without stub
+                const other = createRemote();
+                const notConfigured = await mcpIot(other.remote, { body: {} }, 's2', 5);
+                assert.deepStrictEqual(notConfigured, {
+                    sid: 's2',
+                    d: [TYPE.MCP, 5, '', { error: 'MCP instance is not configured' }],
+                });
+                await tick();
+                assert.strictEqual(sent.length + other.sent.length, 0);
+            });
+
+            it('forwards the request to the MCP instance', async () => {
+                const { remote } = createRemote({ remoteMcpInstance: 'mcp.0' }, { objects: mcpObjects() });
+                const body = { jsonrpc: '2.0', id: 1, method: 'tools/list' };
+                const answer = await mcpIot(remote, { headers: { 'mcp-session-id': 'session-1' }, body });
+                const response = unpack(answer.d[3]);
+                assert.strictEqual(response.status, 200);
+                assert.strictEqual(response.headers['mcp-session-id'], 'session-1');
+                assert.ok(response.body.includes('"tools":[]'));
+                assert.strictEqual(received.length, 1);
+                assert.deepStrictEqual(JSON.parse(received[0].body), body);
+            });
         });
     });
 });

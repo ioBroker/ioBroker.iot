@@ -1,6 +1,10 @@
 import axios, { type AxiosError } from 'axios';
 import { deflateSync } from 'node:zlib';
 import { Agent as HttpsAgent } from 'node:https';
+import { existsSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
+import { dirname, join, sep } from 'node:path';
+import { getType as getMimeType } from 'mime';
 import AdminSocket, { COMMANDS_PERMISSIONS } from './adminCommonSocket';
 import type { IotAdapterConfig } from './types';
 import type { device as DeviceModule } from 'aws-iot-device-sdk';
@@ -20,12 +24,16 @@ const MESSAGE_TYPES: Record<string, MESSAGE_TYPE> = {
     HTML: 9,
     COMBINED_CALLBACK: 10,
     COMBINED_MESSAGE: 11,
+    /** MCP request of the cloud, answered via IoT like HTML */
+    MCP: 12,
 };
 
 const MAX_IOT_MESSAGE_LENGTH = 127 * 1024;
 // Reserve for the JSON envelope ({sid, i, l, d: [type, id, name, ...]}) around a packed payload
 const MAX_IOT_PAYLOAD_LENGTH = MAX_IOT_MESSAGE_LENGTH - 1024;
-const MAX_POST_MESSAGE_LENGTH = 127 * 1024;
+// The events server forwards every POST as one WebSocket message to the browser.
+// Messages of ~100 KB failed there with "internal error", so the payload is limited to 64 KB.
+const MAX_POST_MESSAGE_LENGTH = 65 * 1024;
 const MAX_POST_PAYLOAD_LENGTH = MAX_POST_MESSAGE_LENGTH - 1024;
 const MAX_FILE_SIZE = 4 * 1024 * 1024;
 
@@ -50,7 +58,7 @@ const INVALID_CONNECTION = 'invalid connectionId';
 // local instances often use certificates, which are not issued for "localhost"
 const localHttpsAgent = new HttpsAgent({ rejectUnauthorized: false });
 
-/** Request for the local MCP server, sent by the cloud with the command `mcp` */
+/** Request for the local MCP server, sent by the cloud with the message type MCP (12) */
 export type MCP_REMOTE_REQUEST = {
     /** Default POST */
     method?: 'POST' | 'GET' | 'DELETE';
@@ -72,14 +80,31 @@ function normalizeError(error: any): any {
     return error instanceof Error ? error.message : error;
 }
 
-/** Build the local URL of a web server instance (admin, web or mcp) from its settings */
-export function getLocalUrl(native: Record<string, any>): string {
+/**
+ * Build the URL of the web server of an instance (admin, web or mcp) from its settings
+ *
+ * @param native settings of the instance
+ * @param hostAddresses addresses of the host, if the instance runs on another host
+ * @returns empty string, if the instance runs on another host and listens on all addresses, but the host has no usable address
+ */
+export function getLocalUrl(native: Record<string, any>, hostAddresses?: string[] | null): string {
     let host: string = native.bind || '';
-    if (!host || host === '0.0.0.0') {
+    const anyAddress = !host || host === '0.0.0.0' || host === '::';
+    if (anyAddress && hostAddresses) {
+        // loopback and link-local addresses of another host cannot be reached from here
+        const usable = hostAddresses.filter(
+            address => address && !/^127\./.test(address) && address !== '::1' && !/^fe80:/i.test(address),
+        );
+        host = usable.find(address => !address.includes(':')) || usable[0] || '';
+        if (!host) {
+            return '';
+        }
+    } else if (!host || host === '0.0.0.0') {
         host = '127.0.0.1';
     } else if (host === '::') {
         host = 'localhost';
-    } else if (host.includes(':')) {
+    }
+    if (host.includes(':')) {
         host = `[${host}]`;
     }
     return `${native.secure ? 'https' : 'http'}://${host}:${native.port}`;
@@ -163,11 +188,10 @@ export default class RemoteAccess {
     } = { stateChange: {}, objectChange: {}, log: {} };
     private sockets: { [socketId: SessionID]: Socket } = {};
     private vendorPrefix = '';
-    private localAdmin: string | null = null;
+    // pages of the installed admin adapter (undefined - not searched yet, null - not installed on this host)
+    private adminWwwDir: string | null | undefined;
     private webObj: ioBroker.InstanceObject | null = null;
-    private webUrl: string = '';
     private adminObj: ioBroker.InstanceObject | null = null;
-    private adminUrl: string = '';
     private lang: ioBroker.Languages = 'en';
     private sendObjectsTimeout: NodeJS.Timeout | null = null;
     private sendLogsTimeout: NodeJS.Timeout | null = null;
@@ -232,22 +256,10 @@ export default class RemoteAccess {
         }
 
         if (this.config.remoteAdminInstance) {
-            try {
-                this.localAdmin = require
-                    .resolve('iobroker.admin')
-                    .replace(/\\/g, '/')
-                    .replace(/main\.js$/, 'www-react');
-            } catch {
-                this.localAdmin = null;
-                this.adapter.log.warn('[REMOTE] Cannot read admin files while iobroker.admin was not found');
-            }
             this.adapter
                 .getForeignObjectAsync(`system.adapter.${this.config.remoteAdminInstance}`)
                 .then(obj => {
                     this.adminObj = obj || null;
-                    if (obj?.native && !obj.native.auth) {
-                        this.adminUrl = getLocalUrl(obj.native);
-                    }
                 })
                 .catch(e => this.adapter.log.error(`[REMOTE] Cannot read admin instance: ${e}`));
         }
@@ -256,9 +268,6 @@ export default class RemoteAccess {
                 .getForeignObjectAsync(`system.adapter.${this.config.remoteWebInstance}`)
                 .then(obj => {
                     this.webObj = obj || null;
-                    if (obj?.native && !obj.native.auth) {
-                        this.webUrl = getLocalUrl(obj.native);
-                    }
                 })
                 .catch(e => this.adapter.log.error(`[REMOTE] Cannot read web instance: ${e}`));
         }
@@ -883,6 +892,8 @@ export default class RemoteAccess {
             validateStatus: status => status === 200,
             timeout: 5000,
             httpsAgent: localHttpsAgent,
+            // admin redirects to the login page, which must not be delivered as the requested file
+            maxRedirects: 0,
         })
             .then(response => {
                 // replace port
@@ -903,7 +914,10 @@ export default class RemoteAccess {
                 let errorMessage;
                 if (error.response && error.response.status === 404) {
                     errorMessage = 'Not exists';
-                } else if (error.response && error.response.status === 401) {
+                } else if (
+                    error.response &&
+                    (error.response.status === 401 || (error.response.status >= 300 && error.response.status < 400))
+                ) {
                     errorMessage = 'Not authorised';
                 } else {
                     if (error.response) {
@@ -918,6 +932,168 @@ export default class RemoteAccess {
             });
     }
 
+    /**
+     * URL of the web server of an instance. The instance can run on another host of a multi-host system.
+     *
+     * @param obj instance object
+     * @returns empty string if the address of the host is unknown
+     */
+    async _getInstanceUrl(obj: ioBroker.InstanceObject): Promise<string> {
+        const ownHost = this.adapter.common?.host;
+        let hostAddresses: string[] | null = null;
+        if (obj.common?.host && ownHost && obj.common.host !== ownHost) {
+            const hostObj = await this.adapter.getForeignObjectAsync(`system.host.${obj.common.host}`);
+            hostAddresses = hostObj?.common?.address || [];
+        }
+        return getLocalUrl(obj.native, hostAddresses);
+    }
+
+    /**
+     * URL of the configured admin instance.
+     * Admin delivers its pages (e.g. "/img/...") also with authentication, only "/adapter/..." requires a login.
+     */
+    async _getAdminUrl(): Promise<string> {
+        if (!this.config.remoteAdminInstance) {
+            return '';
+        }
+        const obj = await this.adapter.getForeignObjectAsync(`system.adapter.${this.config.remoteAdminInstance}`);
+        return obj?.native ? this._getInstanceUrl(obj) : '';
+    }
+
+    /** URL of the configured web instance, if it can be read without authentication */
+    async _getWebUrl(): Promise<string> {
+        if (!this.config.remoteWebInstance) {
+            return '';
+        }
+        const obj = await this.adapter.getForeignObjectAsync(`system.adapter.${this.config.remoteWebInstance}`);
+        return obj?.native && !obj.native.auth ? this._getInstanceUrl(obj) : '';
+    }
+
+    /** Directory with the pages of the installed admin adapter, which admin serves from the disk */
+    _getAdminWwwDir(): string | null {
+        if (this.adminWwwDir === undefined) {
+            try {
+                const dir = join(dirname(require.resolve('iobroker.admin/package.json')), 'adminWww');
+                this.adminWwwDir = existsSync(dir) ? dir : null;
+            } catch {
+                this.adminWwwDir = null;
+            }
+            if (!this.adminWwwDir) {
+                this.adapter.log.debug('[REMOTE] Pages of iobroker.admin were not found on this host');
+            }
+        }
+        return this.adminWwwDir;
+    }
+
+    /**
+     * Read a page file of the installed admin adapter.
+     * HTML files are not read: admin fills them as templates.
+     *
+     * @param fileName path relative to the admin pages, e.g. "img/no-image.svg"
+     * @returns null if the file cannot be read from the disk
+     */
+    async _readAdminWwwFile(fileName: string): Promise<{ file: string; mimeType: string } | null> {
+        // the installed pages are only valid if the configured admin runs on this host
+        const adminHost = this.adminObj?.common?.host;
+        if (adminHost && adminHost !== this.adapter.common?.host) {
+            return null;
+        }
+        const dir = this._getAdminWwwDir();
+        if (!dir || !fileName || fileName.endsWith('/') || /\.html?$/i.test(fileName)) {
+            return null;
+        }
+        const fullPath = join(dir, fileName);
+        // do not leave the directory with ".."
+        if (!fullPath.startsWith(dir + sep)) {
+            return null;
+        }
+        try {
+            const file = await readFile(fullPath);
+            return { file: file.toString('base64'), mimeType: getMimeType(fullPath) || 'application/octet-stream' };
+        } catch {
+            return null;
+        }
+    }
+
+    /**
+     * Read a file of the adapter configuration pages like admin does for "/adapter/<adapter>/<file>":
+     * from the file storage "<adapter>.admin" and, if not found there, from the local admin instance.
+     *
+     * @param name "/adapter/<adapter>/<file>" or "/admin/adapter/<adapter>/<file>", optionally with query
+     * @param sid session ID
+     * @param type message type
+     * @param id message ID
+     */
+    _readAdapterFile(
+        name: string,
+        sid: SessionID,
+        type: MESSAGE_TYPE,
+        id: number,
+    ): Promise<SOCKET_MESSAGE | { file: string; mimeType: string }> {
+        // "/admin/adapter/cloud/cloud.png?0" => "/adapter/cloud/cloud.png?0"
+        const adminPath = name.replace(/^\/admin\//, '/');
+        // ["", "adapter", "cloud", "cloud.png"]
+        const parts = adminPath.split('?')[0].split('/').slice(2);
+        const adapterName = parts.shift() || '';
+        let fileName = parts.join('/');
+        if (!fileName || fileName.endsWith('/')) {
+            fileName += 'index.html';
+        }
+
+        const notExists: SOCKET_MESSAGE = { sid, d: [type, id, '', { error: 'Not exists' }] };
+        if (!adapterName || adapterName === '..' || fileName.split('/').includes('..')) {
+            return Promise.resolve(notExists);
+        }
+
+        return this.adapter
+            .readFileAsync(`${adapterName}.admin`, fileName)
+            .then(data => ({ file: Buffer.from(data.file).toString('base64'), mimeType: data.mimeType as string }))
+            .catch(async (): Promise<SOCKET_MESSAGE | { file: string; mimeType: string }> => {
+                const adminUrl = await this._getAdminUrl();
+                if (adminUrl) {
+                    // admin serves its own files from the disk
+                    return this.readUrlFile(adminUrl, adminPath, sid, type, id);
+                }
+                this.adapter.log.debug(`[REMOTE] File ${adapterName}.admin/${fileName} not found`);
+                return notExists;
+            });
+    }
+
+    /**
+     * Build the answer to a request, which is published via IoT (HTML, MCP).
+     * A payload, which does not fit into one IoT message, is split into trunks. The trunks are kept
+     * to resend them on MISSING, until the cloud confirms them with SENDING_DONE.
+     *
+     * @param sid session ID
+     * @param _type message type of the request
+     * @param id ID of the request
+     * @param packed deflated and base64 encoded payload
+     * @returns one message or the trunks
+     */
+    _splitForIot(sid: SessionID, _type: MESSAGE_TYPE, id: number, packed: string): SOCKET_MESSAGE | SOCKET_TRUNK[] {
+        if (packed.length <= MAX_IOT_PAYLOAD_LENGTH) {
+            return { sid, d: [_type, id, '', packed] };
+        }
+        const count = Math.ceil(packed.length / MAX_IOT_PAYLOAD_LENGTH);
+        const trunks: SOCKET_TRUNK[] = [];
+        for (let i = 0; i < count; i++) {
+            trunks.push({
+                sid,
+                i,
+                l: count,
+                d: [_type, id, '', packed.substring(i * MAX_IOT_PAYLOAD_LENGTH, (i + 1) * MAX_IOT_PAYLOAD_LENGTH)],
+            });
+        }
+
+        // key by session too: the Lambda may use the same ID for parallel requests
+        this.packets[`${sid}_${id}`] = { ts: Date.now(), trunks };
+
+        // start garbage collector
+        this._startGarbageCollector();
+
+        return trunks;
+    }
+
     _sendResponse(
         sid: SessionID,
         _type: MESSAGE_TYPE,
@@ -929,7 +1105,8 @@ export default class RemoteAccess {
     ): Promise<SOCKET_MESSAGE> {
         let packed = deflateSync(JSON.stringify(args)).toString('base64');
 
-        if (packed.length > MAX_IOT_PAYLOAD_LENGTH) {
+        // the answer is always sent via the events server (POST), not via IoT
+        if (packed.length > MAX_POST_PAYLOAD_LENGTH) {
             if (writeUrl) {
                 if (args.length === 3) {
                     const [error, file, mimeType] = args;
@@ -1109,22 +1286,9 @@ export default class RemoteAccess {
                         }));
                 } else if (name === 'vendorPrefix' || name === '/vendorPrefix') {
                     return Promise.resolve({ sid: message.sid, d: [_type, id, '', [null, this.vendorPrefix]] });
-                } else if (name.startsWith('/adapter')) {
-                    if (this.config.remoteAdminInstance) {
-                        if (this.adminUrl) {
-                            promiseFile = this.readUrlFile(this.adminUrl, name, message.sid, _type, id);
-                        } else {
-                            promiseFile = Promise.resolve({
-                                sid: message.sid,
-                                d: [_type, id, '', { error: 'Not exists' }],
-                            });
-                        }
-                    } else {
-                        promiseFile = Promise.resolve({
-                            sid: message.sid,
-                            d: [_type, id, '', { error: 'Not exists' }],
-                        });
-                    }
+                } else if (/^\/(admin\/)?adapter\//.test(name)) {
+                    // the admin pages use relative links, so the files come as "/admin/adapter/<adapter>/<file>"
+                    promiseFile = this._readAdapterFile(name, message.sid, _type, id);
                 } else {
                     const path = name.split('?')[0];
                     const parts = path.split('/');
@@ -1132,24 +1296,46 @@ export default class RemoteAccess {
                     const _adapter = parts.shift() || '';
                     this.adapter.log.debug(`[REMOTE] HTML: ${path}`);
 
+                    const isAdminPage = _adapter === 'admin' && path.startsWith('/admin/');
+
                     // html must be returned only by iot channel, as lambda must process the answer
-                    promiseFile = this.adapter
-                        .readFileAsync(_adapter, parts.join('/'))
-                        .then(data => {
-                            data.file = Buffer.from(data.file).toString('base64');
-                            return data as { file: string; mimeType: string };
-                        })
-                        .catch(() => {
-                            // the path must be absolute, else it could change the host of the URL
-                            if (this.webUrl && path.startsWith('/')) {
-                                // try to read from server
-                                return this.readUrlFile(this.webUrl, path, message.sid, _type, id);
-                            }
-                            return {
-                                sid: message.sid,
-                                d: [_type, id, '', { error: 'Not exists' }],
-                            };
-                        });
+                    const readFromStorage = (): Promise<SOCKET_MESSAGE | { file: string; mimeType: string }> =>
+                        this.adapter
+                            .readFileAsync(_adapter, parts.join('/'))
+                            .then(data => {
+                                data.file = Buffer.from(data.file).toString('base64');
+                                return data as { file: string; mimeType: string };
+                            })
+                            .catch(async (): Promise<SOCKET_MESSAGE | { file: string; mimeType: string }> => {
+                                const adminUrl = isAdminPage ? await this._getAdminUrl() : '';
+                                if (adminUrl) {
+                                    // admin serves "/admin/img/x.svg" as "/img/x.svg" too
+                                    return this.readUrlFile(
+                                        adminUrl,
+                                        name.substring('/admin'.length),
+                                        message.sid,
+                                        _type,
+                                        id,
+                                    );
+                                }
+                                // the path must be absolute, else it could change the host of the URL
+                                const webUrl = path.startsWith('/') ? await this._getWebUrl() : '';
+                                if (webUrl) {
+                                    // try to read from server
+                                    return this.readUrlFile(webUrl, path, message.sid, _type, id);
+                                }
+                                return {
+                                    sid: message.sid,
+                                    d: [_type, id, '', { error: 'Not exists' }],
+                                };
+                            });
+
+                    if (isAdminPage) {
+                        // admin serves its pages from the installation directory and does not upload them
+                        promiseFile = this._readAdminWwwFile(parts.join('/')).then(data => data || readFromStorage());
+                    } else {
+                        promiseFile = readFromStorage();
+                    }
                 }
 
                 return promiseFile.then(
@@ -1163,7 +1349,7 @@ export default class RemoteAccess {
                         const dataFile = data as { file: string; mimeType: string };
                         const canUpload = typeof args === 'string' && args.startsWith('https:');
                         // do not pack big files, which will be rejected anyway
-                        let packed =
+                        const packed =
                             !canUpload && dataFile.file.length > MAX_FILE_SIZE
                                 ? ''
                                 : deflateSync(JSON.stringify(data)).toString('base64');
@@ -1197,35 +1383,28 @@ export default class RemoteAccess {
                             });
                         }
 
-                        if (packed.length > MAX_IOT_PAYLOAD_LENGTH) {
-                            const packets: string[] = [];
-                            while (packed.length > MAX_IOT_PAYLOAD_LENGTH) {
-                                const trunk = packed.substring(0, MAX_IOT_PAYLOAD_LENGTH);
-                                packed = packed.substring(MAX_IOT_PAYLOAD_LENGTH);
-                                packets.push(trunk);
-                            }
-                            if (packed.length) {
-                                packets.push(packed);
-                            }
-
-                            const trunks: SOCKET_TRUNK[] = packets.map((trunk, i) => ({
-                                sid: message.sid,
-                                i,
-                                l: packets.length,
-                                d: [_type, id, '', trunk],
-                            }));
-
-                            // key by session too: the Lambda may use the same ID for parallel requests
-                            this.packets[`${message.sid}_${id}`] = { ts: Date.now(), trunks };
-
-                            // start garbage collector
-                            this._startGarbageCollector();
-
-                            return Promise.resolve(trunks);
-                        }
-                        return Promise.resolve({ sid: message.sid, d: [_type, id, '', packed] });
+                        return Promise.resolve(this._splitForIot(message.sid, _type, id, packed));
                     },
                 );
+            } else if (_type === MESSAGE_TYPES.MCP) {
+                // the answer is published via IoT, because the cloud (HTTP Lambda) waits for it synchronously
+                if (!this.config.remote) {
+                    return Promise.resolve({ sid: message.sid, d: [_type, id, '', { error: 'Not enabled' }] });
+                }
+                return this._mcpRequest(args as unknown as MCP_REMOTE_REQUEST | undefined)
+                    .then(response =>
+                        this._splitForIot(
+                            message.sid,
+                            _type,
+                            id,
+                            deflateSync(JSON.stringify(response)).toString('base64'),
+                        ),
+                    )
+                    .catch((error: unknown): SOCKET_MESSAGE => {
+                        const text = String(normalizeError(error));
+                        this.adapter.log.warn(`[REMOTE] Cannot process MCP request: ${text}`);
+                        return { sid: message.sid, d: [_type, id, '', { error: text }] };
+                    });
             }
 
             if (!this.config.remote) {
@@ -1629,14 +1808,14 @@ export default class RemoteAccess {
                 promiseResult = AdminSocket.getCompactInstalled(
                     this.adapter,
                     (args as [hostName: string])[0] || this.adminObj?.common.host || this.adapter.common!.host,
-                ).then(data => ({ sid: message.sid, d: [_type, id, name, [data]] }));
+                ).then(data => this._sendResponse(message.sid, _type, id, name, [data], message.wu, message.ru));
             } else if (name === 'getCompactSystemConfig') {
                 promiseOne = AdminSocket.getCompactSystemConfig(this.adapter);
             } else if (name === 'getCompactRepository') {
                 promiseResult = AdminSocket.getCompactRepository(
                     this.adapter,
                     (args as [hostName: string])[0] || this.adminObj?.common.host || this.adapter.common!.host,
-                ).then(data => ({ sid: message.sid, d: [_type, id, name, [data]] }));
+                ).then(data => this._sendResponse(message.sid, _type, id, name, [data], message.wu, message.ru));
             } else if (name === 'getCompactHosts') {
                 promiseOne = AdminSocket.getCompactHosts(this.adapter);
             } else if (name === 'readLogs') {
@@ -1674,15 +1853,6 @@ export default class RemoteAccess {
                     .catch(error => ({ sid: message.sid, d: [_type, id, name, [error]] as SOCKET_PAYLOAD }));
             } else if (name === 'getAllObjects') {
                 promiseOne = AdminSocket.getAllObjects(this.adapter);
-            } else if (name === 'mcp') {
-                promiseResult = this._mcpRequest((args as [MCP_REMOTE_REQUEST] | undefined)?.[0])
-                    .then(response =>
-                        this._sendResponse(message.sid, _type, id, name, [null, response], message.wu, message.ru),
-                    )
-                    .catch(error => ({
-                        sid: message.sid,
-                        d: [_type, id, name, [normalizeError(error)]] as SOCKET_PAYLOAD,
-                    }));
             }
 
             // MESSAGE is the only one-way message and no answer is expected
@@ -1799,7 +1969,11 @@ export default class RemoteAccess {
             );
         }
 
-        return `${getLocalUrl(serverObj.native)}/mcp`;
+        const url = await this._getInstanceUrl(serverObj);
+        if (!url) {
+            throw new Error(`The address of the host "${serverObj.common.host}" of "${serverInstance}" is unknown`);
+        }
+        return `${url}/mcp`;
     }
 
     /**
@@ -1854,10 +2028,18 @@ export default class RemoteAccess {
             }
         }
 
-        return {
-            status: response.status,
-            headers: responseHeaders,
-            body: typeof response.data === 'string' ? response.data : '',
-        };
+        const body = typeof response.data === 'string' ? response.data : '';
+        let status = response.status;
+        // @iobroker/mcp-server answers requests of a session, which it does not know (anymore), with 400,
+        // e.g. after a restart of the MCP instance. MCP clients start a new session only on 404
+        // (Streamable HTTP specification), otherwise every further request of the client fails.
+        if (headers['mcp-session-id'] && status === 400 && /session ID/i.test(body)) {
+            this.adapter.log.info(
+                `[REMOTE] MCP session "${headers['mcp-session-id']}" is unknown to the MCP instance (restarted?), the client must reconnect`,
+            );
+            status = 404;
+        }
+
+        return { status, headers: responseHeaders, body };
     }
 }

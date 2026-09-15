@@ -1,14 +1,17 @@
-import { device as DeviceModule } from 'aws-iot-device-sdk';
+import type { device as DeviceModule } from 'aws-iot-device-sdk';
 import { Adapter, type AdapterOptions, EXIT_CODES, Credentials } from '@iobroker/adapter-core'; // Get common adapter utils
 import { readFileSync } from 'node:fs';
 import axios from 'axios';
 import { deflateSync } from 'node:zlib';
+import type { EventEmitter } from 'node:events';
 
 import AlexaSH3 from './lib/alexaSmartHomeV3';
 import AlexaCustom, { type AlexaCustomResponse } from './lib/alexaCustom';
 import GoogleHome from './lib/googleHome';
 import YandexAlisa from './lib/alisa';
 import Remote, { type SOCKET_MESSAGE, type SOCKET_TRUNK } from './lib/remote';
+import ConnectionDiagnostics, { type MqttPacket } from './lib/connectionDiagnostics';
+import { createIotDevice } from './lib/createIotDevice';
 import { handleGeofenceData, handleDevicesData, handleSendToAdapter, handleGetInstances } from './lib/visuApp';
 import { buildMessageFromNotification } from './lib/notifications';
 import { AppNotifications } from './lib/appNotifications';
@@ -16,6 +19,7 @@ import type { IotAdapterConfig } from './lib/types';
 
 const NONE = '___none___';
 const MAX_IOT_MESSAGE_LENGTH = 127 * 1024;
+const IOT_KEEPALIVE_SEC = 60;
 const SPECIAL_ADAPTERS = ['netatmo'];
 const ALLOWED_SERVICES = SPECIAL_ADAPTERS.concat(['text2command']);
 
@@ -46,7 +50,7 @@ class IotAdapter extends Adapter {
 
     private connectedOwn = false;
     private secret: string = '';
-    private connectStarted = 0;
+    private readonly connectionDiagnostics = new ConnectionDiagnostics(IOT_KEEPALIVE_SEC);
     private caCert: Buffer | null = null;
     private validTill: string | null = null; // null - never read, "--" - user has no license, ISO date string - valid till
     private validTillLastQuery: number = 0;
@@ -125,6 +129,7 @@ class IotAdapter extends Adapter {
             unload: async callback => {
                 try {
                     if (this.device) {
+                        this.connectionDiagnostics.markIntentionalClose();
                         this.device.end();
                         this.device = null;
                     }
@@ -653,30 +658,21 @@ class IotAdapter extends Adapter {
         );
     }
 
-    onDisconnect(event?: string): void {
-        const now = Date.now();
-        if (now - this.connectStarted < 500) {
-            this.log.warn(
-                'Looks like your connection certificates are invalid. Please renew them via configuration dialog.',
-            );
-        }
-
-        if (typeof event === 'string') {
-            if (event.toLowerCase().includes('duplicate')) {
-                // disable adapter
-                this.log.error(
-                    `Two devices are trying to connect with the same iot account. This is not allowed. Stopping`,
-                );
-                void this.getForeignObjectAsync(`system.adapter.${this.namespace}`).then(obj => {
-                    if (obj) {
-                        obj.common.enabled = false;
-                        return this.setForeignObjectAsync(obj._id, obj);
-                    }
-                });
-            }
-            this.log.info(`Connection changed: ${event}`);
+    onDisconnect(): void {
+        // AWS IoT does not send the reason of the disconnect, so explain it by what happened before
+        const info = this.connectionDiagnostics.onClose();
+        if (info.intentional) {
+            this.log.debug('Connection closed by adapter');
+        } else if (info.wasConnected) {
+            this.log.info(`Connection changed: disconnect (${info.text})`);
+        } else if (info.attempt === 1) {
+            this.log.info(`Connection changed: ${info.text}`);
         } else {
-            this.log.info('Connection changed: disconnect');
+            // do not flood the log while the cloud is not reachable
+            this.log.debug(`Connection changed: ${info.text}`);
+        }
+        if (info.cause && (info.wasConnected || info.attempt === 1)) {
+            this.log.warn(`Probable cause of the disconnect: ${info.cause}`);
         }
 
         if (this.connectedOwn) {
@@ -689,6 +685,10 @@ class IotAdapter extends Adapter {
     }
 
     onConnect(clientId: string): void {
+        const restored = this.connectionDiagnostics.onConnect();
+        if (restored) {
+            this.log.info(`Connection restored ${restored}`);
+        }
         if (!this.connectedOwn) {
             // Make from peter_gmail_com => p***r_g...com
             const parts = clientId.split('_');
@@ -1142,6 +1142,7 @@ class IotAdapter extends Adapter {
         return new Promise<void>(resolve => {
             if (this.device) {
                 try {
+                    this.connectionDiagnostics.markIntentionalClose();
                     this.device.end(true, () => {
                         this.device = null;
                         resolve();
@@ -1281,8 +1282,8 @@ class IotAdapter extends Adapter {
         this.caCert ||= readFileSync(`${__dirname}/../keys/root-CA.crt`);
 
         try {
-            this.connectStarted = Date.now();
-            this.device = new DeviceModule({
+            this.connectionDiagnostics.onStart();
+            this.device = createIotDevice({
                 privateKey: Buffer.from(certs.private),
                 clientCert: Buffer.from(certs.certificate),
                 caCert: this.caCert,
@@ -1291,18 +1292,31 @@ class IotAdapter extends Adapter {
                 host: this.config.cloudUrl,
                 debug: !!this.config.debug,
                 baseReconnectTimeMs: 5000,
-                keepalive: 60,
+                keepalive: IOT_KEEPALIVE_SEC,
             });
             this.remote?.registerDevice(this.device);
 
             this.device.subscribe(`command/${clientId}/#`);
             this.device.on('connect', () => this.onConnect(clientId));
             this.device.on('close', (): void => this.onDisconnect());
-            this.device.on('reconnect', () => this.log.debug('reconnect'));
+            this.device.on('reconnect', () => {
+                const failedAttempts = this.connectionDiagnostics.getFailedAttempts();
+                if (failedAttempts) {
+                    this.log.debug(`Reconnecting to the cloud (attempt ${failedAttempts + 1})`);
+                } else {
+                    this.log.info('Reconnecting to the cloud');
+                }
+            });
             this.device.on('offline', () => this.log.debug('offline'));
+            // the typings of aws-iot-device-sdk do not contain these events
+            const emitter: EventEmitter = this.device;
+            emitter.on('end', () => this.log.debug('Connection ended'));
+            emitter.on('packetsend', (packet: MqttPacket) => this.connectionDiagnostics.onPacketSend(packet));
+            emitter.on('packetreceive', () => this.connectionDiagnostics.onPacketReceive());
             this.device.on('error', error => {
                 const errorTxt =
                     ((error as Error)?.message && JSON.stringify((error as Error).message)) || JSON.stringify(error);
+                this.connectionDiagnostics.onError(errorTxt);
                 this.log.error(`Error by device connection: ${errorTxt}`);
 
                 // restart the iot device if DNS cannot be resolved
@@ -1364,17 +1378,21 @@ class IotAdapter extends Adapter {
                                 );
 
                                 const msg = JSON.stringify(response);
-                                if (msg && msg.length > MAX_IOT_MESSAGE_LENGTH) {
+                                // the limit is in bytes: names with umlauts or cyrillic letters need more bytes than characters
+                                const msgBytes = msg ? Buffer.byteLength(msg) : 0;
+                                if (msgBytes > MAX_IOT_MESSAGE_LENGTH) {
                                     const packed = deflateSync(msg).toString('base64');
                                     this.log.debug(
-                                        `[REMOTE] Content was packed from ${msg.length} bytes to ${packed.length} bytes`,
+                                        `[REMOTE] Content was packed from ${msgBytes} bytes to ${packed.length} bytes`,
                                     );
                                     if (packed.length > MAX_IOT_MESSAGE_LENGTH) {
-                                        this.log.warn(
-                                            `[REMOTE] Content was packed to ${packed.length} bytes which is still near/over the message limit!`,
+                                        // the cloud would close the connection and the answer would be lost anyway
+                                        this.log.error(
+                                            `Response to "${type}" is too big (${packed.length} bytes packed, max ${MAX_IOT_MESSAGE_LENGTH} bytes) and was not sent`,
                                         );
+                                    } else {
+                                        this.device.publish(`response/${clientId}/${type}`, packed);
                                     }
-                                    this.device.publish(`response/${clientId}/${type}`, packed);
                                 } else {
                                     // console.log(`Publish to "response/${clientId}/${type}": ${msg}`);
                                     this.device.publish(`response/${clientId}/${type}`, msg);

@@ -337,6 +337,7 @@
             "zh-cn": "无状态查询"
         }
     },
+    "type": "panel",
     "items": {
         "title": {
             "newLine": true,
