@@ -416,7 +416,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 7.1.1 (2026-09-16)
 - (@GermanBluefox) Corrected validTill request
 
 ### 7.1.0 (2026-09-15)
@@ -435,9 +435,6 @@ setState('iot.0.app.message', JSON.stringify({
 - (@GermanBluefox) Implemented new feature to select devices from the list and not by enumeration
 - (@GermanBluefox) Possibility to send messages to the app directly from the state
 - (@GermanBluefox) Migrated Google and Alisa to TypeScript
-
-### 6.0.3 (2026-04-23)
-- (@GermanBluefox) Allowed to read temperature information via Alexa
 
 ## License
 

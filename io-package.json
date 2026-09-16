@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "7.1.0",
+    "version": "7.1.1",
     "news": {
+      "7.1.1": {
+        "en": "Corrected validTill request",
+        "de": "Korrigiert Gültige Anfrage",
+        "ru": "Исправлен запрос ValidTill",
+        "pt": "Pedido ValidTill corrigido",
+        "nl": "ValidTill-verzoek gecorrigeerd",
+        "fr": "Demande ValidTill corrigée",
+        "it": "Richiesta ValidTill corretta",
+        "es": "Solicitud validTill corregida",
+        "pl": "Poprawiono żądanie ValidTill",
+        "uk": "Виправлений запит ValidTill",
+        "zh-cn": "更正了validTill请求"
+      },
       "7.1.0": {
         "en": "Remote access: MCP requests of the cloud are answered via MQTT (message type 12)\nMigrated blockly to TypeScript\nRemote access improved\nAvoided the Node.js 24 deprecation warning DEP0187 (`fs.existsSync`) when connecting to the cloud",
         "de": "Fernzugriff: MCP-Anfragen der Cloud werden per MQTT beantwortet (Typ 12)\nBlockweise zu TypeScript migriert\nFernzugriff verbessert\nVermeidete die Node.js 24-Warnung DEP0187 (`fs.ExistsSync`) beim Verbinden mit der Cloud",
@@ -80,19 +93,6 @@
         "pl": "Adapter wymaga node.js > = 20 teraz.\nUsunięte wsparcie dla Alexa 2\nNaprawiono błąd w Alisie z czujnikiem kolorów i ruchu\nSprawdzić odpowiedź Discovery przed wysłaniem jej z powrotem",
         "uk": "Адаптер вимагає node.js >= 20 тепер.\nВидалення підтримки Alexa 2\nВиправлена помилка в Алісі з датчиком кольору і руху\nДійсність Відповіді про відкриття",
         "zh-cn": "适配器需要节点.js >= 20 现在.\n删除对 Alexa 2 的支持\nAlisa 有颜色和运动传感器的固定错误\n在发回前验证发现回复"
-      },
-      "5.0.13": {
-        "en": "Adapter requires node.js >= 20 now.\nCorrected the handling of the multiple group names\nFixing the license validation",
-        "de": "Adapter benötigt jetzt node.js >= 20.\nDie Handhabung der Mehrfachgruppennamen wurde korrigiert\nFestlegung der Lizenzvalidierung",
-        "ru": "Адаптер требует node.js >= 20 сейчас.\nИсправлена обработка множественных названий групп\nИсправление проверки лицензии",
-        "pt": "O adaptador requer gnod.js >= 20 agora.\nCorrigido o tratamento dos nomes de vários grupos\nCorrigindo a validação da licença",
-        "nl": "Voor de adapter zijn node.js > 20 nu nodig.\nCorrectie voor de behandeling van de meervoudige groepsnamen\nVaststelling van de licentievalidatie",
-        "fr": "Adapter nécessite node.js >= 20 maintenant.\nCorrection du traitement des noms de groupes multiples\nCorrection de la validation de la licence",
-        "it": "Adattatore richiede node.js >= 20 ora.\nCorretto il trattamento dei nomi dei gruppi multipli\nFissare la convalida della licenza",
-        "es": "Adaptador requiere node.js >= 20 ahora.\nCorregido el manejo de los nombres de grupos múltiples\nFijar la validación de la licencia",
-        "pl": "Adapter wymaga node.js > = 20 teraz.\nPoprawiono obsługę wielu nazw grup\nUstawienie zatwierdzenia licencji",
-        "uk": "Адаптер вимагає node.js >= 20 тепер.\nВиправлено обробку кількох назв груп\nВиправлення перевірки ліцензії",
-        "zh-cn": "适配器需要节点.js >= 20 现在.\n更正了多个组名的处理\n修复许可证验证"
       }
     },
     "titleLang": {

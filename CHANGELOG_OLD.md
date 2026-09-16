@@ -511,6 +511,9 @@
 ### 0.1.4 (2018-09-26)
 
 -   (bluefox) Initial commit
+## 6.0.3 (2026-04-23)
+- (@GermanBluefox) Allowed to read temperature information via Alexa
+
 ## 6.0.1 (2026-04-07)
 - (iobroker-bot) Adapter requires node.js >= 20 now.
 - (@GermanBluefox) Removed support for Alexa 2
