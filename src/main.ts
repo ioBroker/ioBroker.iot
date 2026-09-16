@@ -499,7 +499,7 @@ class IotAdapter extends Adapter {
             response = await axios.post('https://app-message.iobroker.in/', json, {
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${Buffer.from(`${this.login}:${this.password}`).toString('base64')}`,
+                    Authorization: `Basic ${Buffer.from(`${this.login}:${this.password}`).toString('base64')}`,
                 },
                 timeout: 5_000,
                 validateStatus: status => status < 400,
@@ -848,7 +848,7 @@ class IotAdapter extends Adapter {
         } catch (error) {
             if (error.response) {
                 if (error.response.status === 401) {
-                    this.log.error(`Cannot fetch connection certificates because of invalid user or password`);
+                    this.log.error('Cannot fetch connection certificates because of invalid user or password');
                 } else {
                     this.log.error(`Cannot fetch connection certificates: ${JSON.stringify(error.response.data)}`);
                 }
@@ -1208,10 +1208,10 @@ class IotAdapter extends Adapter {
             return;
         }
         try {
-            const response = await fetch('https://iobroker.pro:3001/api/v1/validTill', {
+            const response = await fetch('https://iobroker.pro/api/v1/validTill', {
                 method: 'GET',
                 headers: {
-                    Authorization: `Bearer ${Buffer.from(`${this.login}:${this.password}`).toString('base64')}`,
+                    Authorization: `Basic ${Buffer.from(`${this.login}:${this.password}`).toString('base64')}`,
                 },
             });
             if (response.ok) {

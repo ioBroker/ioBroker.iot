@@ -5,7 +5,7 @@
     "dependencies": {
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.1",
-        "@iobroker/gui-components": "^10.2.3",
+        "@iobroker/gui-components": "^10.3.1",
         "@iobroker/types": "^7.2.2",
         "@iobroker/type-detector": "^6.0.1",
         "@mui/icons-material": "^9.4.0",

@@ -416,6 +416,9 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Corrected validTill request
+
 ### 7.1.0 (2026-09-15)
 - (@GermanBluefox) Remote access: MCP requests of the cloud are answered via MQTT (message type 12)
 - (@GermanBluefox) Migrated blockly to TypeScript
@@ -431,7 +434,7 @@ setState('iot.0.app.message', JSON.stringify({
 ### 6.1.0 (2026-06-02)
 - (@GermanBluefox) Implemented new feature to select devices from the list and not by enumeration
 - (@GermanBluefox) Possibility to send messages to the app directly from the state
-- (@GermanBluefox) Migrated google and alisa to TypeScript
+- (@GermanBluefox) Migrated Google and Alisa to TypeScript
 
 ### 6.0.3 (2026-04-23)
 - (@GermanBluefox) Allowed to read temperature information via Alexa
