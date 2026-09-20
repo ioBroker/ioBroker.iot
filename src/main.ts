@@ -34,6 +34,10 @@ const RETRY_DELAYS_MS = [
 ];
 const MAX_RETRY_DELAY_MS = 60_000; // Cap at 60 seconds for all subsequent retries
 
+// How long to wait for the MQTT DISCONNECT packet to be flushed before the socket is destroyed.
+// Must stay below "stopTimeout" in io-package.json, so the adapter can still close the connection on unload.
+const DISCONNECT_TIMEOUT_MS = 1_000;
+
 class IotAdapter extends Adapter {
     declare public config: IotAdapterConfig;
     private recalcTimeout: NodeJS.Timeout | null = null;
@@ -49,6 +53,7 @@ class IotAdapter extends Adapter {
     private urlKey: { key: string } | null = null;
 
     private connectedOwn = false;
+    private restartTimer: NodeJS.Timeout | null = null;
     private secret: string = '';
     private readonly connectionDiagnostics = new ConnectionDiagnostics(IOT_KEEPALIVE_SEC);
     private caCert: Buffer | null = null;
@@ -128,11 +133,14 @@ class IotAdapter extends Adapter {
             },
             unload: async callback => {
                 try {
-                    if (this.device) {
-                        this.connectionDiagnostics.markIntentionalClose();
-                        this.device.end();
-                        this.device = null;
+                    if (this.restartTimer) {
+                        clearTimeout(this.restartTimer);
+                        this.restartTimer = null;
                     }
+                    // Wait until the cloud confirmed the disconnect. If the process is terminated before the
+                    // DISCONNECT packet was sent, the session stays alive in the cloud and the next start of the
+                    // adapter is reported as "duplicate connection".
+                    await this.closeDevice();
                     if (this.remote) {
                         this.remote.destroy();
                         this.remote = null;
@@ -678,7 +686,10 @@ class IotAdapter extends Adapter {
         if (this.connectedOwn) {
             this.log.info('Connection lost');
             this.connectedOwn = false;
-            void this.setState('info.connection', false, true);
+            // this can be called while the adapter is unloading, and then the state cannot be written anymore
+            this.setState('info.connection', false, true).catch(() => {
+                // ignore
+            });
         }
 
         this.remote?.onCloudDisconnect();
@@ -1138,23 +1149,87 @@ class IotAdapter extends Adapter {
         return { error: 'Unknown message type' };
     }
 
-    closeDevice(): Promise<void> {
+    /**
+     * Close the current cloud connection.
+     *
+     * The connection is closed gracefully, so an MQTT DISCONNECT packet is sent and AWS IoT releases the session
+     * at once. A forced close only destroys the socket: the session stays registered in the cloud for up to
+     * 1.5 * keepalive seconds and the next connection with the same clientId is reported as "duplicate connection",
+     * although it is the very same installation.
+     *
+     * @param timeoutMs how long to wait for the DISCONNECT packet before the socket is destroyed anyway
+     */
+    closeDevice(timeoutMs: number = DISCONNECT_TIMEOUT_MS): Promise<void> {
+        const device = this.device;
+        if (!device) {
+            return Promise.resolve();
+        }
+        this.device = null;
+        this.connectionDiagnostics.markIntentionalClose();
+
         return new Promise<void>(resolve => {
-            if (this.device) {
-                try {
-                    this.connectionDiagnostics.markIntentionalClose();
-                    this.device.end(true, () => {
-                        this.device = null;
-                        resolve();
-                    });
-                } catch {
-                    this.device = null;
-                    resolve();
+            let timer: NodeJS.Timeout | null = null;
+            let finished = false;
+
+            const done = (): void => {
+                if (finished) {
+                    return;
                 }
-            } else {
+                finished = true;
+                if (timer) {
+                    clearTimeout(timer);
+                    timer = null;
+                }
+                // The discarded client must not influence the new one anymore: its "error" handler could start
+                // yet another device and its "close" handler would report a disconnect of the new connection.
+                try {
+                    (device as EventEmitter).removeAllListeners();
+                } catch {
+                    // ignore
+                }
                 resolve();
+            };
+
+            timer = setTimeout(() => {
+                timer = null;
+                this.log.debug('The cloud did not confirm the disconnect in time. Closing the socket.');
+                try {
+                    device.end(true);
+                } catch {
+                    // ignore
+                }
+                done();
+            }, timeoutMs);
+
+            try {
+                // graceful close: send DISCONNECT and wait until it is written to the socket
+                device.end(false, done);
+            } catch {
+                done();
             }
         });
+    }
+
+    /**
+     * Schedule a new connection attempt.
+     *
+     * Only one restart can be pending: a timer of an already discarded device must never start a second connection
+     * in parallel to the running one.
+     *
+     * @param delayMs delay before the next connection attempt
+     * @param clientId the clientId of the IoT device
+     * @param login the cloud login
+     * @param password the cloud password
+     * @param retry the number of the next connection attempt
+     */
+    private scheduleRestart(delayMs: number, clientId: string, login: string, password: string, retry: number): void {
+        if (this.restartTimer) {
+            clearTimeout(this.restartTimer);
+        }
+        this.restartTimer = setTimeout(() => {
+            this.restartTimer = null;
+            void this.startDevice(clientId, login, password, retry);
+        }, delayMs);
     }
 
     /**
@@ -1247,6 +1322,11 @@ class IotAdapter extends Adapter {
 
     async startDevice(clientId: string, login: string, password: string, retry?: number): Promise<void> {
         retry ||= 0;
+        // a restart is running now, so a pending one is obsolete
+        if (this.restartTimer) {
+            clearTimeout(this.restartTimer);
+            this.restartTimer = null;
+        }
         let certs:
             | {
                   private: string;
@@ -1323,7 +1403,7 @@ class IotAdapter extends Adapter {
                 if (errorTxt.includes('EAI_AGAIN')) {
                     const retryDelay = this.getRetryDelay(retry);
                     this.logRetryAttempt(retryDelay, `DNS name of ${this.config.cloudUrl} cannot be resolved`, true);
-                    setTimeout(() => this.startDevice(clientId, login, password, retry + 1), retryDelay);
+                    this.scheduleRestart(retryDelay, clientId, login, password, retry + 1);
                 }
             });
 
@@ -1421,7 +1501,7 @@ class IotAdapter extends Adapter {
             if ((error === 'timeout' || error.message?.includes('timeout')) && retry < 10) {
                 const retryDelay = this.getRetryDelay(retry);
                 this.logRetryAttempt(retryDelay, 'Connection timeout', false);
-                setTimeout(() => this.startDevice(clientId, login, password, retry + 1), retryDelay);
+                this.scheduleRestart(retryDelay, clientId, login, password, retry + 1);
             }
         }
     }

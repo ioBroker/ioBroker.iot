@@ -147,6 +147,7 @@
       "notifications": true
     },
     "stopBeforeUpdate": true,
+    "stopTimeout": 2000,
     "supportCustoms": true,
     "adminUI": {
       "config": "materialize",

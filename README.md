@@ -416,6 +416,10 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) The cloud connection is now closed gracefully, so the cloud does not report a duplicate connection after a restart of the adapter
+- (@GermanBluefox) Only one reconnection attempt can be pending, so two connections cannot overlap anymore
+
 ### 7.1.1 (2026-09-16)
 - (@GermanBluefox) Corrected validTill request
 
