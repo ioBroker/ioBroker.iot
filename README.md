@@ -435,6 +435,8 @@ setState('iot.0.app.message', JSON.stringify({
 ### 6.1.3 (2026-06-12)
 - (@GermanBluefox) Added support of credentials manager
 
+[Older changelogs can be found there](CHANGELOG_OLD.md)
+
 ## License
 
 The MIT License (MIT)
