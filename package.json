@@ -36,6 +36,7 @@
     "@iobroker/eslint-config": "^2.3.4",
     "@iobroker/legacy-testing": "^3.0.1",
     "@iobroker/types": "^7.2.2",
+    "@tsconfig/node22": "^22.0.6",
     "@types/aws-iot-device-sdk": "^2.2.9",
     "@types/mime": "^3.0.0",
     "@types/node": "^26.5.1",
