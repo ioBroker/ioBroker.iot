@@ -4,7 +4,7 @@ import { Agent as HttpsAgent } from 'node:https';
 import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { dirname, join, sep } from 'node:path';
-import { getType as getMimeType } from 'mime';
+import { lookup as getMimeType } from 'mime-types';
 import AdminSocket, { COMMANDS_PERMISSIONS } from './adminCommonSocket';
 import type { IotAdapterConfig } from './types';
 import type { device as DeviceModule } from 'aws-iot-device-sdk';

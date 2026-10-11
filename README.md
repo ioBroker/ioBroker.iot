@@ -416,6 +416,9 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Added latitude and longitude for visu app
+
 ### 7.1.2 (2026-09-20)
 - (@GermanBluefox) The cloud connection is now closed gracefully, so the cloud does not report a duplicate connection after a restart of the adapter
 - (@GermanBluefox) Only one reconnection attempt can be pending, so two connections cannot overlap anymore

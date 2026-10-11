@@ -124,7 +124,48 @@ const commonMapping: Record<string, ioBroker.StateCommon> = {
             3: 'full',
         },
     },
+    latitude: {
+        name: 'Current latitude',
+        desc: 'Current GPS latitude of the device',
+        type: 'number',
+        read: true,
+        write: false,
+        role: 'value.gps.latitude',
+        unit: '°',
+    },
+    longitude: {
+        name: 'Current longitude',
+        desc: 'Current GPS longitude of the device',
+        type: 'number',
+        read: true,
+        write: false,
+        role: 'value.gps.longitude',
+        unit: '°',
+    },
 };
+
+/** IDs of device states, which were already checked/created in this adapter run */
+const checkedStates = new Set<string>();
+
+/**
+ * Get common for device data. For unknown data, the common is derived from the value
+ *
+ * @param dataName name of the data sent by app
+ * @param dataVal value of the data
+ */
+function getDeviceDataCommon(dataName: string, dataVal: ioBroker.StateValue): ioBroker.StateCommon {
+    if (commonMapping[dataName]) {
+        return commonMapping[dataName];
+    }
+    const valType = typeof dataVal;
+    return {
+        name: dataName,
+        type: valType === 'number' || valType === 'boolean' || valType === 'string' ? valType : 'mixed',
+        read: true,
+        write: false,
+        role: 'state',
+    };
+}
 
 /**
  *  Handle device's data update from app
@@ -154,15 +195,22 @@ export async function handleDevicesData(
         for (const [dataName, dataVal] of Object.entries(deviceData)) {
             const id = `${deviceId}.${dataName}`;
 
-            if (!commonMapping[dataName]) {
-                adapter.log.warn(`Unknown device data "${dataName}" with value "${dataVal}"`);
-            }
+            if (!checkedStates.has(id)) {
+                if (!commonMapping[dataName]) {
+                    adapter.log.warn(`Unknown device data "${dataName}" with value "${dataVal}"`);
+                }
 
-            await adapter.setObjectNotExistsAsync(id, {
-                type: 'state',
-                common: commonMapping[dataName],
-                native: {},
-            });
+                const obj = await adapter.getObjectAsync(id);
+                // Create the object or repair it, if it was created earlier without common
+                if (!obj?.common?.type) {
+                    await adapter.setObject(id, {
+                        type: 'state',
+                        common: getDeviceDataCommon(dataName, dataVal),
+                        native: obj?.native || {},
+                    });
+                }
+                checkedStates.add(id);
+            }
 
             await adapter.setState(id, dataVal, true);
         }
