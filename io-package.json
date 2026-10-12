@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "7.1.2",
+    "version": "7.1.3",
     "news": {
+      "7.1.3": {
+        "en": "Added latitude and longitude for visu app",
+        "de": "Längen- und Breitengrad für Visu App hinzugefügt",
+        "ru": "Добавлены широта и долгота для приложения Visu",
+        "pt": "Mais latitude e longitude para o app Visu",
+        "nl": "Breedte- en lengtegraad toegevoegd voor de Visu-app",
+        "fr": "Latitude et longitude ajoutées à Visu App",
+        "it": "Aggiunti latitudine e longitudine per Visu",
+        "es": "Añadió latitud y longitud para Visu App",
+        "pl": "Dodano szerokość i długość geograficzną dla aplikacji visu",
+        "uk": "Додана широта і довгота для програми visu",
+        "zh-cn": "为 visu 应用程序添加了纬度和经度"
+      },
       "7.1.2": {
         "en": "The cloud connection is now closed gracefully, so the cloud does not report a duplicate connection after a restart of the adapter\nOnly one reconnection attempt can be pending, so two connections cannot overlap anymore",
         "de": "Die Cloud-Verbindung ist nun korrekt geschlossen, sodass die Cloud nach einem Adapter-Neustart kein Duplikat meldet\nEs kann nur ein Verbindungsversuch ausstehen, zwei Verbindungen können sich nicht mehr überschneiden",
@@ -80,19 +93,6 @@
         "pl": "Wdrożenie nowej funkcji do wyboru urządzeń z listy, a nie poprzez wyliczenie\nMożliwości wysyłania wiadomości do aplikacji bezpośrednio ze stanu\nMigrated google i Alisa do TypeScript",
         "uk": "Реалізовано нову функцію для вибору пристроїв зі списку та не шляхом евакуації\nОбов'язки для відправки повідомлень в додаток безпосередньо з держави\nMigrated google і alisa для TypeScript",
         "zh-cn": "执行从列表中选择设备的新功能,而不是通过点数\n从国家直接向应用程序发送消息的可能性\n将 google 和 alisa 移到类型脚本"
-      },
-      "6.0.3": {
-        "en": "Allowed to read temperature information via Alexa",
-        "de": "Erlaubt, Temperaturinformationen über Alexa zu lesen",
-        "ru": "Разрешено читать информацию о температуре через Alexa",
-        "pt": "Permite ler informações de temperatura através de Alexa",
-        "nl": "Toegestaan om temperatuurinformatie te lezen via Alexa",
-        "fr": "Permet de lire les informations de température via Alexa",
-        "it": "Permesso di leggere le informazioni sulla temperatura tramite Alexa",
-        "es": "Permitido leer información de temperatura a través de Alexa",
-        "pl": "Dozwolone odczytywanie informacji dotyczących temperatury za pośrednictwem Alexa",
-        "uk": "Ознайомитися з інформацією про температуру через Alexa",
-        "zh-cn": "允许通过Alexa读取温度信息"
       }
     },
     "titleLang": {

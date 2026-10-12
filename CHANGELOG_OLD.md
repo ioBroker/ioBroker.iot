@@ -511,6 +511,9 @@
 ### 0.1.4 (2018-09-26)
 
 -   (bluefox) Initial commit
+## 6.1.3 (2026-06-12)
+- (@GermanBluefox) Added support of credentials manager
+
 ## 6.1.0 (2026-06-02)
 - (@GermanBluefox) Implemented new feature to select devices from the list and not by enumeration
 - (@GermanBluefox) Possibility to send messages to the app directly from the state
