@@ -6,6 +6,7 @@ import { deflateSync } from 'node:zlib';
 import type { EventEmitter } from 'node:events';
 
 import AlexaSH3 from './lib/alexaSmartHomeV3';
+import AlexaResponse from './lib/AlexaSmartHomeV3/Alexa/AlexaResponse';
 import AlexaCustom, { type AlexaCustomResponse } from './lib/alexaCustom';
 import GoogleHome from './lib/googleHome';
 import YandexAlisa from './lib/alisa';
@@ -965,8 +966,15 @@ class IotAdapter extends Adapter {
                             throw new Error('Incoming and outgoing header message IDs are not equal!');
                         }
                         return response as any;
-                    } catch {
-                        this.log.error(`Cannot parse request: ${request}`);
+                    } catch (err) {
+                        this.log.error(
+                            `Cannot process Alexa request ${JSON.stringify(printRequest)}: ${err instanceof Error ? err.stack : JSON.stringify(err)}`,
+                        );
+                        // a valid Alexa error answer. "Service is disabled", sent before, is no Alexa answer at all
+                        return AlexaResponse.internalError(
+                            request,
+                            `Cannot process ${request.directive.header?.namespace}.${request.directive.header?.name}`,
+                        ) as any;
                     }
                 }
                 return { error: 'Service is disabled' };

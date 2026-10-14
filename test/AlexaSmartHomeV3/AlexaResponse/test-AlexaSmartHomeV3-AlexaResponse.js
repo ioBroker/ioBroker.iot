@@ -74,6 +74,17 @@ describe('AlexaSmartHomeV3 - AlexaResponse', function () {
             assert.equal(response.event.payload.message, `Control Dimmer doesn't support the Alexa with payloadVersion 3`);
             assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken);
         });
+
+        it('A failed handling is reported as INTERNAL_ERROR with the message ID of the directive', async function () {
+            const event = await helpers.getSample('ReportState.json');
+            const response = AlexaResponse.internalError(event, 'Cannot process Alexa.ReportState').get();
+
+            assert.equal(response.event.payload.type, 'INTERNAL_ERROR');
+            assert.equal(response.event.payload.message, 'Cannot process Alexa.ReportState');
+            assert.equal(response.event.header.messageId, event.directive.header.messageId);
+            assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken);
+            assert.equal(response.event.endpoint.endpointId, 'endpoint-001');
+        });
     });
 
     describe('TestResponse', function () {

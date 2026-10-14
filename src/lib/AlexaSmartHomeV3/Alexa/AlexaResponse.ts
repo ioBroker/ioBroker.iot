@@ -88,6 +88,14 @@ export default class AlexaResponse {
         });
     }
 
+    /** Handling of the directive failed unexpectedly */
+    static internalError(event: AlexaV3Request | undefined, message: string): AlexaResponse {
+        return AlexaResponse.errorResponse(event, {
+            type: 'INTERNAL_ERROR',
+            message,
+        });
+    }
+
     /**
      * The directive is for a device that is not there any more.
      *
