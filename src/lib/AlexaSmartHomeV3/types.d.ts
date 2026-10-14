@@ -23,16 +23,7 @@ export type AlexaV3DirectiveValue =
       };
 
 export type AlexaV3DirectiveName =
-    | 'ADJUST'
-    | 'SET'
-    | 'CELSIUS'
-    | 'DETECTED'
-    | 'NOT_DETECTED'
-    | 'JAMMED'
-    | 'UNLOCKED'
-    | 'ON'
-    | 'OFF'
-    | 'LOCKED';
+    'ADJUST' | 'SET' | 'CELSIUS' | 'DETECTED' | 'NOT_DETECTED' | 'JAMMED' | 'UNLOCKED' | 'ON' | 'OFF' | 'LOCKED';
 
 // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-discovery.html#display-categories
 export type AlexaV3Category =

@@ -32,7 +32,7 @@ import { TbVacuumCleaner } from 'react-icons/tb';
 import { WiHumidity } from 'react-icons/wi';
 import { PiSlidersHorizontal } from 'react-icons/pi';
 
-import { type AdminConnection, DialogConfirm, I18n, Utils } from '@iobroker/adapter-react-v5';
+import { type AdminConnection, DialogConfirm, I18n, Utils } from '@iobroker/gui-components';
 import { Types } from '@iobroker/type-detector';
 
 import type {

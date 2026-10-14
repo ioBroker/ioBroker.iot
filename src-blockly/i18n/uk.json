@@ -1,0 +1,14 @@
+{
+    "ifttt_event": "event",
+    "ifttt_iot": "Надіслати текст в IFTTT через iot",
+    "ifttt_log": "рівень журналу",
+    "ifttt_log_debug": "налагоджувати",
+    "ifttt_log_error": "помилка",
+    "ifttt_log_info": "інформація",
+    "ifttt_log_none": "немає",
+    "ifttt_log_warn": "УВАГА",
+    "ifttt_tooltip": "Надіслати в IFTTT",
+    "ifttt_value1": "value1",
+    "ifttt_value2": "value2",
+    "ifttt_value3": "value3"
+}

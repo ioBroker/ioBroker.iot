@@ -1,22 +1,25 @@
-import { device as DeviceModule } from 'aws-iot-device-sdk';
-import { Adapter, type AdapterOptions } from '@iobroker/adapter-core'; // Get common adapter utils
+import type { device as DeviceModule } from 'aws-iot-device-sdk';
+import { Adapter, type AdapterOptions, EXIT_CODES, Credentials } from '@iobroker/adapter-core'; // Get common adapter utils
 import { readFileSync } from 'node:fs';
 import axios from 'axios';
 import { deflateSync } from 'node:zlib';
+import type { EventEmitter } from 'node:events';
 
 import AlexaSH3 from './lib/alexaSmartHomeV3';
 import AlexaCustom, { type AlexaCustomResponse } from './lib/alexaCustom';
-// @ts-expect-error no types
 import GoogleHome from './lib/googleHome';
-// @ts-expect-error no types
 import YandexAlisa from './lib/alisa';
 import Remote, { type SOCKET_MESSAGE, type SOCKET_TRUNK } from './lib/remote';
+import ConnectionDiagnostics, { type MqttPacket } from './lib/connectionDiagnostics';
+import { createIotDevice } from './lib/createIotDevice';
 import { handleGeofenceData, handleDevicesData, handleSendToAdapter, handleGetInstances } from './lib/visuApp';
 import { buildMessageFromNotification } from './lib/notifications';
+import { AppNotifications } from './lib/appNotifications';
 import type { IotAdapterConfig } from './lib/types';
 
 const NONE = '___none___';
 const MAX_IOT_MESSAGE_LENGTH = 127 * 1024;
+const IOT_KEEPALIVE_SEC = 60;
 const SPECIAL_ADAPTERS = ['netatmo'];
 const ALLOWED_SERVICES = SPECIAL_ADAPTERS.concat(['text2command']);
 
@@ -31,6 +34,10 @@ const RETRY_DELAYS_MS = [
 ];
 const MAX_RETRY_DELAY_MS = 60_000; // Cap at 60 seconds for all subsequent retries
 
+// How long to wait for the MQTT DISCONNECT packet to be flushed before the socket is destroyed.
+// Must stay below "stopTimeout" in io-package.json, so the adapter can still close the connection on unload.
+const DISCONNECT_TIMEOUT_MS = 1_000;
+
 class IotAdapter extends Adapter {
     declare public config: IotAdapterConfig;
     private recalcTimeout: NodeJS.Timeout | null = null;
@@ -42,21 +49,29 @@ class IotAdapter extends Adapter {
     private yandexAlisa: YandexAlisa | null = null;
     private remote: Remote | null = null;
     private device: DeviceModule | null = null;
+    private appNotifications: AppNotifications | null = null;
     private urlKey: { key: string } | null = null;
 
     private connectedOwn = false;
+    private restartTimer: NodeJS.Timeout | null = null;
     private secret: string = '';
-    private connectStarted = 0;
+    private readonly connectionDiagnostics = new ConnectionDiagnostics(IOT_KEEPALIVE_SEC);
     private caCert: Buffer | null = null;
     private validTill: string | null = null; // null - never read, "--" - user has no license, ISO date string - valid till
     private validTillLastQuery: number = 0;
     private alertReported = false;
+    public login: string = '';
+    private password: string = '';
 
     public constructor(options: Partial<AdapterOptions> = {}) {
         super({
             ...options,
             name: 'iot',
             objectChange: (id, obj) => {
+                if (Credentials?.CREDENTIALS_PREFIX && id.startsWith(Credentials.CREDENTIALS_PREFIX)) {
+                    // handled by subscribeCredentials; credential objects must never be forwarded to the cloud
+                    return;
+                }
                 if (id === 'system.config' && obj && !this.translate) {
                     const systemObj = obj as ioBroker.SystemConfigObject;
                     this.lang = systemObj.common.language;
@@ -80,10 +95,13 @@ class IotAdapter extends Adapter {
                         // update state
                         setTimeout(async () => await this.createStateForAdapter(adpr), 1000);
                     }
+                    // remote admin shows the instances and must get their changes
+                    this.remote?.updateObject(id, obj);
 
                     return;
                 }
                 void this.alexaSH3?.handleObjectChange(id, obj);
+                void this.appNotifications?.handleObjectChange(id, obj);
 
                 if (id) {
                     this.remote?.updateObject(id, obj);
@@ -102,6 +120,7 @@ class IotAdapter extends Adapter {
                     void this.googleHome?.updateState(id, state);
                     void this.alexaSH3?.handleStateUpdate(id, state);
                     void this.yandexAlisa?.updateState?.(id, state);
+                    void this.appNotifications?.handleStateChange(id, state);
                 }
 
                 if (id) {
@@ -114,10 +133,14 @@ class IotAdapter extends Adapter {
             },
             unload: async callback => {
                 try {
-                    if (this.device) {
-                        this.device.end();
-                        this.device = null;
+                    if (this.restartTimer) {
+                        clearTimeout(this.restartTimer);
+                        this.restartTimer = null;
                     }
+                    // Wait until the cloud confirmed the disconnect. If the process is terminated before the
+                    // DISCONNECT packet was sent, the session stays alive in the cloud and the next start of the
+                    // adapter is reported as "duplicate connection".
+                    await this.closeDevice();
                     if (this.remote) {
                         this.remote.destroy();
                         this.remote = null;
@@ -125,6 +148,10 @@ class IotAdapter extends Adapter {
 
                     if (this.alexaSH3) {
                         await this.alexaSH3.destroy();
+                    }
+                    if (this.appNotifications) {
+                        await this.appNotifications.destroy();
+                        this.appNotifications = null;
                     }
                 } catch {
                     // ignore
@@ -146,7 +173,7 @@ class IotAdapter extends Adapter {
                                     await this.setStateAsync('smart.updates3', 1, true);
                                 }
 
-                                this.googleHome?.updateDevices(async (analyseAddedId: any): Promise<void> => {
+                                void this.googleHome?.updateDevices(async (analyseAddedId: any): Promise<void> => {
                                     await this.setStateAsync('smart.updatesResult', analyseAddedId || '', true);
                                     this.log.debug('GH Devices updated!');
                                     await this.setStateAsync('smart.updatesGH', true, true);
@@ -171,7 +198,7 @@ class IotAdapter extends Adapter {
                             if (obj.callback) {
                                 this.log.info('Request google home devices');
                                 if (this.googleHome) {
-                                    this.googleHome.updateDevices(() => {
+                                    void this.googleHome.updateDevices(() => {
                                         this.sendTo(obj.from, obj.command, this.googleHome!.getDevices(), obj.callback);
                                         void this.setStateAsync('smart.updatesGH', false, true);
                                     });
@@ -185,7 +212,7 @@ class IotAdapter extends Adapter {
                             if (obj.callback) {
                                 this.log.info('Request Yandex Alice devices');
                                 if (this.yandexAlisa) {
-                                    this.yandexAlisa.updateDevices(() => {
+                                    void this.yandexAlisa.updateDevices(() => {
                                         this.sendTo(
                                             obj.from,
                                             obj.command,
@@ -274,7 +301,7 @@ class IotAdapter extends Adapter {
                                         this.urlKey = await this.readUrlKey();
                                     } catch {
                                         try {
-                                            this.urlKey = await this.createUrlKey(this.config.login, this.config.pass);
+                                            this.urlKey = await this.createUrlKey(this.login, this.password);
                                         } catch (err) {
                                             if (obj.callback) {
                                                 this.sendTo(
@@ -295,7 +322,7 @@ class IotAdapter extends Adapter {
                                     data?: string;
                                     warning?: string;
                                 } = {
-                                    url: `https://service.iobroker.in/v1/iotService?key=${this.urlKey.key}&user=${encodeURIComponent(this.config.login)}`,
+                                    url: `https://service.iobroker.in/v1/iotService?key=${this.urlKey.key}&user=${encodeURIComponent(this.login)}`,
                                 };
                                 const serviceName =
                                     typeof obj.message === 'string' ? obj.message : obj.message?.serviceName;
@@ -329,7 +356,8 @@ class IotAdapter extends Adapter {
                                 if (obj.callback) {
                                     this.sendTo(obj.from, 'sendNotification', { sent: true }, obj.callback);
                                 }
-                            } catch {
+                            } catch (e) {
+                                this.log.error(`Cannot forward notification to app: ${e as string}`);
                                 if (obj.callback) {
                                     this.sendTo(obj.from, 'sendNotification', { sent: false }, obj.callback);
                                 }
@@ -474,14 +502,36 @@ class IotAdapter extends Adapter {
             throw new Error('Empty message');
         }
 
-        const response = await axios.post('https://app-message.iobroker.in/', json, {
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${Buffer.from(`${this.config.login}:${this.config.pass}`).toString('base64')}`,
-            },
-            timeout: 5_000,
-            validateStatus: status => status < 400,
-        });
+        let response;
+        try {
+            response = await axios.post('https://app-message.iobroker.in/', json, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Basic ${Buffer.from(`${this.login}:${this.password}`).toString('base64')}`,
+                },
+                timeout: 5_000,
+                validateStatus: status => status < 400,
+            });
+        } catch (error) {
+            // Surface the cloud's response body — `error.toString()` alone would only show
+            // "Request failed with status code 4xx" and hide what the server actually said.
+            const err = error as {
+                response?: { status?: number; statusText?: string; data?: unknown };
+                request?: unknown;
+                message?: string;
+            };
+            let detail: string;
+            if (err.response) {
+                const body = err.response.data;
+                const bodyText = body === undefined ? '' : typeof body === 'string' ? body : JSON.stringify(body);
+                detail = `HTTP ${err.response.status}${err.response.statusText ? ` ${err.response.statusText}` : ''}${bodyText ? ` — ${bodyText}` : ''}`;
+            } else if (err.request) {
+                detail = 'No response from cloud (network error / timeout)';
+            } else {
+                detail = err.message || 'Unknown error';
+            }
+            throw new Error(`app-message endpoint rejected the message: ${detail}`);
+        }
         await this.setState('app.message', message, true);
         this.log.debug(`Message sent: ${JSON.stringify(response.data)}`);
     }
@@ -583,7 +633,7 @@ class IotAdapter extends Adapter {
                 this.log.debug(`Cannot parse: ${JSON.stringify(data)}`);
             }
         } else {
-            dataObj = data as { id?: string; val?: ioBroker.StateValue; ack?: boolean };
+            dataObj = data;
         }
 
         if (id) {
@@ -616,42 +666,40 @@ class IotAdapter extends Adapter {
         );
     }
 
-    onDisconnect(event?: string): void {
-        const now = Date.now();
-        if (now - this.connectStarted < 500) {
-            this.log.warn(
-                'Looks like your connection certificates are invalid. Please renew them via configuration dialog.',
-            );
-        }
-
-        if (typeof event === 'string') {
-            if (event.toLowerCase().includes('duplicate')) {
-                // disable adapter
-                this.log.error(
-                    `Two devices are trying to connect with the same iot account. This is not allowed. Stopping`,
-                );
-                void this.getForeignObjectAsync(`system.adapter.${this.namespace}`).then(obj => {
-                    if (obj) {
-                        obj.common.enabled = false;
-                        return this.setForeignObjectAsync(obj._id, obj);
-                    }
-                });
-            }
-            this.log.info(`Connection changed: ${event}`);
+    onDisconnect(): void {
+        // AWS IoT does not send the reason of the disconnect, so explain it by what happened before
+        const info = this.connectionDiagnostics.onClose();
+        if (info.intentional) {
+            this.log.debug('Connection closed by adapter');
+        } else if (info.wasConnected) {
+            this.log.info(`Connection changed: disconnect (${info.text})`);
+        } else if (info.attempt === 1) {
+            this.log.info(`Connection changed: ${info.text}`);
         } else {
-            this.log.info('Connection changed: disconnect');
+            // do not flood the log while the cloud is not reachable
+            this.log.debug(`Connection changed: ${info.text}`);
+        }
+        if (info.cause && (info.wasConnected || info.attempt === 1)) {
+            this.log.warn(`Probable cause of the disconnect: ${info.cause}`);
         }
 
         if (this.connectedOwn) {
             this.log.info('Connection lost');
             this.connectedOwn = false;
-            void this.setState('info.connection', false, true);
+            // this can be called while the adapter is unloading, and then the state cannot be written anymore
+            this.setState('info.connection', false, true).catch(() => {
+                // ignore
+            });
         }
 
         this.remote?.onCloudDisconnect();
     }
 
     onConnect(clientId: string): void {
+        const restored = this.connectionDiagnostics.onConnect();
+        if (restored) {
+            this.log.info(`Connection restored ${restored}`);
+        }
         if (!this.connectedOwn) {
             // Make from peter_gmail_com => p***r_g...com
             const parts = clientId.split('_');
@@ -811,7 +859,7 @@ class IotAdapter extends Adapter {
         } catch (error) {
             if (error.response) {
                 if (error.response.status === 401) {
-                    this.log.error(`Cannot fetch connection certificates because of invalid user or password`);
+                    this.log.error('Cannot fetch connection certificates because of invalid user or password');
                 } else {
                     this.log.error(`Cannot fetch connection certificates: ${JSON.stringify(error.response.data)}`);
                 }
@@ -964,7 +1012,7 @@ class IotAdapter extends Adapter {
             this.log.debug(`[GHOME] request: ${JSON.stringify(request)}`);
 
             if (this.googleHome) {
-                return this.googleHome.process(request, this.config.googleHome);
+                return this.googleHome.process(request, this.config.googleHome) as any;
             }
             return { error: 'Service is disabled' };
         } else if (type.startsWith('alisa')) {
@@ -1101,22 +1149,87 @@ class IotAdapter extends Adapter {
         return { error: 'Unknown message type' };
     }
 
-    closeDevice(): Promise<void> {
+    /**
+     * Close the current cloud connection.
+     *
+     * The connection is closed gracefully, so an MQTT DISCONNECT packet is sent and AWS IoT releases the session
+     * at once. A forced close only destroys the socket: the session stays registered in the cloud for up to
+     * 1.5 * keepalive seconds and the next connection with the same clientId is reported as "duplicate connection",
+     * although it is the very same installation.
+     *
+     * @param timeoutMs how long to wait for the DISCONNECT packet before the socket is destroyed anyway
+     */
+    closeDevice(timeoutMs: number = DISCONNECT_TIMEOUT_MS): Promise<void> {
+        const device = this.device;
+        if (!device) {
+            return Promise.resolve();
+        }
+        this.device = null;
+        this.connectionDiagnostics.markIntentionalClose();
+
         return new Promise<void>(resolve => {
-            if (this.device) {
-                try {
-                    this.device.end(true, () => {
-                        this.device = null;
-                        resolve();
-                    });
-                } catch {
-                    this.device = null;
-                    resolve();
+            let timer: NodeJS.Timeout | null = null;
+            let finished = false;
+
+            const done = (): void => {
+                if (finished) {
+                    return;
                 }
-            } else {
+                finished = true;
+                if (timer) {
+                    clearTimeout(timer);
+                    timer = null;
+                }
+                // The discarded client must not influence the new one anymore: its "error" handler could start
+                // yet another device and its "close" handler would report a disconnect of the new connection.
+                try {
+                    (device as EventEmitter).removeAllListeners();
+                } catch {
+                    // ignore
+                }
                 resolve();
+            };
+
+            timer = setTimeout(() => {
+                timer = null;
+                this.log.debug('The cloud did not confirm the disconnect in time. Closing the socket.');
+                try {
+                    device.end(true);
+                } catch {
+                    // ignore
+                }
+                done();
+            }, timeoutMs);
+
+            try {
+                // graceful close: send DISCONNECT and wait until it is written to the socket
+                device.end(false, done);
+            } catch {
+                done();
             }
         });
+    }
+
+    /**
+     * Schedule a new connection attempt.
+     *
+     * Only one restart can be pending: a timer of an already discarded device must never start a second connection
+     * in parallel to the running one.
+     *
+     * @param delayMs delay before the next connection attempt
+     * @param clientId the clientId of the IoT device
+     * @param login the cloud login
+     * @param password the cloud password
+     * @param retry the number of the next connection attempt
+     */
+    private scheduleRestart(delayMs: number, clientId: string, login: string, password: string, retry: number): void {
+        if (this.restartTimer) {
+            clearTimeout(this.restartTimer);
+        }
+        this.restartTimer = setTimeout(() => {
+            this.restartTimer = null;
+            void this.startDevice(clientId, login, password, retry);
+        }, delayMs);
     }
 
     /**
@@ -1170,10 +1283,10 @@ class IotAdapter extends Adapter {
             return;
         }
         try {
-            const response = await fetch('https://iobroker.pro:3001/api/v1/validTill', {
+            const response = await fetch('https://iobroker.pro/api/v1/validTill', {
                 method: 'GET',
                 headers: {
-                    Authorization: `Bearer ${Buffer.from(`${this.config.login}:${this.config.pass}`).toString('base64')}`,
+                    Authorization: `Basic ${Buffer.from(`${this.login}:${this.password}`).toString('base64')}`,
                 },
             });
             if (response.ok) {
@@ -1209,6 +1322,11 @@ class IotAdapter extends Adapter {
 
     async startDevice(clientId: string, login: string, password: string, retry?: number): Promise<void> {
         retry ||= 0;
+        // a restart is running now, so a pending one is obsolete
+        if (this.restartTimer) {
+            clearTimeout(this.restartTimer);
+            this.restartTimer = null;
+        }
         let certs:
             | {
                   private: string;
@@ -1244,8 +1362,8 @@ class IotAdapter extends Adapter {
         this.caCert ||= readFileSync(`${__dirname}/../keys/root-CA.crt`);
 
         try {
-            this.connectStarted = Date.now();
-            this.device = new DeviceModule({
+            this.connectionDiagnostics.onStart();
+            this.device = createIotDevice({
                 privateKey: Buffer.from(certs.private),
                 clientCert: Buffer.from(certs.certificate),
                 caCert: this.caCert,
@@ -1254,25 +1372,38 @@ class IotAdapter extends Adapter {
                 host: this.config.cloudUrl,
                 debug: !!this.config.debug,
                 baseReconnectTimeMs: 5000,
-                keepalive: 60,
+                keepalive: IOT_KEEPALIVE_SEC,
             });
             this.remote?.registerDevice(this.device);
 
             this.device.subscribe(`command/${clientId}/#`);
             this.device.on('connect', () => this.onConnect(clientId));
             this.device.on('close', (): void => this.onDisconnect());
-            this.device.on('reconnect', () => this.log.debug('reconnect'));
+            this.device.on('reconnect', () => {
+                const failedAttempts = this.connectionDiagnostics.getFailedAttempts();
+                if (failedAttempts) {
+                    this.log.debug(`Reconnecting to the cloud (attempt ${failedAttempts + 1})`);
+                } else {
+                    this.log.info('Reconnecting to the cloud');
+                }
+            });
             this.device.on('offline', () => this.log.debug('offline'));
+            // the typings of aws-iot-device-sdk do not contain these events
+            const emitter: EventEmitter = this.device;
+            emitter.on('end', () => this.log.debug('Connection ended'));
+            emitter.on('packetsend', (packet: MqttPacket) => this.connectionDiagnostics.onPacketSend(packet));
+            emitter.on('packetreceive', () => this.connectionDiagnostics.onPacketReceive());
             this.device.on('error', error => {
                 const errorTxt =
                     ((error as Error)?.message && JSON.stringify((error as Error).message)) || JSON.stringify(error);
+                this.connectionDiagnostics.onError(errorTxt);
                 this.log.error(`Error by device connection: ${errorTxt}`);
 
                 // restart the iot device if DNS cannot be resolved
                 if (errorTxt.includes('EAI_AGAIN')) {
                     const retryDelay = this.getRetryDelay(retry);
                     this.logRetryAttempt(retryDelay, `DNS name of ${this.config.cloudUrl} cannot be resolved`, true);
-                    setTimeout(() => this.startDevice(clientId, login, password, retry + 1), retryDelay);
+                    this.scheduleRestart(retryDelay, clientId, login, password, retry + 1);
                 }
             });
 
@@ -1327,17 +1458,21 @@ class IotAdapter extends Adapter {
                                 );
 
                                 const msg = JSON.stringify(response);
-                                if (msg && msg.length > MAX_IOT_MESSAGE_LENGTH) {
+                                // the limit is in bytes: names with umlauts or cyrillic letters need more bytes than characters
+                                const msgBytes = msg ? Buffer.byteLength(msg) : 0;
+                                if (msgBytes > MAX_IOT_MESSAGE_LENGTH) {
                                     const packed = deflateSync(msg).toString('base64');
                                     this.log.debug(
-                                        `[REMOTE] Content was packed from ${msg.length} bytes to ${packed.length} bytes`,
+                                        `[REMOTE] Content was packed from ${msgBytes} bytes to ${packed.length} bytes`,
                                     );
                                     if (packed.length > MAX_IOT_MESSAGE_LENGTH) {
-                                        this.log.warn(
-                                            `[REMOTE] Content was packed to ${packed.length} bytes which is still near/over the message limit!`,
+                                        // the cloud would close the connection and the answer would be lost anyway
+                                        this.log.error(
+                                            `Response to "${type}" is too big (${packed.length} bytes packed, max ${MAX_IOT_MESSAGE_LENGTH} bytes) and was not sent`,
                                         );
+                                    } else {
+                                        this.device.publish(`response/${clientId}/${type}`, packed);
                                     }
-                                    this.device.publish(`response/${clientId}/${type}`, packed);
                                 } else {
                                     // console.log(`Publish to "response/${clientId}/${type}": ${msg}`);
                                     this.device.publish(`response/${clientId}/${type}`, msg);
@@ -1366,7 +1501,7 @@ class IotAdapter extends Adapter {
             if ((error === 'timeout' || error.message?.includes('timeout')) && retry < 10) {
                 const retryDelay = this.getRetryDelay(retry);
                 this.logRetryAttempt(retryDelay, 'Connection timeout', false);
-                setTimeout(() => this.startDevice(clientId, login, password, retry + 1), retryDelay);
+                this.scheduleRestart(retryDelay, clientId, login, password, retry + 1);
             }
         }
     }
@@ -1376,10 +1511,10 @@ class IotAdapter extends Adapter {
             return;
         }
 
-        const email = this.config.login.replace(/[^\w\d-_]/g, '_');
+        const email = this.login.replace(/[^\w\d-_]/g, '_');
         const secret = this.config.nightscoutPass;
         const apiSecret = email + (secret ? `-${secret}` : '');
-        const URL = `https://generate-key.iobroker.in/v1/generateUrlKey?user=${encodeURIComponent(this.config.login)}&pass=${encodeURIComponent(this.config.pass)}&apisecret=${encodeURIComponent(apiSecret)}`;
+        const URL = `https://generate-key.iobroker.in/v1/generateUrlKey?user=${encodeURIComponent(this.login)}&pass=${encodeURIComponent(this.password)}&apisecret=${encodeURIComponent(apiSecret)}`;
         let response;
 
         try {
@@ -1482,6 +1617,39 @@ class IotAdapter extends Adapter {
         }
     }
 
+    private async resolveCredentials(data: {
+        credentialType?: 'manual' | 'manager';
+        credentialId?: string;
+        login?: string;
+        pass?: string;
+    }): Promise<{ login: string; password: string; subscribe: boolean } | null> {
+        if (data.credentialType === 'manager') {
+            if (!Credentials?.getCredentials) {
+                this.log.error(
+                    'Actually iot adapter is not able to use credentials manager. Please update js-controller to 7.2.2 or higher!',
+                );
+                return null;
+            }
+            if (!data.credentialId) {
+                this.log.error('Credentials not provided. Please check your configuration!');
+                return null;
+            }
+            try {
+                const credentials = await Credentials.getCredentials<Credentials.LoginPasswordCredentials>(
+                    this,
+                    data.credentialId,
+                );
+                return { login: credentials.values.login, password: credentials.values.password, subscribe: true };
+            } catch (error) {
+                this.log.error(
+                    `Cannot read credentials "${data.credentialId}": ${error instanceof Error ? error.message : String(error)}`,
+                );
+                return null;
+            }
+        }
+        return { login: data.login || this.login, password: data.pass || this.password, subscribe: false };
+    }
+
     async main(): Promise<void> {
         if (this.config.googleHome === undefined) {
             this.config.googleHome = false;
@@ -1519,11 +1687,8 @@ class IotAdapter extends Adapter {
             this.config.deviceOffLevel = 30;
         }
 
-        if (this.config.login !== (this.config.login || '').trim().toLowerCase()) {
+        if (this.login !== (this.login || '').trim().toLowerCase()) {
             this.log.error('Please write your login only in lowercase!');
-        }
-        if (!this.config.login || !this.config.pass) {
-            return this.log.error('No cloud credentials found. Please get one on https://iobroker.pro');
         }
 
         let systemConfig = await this.getForeignObjectAsync('system.config');
@@ -1531,15 +1696,44 @@ class IotAdapter extends Adapter {
             this.log.warn('Object system.config not found. Please check your installation!');
             systemConfig = { common: {} } as ioBroker.SystemConfigObject;
         }
+        this.secret = systemConfig?.native?.secret || 'Zgfr56gFe87jJOM';
+
+        const credentials = await this.resolveCredentials({
+            credentialType: this.config.credentialType,
+            credentialId: this.config.credentialId,
+            login: this.config.login,
+            pass: this.decryptOwn(this.secret, this.config.pass),
+        });
+
+        if (credentials?.subscribe && this.config.credentialId) {
+            await Credentials.subscribeCredentials<Credentials.LoginPasswordCredentials>(
+                this,
+                this.config.credentialId,
+                (id: string, newCred) => {
+                    if (newCred) {
+                        if (newCred.values.login !== this.login || newCred.values.password !== this.password) {
+                            this.log.info(`Credential ${id} was changed, reconnecting...`);
+                            this.terminate(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
+                        }
+                    } else {
+                        this.log.info(`Credential ${id} was deleted, reconnecting...`);
+                        this.terminate(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
+                    }
+                },
+            );
+        }
+        this.login = credentials?.login || '';
+        this.password = credentials?.password || '';
+
+        if (!this.login || !this.password) {
+            return this.log.error('No cloud credentials found. Please get one on https://iobroker.pro');
+        }
 
         // create service state for netatmo if any instance exists
         for (let a = 0; a < SPECIAL_ADAPTERS.length; a++) {
             await this.createStateForAdapter(SPECIAL_ADAPTERS[a]);
         }
 
-        this.secret = systemConfig?.native?.secret || 'Zgfr56gFe87jJOM';
-
-        this.config.pass = this.decryptOwn(this.secret, this.config.pass);
         this.config.deviceOffLevel = parseFloat(this.config.deviceOffLevel as string) || 0;
         this.config.concatWord = (this.config.concatWord || '').toString().trim();
         this.config.apikey = (this.config.apikey || '').trim();
@@ -1558,7 +1752,10 @@ class IotAdapter extends Adapter {
             this.yandexAlisa = new YandexAlisa(this);
         }
 
-        this.remote = new Remote(this, this.config.login.replace(/[^-_:a-zA-Z1-9]/g, '_'));
+        this.remote = new Remote(this, this.login.replace(/[^-_:a-zA-Z1-9]/g, '_'));
+
+        this.appNotifications = new AppNotifications(this, this.lang);
+        await this.appNotifications.init();
 
         this.config.allowedServices = ((this.config.allowedServices as string) || '')
             .split(/[,\s]+/)
@@ -1570,7 +1767,7 @@ class IotAdapter extends Adapter {
         await this.setStateAsync('info.connection', false, true);
         this.config.cloudUrl = this.config.cloudUrl || 'a18wym7vjdl22g.iot.eu-west-1.amazonaws.com';
 
-        if (!this.config.login || !this.config.pass) {
+        if (!this.login || !this.password) {
             return this.log.error('No cloud credentials found. Please get one on https://iobroker.pro');
         }
 
@@ -1596,7 +1793,7 @@ class IotAdapter extends Adapter {
         }
 
         // detect netatmo creation
-        await this.subscribeForeignObjectsAsync('system.adapter.*');
+        await this.subscribeForeignObjectsAsync('*');
 
         await this.subscribeStatesAsync('smart.*');
 
@@ -1622,10 +1819,10 @@ class IotAdapter extends Adapter {
         this.remote?.setLanguage(this.lang);
         // check password
         if (
-            this.config.pass.length < 8 ||
-            !this.config.pass.match(/[a-z]/) ||
-            !this.config.pass.match(/[A-Z]/) ||
-            !this.config.pass.match(/\d/)
+            this.password.length < 8 ||
+            !this.password.match(/[a-z]/) ||
+            !this.password.match(/[A-Z]/) ||
+            !this.password.match(/\d/)
         ) {
             return this.log.error(
                 'The password must be at least 8 characters long and have numbers, upper and lower case letters. Please change the password in the profile https://iobroker.pro/accountProfile.',
@@ -1634,9 +1831,9 @@ class IotAdapter extends Adapter {
 
         await this.updateNightscoutSecret();
 
-        const iotClientId = this.config.login.replace(/[^-_:a-zA-Z1-9]/g, '_');
+        const iotClientId = this.login.replace(/[^-_:a-zA-Z1-9]/g, '_');
         // user will be created here
-        await this.startDevice(iotClientId, this.config.login, this.config.pass);
+        await this.startDevice(iotClientId, this.login, this.password);
 
         // after the user created, we can try to generate URL key
         // read URL keys from server
@@ -1650,7 +1847,7 @@ class IotAdapter extends Adapter {
                 this.config.iftttKey
             ) {
                 try {
-                    this.urlKey = await this.createUrlKey(this.config.login, this.config.pass);
+                    this.urlKey = await this.createUrlKey(this.login, this.password);
                 } catch (err) {
                     return this.log.error(
                         `Cannot read URL key: ${typeof err === 'object' ? JSON.stringify(err) : err}`,
@@ -1715,10 +1912,10 @@ class IotAdapter extends Adapter {
         }
 
         this.googleHome?.setLanguage(this.lang);
-        this.googleHome?.updateDevices();
+        await this.googleHome?.updateDevices();
 
         this.yandexAlisa?.setLanguage(this.lang);
-        this.yandexAlisa?.updateDevices();
+        await this.yandexAlisa?.updateDevices();
 
         await this.subscribeStatesAsync('app.message');
     }

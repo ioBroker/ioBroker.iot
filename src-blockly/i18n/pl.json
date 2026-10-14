@@ -1,0 +1,14 @@
+{
+    "ifttt_event": "event",
+    "ifttt_iot": "Wyślij tekst do IFTTT przez iot",
+    "ifttt_log": "poziom dziennika",
+    "ifttt_log_debug": "odpluskwić",
+    "ifttt_log_error": "błąd",
+    "ifttt_log_info": "informacje",
+    "ifttt_log_none": "nic",
+    "ifttt_log_warn": "ostrzeżenie",
+    "ifttt_tooltip": "Wyślij do IFTTT",
+    "ifttt_value1": "value1",
+    "ifttt_value2": "value2",
+    "ifttt_value3": "value3"
+}

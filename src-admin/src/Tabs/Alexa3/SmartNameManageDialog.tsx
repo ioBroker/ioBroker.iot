@@ -16,7 +16,7 @@ import {
     Checkbox,
     Tooltip,
 } from '@mui/material';
-import { type AdminConnection, I18n, type ThemeType, Utils } from '@iobroker/adapter-react-v5';
+import { type AdminConnection, I18n, type ThemeType, Utils } from '@iobroker/gui-components';
 import type { AlexaSH3DeviceDescription, SmartNameObject } from './alexa.types';
 import { collectSmartNamesOfDevice, findDeviceForState } from './utils';
 import { Close as IconClose } from '@mui/icons-material';

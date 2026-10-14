@@ -1,6 +1,6 @@
 {
   "name": "iobroker.iot",
-  "version": "6.0.3",
+  "version": "7.1.3",
   "description": "This adapter allows to communicate Amazon Alexa and Google Home with ioBroker.",
   "author": {
     "name": "bluefox",
@@ -15,35 +15,39 @@
     "web"
   ],
   "engines": {
-    "node": ">=20"
+    "node": ">=22.19.0"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/ioBroker/ioBroker.iot"
   },
   "dependencies": {
-    "@iobroker/adapter-core": "^3.3.2",
-    "@iobroker/type-detector": "^5.0.13",
+    "@iobroker/adapter-core": "^3.4.3",
+    "@iobroker/type-detector": "^6.0.1",
     "aws-iot-device-sdk": "^2.2.16",
-    "axios": "^1.15.2",
-    "mime": "^3.0.0"
+    "axios": "^1.20.0",
+    "mime-types": "^3.0.2"
   },
   "devDependencies": {
-    "@alcalzone/release-script": "^5.2.0",
+    "@alcalzone/release-script": "^5.2.1",
     "@alcalzone/release-script-plugin-iobroker": "^5.2.0",
-    "@alcalzone/release-script-plugin-license": "^5.2.0",
-    "@iobroker/build-tools": "^3.0.1",
-    "@iobroker/eslint-config": "^2.2.0",
-    "@iobroker/legacy-testing": "^2.0.2",
-    "@iobroker/types": "^7.1.2",
+    "@alcalzone/release-script-plugin-license": "^5.2.2",
+    "@iobroker/build-tools": "^3.0.3",
+    "@iobroker/eslint-config": "^2.3.4",
+    "@iobroker/legacy-testing": "^4.0.0",
+    "@iobroker/types": "^7.2.5",
+    "@tsconfig/node22": "^22.0.6",
     "@types/aws-iot-device-sdk": "^2.2.9",
-    "@types/node": "^25.7.0",
+    "@types/mime-types": "^3.0.1",
+    "@types/node": "^22.20.5",
     "ajv": "^8.20.0",
     "ajv-draft-04": "^1.0.0",
     "ajv-formats": "^3.0.1",
+    "blockly": "^13.3.0",
     "colorette": "^2.0.20",
-    "puppeteer": "^24.43.1",
-    "typescript": "~5.9.3"
+    "esbuild": "^0.28.2",
+    "puppeteer": "^25.13.0",
+    "typescript": "~6.0.3"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.iot/issues"
@@ -61,18 +65,22 @@
   "scripts": {
     "test:gui": "mocha test/testAdapter.gui.js --exit",
     "test:package": "mocha test/testPackageFiles.js --exit",
-    "test": "npm run test:gui && npm run test:package && npm run test:alexa-v3",
+    "test": "npm run test:gui && npm run test:package && npm run test:alexa-v3 && npm run test:remote && npm run test:connection && npm run test:device",
+    "test:remote": "mocha test/testRemote.js --exit",
+    "test:connection": "mocha test/testConnectionDiagnostics.js --exit",
+    "test:device": "mocha test/testIotDevice.js --exit",
     "test:integration": "npm run test:gui && npm run test:alexa-v3",
     "test:alexa-v3": "mocha --grep AlexaSmartHomeV3 --recursive",
     "prepublishOnly": "npm run build",
     "lint": "eslint -c eslint.config.mjs",
     "build:backend": "tsc -p tsconfig.build.json && node tasks --backend",
-    "build": "node tasks && npm run build:backend",
+    "build:blockly": "tsc -p src-blockly/tsconfig.json && node src-blockly/build.mjs",
+    "build": "node tasks && npm run build:backend && npm run build:blockly",
     "release": "release-script",
     "release-patch": "release-script patch --yes",
     "release-minor": "release-script minor --yes",
     "release-major": "release-script major --yes",
-    "translate": "translate-adapter",
+    "translate": "translate-adapter -b src-blockly/i18n/en.json",
     "update-packages": "npx -y npm-check-updates --upgrade && cd src-admin && npx -y npm-check-updates --upgrade && cd ../src-rules && npx -y npm-check-updates --upgrade",
     "npm": "npm i && cd src-admin && npm i -f && cd ../src-rules && npm i -f",
     "rules-0-clean": "node tasks --rules-0-clean",

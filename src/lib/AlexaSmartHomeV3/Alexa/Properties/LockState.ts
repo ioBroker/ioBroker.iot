@@ -11,7 +11,7 @@ export default class LockState extends Base {
     }
 
     alexaDirectiveValue(event: AlexaV3Request): AlexaV3DirectiveValue {
-        return event.directive.header.name as 'Lock' | 'Unlock';
+        return event.directive.header.name;
     }
 
     static get LOCK(): string {

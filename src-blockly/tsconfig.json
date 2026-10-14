@@ -1,0 +1,19 @@
+{
+    // Type check only - `admin/blockly.js` is produced by esbuild, not by tsc.
+    // Standalone (not extending ../tsconfig.json) because this code runs in the browser:
+    // no node types, and the module resolution has to match the bundler's.
+    "compilerOptions": {
+        "noEmit": true,
+        "skipLibCheck": true,
+        "strict": true,
+        "target": "es2022",
+        "module": "esnext",
+        "moduleResolution": "bundler",
+        // The words are imported from src-blockly/i18n/*.json
+        "resolveJsonModule": true,
+        "lib": ["es2022", "dom"],
+        "types": [],
+        "useUnknownInCatchVariables": false
+    },
+    "include": ["**/*.ts"]
+}

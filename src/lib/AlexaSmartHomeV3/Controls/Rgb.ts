@@ -292,7 +292,7 @@ export default class Rgb extends AdjustableControl {
         if (this.smartName && typeof this.smartName === 'object') {
             const byOn = this.smartName.byON;
             if (byOn !== null && byOn !== undefined && !isNaN(byOn as unknown as number)) {
-                onValue = parseFloat(byOn as any);
+                onValue = parseFloat(byOn);
                 if (onValue < offValue) {
                     onValue = offValue;
                 }

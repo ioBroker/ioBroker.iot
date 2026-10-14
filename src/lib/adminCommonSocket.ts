@@ -903,30 +903,18 @@ export async function getListOfAllAdapters(
     }
 
     for (let a = 0; a < adapters.rows.length; a++) {
-        const obj = adapters.rows[a].value;
         objects[adapters.rows[a].id] = adapters.rows[a].value;
-        let found;
-        if (instances?.rows) {
-            found = [];
-            // find if any instance of this adapter exists and started
-            for (let i = 0; i < instances.rows.length; i++) {
-                let id: string = instances.rows[i].id;
-                const ids = id.split('.');
-                ids.pop();
-                id = ids.join('.');
-                if (id === obj._id && instances.rows[i].value.common?.enabled) {
-                    found.push(instances.rows[i].id);
-                }
-            }
-        }
     }
     const config = adapter.config;
 
-    if (
-        config.remoteWebInstance &&
-        objects[`system.adapter.${config.remoteWebInstance}`]?.common?.enabled &&
-        objects[`system.adapter.vis-2.0`]?.common?.enabled
-    ) {
+    // true if at least one instance of the adapter is enabled
+    const isAdapterEnabled = (name: string): boolean =>
+        instances.rows.some(row => row.id.startsWith(`system.adapter.${name}.`) && row.value.common?.enabled);
+
+    const isWebEnabled =
+        !!config.remoteWebInstance && !!objects[`system.adapter.${config.remoteWebInstance}`]?.common?.enabled;
+
+    if (isWebEnabled && objects[`system.adapter.vis-2.0`]?.common?.enabled) {
         list.push({
             link: 'vis-2/index.html',
             // @ts-expect-error fix later
@@ -944,6 +932,13 @@ export async function getListOfAllAdapters(
             order: 1,
         });
     }
+    // web pages of these adapters are delivered by the web instance
+    if (isWebEnabled && isAdapterEnabled('echarts')) {
+        list.push({ link: 'echarts/index.html', name: 'Echarts', color: '#AA314D', order: 3 });
+    }
+    if (isWebEnabled && isAdapterEnabled('devices')) {
+        list.push({ link: 'devices/index.html', name: 'Devices', color: '#2196F3', order: 10 });
+    }
     const common: ioBroker.AdapterCommon | undefined = config.remoteAdminInstance
         ? objects[`system.adapter.${config.remoteAdminInstance}`].common
         : undefined;
@@ -958,7 +953,7 @@ export async function getListOfAllAdapters(
         });
     }
 
-    return list;
+    return list.sort((a, b) => a.order - b.order);
 }
 
 let objectsTs: number | null = null;

@@ -1,0 +1,14 @@
+{
+    "ifttt_event": "event",
+    "ifttt_iot": "通过 iot 向 IFTTT 发送文本",
+    "ifttt_log": "日志级别",
+    "ifttt_log_debug": "调试",
+    "ifttt_log_error": "错误",
+    "ifttt_log_info": "信息",
+    "ifttt_log_none": "没有任何",
+    "ifttt_log_warn": "警告",
+    "ifttt_tooltip": "发送到 IFTTT",
+    "ifttt_value1": "value1",
+    "ifttt_value2": "value2",
+    "ifttt_value3": "value3"
+}

@@ -511,6 +511,35 @@
 ### 0.1.4 (2018-09-26)
 
 -   (bluefox) Initial commit
+## 6.1.3 (2026-06-12)
+- (@GermanBluefox) Added support of credentials manager
+
+## 6.1.0 (2026-06-02)
+- (@GermanBluefox) Implemented new feature to select devices from the list and not by enumeration
+- (@GermanBluefox) Possibility to send messages to the app directly from the state
+- (@GermanBluefox) Migrated Google and Alisa to TypeScript
+
+## 6.0.3 (2026-04-23)
+- (@GermanBluefox) Allowed to read temperature information via Alexa
+
+## 6.0.1 (2026-04-07)
+- (iobroker-bot) Adapter requires node.js >= 20 now.
+- (@GermanBluefox) Removed support for Alexa 2
+- (@GermanBluefox) Fixed bug in Alisa with color and motion sensor
+- (@GermanBluefox) Validate Discovery response before sending it back
+
+## 5.0.13 (2026-03-31)
+- (@GermanBluefox) Corrected the handling of the multiple group names
+- (@GermanBluefox) Fixing the license validation
+
+## 5.0.12 (2025-12-21)
+- (@GermanBluefox) Added copy of credentials from cloud instance
+- (@GermanBluefox) Added QR code to fast connect the ioBroker visu app
+
+## 5.0.11 (2025-12-16)
+- (@GermanBluefox) Added percentual control
+- (@GermanBluefox) Correcting creation for complex groups
+
 ## 5.0.8 (2025-11-28)
 - (@GermanBluefox) Showed last controller ID in `smart.lastObjectID`
 - (@GermanBluefox) Showed subscription valid period in `info.validTill` and GUI

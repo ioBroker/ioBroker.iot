@@ -21,7 +21,7 @@ import {
     Check as IconCheck,
     Close as IconClose,
 } from '@mui/icons-material';
-import type { IobTheme } from '@iobroker/adapter-react-v5';
+import type { IobTheme } from '@iobroker/gui-components';
 
 function getAttr(obj: Record<string, any>, attr: string | string[], lookup?: Record<string, string>): any {
     if (typeof attr === 'string') {

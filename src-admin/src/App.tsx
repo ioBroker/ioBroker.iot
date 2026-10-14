@@ -21,13 +21,14 @@ import {
     type IobTheme,
     type GenericAppProps,
     type GenericAppState,
-} from '@iobroker/adapter-react-v5';
+} from '@iobroker/gui-components';
 import type { IotAdapterConfig } from './types';
 
 import TabOptions from './Tabs/Options';
 import TabExtended from './Tabs/Extended';
 import TabServices from './Tabs/Services';
 import TabEnums from './Tabs/Enums';
+import TabDevices from './Tabs/Devices';
 import TabAlexa3SmartNames from './Tabs/Alexa3';
 import TabAlisaSmartNames from './Tabs/AlisaSmartNames';
 import TabGoogleSmartNames from './Tabs/GoogleSmartNames';
@@ -95,7 +96,7 @@ export default class App extends GenericApp<GenericAppProps, AppState> {
         extendedProps.sentryDSN = window.sentryDSN;
         // extendedProps.socket = {
         //     protocol: 'http:',
-        //     host: '192.168.178.45',
+        //     host: '192.168.1.129',
         //     port: 8081,
         // };
 
@@ -202,7 +203,16 @@ export default class App extends GenericApp<GenericAppProps, AppState> {
                     >
                         <AppBar position="static">
                             <Tabs
-                                value={this.state.selectedTab || 'options'}
+                                value={(() => {
+                                    const sel = this.state.selectedTab || 'options';
+                                    if (sel === 'enums' && this.state.native.detectionMethod === 'devices') {
+                                        return 'devices';
+                                    }
+                                    if (sel === 'devices' && this.state.native.detectionMethod !== 'devices') {
+                                        return 'enums';
+                                    }
+                                    return sel;
+                                })()}
                                 onChange={(e, value: string): void => {
                                     this.setState({ selectedTab: value });
                                     window.localStorage.setItem(
@@ -220,13 +230,23 @@ export default class App extends GenericApp<GenericAppProps, AppState> {
                                     label={I18n.t('Options')}
                                     data-name="options"
                                 />
-                                <Tab
-                                    value="enums"
-                                    className="enums-tab"
-                                    sx={{ '&.Mui-selected': styles.selected }}
-                                    label={I18n.t('Smart enums')}
-                                    data-name="enums"
-                                />
+                                {this.state.native.detectionMethod === 'devices' ? (
+                                    <Tab
+                                        value="devices"
+                                        className="devices-tab"
+                                        sx={{ '&.Mui-selected': styles.selected }}
+                                        label={I18n.t('Devices')}
+                                        data-name="devices"
+                                    />
+                                ) : (
+                                    <Tab
+                                        value="enums"
+                                        className="enums-tab"
+                                        sx={{ '&.Mui-selected': styles.selected }}
+                                        label={I18n.t('Smart enums')}
+                                        data-name="enums"
+                                    />
+                                )}
                                 {this.state.native.amazonAlexaV3 && (
                                     <Tab
                                         value="alexa3"
@@ -296,9 +316,32 @@ export default class App extends GenericApp<GenericAppProps, AppState> {
                                     onChange={(attr, value, cb) => this.updateNativeValue(attr, value, cb)}
                                 />
                             )}
-                            {this.state.selectedTab === 'enums' && (
+                            {(this.state.selectedTab === 'enums' ||
+                                (this.state.selectedTab === 'devices' &&
+                                    this.state.native.detectionMethod !== 'devices')) &&
+                                this.state.native.detectionMethod !== 'devices' && (
                                 <TabEnums
                                     key="enums"
+                                    socket={this.socket}
+                                    native={this.state.native}
+                                    onError={text =>
+                                        this.setState({
+                                            errorText:
+                                                (text || (text as any) === 0) && typeof text !== 'string'
+                                                    ? (text as any).toString()
+                                                    : text,
+                                        })
+                                    }
+                                    instance={this.instance}
+                                    adapterName={this.adapterName}
+                                />
+                            )}
+                            {(this.state.selectedTab === 'devices' ||
+                                (this.state.selectedTab === 'enums' &&
+                                    this.state.native.detectionMethod === 'devices')) &&
+                                this.state.native.detectionMethod === 'devices' && (
+                                <TabDevices
+                                    key="devices"
                                     socket={this.socket}
                                     native={this.state.native}
                                     onError={text =>

@@ -1,6 +1,8 @@
 export interface IotAdapterConfig {
     login: string;
     pass: string;
+    credentialType?: 'manager' | 'manual';
+    credentialId?: string;
     language: ioBroker.Languages;
     cloudUrl: string;
     functionFirst: boolean;
@@ -22,11 +24,13 @@ export interface IotAdapterConfig {
     nightscout: string;
     nightscoutPass: string;
     noCommon: boolean;
+    detectionMethod: 'enums' | 'devices';
     debug: boolean;
     remote: boolean;
     defaultToggle: boolean;
     remoteAdminInstance: `${string}.${number}`;
     remoteWebInstance: `${string}.${number}`;
+    remoteMcpInstance?: `${string}.${number}` | '';
     customKnownAlexaUsers: {
         id: string;
         name: string;

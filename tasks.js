@@ -1,16 +1,11 @@
 /*!
  * ioBroker tasks file for tasks like build, clean, etc.
- * Date: 2025-05-31
+ * Date: 2026-05-29
  */
 'use strict';
 
-const { existsSync, renameSync, copyFileSync } = require('node:fs');
+const { existsSync, renameSync } = require('node:fs');
 const { buildReact, copyFiles, deleteFoldersRecursive, npmInstall, patchHtmlFile } = require('@iobroker/build-tools');
-
-function copyBackend() {
-    copyFileSync(`${__dirname}/src/lib/alisa.js`, `${__dirname}/build/lib/alisa.js`);
-    copyFileSync(`${__dirname}/src/lib/googleHome.js`, `${__dirname}/build/lib/googleHome.js`);
-}
 
 function cleanRules() {
     deleteFoldersRecursive(`${__dirname}/admin/rules`);
@@ -33,9 +28,16 @@ function clean() {
         'iot.png',
         'iot.svg',
         'rules',
+        'jsonCustom.json'
     ]);
 }
-if (process.argv.find(arg => arg === '--rules-0-clean')) {
+function copyBackend() {
+    copyFiles(['src/i18n/*.json'], 'build/i18n');
+}
+
+if (process.argv.find(arg => arg === '--backend')) {
+    copyBackend();
+} else if (process.argv.find(arg => arg === '--rules-0-clean')) {
     cleanRules();
 } else if (process.argv.find(arg => arg === '--rules-1-npm')) {
     npmInstall('./src-rules/').catch(error => console.error(error));
@@ -87,8 +89,6 @@ if (process.argv.find(arg => arg === '--rules-0-clean')) {
             }
         })
         .catch(error => console.error(error));
-} else if (process.argv.includes('--backend')) {
-    copyBackend();
 } else {
     clean();
     let installPromise;
@@ -106,9 +106,7 @@ if (process.argv.find(arg => arg === '--rules-0-clean')) {
                 renameSync(`${__dirname}/admin/index.html`, `${__dirname}/admin/index_m.html`);
             }
         })
-        .then(() => {
-            cleanRules()
-        })
+        .then(() => cleanRules())
         .then(() => npmInstall('./src-rules/'))
         .then(() => buildReact(`${__dirname}/src-rules/`, { rootDir: __dirname, vite: true }))
         .then(() => copyRules());

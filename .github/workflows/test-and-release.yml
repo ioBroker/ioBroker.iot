@@ -29,7 +29,7 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            - uses: ioBroker/testing-action-check@v1
+            - uses: ioBroker/testing-action-check@v2
               with:
                   node-version: '24.x'
                   lint: true
@@ -43,10 +43,10 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                node-version: [20.x, 22.x, 24.x]
+                node-version: [22.x, 24.x, 26.x]
 
         steps:
-            - uses: ioBroker/testing-action-adapter@v1.1.1
+            - uses: ioBroker/testing-action-adapter@v1.1.2
               with:
                   build: true
                   os: 'ubuntu-latest'

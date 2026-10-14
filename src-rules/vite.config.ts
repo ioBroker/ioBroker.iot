@@ -1,6 +1,5 @@
 import react from '@vitejs/plugin-react';
 import commonjs from 'vite-plugin-commonjs';
-import vitetsConfigPaths from 'vite-tsconfig-paths';
 import { federation } from '@module-federation/vite';
 
 const makeShared = pkgs => {
@@ -24,12 +23,14 @@ const config = {
                 './ActionVisu': './src/ActionVisu.tsx',
             },
             remotes: {},
-            shared: makeShared(['react', '@iobroker/adapter-react-v5', 'react-dom']),
+            shared: makeShared(['react', '@iobroker/gui-components', 'react-dom']),
         }),
         react(),
-        vitetsConfigPaths(),
         commonjs(),
     ],
+    resolve: {
+        tsconfigPaths: true,
+    },
     server: {
         port: 3000,
     },
