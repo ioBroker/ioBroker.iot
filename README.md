@@ -416,8 +416,8 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-
 ### **WORK IN PROGRESS**
+- (@Gehli23) Fixed detection of thermostats in Alexa V3 with type-detector 6 (`requiredOneOf` states)
 - (ioBroker-Bot) Adapter requires js-controller >= 6.0.11 now.
 
 ### 6.0.3 (2026-04-23)

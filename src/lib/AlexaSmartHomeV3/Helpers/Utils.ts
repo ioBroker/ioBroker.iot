@@ -551,7 +551,7 @@ export async function controls(
             // get only first control
             controls = [controls[0]];
             // And take only first state
-            const state = controls[0].states.find(state => state.required);
+            const state = controls[0].states.find(state => state.required || state.requiredOneOf);
             if (state) {
                 state.id = id;
                 controls[0].states = [state];
