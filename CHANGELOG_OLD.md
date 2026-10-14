@@ -511,6 +511,29 @@
 ### 0.1.4 (2018-09-26)
 
 -   (bluefox) Initial commit
+## 5.0.11 (2025-12-16)
+- (@GermanBluefox) Added percentual control
+- (@GermanBluefox) Correcting creation for complex groups
+
+## 7.1.3 (2026-10-12)
+- (@GermanBluefox) Added latitude and longitude for visu app
+
+## 7.1.2 (2026-09-20)
+- (@GermanBluefox) The cloud connection is now closed gracefully, so the cloud does not report a duplicate connection after a restart of the adapter
+- (@GermanBluefox) Only one reconnection attempt can be pending, so two connections cannot overlap anymore
+
+## 7.1.1 (2026-09-16)
+- (@GermanBluefox) Corrected validTill request
+
+## 7.1.0 (2026-09-15)
+- (@GermanBluefox) Remote access: MCP requests of the cloud are answered via MQTT (message type 12)
+- (@GermanBluefox) Migrated blockly to TypeScript
+- (@GermanBluefox) Remote access improved
+- (@GermanBluefox) Avoided the Node.js 24 deprecation warning DEP0187 (`fs.existsSync`) when connecting to the cloud
+
+## 7.0.1 (2026-08-06)
+- (@GermanBluefox) Migrated to TypeScript 6 and react 19
+
 ## 6.1.3 (2026-06-12)
 - (@GermanBluefox) Added support of credentials manager
 

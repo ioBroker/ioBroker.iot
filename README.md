@@ -416,7 +416,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 7.1.4 (2026-10-14)
 - (@Gehli23) Fixed detection of thermostats in Alexa V3 with type-detector 6 (`requiredOneOf` states)
 - (@GermanBluefox) Alexa V3: removed, renamed and new devices are reported to Alexa without a new discovery, but it is not yet active in the cloud
 - (@GermanBluefox) Alexa V3: error answers carry the correlation token and endpoint of the request, and a device that is gone is reported as NO_SUCH_ENDPOINT
@@ -438,29 +438,6 @@ setState('iot.0.app.message', JSON.stringify({
 ### 5.0.12 (2025-12-21)
 - (@GermanBluefox) Added copy of credentials from cloud instance
 - (@GermanBluefox) Added QR code to fast connect the ioBroker visu app
-
-### 5.0.11 (2025-12-16)
-- (@GermanBluefox) Added percentual control
-- (@GermanBluefox) Correcting creation for complex groups
-
-### 7.1.3 (2026-10-12)
-- (@GermanBluefox) Added latitude and longitude for visu app
-
-### 7.1.2 (2026-09-20)
-- (@GermanBluefox) The cloud connection is now closed gracefully, so the cloud does not report a duplicate connection after a restart of the adapter
-- (@GermanBluefox) Only one reconnection attempt can be pending, so two connections cannot overlap anymore
-
-### 7.1.1 (2026-09-16)
-- (@GermanBluefox) Corrected validTill request
-
-### 7.1.0 (2026-09-15)
-- (@GermanBluefox) Remote access: MCP requests of the cloud are answered via MQTT (message type 12)
-- (@GermanBluefox) Migrated blockly to TypeScript
-- (@GermanBluefox) Remote access improved
-- (@GermanBluefox) Avoided the Node.js 24 deprecation warning DEP0187 (`fs.existsSync`) when connecting to the cloud
-
-### 7.0.1 (2026-08-06)
-- (@GermanBluefox) Migrated to TypeScript 6 and react 19
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
