@@ -416,6 +416,9 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@Gehli23) Fixed detection of thermostats in Alexa V3 with type-detector 6 (`requiredOneOf` states)
+
 ### 7.1.3 (2026-10-12)
 - (@GermanBluefox) Added latitude and longitude for visu app
 
