@@ -77,7 +77,7 @@ export default class Button extends Control {
                 this.log.error('Failed to activate scene');
 
                 // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
-                return Promise.reject(AlexaResponse.endpointUnreachable(event.directive.header.messageId).get());
+                return Promise.reject(AlexaResponse.endpointUnreachable(event).get());
             }
         }
 

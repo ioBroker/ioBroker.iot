@@ -480,18 +480,14 @@ export default class DeviceManager {
                             }
                             return response;
                         },
-                        AlexaResponse.throttlingException(event.directive.header.messageId).get(),
+                        AlexaResponse.throttlingException(event).get(),
                     );
                 } else {
-                    response = AlexaResponse.directiveNotSupportedByDevice(
-                        device.friendlyName,
-                        event.directive.header.namespace,
-                        event.directive.header.messageId,
-                        event.directive.header.payloadVersion,
-                    ).get();
+                    response = AlexaResponse.directiveNotSupportedByDevice(device.friendlyName, event).get();
                 }
             } else {
-                response = AlexaResponse.endpointUnreachable(event.directive.header.messageId).get();
+                // Alexa still has a device that is gone here - removed, renamed, or no longer detected
+                response = AlexaResponse.nonExistingEndpoint(event).get();
             }
         }
 
@@ -551,7 +547,7 @@ export default class DeviceManager {
                                         this.publishStateChange(stateChange);
                                         return Promise.resolve(stateChange);
                                     },
-                                    AlexaResponse.throttlingException(responseEvent.directive.header.messageId).get(),
+                                    AlexaResponse.throttlingException(responseEvent).get(),
                                 );
                             }
                         } else {

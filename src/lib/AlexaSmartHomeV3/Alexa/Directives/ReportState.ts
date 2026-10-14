@@ -39,7 +39,7 @@ export default class ReportState extends Base {
             const properties: Record<string, any>[] = await endpoint.reportState();
             properties.forEach(property => response.addContextProperty(property));
         } else {
-            response = AlexaResponse.nonExistingEndpoint(event.directive.header.messageId, endpointId);
+            response = AlexaResponse.nonExistingEndpoint(event);
         }
 
         this.log.silly(`${JSON.stringify(response.get())}`);

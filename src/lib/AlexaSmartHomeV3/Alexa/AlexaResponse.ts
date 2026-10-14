@@ -6,7 +6,6 @@ import type {
     AlexaV3Directive,
     AlexaV3DirectiveType,
     AlexaV3DiscoverAppliance,
-    AlexaV3EndpointID,
     AlexaV3Namespace,
     AlexaV3Payload,
     AlexaV3ReportedState,
@@ -31,56 +30,73 @@ export default class AlexaResponse {
         return response?.event?.header?.name === AlexaResponse.ErrorResponseName;
     }
 
-    static errorResponse(messageId: string, payload: any): AlexaResponse {
-        return new AlexaResponse({
+    /**
+     * An Alexa.ErrorResponse that answers the directive in `event`.
+     *
+     * It carries the correlationToken and the endpoint of the directive, as Alexa needs both to match the answer;
+     * without them it counts as INVALID_SKILL_RESPONSE_EXCEPTION. The message ID stays the one of the directive,
+     * because the cloud finds the waiting request by it - and replaces it with a new one before it goes to Alexa.
+     *
+     * @param event the directive this error answers
+     * @param payload `type` and `message` of the error
+     */
+    static errorResponse(event: AlexaV3Request | undefined, payload: any): AlexaResponse {
+        const endpointId = event?.directive?.endpoint?.endpointId;
+        const response = new AlexaResponse({
             name: AlexaResponse.ErrorResponseName,
             payload,
-            messageId,
+            messageId: event?.directive?.header?.messageId,
+            correlationToken: event?.directive?.header?.correlationToken,
+            token: event?.directive?.endpoint?.scope?.token,
+            endpointId,
         });
+        // a Discover directive concerns no endpoint, so neither does its error
+        if (event?.directive && !endpointId && response.event) {
+            delete response.event.endpoint;
+        }
+        return response;
     }
 
-    static endpointUnreachable(messageId: string): AlexaResponse {
-        return AlexaResponse.errorResponse(messageId, {
+    static endpointUnreachable(event?: AlexaV3Request): AlexaResponse {
+        return AlexaResponse.errorResponse(event, {
             type: 'ENDPOINT_UNREACHABLE',
             message: 'Unable to reach endpoint.',
         });
     }
 
-    static throttlingException(messageId: string): AlexaResponse {
-        return AlexaResponse.errorResponse(messageId, {
-            type: 'THROTTLING_EXCEPTION',
-            message: 'Unable to reach endpoint.',
+    /** Our own limit of requests per device was reached. THROTTLING_EXCEPTION, sent before, is no Alexa error type */
+    static throttlingException(event?: AlexaV3Request): AlexaResponse {
+        return AlexaResponse.errorResponse(event, {
+            type: 'RATE_LIMIT_EXCEEDED',
+            message: 'Too many requests for this endpoint.',
         });
     }
 
-    static directiveNotSupportedByControl(
-        controlName: string,
-        namespace: AlexaV3Namespace,
-        messageId: string,
-        payloadVersion: string,
-    ): AlexaResponse {
-        return AlexaResponse.errorResponse(messageId, {
+    static directiveNotSupportedByControl(controlName: string, event?: AlexaV3Request): AlexaResponse {
+        const header = event?.directive?.header;
+        return AlexaResponse.errorResponse(event, {
             type: 'INTERNAL_ERROR',
-            message: `Control ${controlName} doesn't support the ${namespace} with payloadVersion ${payloadVersion}`,
+            message: `Control ${controlName} doesn't support the ${header?.namespace} with payloadVersion ${header?.payloadVersion}`,
         });
     }
 
-    static directiveNotSupportedByDevice(
-        deviceName: string,
-        namespace: AlexaV3Namespace,
-        messageId: string,
-        payloadVersion: string,
-    ): AlexaResponse {
-        return AlexaResponse.errorResponse(messageId, {
+    static directiveNotSupportedByDevice(deviceName: string, event?: AlexaV3Request): AlexaResponse {
+        const header = event?.directive?.header;
+        return AlexaResponse.errorResponse(event, {
             type: 'INTERNAL_ERROR',
-            message: `Device ${deviceName} doesn't support the ${namespace} with payloadVersion ${payloadVersion}`,
+            message: `Device ${deviceName} doesn't support the ${header?.namespace} with payloadVersion ${header?.payloadVersion}`,
         });
     }
 
-    static nonExistingEndpoint(messageId: string, endpointId: AlexaV3EndpointID | undefined): AlexaResponse {
-        return AlexaResponse.errorResponse(messageId, {
-            type: 'INTERNAL_ERROR',
-            message: `No endpoint with id ${endpointId} found`,
+    /**
+     * The directive is for a device that is not there any more.
+     *
+     * NO_SUCH_ENDPOINT tells Alexa so. INTERNAL_ERROR, sent before, made the device look broken instead.
+     */
+    static nonExistingEndpoint(event?: AlexaV3Request): AlexaResponse {
+        return AlexaResponse.errorResponse(event, {
+            type: 'NO_SUCH_ENDPOINT',
+            message: `No endpoint with id ${event?.directive?.endpoint?.endpointId} found`,
         });
     }
 

@@ -80,7 +80,7 @@ export default class ChangeReport extends Base {
                 }
             }
         } else {
-            response = AlexaResponse.nonExistingEndpoint(event.directive.header.messageId, endpointId);
+            response = AlexaResponse.nonExistingEndpoint(event);
         }
 
         this.log.debug(`${JSON.stringify(response.get())}`);

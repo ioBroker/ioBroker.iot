@@ -1,4 +1,5 @@
 const assert = require('assert');
+const helpers = require('../helpers');
 const AlexaResponse = require('../../../build/lib/AlexaSmartHomeV3/Alexa/AlexaResponse').default;
 
 describe('AlexaSmartHomeV3 - AlexaResponse', function () {
@@ -21,6 +22,57 @@ describe('AlexaSmartHomeV3 - AlexaResponse', function () {
         it('Non existing endpoint error recognized as error response', async function () {
             let errorResponse = AlexaResponse.nonExistingEndpoint();
             assert.equal(AlexaResponse.isErrorResponse(errorResponse), true);
+        });
+    });
+
+    // Without the correlationToken and the endpoint of the directive Alexa counts an error as
+    // INVALID_SKILL_RESPONSE_EXCEPTION (AES case 19232822931)
+    describe('Error response answers its directive', async function () {
+        it('Error response carries correlationToken, message ID and endpoint of the directive', async function () {
+            const event = await helpers.getSample('ReportState.json');
+            const response = AlexaResponse.endpointUnreachable(event).get();
+
+            assert.equal(response.event.header.name, 'ErrorResponse');
+            assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken);
+            // the cloud finds the waiting request by it, and replaces it before the answer goes to Alexa
+            assert.equal(response.event.header.messageId, event.directive.header.messageId);
+            assert.equal(response.event.endpoint.endpointId, 'endpoint-001');
+            assert.equal(response.event.endpoint.scope.token, event.directive.endpoint.scope.token);
+            assert.equal(response.event.payload.type, 'ENDPOINT_UNREACHABLE');
+        });
+
+        it('Error response to a discovery has no endpoint', async function () {
+            const event = await helpers.getSample('Discovery.request.json');
+            const response = AlexaResponse.endpointUnreachable(event).get();
+
+            assert.equal(response.event.header.name, 'ErrorResponse');
+            assert.equal(response.event.endpoint, undefined);
+        });
+
+        it('A device that is gone is reported as NO_SUCH_ENDPOINT', async function () {
+            const event = await helpers.getSample('ReportState.json');
+            const response = AlexaResponse.nonExistingEndpoint(event).get();
+
+            assert.equal(response.event.payload.type, 'NO_SUCH_ENDPOINT');
+            assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken);
+            assert.equal(response.event.endpoint.endpointId, 'endpoint-001');
+        });
+
+        it('The own rate limit is reported as RATE_LIMIT_EXCEEDED, which Alexa knows', async function () {
+            const event = await helpers.getSample('ReportState.json');
+            const response = AlexaResponse.throttlingException(event).get();
+
+            assert.equal(response.event.payload.type, 'RATE_LIMIT_EXCEEDED');
+            assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken);
+        });
+
+        it('A directive not supported by a control names the namespace and keeps the correlationToken', async function () {
+            const event = await helpers.getSample('ReportState.json');
+            const response = AlexaResponse.directiveNotSupportedByControl('Dimmer', event).get();
+
+            assert.equal(response.event.payload.type, 'INTERNAL_ERROR');
+            assert.equal(response.event.payload.message, `Control Dimmer doesn't support the Alexa with payloadVersion 3`);
+            assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken);
         });
     });
 

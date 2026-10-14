@@ -164,7 +164,7 @@ export default class Control {
                 this.log.error(`failed handling Alexa event`);
 
                 // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
-                return Promise.reject(AlexaResponse.endpointUnreachable(event.directive.header.messageId).get());
+                return Promise.reject(AlexaResponse.endpointUnreachable(event).get());
             }
 
             // even though the handler successfully processed the Alexa event,
@@ -173,14 +173,7 @@ export default class Control {
             // running into a situation of returning a wrong value back to Alexa
             if (this.enforced.find(capability => capability.matches(event))) {
                 // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
-                return Promise.reject(
-                    AlexaResponse.directiveNotSupportedByControl(
-                        this.name,
-                        event?.directive?.header?.namespace,
-                        event?.directive?.header?.messageId,
-                        event?.directive?.header?.payloadVersion,
-                    ).get(),
-                );
+                return Promise.reject(AlexaResponse.directiveNotSupportedByControl(this.name, event).get());
             }
 
             if (alexaValue !== undefined) {
@@ -210,12 +203,7 @@ export default class Control {
             return response.get();
         }
 
-        const errorResponse = AlexaResponse.directiveNotSupportedByControl(
-            this.name,
-            event?.directive?.header?.namespace,
-            event?.directive?.header?.messageId,
-            event?.directive?.header?.payloadVersion,
-        );
+        const errorResponse = AlexaResponse.directiveNotSupportedByControl(this.name, event);
         this.log.silly(`${JSON.stringify(errorResponse.get())}`);
         // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(errorResponse.get());

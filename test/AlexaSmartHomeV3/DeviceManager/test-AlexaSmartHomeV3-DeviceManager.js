@@ -124,6 +124,32 @@ describe('AlexaSmartHomeV3 - DeviceManager', function () {
         });
     });
 
+    // Alexa keeps a device that is gone here and still asks for it; the answer has to say so in a form Alexa accepts
+    describe('answers for a device that is gone...', async function () {
+        it('a ReportState with NO_SUCH_ENDPOINT', async function () {
+            const event = await helpers.getSample('ReportState.json');
+            event.directive.endpoint.endpointId = 'removed-device';
+
+            const response = await deviceManager.handleAlexaEvent(event);
+
+            assert.equal(response.event.header.name, 'ErrorResponse');
+            assert.equal(response.event.payload.type, 'NO_SUCH_ENDPOINT');
+            assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken);
+            assert.equal(response.event.endpoint.endpointId, 'removed-device');
+        });
+
+        it('a control directive with NO_SUCH_ENDPOINT', async function () {
+            const event = await helpers.getSample('PowerController/PowerController.TurnOn.request.json');
+            event.directive.endpoint.endpointId = 'removed-device';
+
+            const response = await deviceManager.handleAlexaEvent(event);
+
+            assert.equal(response.event.header.name, 'ErrorResponse');
+            assert.equal(response.event.payload.type, 'NO_SUCH_ENDPOINT');
+            assert.equal(response.event.header.correlationToken, event.directive.header.correlationToken);
+        });
+    });
+
     describe('creates devices...', async function () {
         it('must create HUE device from combined states', async function () {
             const objects = require('../Resources/hue-combined.json');

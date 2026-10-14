@@ -10,13 +10,6 @@ export default abstract class ReadOnlyDetector extends Control {
         this.log.error(`Setting value is not supported by ${this.name} control`);
 
         // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
-        return Promise.reject(
-            AlexaResponse.directiveNotSupportedByControl(
-                this.name,
-                event.directive.header.namespace,
-                event.directive.header.messageId,
-                event.directive.header.payloadVersion,
-            ).get(),
-        );
+        return Promise.reject(AlexaResponse.directiveNotSupportedByControl(this.name, event).get());
     }
 }
