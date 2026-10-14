@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "7.1.4",
+    "version": "7.1.5",
     "news": {
+      "7.1.5": {
+        "en": "Alexa V3: a request that fails with an exception is answered with INTERNAL_ERROR instead of \"Service is disabled\", and the error is logged\nFixed detection of thermostats in Alexa V3 with type-detector 6 (`requiredOneOf` states)\nAlexa V3: removed, renamed and new devices are reported to Alexa without a new discovery, but it is not yet active in the cloud\nAlexa V3: error answers carry the correlation token and endpoint of the request, and a device that is gone is reported as NO_SUCH_ENDPOINT\nAdapter requires js-controller >= 6.0.11 now.",
+        "de": "Alexa V3: Eine ausnahmsweise fehlgeschlagene Anfrage wird mit INTERNAL_ERROR statt „Service is disabled“ beantwortet und geloggt\nThermostaterkennung in Alexa V3 mit Typmelder 6 behoben (Status `RequiredOneOf`)\nAlexa V3: entfernt, umbenannt und neue Geräte werden an Alexa gemeldet, aber in der Cloud noch nicht aktiv\nAlexa V3: Fehlerantworten enthalten das Token und den Endpunkt der Anfrage, und ein defektes Gerät wird als NO_SUCH_ENDPOINT gemeldet\nAdapter benötigt jetzt JS-Controller >= 6.0.11.",
+        "ru": "Alexa V3: на запрос, который не удался с исключением, вместо «Служба отключена» отвечает INTERNAL_ERROR, и ошибка регистрируется\nИсправлено обнаружение термостатов в Alexa V3 с помощью детектора типов 6 (состояния «RequireDoneOf»)\nAlexa V3: удалены, переименованы, а новые устройства поступают в Alexa без нового обнаружения, но она пока не активна в облаке\nAlexa V3: ответы на ошибки содержат токен корреляции и конечную точку запроса, а об исчезнувшем устройстве сообщается как NO_SUCH_ENDPOINT\nТеперь для адаптера требуется js-контроллер >= 6.0.11.",
+        "pt": "Alexa V3: um pedido que falha com uma exceção é respondido com INTERNAL_ERROR em vez de “Serviço desativado” e o erro é registrado\nDetecção fixa de termostatos na Alexa V3 com detector de tipo 6 (estados `obrigatório`)\nAlexa V3: dispositivos removidos, renomeados e novos são reportados à Alexa, mas ainda não estão ativos na nuvem\nAlexa V3: respostas de erro têm o token de correlação e o endpoint da solicitação, e um dispositivo perdido é NO_SUCH_ENDPOINT\nO adaptador exige js-controller >= 6.0.11.",
+        "nl": "Alexa V3: een verzoek dat mislukt, op een uitzondering na, wordt beantwoord met INTERNAL_ERROR in plaats van „Service is uitgeschakeld”, en de fout wordt geregistreerd\nVaste detectie van thermostaten in Alexa V3 met typedetector 6 (status `RequireDoneOf`)\nAlexa V3: verwijderd, hernoemd en nieuwe apparaten worden zonder nieuwe ontdekking aan Alexa gerapporteerd, maar de telefoon is nog niet actief in de cloud\nAlexa V3: foutenantwoorden bevatten het correlatietoken en het eindpunt van de aanvraag, en een apparaat dat weg is, wordt gerapporteerd als NO_SUCH_ENDPOINT\nVoor de adapter is nu een js-controller >= 6.0.11 nodig.",
+        "fr": "Alexa V3 : une demande qui échoue sauf exception reçoit INTERNAL_ERROR au lieu de « Le service est désactivé », et l'erreur est enregistrée\nDétection fixe des thermostats dans Alexa V3 avec détecteur de type 6 (états « RequireOneOf »)\nAlexa V3 : les appareils supprimés, renommés et nouveaux sont signalés à Alexa sans qu'il soit découvert, mais il n'est pas encore actif\nAlexa V3 : les réponses aux erreurs contiennent le jeton de corrélation et le point final de la demande, et un appareil disparu est signalé NO_SUCH_ENDPOINT\nAdapter nécessite JS-Controller >= 6.0.11.",
+        "it": "Alexa V3: una richiesta fallita riceve INTERNAL_ERROR anziché «Servizio disabilitato» e l'errore viene registrato\nRisolto il problema dei termostati in Alexa V3 con sensore di tipo 6 (stati `RequireOneOf`)\nAlexa V3: rimosso, rinominato e segnalato ad Alexa senza una nuova scoperta, ma non è ancora attivo nel cloud\nAlexa V3: le risposte agli errori riportano il token di correlazione e l'endpoint della richiesta e un dispositivo perso è NO_SUCH_ENDPOINT\nAdapter richiede js-controller >= 6.0.11 ora.",
+        "es": "Alexa V3: una solicitud que falla con una excepción se responde con INTERNAL_ERROR en lugar de «El servicio está desactivado» y el error se registra\nDetección fija de termostatos en Alexa V3 con detector de tipo 6 («RequireDoneOf` estados)\nAlexa V3: se quita, se cambia el nombre y se informa de los nuevos dispositivos a Alexa sin que se descubra, pero aún no está activo en la nube\nAlexa V3: las respuestas de error llevan el token de correlación y el punto final de la solicitud, y un dispositivo que no funciona se indica como NO_SUCH_ENDPOINT\nEl adaptador ahora requiere js-controller >= 6.0.11.",
+        "pl": "Alexa V3: na żądanie, które nie powiedzie się z wyjątkiem, odpowiada INTERNAL_ERROR zamiast „Usługa jest wyłączona”, a błąd jest rejestrowany\nNaprawiono wykrywanie termostatów w Alexa V3 z detektorem typu 6 (stany `RequiredoneOf`)\nAlexa V3: usunięta, zmieniona nazwa i nowe urządzenia są zgłaszane Alexie bez nowego odkrycia, ale nie jest jeszcze aktywny w chmurze\nAlexa V3: odpowiedzi na błędy zawierają token korelacji i punkt końcowy żądania, a urządzenie, które zniknęło, jest zgłaszane jako NO_SUCH_ENDPOINT\nAdapter wymaga teraz kontrolera js->= 6.0.11.",
+        "uk": "Alexa V3: на запит, який не вдається за винятком, відповідає INTERNAL_ERROR замість «Служба відключена», і помилка реєструється\nВиправлено виявлення термостатів в Alexa V3 з детектором типу 6 (стани «вимагаються»)\nAlexa V3: видалені, перейменовані та нові пристрої повідомляються Alexa без нового відкриття, але він ще не активний у хмарі\nAlexa V3: відповіді на помилки несуть токен кореляції та кінцеву точку запиту, а пристрій, який зник, повідомляється як NO_SUCH_ENDPOINT\nДля адаптера зараз потрібен js-контролер >= 6.0.11.",
+        "zh-cn": "Alexa V3：因异常而失败的请求将使用 INTERNAL_ERROR 而不是 “服务已禁用” 来回答，并记录错误\n修复了使用类型探测器 6（requiredOneOF 状态）在 Alexa V3 中检测恒温器的问题\nAlexa V3：移除、重命名并向Alexa报告了新设备，但未发现任何新设备，但尚未在云端激活\nAlexa V3：错误答案带有请求的关联令牌和端点，消失的设备被报告为 NO_SUCH_ENDPOINT\n适配器现在需要 js-controller >= 6.0.11。"
+      },
       "7.1.4": {
         "en": "Fixed detection of thermostats in Alexa V3 with type-detector 6 (`requiredOneOf` states)\nAlexa V3: removed, renamed and new devices are reported to Alexa without a new discovery, but it is not yet active in the cloud\nAlexa V3: error answers carry the correlation token and endpoint of the request, and a device that is gone is reported as NO_SUCH_ENDPOINT\nAdapter requires js-controller >= 6.0.11 now.",
         "de": "Thermostaterkennung in Alexa V3 mit Typmelder 6 behoben (Status `RequiredOneOf`)\nAlexa V3: entfernt, umbenannt und neue Geräte werden an Alexa gemeldet, aber in der Cloud noch nicht aktiv\nAlexa V3: Fehlerantworten enthalten das Token und den Endpunkt der Anfrage, und ein defektes Gerät wird als NO_SUCH_ENDPOINT gemeldet\nAdapter benötigt jetzt JS-Controller >= 6.0.11.",
@@ -80,19 +93,6 @@
         "pl": "Migracja do TypeScript 6 i React 19",
         "uk": "Перейшов на TypeScript 6 та React 19",
         "zh-cn": "已迁移到 TypeScript 6 和 React 19"
-      },
-      "6.1.3": {
-        "en": "Added support of credentials manager",
-        "de": "Zusätzliche Unterstützung des Anmeldermanagers",
-        "ru": "Добавлена поддержка менеджера по учетным данным",
-        "pt": "Adicionado suporte ao gestor de credenciais",
-        "nl": "Toegevoegde ondersteuning van credentials manager",
-        "fr": "Soutien supplémentaire du gestionnaire des pouvoirs",
-        "it": "Aggiunto supporto di credenziali manager",
-        "es": "Añadido el apoyo del administrador de credenciales",
-        "pl": "Dodano wsparcie menedżera mandatów",
-        "uk": "Додано підтримку менеджера облікових записів",
-        "zh-cn": "证书管理器的支持增加"
       }
     },
     "titleLang": {
