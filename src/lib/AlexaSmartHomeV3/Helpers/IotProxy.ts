@@ -1,5 +1,6 @@
 import type { device as DeviceModule } from 'aws-iot-device-sdk';
 import type AlexaResponse from '../Alexa/AlexaResponse';
+import type { AlexaV3DiscoveryReport } from '../types';
 
 export default class IotProxy {
     static device: DeviceModule;
@@ -20,7 +21,13 @@ export default class IotProxy {
         return IotProxy.publish(IotProxy.stateChangedTopic, stateChange);
     }
 
-    static publish(topic: string, message: AlexaResponse | string): void {
+    /** AddOrUpdateReport and DeleteReport take the same way as ChangeReport, but carry the token in the payload */
+    static publishDiscoveryReport(report: AlexaV3DiscoveryReport): void {
+        report.event.payload.scope.token = this.login;
+        return IotProxy.publish(IotProxy.stateChangedTopic, report);
+    }
+
+    static publish(topic: string, message: AlexaResponse | AlexaV3DiscoveryReport | string): void {
         if (typeof message !== 'string') {
             message = JSON.stringify(message);
         }

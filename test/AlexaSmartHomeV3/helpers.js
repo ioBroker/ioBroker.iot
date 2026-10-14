@@ -175,9 +175,13 @@ class AdapterMock {
         }
     }
 
-    // used in informAboutStatesChange
-    async setStateAsync() {
-        return;
+    // used in informAboutStatesChange and by the DiscoveryReporter
+    async setStateAsync(id, val, ack) {
+        this.states[`${this.namespace}.${id}`] = { val, ack: !!ack, ts: Date.now() };
+    }
+
+    async getStateAsync(id) {
+        return this.states[`${this.namespace}.${id}`] || null;
     }
 
     async subscribeForeignStatesAsync(id) {

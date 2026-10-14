@@ -368,6 +368,22 @@ export interface AlexaV3Directive<Payload = AlexaV3Payload> {
     payload: Payload;
 }
 
+/** Proactive Alexa.Discovery event: tells Alexa about added, changed or deleted endpoints without a discovery */
+export interface AlexaV3DiscoveryReport {
+    event: {
+        header: {
+            namespace: 'Alexa.Discovery';
+            name: 'AddOrUpdateReport' | 'DeleteReport';
+            payloadVersion: '3';
+            messageId: string;
+        };
+        payload: {
+            endpoints: AlexaV3DiscoverAppliance[] | { endpointId: AlexaV3EndpointID }[];
+            scope: AlexaV3BearerTokenScope;
+        };
+    };
+}
+
 // ReportState Request
 export type AlexaV3ReportStateDirective = AlexaV3Directive<object> & {
     header: AlexaV3Header & { namespace: 'Alexa'; name: 'ReportState'; payloadVersion: '3' };

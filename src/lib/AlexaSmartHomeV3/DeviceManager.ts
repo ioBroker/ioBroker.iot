@@ -14,6 +14,7 @@ import type { AlexaV3EndpointID, AlexaV3Request, IotExternalPatternControl } fro
 import ChangeReport from './Alexa/Directives/ChangeReport';
 import Discovery from './Alexa/Directives/Discovery';
 import ReportState from './Alexa/Directives/ReportState';
+import DiscoveryReporter from './Helpers/DiscoveryReporter';
 import { randomUUID } from 'node:crypto';
 import type { Types } from '@iobroker/type-detector';
 
@@ -44,6 +45,7 @@ export default class DeviceManager {
     private subscribed: string[] = [];
     private log: Logger;
     private eventsPausedTill = 0; // timestamp
+    private readonly discoveryReporter = new DiscoveryReporter();
 
     private collecting = false;
     private recollect = false;
@@ -358,6 +360,13 @@ export default class DeviceManager {
             if (unsubscribe.length) {
                 await AdapterProvider.unsubscribe(unsubscribe);
             }
+
+            // devices may be gone, renamed or new: tell Alexa, so it does not keep unresponsive ones
+            this.discoveryReporter.schedule(
+                // half-collected devices would look like deleted ones; the running collection schedules again
+                () => (this.collecting ? null : this.devices),
+                () => this.eventsPausedTill >= Date.now(),
+            );
         } catch (e) {
             this.log.error(`failed to collect devices: ${e}`);
             if (e.stack) {
@@ -375,6 +384,7 @@ export default class DeviceManager {
     }
 
     async destroy(): Promise<void> {
+        this.discoveryReporter.destroy();
         const promises = [];
         for (const id of this.subscribed) {
             this.log.silly(`unsubscribing from updates of ${id}`);
@@ -426,6 +436,9 @@ export default class DeviceManager {
         const directive = this.matchDirective(event);
         if (directive) {
             response = await directive.handle(event, this);
+            if (directive instanceof Discovery) {
+                await this.discoveryReporter.discovered(response.event?.payload.endpoints || []);
+            }
         } else {
             const endpointId = event?.directive?.endpoint?.endpointId;
             const device = endpointId ? this.endpointById(endpointId) : undefined;

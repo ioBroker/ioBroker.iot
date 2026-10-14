@@ -3,6 +3,8 @@ import Base from './Base';
 import type { AlexaV3Request } from '../../types';
 import type DeviceManager from '../../DeviceManager';
 import { validateDiscoveryResponse } from '../../Helpers/DiscoveryValidator';
+import type Device from '../../Device';
+import type Logger from '../../Helpers/Logger';
 
 export default class Discovery extends Base {
     static isSensorInterface(iface: unknown): boolean {
@@ -45,12 +47,24 @@ export default class Discovery extends Base {
         this.log.debug(`handling Discovery`);
         this.log.silly(`${JSON.stringify(event)}`);
 
-        const endpoints = endpointManager.endpoints;
+        return Promise.resolve(
+            Discovery.discoveryResponse(endpointManager.endpoints, this.log, event?.directive?.header?.messageId),
+        );
+    }
 
+    /**
+     * Describes the devices exactly as Alexa gets them on discovery. The proactive Alexa.Discovery reports use it
+     * too, so Alexa never learns two different versions of the same device.
+     *
+     * @param endpoints all collected devices
+     * @param log logger for the warnings
+     * @param messageId message ID of the Discover directive, if any
+     */
+    static discoveryResponse(endpoints: Device[], log: Logger, messageId?: string): AlexaResponse {
         const response = new AlexaResponse({
             namespace: Discovery.namespace,
             name: 'Discover.Response',
-            messageId: event?.directive?.header?.messageId,
+            messageId,
         });
 
         let count = 0;
@@ -58,7 +72,7 @@ export default class Discovery extends Base {
         endpoints.forEach(endpoint => {
             count++;
             if (count > 300) {
-                this.log.warn(
+                log.warn(
                     `Too many devices. Alexa supports up to 300 devices. ${endpoint.friendlyName} will not be discovered.`,
                 );
                 return;
@@ -81,8 +95,8 @@ export default class Discovery extends Base {
         Discovery.setAllProactiveAndRetrievableFalse(json);
         //}
 
-        validateDiscoveryResponse(json, this.log);
+        validateDiscoveryResponse(json, log);
 
-        return Promise.resolve(json);
+        return json;
     }
 }

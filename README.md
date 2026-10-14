@@ -418,6 +418,7 @@ setState('iot.0.app.message', JSON.stringify({
 ## Changelog
 ### **WORK IN PROGRESS**
 - (@Gehli23) Fixed detection of thermostats in Alexa V3 with type-detector 6 (`requiredOneOf` states)
+- (@GermanBluefox) Alexa V3: removed, renamed and new devices are reported to Alexa without a new discovery, but it is not yet active in the cloud
 - (ioBroker-Bot) Adapter requires js-controller >= 6.0.11 now.
 
 ### 6.0.3 (2026-04-23)
@@ -440,6 +441,7 @@ setState('iot.0.app.message', JSON.stringify({
 ### 5.0.11 (2025-12-16)
 - (@GermanBluefox) Added percentual control
 - (@GermanBluefox) Correcting creation for complex groups
+
 ### 7.1.3 (2026-10-12)
 - (@GermanBluefox) Added latitude and longitude for visu app
 

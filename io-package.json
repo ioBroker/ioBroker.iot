@@ -457,6 +457,19 @@
       "native": {}
     },
     {
+      "_id": "smart.alexa3Discovered",
+      "type": "state",
+      "common": {
+        "role": "json",
+        "name": "Devices known to Alexa V3 since the last discovery",
+        "type": "string",
+        "read": true,
+        "write": false,
+        "expert": true
+      },
+      "native": {}
+    },
+    {
       "_id": "smart.updatesGH",
       "type": "state",
       "common": {
