@@ -698,7 +698,7 @@ export async function controls(
             const control: IotExternalPatternControl = controls?.[0] || JSON.parse(JSON.stringify(patterns[pattern]));
 
             // find first required
-            const state = control.states.find(state => state.required);
+            const state = control.states.find(state => state.required || state.requiredOneOf);
             if (state) {
                 if (!controls?.[0]) {
                     state.id = id;
