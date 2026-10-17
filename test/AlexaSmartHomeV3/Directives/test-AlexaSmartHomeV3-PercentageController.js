@@ -23,7 +23,8 @@ describe('AlexaSmartHomeV3 - PercentageController', function () {
         AdapterProvider.init(helpers.adapterMock());
         IotProxy.publishStateChange = event => (stateChange = event);
 
-        blinds = helpers.blindsControl();
+        // blinds use the RangeController now; the base of the Percentage control keeps the PercentageController
+        blinds = helpers.percentageControl();
 
         deviceManager = new DeviceManager();
         deviceManager.addDevice(
