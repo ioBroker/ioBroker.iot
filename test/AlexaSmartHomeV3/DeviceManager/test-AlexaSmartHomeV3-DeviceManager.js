@@ -183,4 +183,34 @@ describe('AlexaSmartHomeV3 - DeviceManager', function () {
             );
         });
     });
+
+    describe('keeps devices sharing a state up to date...', async function () {
+        it('when the state changes outside of the device', async function () {
+            AdapterProvider.init(helpers.adapterMock());
+            // every name of a comma-separated smartName becomes its own device with its own copy of the controls
+            const manager = new DeviceManager();
+            const first = helpers.sliderControl();
+            const second = helpers.sliderControl();
+            manager.addDevice(new Device({ id: 'oven', friendlyName: 'oven', controls: [first] }));
+            manager.addDevice(new Device({ id: 'stove', friendlyName: 'stove', controls: [second] }));
+
+            // the second name was used last: its cache holds 120
+            const set = await helpers.getSample('RangeController/RangeController.SetRangeValue.request.json');
+            set.directive.endpoint.endpointId = 'stove';
+            await manager.handleAlexaEvent(set);
+
+            // the device confirms another value, e.g. after a command via the first name or a wall switch
+            const id = second.supported[0].properties[0].getId;
+            await AdapterProvider.get().setForeignStateAsync(id, { val: 200, ack: true });
+            await manager.handleStateUpdate(id, { val: 200, ack: true });
+            assert.equal(first.supported[0].properties[0].currentValue, 200);
+            assert.equal(second.supported[0].properties[0].currentValue, 200);
+
+            // a relative command via the second name starts from the current value
+            const adjust = await helpers.getSample('RangeController/RangeController.AdjustRangeValue.request.json');
+            adjust.directive.endpoint.endpointId = 'stove';
+            const response = await manager.handleAlexaEvent(adjust);
+            assert.equal(response.context.properties[0].value, 195, 'Value!');
+        });
+    });
 });

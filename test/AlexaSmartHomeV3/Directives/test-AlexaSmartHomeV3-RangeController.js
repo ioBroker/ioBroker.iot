@@ -89,5 +89,24 @@ describe('AlexaSmartHomeV3 - RangeController', function () {
 
             assert.equal(deviceManager.devices[0].controls[0].supported[0].properties[0].currentValue, 115);
         });
+
+        // "Alexa, turn the oven down" without an amount: Alexa sends rangeValueDelta = -precision
+        // and rangeValueDeltaDefault = true. The configured step replaces the amount, the sign stays.
+        it('RangeController Adjust down without amount', async function () {
+            const event = await helpers.getSample('RangeController/RangeController.AdjustRangeValue.request.json');
+            event.directive.payload = { rangeValueDelta: -1, rangeValueDeltaDefault: true };
+            const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+            // 115 - step, step = (280 - 80) / 10 = 20
+            assert.equal(response.context.properties[0].value, 95, 'Value!');
+        });
+
+        it('RangeController Adjust up without amount', async function () {
+            const event = await helpers.getSample('RangeController/RangeController.AdjustRangeValue.request.json');
+            event.directive.payload = { rangeValueDelta: 1, rangeValueDeltaDefault: true };
+            const response = await deviceManager.handleAlexaEvent(event);
+            assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+            assert.equal(response.context.properties[0].value, 115, 'Value!');
+        });
     });
 });

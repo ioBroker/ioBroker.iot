@@ -321,6 +321,10 @@ const Helpers = {
         return new Controls.Blind(require('./Resources/blinds.json'));
     },
 
+    percentageControl: function () {
+        return new Controls.AdjustablePercentageControl(require('./Resources/blinds.json'));
+    },
+
     vacuumCleanerControl: function () {
         return new Controls.VacuumCleaner(require('./Resources/vacuumCleaner.json'));
     },

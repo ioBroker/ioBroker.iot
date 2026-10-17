@@ -367,10 +367,11 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             assert.equal(response.event.payload.endpoints[0].capabilities.length, 2);
             assert.equal(response.event.payload.endpoints[0].capabilities[0].type, 'AlexaInterface');
             assert.equal(response.event.payload.endpoints[0].capabilities[0].interface, 'Alexa');
-            assert.equal(response.event.payload.endpoints[0].capabilities[1].interface, 'Alexa.PercentageController');
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].interface, 'Alexa.RangeController');
+            assert.equal(response.event.payload.endpoints[0].capabilities[1].instance, 'Blind.Lift');
             assert.equal(
                 response.event.payload.endpoints[0].capabilities[1].properties.supported[0].name,
-                'percentage',
+                'rangeValue',
             );
         });
 
