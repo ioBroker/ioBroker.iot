@@ -558,7 +558,10 @@ export default class DeviceManager {
                     }
                 }
 
-                // should be the only device having the id => stop processing here
+                // Further devices can have the same id: every name of a comma-separated smartName becomes
+                // its own device with its own copy of the controls. The change is reported once, but all
+                // copies need the new value, otherwise relative commands and toggling use an outdated one.
+                this.updateCachedValues(id, state.val, device);
                 break;
             }
         }
@@ -566,6 +569,22 @@ export default class DeviceManager {
         // this should never happen
         if (notFound) {
             this.log.debug(`state id ${id} doesn't belong to any device`);
+        }
+    }
+
+    /** Sets the cached value of the state `id` in all devices except `reportedDevice` */
+    private updateCachedValues(id: string, val: ioBroker.StateValue, reportedDevice: Device): void {
+        for (const device of this.devices) {
+            if (device === reportedDevice) {
+                continue;
+            }
+            const property = device.controls
+                .flatMap(item => item.supported)
+                .flatMap(item => item.properties)
+                .find(item => item.getId === id);
+            if (property) {
+                property.currentValue = val;
+            }
         }
     }
 }

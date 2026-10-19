@@ -34,7 +34,7 @@ export default class RangeController extends Base {
         configuration?: AlexaV3RangeConfiguration;
         semantics?: {
             actionMappings: AlexaV3ActionMapping[];
-            stateMappings: AlexaV3StateMapping[];
+            stateMappings?: AlexaV3StateMapping[];
         };
         capabilityResources?: {
             friendlyNames: AlexaV3FriendlyName[];

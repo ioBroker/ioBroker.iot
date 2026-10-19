@@ -476,7 +476,7 @@ export interface AlexaV3Capability {
           };
     semantics?: {
         actionMappings: AlexaV3ActionMapping[];
-        stateMappings: AlexaV3StateMapping[];
+        stateMappings?: AlexaV3StateMapping[];
     };
     capabilityResources?: {
         friendlyNames: AlexaV3FriendlyName[];
@@ -627,9 +627,10 @@ export type AlexaV3ActionMapping = {
     actions: string[];
     directive: {
         name: string;
-        payload: {
-            mode: string;
-        };
+        payload:
+            | { mode: string } // SetMode
+            | { rangeValue: number } // SetRangeValue
+            | { rangeValueDelta: number; rangeValueDeltaDefault: boolean }; // AdjustRangeValue
     };
 };
 export type AlexaV3FriendlyName =
