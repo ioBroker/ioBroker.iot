@@ -511,6 +511,10 @@
 ### 0.1.4 (2018-09-26)
 
 -   (bluefox) Initial commit
+## 5.0.12 (2025-12-21)
+- (@GermanBluefox) Added copy of credentials from cloud instance
+- (@GermanBluefox) Added QR code to fast connect the ioBroker visu app
+
 ## 5.0.11 (2025-12-16)
 - (@GermanBluefox) Added percentual control
 - (@GermanBluefox) Correcting creation for complex groups

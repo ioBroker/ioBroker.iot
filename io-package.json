@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "7.1.5",
+    "version": "7.1.6",
     "news": {
+      "7.1.6": {
+        "en": "Alexa V3: blinds are announced as RangeController \"Blind.Lift\" and understand \"open/close\". \"Down/up\" without an amount closes/opens the blind fully. A new device discovery in Alexa is required, and the discovery of a blind is about 600 characters bigger\nAlexa V3: \"down\" without an amount lowers a slider instead of raising it\nAlexa V3: all names of a comma-separated smart name get the new value of a state\nAlexa V3: several RangeControllers in one device (e.g. a blind and a slider) are discovered and controlled separately",
+        "de": "Alexa V3: Rollos heißen RangeController „Blind.Lift“ und verstehen „öffnen/schließen“. „Runter/Rauf“ ohne Betrag schließt/öffnet das Rollo ganz. Eine neue Geräteerkennung in Alexa ist erforderlich, und eine Blinde ist etwa 600 Zeichen größer\nAlexa V3: „Ab“ ohne Betrag senkt einen Slider, statt ihn zu erhöhen\nAlexa V3: Alle Namen kommagetrennter Smart Names erhalten den neuen Status\nAlexa V3: mehrere RangeController in einem Gerät (z. B. Blind und Slider) werden separat erkannt und gesteuert",
+        "ru": "Alexa V3: жалюзи анонсированы как RangController «Blind.Lift» и подразумевают «открыть/закрыть». При нажатии кнопки «Вниз/вверх» жалюзи полностью закрываются/открываются. Требуется обнаружение нового устройства в Alexa, а размер обнаружения слепых примерно на 600 символов\nAlexa V3: «вниз» без суммы опускает слайдер, а не поднимает его\nAlexa V3: все имена смарт-имени, разделенного запятыми, получают новое значение состояния\nAlexa V3: несколько RangeController в одном устройстве (например, жалюзи и ползунок) обнаруживаются и управляются отдельно",
+        "pt": "Alexa V3: blinds são RangeController “Blind.Lift” e entendem “abrir/fechar”. “Down/up” sem valor fecha/abre totalmente a cortina. É preciso descobrir um novo dispositivo na Alexa, e a de um cego é cerca de 600 caracteres maior\nAlexa V3: “para baixo” sem valor abaixa o controle em vez de aumentá-lo\nAlexa V3: todos os nomes inteligentes por vírgula ganham o novo valor de um estado\nAlexa V3: vários RangeControllers em um dispositivo (ex: persiana e slider) são detectados e controlados separadamente",
+        "nl": "Alexa V3: jaloezieën worden aangekondigd als RangeController „Blind.Lift” en begrijpen „open/sluiten”. „Omlaag/omhoog” zonder een bedrag sluit of opent het rolgordijn volledig. Er is een nieuw apparaat nodig in Alexa, en de ontdekking van een blind is ongeveer 600 tekens groter\nAlexa V3: „omlaag” zonder een bedrag verlaagt een schuifregelaar in plaats van omhoog\nAlexa V3: alle namen van een slimme naam die door komma's wordt gescheiden, krijgen de nieuwe waarde van een staat\nAlexa V3: meerdere RangeControllers in één apparaat (bijvoorbeeld een rolgordijn en een schuifregelaar) worden afzonderlijk ontdekt en bediend",
+        "fr": "Alexa V3 : les blinds se nomment RangeController « Blind.Lift » et comprennent « ouvrir/fermer ». « Bas/up » sans montant ferme/ouvre complètement le store. Il faut découvrir un nouvel appareil dans Alexa, et celui d'un blind fait 600 caractères de plus\nAlexa V3 : « vers le bas » sans montant fait baisser le curseur au lieu de le relever\nAlexa V3 : tous les noms intelligents séparés par des virgules prennent la nouvelle valeur\nAlexa V3 : plusieurs RangeController (un store et un slider, par exemple) sont découverts et contrôlés séparément",
+        "it": "Alexa V3: le tende si chiamano RangeController «Blind.Lift» e capiscono «apri/chiudi». «Giù/su» senza importo chiude o apre completamente la tenda. È richiesto un nuovo dispositivo in Alexa, e un cieco è più grande di circa 600 caratteri\nAlexa V3: «giù» senza importo abbassa un cursore invece di alzarlo\nAlexa V3: tutti i nomi smart separati da virgole assumono il nuovo stato\nAlexa V3: diversi RangeController in un dispositivo (ad es. tenda e slider) sono rilevati e controllati separatamente",
+        "es": "Alexa V3: las persianas se anuncian como RangeController «Blind.Lift» y entienden «abrir/cerrar». «Bajar/subir» sin cantidad cierra o abre la persiana por completo. Es necesario descubrir un nuevo dispositivo en Alexa, y el descubrimiento de un ciego es unos 600 caracteres más\nAlexa V3: «abajo» sin cantidad baja un control en lugar de subirlo\nAlexa V3: todos los nombres de un smartphone separados por comas tienen el nuevo valor de un estado\nAlexa V3: varios RangeControllers en un dispositivo (p. ej., una persiana y un cursor) se descubren y controlan por separado",
+        "pl": "Alexa V3: rolety są ogłaszane jako RangeController „Blind.Lift” i rozumieją „otwórz/zamknij”. „W dół/w górę” bez kwoty zamykają/otwiera roletę całkowicie. Wymagane jest odkrycie nowego urządzenia w Alexa, a odkrycie ślepyty jest większe o około 600 znaków\nAlexa V3: „w dół” bez kwoty obniża suwak zamiast go podnosić\nAlexa V3: wszystkie nazwy inteligentnej nazwy rozdzielonej przecinkami otrzymują nową wartość stanu\nAlexa V3: kilka kontrolerów RangeControllerów w jednym urządzeniu (np. żaluzja i suwak) jest wykrywanych i kontrolowanych osobno",
+        "uk": "Alexa V3: жалюзі оголошуються як контролер діапазону «Blind.Lift» і розуміють «відкрити/закрити». «Вниз/вгору» без суми закриває/відкриває жалюзі повністю. Потрібне відкриття нового пристрою в Alexa, а виявлення сліпого приблизно на 600 символів більше\nAlexa V3: «вниз» без суми знижує повзунок замість того, щоб піднімати його\nAlexa V3: всі імена смарт-імені, розділеного комами, отримують нове значення стану\nAlexa V3: кілька контролерів діапазону в одному пристрої (наприклад, жалюзі та повзунок) виявляються та контролюються окремо",
+        "zh-cn": "Alexa V3：百叶窗被宣布为 RangeController “Blind.Lift”，理解为 “打开/关闭”。没有金额的 “向下/向上” 则完全关闭/打开盲注。需要在 Alexa 中发现新的设备，而盲注的发现要大约 600 个字符\nAlexa V3：没有数量的 “向下” 会降低滑块而不是抬高滑块\nAlexa V3：以逗号分隔的智能名称的所有名称都将获得状态的新值\nAlexa V3：发现一台设备（例如百叶窗和滑块）中的多个范围控制器并分别进行控制"
+      },
       "7.1.5": {
         "en": "Alexa V3: a request that fails with an exception is answered with INTERNAL_ERROR instead of \"Service is disabled\", and the error is logged\nFixed detection of thermostats in Alexa V3 with type-detector 6 (`requiredOneOf` states)\nAlexa V3: removed, renamed and new devices are reported to Alexa without a new discovery, but it is not yet active in the cloud\nAlexa V3: error answers carry the correlation token and endpoint of the request, and a device that is gone is reported as NO_SUCH_ENDPOINT\nAdapter requires js-controller >= 6.0.11 now.",
         "de": "Alexa V3: Eine ausnahmsweise fehlgeschlagene Anfrage wird mit INTERNAL_ERROR statt „Service is disabled“ beantwortet und geloggt\nThermostaterkennung in Alexa V3 mit Typmelder 6 behoben (Status `RequiredOneOf`)\nAlexa V3: entfernt, umbenannt und neue Geräte werden an Alexa gemeldet, aber in der Cloud noch nicht aktiv\nAlexa V3: Fehlerantworten enthalten das Token und den Endpunkt der Anfrage, und ein defektes Gerät wird als NO_SUCH_ENDPOINT gemeldet\nAdapter benötigt jetzt JS-Controller >= 6.0.11.",
@@ -80,19 +93,6 @@
         "pl": "Zdalny dostęp: na żądania MCP w chmurze odpowiadają za pośrednictwem MQTT (typ wiadomości 12)\nPrzemigrowany blokowo do TypeScript\nPoprawiono zdalny dostęp\nUniknęło ostrzeżenia o deprecacji Node.js 24 DEP0187 (`FS.ExistsSync`) podczas łączenia się z chmurą",
         "uk": "Віддалений доступ: MCP-запити хмари відповідають через MQTT (тип повідомлення 12)\nПеремігрується блокно до TypeScript\nВіддалений доступ покращено\nУникає попередження про застарілість Node.js 24 DEP0187 (`FS.existsSync`) під час підключення до хмари",
         "zh-cn": "远程访问：通过 MQTT 回复云端的 MCP 请求（消息类型 12）\n分块迁移到 TypeScript\n远程访问得到改善\n连接云时避免了 Node.js 24 弃用警告 DEP0187 (`fs.existsSync`)"
-      },
-      "7.0.1": {
-        "en": "Migrated to TypeScript 6 and react 19",
-        "de": "Migration zu TypeScript 6 und React 19",
-        "ru": "Перешёл на TypeScript 6 и React 19.",
-        "pt": "Migrei para TypeScript 6 e React 19.",
-        "nl": "Overgestapt naar TypeScript 6 en React 19.",
-        "fr": "Migration vers TypeScript 6 et React 19",
-        "it": "Migrazione a TypeScript 6 e React 19",
-        "es": "Migrado a TypeScript 6 y React 19.",
-        "pl": "Migracja do TypeScript 6 i React 19",
-        "uk": "Перейшов на TypeScript 6 та React 19",
-        "zh-cn": "已迁移到 TypeScript 6 和 React 19"
       }
     },
     "titleLang": {

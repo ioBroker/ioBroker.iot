@@ -416,7 +416,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 7.1.6 (2026-10-19)
 - (@jtolksdo) Alexa V3: blinds are announced as RangeController "Blind.Lift" and understand "open/close". "Down/up" without an amount closes/opens the blind fully. A new device discovery in Alexa is required, and the discovery of a blind is about 600 characters bigger
 - (@jtolksdo) Alexa V3: "down" without an amount lowers a slider instead of raising it
 - (@jtolksdo) Alexa V3: all names of a comma-separated smart name get the new value of a state
@@ -441,10 +441,6 @@ setState('iot.0.app.message', JSON.stringify({
 ### 5.0.13 (2026-03-31)
 - (@GermanBluefox) Corrected the handling of the multiple group names
 - (@GermanBluefox) Fixing the license validation
-
-### 5.0.12 (2025-12-21)
-- (@GermanBluefox) Added copy of credentials from cloud instance
-- (@GermanBluefox) Added QR code to fast connect the ioBroker visu app
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
