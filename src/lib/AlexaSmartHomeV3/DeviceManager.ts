@@ -457,6 +457,7 @@ export default class DeviceManager {
                                     propertyName || '',
                                     false,
                                     event.directive.header.messageId,
+                                    response.context?.properties[0].instance,
                                 );
                                 const directive = this.matchDirective(responseEvent);
                                 if (directive) {
@@ -526,6 +527,7 @@ export default class DeviceManager {
                         property.propertyName,
                         true,
                         randomUUID(),
+                        property.instance,
                     );
                     const directive = this.matchDirective(responseEvent);
                     if (directive) {

@@ -25,12 +25,14 @@ export default class ChangeReport extends Base {
         propertyName: string,
         isPhysicalInteraction: boolean,
         messageId: string,
+        instance?: string,
     ): AlexaV3Request {
         return {
             directive: {
                 header: {
                     name: className(this.toString()) as AlexaV3DirectiveType,
                     propertyName: propertyName,
+                    instance,
                     physicalInteraction: isPhysicalInteraction,
                     messageId,
                     payloadVersion: '3',
@@ -54,6 +56,7 @@ export default class ChangeReport extends Base {
 
         const endpointId = event.directive?.endpoint?.endpointId;
         const propertyName = event.directive?.header?.propertyName;
+        const instance = event.directive?.header?.instance;
         const changeCauseType = event.directive?.header?.physicalInteraction
             ? 'PHYSICAL_INTERACTION'
             : 'VOICE_INTERACTION';
@@ -73,7 +76,7 @@ export default class ChangeReport extends Base {
         if (endpoint?.reportState) {
             const properties = await endpoint.reportState();
             for (const property of properties) {
-                if (propertyName === property.name) {
+                if (propertyName === property.name && (!instance || instance === property.instance)) {
                     response.addPayloadChangeProperty(property);
                 } else {
                     response.addContextProperty(property);

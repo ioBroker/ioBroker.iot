@@ -36,7 +36,7 @@ class BlindLiftController extends RangeController {
     get alexaResponse(): RangeController['alexaResponse'] {
         return {
             interface: this.namespace,
-            instance: INSTANCE,
+            instance: this.instance,
             version: this.version,
             properties: this.discoverableProperties,
             capabilityResources: {

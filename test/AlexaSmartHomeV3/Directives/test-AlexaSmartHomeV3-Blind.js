@@ -109,4 +109,66 @@ describe('AlexaSmartHomeV3 - Blind', function () {
             });
         }
     });
+
+    describe('Together with a slider in one device', function () {
+        const mixedId = 'endpoint-002';
+        let manager;
+        let device;
+
+        before(function () {
+            manager = new DeviceManager();
+            device = new Device({
+                id: mixedId,
+                friendlyName: 'blind-and-slider',
+                controls: [helpers.blindsControl(), helpers.sliderControl()],
+            });
+            manager.addDevice(device);
+        });
+
+        function request(instance, rangeValue) {
+            const event = rangeControllerRequest('SetRangeValue', { rangeValue });
+            event.directive.header.instance = instance;
+            event.directive.endpoint.endpointId = mixedId;
+            return event;
+        }
+
+        it('discovers both RangeController instances', function () {
+            const instances = device.capabilities
+                .filter(capability => capability.namespace === 'Alexa.RangeController')
+                .map(capability => capability.alexaResponse.instance);
+            assert.deepEqual(instances.sort(), ['Blind.Lift', 'Range.Value']);
+        });
+
+        it('a "Blind.Lift" directive changes only the blind', async function () {
+            await AdapterProvider.get().setForeignStateAsync('alias.0.Wohnzimmer.Backofen.SET', 150);
+            const response = await manager.handleAlexaEvent(request('Blind.Lift', 40));
+            assert.equal(response.context.properties[0].instance, 'Blind.Lift', 'Instance!');
+            assert.equal(response.context.properties[0].value, 40, 'Value!');
+            const blind = await AdapterProvider.get().getForeignStateAsync('alias.0.Wohnzimmer.Blinds.SET');
+            const slider = await AdapterProvider.get().getForeignStateAsync('alias.0.Wohnzimmer.Backofen.SET');
+            assert.equal(blind.val, 40, 'Blind!');
+            assert.equal(slider.val, 150, 'Slider!');
+        });
+
+        it('a "Range.Value" directive changes only the slider', async function () {
+            const response = await manager.handleAlexaEvent(request('Range.Value', 200));
+            assert.equal(response.context.properties[0].instance, 'Range.Value', 'Instance!');
+            assert.equal(response.context.properties[0].value, 200, 'Value!');
+            const blind = await AdapterProvider.get().getForeignStateAsync('alias.0.Wohnzimmer.Blinds.SET');
+            const slider = await AdapterProvider.get().getForeignStateAsync('alias.0.Wohnzimmer.Backofen.SET');
+            assert.equal(blind.val, 40, 'Blind!');
+            assert.equal(slider.val, 200, 'Slider!');
+        });
+
+        it('reports the values of both instances', async function () {
+            const properties = (await device.reportState()).filter(p => p.name === 'rangeValue');
+            assert.deepEqual(
+                properties.map(p => [p.instance, p.value]).sort(),
+                [
+                    ['Blind.Lift', 40],
+                    ['Range.Value', 200],
+                ],
+            );
+        });
+    });
 });

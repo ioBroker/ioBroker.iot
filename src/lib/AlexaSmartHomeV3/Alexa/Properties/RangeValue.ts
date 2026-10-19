@@ -2,12 +2,20 @@ import type { AlexaV3DirectiveValue, AlexaV3Request } from '../../types';
 import AdjustableProperty from './AdjustableProperty';
 
 export default class RangeValue extends AdjustableProperty {
+    static readonly DEFAULT_INSTANCE = 'Range.Value';
+
     static matches(event: AlexaV3Request): boolean {
         return event?.directive?.header?.namespace === `Alexa.RangeController`;
     }
 
+    get instance(): string {
+        return super.instance ?? RangeValue.DEFAULT_INSTANCE;
+    }
+
     matches(event: AlexaV3Request): boolean {
-        return RangeValue.matches(event);
+        // A device can have several RangeControllers (e.g. a blind and a slider): Alexa names the addressed one
+        const instance = event?.directive?.header?.instance;
+        return RangeValue.matches(event) && (!instance || instance === this.instance);
     }
 
     alexaDirectiveValue(event: AlexaV3Request): AlexaV3DirectiveValue {

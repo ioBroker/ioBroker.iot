@@ -6,6 +6,7 @@ import type {
     AlexaV3FriendlyName,
     AlexaV3Namespace,
     AlexaV3RangeConfiguration,
+    AlexaV3Request,
     AlexaV3StateMapping,
     AlexaV3UnitOfMeasure,
 } from '../../types';
@@ -20,6 +21,16 @@ export default class RangeController extends Base {
         this.min = opts.setState?.common.min || 0;
         this.max = opts.setState?.common.max || 100;
         this.unit = opts.setState?.common.unit || '';
+    }
+
+    get instance(): string {
+        return this._properties[0].instance!;
+    }
+
+    matches(event: AlexaV3Request): boolean {
+        // A device can have several RangeControllers (e.g. a blind and a slider): Alexa names the addressed one
+        const instance = event?.directive?.header?.instance;
+        return super.matches(event) && (!instance || instance === this.instance);
     }
 
     get alexaResponse(): {
@@ -42,7 +53,7 @@ export default class RangeController extends Base {
     } {
         return {
             interface: this.namespace,
-            instance: 'Range.Value',
+            instance: this.instance,
             version: this.version,
             properties: this.discoverableProperties,
             configuration: this.configuration,

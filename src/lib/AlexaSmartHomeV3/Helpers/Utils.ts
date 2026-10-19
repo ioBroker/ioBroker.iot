@@ -950,18 +950,18 @@ export function denormalize_0_1(normalized: number, min: number, max: number, no
  * Returns distinct objects in a list based on values of the provided property name
  *
  * @param list - list of objects
- * @param propertyName - name of the property to build distinct values on
+ * @param propertyName - name of the property to build distinct values on, or a function returning the key
  * @param combineValues - if the values should be combined and not just overwritten
  * @returns List containing at most one element per property value
  */
 export function distinctByPropertyName<T extends Record<string, any>>(
     list: T[],
-    propertyName: keyof T,
+    propertyName: keyof T | ((item: T) => unknown),
     combineValues?: boolean,
 ): T[] {
-    const map = new Map<T[keyof T], T>();
+    const map = new Map<unknown, T>();
     for (const item of list) {
-        const key = item[propertyName];
+        const key = typeof propertyName === 'function' ? propertyName(item) : item[propertyName];
         if (combineValues && map.has(key)) {
             const existing = map.get(key)!;
             if (existing.value === 'ON' || existing.value === 'OFF') {

@@ -93,12 +93,13 @@ export default class Device {
             instance?: string;
             name: string;
             value: any;
-        }>(properties, 'name', true);
+        }>(properties, item => `${item.name}#${item.instance || ''}`, true);
     }
 
     get capabilities(): CapabilitiesBase[] {
         const allCapabilities = this.controls.flatMap(item => item.supported);
-        return distinctByPropertyName(allCapabilities, 'namespace');
+        // the same namespace with different instances are different capabilities, e.g. a blind and a slider
+        return distinctByPropertyName(allCapabilities, item => `${item.namespace}#${item.instance || ''}`);
     }
 
     get displayCategories(): AlexaV3Category[] {

@@ -23,6 +23,11 @@ export abstract class Base {
         return `Alexa.${this.constructor.name}` as AlexaV3Namespace;
     }
 
+    /** Distinguishes several capabilities of the same namespace, e.g. ModeController or RangeController */
+    get instance(): string | undefined {
+        return undefined;
+    }
+
     /**
      * Checks whether the capability instance matches, i.e. can handle the event Alexa sends to the skill
      *
