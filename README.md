@@ -417,7 +417,7 @@ setState('iot.0.app.message', JSON.stringify({
 -->
 ## Changelog
 ### 7.1.6 (2026-10-19)
-- (@jtolksdo) Alexa V3: blinds are announced as RangeController "Blind.Lift" and understand "open/close". "Down/up" without an amount closes/opens the blind fully. A new device discovery in Alexa is required, and the discovery of a blind is about 600 characters bigger
+- (@jtolksdo) Alexa V3: blinds are announced as RangeController "Blind.Lift" and understand "open/close". "Down/up" without an amount closes/opens the blind fully. A new device discovery in Alexa is required. **Breaking:** existing Alexa routines with blinds stop working and must be edited once (remove the blind from the routine, add it again and save). The discovery of a blind is about 600 characters bigger
 - (@jtolksdo) Alexa V3: "down" without an amount lowers a slider instead of raising it
 - (@jtolksdo) Alexa V3: all names of a comma-separated smart name get the new value of a state
 - (@GermanBluefox) Alexa V3: several RangeControllers in one device (e.g. a blind and a slider) are discovered and controlled separately
