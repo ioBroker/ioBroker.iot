@@ -427,6 +427,7 @@ setState('iot.0.app.message', JSON.stringify({
 - (@GermanBluefox) Alexa V3: thermostats with modes unknown to Alexa (e.g. MANU) send no empty or double modes in the discovery
 - (@GermanBluefox) Custom skill: "Starte Dialog" is not said twice anymore, and answers in SSML (`<speak>...`) are spoken
 - (@GermanBluefox) Google Home: own attributes of a trait are kept, and a thermostat with its own mode state reports this mode
+- (@GermanBluefox) The request of the Alexa V3 devices by the GUI is logged on debug level
 
 ### 7.1.6 (2026-10-19)
 - (@jtolksdo) Alexa V3: blinds are announced as RangeController "Blind.Lift" and understand "open/close". "Down/up" without an amount closes/opens the blind fully. A new device discovery in Alexa is required. **Breaking:** existing Alexa routines with blinds stop working and must be edited once (remove the blind from the routine, add it again and save). The discovery of a blind is about 600 characters bigger

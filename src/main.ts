@@ -184,7 +184,8 @@ class IotAdapter extends Adapter {
 
                         case 'browse3':
                             if (obj.callback) {
-                                this.log.info(`Request V3 devices: ${obj.message}`);
+                                // the open Alexa V3 tab asks on every state change
+                                this.log.debug(`Request V3 devices: ${obj.message}`);
                                 if (this.alexaSH3) {
                                     const devices = await this.alexaSH3.getDevices(obj.message === 'objects');
                                     this.sendTo(obj.from, obj.command, devices, obj.callback);
