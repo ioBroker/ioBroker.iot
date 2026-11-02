@@ -7,35 +7,32 @@ import type Device from '../../Device';
 import type Logger from '../../Helpers/Logger';
 
 export default class Discovery extends Base {
-    static isSensorInterface(iface: unknown): boolean {
-        return typeof iface === 'string' && iface.endsWith('Sensor');
-    }
-
-    static setAllProactiveAndRetrievableFalse(obj: any): any {
+    /**
+     * The skill does not forward ChangeReports to Alexa (no event gateway), so no property may be announced as
+     * proactively reported: Alexa would wait for changes that never come.
+     * "retrievable" stays as the capability declares it: Alexa asks with ReportState, e.g. for the tile in the app
+     * or "What's the temperature in the kitchen?".
+     *
+     * @param obj Discovery response or a part of it
+     */
+    static setAllProactivelyReportedFalse(obj: any): any {
         if (obj === null || obj === undefined) {
             return obj;
         }
 
         if (Array.isArray(obj)) {
             for (let i = 0; i < obj.length; i++) {
-                Discovery.setAllProactiveAndRetrievableFalse(obj[i]);
+                Discovery.setAllProactivelyReportedFalse(obj[i]);
             }
             return obj;
         }
 
         if (typeof obj === 'object') {
-            // Sensor capabilities (e.g. Alexa.TemperatureSensor, HumiditySensor,
-            // MotionSensor, ContactSensor) must stay retrievable so Alexa can
-            // answer queries like "What's the temperature in the kitchen?".
-            if (Discovery.isSensorInterface(obj.interface)) {
-                return obj;
-            }
-
             for (const key of Object.keys(obj)) {
-                if (key === 'proactivelyReported' || key === 'retrievable') {
+                if (key === 'proactivelyReported') {
                     obj[key] = false;
                 } else {
-                    Discovery.setAllProactiveAndRetrievableFalse(obj[key]);
+                    Discovery.setAllProactivelyReportedFalse(obj[key]);
                 }
             }
         }
@@ -90,10 +87,7 @@ export default class Discovery extends Base {
 
         const json = response.get();
 
-        // To do, activate it again after status report will work
-        //if (endpointManager.validTill <= Date.now()) {
-        Discovery.setAllProactiveAndRetrievableFalse(json);
-        //}
+        Discovery.setAllProactivelyReportedFalse(json);
 
         validateDiscoveryResponse(json, log);
 

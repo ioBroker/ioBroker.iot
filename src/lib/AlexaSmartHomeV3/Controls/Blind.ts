@@ -46,7 +46,7 @@ class BlindLiftController extends RangeController {
                 supportedRange: { minimumValue: CLOSED, maximumValue: OPEN, precision: 1 },
                 unitOfMeasure: 'Alexa.Unit.Percent',
             },
-            // no stateMappings: they only serve state queries, and Discovery sends retrievable = false
+            // no stateMappings yet: they only serve questions like "Is the blind open?"
             semantics: {
                 actionMappings: [
                     setRangeValue(['Alexa.Actions.Close', 'Alexa.Actions.Lower'], CLOSED),
