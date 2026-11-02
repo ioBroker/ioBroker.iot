@@ -505,6 +505,8 @@ interface UrlKey {
 // Trait-specific EXECUTE command params (flat union — all fields optional).
 interface GHColor {
     name?: string;
+    // Kelvin
+    temperature?: number;
     temperatureK?: number;
     spectrumRGB?: number;
     spectrumHSV?: { hue: number; saturation: number; value: number };
@@ -599,23 +601,199 @@ interface GHRequest {
     inputs?: GHInput[];
 }
 
-// Reported-state cache: per device, per attribute → last sent value + timestamp.
-type ReportedValue = ioBroker.StateValue | GHQueryColor | undefined;
-interface ReportedEntry {
-    val: ReportedValue;
-    ts: number;
+// A state to write for an EXECUTE command
+interface GHTask {
+    id: string;
+    val: ioBroker.StateValue;
+    cmd?: string;
+    devId: string;
+    param: string;
+    // e.g. "color_temperature": decides how the value of Google is converted into the unit of the state
+    path?: string;
+    // the value in the form of Google, for the answer
+    googleVal?: unknown;
 }
 
 // updateStates / updateState send-to-cloud per-device JSON shape.
 // Mixed-type map — discrimination is dynamic, so we type as unknown and narrow at access sites.
-interface GHUpdateAttrRef {
-    id: string;
-}
 interface GHUpdateDeviceMap {
     color?: GHQueryColor;
     [field: string]: unknown;
 }
 type GHUpdateMap = Record<string, GHUpdateDeviceMap>;
+
+// Range and unit of an ioBroker state, to convert its values into the values of Google and back
+interface StateRange {
+    min?: number;
+    max?: number;
+    unit?: string;
+}
+
+interface KelvinRange {
+    temperatureMinK: number;
+    temperatureMaxK: number;
+}
+
+const DEFAULT_KELVIN_RANGE: KelvinRange = { temperatureMinK: 2000, temperatureMaxK: 9000 };
+
+function toNumber(value: unknown): number | undefined {
+    const num = typeof value === 'number' ? value : parseFloat(value as string);
+    return Number.isFinite(num) ? num : undefined;
+}
+
+function clamp(value: number, min: number, max: number): number {
+    return Math.min(Math.max(value, min), max);
+}
+
+function toBoolean(value: ioBroker.StateValue): boolean {
+    return (
+        value === 1 ||
+        value === '1' ||
+        value === 'true' ||
+        value === 'ON' ||
+        value === 'on' ||
+        value === true ||
+        (typeof value === 'number' && value > 0)
+    );
+}
+
+/** Position of a value in the range of its state: 0..1 */
+function toFraction(value: unknown, range: StateRange, defaultMax: number): number | undefined {
+    const num = toNumber(value);
+    if (num === undefined) {
+        return undefined;
+    }
+    const min = range.min ?? 0;
+    const max = range.max ?? defaultMax;
+    return max > min ? clamp((num - min) / (max - min), 0, 1) : clamp(num / defaultMax, 0, 1);
+}
+
+/** Value of a state for a position 0..1 in its range */
+function fromFraction(fraction: number, range: StateRange, defaultMax: number): number {
+    const min = range.min ?? 0;
+    const max = range.max ?? defaultMax;
+    const value = min + (max - min) * clamp(fraction, 0, 1);
+    // a state with a small range, e.g. 0..1, needs decimals
+    return max - min > 10 ? Math.round(value) : Math.round(value * 1000) / 1000;
+}
+
+/** Google expects 0..100 %, the state may have another range, e.g. 0..255 */
+function toPercent(value: unknown, range: StateRange): number | undefined {
+    const fraction = toFraction(value, range, 100);
+    return fraction === undefined ? undefined : Math.round(fraction * 100);
+}
+
+function isMired(range: StateRange): boolean {
+    const unit = range.unit?.toLowerCase();
+    if (unit === 'mired' || unit === 'mireds') {
+        return true;
+    }
+    // e.g. 153..500 without unit: Kelvin values are always above 1000
+    return !range.unit && range.max !== undefined && range.max > 100 && range.max <= 1000;
+}
+
+function isPercent(range: StateRange): boolean {
+    return range.unit === '%' || (range.unit !== 'K' && range.max !== undefined && range.max <= 100);
+}
+
+/** Converts the value of a color temperature state (Kelvin, mired or %) into Kelvin within the range of the device */
+function toKelvin(value: unknown, range: StateRange, kelvinRange: KelvinRange): number | undefined {
+    const num = toNumber(value);
+    if (num === undefined) {
+        return undefined;
+    }
+    let kelvin: number;
+    if (isMired(range)) {
+        kelvin = num > 0 ? 1000000 / num : kelvinRange.temperatureMaxK;
+    } else if (isPercent(range)) {
+        // like IKEA TRADFRI: 0 % is the coldest, 100 % the warmest white
+        const fraction = toFraction(num, range, 100)!;
+        kelvin = kelvinRange.temperatureMaxK - (kelvinRange.temperatureMaxK - kelvinRange.temperatureMinK) * fraction;
+    } else {
+        kelvin = num;
+    }
+    return Math.round(clamp(kelvin, kelvinRange.temperatureMinK, kelvinRange.temperatureMaxK));
+}
+
+/** Converts Kelvin from Google into the unit of the color temperature state (Kelvin, mired or %) */
+function fromKelvin(kelvin: number, range: StateRange, kelvinRange: KelvinRange): number {
+    kelvin = clamp(kelvin, kelvinRange.temperatureMinK, kelvinRange.temperatureMaxK);
+    if (isMired(range)) {
+        const mired = Math.round(1000000 / kelvin);
+        return clamp(mired, range.min ?? mired, range.max ?? mired);
+    }
+    if (isPercent(range)) {
+        const span = kelvinRange.temperatureMaxK - kelvinRange.temperatureMinK;
+        return fromFraction(span > 0 ? (kelvinRange.temperatureMaxK - kelvin) / span : 0, range, 100);
+    }
+    return Math.round(clamp(kelvin, range.min ?? kelvin, range.max ?? kelvin));
+}
+
+/** h, s and v in 0..1 → 0xRRGGBB */
+function hsvToRgb(h: number, s: number, v: number): number {
+    const i = Math.floor(h * 6);
+    const f = h * 6 - i;
+    const p = v * (1 - s);
+    const q = v * (1 - f * s);
+    const t = v * (1 - (1 - f) * s);
+    const [r, g, b] = [
+        [v, t, p],
+        [q, v, p],
+        [p, v, t],
+        [p, q, v],
+        [t, p, v],
+        [v, p, q],
+    ][i % 6];
+    return (Math.round(r * 255) << 16) | (Math.round(g * 255) << 8) | Math.round(b * 255);
+}
+
+/** 0xRRGGBB → h, s and v in 0..1 */
+function rgbToHsv(rgb: number): { h: number; s: number; v: number } {
+    const r = ((rgb & 0xff0000) >> 16) / 255;
+    const g = ((rgb & 0x00ff00) >> 8) / 255;
+    const b = (rgb & 0x0000ff) / 255;
+    const max = Math.max(r, g, b);
+    const d = max - Math.min(r, g, b);
+    let h = 0;
+    if (d) {
+        if (max === r) {
+            h = (g - b) / d + (g < b ? 6 : 0);
+        } else if (max === g) {
+            h = (b - r) / d + 2;
+        } else {
+            h = (r - g) / d + 4;
+        }
+        h /= 6;
+    }
+    return { h, s: max ? d / max : 0, v: max };
+}
+
+function parseRgb(value: ioBroker.StateValue): number | undefined {
+    // "#RRGGBB" or "#RRGGBBWW" (with white)
+    const num = typeof value === 'string' ? parseInt(value.replace(/^#/, '').substring(0, 6), 16) : toNumber(value);
+    return num === undefined || !Number.isFinite(num) ? undefined : clamp(Math.round(num), 0, 0xffffff);
+}
+
+/** The color of an EXECUTE command in the form of the device state of Google */
+function toGoogleColor(color: GHColor | undefined): GHQueryColor | undefined {
+    if (color?.spectrumRGB !== undefined) {
+        return { spectrumRgb: color.spectrumRGB };
+    }
+    const temperatureK = color?.temperature ?? color?.temperatureK;
+    return temperatureK !== undefined ? { temperatureK } : undefined;
+}
+
+/** IDs of all states, from which the state of the device for Google is read */
+function getStateIds(device: GHDevice): string[] {
+    const ids: string[] = [];
+    Object.keys(device.customData || {}).forEach(attr => {
+        const id = device.customData[attr];
+        if (attr.startsWith('get_') && id && !ids.includes(id)) {
+            ids.push(id);
+        }
+    });
+    return ids;
+}
 
 // -----------------------------------------------------------------------------
 
@@ -636,7 +814,9 @@ export default class GoogleHome {
     private keyPromise: Promise<void> | null = null;
     private keyPromiseTime: number | null = null;
     private unknownDevices: Record<string, number> = {};
-    private reportedStates: Record<string, Record<string, ReportedEntry>> = {};
+    // per device: the state last reported to Google
+    private reportedStates: Record<string, GHUpdateDeviceMap> = {};
+    private stateRanges: Record<string, StateRange> = {};
     private rateCalculation: number[] = [];
 
     private tasksTimer: NodeJS.Timeout | null = null;
@@ -1370,9 +1550,11 @@ export default class GoogleHome {
         func: string,
         obj: IoBObject,
     ): GHDevice {
-        const getOpenPercent = control.states.find(state => state.name === 'SET' && state.id);
-        const set_openPercent = getOpenPercent?.id;
-        const get_openPercent = set_openPercent;
+        const setOpenPercent = control.states.find(state => state.name === 'SET' && state.id);
+        const set_openPercent = setOpenPercent?.id;
+        // the position the blind really has, while SET is only the target
+        const getOpenPercent = control.states.find(state => state.name === 'ACTUAL' && state.id);
+        const get_openPercent = getOpenPercent?.id || set_openPercent;
 
         const getOpenDirection = control.states.find(state => state.name === 'DIRECTION' && state.id);
         const set_openDirection = getOpenDirection?.id;
@@ -2067,6 +2249,7 @@ export default class GoogleHome {
         this.smartNames = {};
         this.usedIds = [];
         this.keys = [];
+        this.stateRanges = {};
 
         ids.sort();
 
@@ -2186,6 +2369,189 @@ export default class GoogleHome {
         return result;
     }
 
+    /** Range and unit of a state, read once after each update of the devices */
+    private async getStateRange(id: string): Promise<StateRange> {
+        if (!this.stateRanges[id]) {
+            let range: StateRange = {};
+            try {
+                const obj = await this.adapter.getForeignObjectAsync(id);
+                const common = obj?.common as Partial<ioBroker.StateCommon> | undefined;
+                range = {
+                    min: toNumber(common?.min),
+                    max: toNumber(common?.max),
+                    unit: typeof common?.unit === 'string' ? common.unit.trim() : undefined,
+                };
+            } catch {
+                // without range the defaults of Google are taken
+            }
+            this.stateRanges[id] = range;
+        }
+        return this.stateRanges[id];
+    }
+
+    /**
+     * Converts the states of a device into the state for Google (QUERY and Report State).
+     * Google rejects the whole report, if a value has a wrong type or is out of range.
+     */
+    private async getGoogleState(
+        device: GHDevice,
+        states: Record<string, ioBroker.State | null | undefined>,
+    ): Promise<GHUpdateDeviceMap> {
+        const result: GHUpdateDeviceMap = {};
+        const attrs = device.customData || {};
+        const kelvinRange = device.attributes?.colorTemperatureRange || DEFAULT_KELVIN_RANGE;
+
+        const getValue = (id: string | undefined): ioBroker.StateValue | undefined => {
+            if (!id) {
+                return undefined;
+            }
+            let value = states[id]?.val;
+            const conv = device.conv2GH?.[id];
+            if (conv) {
+                try {
+                    value = new Function('value', conv)(value) as ioBroker.StateValue;
+                } catch {
+                    this.adapter.log.error(`Invalid convert function in ${device.id}/${id}: ${conv}`);
+                }
+            }
+            return value === null || value === '' ? undefined : value;
+        };
+        // an own convert function replaces the automatic conversion of the range
+        const getRange = (id: string): Promise<StateRange> =>
+            device.conv2GH?.[id] ? Promise.resolve({}) : this.getStateRange(id);
+
+        // Google knows only one color: RGB or the color temperature, whichever was set last
+        let rgb: number | undefined;
+        let rgbTs = 0;
+        let temperatureK: number | undefined;
+        let temperatureTs = 0;
+
+        for (const attr of Object.keys(attrs)) {
+            const id = attrs[attr];
+            if (!attr.startsWith('get_') || !id) {
+                continue;
+            }
+            const name = attr.substring(4);
+            const value = getValue(id);
+            if (value === undefined) {
+                continue;
+            }
+            switch (name) {
+                case 'on':
+                    result.on = toBoolean(value);
+                    break;
+
+                case 'brightness': {
+                    const brightness = toPercent(value, await getRange(id));
+                    if (brightness !== undefined) {
+                        result.brightness = brightness;
+                    }
+                    break;
+                }
+
+                case 'openPercent': {
+                    const percent =
+                        typeof value === 'boolean' ? (value ? 0 : 100) : toPercent(value, await getRange(id));
+                    if (percent !== undefined) {
+                        result.openPercent = percent;
+                    }
+                    break;
+                }
+
+                case 'openDirection':
+                    result.openDirection = value === 2 ? 'DOWN' : 'UP';
+                    break;
+
+                case 'isLocked':
+                    result.isLocked = typeof value === 'boolean' ? value : value === 0;
+                    break;
+
+                case 'color_R':
+                case 'color_G':
+                case 'color_B':
+                    if (rgb === undefined) {
+                        const parts = [attrs.get_color_R, attrs.get_color_G, attrs.get_color_B];
+                        rgb = 0;
+                        for (const partId of parts) {
+                            const fraction = partId ? toFraction(getValue(partId), await getRange(partId), 255) : 0;
+                            rgb = (rgb << 8) | Math.round((fraction ?? 0) * 255);
+                        }
+                        rgbTs = Math.max(...parts.map(partId => (partId && states[partId]?.ts) || 0));
+                    }
+                    break;
+
+                case 'color_hue': {
+                    const hue = toFraction(value, await getRange(id), 360);
+                    if (hue !== undefined) {
+                        const saturationId = attrs.get_color_saturation;
+                        const saturation = saturationId
+                            ? toFraction(getValue(saturationId), await getRange(saturationId), 100)
+                            : undefined;
+                        // the brightness is reported by its own
+                        rgb = hsvToRgb(hue, saturation ?? 1, 1);
+                        rgbTs = Math.max(states[id]?.ts || 0, (saturationId && states[saturationId]?.ts) || 0);
+                    }
+                    break;
+                }
+
+                case 'color_saturation':
+                    // reported together with color_hue
+                    break;
+
+                case 'color_spectrumRGB': {
+                    const spectrumRgb = parseRgb(value);
+                    if (spectrumRgb !== undefined) {
+                        rgb = spectrumRgb;
+                        rgbTs = states[id]?.ts || 0;
+                    }
+                    break;
+                }
+
+                case 'color_temperature':
+                    temperatureK = toKelvin(value, await getRange(id), kelvinRange);
+                    temperatureTs = states[id]?.ts || 0;
+                    break;
+
+                case 'thermostatTemperatureSetpoint':
+                case 'thermostatTemperatureAmbient':
+                case 'thermostatHumidityAmbient':
+                case 'temperatureAmbientCelsius': {
+                    const num = toNumber(value);
+                    if (num !== undefined) {
+                        result[name] = num;
+                    }
+                    break;
+                }
+
+                default:
+                    if (name.split('_').length > 1) {
+                        const attrArray = name.split('_');
+                        const dest = result as Record<string, Record<string, ioBroker.StateValue>>;
+                        dest[attrArray[0]] ||= {};
+                        dest[attrArray[0]][attrArray[1]] = value;
+                    } else {
+                        result[name] = value;
+                    }
+            }
+        }
+
+        if (rgb !== undefined && (temperatureK === undefined || rgbTs > temperatureTs)) {
+            result.color = { spectrumRgb: rgb };
+        } else if (temperatureK !== undefined) {
+            result.color = { temperatureK };
+        }
+
+        // workaround for thermostats without their own mode state
+        if (result.thermostatTemperatureSetpoint !== undefined && result.thermostatMode === undefined) {
+            result.thermostatMode =
+                (result.thermostatTemperatureAmbient as number) > (result.thermostatTemperatureSetpoint as number)
+                    ? 'cool'
+                    : 'heat';
+        }
+
+        return result;
+    }
+
     async updateState(id: string, state: ioBroker.State): Promise<void> {
         const now = Date.now();
         if (
@@ -2196,194 +2562,33 @@ export default class GoogleHome {
         }
 
         const json: GHUpdateMap = {};
-        let found = false;
-        for (const devId in this.smartDevicesSentToGoogle) {
-            if (!Object.prototype.hasOwnProperty.call(this.smartDevicesSentToGoogle, devId)) {
+        for (const devId of Object.keys(this.smartDevicesSentToGoogle)) {
+            const device = this.smartDevicesSentToGoogle[devId];
+            const ids = getStateIds(device);
+            if (!ids.includes(id)) {
                 continue;
             }
-            const custom = this.smartDevicesSentToGoogle[devId].customData;
-            let idIsAttr = false;
-            for (const attr in custom) {
-                if (!Object.prototype.hasOwnProperty.call(custom, attr)) {
-                    continue;
-                }
-                if (attr?.startsWith('get_')) {
-                    if (custom[attr] === id) {
-                        idIsAttr = true;
-                    } else {
-                        continue;
-                    }
-                    const _attr = attr.substring(4);
-                    json[devId] ||= {};
-                    json[devId][_attr] = { id: custom[attr] };
-                }
-            }
+            try {
+                // the other states of the device are needed too, e.g. green and blue for a new red
+                const states = await this.getStates(ids.filter(otherId => otherId !== id));
+                states[id] = state;
+                const googleState = await this.getGoogleState(device, states);
 
-            if (!idIsAttr) {
-                continue;
-            }
-
-            for (const attr in custom) {
-                if (!Object.prototype.hasOwnProperty.call(custom, attr)) {
-                    continue;
-                }
-                if (custom[attr] !== id || !attr?.startsWith('get_')) {
-                    continue;
-                }
-
-                const _attr = attr.substring(4);
-                let val: ReportedValue;
-                json[devId] ||= {};
-
-                try {
-                    if (_attr === 'on') {
-                        val =
-                            state.val === 1 ||
-                            state.val === '1' ||
-                            state.val === 'true' ||
-                            state.val === 'ON' ||
-                            state.val === 'on' ||
-                            state.val === true ||
-                            (typeof state.val === 'number' && state.val > 0);
-                    } else if (_attr === 'color_R' || _attr === 'color_G' || _attr === 'color_B') {
-                        const colorR = json[devId].color_R as GHUpdateAttrRef | undefined;
-                        const colorG = json[devId].color_G as GHUpdateAttrRef | undefined;
-                        const colorB = json[devId].color_B as GHUpdateAttrRef | undefined;
-                        if (!colorR && !!colorG && !colorB) {
-                            this.adapter.log.warn(
-                                `[GHOME] Invalid structure for "${devId}": ${JSON.stringify(json[devId])}`,
-                            );
-                            val = this.reportedStates[devId]?.[_attr]?.val;
-                        } else {
-                            const r = colorR ? await this.adapter.getForeignStateAsync(colorR.id) : { val: 0 };
-                            const g = colorG ? await this.adapter.getForeignStateAsync(colorG.id) : { val: 0 };
-                            const b = colorB ? await this.adapter.getForeignStateAsync(colorB.id) : { val: 0 };
-                            const rv = (r?.val as number) || 0;
-                            const gv = (g?.val as number) || 0;
-                            const bv = (b?.val as number) || 0;
-                            const spectrumRgb = (rv << 16) + (gv << 8) + bv;
-                            val = Math.floor(spectrumRgb);
-                        }
-                    } else if (_attr === 'color_hue') {
-                        json[devId].color ||= {};
-                        const hueRef = json[devId].color_hue as GHUpdateAttrRef | undefined;
-                        const satRef = json[devId].color_saturation as GHUpdateAttrRef | undefined;
-                        const briRef = json[devId].brightness as GHUpdateAttrRef | undefined;
-                        const hue = hueRef ? await this.adapter.getForeignStateAsync(hueRef.id) : { val: 0 };
-                        const sat = satRef ? await this.adapter.getForeignStateAsync(satRef.id) : { val: 0 };
-                        const value = briRef ? await this.adapter.getForeignStateAsync(briRef.id) : { val: 0 };
-                        const h = ((hue?.val as number) || 0) / 360;
-                        const s = ((sat?.val as number) || 0) / 255;
-                        const v = ((value?.val as number) || 0) / 100;
-                        const i = Math.floor(h * 6);
-                        const f = h * 6 - i;
-                        const p = v * (1 - s);
-                        const q = v * (1 - f * s);
-                        const t = v * (1 - (1 - f) * s);
-
-                        let r = 0;
-                        let g = 0;
-                        let b = 0;
-                        switch (i % 6) {
-                            case 0:
-                                r = v;
-                                g = t;
-                                b = p;
-                                break;
-                            case 1:
-                                r = q;
-                                g = v;
-                                b = p;
-                                break;
-                            case 2:
-                                r = p;
-                                g = v;
-                                b = t;
-                                break;
-                            case 3:
-                                r = p;
-                                g = q;
-                                b = v;
-                                break;
-                            case 4:
-                                r = t;
-                                g = p;
-                                b = v;
-                                break;
-                            case 5:
-                                r = v;
-                                g = p;
-                                b = q;
-                                break;
-                        }
-                        val = (r << 16) | (g << 8) | b;
-                    } else if (_attr === 'color_spectrumRGB') {
-                        const rgb = state.val;
-                        json[devId].color ||= {};
-                        if (typeof rgb === 'string') {
-                            val = parseInt(rgb.substring(1), 16) || 0;
-                        } else {
-                            val = rgb;
-                        }
-                    } else if (_attr === 'color_temperature') {
-                        const temp = state.val as number;
-                        val = Math.floor(temp) || 0;
-                    } else if (_attr === 'isLocked') {
-                        val = !!state.val;
-                    } else if (_attr === 'openDirection') {
-                        val = state.val === 2 ? 'DOWN' : 'UP';
-                    } else if (_attr === 'openPercent') {
-                        if (state.val === true || state.val === false) {
-                            val = state.val === false ? 100 : 0;
-                        } else {
-                            val = parseInt(state.val as unknown as string) || 0;
-                        }
-                    } else {
-                        val = state.val;
-                    }
-
-                    const customId = custom[attr];
-                    if (this.smartDevices[devId].conv2GH?.[customId]) {
-                        try {
-                            const conv = new Function('value', this.smartDevices[devId].conv2GH[customId]);
-                            val = conv(val) as ReportedValue;
-                        } catch {
-                            this.adapter.log.error(
-                                `Invalid convert function in ${devId}/${customId}: ${this.smartDevices[devId].conv2GH[customId]}`,
-                            );
-                        }
-                    }
-
-                    if (this.reportedStates[devId]?.[_attr]?.val !== val) {
-                        this.reportedStates[devId] ||= {};
-                        this.reportedStates[devId][_attr] ||= { val: undefined, ts: 0 };
-                        this.reportedStates[devId][_attr].val = val;
-                        this.reportedStates[devId][_attr].ts = now;
+                // report only what changed
+                const reported = (this.reportedStates[devId] ||= {});
+                for (const key of Object.keys(googleState)) {
+                    if (JSON.stringify(googleState[key]) !== JSON.stringify(reported[key])) {
+                        reported[key] = googleState[key];
                         json[devId] ||= {};
-                        if (_attr.includes('color_')) {
-                            const color = (json[devId].color ||= {});
-                            if (_attr === 'color_temperature') {
-                                color.temperatureK = Math.floor(val as number);
-                            } else {
-                                color.spectrumRgb = val as number;
-                            }
-                        } else if (_attr.substring(4).split('_').length > 1) {
-                            const attrArray = _attr.substring(4).split('_');
-                            const dest = json[devId] as Record<string, Record<string, ReportedValue>>;
-                            dest[attrArray[0]] ||= {};
-                            dest[attrArray[0]][attrArray[1]] = val;
-                        } else {
-                            json[devId][_attr] = val;
-                        }
-                        found = true;
+                        json[devId][key] = googleState[key];
                     }
-                } catch (error) {
-                    this.adapter.log.error(`[GHOME] ${(error as Error)?.message} ${(error as Error)?.stack}`);
                 }
+            } catch (error) {
+                this.adapter.log.error(`[GHOME] ${(error as Error)?.message} ${(error as Error)?.stack}`);
             }
         }
 
-        if (found && this.urlKey) {
+        if (Object.keys(json).length && this.urlKey) {
             const ts = Date.now();
 
             let i = 0;
@@ -2448,201 +2653,22 @@ export default class GoogleHome {
         }
     }
 
-    async updateStates(json?: GHUpdateMap): Promise<void> {
+    async updateStates(): Promise<void> {
         if (!this.urlKeyOk || !this.urlKey) {
             return;
         }
-        if (!json) {
-            json = {};
-            for (const devId in this.smartDevicesSentToGoogle) {
-                if (!Object.prototype.hasOwnProperty.call(this.smartDevicesSentToGoogle, devId)) {
-                    continue;
-                }
-                const custom = this.smartDevicesSentToGoogle[devId].customData;
-                for (const attr in custom) {
-                    if (!Object.prototype.hasOwnProperty.call(custom, attr)) {
-                        continue;
-                    }
-                    if (attr?.startsWith('get_')) {
-                        const _attr = attr.substring(4);
-                        json[devId] ||= {};
-                        json[devId][_attr] = { id: custom[attr] };
-                    }
-                }
-            }
-        }
+        const devices = Object.values(this.smartDevicesSentToGoogle);
+        const ids: string[] = [];
+        devices.forEach(device => getStateIds(device).forEach(id => !ids.includes(id) && ids.push(id)));
+        const states = await this.getStates(ids);
 
-        for (const devId in json) {
+        const json: GHUpdateMap = {};
+        for (const device of devices) {
             try {
-                if (!Object.prototype.hasOwnProperty.call(json, devId)) {
-                    continue;
-                }
-
-                for (const attr in json[devId]) {
-                    if (!Object.prototype.hasOwnProperty.call(json[devId], attr)) {
-                        continue;
-                    }
-
-                    const attrRef = json[devId][attr] as GHUpdateAttrRef | undefined;
-                    if (typeof attrRef === 'object' && attrRef !== null && attrRef.id) {
-                        let state = await this.adapter.getForeignStateAsync(attrRef.id);
-                        if (state == null || state.val === null || state.val === '') {
-                            delete json[devId][attr];
-                            if (Object.keys(json[devId]).length === 0) {
-                                delete json[devId];
-                            }
-                            continue;
-                        }
-
-                        state ||= { val: false } as ioBroker.State;
-
-                        if (this.smartDevices[devId].conv2GH?.[attrRef.id]) {
-                            try {
-                                const conv = new Function('value', this.smartDevices[devId].conv2GH[attrRef.id]);
-                                state.val = conv(state.val) as ioBroker.StateValue;
-                            } catch {
-                                this.adapter.log.error(
-                                    `Invalid convert function in ${devId}/${attr}: ${this.smartDevices[devId].conv2GH[attrRef.id]}`,
-                                );
-                            }
-                        }
-                        if (attr === 'on') {
-                            json[devId][attr] =
-                                state.val === 1 ||
-                                state.val === '1' ||
-                                state.val === 'true' ||
-                                state.val === 'ON' ||
-                                state.val === 'on' ||
-                                state.val === true ||
-                                (typeof state.val === 'number' && state.val > 0);
-                        } else if (attr === 'color_R' || attr === 'color_G' || attr === 'color_B') {
-                            const colorR = json[devId].color_R as GHUpdateAttrRef | undefined;
-                            const colorG = json[devId].color_G as GHUpdateAttrRef | undefined;
-                            const colorB = json[devId].color_B as GHUpdateAttrRef | undefined;
-                            const r = colorR ? await this.adapter.getForeignStateAsync(colorR.id) : { val: 0 };
-                            const g = colorG ? await this.adapter.getForeignStateAsync(colorG.id) : { val: 0 };
-                            const b = colorB ? await this.adapter.getForeignStateAsync(colorB.id) : { val: 0 };
-                            const rv = (r?.val as number) || 0;
-                            const gv = (g?.val as number) || 0;
-                            const bv = (b?.val as number) || 0;
-                            const spectrumRgb = (rv << 16) | (gv << 8) | bv;
-                            json[devId].color ||= {};
-                            json[devId].color.spectrumRgb = Math.floor(spectrumRgb);
-                            delete json[devId].color_R;
-                            delete json[devId].color_G;
-                            delete json[devId].color_B;
-                        } else if (attr === 'color_hue') {
-                            json[devId].color ||= {};
-                            const hueRef = json[devId].color_hue as GHUpdateAttrRef | undefined;
-                            const satRef = json[devId].color_saturation as GHUpdateAttrRef | undefined;
-                            const briRef = json[devId].brightness as GHUpdateAttrRef | undefined;
-                            if (hueRef && satRef && briRef) {
-                                try {
-                                    const hue = await this.adapter.getForeignStateAsync(hueRef.id);
-                                    const sat = await this.adapter.getForeignStateAsync(satRef.id);
-                                    const val = await this.adapter.getForeignStateAsync(briRef.id);
-                                    const h = ((hue?.val as number) || 0) / 360;
-                                    const s = ((sat?.val as number) || 0) / 255;
-                                    const v = ((val?.val as number) || 0) / 100;
-                                    const i = Math.floor(h * 6);
-                                    const f = h * 6 - i;
-                                    const p = v * (1 - s);
-                                    const q = v * (1 - f * s);
-                                    const t = v * (1 - (1 - f) * s);
-                                    let r = 0,
-                                        g = 0,
-                                        b = 0;
-                                    switch (i % 6) {
-                                        case 0:
-                                            r = v;
-                                            g = t;
-                                            b = p;
-                                            break;
-                                        case 1:
-                                            r = q;
-                                            g = v;
-                                            b = p;
-                                            break;
-                                        case 2:
-                                            r = p;
-                                            g = v;
-                                            b = t;
-                                            break;
-                                        case 3:
-                                            r = p;
-                                            g = q;
-                                            b = v;
-                                            break;
-                                        case 4:
-                                            r = t;
-                                            g = p;
-                                            b = v;
-                                            break;
-                                        case 5:
-                                            r = v;
-                                            g = p;
-                                            b = q;
-                                            break;
-                                    }
-                                    json[devId].color.spectrumRgb = (r << 16) | (g << 8) | b;
-                                } catch (error) {
-                                    this.adapter.log.error(`[GHOME] ${error as string}`);
-                                }
-                            }
-                            delete json[devId].color_hue;
-                            delete json[devId].color_saturation;
-                            delete json[devId].brightness;
-                        } else if (attr === 'color_spectrumRGB') {
-                            const rgb = state.val;
-                            json[devId].color ||= {};
-                            if (typeof rgb === 'string') {
-                                json[devId].color.spectrumRgb = parseInt(rgb.substring(1), 16) || 0;
-                            } else {
-                                json[devId].color.spectrumRgb = rgb as number;
-                            }
-                            delete json[devId][attr];
-                        } else if (attr === 'color_temperature') {
-                            const temp = state.val as number;
-                            json[devId].color ||= {};
-                            json[devId].color.temperatureK = Math.floor(temp);
-                            delete json[devId][attr];
-                        } else if (attr === 'isLocked') {
-                            json[devId][attr] = !!state.val;
-                        } else if (attr === 'openDirection') {
-                            json[devId][attr] = state.val === 2 ? 'DOWN' : 'UP';
-                        } else if (attr === 'openPercent') {
-                            if (state.val === true || state.val === false || isNaN(state.val as number)) {
-                                json[devId][attr] = state.val === false ? 100 : 0;
-                            } else {
-                                json[devId][attr] = parseInt(state.val as unknown as string) || 0;
-                            }
-                        } else if (attr === 'thermostatTemperatureSetpoint') {
-                            json[devId][attr] = state.val;
-                            // workaround for thermostats without their own mode state
-                            if (!this.smartDevices[devId]?.customData?.get_thermostatMode) {
-                                const ambient = json[devId].thermostatTemperatureAmbient as number | undefined;
-                                const setpoint = json[devId].thermostatTemperatureSetpoint as number | undefined;
-                                if (ambient !== undefined && setpoint !== undefined && ambient > setpoint) {
-                                    json[devId].thermostatMode = 'cool';
-                                } else {
-                                    json[devId].thermostatMode = 'heat';
-                                }
-                            }
-                        } else {
-                            if (attr.split('_').length > 1) {
-                                const attrArray = attr.split('_');
-                                delete json[devId][attr];
-                                const dest = json[devId] as Record<string, Record<string, ioBroker.StateValue>>;
-                                dest[attrArray[0]] ||= {};
-                                dest[attrArray[0]][attrArray[1]] = state.val;
-                            } else {
-                                if (!isNaN(state.val as number)) {
-                                    state.val = Math.floor(state.val as number);
-                                }
-                                json[devId][attr] = state.val;
-                            }
-                        }
-                    }
+                const googleState = await this.getGoogleState(device, states);
+                if (Object.keys(googleState).length) {
+                    json[device.id] = googleState;
+                    this.reportedStates[device.id] = { ...googleState };
                 }
             } catch (error) {
                 this.adapter.log.error(`[GHOME] ${error as string}`);
@@ -2739,11 +2765,11 @@ export default class GoogleHome {
         };
     }
 
-    async getStates(ids: string[]): Promise<Record<string, ioBroker.StateValue | undefined>> {
-        const states: Record<string, ioBroker.StateValue | undefined> = {};
+    async getStates(ids: string[]): Promise<Record<string, ioBroker.State | null | undefined>> {
+        const states: Record<string, ioBroker.State | null | undefined> = {};
         const results = await Promise.all(ids.map(id => this.adapter.getForeignStateAsync(id).catch(() => null)));
         ids.forEach((id, idx) => {
-            states[id] = results[idx]?.val;
+            states[id] = results[idx];
         });
         return states;
     }
@@ -2753,148 +2779,26 @@ export default class GoogleHome {
         const ids: string[] = [];
         try {
             devices.forEach(dev => {
-                if (this.smartDevices[dev.id]) {
-                    const attrs = this.smartDevices[dev.id].customData;
-                    if (attrs) {
-                        Object.keys(attrs).forEach(attr => {
-                            const v = attrs[attr];
-                            if (attr?.startsWith('get_') && v !== undefined && !ids.includes(v)) {
-                                ids.push(v);
-                            }
-                        });
-                    } else {
-                        this.adapter.log.error(
-                            `[GHOME] No Google Home customData for ${dev.id} cannot handle Google Request.`,
-                        );
-                    }
+                const device = this.smartDevices[dev.id];
+                if (device?.customData) {
+                    getStateIds(device).forEach(id => !ids.includes(id) && ids.push(id));
                 }
             });
 
             const states = await this.getStates(ids);
-            devices.forEach(dev => {
-                if (!this.smartDevices[dev.id]) {
+            for (const dev of devices) {
+                const device = this.smartDevices[dev.id];
+                if (!device) {
                     responseDev[dev.id] = { online: false };
-                    return;
-                }
-                responseDev[dev.id] = { online: true };
-                const attrs = this.smartDevices[dev.id].customData;
-                if (!attrs) {
+                } else if (!device.customData) {
                     this.adapter.log.error(
                         `[GHOME] No Google Home customData for ${dev.id} cannot handle Google Request.`,
                     );
-                    return;
+                    responseDev[dev.id] = { online: true };
+                } else {
+                    responseDev[dev.id] = { online: true, ...(await this.getGoogleState(device, states)) };
                 }
-                Object.keys(attrs).forEach(attr => {
-                    if (!attr?.startsWith('get_')) {
-                        return;
-                    }
-                    const targetId = attrs[attr]!;
-                    if (this.smartDevices[dev.id].conv2GH?.[targetId]) {
-                        try {
-                            const conv = new Function('value', this.smartDevices[dev.id].conv2GH![targetId]);
-                            states[targetId] = conv(states[targetId]);
-                        } catch {
-                            this.adapter.log.error(
-                                `Invalid convert function in ${dev.id}/${targetId}: ${this.smartDevices[dev.id].conv2GH![targetId]}`,
-                            );
-                        }
-                    }
-                    if (attr.substring(4).split('_').length > 1) {
-                        const attrArray = attr.substring(4).split('_');
-                        if (attr === 'get_color_R' || attr === 'get_color_G' || attr === 'get_color_B') {
-                            const r = (states[attrs.get_color_R!] as number) || 0;
-                            const g = (states[attrs.get_color_G!] as number) || 0;
-                            const b = (states[attrs.get_color_B!] as number) || 0;
-                            const spectrumRgb = (r << 16) + (g << 8) + b;
-                            responseDev[dev.id].color ||= {};
-                            responseDev[dev.id].color!.spectrumRgb = spectrumRgb;
-                        } else if (attr === 'get_color_hue') {
-                            responseDev[dev.id].color ||= {};
-                            const h = ((states[attrs.get_color_hue!] as number) || 0) / 360;
-                            const s = ((states[attrs.get_color_saturation!] as number) || 0) / 255;
-                            const v = ((states[attrs.get_brightness!] as number) || 0) / 100;
-                            const i = Math.floor(h * 6);
-                            const f = h * 6 - i;
-                            const p = v * (1 - s);
-                            const q = v * (1 - f * s);
-                            const t = v * (1 - (1 - f) * s);
-                            let r = 0;
-                            let g = 0;
-                            let b = 0;
-                            switch (i % 6) {
-                                case 0:
-                                    r = v;
-                                    g = t;
-                                    b = p;
-                                    break;
-                                case 1:
-                                    r = q;
-                                    g = v;
-                                    b = p;
-                                    break;
-                                case 2:
-                                    r = p;
-                                    g = v;
-                                    b = t;
-                                    break;
-                                case 3:
-                                    r = p;
-                                    g = q;
-                                    b = v;
-                                    break;
-                                case 4:
-                                    r = t;
-                                    g = p;
-                                    b = v;
-                                    break;
-                                case 5:
-                                    r = v;
-                                    g = p;
-                                    b = q;
-                                    break;
-                            }
-                            responseDev[dev.id].color!.spectrumRgb = (r << 16) | (g << 8) | b;
-                        } else if (attr === 'get_color_spectrumRGB') {
-                            const rgb = states[attrs.get_color_spectrumRGB!];
-                            responseDev[dev.id].color ||= {};
-                            if (typeof rgb === 'string') {
-                                responseDev[dev.id].color!.spectrumRgb = parseInt(rgb.substring(1), 16) || 0;
-                            } else {
-                                responseDev[dev.id].color!.spectrumRgb = rgb as number;
-                            }
-                        } else {
-                            const dest = responseDev[dev.id] as Record<string, Record<string, unknown>>;
-                            dest[attrArray[0]] ||= {};
-                            dest[attrArray[0]][attrArray[1]] = states[targetId];
-                        }
-                    } else {
-                        if (attr === 'get_isLocked' && states[targetId] !== true && states[targetId] !== false) {
-                            (responseDev[dev.id] as Record<string, unknown>)[attr.substring(4)] =
-                                states[targetId] === 0;
-                        }
-                        if (attr === 'get_openPercent' && (states[targetId] === true || states[targetId] === false)) {
-                            (responseDev[dev.id] as Record<string, unknown>)[attr.substring(4)] =
-                                states[targetId] === true ? 0 : 100;
-                        } else {
-                            (responseDev[dev.id] as Record<string, unknown>)[attr.substring(4)] = states[targetId];
-                        }
-                    }
-                });
-                // workaround for thermostats without their own mode state
-                if (
-                    responseDev[dev.id].thermostatTemperatureSetpoint !== undefined &&
-                    responseDev[dev.id].thermostatMode === undefined
-                ) {
-                    if (
-                        (responseDev[dev.id].thermostatTemperatureAmbient as number) >
-                        (responseDev[dev.id].thermostatTemperatureSetpoint as number)
-                    ) {
-                        responseDev[dev.id].thermostatMode = 'cool';
-                    } else {
-                        responseDev[dev.id].thermostatMode = 'heat';
-                    }
-                }
-            });
+            }
         } catch (error) {
             this.adapter.log.error(`[GHOME] ${(error as Error)?.stack}`);
             this.adapter.log.error(`[GHOME] ${JSON.stringify(devices)}`);
@@ -2903,10 +2807,56 @@ export default class GoogleHome {
         return { requestId, payload: { devices: responseDev } };
     }
 
-    async setStates(
-        tasks: { id: string; val: ioBroker.StateValue; cmd?: string; devId: string; param: string }[],
-    ): Promise<Record<string, Record<string, ioBroker.StateValue | string | Error>>> {
-        const results: Record<string, Record<string, ioBroker.StateValue | string | Error>> = {};
+    /** Converts a value of Google into the unit and range of the state */
+    private async toIoBrokerValue(
+        device: GHDevice,
+        path: string,
+        id: string,
+        val: ioBroker.StateValue,
+    ): Promise<ioBroker.StateValue> {
+        const conv = device.conv2iob?.[id];
+        if (conv) {
+            // an own convert function replaces the automatic conversion
+            try {
+                return new Function('value', conv)(val) as ioBroker.StateValue;
+            } catch {
+                this.adapter.log.error(`Invalid convert function in ${device.id}/${id}: ${conv}`);
+                return val;
+            }
+        }
+        if (typeof val !== 'number') {
+            return val;
+        }
+        switch (path) {
+            case 'on':
+                // a dimmer without its own switch: on is 100 %
+                return id === device.customData.set_brightness
+                    ? fromFraction(val / 100, await this.getStateRange(id), 100)
+                    : val;
+            case 'brightness':
+            case 'openPercent':
+                return fromFraction(val / 100, await this.getStateRange(id), 100);
+            case 'color_R':
+            case 'color_G':
+            case 'color_B':
+                return fromFraction(val / 255, await this.getStateRange(id), 255);
+            case 'color_hue':
+                return fromFraction(val, await this.getStateRange(id), 360);
+            case 'color_saturation':
+                return fromFraction(val, await this.getStateRange(id), 100);
+            case 'color_temperature':
+                return fromKelvin(
+                    val,
+                    await this.getStateRange(id),
+                    device.attributes?.colorTemperatureRange || DEFAULT_KELVIN_RANGE,
+                );
+            default:
+                return val;
+        }
+    }
+
+    async setStates(tasks: GHTask[]): Promise<Record<string, Record<string, unknown>>> {
+        const results: Record<string, Record<string, unknown>> = {};
         for (const task of tasks) {
             this.adapter.log.debug(`[GHOME] setState: ${JSON.stringify(task)}`);
             try {
@@ -2919,7 +2869,8 @@ export default class GoogleHome {
                 } else {
                     await this.adapter.setForeignStateAsync(task.id, task.val);
                     results[task.devId] ||= {};
-                    results[task.devId][task.param] = task.val;
+                    // Google expects its own values in the answer, not the converted ones
+                    results[task.devId][task.param] = task.googleVal !== undefined ? task.googleVal : task.val;
                 }
             } catch (error) {
                 results[task.devId] ||= {};
@@ -2935,7 +2886,7 @@ export default class GoogleHome {
             return { error: 'Invalid parameter' };
         }
 
-        const tasks: { id: string; val: ioBroker.StateValue; cmd?: string; devId: string; param: string }[] = [];
+        const tasks: GHTask[] = [];
         commands.forEach(command => {
             command.execution.forEach(execute => {
                 this.adapter.log.debug(`[GHOME] execute ${execute.command} => ${JSON.stringify(execute.params)}`);
@@ -2987,36 +2938,11 @@ export default class GoogleHome {
                                     paths.push({ path: 'color_B', val: rgb & 0x0000ff });
                                 } else if (subElement === 'spectrumRGB' && attrs.set_color_hue) {
                                     const rgb = parseInt(String(execute.params.color?.spectrumRGB)) || 0;
-                                    const r = ((rgb & 0xff0000) >> 16) / 255;
-                                    const g = ((rgb & 0x00ff00) >> 8) / 255;
-                                    const b = (rgb & 0x0000ff) / 255;
-
-                                    const max = Math.max(r, g, b);
-                                    const min = Math.min(r, g, b);
-                                    let h = 0;
-                                    const v = max;
-                                    const d = max - min;
-                                    const s = max ? d / max : 0;
-
-                                    if (max === min) {
-                                        h = 0;
-                                    } else {
-                                        switch (max) {
-                                            case r:
-                                                h = (g - b) / d + (g < b ? 6 : 0);
-                                                break;
-                                            case g:
-                                                h = (b - r) / d + 2;
-                                                break;
-                                            case b:
-                                                h = (r - g) / d + 4;
-                                                break;
-                                        }
-                                        h /= 6;
-                                    }
+                                    // h and s in 0..1, converted later into the range of the states.
+                                    // The brightness stays: Google sets it with its own command.
+                                    const { h, s } = rgbToHsv(rgb);
                                     paths.push({ path: 'color_hue', val: h });
                                     paths.push({ path: 'color_saturation', val: s });
-                                    paths.push({ path: 'brightness', val: v });
                                 } else if (subElement === 'spectrumRGB') {
                                     const rgb = parseInt(String(execute.params.color?.spectrumRGB)) || 0;
                                     paths.push({
@@ -3038,36 +2964,37 @@ export default class GoogleHome {
                             }
                         }
 
+                        const googleVal = param === 'color' ? toGoogleColor(execute.params.color) : paramValue;
                         paths.forEach(element => {
                             const targetSetId = attrs[`set_${element.path}`];
                             if (!targetSetId) {
                                 return;
                             }
-                            if (this.smartDevices[dev.id].conv2iob?.[targetSetId]) {
-                                try {
-                                    const conv = new Function(
-                                        'value',
-                                        this.smartDevices[dev.id].conv2iob![targetSetId],
-                                    );
-                                    element.val = conv(element.val) as ioBroker.StateValue;
-                                } catch {
-                                    this.adapter.log.error(
-                                        `Invalid convert function in ${dev.id}/${targetSetId}: ${this.smartDevices[dev.id].conv2iob![targetSetId]}`,
-                                    );
-                                }
-                            }
-                            tasks.push({ id: targetSetId, val: element.val, param, devId: dev.id });
+                            tasks.push({
+                                id: targetSetId,
+                                val: element.val,
+                                path: element.path,
+                                param,
+                                devId: dev.id,
+                                googleVal,
+                            });
                         });
                     });
                 });
             });
         });
 
+        for (const task of tasks) {
+            if (task.path && this.smartDevices[task.devId]) {
+                task.val = await this.toIoBrokerValue(this.smartDevices[task.devId], task.path, task.id, task.val);
+            }
+        }
+
         const results = await this.setStates(tasks);
         const responseCommands: GHExecuteResult[] = Object.keys(results).map(devId => {
             const r = results[devId];
             if (r.error) {
-                return { ids: [devId], status: 'ERROR', errorCode: String(r.error) };
+                return { ids: [devId], status: 'ERROR', errorCode: (r.error as Error).toString() };
             }
             return { ids: [devId], status: 'SUCCESS', states: r };
         });

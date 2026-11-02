@@ -416,6 +416,11 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Google Home: values are converted into the units and ranges of Google (brightness and position in %, color temperature from mired or % into Kelvin within the range of the device), and a state report contains no internal names anymore. This fixes the error "Cannot updateState: INVALID_ARGUMENT"
+- (@GermanBluefox) Google Home: lights with hue and saturation or with separate red, green and blue states report and set the color correctly, and a new color does not change the brightness anymore
+- (@GermanBluefox) Google Home: blinds report the position from ACTUAL instead of SET
+
 ### 7.1.7 (2026-11-02)
 - (@GermanBluefox) Admin shows a warning on the update from a version before 7.1.6: Alexa routines with blinds must be edited once
 - (@GermanBluefox) Alexa V3: Alexa may ask for the state of all devices, so the tiles of thermostats, lights, plugs etc. in the Alexa app show their values instead of loading forever. A new device discovery in Alexa is required
