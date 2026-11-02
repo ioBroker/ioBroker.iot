@@ -3,6 +3,7 @@ const helpers = require('../helpers');
 const Device = require('../../../build/lib/AlexaSmartHomeV3/Device').default;
 const DeviceManager = require('../../../build/lib/AlexaSmartHomeV3/DeviceManager').default;
 const AdapterProvider = require('../../../build/lib/AlexaSmartHomeV3/Helpers/AdapterProvider').default;
+const Controls = require('../../../build/lib/AlexaSmartHomeV3/Controls').default;
 
 let deviceManager;
 let dimmerDeviceManager;
@@ -1856,6 +1857,19 @@ describe('AlexaSmartHomeV3 - Controls', function () {
             assert.equal(response.context.properties[0].value, 110);
 
             assert.equal(await helpers.validateAnswer(response), null, 'Schema should be valid');
+        });
+    });
+
+    describe('Connectivity', async function () {
+        // HomeMatic: STICKY_UNREACH stays true till it is acknowledged, UNREACH is the current state (#1004)
+        it('uses UNREACH instead of STICKY_UNREACH', async function () {
+            const config = JSON.parse(JSON.stringify(helpers.motionConfig()));
+            config.states.find(state => state.name === 'UNREACH').id = 'hm-rpc.0.KEQ0766259.0.STICKY_UNREACH';
+
+            const motion = new Controls.Motion(config);
+            const health = motion.supported.find(capability => capability.namespace === 'Alexa.EndpointHealth');
+
+            assert.equal(health.properties[0].getId, 'hm-rpc.0.KEQ0766259.0.UNREACH');
         });
     });
 });

@@ -383,8 +383,9 @@ export default class Control {
     protected connectivityInitObject(alwaysReturn?: boolean): ControlStateInitObject | null {
         const map = this.statesMap;
         const state = this.states[map.unreach];
+        // STICKY_UNREACH stays true till it is acknowledged; the current reachability is in UNREACH
         if (state?.id.toLowerCase().includes('sticky_')) {
-            state.id = state.id.replace(/\.sticky_/i, '');
+            state.id = state.id.replace(/\.sticky_/i, '.');
         }
         if (!state) {
             if (alwaysReturn) {
