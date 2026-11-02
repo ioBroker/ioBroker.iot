@@ -421,6 +421,7 @@ setState('iot.0.app.message', JSON.stringify({
 - (@GermanBluefox) Alexa V3: Alexa may ask for the state of all devices, so the tiles of thermostats, lights, plugs etc. in the Alexa app show their values instead of loading forever. A new device discovery in Alexa is required
 - (@GermanBluefox) Alexa V3: a state with `min` or `max` set to null or empty no longer gets null instead of the value from Alexa, e.g. the temperature of a thermostat
 - (@GermanBluefox) Alexa V3: color lights report a valid color to Alexa, also without a saturation state
+- (@GermanBluefox) Alexa V3 tab: a state added to an existing device is added to it instead of becoming its own device
 
 ### 7.1.6 (2026-10-19)
 - (@jtolksdo) Alexa V3: blinds are announced as RangeController "Blind.Lift" and understand "open/close". "Down/up" without an amount closes/opens the blind fully. A new device discovery in Alexa is required. **Breaking:** existing Alexa routines with blinds stop working and must be edited once (remove the blind from the routine, add it again and save). The discovery of a blind is about 600 characters bigger

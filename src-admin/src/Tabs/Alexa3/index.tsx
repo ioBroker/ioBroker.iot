@@ -1654,6 +1654,8 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                 types={['state']}
                 onClose={() => this.setState({ showSelectId: null })}
                 onOk={async (selected /* , name */): Promise<void> => {
+                    // the state is reset at once, so read the name for the device before
+                    const predefinedName = this.state.showSelectId?.predefinedName;
                     this.setState({ showSelectId: null });
                     const selectedId = Array.isArray(selected) ? selected[0] : selected;
 
@@ -1674,9 +1676,8 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                                     smartType: 'button',
                                     [this.language]: name || I18n.t('Button'),
                                 };
-                                if (this.state.showSelectId?.predefinedName) {
-                                    obj.common.custom[this.namespace].smartName[this.language] =
-                                        this.state.showSelectId.predefinedName;
+                                if (predefinedName) {
+                                    obj.common.custom[this.namespace].smartName[this.language] = predefinedName;
                                     obj.common.custom[this.namespace].smartName.noAutoDetect = true;
                                 }
                             } else {
@@ -1684,8 +1685,8 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                                     smartType: 'button',
                                     [this.language]: name || I18n.t('Button'),
                                 };
-                                if (this.state.showSelectId?.predefinedName) {
-                                    obj.common.smartName[this.language] = this.state.showSelectId.predefinedName;
+                                if (predefinedName) {
+                                    obj.common.smartName[this.language] = predefinedName;
                                     obj.common.smartName.noAutoDetect = true;
                                 }
                             }
@@ -1695,15 +1696,15 @@ export default class Alexa3SmartNames extends Component<Alexa3SmartNamesProps, A
                                 instanceId: this.namespace,
                                 noCommon: this.props.native.noCommon,
                             };
-                            if (this.state.showSelectId?.predefinedName) {
+                            if (predefinedName) {
                                 options.noAutoDetect = true;
-                                options.smartName = this.state.showSelectId.predefinedName;
+                                options.smartName = predefinedName;
                             }
 
                             Utils.updateSmartNameEx(obj as ioBroker.StateObject, options);
                         }
                         this.addChanged(obj._id);
-                        if (!this.state.showSelectId?.predefinedName) {
+                        if (!predefinedName) {
                             this.waitForUpdateID = obj._id;
                         }
 
