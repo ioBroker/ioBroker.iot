@@ -174,5 +174,18 @@ describe('AlexaSmartHomeV3 - ColorControllerSingleRgb', function () {
             );
             assert.equal(response.event.endpoint.endpointId, endpointId, 'Endpoint Id!');
         });
+
+        // the lamp has no SATURATION state; Alexa rejects a saturation or brightness outside 0..1
+        it('ColorController ReportState', async function () {
+            const event = await helpers.getSample('ReportState.json');
+            event.directive.endpoint.endpointId = endpointId;
+            color.supported[0].properties[0].currentValue = undefined;
+
+            const response = await deviceManager.handleAlexaEvent(event);
+
+            const property = response.context.properties.find(p => p.namespace === 'Alexa.ColorController');
+            assert.equal(property.value.saturation, 1, 'Saturation!');
+            assert.ok(property.value.brightness >= 0 && property.value.brightness <= 1, 'Brightness!');
+        });
     });
 });

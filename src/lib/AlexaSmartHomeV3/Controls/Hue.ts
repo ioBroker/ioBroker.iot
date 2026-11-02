@@ -8,6 +8,7 @@ import {
     rgb2hal,
     normalize_0_1,
     denormalize_0_1,
+    ensureValueInRange,
 } from '../Helpers/Utils';
 import Properties from '../Alexa/Properties';
 import PowerState from '../Alexa/Properties/PowerState';
@@ -73,6 +74,15 @@ export default class Hue extends AdjustableControl {
         return [Properties.ColorTemperatureInKelvin];
     }
 
+    /** Value of a state as 0..1, as Alexa expects it for saturation and brightness. Without a valid value: 1 */
+    static toRange_0_1(value: ioBroker.StateValue | undefined, min: number, max: number): number {
+        const num = typeof value === 'number' ? value : parseFloat(value as string);
+        if (!Number.isFinite(num) || !(min < max)) {
+            return 1;
+        }
+        return normalize_0_1(ensureValueInRange(num, min, max), min, max) ?? 1;
+    }
+
     async getOrRetrieveCurrentValue(property: Color): Promise<ioBroker.StateValue> {
         const map = this.statesMap;
 
@@ -84,23 +94,19 @@ export default class Hue extends AdjustableControl {
             }
 
             if (property.propertyName === Properties.Color.propertyName) {
-                let saturation = property.hal!.saturation
-                    ? await AdapterProvider.getState(property.hal!.saturation)
-                    : 100;
-                let brightness = property.hal!.brightness
-                    ? await AdapterProvider.getState(property.hal!.brightness)
-                    : 100;
-                // convert to HAL object
-                if (this._brightness) {
-                    brightness = normalize_0_1(
-                        brightness as number,
+                // convert to HAL object: Alexa rejects a saturation or brightness outside 0..1
+                let saturation = 1;
+                let brightness = 1;
+                if (property.hal!.brightness && this._brightness) {
+                    brightness = Hue.toRange_0_1(
+                        await AdapterProvider.getState(property.hal!.brightness),
                         this._brightness.valuesRangeMin as number,
                         this._brightness.valuesRangeMax as number,
                     );
                 }
-                if (this.states[map.saturation]) {
-                    saturation = normalize_0_1(
-                        saturation as number,
+                if (property.hal!.saturation && this.states[map.saturation]) {
+                    saturation = Hue.toRange_0_1(
+                        await AdapterProvider.getState(property.hal!.saturation),
                         this.states[map.saturation]!.common.min || 0,
                         this.states[map.saturation]!.common.max || 100,
                     );
