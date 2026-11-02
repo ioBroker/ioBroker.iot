@@ -76,6 +76,9 @@ const SMART_TYPES: { [name: string]: Types } = {
     blinds: Types.blind, // error in the GUI
     levelSlider: Types.slider, // error in the GUI
     TV: Types.button,
+    // e.g. a state of the scene adapter: true activates it
+    SCENE_TRIGGER: Types.button,
+    ACTIVITY_TRIGGER: Types.button,
 };
 
 function getSmartNameFromObj(

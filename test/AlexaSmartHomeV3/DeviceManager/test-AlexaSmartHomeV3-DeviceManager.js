@@ -182,6 +182,32 @@ describe('AlexaSmartHomeV3 - DeviceManager', function () {
                 'powerState',
             );
         });
+
+        // Alexa V2 knew scenes as SCENE_TRIGGER, and such a type stays in the smartName (#1071)
+        it('must create a scene from a state with the old type SCENE_TRIGGER', async function () {
+            const objects = {
+                'scene.0.Evening': {
+                    _id: 'scene.0.Evening',
+                    type: 'state',
+                    common: {
+                        name: 'Evening',
+                        type: 'mixed',
+                        role: 'scene.state',
+                        read: true,
+                        write: true,
+                        smartName: { de: 'Abendstimmung', smartType: 'SCENE_TRIGGER' },
+                    },
+                    native: {},
+                },
+            };
+            AdapterProvider.init(helpers.adapterMock(objects));
+            const manager = new DeviceManager();
+            await manager.collectEndpoints();
+
+            assert.equal(manager.endpoints.length, 1);
+            assert.equal(manager.endpoints[0].friendlyName, 'Abendstimmung');
+            assert.deepEqual(manager.endpoints[0].displayCategories, ['SCENE_TRIGGER']);
+        });
     });
 
     describe('keeps devices sharing a state up to date...', async function () {
