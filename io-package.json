@@ -4,8 +4,8 @@
     "version": "7.1.6",
     "news": {
       "7.1.6": {
-        "en": "Alexa V3: blinds are announced as RangeController \"Blind.Lift\" and understand \"open/close\". \"Down/up\" without an amount closes/opens the blind fully. A new device discovery in Alexa is required, and the discovery of a blind is about 600 characters bigger\nAlexa V3: \"down\" without an amount lowers a slider instead of raising it\nAlexa V3: all names of a comma-separated smart name get the new value of a state\nAlexa V3: several RangeControllers in one device (e.g. a blind and a slider) are discovered and controlled separately",
-        "de": "Alexa V3: Rollos heißen RangeController „Blind.Lift“ und verstehen „öffnen/schließen“. „Runter/Rauf“ ohne Betrag schließt/öffnet das Rollo ganz. Eine neue Geräteerkennung in Alexa ist erforderlich, und eine Blinde ist etwa 600 Zeichen größer\nAlexa V3: „Ab“ ohne Betrag senkt einen Slider, statt ihn zu erhöhen\nAlexa V3: Alle Namen kommagetrennter Smart Names erhalten den neuen Status\nAlexa V3: mehrere RangeController in einem Gerät (z. B. Blind und Slider) werden separat erkannt und gesteuert",
+        "en": "Alexa V3: blinds are announced as RangeController \"Blind.Lift\" and understand \"open/close\". \"Down/up\" without an amount closes/opens the blind fully. A new device discovery in Alexa is required. Breaking: existing Alexa routines with blinds stop working and must be edited once (remove the blind from the routine, add it again and save). The discovery of a blind is about 600 characters bigger\nAlexa V3: \"down\" without an amount lowers a slider instead of raising it\nAlexa V3: all names of a comma-separated smart name get the new value of a state\nAlexa V3: several RangeControllers in one device (e.g. a blind and a slider) are discovered and controlled separately",
+        "de": "Alexa V3: Rollos heißen RangeController „Blind.Lift“ und verstehen „öffnen/schließen“. „Runter/Rauf“ ohne Betrag schließt/öffnet das Rollo ganz. Eine neue Geräteerkennung in Alexa ist erforderlich. Breaking: bestehende Alexa-Routinen mit Rollos funktionieren nicht mehr und müssen einmal bearbeitet werden (Rollo aus der Routine entfernen, neu hinzufügen und speichern). Die Erkennung eines Rollos ist etwa 600 Zeichen größer\nAlexa V3: „Ab“ ohne Betrag senkt einen Slider, statt ihn zu erhöhen\nAlexa V3: Alle Namen kommagetrennter Smart Names erhalten den neuen Status\nAlexa V3: mehrere RangeController in einem Gerät (z. B. Blind und Slider) werden separat erkannt und gesteuert",
         "ru": "Alexa V3: жалюзи анонсированы как RangController «Blind.Lift» и подразумевают «открыть/закрыть». При нажатии кнопки «Вниз/вверх» жалюзи полностью закрываются/открываются. Требуется обнаружение нового устройства в Alexa, а размер обнаружения слепых примерно на 600 символов\nAlexa V3: «вниз» без суммы опускает слайдер, а не поднимает его\nAlexa V3: все имена смарт-имени, разделенного запятыми, получают новое значение состояния\nAlexa V3: несколько RangeController в одном устройстве (например, жалюзи и ползунок) обнаруживаются и управляются отдельно",
         "pt": "Alexa V3: blinds são RangeController “Blind.Lift” e entendem “abrir/fechar”. “Down/up” sem valor fecha/abre totalmente a cortina. É preciso descobrir um novo dispositivo na Alexa, e a de um cego é cerca de 600 caracteres maior\nAlexa V3: “para baixo” sem valor abaixa o controle em vez de aumentá-lo\nAlexa V3: todos os nomes inteligentes por vírgula ganham o novo valor de um estado\nAlexa V3: vários RangeControllers em um dispositivo (ex: persiana e slider) são detectados e controlados separadamente",
         "nl": "Alexa V3: jaloezieën worden aangekondigd als RangeController „Blind.Lift” en begrijpen „open/sluiten”. „Omlaag/omhoog” zonder een bedrag sluit of opent het rolgordijn volledig. Er is een nieuw apparaat nodig in Alexa, en de ontdekking van een blind is ongeveer 600 tekens groter\nAlexa V3: „omlaag” zonder een bedrag verlaagt een schuifregelaar in plaats van omhoog\nAlexa V3: alle namen van een slimme naam die door komma's wordt gescheiden, krijgen de nieuwe waarde van een staat\nAlexa V3: meerdere RangeControllers in één apparaat (bijvoorbeeld een rolgordijn en een schuifregelaar) worden afzonderlijk ontdekt en bediend",
@@ -95,6 +95,56 @@
         "zh-cn": "远程访问：通过 MQTT 回复云端的 MCP 请求（消息类型 12）\n分块迁移到 TypeScript\n远程访问得到改善\n连接云时避免了 Node.js 24 弃用警告 DEP0187 (`fs.existsSync`)"
       }
     },
+    "messages": [
+      {
+        "condition": {
+          "operand": "and",
+          "rules": ["oldVersion<7.1.6", "newVersion>=7.1.6"]
+        },
+        "title": {
+          "en": "Alexa routines with blinds must be edited",
+          "de": "Alexa-Routinen mit Rollos müssen angepasst werden",
+          "ru": "Процедуры Alexa с жалюзи нужно изменить",
+          "pt": "As rotinas da Alexa com persianas precisam ser editadas",
+          "nl": "Alexa-routines met rolluiken moeten worden aangepast",
+          "fr": "Les routines Alexa avec des volets doivent être modifiées",
+          "it": "Le routine di Alexa con tapparelle devono essere modificate",
+          "es": "Las rutinas de Alexa con persianas deben editarse",
+          "pl": "Rutyny Alexa z roletami trzeba poprawić",
+          "uk": "Процедури Alexa з ролетами потрібно змінити",
+          "zh-cn": "包含百叶窗的 Alexa 例程需要重新编辑"
+        },
+        "text": {
+          "en": "Since version 7.1.6, blinds are announced to Alexa as RangeController \"Blind.Lift\". After the update, run a device discovery in the Alexa app. Existing Alexa routines with blinds stop working: open each such routine, remove the blind, add it again and save the routine.",
+          "de": "Ab Version 7.1.6 werden Rollos an Alexa als RangeController „Blind.Lift“ gemeldet. Nach dem Update bitte in der Alexa-App eine Gerätesuche starten. Bestehende Alexa-Routinen mit Rollos funktionieren danach nicht mehr: jede dieser Routinen öffnen, das Rollo entfernen, wieder hinzufügen und die Routine speichern.",
+          "ru": "Начиная с версии 7.1.6 жалюзи передаются в Alexa как RangeController «Blind.Lift». После обновления запустите поиск устройств в приложении Alexa. Существующие процедуры Alexa с жалюзи перестанут работать: откройте каждую такую процедуру, удалите жалюзи, добавьте их снова и сохраните процедуру.",
+          "pt": "A partir da versão 7.1.6, as persianas são anunciadas à Alexa como RangeController \"Blind.Lift\". Após a atualização, execute uma descoberta de dispositivos no app Alexa. As rotinas da Alexa existentes com persianas deixam de funcionar: abra cada rotina, remova a persiana, adicione-a novamente e salve a rotina.",
+          "nl": "Vanaf versie 7.1.6 worden rolluiken aan Alexa gemeld als RangeController \"Blind.Lift\". Start na de update een apparaatzoekopdracht in de Alexa-app. Bestaande Alexa-routines met rolluiken werken daarna niet meer: open elke routine, verwijder het rolluik, voeg het opnieuw toe en sla de routine op.",
+          "fr": "À partir de la version 7.1.6, les volets sont déclarés à Alexa comme RangeController « Blind.Lift ». Après la mise à jour, lancez une recherche d'appareils dans l'application Alexa. Les routines Alexa existantes avec des volets ne fonctionnent plus : ouvrez chaque routine, retirez le volet, ajoutez-le à nouveau et enregistrez la routine.",
+          "it": "Dalla versione 7.1.6 le tapparelle vengono annunciate ad Alexa come RangeController \"Blind.Lift\". Dopo l'aggiornamento avvia una ricerca dispositivi nell'app Alexa. Le routine Alexa esistenti con tapparelle smettono di funzionare: apri ogni routine, rimuovi la tapparella, aggiungila di nuovo e salva la routine.",
+          "es": "Desde la versión 7.1.6, las persianas se anuncian a Alexa como RangeController \"Blind.Lift\". Después de la actualización, ejecuta una búsqueda de dispositivos en la app de Alexa. Las rutinas de Alexa existentes con persianas dejan de funcionar: abre cada rutina, quita la persiana, vuelve a añadirla y guarda la rutina.",
+          "pl": "Od wersji 7.1.6 rolety są zgłaszane do Alexy jako RangeController „Blind.Lift”. Po aktualizacji uruchom wyszukiwanie urządzeń w aplikacji Alexa. Istniejące rutyny Alexa z roletami przestaną działać: otwórz każdą taką rutynę, usuń roletę, dodaj ją ponownie i zapisz rutynę.",
+          "uk": "Починаючи з версії 7.1.6, ролети передаються в Alexa як RangeController «Blind.Lift». Після оновлення запустіть пошук пристроїв у застосунку Alexa. Наявні процедури Alexa з ролетами перестануть працювати: відкрийте кожну таку процедуру, видаліть ролету, додайте її знову та збережіть процедуру.",
+          "zh-cn": "从 7.1.6 版本起，百叶窗以 RangeController“Blind.Lift”的形式报告给 Alexa。更新后请在 Alexa 应用中重新搜索设备。现有包含百叶窗的 Alexa 例程将无法工作：请打开每个此类例程，移除百叶窗，重新添加并保存例程。"
+        },
+        "link": "https://github.com/ioBroker/ioBroker.iot/issues/1282",
+        "linkText": {
+          "en": "Details",
+          "de": "Details",
+          "ru": "Подробнее",
+          "pt": "Detalhes",
+          "nl": "Details",
+          "fr": "Détails",
+          "it": "Dettagli",
+          "es": "Detalles",
+          "pl": "Szczegóły",
+          "uk": "Докладніше",
+          "zh-cn": "详情"
+        },
+        "level": "warn",
+        "buttons": ["agree", "cancel"]
+      }
+    ],
     "titleLang": {
       "en": "IoT cloud connection",
       "de": "Cloud IoT-Verbindung",
