@@ -312,7 +312,7 @@ export default class AlexaCustom {
                               type: 'PlainText',
                               text,
                           }
-                        : { type: 'SSML', ssml: `text` },
+                        : { type: 'SSML', ssml: text },
                 card: {
                     content: speechPlainText,
                     title: textsT(this.lang, 'Answer from ioBroker') || 'ioBroker',
@@ -745,7 +745,8 @@ export default class AlexaCustom {
                             response = 'Ja?';
                         }
                     }
-                    return getResponse(response, response, requestId);
+                    // no reprompt: Alexa would say the whole text again after a few seconds of silence
+                    return getResponse(response, null, requestId);
                 }
                 if (intent === 'queryIntent' && stopPhrases[this.lang].includes(text.toLowerCase())) {
                     // v2 Skill when in dialog mode, we need to take care of the exit criteria ourselves

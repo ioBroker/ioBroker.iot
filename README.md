@@ -425,6 +425,7 @@ setState('iot.0.app.message', JSON.stringify({
 - (@GermanBluefox) Alexa V3: states with the old Alexa V2 type SCENE_TRIGGER or ACTIVITY_TRIGGER (e.g. of the scene adapter) are offered to Alexa as scenes again
 - (@GermanBluefox) Alexa V3: HomeMatic devices report their reachability from UNREACH again
 - (@GermanBluefox) Alexa V3: thermostats with modes unknown to Alexa (e.g. MANU) send no empty or double modes in the discovery
+- (@GermanBluefox) Custom skill: "Starte Dialog" is not said twice anymore, and answers in SSML (`<speak>...`) are spoken
 
 ### 7.1.6 (2026-10-19)
 - (@jtolksdo) Alexa V3: blinds are announced as RangeController "Blind.Lift" and understand "open/close". "Down/up" without an amount closes/opens the blind fully. A new device discovery in Alexa is required. **Breaking:** existing Alexa routines with blinds stop working and must be edited once (remove the blind from the routine, add it again and save). The discovery of a blind is about 600 characters bigger
