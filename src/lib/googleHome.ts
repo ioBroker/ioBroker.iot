@@ -1890,7 +1890,8 @@ export default class GoogleHome {
                             common: { smartName: { ghAttributes: defaultAttributes } as SmartNameObject },
                         });
                     }
-                } else {
+                } else if (!snObj.ghAttributes) {
+                    // own attributes were already taken from snObj.ghAttributes
                     result[id].attributes = {};
                 }
             }
@@ -2617,12 +2618,15 @@ export default class GoogleHome {
                             }
                         } else if (attr === 'thermostatTemperatureSetpoint') {
                             json[devId][attr] = state.val;
-                            const ambient = json[devId].thermostatTemperatureAmbient as number | undefined;
-                            const setpoint = json[devId].thermostatTemperatureSetpoint as number | undefined;
-                            if (ambient !== undefined && setpoint !== undefined && ambient > setpoint) {
-                                json[devId].thermostatMode = 'cool';
-                            } else {
-                                json[devId].thermostatMode = 'heat';
+                            // workaround for thermostats without their own mode state
+                            if (!this.smartDevices[devId]?.customData?.get_thermostatMode) {
+                                const ambient = json[devId].thermostatTemperatureAmbient as number | undefined;
+                                const setpoint = json[devId].thermostatTemperatureSetpoint as number | undefined;
+                                if (ambient !== undefined && setpoint !== undefined && ambient > setpoint) {
+                                    json[devId].thermostatMode = 'cool';
+                                } else {
+                                    json[devId].thermostatMode = 'heat';
+                                }
                             }
                         } else {
                             if (attr.split('_').length > 1) {
@@ -2876,7 +2880,11 @@ export default class GoogleHome {
                         }
                     }
                 });
-                if (responseDev[dev.id].thermostatTemperatureSetpoint !== undefined) {
+                // workaround for thermostats without their own mode state
+                if (
+                    responseDev[dev.id].thermostatTemperatureSetpoint !== undefined &&
+                    responseDev[dev.id].thermostatMode === undefined
+                ) {
                     if (
                         (responseDev[dev.id].thermostatTemperatureAmbient as number) >
                         (responseDev[dev.id].thermostatTemperatureSetpoint as number)
