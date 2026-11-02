@@ -158,6 +158,22 @@ describe('AlexaSmartHomeV3 - Helpers', function () {
             const valueInRange = Utils.ensureValueInRange_0_100(2, 1, 3);
             assert.equal(valueInRange, 2);
         });
+
+        // e.g. a thermostat with "min": null set 22° as null (#1174)
+        it('configuredRangeOrDefault uses the defaults for null and empty limits', async function () {
+            const range = Utils.configuredRangeOrDefault({
+                common: { type: 'number', min: null, max: '', step: null },
+            });
+            assert.deepEqual(range, { min: 0, max: 100, step: 10 });
+            assert.equal(Utils.ensureValueInRange(22, range.min, range.max), 22);
+        });
+
+        it('configuredRangeOrDefault takes numbers and numeric strings', async function () {
+            const range = Utils.configuredRangeOrDefault({
+                common: { type: 'number', min: 5, max: '30', step: '0.5' },
+            });
+            assert.deepEqual(range, { min: 5, max: 30, step: 0.5 });
+        });
     });
 
     describe('Endpoint Id', async function () {
