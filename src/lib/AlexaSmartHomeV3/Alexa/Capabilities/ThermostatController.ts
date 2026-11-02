@@ -60,9 +60,12 @@ export default class ThermostatController extends Base {
     }
 
     get configuration(): AlexaV3ModeConfiguration {
+        // The position of a mode is its value in ioBroker, so the list has gaps for values without an Alexa mode,
+        // e.g. {0: AUTO, 1: MANU, 2: ECO}. Alexa must get every mode once and no null.
+        const modes = [...new Set((this._thermostatMode?.supportedModes || []).filter(mode => mode))];
         return {
             ordered: false,
-            supportedModes: this._thermostatMode?.supportedModes || ['AUTO'],
+            supportedModes: modes.length ? modes : ['AUTO'],
         };
     }
 }

@@ -4,6 +4,7 @@ const DeviceManager = require('../../../build/lib/AlexaSmartHomeV3/DeviceManager
 const Device = require('../../../build/lib/AlexaSmartHomeV3/Device').default;
 const Directives = require('../../../build/lib/AlexaSmartHomeV3/Alexa/Directives').default;
 const AdapterProvider = require('../../../build/lib/AlexaSmartHomeV3/Helpers/AdapterProvider').default;
+const Controls = require('../../../build/lib/AlexaSmartHomeV3/Controls').default;
 
 let endpointId;
 let friendlyName;
@@ -224,6 +225,30 @@ describe('AlexaSmartHomeV3 - Discovery', function () {
             assert.equal(response.event.payload.endpoints[0].capabilities[1].configuration.supportedModes.length, 3);
             assert.equal(response.event.payload.endpoints[0].capabilities[1].configuration.supportedModes[0], 'AUTO');
             assert.equal(response.event.payload.endpoints[0].capabilities[1].configuration.supportedModes[2], 'ECO');
+        });
+
+        // e.g. HomeMatic: MANU has no Alexa mode, and two values may give the same mode (#1070)
+        it('Discovery of a thermostat with modes unknown to Alexa', async function () {
+            const event = await helpers.getSample('Discovery/Discovery.request.json');
+            const config = JSON.parse(JSON.stringify(helpers.thermostatFullConfig()));
+            config.states.find(state => state.name === 'MODE').common.states = {
+                0: 'AUTO',
+                1: 'MANU',
+                2: 'ECO',
+                3: 'AUTO-BOOST',
+            };
+
+            const deviceManager = new DeviceManager();
+            deviceManager.addDevice(
+                new Device({ id: endpointId, friendlyName, controls: [new Controls.Thermostat(config)] }),
+            );
+
+            const response = await deviceManager.handleAlexaEvent(event);
+
+            const thermostat = response.event.payload.endpoints[0].capabilities.find(
+                capability => capability.interface === 'Alexa.ThermostatController',
+            );
+            assert.deepEqual(thermostat.configuration.supportedModes, ['AUTO', 'ECO']);
         });
 
         it('Discovery of a motion sensor', async function () {
