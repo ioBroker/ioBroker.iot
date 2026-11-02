@@ -36,6 +36,9 @@
         "extends": "react-app"
     },
     "devDependencies": {},
+    "overrides": {
+        "undici": "^7.30.1"
+    },
     "browserslist": {
         "production": [
             ">0.2%",
