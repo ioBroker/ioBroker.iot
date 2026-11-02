@@ -416,7 +416,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 7.1.7 (2026-11-02)
 - (@GermanBluefox) Admin shows a warning on the update from a version before 7.1.6: Alexa routines with blinds must be edited once
 - (@GermanBluefox) Alexa V3: Alexa may ask for the state of all devices, so the tiles of thermostats, lights, plugs etc. in the Alexa app show their values instead of loading forever. A new device discovery in Alexa is required
 - (@GermanBluefox) Alexa V3: a state with `min` or `max` set to null or empty no longer gets null instead of the value from Alexa, e.g. the temperature of a thermostat
@@ -450,10 +450,6 @@ setState('iot.0.app.message', JSON.stringify({
 - (@GermanBluefox) Removed support for Alexa 2
 - (@GermanBluefox) Fixed bug in Alisa with color and motion sensor
 - (@GermanBluefox) Validate Discovery response before sending it back
-
-### 5.0.13 (2026-03-31)
-- (@GermanBluefox) Corrected the handling of the multiple group names
-- (@GermanBluefox) Fixing the license validation
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
