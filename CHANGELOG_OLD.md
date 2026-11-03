@@ -511,6 +511,12 @@
 ### 0.1.4 (2018-09-26)
 
 -   (bluefox) Initial commit
+## 6.0.1 (2026-04-07)
+- (iobroker-bot) Adapter requires node.js >= 20 now.
+- (@GermanBluefox) Removed support for Alexa 2
+- (@GermanBluefox) Fixed bug in Alisa with color and motion sensor
+- (@GermanBluefox) Validate Discovery response before sending it back
+
 ## 5.0.13 (2026-03-31)
 - (@GermanBluefox) Corrected the handling of the multiple group names
 - (@GermanBluefox) Fixing the license validation

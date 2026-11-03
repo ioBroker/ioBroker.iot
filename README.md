@@ -416,7 +416,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 7.1.8 (2026-11-03)
 - (@GermanBluefox) Google Home: values are converted into the units and ranges of Google (brightness and position in %, color temperature from mired or % into Kelvin within the range of the device), and a state report contains no internal names anymore. This fixes the error "Cannot updateState: INVALID_ARGUMENT"
 - (@GermanBluefox) Google Home: lights with hue and saturation or with separate red, green and blue states report and set the color correctly, and a new color does not change the brightness anymore
 - (@GermanBluefox) Google Home: blinds report the position from ACTUAL instead of SET
@@ -449,12 +449,6 @@ setState('iot.0.app.message', JSON.stringify({
 
 ### 6.0.3 (2026-04-23)
 - (@GermanBluefox) Allowed to read temperature information via Alexa
-
-### 6.0.1 (2026-04-07)
-- (iobroker-bot) Adapter requires node.js >= 20 now.
-- (@GermanBluefox) Removed support for Alexa 2
-- (@GermanBluefox) Fixed bug in Alisa with color and motion sensor
-- (@GermanBluefox) Validate Discovery response before sending it back
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
