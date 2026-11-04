@@ -708,7 +708,8 @@ class IotAdapter extends Adapter {
             const clientIdSafe: string[] = [];
             if (parts.length > 2) {
                 for (let i = 0; i < parts.length - 1; i++) {
-                    clientIdSafe.push(`${parts[i][0]}***${parts[i][parts[i].length - 1]}`);
+                    // empty parts come from consecutive replaced characters, e.g. "0@" => "__"
+                    clientIdSafe.push(parts[i] ? `${parts[i][0]}***${parts[i][parts[i].length - 1]}` : '');
                 }
                 clientIdSafe.push(parts[parts.length - 1]);
             } else {
