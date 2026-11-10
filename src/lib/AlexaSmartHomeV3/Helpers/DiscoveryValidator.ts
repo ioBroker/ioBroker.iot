@@ -1,5 +1,6 @@
 import type Logger from './Logger';
 import type AlexaResponse from '../Alexa/AlexaResponse';
+import { MAX_IOT_MESSAGE_LENGTH, getSentSize } from '../../iotMessage';
 
 // Alexa limits: https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-discovery.html
 const MAX_ENDPOINTS = 300;
@@ -10,7 +11,7 @@ const MAX_MANUFACTURER_NAME_LENGTH = 128;
 const MAX_CAPABILITIES_PER_ENDPOINT = 100;
 
 // AWS IoT MQTT message size limit (128 KB minus overhead)
-const MAX_RESPONSE_SIZE_BYTES = 127 * 1024;
+const MAX_RESPONSE_SIZE_BYTES = MAX_IOT_MESSAGE_LENGTH;
 const RESPONSE_SIZE_WARNING_BYTES = 100 * 1024;
 
 // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-discovery.html#display-categories
@@ -178,20 +179,59 @@ export function validateDiscoveryResponse(response: AlexaResponse, log: Logger):
         endpoints.length = MAX_ENDPOINTS;
     }
 
-    // Check total response size against AWS IoT MQTT limit
-    const responseSize = JSON.stringify(response).length;
-    if (responseSize > MAX_RESPONSE_SIZE_BYTES) {
+    // Check total response size against AWS IoT MQTT limit.
+    // Responses over the limit are packed before sending (see main.ts), so the packed size is what counts.
+    const json = JSON.stringify(response);
+    const responseSize = Buffer.byteLength(json);
+    const sentSize = getSentSize(json);
+    const sizeText =
+        sentSize === responseSize
+            ? `${Math.round(responseSize / 1024)} KB`
+            : `${Math.round(responseSize / 1024)} KB (${Math.round(sentSize / 1024)} KB packed)`;
+    if (sentSize > MAX_RESPONSE_SIZE_BYTES) {
         const originalCount = endpoints.length;
-        while (endpoints.length > 1 && JSON.stringify(response).length > MAX_RESPONSE_SIZE_BYTES) {
-            const removed = endpoints.pop()!;
-            log.warn(`Discovery: removed "${removed.friendlyName}" to fit AWS IoT message size limit`);
+        const all = endpoints.slice();
+        const fits = (count: number): boolean => {
+            endpoints.splice(0, endpoints.length, ...all.slice(0, count));
+            return getSentSize(JSON.stringify(response)) <= MAX_RESPONSE_SIZE_BYTES;
+        };
+        // At least one endpoint is always kept.
+        // Start with a rough estimate and then search for the largest count that fits.
+        let lo = 1;
+        let hi = originalCount - 1;
+        if (hi >= lo) {
+            const estimate = Math.min(
+                hi,
+                Math.max(lo, Math.floor((originalCount * MAX_RESPONSE_SIZE_BYTES) / sentSize)),
+            );
+            if (fits(estimate)) {
+                lo = estimate;
+            } else {
+                hi = estimate - 1;
+            }
+            while (lo < hi) {
+                const mid = Math.ceil((lo + hi) / 2);
+                if (fits(mid)) {
+                    lo = mid;
+                } else {
+                    hi = mid - 1;
+                }
+            }
+        }
+        endpoints.splice(0, endpoints.length, ...all.slice(0, lo));
+        for (let i = all.length - 1; i >= endpoints.length; i--) {
+            log.warn(`Discovery: removed "${all[i].friendlyName}" to fit AWS IoT message size limit`);
         }
         log.warn(
-            `Discovery: response was ${Math.round(responseSize / 1024)} KB (limit: ${Math.round(MAX_RESPONSE_SIZE_BYTES / 1024)} KB), reduced from ${originalCount} to ${endpoints.length} endpoints`,
+            `Discovery: response was ${sizeText} (limit: ${Math.round(MAX_RESPONSE_SIZE_BYTES / 1024)} KB), reduced from ${originalCount} to ${endpoints.length} endpoints`,
         );
-    } else if (responseSize > RESPONSE_SIZE_WARNING_BYTES) {
+    } else if (sentSize > RESPONSE_SIZE_WARNING_BYTES) {
         log.warn(
-            `Discovery: response is ${Math.round(responseSize / 1024)} KB with ${endpoints.length} endpoints — approaching AWS IoT limit of ${Math.round(MAX_RESPONSE_SIZE_BYTES / 1024)} KB`,
+            `Discovery: response is ${sizeText} with ${endpoints.length} endpoints — approaching AWS IoT limit of ${Math.round(MAX_RESPONSE_SIZE_BYTES / 1024)} KB`,
+        );
+    } else if (sentSize !== responseSize) {
+        log.debug(
+            `Discovery: response is ${sizeText} with ${endpoints.length} endpoints, packed it fits the AWS IoT limit of ${Math.round(MAX_RESPONSE_SIZE_BYTES / 1024)} KB`,
         );
     }
 
