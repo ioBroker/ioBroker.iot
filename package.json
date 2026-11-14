@@ -46,7 +46,7 @@
     "blockly": "^13.4.0",
     "colorette": "^2.0.20",
     "esbuild": "^0.28.2",
-    "puppeteer": "^25.13.0",
+    "puppeteer": "^25.16.0",
     "typescript": "~6.0.3"
   },
   "bugs": {
