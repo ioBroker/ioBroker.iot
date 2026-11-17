@@ -212,6 +212,8 @@ type StoredSession = {
     responseTimer: NodeJS.Timeout | null;
     expiryTimer: NodeJS.Timeout | null;
     callback: ((response: AlexaCustomResponse) => void) | null;
+    /** Last text spoken by Alexa in this session */
+    lastResponse?: string;
 };
 
 export default class AlexaCustom {
@@ -442,6 +444,10 @@ export default class AlexaCustom {
 
         const sessionId = request.session?.sessionId || '';
         const requestId = request.request?.requestId || '';
+
+        if (this.openSessions[sessionId]) {
+            this.openSessions[sessionId].lastResponse = text;
+        }
 
         if (this.openSessions[sessionId].responseTimer) {
             clearTimeout(this.openSessions[sessionId].responseTimer);
@@ -745,6 +751,9 @@ export default class AlexaCustom {
                             response = 'Ja?';
                         }
                     }
+                    if (this.openSessions[sessionId]) {
+                        this.openSessions[sessionId].lastResponse = response;
+                    }
                     // no reprompt: Alexa would say the whole text again after a few seconds of silence
                     return getResponse(response, null, requestId);
                 }
@@ -775,6 +784,7 @@ export default class AlexaCustom {
                     sessionId,
                     userId,
                     userName,
+                    lastResponse: this.openSessions[sessionId]?.lastResponse || '',
                 };
 
                 // Add room and username to the text if configured
