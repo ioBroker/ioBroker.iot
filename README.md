@@ -418,6 +418,7 @@ setState('iot.0.app.message', JSON.stringify({
 ## Changelog
 ### **WORK IN PROGRESS**
 - (@GermanBluefox) Alexa V3: discovery size limit is now checked against the compressed size, so large installations are no longer truncated (#1294)
+- (@GermanBluefox) [GHOME] Ignored devices (smartName = false) are logged as debug instead of warn, message clarified (#450)
 
 ### 7.1.8 (2026-11-03)
 - (@GermanBluefox) Google Home: values are converted into the units and ranges of Google (brightness and position in %, color temperature from mired or % into Kelvin within the range of the device), and a state report contains no internal names anymore. This fixes the error "Cannot updateState: INVALID_ARGUMENT"

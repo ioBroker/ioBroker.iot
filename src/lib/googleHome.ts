@@ -1784,8 +1784,8 @@ export default class GoogleHome {
             const smartName = this.getSmartName(objects, id);
 
             if (smartName !== undefined && (smartName === 'ignore' || smartName === false)) {
-                this.adapter.log.warn(
-                    `[GHOME] ${id} is ignored because the property smartName is false or ignore. To use this state again, remove the property smartName in Object explorer or add it manually under Google Devices`,
+                this.adapter.log.debug(
+                    `[GHOME] ${id} is excluded from Google Home because common.smartName is false or 'ignore' (device was removed by user). Remove common.smartName only if you want to re-enable it.`,
                 );
                 return;
             }
