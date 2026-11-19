@@ -1,7 +1,8 @@
 const assert = require('node:assert');
+const { EventEmitter } = require('node:events');
 const fs = require('node:fs');
 const { join } = require('node:path');
-const { createIotDevice } = require('../build/lib/createIotDevice');
+const { createIotDevice, detachIotDevice } = require('../build/lib/createIotDevice');
 
 describe('createIotDevice', () => {
     let originalExistsSync;
@@ -65,5 +66,23 @@ describe('createIotDevice', () => {
             caCert: Buffer.from('ca'),
         });
         assert.strictEqual(fs.existsSync, spy);
+    });
+});
+
+describe('detachIotDevice', () => {
+    it('keeps a passive error listener after closing and detaches the adapter callbacks', () => {
+        const retired = new EventEmitter();
+        const onError = () => assert.fail('the discarded client called the adapter');
+        retired.on('error', onError);
+        retired.on('close', () => assert.fail('the discarded client reported a disconnect'));
+
+        detachIotDevice(retired);
+
+        assert.strictEqual(retired.emit('close'), false);
+        const listeners = retired.listeners('error');
+        assert.strictEqual(listeners.length, 1);
+        assert.notStrictEqual(listeners[0], onError);
+        // A once-listener would protect only the first late notification.
+        assert.strictEqual(retired.rawListeners('error')[0], listeners[0]);
     });
 });

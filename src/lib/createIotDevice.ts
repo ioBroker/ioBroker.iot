@@ -1,3 +1,4 @@
+import type { EventEmitter } from 'node:events';
 import fs from 'node:fs';
 import { device as DeviceModule, type DeviceOptions } from 'aws-iot-device-sdk';
 
@@ -22,4 +23,15 @@ export function createIotDevice(options: DeviceOptions): DeviceModule {
     } finally {
         writableFs.existsSync = originalExistsSync;
     }
+}
+
+/**
+ * Remove the adapter's listeners after closing the cloud connection.
+ *
+ * @param device the discarded SDK client
+ */
+export function detachIotDevice(device: EventEmitter): void {
+    device.removeAllListeners();
+    // The SDK can still forward transport errors after end() has completed.
+    device.on('error', () => undefined);
 }

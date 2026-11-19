@@ -11,7 +11,7 @@ import GoogleHome from './lib/googleHome';
 import YandexAlisa from './lib/alisa';
 import Remote, { type SOCKET_MESSAGE, type SOCKET_TRUNK } from './lib/remote';
 import ConnectionDiagnostics, { type MqttPacket } from './lib/connectionDiagnostics';
-import { createIotDevice } from './lib/createIotDevice';
+import { createIotDevice, detachIotDevice } from './lib/createIotDevice';
 import { handleGeofenceData, handleDevicesData, handleSendToAdapter, handleGetInstances } from './lib/visuApp';
 import { buildMessageFromNotification } from './lib/notifications';
 import { AppNotifications } from './lib/appNotifications';
@@ -1192,7 +1192,7 @@ class IotAdapter extends Adapter {
                 // The discarded client must not influence the new one anymore: its "error" handler could start
                 // yet another device and its "close" handler would report a disconnect of the new connection.
                 try {
-                    (device as EventEmitter).removeAllListeners();
+                    detachIotDevice(device);
                 } catch {
                     // ignore
                 }
