@@ -419,6 +419,7 @@ setState('iot.0.app.message', JSON.stringify({
 ## Changelog
 ### **WORK IN PROGRESS**
 - (@GermanBluefox) Alexa V3: discovery size limit is now checked against the compressed size, so large installations are no longer truncated (#1294)
+- (@GermanBluefox) [GHOME] Ignored devices (smartName = false) are logged as debug instead of warn, message clarified (#450)
 - (@GermanBluefox) Added `lastResponse` to `smart.lastCommandObj` with the last text spoken by Alexa in the current custom skill session (#574)
 
 ### 7.1.8 (2026-11-03)
