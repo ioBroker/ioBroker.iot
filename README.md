@@ -301,6 +301,7 @@ The adapter will provide the details in two states with different detail level
     -   `sessionId` contains a sessionId of the Skill session, should be the same if multiple commands were spoken, delivered by Amazon, will be empty string if not provided
     -   `userId` contains a userId from the device owner (or maybe later the user that was interacting with the skill), delivered by Amazon, will be empty string if not provided
     -   `userName` contains a mapped username you can configure in iot admin UI for collected userIds
+    -   `lastResponse` contains the last text spoken by Alexa in the same session, e.g. the text from `Starte Dialog mit ...` or the response set via `smart.lastResponse`; empty string for a new session
 
 More details on how the words are detected and what type of queries the Alexa Custom Skill differentiates, please check https://forum.iobroker.net/viewtopic.php?f=37&t=17452 .
 
@@ -418,6 +419,7 @@ setState('iot.0.app.message', JSON.stringify({
 ## Changelog
 ### **WORK IN PROGRESS**
 - (@GermanBluefox) Alexa V3: discovery size limit is now checked against the compressed size, so large installations are no longer truncated (#1294)
+- (@GermanBluefox) Added `lastResponse` to `smart.lastCommandObj` with the last text spoken by Alexa in the current custom skill session (#574)
 
 ### 7.1.8 (2026-11-03)
 - (@GermanBluefox) Google Home: values are converted into the units and ranges of Google (brightness and position in %, color temperature from mired or % into Kelvin within the range of the device), and a state report contains no internal names anymore. This fixes the error "Cannot updateState: INVALID_ARGUMENT"
