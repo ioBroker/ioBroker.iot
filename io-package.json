@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "iot",
-    "version": "7.1.8",
+    "version": "7.1.9",
     "news": {
+      "7.1.9": {
+        "en": "Alexa V3: discovery size limit is now checked against the compressed size, so large installations are no longer truncated (#1294)\n[GHOME] Ignored devices (smartName = false) are logged as debug instead of warn, message clarified (#450)\nAdded `lastResponse` to `smart.lastCommandObj` with the last text spoken by Alexa in the current custom skill session (#574)",
+        "de": "Alexa V3: Discovery-Größe wird jetzt mit der komprimierten Größe verglichen, große Installationen werden nicht mehr gekürzt (#1294)\n[HOME] Ignorierte Geräte (SmartName = false) werden als Debug statt als Warnung geloggt (#450)\n`Smart.LastCommandObj` mit dem letzten Text von Alexa in der aktuellen Custom-Skill-Sitzung hinzugefügt (#574)",
+        "ru": "Alexa V3: ограничение размера обнаружения теперь сопоставляется с размером сжатого файла, поэтому большие установки больше не усекаются (#1294)\n[GHOME] Проигнорированные устройства (SmartName = false) регистрируются как отладка вместо предупреждения, сообщение уточнено (#450)\nДобавлен `LastResponse` в `Smart.lastCommandObj` с последним текстом, произнесенным Алексой в текущем сеансе пользовательских навыков (#574)",
+        "pt": "Alexa V3: o limite de detecção agora é comparado ao tamanho compactado, então grandes instalações não são mais truncadas (#1294)\n[GHOME] Dispositivos ignorados (smartName = false) são registrados como debug em vez de warn (#450)\nAdicionamos `lastResponse` a `smart.lastCommandObj` com o último texto falado pela Alexa na sessão atual (#574)",
+        "nl": "Alexa V3: de limiet voor de detectiegrootte wordt nu vergeleken met de gecomprimeerde grootte, zodat grote installaties niet langer worden ingekort (#1294)\n[GHOME] Genegeerde apparaten (SmartName = false) worden geregistreerd als foutopsporing in plaats van als waarschuwing, bericht verduidelijkt (#450)\n`LastResponse` toegevoegd aan `Smart.LastCommandObj` met de laatste tekst die Alexa heeft gesproken tijdens de huidige aangepaste vaardigheidssessie (#574)",
+        "fr": "Alexa V3 : la taille limite de découverte est désormais comparée à la taille compressée, donc les grandes installations ne sont plus tronquées (#1294)\n[GHOME] Les appareils ignorés (SmartName = false) sont enregistrés comme Debug au lieu d'Warn, message clarifié (#450)\nJ'ai ajouté « LastResponse » à « Smart.LastCommandObj » avec le dernier texte prononcé par Alexa lors de la session personnalisée (#574)",
+        "it": "Alexa V3: Discovery size limit è ora confrontato con il formato compresso, così le grandi installazioni non sono più troncate (#1294)\n[GHOME] I dispositivi ignorati (SmartName = false) sono registrati come debug anziché warn (#450)\nAggiunto `LastResponse` a `Smart.lastCommandObj` con l'ultimo testo pronunciato da Alexa (#574)",
+        "es": "Alexa V3: el límite de tamaño de detección ahora se compara con el tamaño comprimido, por lo que las grandes instalaciones ya no se truncan (#1294)\n[GHOME] Los dispositivos ignorados (SmartName = false) se registran como debug en lugar de advertir, mensaje aclarado (#450)\nSe ha añadido `LastResponse` a `Smart.LastCommandObj` con el último texto dicho por Alexa en la sesión de habilidad personalizada actual (#574)",
+        "pl": "Alexa V3: limit rozmiaru wykrywania jest teraz sprawdzany w stosunku do skompresowanego rozmiaru, więc duże instalacje nie są już skrócone (#1294)\n[GHOME] Zignorowane urządzenia (SmartName = false) są rejestrowane jako debug zamiast ostrzeżenia, komunikat wyjaśniony (#450)\nDodano `LastResponse` do `Smart.LastCommandObj` z ostatnim tekstem wypowiedzianym przez Alexę w bieżącej sesji umiejętności niestandardowych (#574)",
+        "uk": "Alexa V3: ліміт розміру виявлення тепер перевіряється відповідно до стисненого розміру, тому великі установки більше не скорочуються (#1294)\n[GHOME] Ігноровані пристрої (SmartName = false) реєструються як налагодження замість попередження, повідомлення уточнено (#450)\nДодано `LastResponse` до `smart.lastCommandObj` з останнім текстом, виголошеним Alexa в поточному сеансі користувацьких навичок (#574)",
+        "zh-cn": "Alexa V3：现在会根据压缩后的大小检查发现大小限制，因此不再截断大型安装 (#1294)\n[GHOME] 消息已澄清，忽略的设备 (smartName = false) 被记录为调试而不是警告 (#450)\n在 `smart.lastCommandObj` 中添加了 `lastResponse`，其中包含了 Alexa 在当前自定义技能会话中说的最后一条短信 (#574)"
+      },
       "7.1.8": {
         "en": "Google Home: values are converted into the units and ranges of Google (brightness and position in %, color temperature from mired or % into Kelvin within the range of the device), and a state report contains no internal names anymore. This fixes the error \"Cannot updateState: INVALID_ARGUMENT\"\nGoogle Home: lights with hue and saturation or with separate red, green and blue states report and set the color correctly, and a new color does not change the brightness anymore\nGoogle Home: blinds report the position from ACTUAL instead of SET",
         "de": "Google Home: Werte werden in die Einheiten und Bereiche von Google umgerechnet (Helligkeit und Position in %, Farbtemperatur von Mired oder % in Kelvin im Bereich des Geräts), und ein Statusbericht enthält keine internen Namen mehr. Das behebt den Fehler „Cannot updateState: INVALID_ARGUMENT“\nGoogle Home: Lampen mit Farbton und Sättigung oder mit getrennten Zuständen für Rot, Grün und Blau melden und setzen die Farbe richtig, und eine neue Farbe ändert die Helligkeit nicht mehr\nGoogle Home: Rollläden melden die Position aus ACTUAL statt aus SET",
@@ -80,19 +93,6 @@
         "pl": "Dodano szerokość i długość geograficzną dla aplikacji visu",
         "uk": "Додана широта і довгота для програми visu",
         "zh-cn": "为 visu 应用程序添加了纬度和经度"
-      },
-      "7.1.2": {
-        "en": "The cloud connection is now closed gracefully, so the cloud does not report a duplicate connection after a restart of the adapter\nOnly one reconnection attempt can be pending, so two connections cannot overlap anymore",
-        "de": "Die Cloud-Verbindung ist nun korrekt geschlossen, sodass die Cloud nach einem Adapter-Neustart kein Duplikat meldet\nEs kann nur ein Verbindungsversuch ausstehen, zwei Verbindungen können sich nicht mehr überschneiden",
-        "ru": "Теперь облачное соединение закрыто корректно, поэтому после перезапуска адаптера облако не сообщает о дублирующемся соединении\nМожет быть отложена только одна попытка повторного подключения, поэтому два соединения больше не могут перекрываться",
-        "pt": "A conexão à nuvem agora está fechada corretamente, então ela não relata uma conexão duplicada após o reinício do adaptador\nSó há uma tentativa de reconexão pendente, então duas não podem mais se sobrepor",
-        "nl": "De cloudverbinding is nu netjes afgesloten, dus de cloud meldt geen dubbele verbinding na een herstart van de adapter\nEr kan slechts één poging worden gedaan om opnieuw verbinding te maken, dus twee verbindingen kunnen elkaar niet meer overlappen",
-        "fr": "La connexion au cloud est maintenant correctement fermée. Il ne signale pas de connexion dupliquée après le redémarrage de l'adaptateur\nUne seule tentative de reconnexion est en attente, donc deux connexions ne peuvent plus se chevaucher",
-        "it": "La connessione cloud è ora chiusa, quindi non segnala una connessione duplicata dopo il riavvio dell'adattatore\nÈ in sospeso un solo tentativo di riconnessione, quindi due connessioni",
-        "es": "La conexión a la nube ya está cerrada correctamente, por lo que la nube no informa de una conexión duplicada tras reiniciar el adaptador\nSolo puede quedar un intento de reconexión pendiente, por lo que dos conexiones ya no se superponen",
-        "pl": "Połączenie w chmurze jest teraz zamknięte z wdziękiem, więc chmura nie zgłasza zduplikowanego połączenia po ponownym uruchomieniu adaptera\nOczekuje się tylko jedna próba ponownego połączenia, więc dwa połączenia nie mogą się już nakładać",
-        "uk": "Хмарне з'єднання тепер витончено закрито, тому хмара не повідомляє про повторне з'єднання після перезавантаження адаптера\nОчікується лише одна спроба повторного підключення, тому два з'єднання більше не можуть перекриватися",
-        "zh-cn": "云连接现已正常关闭，因此在重新启动适配器后，云端不会报告重复连接\n只有一次重新连接尝试处于待处理状态，因此两个连接不能再重叠"
       }
     },
     "messages": [

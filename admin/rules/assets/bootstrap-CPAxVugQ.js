@@ -1,0 +1,1 @@
+import{O as e,r as t,t as n}from"./_virtual_mf___mfe_internal__ActionVisu__mf_owner__214573928420433__loadShare__shared-Z-IHHB39.js";n.createRoot(document.getElementById(`root`)).render(t(e.StrictMode,{}));

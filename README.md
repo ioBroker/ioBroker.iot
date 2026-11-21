@@ -417,7 +417,7 @@ setState('iot.0.app.message', JSON.stringify({
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 7.1.9 (2026-11-21)
 - (@GermanBluefox) Alexa V3: discovery size limit is now checked against the compressed size, so large installations are no longer truncated (#1294)
 - (@GermanBluefox) [GHOME] Ignored devices (smartName = false) are logged as debug instead of warn, message clarified (#450)
 - (@GermanBluefox) Added `lastResponse` to `smart.lastCommandObj` with the last text spoken by Alexa in the current custom skill session (#574)
@@ -452,9 +452,6 @@ setState('iot.0.app.message', JSON.stringify({
 - (@GermanBluefox) Alexa V3: removed, renamed and new devices are reported to Alexa without a new discovery, but it is not yet active in the cloud
 - (@GermanBluefox) Alexa V3: error answers carry the correlation token and endpoint of the request, and a device that is gone is reported as NO_SUCH_ENDPOINT
 - (ioBroker-Bot) Adapter requires js-controller >= 6.0.11 now.
-
-### 6.0.3 (2026-04-23)
-- (@GermanBluefox) Allowed to read temperature information via Alexa
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
