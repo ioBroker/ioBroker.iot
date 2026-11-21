@@ -665,20 +665,20 @@ export default class AlexaCustom {
                 } else if (request.request.intent.name.startsWith('queryIntent')) {
                     // v2 Skill
                     // Only relevant for v2 Skill, get the start words out of the intent name
-                    const startWords = request.request.intent.name
-                        .replace(/^queryIntent/, '')
-                        .replace(/ae/, 'ä')
-                        .replace(/oe/, 'ö')
-                        .replace(/ue/, 'ü')
-                        .replace(/Oe/, 'Ö')
-                        .replace(/Ue/, 'Ü')
-                        .replace(/Ae/, 'Ä')
-                        .replace(/ss/, 'ß')
-                        .replace(/([A-Z])/g, ' $1')
-                        .trim();
+                    const rawStartWords = request.request.intent.name.replace(/^queryIntent/, '');
                     request.request.intent.name = 'queryIntent';
-                    if (startWords.length && startWords !== 'FillWords') {
-                        // ignore FillWords
+                    // ignore FillWords
+                    if (rawStartWords.length && rawStartWords !== 'FillWords') {
+                        const startWords = rawStartWords
+                            .replace(/ae/, 'ä')
+                            .replace(/oe/, 'ö')
+                            .replace(/ue/, 'ü')
+                            .replace(/Oe/, 'Ö')
+                            .replace(/Ue/, 'Ü')
+                            .replace(/Ae/, 'Ä')
+                            .replace(/ss/, 'ß')
+                            .replace(/([A-Z])/g, ' $1')
+                            .trim();
                         textsLog.push(`queryIntent = ${startWords}`);
                         texts.push(startWords);
                     }
